@@ -224,8 +224,8 @@ function ws_prompt_get_auto_exclusions( string $record_type, string $jx_id ): ar
         }
 
         if ( $record_type === 'statute' ) {
-            $rk = strtoupper( trim( (string) get_post_meta( $pid, 'ws_ingest_record_key', true ) ) );
-            if ( $rk !== '' && str_starts_with( $rk, strtoupper( $jx_id ) . '::' ) ) {
+            $rk = strtoupper( trim( (string) get_post_meta( $pid, '_ws_ingest_record_key', true ) ) );
+            if ( $rk !== '' && str_starts_with( $rk, strtoupper( $jx_id ) . '|' ) ) {
                 return true;
             }
         }
@@ -277,8 +277,8 @@ function ws_prompt_get_auto_exclusions( string $record_type, string $jx_id ): ar
             'update_post_term_cache' => false,
             'meta_query'             => [
                 [
-                    'key'     => 'ws_ingest_record_key',
-                    'value'   => strtoupper( $jx_id ) . '::',
+                    'key'     => '_ws_ingest_record_key',
+                    'value'   => strtolower( $jx_id ) . '|',
                     'compare' => 'LIKE',
                 ],
             ],
@@ -394,6 +394,21 @@ function ws_prompt_split_lines( string $text ): array {
     $lines = array_values( array_unique( $lines ) );
     sort( $lines, SORT_NATURAL | SORT_FLAG_CASE );
     return $lines;
+}
+
+function ws_prompt_resolve_auto_exclusions_text( array $post, array $computed_auto_exclusions ): string {
+    $posted = isset( $post['exclusion_list_auto'] )
+        ? sanitize_textarea_field( (string) $post['exclusion_list_auto'] )
+        : '';
+    $edited = ! empty( $post['exclusion_list_auto_edited'] );
+
+    // Keep operator edits, but never let an untouched empty textarea
+    // suppress computed exclusions on first submit.
+    if ( $edited ) {
+        return $posted;
+    }
+
+    return implode( "\n", $computed_auto_exclusions );
 }
 
 
@@ -1646,7 +1661,7 @@ function ws_handle_prompt_generation(): array {
     }
 
     $auto_exclusions = ws_prompt_get_auto_exclusions( $record_type, $jx_id );
-    $auto_exclusions_input = sanitize_textarea_field( $_POST['exclusion_list_auto'] ?? implode( "\n", $auto_exclusions ) );
+    $auto_exclusions_input = ws_prompt_resolve_auto_exclusions_text( $_POST, $auto_exclusions );
     $exclusion_list  = ws_prompt_merge_exclusions(
         (string) ( $_POST['exclusion_list_manual'] ?? ( $_POST['exclusion_list'] ?? '' ) ),
         ws_prompt_split_lines( $auto_exclusions_input )
@@ -1708,8 +1723,17 @@ function ws_render_prompt_generator_page() {
     }
 
     $result = null;
-    if ( isset( $_POST['ws_prompt_nonce'] ) ) {
+    $is_refresh_only = isset( $_POST['ws_refresh_exclusions'] );
+    if ( isset( $_POST['ws_prompt_nonce'] ) && ! $is_refresh_only ) {
         $result = ws_handle_prompt_generation();
+    }
+    if ( isset( $_POST['ws_prompt_nonce'] ) && $is_refresh_only ) {
+        $result = [
+            'success'  => true,
+            'message'  => 'Auto exclusions refreshed from current records for the selected jurisdiction and record type.',
+            'filename' => '',
+            'path'     => '',
+        ];
     }
 
     $record_type = sanitize_text_field( $_POST['record_type'] ?? 'statute' );
@@ -1728,7 +1752,7 @@ function ws_render_prompt_generator_page() {
         $scope_note_value = $default_scope_note;
     }
     $manual_exclusions = sanitize_textarea_field( $_POST['exclusion_list_manual'] ?? ( $_POST['exclusion_list'] ?? '' ) );
-    $auto_exclusions_text = sanitize_textarea_field( $_POST['exclusion_list_auto'] ?? implode( "\n", $auto_exclusions ) );
+    $auto_exclusions_text = ws_prompt_resolve_auto_exclusions_text( $_POST, $auto_exclusions );
     $auto_count = count( ws_prompt_split_lines( $auto_exclusions_text ) );
     $manual_count = count( ws_prompt_split_lines( $manual_exclusions ) );
     $merged_count = count( ws_prompt_split_lines( ws_prompt_merge_exclusions( $manual_exclusions, ws_prompt_split_lines( $auto_exclusions_text ) ) ) );
@@ -1850,6 +1874,7 @@ function ws_render_prompt_generator_page() {
                 <tr>
                     <th scope="row"><label for="exclusion_list_auto">Auto Exclusions (Drafts)</label></th>
                     <td>
+                        <input type="hidden" name="exclusion_list_auto_edited" id="exclusion_list_auto_edited" value="0">
                         <textarea name="exclusion_list_auto" id="exclusion_list_auto" rows="4" class="large-text code"
                                   placeholder="No existing draft exclusions found for this jurisdiction/CPT."><?php echo esc_textarea( $auto_exclusions_text ); ?></textarea>
                         <p class="description">Prefilled from existing records for this jurisdiction + CPT using canonical hidden statute key <code>_ws_jx_statute_id</code>. Editable if you want to intentionally regenerate an existing record.</p>
@@ -1876,12 +1901,48 @@ function ws_render_prompt_generator_page() {
             <p class="submit">
                 <input type="submit" name="submit" id="submit" class="button button-primary"
                        value="Generate Prompt">
+                  <input type="submit" name="ws_refresh_exclusions" id="ws_refresh_exclusions" class="button"
+                      value="Refresh Auto Exclusions"
+                      onclick="var edited=document.getElementById('exclusion_list_auto_edited'); if (edited) { edited.value='0'; }">
             </p>
 
         </form>
     </div>
 
     <script>
+    var wsPromptLastAutoScope = '';
+
+    function wsPromptGetDefaultScopeForJx(jxCode) {
+        var jx = (jxCode || '').toUpperCase().trim();
+        var jxType = (jx === 'US') ? 'federal' : 'state';
+        return jxType + '-level whistleblower laws and protections';
+    }
+
+    function wsPromptSyncScopeFromJx() {
+        var recordType = document.getElementById('record_type');
+        var jxInput = document.getElementById('jx_id');
+        var scopeNotes = document.getElementById('scope_notes');
+
+        if (!recordType || !jxInput || !scopeNotes) {
+            return;
+        }
+
+        var type = (recordType.value || '').toLowerCase();
+        if (type !== 'statute' && type !== 'common-law') {
+            return;
+        }
+
+        var current = (scopeNotes.value || '').trim();
+        var nextDefault = wsPromptGetDefaultScopeForJx(jxInput.value);
+        var looksLikeDefault = /^(state|federal)-level whistleblower laws and protections$/i.test(current);
+
+        // Only rewrite when field is blank or still on an auto/default value.
+        if (current === '' || current === wsPromptLastAutoScope || looksLikeDefault) {
+            scopeNotes.value = nextDefault;
+            wsPromptLastAutoScope = nextDefault;
+        }
+    }
+
     function wsPromptApplyJxFromSelect() {
         var select = document.getElementById('jx_select');
         var input = document.getElementById('jx_id');
@@ -1891,6 +1952,7 @@ function ws_render_prompt_generator_page() {
         if (select.value) {
             input.value = select.value.toUpperCase();
         }
+        wsPromptSyncScopeFromJx();
     }
 
     function wsPromptToggleFields() {
@@ -1920,6 +1982,31 @@ function ws_render_prompt_generator_page() {
     }
 
     document.addEventListener('DOMContentLoaded', wsPromptToggleFields);
+    document.addEventListener('DOMContentLoaded', function() {
+        var jxInput = document.getElementById('jx_id');
+        var scopeNotes = document.getElementById('scope_notes');
+
+        if (scopeNotes) {
+            var initial = (scopeNotes.value || '').trim();
+            if (/^(state|federal)-level whistleblower laws and protections$/i.test(initial)) {
+                wsPromptLastAutoScope = initial;
+            }
+        }
+        if (jxInput) {
+            jxInput.addEventListener('change', wsPromptSyncScopeFromJx);
+            jxInput.addEventListener('blur', wsPromptSyncScopeFromJx);
+        }
+        wsPromptSyncScopeFromJx();
+
+        var autoTextarea = document.getElementById('exclusion_list_auto');
+        var autoEdited = document.getElementById('exclusion_list_auto_edited');
+        if (!autoTextarea || !autoEdited) {
+            return;
+        }
+        autoTextarea.addEventListener('input', function() {
+            autoEdited.value = '1';
+        });
+    });
     </script>
     <?php
 }
