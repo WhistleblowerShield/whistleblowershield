@@ -720,9 +720,11 @@ function ws_prompt_omission_rules(): string {
 
 OMISSION
 
-If you cannot find a value with reasonable confidence, omit the key entirely
-or leave it as "" or [] depending on the field type. Do not use null, "N/A",
-"unknown", or any placeholder string to signal a missing value.
+If you cannot find a value with reasonable confidence, omit the key entirely.
+Do not use null, "N/A", "unknown", empty placeholders, or guessed values.
+
+Use empty "" or [] only when the schema explicitly says the key must exist
+and be empty. Field-level schema rules override this global omission block.
 
 The following fields are routinely empty in a well-produced run and their
 absence is never penalized:
@@ -732,7 +734,6 @@ absence is never penalized:
   - burden_of_proof_details
   - reward_details
   - statute_url
-  - attached_citations
   - _review_notes
   - _reconciled_notes   → must exist, must be empty, used by second pass legal fact checker
 
@@ -965,7 +966,8 @@ you can make to the reliability of this platform.
 }
 
 with_errors must be true if ANY of the following occurred:
-  - record_count is less than records_requested
+    - For statute/common-law runs only (where records_requested exists):
+        record_count is less than records_requested
   - A statute could not be researched with sufficient confidence
   - Any schema rule was knowingly violated
   - A citation was omitted because a URL could not be verified
@@ -1049,8 +1051,8 @@ RECORD SCHEMA
   },
 
   "citations": {
-    "attached_citations": [],
-    "citation_count":     0
+        "attached_citations": "[omit key if none]",
+        "citation_count":     "[omit if attached_citations is omitted; otherwise must equal length of attached_citations]"
   },
 
   "_review_notes":      "",
@@ -1080,7 +1082,7 @@ the second pass legal fact checker who reconciles the records objects.
 CALCULATED FIELDS — compute last, after all records are finalized:
   meta.record_count         — must equal length of records array
   meta.proposed_count       — must equal length of new_terms_proposed
-  citations.citation_count  — must equal length of attached_citations
+    citations.citation_count  — omit if attached_citations is omitted; otherwise must equal length of attached_citations
   integrity.error_count     — must equal length of error_details
 
 ENDSCHEMA;
@@ -1102,7 +1104,6 @@ RECORD SCHEMA
     "recognition_status":         "[WYSIWYG — current judicial status, well-established vs contested]",
     "public_policy_sources":      ["[constitution | statute | administrative-rule | case-law | federal-law | other]"],
     "other_sources":              "[omit unless 'other' is in public_policy_sources]",
-    "precedent_url":              "[URL to leading case on approved source — omit if unverifiable]",
     "disclosure_types":           [],
     "protected_class":            [],
     "protected_class_details":    "[FREE TEXT — omit unless protected_class uses has-details]",
@@ -1156,8 +1157,8 @@ RECORD SCHEMA
   },
 
   "citations": {
-    "attached_citations": [],
-    "citation_count":     0
+        "attached_citations": "[omit key if none]",
+        "citation_count":     "[omit if attached_citations is omitted; otherwise must equal length of attached_citations]"
   },
 
   "_review_notes":     "",
@@ -1173,6 +1174,8 @@ CL. Used in prompt exclusion lists to prevent duplicate records.
 
 limit_ambiguous: Almost always true for common law — SOL is borrowed from the
 nearest analogous statute. Document the source statute in limit_details.
+If limit_details cannot be identified, set with_errors true and explain in
+integrity.error_details. Do not silently omit limit_details for common law.
 
 statutory_preclusion: Set to true when this jurisdiction's courts hold that
 the common law claim is unavailable when a statutory remedy for the same
@@ -1181,7 +1184,7 @@ conduct exists. Document the controlling cases in statutory_preclusion_details.
 CALCULATED FIELDS — compute last:
   meta.record_count        — must equal length of records array
   meta.proposed_count      — must equal length of new_terms_proposed
-  citations.citation_count — must equal length of attached_citations
+    citations.citation_count — omit if attached_citations is omitted; otherwise must equal length of attached_citations
   integrity.error_count    — must equal length of error_details
 
 ENDSCHEMA;
