@@ -1,0 +1,480 @@
+{
+  "meta": {
+    "json_format_version": "2.0",
+    "source_method": "ai_assisted",
+    "source_name": "OpenAI",
+    "jurisdiction_id": "CA",
+    "generated_date": "2026-04-05",
+    "generated_by": "GPT-5.4 Thinking",
+    "record_count": 8,
+    "proposed_count": 2,
+    "new_terms_proposed": [
+      {
+        "taxonomy": "ws_disclosure_type",
+        "term_id": "child-abuse-reporting",
+        "term_label": "Child Abuse Reporting",
+        "notes": "Used for anti-retaliation protection tied to mandated child-abuse reports. Existing terms do not precisely capture child-abuse reporting obligations.",
+        "seen_in": ["CA-11166"],
+        "count": 1
+      },
+      {
+        "taxonomy": "ws_disclosure_type",
+        "term_id": "patient-abuse-reporting",
+        "term_label": "Patient Abuse Reporting",
+        "notes": "Used for statutes protecting reports of suspected patient abuse or neglect in hospitals and similar facilities. Existing terms do not cleanly capture this reporting context.",
+        "seen_in": ["CA-11161.8", "CA-11161.9"],
+        "count": 2
+      }
+    ],
+    "json_run_notes": "Batch focuses on California state-level whistleblower and closely related anti-retaliation reporting protections outside the user-provided exclusion list. I excluded article entry-point statutes that were expressly listed in the exclusion list even when related downstream provisions were found. Several records protect reporting or opposition activity but do not contain a self-contained express filing deadline in the same section; those records are marked limit_ambiguous true. No parent taxonomy slugs were retained after self-check.",
+    "batch_completed": "2026-04-05 22:58 UTC"
+  },
+  "records": [
+    {
+      "jurisdiction_id": "CA",
+      "statute_id": "CA-8547.3",
+      "official_name": "Interference with rights conferred pursuant to the California Whistleblower Protection Act",
+      "common_name": "California State Employee Whistleblower Interference Protection",
+      "legal_basis": {
+        "statute_citation": "Cal. Gov. Code § 8547.3",
+        "disclosure_types": [
+          "general-wrongdoing",
+          "public-health-safety"
+        ],
+        "protected_class": [
+          "state-employee"
+        ],
+        "disclosure_targets": [
+          "agency-state",
+          "has-details"
+        ],
+        "disclosure_targets_details": "The section protects the broader rights conferred by the California Whistleblower Protection Act, including protected disclosures to the California State Auditor and disclosures of improper governmental activity or dangerous conditions.",
+        "adverse_action_scope": "Prohibits direct or indirect use of official authority or influence to intimidate, threaten, coerce, command, or otherwise interfere with protected whistleblower rights, including through personnel actions such as appointment, promotion, transfer, assignment, performance evaluation, suspension, or other disciplinary action."
+      },
+      "statute_of_limitations": {
+        "limit_ambiguous": true,
+        "limit_details": "Section 8547.3 itself does not contain a filing deadline. Related reprisal complaints under the same statutory article use a 12-month filing period, but that deadline is not stated in this section.",
+        "exhaustion_required": false
+      },
+      "enforcement": {
+        "process_type": [
+          "civil-lawsuit"
+        ],
+        "adverse_action": [
+          "suspension",
+          "transfer",
+          "disciplinary-action",
+          "has-details"
+        ],
+        "adverse_action_details": "The statute expressly references interference through personnel actions including appointment, promotion, transfer, assignment, performance evaluation, suspension, or other disciplinary action.",
+        "remedies": [
+          "compensatory-damages"
+        ]
+      },
+      "burden_of_proof": {},
+      "reward": {
+        "available": false
+      },
+      "links": {
+        "statute_url": "https://leginfo.legislature.ca.gov/faces/codes_displayText.xhtml?article=3.&chapter=6.5.&division=1.&lawCode=GOV&title=2.",
+        "is_official": true
+      },
+      "citations": {
+        "citation_count": 0
+      },
+      "_review_notes": "The official California code group text expressly states that an employee who violates subdivision (a) may be liable in an action for civil damages. I did not tag fee shifting because none is stated in this section.",
+      "_reconciled_notes": ""
+    },
+    {
+      "jurisdiction_id": "CA",
+      "statute_id": "CA-8547.7",
+      "official_name": "Retaliation against state employee or applicant for state employment for protected disclosure",
+      "common_name": "California State Employee Whistleblower Reprisal Remedy",
+      "legal_basis": {
+        "statute_citation": "Cal. Gov. Code § 8547.7",
+        "disclosure_types": [
+          "general-wrongdoing",
+          "public-health-safety"
+        ],
+        "protected_class": [
+          "state-employee",
+          "job-applicant"
+        ],
+        "disclosure_targets": [
+          "internal-supervisor",
+          "internal-management",
+          "agency-state"
+        ],
+        "adverse_action_scope": "Covers actual or attempted acts of reprisal, retaliation, threats, coercion, or similar improper acts for having made a protected disclosure regarding improper governmental activity or dangerous conditions."
+      },
+      "statute_of_limitations": {
+        "limit_ambiguous": false,
+        "limit_value": 12,
+        "limit_unit": "months",
+        "trigger": "from the most recent act of reprisal complained about",
+        "exhaustion_required": true,
+        "exhaustion_details": "A state employee or applicant may file a written complaint with the State Personnel Board, together with a sworn statement. The complaint to the board must be filed within 12 months of the most recent act of reprisal. A damages action is unavailable unless the injured party first filed with the State Personnel Board and the board issued, or failed to issue, findings pursuant to Section 19683."
+      },
+      "enforcement": {
+        "primary_agency": "State Personnel Board",
+        "process_type": [
+          "administrative-complaint",
+          "civil-lawsuit"
+        ],
+        "adverse_action": [
+          "termination",
+          "disciplinary-action",
+          "has-details"
+        ],
+        "adverse_action_details": "The section covers acts of reprisal, retaliation, threats, coercion, or similar improper acts.",
+        "remedies": [
+          "compensatory-damages",
+          "punitive-damages",
+          "attorney-fees"
+        ],
+        "fee_shifting": "unilateral-pro-plaintiff"
+      },
+      "burden_of_proof": {},
+      "reward": {
+        "available": false
+      },
+      "links": {
+        "statute_url": "https://leginfo.legislature.ca.gov/faces/codes_displayText.xhtml?article=3.&chapter=6.5.&division=1.&lawCode=GOV&title=2.",
+        "is_official": true
+      },
+      "citations": {
+        "citation_count": 0
+      },
+      "_review_notes": "The section also imposes criminal penalties. Attorney-fees language appears in the damages subsection. I omitted litigation-costs because the section text I relied on expressly named attorney’s fees but not costs.",
+      "_reconciled_notes": ""
+    },
+    {
+      "jurisdiction_id": "CA",
+      "statute_id": "CA-8547.11",
+      "official_name": "Interference with rights of University of California whistleblowers",
+      "common_name": "University of California Whistleblower Interference Protection",
+      "legal_basis": {
+        "statute_citation": "Cal. Gov. Code § 8547.11",
+        "disclosure_types": [
+          "general-wrongdoing",
+          "public-health-safety"
+        ],
+        "protected_class": [
+          "has-details"
+        ],
+        "protected_class_details": "Covers University of California employees, including officers and faculty members.",
+        "disclosure_targets": [
+          "agency-state",
+          "has-details"
+        ],
+        "disclosure_targets_details": "Protected disclosures may be made to a University of California official designated by the Regents or to the State Auditor.",
+        "adverse_action_scope": "Prohibits direct or indirect use of official authority or influence to intimidate, threaten, coerce, command, or otherwise interfere with a person’s right to make a protected disclosure within the University of California whistleblower framework."
+      },
+      "statute_of_limitations": {
+        "limit_ambiguous": true,
+        "limit_details": "Section 8547.11 itself does not contain a filing deadline. Related University of California reprisal complaints under Section 8547.10 use a 12-month filing period, but that deadline is not stated in this section.",
+        "exhaustion_required": false
+      },
+      "enforcement": {
+        "process_type": [
+          "civil-lawsuit"
+        ],
+        "adverse_action": [
+          "suspension",
+          "transfer",
+          "disciplinary-action",
+          "has-details"
+        ],
+        "adverse_action_details": "The section expressly references personnel actions including appointment, promotion, transfer, assignment, performance evaluation, suspension, or other disciplinary action.",
+        "remedies": [
+          "compensatory-damages"
+        ]
+      },
+      "burden_of_proof": {},
+      "reward": {
+        "available": false
+      },
+      "links": {
+        "statute_url": "https://leginfo.legislature.ca.gov/faces/codes_displayText.xhtml?article=3.&chapter=6.5.&division=1.&lawCode=GOV&title=2.",
+        "is_official": true
+      },
+      "citations": {
+        "citation_count": 0
+      },
+      "_review_notes": "This section addresses interference rather than the separate UC reprisal complaint-and-damages section. I omitted fee shifting because none is stated in Section 8547.11 itself.",
+      "_reconciled_notes": ""
+    },
+    {
+      "jurisdiction_id": "CA",
+      "statute_id": "CA-11166",
+      "official_name": "Child abuse or neglect reporting; internal procedures; no sanction",
+      "common_name": "Child Abuse Mandated Reporter Anti-Retaliation",
+      "legal_basis": {
+        "statute_citation": "Cal. Penal Code § 11166",
+        "disclosure_types": [
+          "general-wrongdoing"
+        ],
+        "protected_class": [
+          "has-details"
+        ],
+        "protected_class_details": "Covers mandated reporters under the Child Abuse and Neglect Reporting Act and, in some circumstances, other persons who make child-abuse reports.",
+        "disclosure_targets": [
+          "agency-state",
+          "law-enforcement"
+        ],
+        "adverse_action_scope": "Makes reporting duties individual, prohibits supervisors or administrators from impeding or inhibiting those duties, and provides that no person making a report is subject to any sanction for making the report."
+      },
+      "statute_of_limitations": {
+        "limit_ambiguous": true,
+        "limit_details": "No express civil filing deadline was identified in the text of Section 11166 for enforcing the no-sanction protection.",
+        "exhaustion_required": false
+      },
+      "enforcement": {
+        "adverse_action": [
+          "disciplinary-action",
+          "has-details"
+        ],
+        "adverse_action_details": "The section bars sanctions for making the report and forbids supervisors or administrators from impeding or inhibiting the reporting duties."
+      },
+      "burden_of_proof": {},
+      "reward": {
+        "available": false
+      },
+      "links": {
+        "statute_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=PEN&sectionNum=11166.",
+        "is_official": true
+      },
+      "citations": {
+        "citation_count": 0
+      },
+      "_review_notes": "Section 11166 contains a clear anti-sanction rule but I did not identify an express private cause of action, agency remedy scheme, or fee-shifting provision in the section text reviewed.",
+      "_reconciled_notes": ""
+    },
+    {
+      "jurisdiction_id": "CA",
+      "statute_id": "CA-11161.8",
+      "official_name": "Reports of neglect or abuse of transferred patient; no discharge, suspension, discipline, or harassment",
+      "common_name": "Hospital Patient Abuse Reporting Anti-Retaliation",
+      "legal_basis": {
+        "statute_citation": "Cal. Penal Code § 11161.8",
+        "disclosure_types": [
+          "general-wrongdoing"
+        ],
+        "protected_class": [
+          "clinical-staff",
+          "has-details"
+        ],
+        "protected_class_details": "Applies to hospital employees involved in reporting, including admitting physicians and, by express text, registered nurses, licensed vocational nurses, and licensed clinical social workers employed at the hospital.",
+        "disclosure_targets": [
+          "law-enforcement",
+          "agency-local"
+        ],
+        "adverse_action_scope": "Prohibits discharge, suspension, discipline, or harassment for making a report of suspected neglect or abuse of a transferred patient."
+      },
+      "statute_of_limitations": {
+        "limit_ambiguous": true,
+        "limit_details": "No express civil filing deadline was identified in the text of Section 11161.8.",
+        "exhaustion_required": false
+      },
+      "enforcement": {
+        "adverse_action": [
+          "termination",
+          "suspension",
+          "disciplinary-action",
+          "harassment"
+        ]
+      },
+      "burden_of_proof": {},
+      "reward": {
+        "available": false
+      },
+      "links": {
+        "statute_url": "https://law.justia.com/codes/california/code-pen/part-4/title-1/chapter-2/article-2/section-11161-8/",
+        "is_official": false,
+        "url_source": "law.justia.com"
+      },
+      "citations": {
+        "citation_count": 0
+      },
+      "_review_notes": "I did not locate a working official legislature section page for this statute during the run, so I used an approved secondary source. The section also grants civil and criminal immunity for making the report, but I did not map immunity as a remedy.",
+      "_reconciled_notes": ""
+    },
+    {
+      "jurisdiction_id": "CA",
+      "statute_id": "CA-11161.9",
+      "official_name": "Immunity for reports under Article 2; no discharge, suspension, discipline, or harassment",
+      "common_name": "Injury and Abuse Report Anti-Retaliation",
+      "legal_basis": {
+        "statute_citation": "Cal. Penal Code § 11161.9",
+        "disclosure_types": [
+          "general-wrongdoing"
+        ],
+        "protected_class": [
+          "has-details"
+        ],
+        "protected_class_details": "Covers persons required or authorized to report under Penal Code Article 2, including health practitioners and designated persons making covered abuse or injury reports.",
+        "disclosure_targets": [
+          "law-enforcement",
+          "agency-local"
+        ],
+        "adverse_action_scope": "Provides that no employee shall be discharged, suspended, disciplined, or harassed for making a report pursuant to the section."
+      },
+      "statute_of_limitations": {
+        "limit_ambiguous": true,
+        "limit_details": "No express civil filing deadline was identified in the text of Section 11161.9.",
+        "exhaustion_required": false
+      },
+      "enforcement": {
+        "adverse_action": [
+          "termination",
+          "suspension",
+          "disciplinary-action",
+          "harassment"
+        ]
+      },
+      "burden_of_proof": {},
+      "reward": {
+        "available": false
+      },
+      "links": {
+        "statute_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=PEN&sectionNum=11161.9.",
+        "is_official": true
+      },
+      "citations": {
+        "citation_count": 0
+      },
+      "_review_notes": "This section principally grants civil and criminal immunity for required or authorized reporters under Penal Code Article 2 and adds an express anti-retaliation sentence in subdivision (d). I did not identify an express private damages remedy.",
+      "_reconciled_notes": ""
+    },
+    {
+      "jurisdiction_id": "CA",
+      "statute_id": "CA-12940",
+      "official_name": "Unlawful employment practices",
+      "common_name": "FEHA Retaliation Protection",
+      "legal_basis": {
+        "statute_citation": "Cal. Gov. Code § 12940",
+        "disclosure_types": [
+          "general-wrongdoing"
+        ],
+        "protected_class": [
+          "all-employees",
+          "job-applicant",
+          "contractor-gig"
+        ],
+        "disclosure_targets": [
+          "agency-state",
+          "court-filing",
+          "has-details"
+        ],
+        "disclosure_targets_details": "Protects opposition to practices forbidden by FEHA and filing complaints, testifying, or assisting in FEHA proceedings. Subdivision (g) separately protects reports made pursuant to Penal Code Section 11161.8.",
+        "adverse_action_scope": "Makes it unlawful to harass, discharge, expel, or otherwise discriminate against a person because the person reported patient abuse under Penal Code Section 11161.8, opposed practices forbidden by FEHA, or filed a complaint, testified, or assisted in a proceeding under FEHA."
+      },
+      "statute_of_limitations": {
+        "limit_ambiguous": true,
+        "limit_value": 3,
+        "limit_unit": "years",
+        "limit_details": "The three-year administrative filing deadline is supplied by Government Code Section 12960 for complaints alleging Article 1 violations, not by Section 12940 itself. A civil action generally follows a right-to-sue process under related FEHA provisions.",
+        "trigger": "from the date upon which the unlawful practice or refusal to cooperate occurred",
+        "exhaustion_required": true,
+        "exhaustion_details": "A FEHA retaliation claimant generally must file an administrative complaint with the Civil Rights Department under related FEHA procedures before commencing a civil action."
+      },
+      "enforcement": {
+        "primary_agency": "California Civil Rights Department",
+        "process_type": [
+          "administrative-complaint",
+          "civil-lawsuit"
+        ],
+        "adverse_action": [
+          "termination",
+          "harassment",
+          "has-details"
+        ],
+        "adverse_action_details": "The statute expressly covers harassment, discharge, expulsion, or other discrimination.",
+        "remedies": [
+          "has-details"
+        ],
+        "remedies_details": "Section 12940 is the substantive anti-retaliation provision; available remedies generally arise through related FEHA enforcement provisions rather than this section’s own text."
+      },
+      "burden_of_proof": {},
+      "reward": {
+        "available": false
+      },
+      "links": {
+        "statute_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=GOV&sectionNum=12940.",
+        "is_official": true
+      },
+      "citations": {
+        "citation_count": 0
+      },
+      "_review_notes": "I treated this as a state-level retaliation protection relevant to whistleblowing/opposition activity, but the filing deadline and exhaustion path come from related FEHA provisions rather than the text of Section 12940. Remedies are therefore left as has-details only.",
+      "_reconciled_notes": ""
+    },
+    {
+      "jurisdiction_id": "CA",
+      "statute_id": "CA-19572",
+      "official_name": "Cause for discipline of state employee",
+      "common_name": "State Employee Anti-Retaliation Discipline Provision",
+      "legal_basis": {
+        "statute_citation": "Cal. Gov. Code § 19572",
+        "disclosure_types": [
+          "general-wrongdoing"
+        ],
+        "protected_class": [
+          "state-employee",
+          "has-details"
+        ],
+        "protected_class_details": "Subdivision (x) protects any other state officer or employee, and also a member of the public, who in good faith reports or discloses actual or suspected legal violations occurring on the job or directly related to the job.",
+        "disclosure_targets": [
+          "has-details"
+        ],
+        "disclosure_targets_details": "Protected reports are brought to the attention of the Attorney General or any other appropriate authority.",
+        "adverse_action_scope": "Defines unlawful retaliation for good-faith reporting of actual or suspected violations of state or federal law occurring on the job or directly related to the job as cause for discipline of the retaliating state employee."
+      },
+      "statute_of_limitations": {
+        "limit_ambiguous": true,
+        "limit_details": "Section 19572 identifies retaliation as cause for discipline but does not state a private filing deadline or standalone claimant limitations period.",
+        "exhaustion_required": false
+      },
+      "enforcement": {
+        "process_type": [
+          "administrative-complaint"
+        ],
+        "adverse_action": [
+          "has-details"
+        ],
+        "adverse_action_details": "The section broadly addresses unlawful retaliation but does not enumerate specific retaliatory acts in subdivision (x).",
+        "remedies": [
+          "has-details"
+        ],
+        "remedies_details": "The section operates by making retaliation cause for discipline of the offending state employee rather than by expressly granting a private claimant remedy."
+      },
+      "burden_of_proof": {},
+      "reward": {
+        "available": false
+      },
+      "links": {
+        "statute_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=GOV&sectionNum=19572.",
+        "is_official": true
+      },
+      "citations": {
+        "citation_count": 0
+      },
+      "_review_notes": "This is a disciplinary provision rather than a classic standalone whistleblower cause of action. I included it because it expressly forbids retaliation for good-faith reporting to the Attorney General or other appropriate authority.",
+      "_reconciled_notes": ""
+    }
+  ],
+  "integrity": {
+    "with_errors": true,
+    "error_details": [
+      "CA-8547.3: Section does not itself state a filing deadline; statute_of_limitations.limit_ambiguous set to true.",
+      "CA-8547.11: Section does not itself state a filing deadline; statute_of_limitations.limit_ambiguous set to true.",
+      "CA-11166: Express civil filing deadline not identified in the reviewed section text; statute_of_limitations.limit_ambiguous set to true.",
+      "CA-11161.8: Official legislature section URL was not successfully located during the run, so an approved secondary source was used; express civil filing deadline not identified.",
+      "CA-11161.9: Express civil filing deadline not identified in the reviewed section text; statute_of_limitations.limit_ambiguous set to true.",
+      "CA-12940: Filing deadline and exhaustion route were derived from related FEHA provisions rather than from Section 12940 itself; statute_of_limitations.limit_ambiguous set to true.",
+      "CA-19572: Section is a disciplinary cause provision and does not state a standalone claimant filing deadline; statute_of_limitations.limit_ambiguous set to true.",
+      "Case citations were omitted for this batch because no approved-source case URLs were sufficiently verified and integrated during the run."
+    ],
+    "error_count": 8
+  }
+}

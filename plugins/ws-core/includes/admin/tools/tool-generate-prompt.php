@@ -727,10 +727,8 @@ or leave it as "" or [] depending on the field type. Do not use null, "N/A",
 The following fields are routinely empty in a well-produced run and their
 absence is never penalized:
   - tolling_notes
-  - exhaustion_details
   - rebuttable_presumption
   - burden_of_proof_details
-  - reward_details
   - statute_url
   - attached_citations
   - _review_notes
