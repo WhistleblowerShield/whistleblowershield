@@ -7,8 +7,12 @@
  * PURPOSE
  * -------
  * Processes validated JSON ingest files and writes statute records to
- * the jx-statute CPT with correct ACF field values, taxonomy assignments,
- * and source/verification stamps.
+ * the jx-statute CPT with normalized field mapping, taxonomy assignments,
+ * and deterministic linkage to related agency/citation records.
+ *
+ * This tool also enforces ingest guardrails (schema/version checks,
+ * integrity advisory handling, and proposal-term logging) while preserving
+ * clean-state data conventions used across ws-core.
  *
  * RECORD TYPES SUPPORTED (this version)
  * --------------------------------------
@@ -25,6 +29,8 @@
  *
  * Phase 2 — Record Processing
  *   Create post → stamp source → map fields → assign taxonomies
+ *   → create/link agency stubs → create/link citation stubs
+ *   → attach statute citation ID array
  *
  * Phase 3 — Post-Run Report
  *
@@ -40,6 +46,12 @@
  * - _review_notes and _reconciled_notes are autostripped (never written)
  * - Proposed terms are logged, not inserted into the taxonomy
  * - Proposed terms in records are removed before writing
+ * - source_chain is written to hidden key _ws_auto_source_chain
+ * - enforcement.primary_agency is mapped to enforcement channel and used for agency matching/stubs
+ * - attached_citations supports array or free-text rows with structured parsing
+ * - citation dedupe uses stable hidden keys to prevent duplicate stub proliferation
+ * - statute records receive ws_jx_statute_citation_ids at ingest-time when citation links exist
+ * - run logs include batch count + second-level timestamp to avoid filename collisions
  * - The assistant's integrity block is advisory — ingest tool validates independently
  * - Version handlers are never modified after release
  *
@@ -52,7 +64,13 @@
  *
  * VERSION
  * -------
- * 3.14.0  Initial release. Statute ingest only (json_format_version 2.0).
+ * 3.14.0  Statute ingest hardening and linkage expansion (json_format_version 2.0):
+ *         - local/federal agency routing + fail-open agency stubs
+ *         - citation stub creation/linking from citations.attached_citations
+ *         - structured citation parsing (CASE || IMPACT || URL || SOURCE || QUALITY)
+ *         - citation impact seed mapped to citation summary field
+ *         - statute-side citation ID array attachment at create-time
+ *         - collision-safe run-log naming (batch count + second precision)
  */
 
 defined( 'ABSPATH' ) || exit;

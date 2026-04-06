@@ -7,10 +7,22 @@
  * PURPOSE
  * -------
  * Generates AI research prompt templates for the WhistleblowerShield
- * ingest pipeline. Reads taxonomy data directly from register-taxonomies.php
- * at runtime so taxonomy tables are always in sync with the PHP source of
- * truth. Outputs a ready-to-paste .txt file to the logs/ws-prompts/
- * directory for FTP retrieval.
+ * ingest pipeline across statute, common-law, citation, and interpretation
+ * record types.
+ *
+ * The generator reads taxonomy terms live from WordPress so approved terms
+ * are reflected immediately in prompt output. It also computes and merges
+ * auto-exclusions for the selected jurisdiction/record type to reduce
+ * duplicate generation, while preserving operator overrides.
+ *
+ * Shared prompt boilerplate is record-neutral and includes record-specific
+ * omission guidance for URL fields:
+ *   - statute records: statute_url
+ *   - common-law records: precedent_url
+ *   - citation/interpretation records: case_url
+ *
+ * The admin form defaults Records Requested to 0 (no hard cap), allowing
+ * broad discovery runs unless the operator specifies a limit.
  *
  * RECORD TYPES SUPPORTED
  * ----------------------
@@ -22,21 +34,25 @@
  * OUTPUT
  * ------
  * Files written to: WP_CONTENT_DIR/logs/ws-prompts/
- * Filename format:  [JX_ID]-[record_type]-[YYYYMMDD-HHmm].txt
+ * Filename format:  [JX_ID]-[records_requested]-[RecordType]-[YYYYMMDD-HHmm].txt
  *
  * ACCESS
  * ------
  * Admin only. Registered under the WhistleblowerShield tools menu.
  *
  * @package    WhistleblowerShield
- * @since      3.13.0
- * @version    3.13.0
+ * @since      3.14.0
+ * @version    3.14.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
  * VERSION
  * -------
+ * 3.14.0  Prompt quality hardening:
+ *         - record-neutral shared boilerplate text
+ *         - clarified omission guidance for statute_url / precedent_url / case_url
+ *         - default Records Requested form value set to 0
  * 3.13.0  Initial release. Generates statute, common-law, citation,
  *         and interpretation prompts from live taxonomy data.
  */
@@ -826,7 +842,7 @@ function ws_prompt_taxonomy_tables( string $applies_to ): string {
         ],
         'ws_employer_defense' => [
             'label'       => 'Employer Defense',
-            'description' => "Affirmative defenses available to an employer. Tag all explicitly\n             recognized under the statute.",
+            'description' => "Affirmative defenses available to an employer. Tag all explicitly\n             recognized under governing law.",
         ],
         'ws_employee_standard' => [
             'label'       => 'Employee Standard',
@@ -880,7 +896,7 @@ limited to {$list} — you must:
   2. Leave the array empty if no valid child slug applies
   3. Note the removed slug in json_run_notes
   4. Set with_errors: true in the integrity block
-  5. Add to error_details: "[STATUTE_ID]: Removed parent slug [SLUG] from
+    5. Add to error_details: "[RECORD_ID]: Removed parent slug [SLUG] from
      [FIELD] — no matching child slug found"
 
 A parent slug in a record array corrupts the database. This self-check
@@ -906,16 +922,16 @@ A proposal that does not become a registered taxonomy term is not discarded.
 It enters a human review queue where it may serve as an edge-case signal —
 a last-resort reference for a user whose situation does not fit any existing
 term. The person using this site may have nowhere else to turn. A concept
-you surface here, even once, even in a single statute, could be the most
+you surface here, even once, even in a single record, could be the most
 useful thing in this entire batch for that person.
 
 Propose it.
 
 Before proposing, consider two things — not as gates, but as guidance:
 
-  1. Is this concept likely to appear in other statutes across other
-     jurisdictions? If yes, it is a strong candidate. If it feels entirely
-     specific to one statute in one jurisdiction, note it in json_run_notes
+    1. Is this concept likely to appear in other records across other
+         jurisdictions? If yes, it is a strong candidate. If it feels entirely
+         specific to one record in one jurisdiction, note it in json_run_notes
      as well so the human reviewer has full context.
 
   2. Can this concept be accurately represented by combining three or fewer
@@ -967,7 +983,7 @@ you can make to the reliability of this platform.
 with_errors must be true if ANY of the following occurred:
     - For statute/common-law runs only (where records_requested exists):
         record_count is less than records_requested
-  - A statute could not be researched with sufficient confidence
+    - A required record could not be researched with sufficient confidence
   - Any schema rule was knowingly violated
   - A citation was omitted because a URL could not be verified
   - A SOL value was derived rather than explicit (limit_ambiguous: true)
@@ -1824,7 +1840,7 @@ function ws_render_prompt_generator_page() {
                     <th scope="row"><label for="records_requested">Records Requested</label></th>
                     <td>
                         <input type="number" name="records_requested" id="records_requested"
-                               value="<?php echo esc_attr( $_POST['records_requested'] ?? '' ); ?>"
+                               value="<?php echo esc_attr( $_POST['records_requested'] ?? 0 ); ?>"
                                class="small-text" min="0" max="20" placeholder="0 = no limit">
                         <p class="description">Required. Set to 0 to tell the model: as many as you can comfortably find.</p>
                     </td>
