@@ -1,0 +1,183 @@
+WhistleblowerShield.org NotebookLM Ruleset - Temporary Addendum #2 (CA Remaining Protections)
+
+STATUS
+TEMPORARY RUN PROFILE - NOT FOR INGEST
+Use this addendum only for analysis of:
+- in-progress/tools/CA-Remaining-Protections.txt
+
+PURPOSE
+Force high-discipline conversion of narrative legal notes into:
+1) a schema-close custom JSON schema proposal, and
+2) a maximally populated JSON meta document.
+
+This output is exploratory and editorial. It should stay close to platform schema,
+but may add clearly namespaced analysis fields needed for research staging.
+
+AUTHORITY FOR THIS RUN
+1) Platform schema and ingest safety constraints
+2) Embedded core ruleset v1.2.0
+3) Addendum v1.2.2
+4) THIS TEMP ADDENDUM #2 (run-specific shaping)
+
+If this temp addendum conflicts with higher authority, preserve higher authority
+and log the conflict in _reconciled_run_notes.
+
+---
+
+RUN MODE: SCHEMA-CLOSE EXPLORATORY
+
+Interpretation target:
+- You are producing a "pre-ingest research packet".
+- It must be close enough that a human can later map it into ingest format with
+  minimal surgery.
+
+Hard constraints:
+- Do not fabricate statutes, cases, holdings, or URLs.
+- Do not claim facts not present in source text.
+- Preserve uncertainty explicitly.
+- Keep key names ingest-adjacent whenever possible.
+
+Allowed flexibility:
+- You may add namespaced fields for non-ingest research context using:
+  _analysis.*
+- You may propose additional schema fields ONLY inside a dedicated proposal section.
+- You may include confidence and source evidence arrays.
+
+---
+
+SOURCE PARSING DIRECTIVE (CA-Remaining-Protections)
+
+The source is a narrative memo with citations and outbound links.
+Treat every claim as one of:
+- statute candidate
+- common-law doctrine candidate
+- case-law candidate
+- operational recommendation
+
+For each extracted candidate, capture:
+- canonical_label (human-readable)
+- candidate_type (statute | common-law | citation | recommendation)
+- jurisdiction_id (CA)
+- source_quote (short excerpt)
+- source_url (if present)
+- source_domain
+- confidence (high | moderate | low)
+- verification_status (unverified-from-source-text | verified-url-content)
+
+When URL exists but was not independently verified in-session, set:
+- verification_status = unverified-from-source-text
+
+---
+
+REQUIRED OUTPUTS
+
+Produce exactly TWO artifacts in this order:
+
+ARTIFACT A - CUSTOM SCHEMA PROPOSAL
+Return a JSON object named custom_schema_proposal with:
+- profile_name
+- profile_version
+- based_on_schema ("WhistleblowerShield JSON v2.0")
+- compatibility_mode ("schema-close")
+- top_level_contract
+- field_map_preserved (array)
+- field_map_extended (array of extension fields, all prefixed _analysis.)
+- extraction_entity_types
+- normalization_rules
+- omission_rules
+- confidence_model
+- unresolved_items_policy
+- promotion_plan_to_ingest (how to convert later)
+
+ARTIFACT B - POPULATED META DOC
+Return one JSON object named research_meta_doc with top-level keys:
+- meta
+- records
+- integrity
+
+meta must include at least:
+- json_format_version
+- source_method
+- source_name
+- jurisdiction_id
+- generated_date
+- generated_by
+- record_count
+- proposed_count
+- new_terms_proposed
+- json_run_notes
+- batch_completed
+- _reconciled_run_notes
+- _analysis.profile
+- _analysis.run_purpose
+- _analysis.input_file
+- _analysis.extraction_summary
+
+records requirements:
+- Include candidate records inferred from the source.
+- Keep record shapes as close as possible to statute/common-law/citation templates.
+- If a field is unknown, omit (do not invent).
+- Include _analysis.evidence and _analysis.confidence per record.
+
+integrity requirements:
+- Follow standard with_errors/error_details/error_count contract.
+- with_errors should be true if unverifiable claims remain.
+
+---
+
+SCHEMA-CLOSENESS RULES
+
+1) Preserve known keys first
+Before inventing any extension field, attempt to map into existing known keys.
+
+2) Extensions are namespaced only
+Any non-platform field must be under _analysis.
+Examples:
+- _analysis.evidence
+- _analysis.candidate_status
+- _analysis.open_questions
+
+3) No free-floating experimental keys
+Do not create new top-level keys outside:
+- custom_schema_proposal
+- research_meta_doc
+
+4) Citation discipline
+If case appears in narrative but legal details are partial:
+- keep minimal citation candidate record,
+- omit unknown dates/court instead of guessing,
+- store narrative support in _analysis.evidence.
+
+5) Common-law doctrine discipline
+For doctrine candidates lacking fully structured legal_basis data:
+- keep doctrine_name/common_name where available,
+- include sparse legal_basis only when supported,
+- push unresolved detail into _analysis.open_questions.
+
+---
+
+MAXIMIZE USEFULNESS WITHOUT HALLUCINATION
+
+You are explicitly encouraged to be "creatively thorough" under constraint:
+- extract all plausible candidates,
+- propose practical structure,
+- provide reviewer-ready notes,
+while never crossing into fabricated legal fact.
+
+When in doubt, include as candidate with lower confidence and clear evidence,
+not as asserted verified truth.
+
+---
+
+FINAL FORMAT CONTRACT
+
+Return valid JSON only (no prose outside JSON) with this exact wrapper:
+{
+  "custom_schema_proposal": { ... },
+  "research_meta_doc": { ... }
+}
+
+Do not include markdown fences.
+Do not include commentary outside JSON.
+
+END OF TEMP ADDENDUM #2
