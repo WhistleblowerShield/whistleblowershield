@@ -1509,8 +1509,7 @@ function ws_ingest_create_citation_stubs_for_statute( int $statute_post_id, arra
             continue;
         }
 
-        // Common-law attached citations are case law by definition.
-        update_post_meta( $post_id, 'ws_jx_citation_type', [ 'case_law' ] );
+        update_post_meta( $post_id, 'ws_jx_citation_type', [ ws_ingest_citation_type_from_batch( $meta ) ] );
         update_post_meta( $post_id, 'ws_jx_citation_common_name', sanitize_text_field( $case_name ) );
         update_post_meta( $post_id, 'ws_jx_citation_official_name', sanitize_text_field( $case_name ) );
 
@@ -1640,7 +1639,8 @@ function ws_ingest_create_citation_stubs_for_common_law( int $common_law_post_id
             continue;
         }
 
-        update_post_meta( $post_id, 'ws_jx_citation_type', [ ws_ingest_citation_type_from_batch( $meta ) ] );
+        // Common-law attached citations are case law by definition.
+        update_post_meta( $post_id, 'ws_jx_citation_type', [ 'case_law' ] );
         update_post_meta( $post_id, 'ws_jx_citation_common_name', sanitize_text_field( $case_name ) );
         update_post_meta( $post_id, 'ws_jx_citation_official_name', sanitize_text_field( $case_name ) );
 
