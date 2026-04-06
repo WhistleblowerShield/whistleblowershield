@@ -82,6 +82,16 @@ Burden of proof
 
 TAXONOMY CORE RULES
 
+Field-to-table strictness
+A slug is valid only when both conditions are true:
+1) It exists in registered taxonomy terms, and
+2) It belongs to the exact taxonomy table assigned to that schema field.
+
+Never cross-pollinate slugs across taxonomy arrays. For example,
+burden_of_proof.employer_defense may only use ws_employer_defense slugs,
+not ws_employee_standard slugs. If no adequate slug exists in the assigned
+table, use has-details where valid and/or propose a new term.
+
 Parent slugs
 Never valid in record arrays:
 workplace-employment, financial-corporate, government-accountability,
@@ -119,6 +129,8 @@ Companion behavior:
   sentinel and flag unresolved.
 - details present + has-details missing: add sentinel only if details content
   is verified and appropriate; otherwise remove details.
+- has-details as sole array entry is valid when all substantive slugs were
+  removed or moved to new_terms_proposed; apply addendum procedure.
 
 CITATION SOURCE CORE RULES
 - Forbidden sources: scholar.google.com, law firm sites, non-institutional
