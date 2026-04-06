@@ -156,21 +156,12 @@ function ws_ingest_get_inbox_files(): array {
 }
 
 function ws_ingest_decode_json_payload( string $raw ): array {
-    $corrections = [];
-
-    // Remove UTF-8 BOM from FTP-uploaded files when present.
-    if ( strncmp( $raw, "\xEF\xBB\xBF", 3 ) === 0 ) {
-        $raw = substr( $raw, 3 );
-        $corrections[] = 'Removed UTF-8 BOM from file payload.';
-    }
-
     $data = json_decode( $raw, true );
     if ( json_last_error() !== JSON_ERROR_NONE ) {
         return [
             'ok'          => false,
             'data'        => null,
             'json'        => $raw,
-            'corrections' => $corrections,
             'error'       => json_last_error_msg(),
         ];
     }
@@ -179,70 +170,8 @@ function ws_ingest_decode_json_payload( string $raw ): array {
         'ok'          => true,
         'data'        => $data,
         'json'        => $raw,
-        'corrections' => $corrections,
         'error'       => '',
     ];
-}
-
-function ws_ingest_apply_safe_json_corrections( array $data ): array {
-    $notes = [];
-
-    if ( isset( $data['meta']['jurisdiction_id'] ) && is_string( $data['meta']['jurisdiction_id'] ) ) {
-        $normalized = strtoupper( trim( $data['meta']['jurisdiction_id'] ) );
-        if ( $normalized !== $data['meta']['jurisdiction_id'] ) {
-            $data['meta']['jurisdiction_id'] = $normalized;
-            $notes[] = 'Normalized meta.jurisdiction_id to uppercase.';
-        }
-    }
-
-    if ( ! empty( $data['records'] ) && is_array( $data['records'] ) ) {
-        foreach ( $data['records'] as $i => $record ) {
-            if ( isset( $record['jurisdiction_id'] ) && is_string( $record['jurisdiction_id'] ) ) {
-                $normalized = strtoupper( trim( $record['jurisdiction_id'] ) );
-                if ( $normalized !== $record['jurisdiction_id'] ) {
-                    $data['records'][ $i ]['jurisdiction_id'] = $normalized;
-                    $notes[] = sprintf( 'Normalized records[%d].jurisdiction_id to uppercase.', $i );
-                }
-            }
-        }
-    }
-
-    if ( isset( $data['meta'] ) && is_array( $data['meta'] ) && isset( $data['records'] ) && is_array( $data['records'] ) ) {
-        $actual = count( $data['records'] );
-        $declared = isset( $data['meta']['record_count'] ) ? (int) $data['meta']['record_count'] : null;
-        if ( $declared !== $actual ) {
-            $data['meta']['record_count'] = $actual;
-            $notes[] = sprintf( 'Adjusted meta.record_count from %s to %d.', (string) $declared, $actual );
-        }
-    }
-
-    if ( isset( $data['meta'] ) && is_array( $data['meta'] ) && empty( $data['meta']['batch_completed'] ) ) {
-        $data['meta']['batch_completed'] = gmdate( 'Y-m-d H:i UTC' );
-        $notes[] = 'Filled missing meta.batch_completed with current UTC timestamp.';
-    }
-
-    return [ 'data' => $data, 'notes' => array_values( array_unique( $notes ) ) ];
-}
-
-function ws_ingest_stamp_archive_notes( array $data, array $notes ): array {
-    if ( empty( $notes ) ) {
-        return $data;
-    }
-
-    if ( empty( $data['meta'] ) || ! is_array( $data['meta'] ) ) {
-        $data['meta'] = [];
-    }
-
-    $existing = $data['meta']['ws_ingest_archive_notes'] ?? [];
-    if ( ! is_array( $existing ) ) {
-        $existing = [ (string) $existing ];
-    }
-
-    $merged = array_values( array_unique( array_merge( $existing, $notes ) ) );
-    $data['meta']['ws_ingest_archive_notes'] = $merged;
-    $data['meta']['ws_ingest_archive_corrected_on'] = gmdate( 'Y-m-d H:i UTC' );
-
-    return $data;
 }
 
 function ws_ingest_archive_json_file( string $source_path, string $filename, array $data ): array {
@@ -2794,7 +2723,6 @@ function ws_handle_ingest_folder_submission(): array {
             'inbox_count'        => 0,
             'processed_files'    => 0,
             'archived_files'     => 0,
-            'corrected_files'    => 0,
             'ready_files'        => 0,
             'blocked_files'      => 0,
             'created_total'      => 0,
@@ -2827,7 +2755,6 @@ function ws_handle_ingest_folder_submission(): array {
         $file_report = [
             'filename'    => $filename,
             'status'      => 'unknown',
-            'corrections' => [],
             'errors'      => [],
             'summary'     => [],
             'archive'     => '',
@@ -2845,7 +2772,6 @@ function ws_handle_ingest_folder_submission(): array {
         if ( ! $decoded['ok'] ) {
             $file_report['status'] = $dry_run ? 'invalid-json-dry-run' : 'invalid-json';
             $file_report['errors'][] = 'JSON parse error: ' . $decoded['error'];
-            $file_report['corrections'] = $decoded['corrections'];
 
             if ( ! $dry_run ) {
                 $archive_raw = ws_ingest_archive_raw_file( $source_path, $filename );
@@ -2867,12 +2793,6 @@ function ws_handle_ingest_folder_submission(): array {
         }
 
         $data = $decoded['data'];
-        $all_corrections = $decoded['corrections'];
-
-        $fixed = ws_ingest_apply_safe_json_corrections( $data );
-        $data  = $fixed['data'];
-        $all_corrections = array_values( array_unique( array_merge( $all_corrections, $fixed['notes'] ) ) );
-        $file_report['corrections'] = $all_corrections;
 
         $preflight = ws_ingest_preflight( $data );
         if ( ! $preflight['pass'] ) {
@@ -2883,8 +2803,7 @@ function ws_handle_ingest_folder_submission(): array {
                     $result['runtime_warnings'][] = "{$filename}: failed to append preflight failure ledger log.";
                 }
 
-                $archived_payload = ws_ingest_stamp_archive_notes( $data, $all_corrections );
-                $archive_fail = ws_ingest_archive_json_file( $source_path, $filename, $archived_payload );
+                $archive_fail = ws_ingest_archive_json_file( $source_path, $filename, $data );
                 if ( $archive_fail['ok'] ) {
                     $file_report['archive'] = $archive_fail['path'];
                     $result['folder']['archived_files']++;
@@ -2897,9 +2816,6 @@ function ws_handle_ingest_folder_submission(): array {
             $result['folder']['blocked_files']++;
             if ( ! $dry_run ) {
                 $result['folder']['failed_total']++;
-            }
-            if ( ! empty( $all_corrections ) ) {
-                $result['folder']['corrected_files']++;
             }
             $result['folder']['files'][] = $file_report;
             continue;
@@ -2914,9 +2830,6 @@ function ws_handle_ingest_folder_submission(): array {
 
             $result['folder']['processed_files']++;
             $result['folder']['ready_files']++;
-            if ( ! empty( $all_corrections ) ) {
-                $result['folder']['corrected_files']++;
-            }
             $result['folder']['files'][] = $file_report;
             continue;
         }
@@ -2934,8 +2847,7 @@ function ws_handle_ingest_folder_submission(): array {
         $result['folder']['citation_stubs_total'] += (int) ( $batch_result['summary']['citation_stubs_created'] ?? 0 );
         $result['folder']['agency_stubs_total']   += (int) ( $batch_result['summary']['agency_stubs_created'] ?? 0 );
 
-        $archived_payload = ws_ingest_stamp_archive_notes( $data, $all_corrections );
-        $archive_ok = ws_ingest_archive_json_file( $source_path, $filename, $archived_payload );
+        $archive_ok = ws_ingest_archive_json_file( $source_path, $filename, $data );
         if ( $archive_ok['ok'] ) {
             $file_report['archive'] = $archive_ok['path'];
             $result['folder']['archived_files']++;
@@ -2944,9 +2856,6 @@ function ws_handle_ingest_folder_submission(): array {
         }
 
         $result['folder']['processed_files']++;
-        if ( ! empty( $all_corrections ) ) {
-            $result['folder']['corrected_files']++;
-        }
         $result['folder']['files'][] = $file_report;
     }
 
@@ -3182,7 +3091,6 @@ function ws_render_ingest_tool_page() {
                     <p>
                         Ready files: <strong><?php echo (int) ( $f['ready_files'] ?? 0 ); ?></strong>
                         &nbsp;|&nbsp; Blocked files: <strong><?php echo (int) ( $f['blocked_files'] ?? 0 ); ?></strong>
-                        &nbsp;|&nbsp; Corrected JSON previews: <strong><?php echo (int) ( $f['corrected_files'] ?? 0 ); ?></strong>
                     </p>
                     <p>No records were written and no files were moved in dry run mode.</p>
                     <?php if ( (int) ( $f['ready_files'] ?? 0 ) > 0 ): ?>
@@ -3208,7 +3116,6 @@ function ws_render_ingest_tool_page() {
                     <?php endif; ?>
                     <p>
                         Archived files: <strong><?php echo (int) ( $f['archived_files'] ?? 0 ); ?></strong>
-                        &nbsp;|&nbsp; Corrected JSON files: <strong><?php echo (int) ( $f['corrected_files'] ?? 0 ); ?></strong>
                     </p>
                 <?php endif; ?>
             </div>
@@ -3230,15 +3137,6 @@ function ws_render_ingest_tool_page() {
                                 agency stubs <?php echo (int) ( $item['summary']['agency_stubs_created'] ?? 0 ); ?>
                             <?php endif; ?>
                         </p>
-                    <?php endif; ?>
-
-                    <?php if ( ! empty( $item['corrections'] ) ): ?>
-                        <p style="margin:0 0 6px 0;color:#555;"><strong>Corrections:</strong></p>
-                        <ul style="margin:4px 0 8px 18px;color:#555;">
-                            <?php foreach ( (array) $item['corrections'] as $note ): ?>
-                                <li><?php echo esc_html( $note ); ?></li>
-                            <?php endforeach; ?>
-                        </ul>
                     <?php endif; ?>
 
                     <?php if ( ! empty( $item['errors'] ) ): ?>
@@ -3325,7 +3223,7 @@ function ws_render_ingest_tool_page() {
                         <td>
                             <label>
                                 <input type="checkbox" name="ws_ingest_folder_dry_run" id="ws_ingest_folder_dry_run" value="1" <?php checked( ! empty( $_POST['ws_ingest_folder_dry_run'] ) ); ?>>
-                                Preflight and preview corrections only (no record writes, no archive moves)
+                                Preflight only (no record writes, no archive moves)
                             </label>
                         </td>
                     </tr>
