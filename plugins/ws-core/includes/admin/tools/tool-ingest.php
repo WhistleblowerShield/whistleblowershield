@@ -1241,6 +1241,16 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
 
     // citations.attached_citations: create draft jx-citation stubs and link to this statute.
     $citation_stub_result = ws_ingest_create_citation_stubs_for_statute( $post_id, $record, $jx_slug, $meta );
+    $citation_ids = array_values( array_unique( array_merge(
+        $citation_stub_result['created'] ?? [],
+        $citation_stub_result['linked'] ?? []
+    ) ) );
+
+    if ( ! empty( $citation_ids ) ) {
+        update_post_meta( $post_id, 'ws_jx_statute_citation_ids', array_map( 'intval', $citation_ids ) );
+        $result['log'][] = "$sid: attached " . count( $citation_ids ) . ' citation ID(s) on statute record';
+    }
+
     if ( ! empty( $citation_stub_result['created'] ) ) {
         $result['log'][] = "$sid: created " . count( $citation_stub_result['created'] ) . ' citation stub record(s) from citations.attached_citations';
     }
@@ -1309,11 +1319,25 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
  * Filename: [JX]-[YYYYMMDD-HHmm]-ingest.txt
  * FTP-accessible, .htaccess protected.
  */
-function ws_ingest_write_run_log( array $result ): bool {
+function ws_ingest_extract_batch_count_from_filename( string $filename ): int {
+    $base = basename( $filename );
+    if ( preg_match( '/^[A-Za-z]{2}-(\d+)-/', $base, $m ) ) {
+        return (int) $m[1];
+    }
+    return 0;
+}
+
+function ws_ingest_write_run_log( array $result, string $batch_filename = '' ): bool {
     $summary = $result['summary'] ?? [];
     $jx      = strtoupper( $summary['jurisdiction'] ?? 'XX' );
-    $ts      = date( 'Ymd-Hi' );
-    $path    = WS_INGEST_LOG_DIR . "{$jx}-{$ts}-ingest.txt";
+    $batch_count = ws_ingest_extract_batch_count_from_filename( $batch_filename );
+    $ts      = date( 'Ymd-His' );
+    $count_part = $batch_count > 0 ? "{$batch_count}-" : '';
+    $path    = WS_INGEST_LOG_DIR . "{$jx}-{$count_part}{$ts}-ingest.txt";
+
+    if ( file_exists( $path ) ) {
+        $path = WS_INGEST_LOG_DIR . "{$jx}-{$count_part}{$ts}-" . wp_generate_password( 4, false, false ) . '-ingest.txt';
+    }
 
     $lines   = [];
     $lines[] = '================================================';
@@ -1491,7 +1515,7 @@ function ws_ingest_process_batch_data( array $data, string $batch_filename ): ar
         'batch_completed' => $meta['batch_completed']  ?? '',
     ];
 
-    if ( ! ws_ingest_write_run_log( $result ) ) {
+    if ( ! ws_ingest_write_run_log( $result, $batch_filename ) ) {
         $result['runtime_warnings'][] = 'Failed to write detailed run log file.';
     }
 
