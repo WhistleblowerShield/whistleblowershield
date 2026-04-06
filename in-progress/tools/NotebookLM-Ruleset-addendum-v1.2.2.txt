@@ -1,4 +1,4 @@
-WhistleblowerShield.org NotebookLM Ruleset - Addendum v1.2.1
+WhistleblowerShield.org NotebookLM Ruleset - Addendum v1.2.2
 
 PURPOSE
 This addendum carries edge-case and operational policy for NotebookLM
@@ -70,6 +70,18 @@ Omit when "":
 - reward.reward_details
 - links.url_source
 - _review_notes
+
+---
+
+FOR COMMON LAW RECORD TYPES
+In record.burden_of_proof:
+If statutory_preclusion is set true, statutory_preclusion_details must accompy it,
+if the field is empty correct statutory_preclusion to false, and note it in with
+error_details. If statutory_preclusion is set to false and statutory_preclusion_details
+has text, remove statutory_preclusion_details, and note it with error_details.
+
+Omit when "":
+- burden_of_proof.statutory_preclusion_details
 
 ---
 

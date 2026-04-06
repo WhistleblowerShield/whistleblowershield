@@ -731,7 +731,9 @@ absence is never penalized:
   - tolling_notes
   - rebuttable_presumption
   - burden_of_proof_details
-  - statute_url
+  - statute_url    → when record type is statute
+  - precedent_url  → when record type is common-law
+  - case_url       → when record type is citation or interpretation
   - _review_notes
 
 The following fields must be omitted entirely when empty — do not include
