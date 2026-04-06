@@ -1,0 +1,279 @@
+{
+  "custom_schema_proposal": {
+    "profile_name": "Exploratory Candidate Extraction",
+    "profile_version": "1.0-alpha",
+    "based_on_schema": "WhistleblowerShield JSON v2.0",
+    "compatibility_mode": "schema-close",
+    "top_level_contract": "Produce custom_schema_proposal and research_meta_doc encapsulating loosely-structured candidate entities for future human staging.",
+    "field_map_preserved": [
+      "jurisdiction_id",
+      "statute_id",
+      "doctrine_id",
+      "common_name",
+      "legal_basis",
+      "enforcement",
+      "statute_of_limitations",
+      "burden_of_proof",
+      "reward",
+      "links",
+      "citations"
+    ],
+    "field_map_extended": [
+      "_analysis.candidate_type",
+      "_analysis.canonical_label",
+      "_analysis.source_quote",
+      "_analysis.source_domain",
+      "_analysis.confidence",
+      "_analysis.verification_status",
+      "_analysis.evidence",
+      "_analysis.open_questions",
+      "_analysis.possible_parent_links"
+    ],
+    "extraction_entity_types": [
+      "statute",
+      "common-law",
+      "citation",
+      "recommendation"
+    ],
+    "normalization_rules": "Retain precise terms from source text. Map to registered taxonomy slugs only if a definitive match exists; otherwise, omit taxonomy and utilize _analysis fields. Never use parent slugs.",
+    "omission_rules": "Aggressively omit required core schema fields (e.g., limit_details, attached_citations) if data is missing, favoring the preservation of sparse records over hallucination.",
+    "confidence_model": {
+      "high": "Explicitly defined in source text",
+      "moderate": "Strongly implied with partial detail",
+      "low": "Plausible but indirect or conceptual"
+    },
+    "unresolved_items_policy": "Flag integrity.with_errors as true if unverified entities exist. Persist detail in integrity.error_details and record-level _analysis.open_questions.",
+    "promotion_plan_to_ingest": "Human review required to verify candidate existence, locate explicit statute/case IDs, convert _analysis metadata into standard review notes, and finalize taxonomy mapping."
+  },
+  "research_meta_doc": {
+    "meta": {
+      "json_format_version": "2.0",
+      "source_method": "ai_assisted",
+      "source_name": "NotebookLM Override Sandbox",
+      "jurisdiction_id": "CA",
+      "generated_date": "2026-04-06",
+      "generated_by": "NotebookLM Exploratory Fact-Finder",
+      "record_count": 15,
+      "proposed_count": 0,
+      "new_terms_proposed": [],
+      "json_run_notes": "Executed exploratory extraction on CA-Remaining-Protections.txt per Temporary Addendum #2. Extracted statute candidates, common-law branches, critical case law, and operational recommendations without fabricating missing identifiers.",
+      "batch_completed": "2026-04-06 06:10 UTC",
+      "_reconciled_run_notes": "Prioritized broad, safe extraction over strict conservatism. Applied `unverified-from-source-text` to all candidates, as live verification was not performed. Created hybrid records utilizing `_analysis` blocks to safely capture narrative insights without breaking the core ingest model.",
+      "_analysis": {
+        "profile": "CA Remaining Protections Exploratory",
+        "run_purpose": "Identify new candidates for schema coverage based on expert narrative memo.",
+        "input_file": "in-progress/tools/CA-Remaining-Protections.txt",
+        "extraction_summary": "Extracted 3 statutory candidate clusters, 3 common-law variants, 7 primary case citations, and 2 architectural recommendations."
+      }
+    },
+    "records": [
+      {
+        "jurisdiction_id": "CA",
+        "_analysis": {
+          "candidate_type": "statute",
+          "canonical_label": "Health & Safety Code elder/dependent adult reporting",
+          "source_quote": "Elder/dependent-adult abuse reporting provisions (paired with anti-retaliation language) can be important in health-care whistleblower fact patterns",
+          "confidence": "high",
+          "verification_status": "unverified-from-source-text",
+          "evidence": "Source explicitly notes H&S Code elder/dependent adult provisions exist and support Tameny claims.",
+          "open_questions": "What are the exact statutory section numbers for these H&S Code reporting protections?"
+        },
+        "legal_basis": {
+          "protected_class": [
+            "has-details"
+          ],
+          "protected_class_details": "Individuals working in health-care or elder-care contexts reporting dependent adult abuse."
+        }
+      },
+      {
+        "jurisdiction_id": "CA",
+        "_analysis": {
+          "candidate_type": "statute",
+          "canonical_label": "Insurance and financial-sector reporting protections",
+          "source_quote": "Additional Insurance Code and financial-regulation provisions (beyond Ins. Code 1871.7...)",
+          "confidence": "moderate",
+          "verification_status": "unverified-from-source-text",
+          "evidence": "Memo states other provisions penalize retaliation for reporting fraud/regulatory violations.",
+          "open_questions": "Require distinct code sections to build discrete records."
+        },
+        "legal_basis": {
+          "disclosure_types": [
+            "securities-commodities-fraud",
+            "banking-aml-compliance"
+          ]
+        }
+      },
+      {
+        "jurisdiction_id": "CA",
+        "_analysis": {
+          "candidate_type": "statute",
+          "canonical_label": "Education Code anti-retaliation provisions",
+          "source_quote": "Education Code anti-retaliation provisions for employees who report certain student-safety, abuse, or financial impropriety issues",
+          "confidence": "high",
+          "verification_status": "unverified-from-source-text",
+          "evidence": "Identified as useful for school/university whistleblower scenarios.",
+          "open_questions": "Require identification of specific Education Code sections."
+        },
+        "legal_basis": {
+          "protected_class": [
+            "k12-education-staff"
+          ]
+        }
+      },
+      {
+        "jurisdiction_id": "CA",
+        "common_name": "Retaliatory Constructive Discharge (Tameny Variant)",
+        "_analysis": {
+          "candidate_type": "common-law",
+          "canonical_label": "Retaliatory constructive discharge in violation of public policy",
+          "source_quote": "Tameny-derived doctrine where the 'termination' is constructive discharge",
+          "confidence": "high",
+          "verification_status": "unverified-from-source-text",
+          "evidence": "Described as imposing intolerable conditions in retaliation for protected activity."
+        },
+        "enforcement": {
+          "adverse_action": [
+            "constructive-discharge"
+          ]
+        }
+      },
+      {
+        "jurisdiction_id": "CA",
+        "common_name": "Common-Law Retaliatory Demotion/Harassment",
+        "_analysis": {
+          "candidate_type": "common-law",
+          "canonical_label": "Common-law retaliatory demotion/harassment tethered to public policy",
+          "source_quote": "tort-style claims based on significant adverse actions (e.g., demotion) when closely tied to public policy and whistleblower statutes.",
+          "confidence": "high",
+          "verification_status": "unverified-from-source-text",
+          "evidence": "Increasingly entertained by California courts as an extension beyond pure wrongful termination."
+        },
+        "enforcement": {
+          "adverse_action": [
+            "demotion",
+            "harassment"
+          ]
+        }
+      },
+      {
+        "jurisdiction_id": "CA",
+        "common_name": "Breach of Implied Contract / Bad Faith (Whistleblower)",
+        "_analysis": {
+          "candidate_type": "common-law",
+          "canonical_label": "Implied-in-fact contract and covenant of good faith/fair dealing",
+          "source_quote": "often paired with whistleblower facts: plaintiffs allege both statutory retaliation (e.g., 1102.5) and common-law breach of implied contract/bad faith",
+          "confidence": "high",
+          "verification_status": "unverified-from-source-text",
+          "evidence": "Used as structural support to show migration of whistleblower policy beyond pure discharge."
+        }
+      },
+      {
+        "jurisdiction_id": "CA",
+        "_analysis": {
+          "candidate_type": "citation",
+          "canonical_label": "Tameny v. Atlantic Richfield Co.",
+          "source_quote": "(Cal. 1980) – foundational wrongful termination in violation of public policy; essential to cite if you are naming the doctrine.",
+          "confidence": "high",
+          "verification_status": "unverified-from-source-text",
+          "evidence": "Identified as the foundational case for the doctrine."
+        }
+      },
+      {
+        "jurisdiction_id": "CA",
+        "_analysis": {
+          "candidate_type": "citation",
+          "canonical_label": "Stevenson v. Superior Court",
+          "source_quote": "(1997) 16 Cal.4th 880 – articulates the four requirements for a public policy to support a Tameny claim",
+          "confidence": "high",
+          "verification_status": "unverified-from-source-text",
+          "evidence": "Sets parameters: statutory/constitutional basis, public in nature, existing at time of discharge, fundamental and substantial."
+        }
+      },
+      {
+        "jurisdiction_id": "CA",
+        "_analysis": {
+          "candidate_type": "citation",
+          "canonical_label": "Gantt v. Sentry Insurance",
+          "source_quote": "important in tracing which sources of public policy can support a Tameny claim",
+          "confidence": "moderate",
+          "verification_status": "unverified-from-source-text",
+          "evidence": "Noted as historically significant, though later refined/limited."
+        }
+      },
+      {
+        "jurisdiction_id": "CA",
+        "_analysis": {
+          "candidate_type": "citation",
+          "canonical_label": "Ferrick v. Santa Clara University",
+          "source_quote": "Court of Appeal allowed a Tameny claim rooted in whistleblower policy even where the plaintiff’s internal reporting status did not fit older, narrow readings of 1102.5.",
+          "confidence": "high",
+          "verification_status": "unverified-from-source-text"
+        }
+      },
+      {
+        "jurisdiction_id": "CA",
+        "_analysis": {
+          "candidate_type": "citation",
+          "canonical_label": "Diego v. Pilgrim United Church of Christ",
+          "source_quote": "Tameny claim allowed for an employee suspected of whistleblowing, emphasizing broad public policy behind 1102.5",
+          "confidence": "high",
+          "verification_status": "unverified-from-source-text",
+          "evidence": "Expands protection context to perceived whistleblowers."
+        },
+        "legal_basis": {
+          "protected_class": [
+            "perceived-whistleblower"
+          ]
+        }
+      },
+      {
+        "jurisdiction_id": "CA",
+        "_analysis": {
+          "candidate_type": "citation",
+          "canonical_label": "Lawson v. PPG Architectural Finishes, Inc.",
+          "source_quote": "leading Supreme Court case on the 1102.6 burden-shifting standard rather than McDonnell Douglas.",
+          "confidence": "high",
+          "verification_status": "unverified-from-source-text"
+        }
+      },
+      {
+        "jurisdiction_id": "CA",
+        "_analysis": {
+          "candidate_type": "citation",
+          "canonical_label": "People ex rel. Garcia-Brower v. Kolla’s, Inc.",
+          "source_quote": "key for 'disclosure' including reports of conduct already known to the employer and for perceived whistleblowers.",
+          "confidence": "high",
+          "verification_status": "unverified-from-source-text"
+        }
+      },
+      {
+        "jurisdiction_id": "CA",
+        "_analysis": {
+          "candidate_type": "recommendation",
+          "canonical_label": "Create Common-law doctrines list for CA",
+          "source_quote": "Add a 'Common-law doctrines' list for CA that includes Tameny, constructive discharge Tameny, and retaliatory demotion/harassment",
+          "confidence": "high",
+          "verification_status": "unverified-from-source-text"
+        }
+      },
+      {
+        "jurisdiction_id": "CA",
+        "_analysis": {
+          "candidate_type": "recommendation",
+          "canonical_label": "Structure foundational vs. exemplar case tags",
+          "source_quote": "Tag each statute you already have with one or two exemplar cases... and then separately maintain a 'foundational cases' cluster",
+          "confidence": "high",
+          "verification_status": "unverified-from-source-text"
+        }
+      }
+    ],
+    "integrity": {
+      "with_errors": true,
+      "error_details": [
+        "Multiple statute candidates (Health & Safety Code, Insurance Code, Education Code) lack precise statutory section numbers.",
+        "All extracted entities carry 'unverified-from-source-text' status as they were pulled purely from a narrative memo without independent live verification."
+      ],
+      "error_count": 2
+    }
+  }
+}
