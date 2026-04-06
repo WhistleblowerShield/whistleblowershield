@@ -1099,7 +1099,8 @@ function ws_ingest_extract_agency_labels( string $primary_agency ): array {
         return [];
     }
 
-    $parts = preg_split( '/\s*(?:\/|;|,|\band\b|\bor\b)\s*/i', $value );
+    // Keep slash compounds (for example Cal/OSHA) intact; split on semicolon/comma/and/or only.
+    $parts = preg_split( '/\s*(?:;|,|\band\b|\bor\b)\s*/i', $value );
     if ( ! is_array( $parts ) ) {
         return [ $value ];
     }
@@ -1109,17 +1110,84 @@ function ws_ingest_extract_agency_labels( string $primary_agency ): array {
 }
 
 /**
- * Finds ws-agency IDs assigned to a jurisdiction term that match agency labels.
+ * Extracts meaningful agency tokens from a normalized label.
  */
-function ws_ingest_match_agencies_for_jx( array $labels, string $jx_slug ): array {
+function ws_ingest_agency_meaningful_tokens( string $normalized_label ): array {
+    if ( $normalized_label === '' ) {
+        return [];
+    }
+
+    $raw_tokens = preg_split( '/\s+/', $normalized_label );
+    if ( ! is_array( $raw_tokens ) ) {
+        return [];
+    }
+
+    $stopwords = [
+        'the', 'of', 'and', 'for', 'to', 'in', 'at', 'on',
+        'department', 'dept', 'division', 'office', 'board', 'commission', 'agency', 'bureau',
+        'state', 'commonwealth', 'county', 'city',
+        'cal', 'ca', 'ma', 'nj', 'pa', 'us',
+    ];
+
+    $tokens = [];
+    foreach ( $raw_tokens as $token ) {
+        $token = trim( (string) $token );
+        if ( $token === '' || strlen( $token ) < 3 ) {
+            continue;
+        }
+        if ( in_array( $token, $stopwords, true ) ) {
+            continue;
+        }
+        $tokens[] = $token;
+    }
+
+    return array_values( array_unique( $tokens ) );
+}
+
+/**
+ * Returns a match reason code when a label/candidate pair is strong enough.
+ */
+function ws_ingest_agency_match_reason( string $needle, string $candidate ): string {
+    if ( $needle === '' || $candidate === '' ) {
+        return '';
+    }
+
+    if ( $needle === $candidate ) {
+        return 'exact';
+    }
+
+    if ( strlen( $needle ) < 6 || strlen( $candidate ) < 6 ) {
+        return '';
+    }
+
+    if ( ! str_contains( $needle, $candidate ) && ! str_contains( $candidate, $needle ) ) {
+        return '';
+    }
+
+    $needle_tokens    = ws_ingest_agency_meaningful_tokens( $needle );
+    $candidate_tokens = ws_ingest_agency_meaningful_tokens( $candidate );
+    $shared_tokens    = array_values( array_intersect( $needle_tokens, $candidate_tokens ) );
+
+    if ( count( $shared_tokens ) >= 2 ) {
+        return 'containment+token_overlap';
+    }
+
+    return '';
+}
+
+/**
+ * Finds ws-agency IDs assigned to a jurisdiction term that match agency labels.
+ * Returns both IDs and reason codes for breadcrumb debugging.
+ */
+function ws_ingest_match_agencies_for_jx_detailed( array $labels, string $jx_slug ): array {
     $jx_slug = strtolower( trim( $jx_slug ) );
     if ( empty( $labels ) || $jx_slug === '' ) {
-        return [];
+        return [ 'matched_ids' => [], 'reasons' => [] ];
     }
 
     $term = get_term_by( 'slug', $jx_slug, WS_JURISDICTION_TAXONOMY );
     if ( ! $term || is_wp_error( $term ) ) {
-        return [];
+        return [ 'matched_ids' => [], 'reasons' => [] ];
     }
 
     $q = new WP_Query( [
@@ -1136,7 +1204,7 @@ function ws_ingest_match_agencies_for_jx( array $labels, string $jx_slug ): arra
     ] );
 
     if ( empty( $q->posts ) ) {
-        return [];
+        return [ 'matched_ids' => [], 'reasons' => [] ];
     }
 
     $normalized_needles = [];
@@ -1149,10 +1217,11 @@ function ws_ingest_match_agencies_for_jx( array $labels, string $jx_slug ): arra
     $normalized_needles = array_values( array_unique( $normalized_needles ) );
 
     if ( empty( $normalized_needles ) ) {
-        return [];
+        return [ 'matched_ids' => [], 'reasons' => [] ];
     }
 
     $matched_ids = [];
+    $reasons     = [];
 
     foreach ( $q->posts as $agency_id ) {
         $candidates = [
@@ -1164,15 +1233,28 @@ function ws_ingest_match_agencies_for_jx( array $labels, string $jx_slug ): arra
 
         foreach ( $normalized_needles as $needle ) {
             foreach ( $candidates as $candidate ) {
-                if ( $needle === $candidate || str_contains( $needle, $candidate ) || str_contains( $candidate, $needle ) ) {
+                $reason = ws_ingest_agency_match_reason( $needle, $candidate );
+                if ( $reason !== '' ) {
                     $matched_ids[] = (int) $agency_id;
+                    $reasons[] = 'agency#' . (int) $agency_id . ' via ' . $reason . " (needle='" . $needle . "', candidate='" . $candidate . "')";
                     continue 3;
                 }
             }
         }
     }
 
-    return array_values( array_unique( $matched_ids ) );
+    return [
+        'matched_ids' => array_values( array_unique( $matched_ids ) ),
+        'reasons'     => array_values( array_unique( $reasons ) ),
+    ];
+}
+
+/**
+ * Finds ws-agency IDs assigned to a jurisdiction term that match agency labels.
+ */
+function ws_ingest_match_agencies_for_jx( array $labels, string $jx_slug ): array {
+    $match = ws_ingest_match_agencies_for_jx_detailed( $labels, $jx_slug );
+    return (array) ( $match['matched_ids'] ?? [] );
 }
 
 /**
@@ -1959,7 +2041,9 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
     if ( trim( $primary_agency ) !== '' ) {
         $agency_labels = ws_ingest_extract_agency_labels( $primary_agency );
         $target_jx     = ( $jx_slug === 'us' ) ? 'us' : $jx_slug;
-        $matched_ids   = ws_ingest_match_agencies_for_jx( $agency_labels, $target_jx );
+        $agency_match  = ws_ingest_match_agencies_for_jx_detailed( $agency_labels, $target_jx );
+        $matched_ids   = (array) ( $agency_match['matched_ids'] ?? [] );
+        $match_reasons = (array) ( $agency_match['reasons'] ?? [] );
         $created_stub_ids = [];
 
         if ( empty( $matched_ids ) ) {
@@ -1988,6 +2072,7 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
             'labels'      => array_values( $agency_labels ),
             'matched_ids' => array_values( array_map( 'intval', $matched_ids ) ),
             'created_ids' => array_values( array_map( 'intval', $created_stub_ids ) ),
+            'match_reasons' => array_values( array_map( 'strval', $match_reasons ) ),
         ];
     }
 
@@ -2227,7 +2312,9 @@ function ws_ingest_process_common_law_record( array $record, array $meta, array 
     if ( trim( $primary_agency ) !== '' ) {
         $agency_labels = ws_ingest_extract_agency_labels( $primary_agency );
         $target_jx     = ( $jx_slug === 'us' ) ? 'us' : $jx_slug;
-        $matched_ids   = ws_ingest_match_agencies_for_jx( $agency_labels, $target_jx );
+        $agency_match  = ws_ingest_match_agencies_for_jx_detailed( $agency_labels, $target_jx );
+        $matched_ids   = (array) ( $agency_match['matched_ids'] ?? [] );
+        $match_reasons = (array) ( $agency_match['reasons'] ?? [] );
         $created_stub_ids = [];
 
         if ( empty( $matched_ids ) ) {
@@ -2255,6 +2342,7 @@ function ws_ingest_process_common_law_record( array $record, array $meta, array 
             'labels'      => array_values( $agency_labels ),
             'matched_ids' => array_values( array_map( 'intval', $matched_ids ) ),
             'created_ids' => array_values( array_map( 'intval', $created_stub_ids ) ),
+            'match_reasons' => array_values( array_map( 'strval', $match_reasons ) ),
         ];
     }
 
@@ -2775,7 +2863,7 @@ function ws_ingest_log_preflight_failure( string $filename, array $errors ): boo
  * Appends a line to the imported batches ledger.
  * One entry per successfully processed batch.
  */
-function ws_ingest_log_imported_batch( string $filename, array $summary, bool $with_errors ): bool {
+function ws_ingest_log_imported_batch( string $filename, array $summary, bool $has_warnings, bool $has_failures ): bool {
     $path    = WS_INGEST_LOG_DIR . 'imported.log';
     $ts      = date( 'Y-m-d H:i:s' );
     $jx      = strtoupper( $summary['jurisdiction'] ?? 'XX' );
@@ -2784,8 +2872,9 @@ function ws_ingest_log_imported_batch( string $filename, array $summary, bool $w
     $failed  = (int) ( $summary['failed']   ?? 0 );
     $citation_stubs = (int) ( $summary['citation_stubs_created'] ?? 0 );
     $agency_stubs   = (int) ( $summary['agency_stubs_created'] ?? 0 );
-    $errors  = $with_errors ? 'true' : 'false';
-    $line    = "[{$ts} UTC]  {$filename}  {$jx}  created:{$created}  skipped:{$skipped}  failed:{$failed}  citation_stubs:{$citation_stubs}  agency_stubs:{$agency_stubs}  errors:{$errors}" . PHP_EOL;
+    $warnings = $has_warnings ? 'true' : 'false';
+    $failures = $has_failures ? 'true' : 'false';
+    $line    = "[{$ts} UTC]  {$filename}  {$jx}  created:{$created}  skipped:{$skipped}  failed:{$failed}  citation_stubs:{$citation_stubs}  agency_stubs:{$agency_stubs}  has_warnings:{$warnings}  has_failures:{$failures}" . PHP_EOL;
     return file_put_contents( $path, $line, FILE_APPEND | LOCK_EX ) !== false;
 }
 
@@ -2816,7 +2905,7 @@ function ws_ingest_log_citation_breadcrumbs( string $filename, string $jx, strin
  * Appends agency mapping breadcrumbs to agency-breadcrumbs.log.
  * One entry per record that attempted enforcement.primary_agency mapping.
  */
-function ws_ingest_log_agency_breadcrumbs( string $filename, string $jx, string $record_id, array $labels, array $matched_ids, array $created_ids ): bool {
+function ws_ingest_log_agency_breadcrumbs( string $filename, string $jx, string $record_id, array $labels, array $matched_ids, array $created_ids, array $match_reasons = [] ): bool {
     if ( empty( $labels ) ) {
         return true;
     }
@@ -2828,6 +2917,7 @@ function ws_ingest_log_agency_breadcrumbs( string $filename, string $jx, string 
     $lines[] = "[{$ts} UTC]  {$filename}  {$jx}  {$record_id}";
     $lines[] = '  labels: ' . implode( ' | ', array_map( 'strval', $labels ) );
     $lines[] = '  matched_ids: ' . ( empty( $matched_ids ) ? 'none' : implode( ', ', array_map( 'intval', $matched_ids ) ) );
+    $lines[] = '  match_reasons: ' . ( empty( $match_reasons ) ? 'none' : implode( ' | ', array_map( 'strval', $match_reasons ) ) );
     $lines[] = '  created_stub_ids: ' . ( empty( $created_ids ) ? 'none' : implode( ', ', array_map( 'intval', $created_ids ) ) );
     $lines[] = '---';
     $lines[] = '';
@@ -2893,7 +2983,8 @@ function ws_ingest_process_batch_data( array $data, string $batch_filename ): ar
                 $sid,
                 (array) ( $agency_breadcrumbs['labels'] ?? [] ),
                 (array) ( $agency_breadcrumbs['matched_ids'] ?? [] ),
-                (array) ( $agency_breadcrumbs['created_ids'] ?? [] )
+                (array) ( $agency_breadcrumbs['created_ids'] ?? [] ),
+                (array) ( $agency_breadcrumbs['match_reasons'] ?? [] )
             ) ) {
                 $result['runtime_warnings'][] = "$sid: failed to append agency breadcrumb log.";
             }
@@ -2941,11 +3032,14 @@ function ws_ingest_process_batch_data( array $data, string $batch_filename ): ar
         $result['runtime_warnings'][] = 'Failed to write detailed run log file.';
     }
 
-    $has_warnings = ! empty( array_filter(
+    $has_record_warnings = ! empty( array_filter(
         array_column( $result['records'], 'warnings' ),
         fn( $w ) => ! empty( $w )
     ) );
-    if ( ! ws_ingest_log_imported_batch( $batch_filename, $result['summary'], $has_warnings ) ) {
+    $has_runtime_warnings = ! empty( $result['runtime_warnings'] );
+    $has_warnings = $has_record_warnings || $has_runtime_warnings;
+    $has_failures = ( (int) ( $result['summary']['failed'] ?? 0 ) ) > 0;
+    if ( ! ws_ingest_log_imported_batch( $batch_filename, $result['summary'], $has_warnings, $has_failures ) ) {
         $result['runtime_warnings'][] = 'Failed to append imported batch ledger log.';
     }
 

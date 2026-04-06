@@ -37,7 +37,7 @@ Subdirectories:
 | File | Content |
 |---|---|
 | `preflight-errors.log` | Append-only. One line per failed preflight with filename and reason |
-| `imported.log` | Append-only. One line per completed batch — filename, jurisdiction, counts, errors flag |
+| `imported.log` | Append-only. One line per completed batch — filename, jurisdiction, counts, has_warnings flag, has_failures flag |
 | `citations-breadcrumbs.log` | Append-only. Full citation strings from ingested batches — research trail for future jx-citation records |
 | `[JX]-[timestamp]-ingest.txt` | Full detail run log per batch — per-record status, taxonomy removals, omitted fields |
 

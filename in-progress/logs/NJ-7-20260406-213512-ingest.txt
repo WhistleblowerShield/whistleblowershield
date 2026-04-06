@@ -1,7 +1,7 @@
 ================================================
 WS INGEST RUN LOG
 ================================================
-Run timestamp:    2026-04-06 21:24:28 UTC
+Run timestamp:    2026-04-06 21:35:12 UTC
 Jurisdiction:     NJ
 Source:           NotebookLM Reconciliation
 Source method:    ai_assisted
@@ -18,7 +18,7 @@ Proposed merged:  0
 Blacklist size:   6
 
 ── RECORD DETAIL ────────────────────────────────
-✓ NJ-34:19-1 [post #3321]
+✓ NJ-34:19-1 [post #3550]
     · jurisdiction: assigned 'nj'
     · NJ-34:19-1: attached 3 citation ID(s) on statute record
     · NJ-34:19-1: created 3 citation stub record(s) from citations.attached_citations
@@ -27,8 +27,8 @@ Blacklist size:   6
     · omitted (no ACF field): _review_notes = CEPA is New Jersey's primary whistleblower statute. Resolved conflicts by verify
     · omitted (no ACF field): citations.attached_citations = Estate of Roach v. TRW, Inc. || confirms reasonable belief standard || https://c
     · omitted (no ACF field): citations.citation_count = 3
-    · NJ-34:19-1: created as post #3321 (draft, unverified)
-✓ NJ-2A:32C-10 [post #3325]
+    · NJ-34:19-1: created as post #3550 (draft, unverified)
+✓ NJ-2A:32C-10 [post #3554]
     · jurisdiction: assigned 'nj'
     · NJ-2A:32C-10: attached 1 citation ID(s) on statute record
     · NJ-2A:32C-10: created 1 citation stub record(s) from citations.attached_citations
@@ -37,8 +37,8 @@ Blacklist size:   6
     · omitted (no ACF field): _review_notes = Merged records for NJFCA. Contains specific anti-retaliation protections in Sect
     · omitted (no ACF field): citations.attached_citations = MCDERMOTT v. LIFE SOURCE SERVICES, LLC et al || applies NJFCA retaliation pleadi
     · omitted (no ACF field): citations.citation_count = 1
-    · NJ-2A:32C-10: created as post #3325 (draft, unverified)
-✓ NJ-34:11-4.10 [post #3327]
+    · NJ-2A:32C-10: created as post #3554 (draft, unverified)
+✓ NJ-34:11-4.10 [post #3556]
     · jurisdiction: assigned 'nj'
     · NJ-34:11-4.10: attached 1 citation ID(s) on statute record
     · NJ-34:11-4.10: created 1 citation stub record(s) from citations.attached_citations
@@ -48,15 +48,15 @@ Blacklist size:   6
     · omitted (no ACF field): _review_notes = Provides robust protections including a 90-day rebuttable presumption of retalia
     · omitted (no ACF field): citations.attached_citations = Maia v. IEW Construction Group || clarifies prospective application || https://l
     · omitted (no ACF field): citations.citation_count = 1
-    · NJ-34:11-4.10: created as post #3327 (draft, unverified)
-✓ NJ-34:11C-1 [post #3329]
+    · NJ-34:11-4.10: created as post #3556 (draft, unverified)
+✓ NJ-34:11C-1 [post #3558]
     · jurisdiction: assigned 'nj'
     · omitted (no ACF field): links.is_official = 
     · omitted (no ACF field): links.url_source = law.justia.com
     · omitted (no ACF field): _review_notes = Protects against retaliation for taking leave related to domestic or sexual viol
     · omitted (no ACF field): citations.citation_count = 0
-    · NJ-34:11C-1: created as post #3329 (draft, unverified)
-✓ NJ-34:15-39.1 [post #3330]
+    · NJ-34:11C-1: created as post #3558 (draft, unverified)
+✓ NJ-34:15-39.1 [post #3559]
     · jurisdiction: assigned 'nj'
     · NJ-34:15-39.1: attached 2 citation ID(s) on statute record
     · NJ-34:15-39.1: created 2 citation stub record(s) from citations.attached_citations
@@ -66,8 +66,8 @@ Blacklist size:   6
     · omitted (no ACF field): _review_notes = Statute provides for administrative penalties. Case law (Lally v. Copygraphics) 
     · omitted (no ACF field): citations.attached_citations = Lally v. Copygraphics || establishes common law claim || https://casetext.com/ca
     · omitted (no ACF field): citations.citation_count = 2
-    · NJ-34:15-39.1: created as post #3330 (draft, unverified)
-✓ NJ-34:5A-17 [post #3333]
+    · NJ-34:15-39.1: created as post #3559 (draft, unverified)
+✓ NJ-34:5A-17 [post #3562]
     · jurisdiction: assigned 'nj'
     · NJ-34:5A-17: created 1 agency stub record(s) from enforcement.primary_agency
     · NJ-34:5A-17: linked 1 agency record(s) from enforcement.primary_agency
@@ -75,8 +75,8 @@ Blacklist size:   6
     · omitted (no ACF field): links.url_source = law.justia.com
     · omitted (no ACF field): _review_notes = Industry-specific workplace safety and hazardous-substance reporting protection.
     · omitted (no ACF field): citations.citation_count = 0
-    · NJ-34:5A-17: created as post #3333 (draft, unverified)
-✓ NJ-34:6A-45 [post #3335]
+    · NJ-34:5A-17: created as post #3562 (draft, unverified)
+✓ NJ-34:6A-45 [post #3564]
     · jurisdiction: assigned 'nj'
     · NJ-34:6A-45: attached 1 citation ID(s) on statute record
     · NJ-34:6A-45: created 1 citation stub record(s) from citations.attached_citations
@@ -86,7 +86,7 @@ Blacklist size:   6
     · omitted (no ACF field): _review_notes = Specific to New Jersey public employees under PEOSH. Contains an explicit 180-da
     · omitted (no ACF field): citations.attached_citations = Lepore v. National Tool and Mfg. Co. || confirms statutory retaliation landscape
     · omitted (no ACF field): citations.citation_count = 1
-    · NJ-34:6A-45: created as post #3335 (draft, unverified)
+    · NJ-34:6A-45: created as post #3564 (draft, unverified)
 
 ================================================
 END OF LOG

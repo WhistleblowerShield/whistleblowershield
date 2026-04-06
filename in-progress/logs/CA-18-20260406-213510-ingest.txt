@@ -1,7 +1,7 @@
 ================================================
 WS INGEST RUN LOG
 ================================================
-Run timestamp:    2026-04-06 21:24:26 UTC
+Run timestamp:    2026-04-06 21:35:10 UTC
 Jurisdiction:     CA
 Source:           NotebookLM Reconciliation
 Source method:    ai_assisted
@@ -18,132 +18,132 @@ Proposed merged:  0
 Blacklist size:   3
 
 ── RECORD DETAIL ────────────────────────────────
-✓ CA-1432 [post #3249]
+✓ CA-1432 [post #3478]
     · jurisdiction: assigned 'ca'
     · CA-1432: created 1 agency stub record(s) from enforcement.primary_agency
     · CA-1432: linked 1 agency record(s) from enforcement.primary_agency
     · omitted (no ACF field): links.is_official = 1
     · omitted (no ACF field): _review_notes = Protects patients and staff in nursing homes. Note the 180-day rebuttable presum
     · omitted (no ACF field): _reconciled_notes = Sourced from Gemini. Validated 'general-wrongdoing' and 'clinical-staff' as regi
-    · CA-1432: created as post #3249 (draft, unverified)
-✓ CA-1569.37 [post #3251]
+    · CA-1432: created as post #3478 (draft, unverified)
+✓ CA-1569.37 [post #3480]
     · jurisdiction: assigned 'ca'
     · CA-1569.37: created 1 agency stub record(s) from enforcement.primary_agency
     · CA-1569.37: linked 1 agency record(s) from enforcement.primary_agency
     · omitted (no ACF field): links.is_official = 1
     · omitted (no ACF field): _review_notes = Statute specifically addresses elder care facilities. The protection extends to 
     · omitted (no ACF field): _reconciled_notes = Sourced from Gemini. Validated 'all-employees' as a correctly formed child slug.
-    · CA-1569.37: created as post #3251 (draft, unverified)
-✓ CA-1871.7 [post #3253]
+    · CA-1569.37: created as post #3480 (draft, unverified)
+✓ CA-1871.7 [post #3482]
     · jurisdiction: assigned 'ca'
     · CA-1871.7: created 1 agency stub record(s) from enforcement.primary_agency
     · CA-1871.7: linked 1 agency record(s) from enforcement.primary_agency
     · omitted (no ACF field): links.is_official = 1
     · omitted (no ACF field): _review_notes = Retaliation provision nested within the larger Insurance Frauds Prevention Act. 
     · omitted (no ACF field): _reconciled_notes = Sourced from Gemini. Confirmed 'double-back-pay' and 'court-filing' slugs are va
-    · CA-1871.7: created as post #3253 (draft, unverified)
-✓ CA-230 [post #3255]
+    · CA-1871.7: created as post #3482 (draft, unverified)
+✓ CA-230 [post #3484]
     · jurisdiction: assigned 'ca'
     · CA-230: created 1 agency stub record(s) from enforcement.primary_agency
     · CA-230: linked 1 agency record(s) from enforcement.primary_agency
     · omitted (no ACF field): links.is_official = 1
     · omitted (no ACF field): _review_notes = Statute provides strong protection for victims of crimes. Note that while Labor 
     · omitted (no ACF field): _reconciled_notes = Sourced from Gemini. Validated 'retaliation-protection' as a proper child slug. 
-    · CA-230: created as post #3255 (draft, unverified)
-✓ CA-232 [post #3257]
+    · CA-230: created as post #3484 (draft, unverified)
+✓ CA-232 [post #3486]
     · jurisdiction: assigned 'ca'
     · CA-232: linked 1 agency record(s) from enforcement.primary_agency
     · omitted (no ACF field): links.is_official = 1
     · omitted (no ACF field): _review_notes = Fundamental protection for workers discussing pay. Important to distinguish from
     · omitted (no ACF field): _reconciled_notes = Sourced from Gemini. 'wage-hour-violations' properly used as a child slug. Strip
-    · CA-232: created as post #3257 (draft, unverified)
-✓ CA-244 [post #3258]
+    · CA-232: created as post #3486 (draft, unverified)
+✓ CA-244 [post #3487]
     · jurisdiction: assigned 'ca'
     · CA-244: linked 1 agency record(s) from enforcement.primary_agency
     · omitted (no ACF field): links.is_official = 1
     · omitted (no ACF field): _review_notes = Prohibits a specific and severe form of retaliation using a worker's immigration
     · omitted (no ACF field): _reconciled_notes = Sourced from Gemini. Validated 'immigration-threat' is a registered flat list sl
-    · CA-244: created as post #3258 (draft, unverified)
-✓ CA-1101 [post #3259]
+    · CA-244: created as post #3487 (draft, unverified)
+✓ CA-1101 [post #3488]
     · jurisdiction: assigned 'ca'
     · CA-1101: linked 1 agency record(s) from enforcement.primary_agency
     · omitted (no ACF field): links.is_official = 1
     · omitted (no ACF field): _review_notes = Protects political activities from employer interference. This is a very broad p
     · omitted (no ACF field): _reconciled_notes = Sourced from Gemini. Confirmed 'retaliation-protection' and 'wrongful-terminatio
-    · CA-1101: created as post #3259 (draft, unverified)
-✓ CA-1198.3 [post #3260]
+    · CA-1101: created as post #3488 (draft, unverified)
+✓ CA-1198.3 [post #3489]
     · jurisdiction: assigned 'ca'
     · CA-1198.3: linked 1 agency record(s) from enforcement.primary_agency
     · omitted (no ACF field): links.is_official = 1
     · omitted (no ACF field): _review_notes = Specific retaliation protection for refusing to work illegal hours. Enforcement 
     · omitted (no ACF field): _reconciled_notes = Sourced from Gemini. No taxonomy corrections needed. Empty strings and arrays st
-    · CA-1198.3: created as post #3260 (draft, unverified)
-✓ CA-12940 [post #3261]
+    · CA-1198.3: created as post #3489 (draft, unverified)
+✓ CA-12940 [post #3490]
     · jurisdiction: assigned 'ca'
     · CA-12940: created 1 agency stub record(s) from enforcement.primary_agency
     · CA-12940: linked 1 agency record(s) from enforcement.primary_agency
     · omitted (no ACF field): links.is_official = 1
     · omitted (no ACF field): _review_notes = Foundation of California anti-discrimination and retaliation law. Note the manda
     · omitted (no ACF field): _reconciled_notes = Merged records from Gemini and ChatGPT. Reconciled limitation period: Gemini ind
-    · CA-12940: created as post #3261 (draft, unverified)
-✓ CA-8547 [post #3263]
+    · CA-12940: created as post #3490 (draft, unverified)
+✓ CA-8547 [post #3492]
     · jurisdiction: assigned 'ca'
     · CA-8547: created 1 agency stub record(s) from enforcement.primary_agency
     · CA-8547: linked 1 agency record(s) from enforcement.primary_agency
     · omitted (no ACF field): links.is_official = 1
     · omitted (no ACF field): _review_notes = Main entry point for state employee whistleblowing. Prohibits retaliation for re
     · omitted (no ACF field): _reconciled_notes = Merged records from Gemini and Grok. Major taxonomy corrections executed: Grok s
-    · CA-8547: created as post #3263 (draft, unverified)
-✓ CA-12650 [post #3265]
+    · CA-8547: created as post #3492 (draft, unverified)
+✓ CA-12650 [post #3494]
     · jurisdiction: assigned 'ca'
     · omitted (no ACF field): links.is_official = 1
     · omitted (no ACF field): _review_notes = Qui tam provisions allow private enforcement with potential bounty. Retaliation 
     · omitted (no ACF field): _reconciled_notes = Sourced from Grok. Major taxonomy correction required: Grok utilized multiple fo
-    · CA-12650: created as post #3265 (draft, unverified)
-✓ CA-8547.3 [post #3266]
+    · CA-12650: created as post #3494 (draft, unverified)
+✓ CA-8547.3 [post #3495]
     · jurisdiction: assigned 'ca'
     · omitted (no ACF field): links.is_official = 1
     · omitted (no ACF field): _review_notes = The official California code group text expressly states that an employee who vi
     · omitted (no ACF field): _reconciled_notes = Sourced from ChatGPT. Removed forbidden parent slug 'public-health-safety' from 
-    · CA-8547.3: created as post #3266 (draft, unverified)
-✓ CA-8547.7 [post #3267]
+    · CA-8547.3: created as post #3495 (draft, unverified)
+✓ CA-8547.7 [post #3496]
     · jurisdiction: assigned 'ca'
     · CA-8547.7: linked 1 agency record(s) from enforcement.primary_agency
     · omitted (no ACF field): links.is_official = 1
     · omitted (no ACF field): _review_notes = The section also imposes criminal penalties. Attorney-fees language appears in t
     · omitted (no ACF field): _reconciled_notes = Sourced from ChatGPT. Struck the forbidden parent slug 'public-health-safety' fr
-    · CA-8547.7: created as post #3267 (draft, unverified)
-✓ CA-8547.11 [post #3268]
+    · CA-8547.7: created as post #3496 (draft, unverified)
+✓ CA-8547.11 [post #3497]
     · jurisdiction: assigned 'ca'
     · omitted (no ACF field): links.is_official = 1
     · omitted (no ACF field): _review_notes = This section addresses interference rather than the separate UC reprisal complai
     · omitted (no ACF field): _reconciled_notes = Sourced from ChatGPT. Removed forbidden parent slug 'public-health-safety'. Veri
-    · CA-8547.11: created as post #3268 (draft, unverified)
-✓ CA-11166 [post #3269]
+    · CA-8547.11: created as post #3497 (draft, unverified)
+✓ CA-11166 [post #3498]
     · jurisdiction: assigned 'ca'
     · omitted (no ACF field): links.is_official = 1
     · omitted (no ACF field): _review_notes = Section 11166 contains a clear anti-sanction rule but I did not identify an expr
     · omitted (no ACF field): _reconciled_notes = Sourced from ChatGPT. Retained ChatGPT's proposed term 'child-abuse-reporting' w
-    · CA-11166: created as post #3269 (draft, unverified)
-✓ CA-11161.8 [post #3270]
+    · CA-11166: created as post #3498 (draft, unverified)
+✓ CA-11161.8 [post #3499]
     · jurisdiction: assigned 'ca'
     · omitted (no ACF field): links.is_official = 
     · omitted (no ACF field): links.url_source = law.justia.com
     · omitted (no ACF field): _review_notes = I did not locate a working official legislature section page for this statute du
     · omitted (no ACF field): _reconciled_notes = Sourced from ChatGPT. Maintained ChatGPT's proposed term 'patient-abuse-reportin
-    · CA-11161.8: created as post #3270 (draft, unverified)
-✓ CA-11161.9 [post #3271]
+    · CA-11161.8: created as post #3499 (draft, unverified)
+✓ CA-11161.9 [post #3500]
     · jurisdiction: assigned 'ca'
     · omitted (no ACF field): links.is_official = 1
     · omitted (no ACF field): _review_notes = This section principally grants civil and criminal immunity for required or auth
     · omitted (no ACF field): _reconciled_notes = Sourced from ChatGPT. Verified taxonomy fields and maintained 'patient-abuse-rep
-    · CA-11161.9: created as post #3271 (draft, unverified)
-✓ CA-19572 [post #3272]
+    · CA-11161.9: created as post #3500 (draft, unverified)
+✓ CA-19572 [post #3501]
     · jurisdiction: assigned 'ca'
     · omitted (no ACF field): links.is_official = 1
     · omitted (no ACF field): _review_notes = This is a disciplinary provision rather than a classic standalone whistleblower 
     · omitted (no ACF field): _reconciled_notes = Sourced from ChatGPT. Retained existing URL and checked for parent slugs; none w
-    · CA-19572: created as post #3272 (draft, unverified)
+    · CA-19572: created as post #3501 (draft, unverified)
 
 ================================================
 END OF LOG

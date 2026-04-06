@@ -1,7 +1,7 @@
 ================================================
 WS INGEST RUN LOG
 ================================================
-Run timestamp:    2026-04-06 21:24:25 UTC
+Run timestamp:    2026-04-06 21:35:09 UTC
 Jurisdiction:     CA
 Source:           NotebookLM Reconciliation
 Source method:    ai_assisted
@@ -18,7 +18,7 @@ Proposed merged:  0
 Blacklist size:   0
 
 ── RECORD DETAIL ────────────────────────────────
-✓ CA-CL-PUBLIC-POLICY [post #3240]
+✓ CA-CL-PUBLIC-POLICY [post #3469]
     · jurisdiction: assigned 'ca'
     · CA-CL-PUBLIC-POLICY: attached 8 citation ID(s) on common-law record
     · CA-CL-PUBLIC-POLICY: created 8 citation stub record(s) from citations.attached_citations
@@ -26,7 +26,7 @@ Blacklist size:   0
     · omitted (no ACF field): _reconciled_notes = Merged the Tameny Claim records from Gemini, Grok, and ChatGPT into a single mas
     · omitted (no ACF field): citations.attached_citations = Tameny v. Atlantic Richfield Co. || establishes public policy exception || https
     · omitted (no ACF field): citations.citation_count = 8
-    · CA-CL-PUBLIC-POLICY: created as post #3240 (draft, unverified)
+    · CA-CL-PUBLIC-POLICY: created as post #3469 (draft, unverified)
 
 ================================================
 END OF LOG

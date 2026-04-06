@@ -127,7 +127,7 @@ Key additions since initial ruleset:
 | File | Content |
 |---|---|
 | `preflight-errors.log` | Append-only. Failed preflights with filename and reason |
-| `imported.log` | Append-only. Completed batches — filename, JX, counts, errors flag |
+| `imported.log` | Append-only. Completed batches — filename, JX, counts, has_warnings flag, has_failures flag |
 | `citations-breadcrumbs.log` | Append-only. Full citation strings — research trail for future jx-citation records |
 | `[JX]-[timestamp]-ingest.txt` | Full detail run log per batch |
 
