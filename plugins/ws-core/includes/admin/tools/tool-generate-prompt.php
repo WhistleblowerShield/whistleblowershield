@@ -1075,7 +1075,7 @@ and note in _review_notes.
 CALCULATED FIELDS — compute last, after all records are finalized:
   meta.record_count         — must equal length of records array
   meta.proposed_count       — must equal length of new_terms_proposed
-    citations.citation_count  — omit if attached_citations is omitted; otherwise must equal length of attached_citations
+  citations.citation_count  — omit if attached_citations is omitted; otherwise must equal length of attached_citations
   integrity.error_count     — must equal length of error_details
 
 ENDSCHEMA;

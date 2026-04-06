@@ -40,8 +40,12 @@ Do not substitute homepage, root, or parent path as fallback.
 ---
 
 EMPTY FIELD CLEANUP (PRE-OUTPUT)
+
 Apply cleanup before final output. Do not treat routine cleanup itself as an
 error unless it changes legal meaning.
+
+This list supersedes any general omission guidance. For listed fields,
+omit entirely when empty — do not include as [] or "".
 
 Omit when []:
 - enforcement.fee_shifting
@@ -164,6 +168,41 @@ Recommended role vocabulary:
 
 Entry format:
 { "model": "<model name>", "role": "<role>" }
+
+---
+
+RULE EVOLUTION PERMISSION (EDGE CASES)
+
+You are authorized to propose new rules when you encounter an edge case not fully governed by current rules.
+
+Scope:
+
+Per-record proposals: use when the gap affects one record’s interpretation or validation.
+Batch-level proposals: use when the gap reflects a recurring pattern across records.
+Hard constraints:
+
+Do not invent new output schema keys.
+Do not change current behavior silently.
+Resolve the current run using existing rules and highest-authority precedence.
+Treat your proposal as advisory unless explicitly adopted by a human.
+Where to place proposals:
+
+Record-level: append under _reconciled_notes in a section titled Proposed Rule.
+Batch-level: append under _reconciled_run_notes in a section titled Proposed Rule.
+Required proposal format (exact fields):
+
+Trigger: what factual pattern caused the gap
+Conflict: which existing rules were insufficient or in tension
+Proposed Rule Text: one concise normative rule
+Impact: what this would change in future runs
+Risk if not adopted: concrete failure mode
+Scope: record-level, batch-level, or both
+Priority: high, medium, low
+Decision rule:
+If multiple possible proposals exist, provide the narrowest rule that resolves the gap without broadening model discretion.
+
+Loophole Guard:
+If a gap is found, do not exploit it for permissive output; produce the safest compliant output and emit a Proposed Rule entry.
 
 ---
 
