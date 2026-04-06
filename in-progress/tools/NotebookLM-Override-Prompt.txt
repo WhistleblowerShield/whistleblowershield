@@ -1,0 +1,129 @@
+WhistleblowerShield NotebookLM Override Prompt
+Experiment: CA Remaining Protections
+Mode: Exploratory, creative-first, non-ingest
+
+You are in discovery mode. Prioritize useful structure, broad extraction, and creative synthesis over strict conservatism.
+This is a sandbox pass. We will tighten later if needed.
+
+Input source:
+- in-progress/tools/CA-Remaining-Protections.txt
+
+Authority order:
+1. Platform safety constraints (no fabrication)
+2. Embedded core ruleset v1.2.0
+3. Addendum v1.2.2
+4. Temporary Addendum #2
+5. This override prompt
+
+If there is tension between strictness and usefulness, choose the most useful safe output and explain tradeoffs in meta._reconciled_run_notes.
+
+Creative exploration policy:
+- Feel free to experiment with candidate grouping, schema extension design, and evidence modeling.
+- Prefer capturing borderline candidates with explicit confidence labels instead of dropping them.
+- Include uncertain but plausible items as candidate-level hypotheses, not verified facts.
+- It is better to over-capture with clear uncertainty than under-capture and miss patterns.
+
+Hard safety rails:
+- Do not invent legal facts, holdings, statutes, dates, or URLs.
+- Do not claim verification you did not perform.
+- Clearly label all unverified material.
+- Keep output valid JSON only.
+
+Primary objective:
+Produce one high-utility pre-ingest packet that:
+1) proposes a schema-close but flexible custom structure, and
+2) outputs a richly populated research meta document with candidate records.
+
+Output wrapper (required):
+{
+  "custom_schema_proposal": { ... },
+  "research_meta_doc": { ... }
+}
+
+Artifact A: custom_schema_proposal
+Required keys:
+- profile_name
+- profile_version
+- based_on_schema
+- compatibility_mode
+- top_level_contract
+- field_map_preserved
+- field_map_extended
+- extraction_entity_types
+- normalization_rules
+- omission_rules
+- confidence_model
+- unresolved_items_policy
+- promotion_plan_to_ingest
+
+Creative latitude for Artifact A:
+- You may propose pragmatic extension fields under _analysis.
+- You may include staged maturity levels for fields: draft, candidate, near-ingest.
+- You may define mapping hints showing how exploratory fields later collapse into ingest-safe fields.
+
+Artifact B: research_meta_doc
+Top-level keys:
+- meta
+- records
+- integrity
+
+meta must include:
+- json_format_version
+- source_method
+- source_name
+- jurisdiction_id
+- generated_date
+- generated_by
+- record_count
+- proposed_count
+- new_terms_proposed
+- json_run_notes
+- batch_completed
+- _reconciled_run_notes
+- _analysis.profile
+- _analysis.run_purpose
+- _analysis.input_file
+- _analysis.extraction_summary
+
+records policy:
+- Extract aggressively but honestly from the source narrative.
+- Candidate types may include statute, common-law, citation, recommendation.
+- Keep record shapes as close as practical to existing platform templates.
+- Omit unknown strict legal fields instead of guessing.
+- Add useful exploratory context under _analysis, such as:
+  - evidence
+  - confidence
+  - candidate_status
+  - open_questions
+  - normalization_notes
+  - possible_parent_links
+
+confidence policy:
+- high: explicit and specific in source text
+- moderate: strongly implied with partial detail
+- low: plausible but incomplete or indirect
+
+verification policy:
+- verified-url-content
+- unverified-from-source-text
+Use unverified-from-source-text by default unless you truly verified during this run.
+
+taxonomy policy (relaxed but safe):
+- Prefer valid known slugs where clearly applicable.
+- If uncertain, keep taxonomy sparse and explain likely mapping in _analysis.open_questions.
+- Do not force uncertain mappings just to fill arrays.
+
+integrity policy:
+- Set integrity.with_errors to true whenever meaningful uncertainty remains.
+- Use error_details for unresolved reviewer-risk issues.
+- Do not treat normal exploratory sparsity as failure.
+- Preserve reviewer trust through transparency, not false precision.
+
+calculated consistency:
+- meta.record_count must equal records length
+- meta.proposed_count must equal new_terms_proposed length
+- if integrity.with_errors is true, integrity.error_count must equal error_details length
+
+final instruction:
+Analyze the source now and return only the final JSON wrapper object, fully populated, valid, and parseable.
+No markdown. No prose outside JSON.
