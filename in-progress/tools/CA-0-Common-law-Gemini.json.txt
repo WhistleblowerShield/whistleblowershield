@@ -1,0 +1,109 @@
+{
+  "meta": {
+    "json_format_version": "2.0",
+    "source_method": "ai_assisted",
+    "source_name": "Gemini",
+    "jurisdiction_id": "CA",
+    "generated_date": "2026-04-05",
+    "generated_by": "Gemini 2.0 Pro Experimental",
+    "record_count": 1,
+    "proposed_count": 0,
+    "new_terms_proposed": [],
+    "json_run_notes": "Clinical execution of California common law doctrine. Focused on the foundational 'Tameny' claim. Verified statute of limitations against CCP § 335.1. Performed mandatory parent slug self-check; no parent slugs detected in record arrays.",
+    "batch_completed": "2026-04-05 23:45 UTC"
+  },
+  "records": [
+    {
+      "jurisdiction_id": "CA",
+      "doctrine_id": "CA-CL-PUBLIC-POLICY",
+      "doctrine_name": "Wrongful Termination in Violation of Public Policy",
+      "common_name": "Tameny Claim",
+      "legal_basis": {
+        "doctrine_basis": "An employer's traditional right to discharge an at-will employee is limited by public policy. An employee may bring a tort action when the discharge contravenes a policy that is: (1) delineated in constitutional or statutory provisions; (2) 'public' in that it inures to the benefit of the public rather than serving merely the interests of the employer; (3) well established at the time of the discharge; and (4) substantial and fundamental.",
+        "recognition_status": "Well-established since the 1980 Tameny decision; remains the primary common law vehicle for whistleblower retaliation claims in California.",
+        "public_policy_sources": [
+          "constitution",
+          "statute",
+          "administrative-rule"
+        ],
+        "disclosure_types": [
+          "wrongful-termination",
+          "retaliation-protection",
+          "general-wrongdoing",
+          "occupational-health-safety",
+          "public-health-safety",
+          "fraud-and-financial"
+        ],
+        "protected_class": [
+          "all-employees"
+        ],
+        "disclosure_targets": [
+          "internal-management",
+          "law-enforcement",
+          "external-state",
+          "external-federal"
+        ],
+        "adverse_action_scope": "Strictly limited to termination or constructive discharge. Does not apply to demotions or other adverse actions short of termination."
+      },
+      "statute_of_limitations": {
+        "limit_ambiguous": true,
+        "limit_value": 2,
+        "limit_unit": "years",
+        "limit_details": "Derived from Cal. Code Civ. Proc. § 335.1, which provides a two-year period for personal injury actions and other torts.",
+        "trigger": "Date of the termination or constructive discharge.",
+        "exhaustion_required": false
+      },
+      "enforcement": {
+        "process_type": [
+          "civil-lawsuit"
+        ],
+        "adverse_action": [
+          "termination",
+          "constructive-discharge"
+        ],
+        "remedies": [
+          "compensatory-damages",
+          "punitive-damages",
+          "lost-wages",
+          "emotional-distress"
+        ],
+        "fee_shifting": "none-american-rule"
+      },
+      "burden_of_proof": {
+        "statutory_preclusion": false,
+        "statutory_preclusion_details": "California courts generally hold that statutory remedies (like Lab. Code § 1102.5) are cumulative and do not preclude a common law Tameny claim. However, the claim is only available to employees, not independent contractors.",
+        "employee_standard": [
+          "preponderance"
+        ],
+        "employer_defense": [
+          "legitimate-non-retaliatory-reason"
+        ],
+        "burden_of_proof_details": "Plaintiff must establish a causal link between the protected activity/refusal and the termination. The 'but-for' causation standard is typically applied."
+      },
+      "reward": {
+        "available": false
+      },
+      "links": {
+        "precedent_url": "https://law.justia.com/cases/california/supreme-court/3d/27/167.html",
+        "is_official": false,
+        "url_source": "law.justia.com"
+      },
+      "citations": {
+        "attached_citations": [
+          "Tameny v. Atlantic Richfield Co. || establishes public policy exception || https://law.justia.com/cases/california/supreme-court/3d/27/167.html || law.justia.com || high",
+          "Gantt v. Sentry Insurance || clarifies constitutional/statutory source requirement || https://law.justia.com/cases/california/supreme-court/4th/1/1083.html || law.justia.com || high",
+          "Green v. Ralee Engineering Co. || applies administrative-rule sources || https://law.justia.com/cases/california/supreme-court/4th/19/66.html || law.justia.com || high"
+        ],
+        "citation_count": 3
+      },
+      "_review_notes": "Foundation of California common law whistleblower protection. It is critical to note that while statutory remedies are broader (covering demotions), the Tameny claim is limited to discharge but offers the possibility of punitive damages without the procedural hurdles of some statutes."
+    }
+  ],
+  "integrity": {
+    "with_errors": true,
+    "error_details": [
+      "CA-CL-PUBLIC-POLICY: limit_ambiguous is true; SOL value derived from general tort statute Cal. Code Civ. Proc. § 335.1."
+    ],
+    "error_count": 1
+  }
+}

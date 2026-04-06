@@ -127,7 +127,7 @@ function ws_prompt_extract_record_identifier( string $record_type, int $post_id 
     }
 
     if ( $record_type === 'common-law' ) {
-        $doctrine_id = trim( (string) get_post_meta( $post_id, 'ws_cl_doctrine_id', true ) );
+        $doctrine_id = trim( (string) get_post_meta( $post_id, '_ws_cl_doctrine_id', true ) );
         if ( $doctrine_id !== '' ) {
             return $doctrine_id;
         }
@@ -231,7 +231,7 @@ function ws_prompt_get_auto_exclusions( string $record_type, string $jx_id ): ar
         }
 
         if ( $record_type === 'common-law' ) {
-            $did = strtoupper( trim( (string) get_post_meta( $pid, 'ws_cl_doctrine_id', true ) ) );
+            $did = strtoupper( trim( (string) get_post_meta( $pid, '_ws_cl_doctrine_id', true ) ) );
             if ( $did !== '' && str_starts_with( $did, strtoupper( $jx_id ) . '-CL-' ) ) {
                 return true;
             }
@@ -1093,8 +1093,8 @@ RECORD SCHEMA
   "common_name":     "[SHORTHAND NAME — omit if none widely used]",
 
   "legal_basis": {
-    "doctrine_basis":             "[WYSIWYG — legal principle, leading cases, how protection works]",
-    "recognition_status":         "[WYSIWYG — current judicial status, well-established vs contested]",
+    "doctrine_basis":             "[legal principle, leading cases, how protection works]",
+    "recognition_status":         "[current judicial status, well-established vs contested]",
     "public_policy_sources":      ["[constitution | statute | administrative-rule | case-law | federal-law | other]"],
     "other_sources":              "[omit unless 'other' is in public_policy_sources]",
     "disclosure_types":           [],
@@ -1146,7 +1146,8 @@ RECORD SCHEMA
   "links": {
     "precedent_url": "[omit if no approved source identified]",
     "is_official":   false,
-    "url_source":    "[domain name — omit if is_official is true or no URL]"
+    "url_source":    "[domain name — omit if is_official is true or no URL]",
+    "is_pdf":      "[omit if false]"
   },
 
   "citations": {
@@ -1176,7 +1177,7 @@ conduct exists. Document the controlling cases in statutory_preclusion_details.
 CALCULATED FIELDS — compute last:
   meta.record_count        — must equal length of records array
   meta.proposed_count      — must equal length of new_terms_proposed
-    citations.citation_count — omit if attached_citations is omitted; otherwise must equal length of attached_citations
+  citations.citation_count — omit if attached_citations is omitted; otherwise must equal length of attached_citations
   integrity.error_count    — must equal length of error_details
 
 ENDSCHEMA;
@@ -1212,7 +1213,8 @@ RECORD SCHEMA
   "links": {
     "case_url":    "[URL to case on approved source — omit if unverifiable]",
     "is_official": false,
-    "url_source":  "[domain name — omit if is_official is true]"
+    "url_source":  "[domain name — omit if is_official is true]",
+    "is_pdf":      "[omit if false]"
   },
 
   "quality":          "[high | moderate | low]",
@@ -1288,7 +1290,9 @@ RECORD SCHEMA
   "links": {
     "case_url":    "[URL on approved source — omit if unverifiable]",
     "is_official": false,
-    "url_source":  "[domain name — omit if is_official is true]"
+    "url_source":  "[domain name — omit if is_official is true]",
+    "is_pdf":      "[omit if false]"
+
   },
 
   "quality": "[high | moderate | low]",

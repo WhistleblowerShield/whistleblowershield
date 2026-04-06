@@ -1,0 +1,56 @@
+Two big directions stand out: (1) a few additional statutes to round out sectoral coverage, and (2) several distinct common‑law doctrines and more case law beyond what you already have. [plaintiffmagazine](https://plaintiffmagazine.com/recent-issues/item/california-boasts-strong-protection-for-whistleblowers-robust-retaliation-laws)
+
+## Additional California statutes worth considering
+
+You already have most of the core “usual suspects,” including 1102.5, Cal. False Claims Act, FEHA, OSHA‑retaliation, public‑employee WPA, and key health‑care/reporting statutes.  A few additions that often appear in whistleblower/retaliation contexts: [dir.ca](https://www.dir.ca.gov/dlse/whistleblowersnotice.pdf)
+
+- **Health & Safety Code elder/dependent adult reporting**  
+  - Elder/dependent‑adult abuse reporting provisions (paired with anti‑retaliation language) can be important in health‑care whistleblower fact patterns and can support public‑policy Tameny claims. [plaintiffmagazine](https://plaintiffmagazine.com/recent-issues/item/california-boasts-strong-protection-for-whistleblowers-robust-retaliation-laws)
+
+- **Insurance and financial‑sector reporting protections**  
+  - Additional Insurance Code and financial‑regulation provisions (beyond Ins. Code 1871.7, which you already have) that penalize retaliation for reporting fraud or regulatory violations; these are narrower but deepen coverage in insurance/financial cases. [plaintiffmagazine](https://plaintiffmagazine.com/recent-issues/item/california-boasts-strong-protection-for-whistleblowers-robust-retaliation-laws)
+
+- **Education‑sector reporting provisions**  
+  - Education Code anti‑retaliation provisions for employees who report certain student‑safety, abuse, or financial impropriety issues; these can be useful in school/university whistleblower scenarios and as public‑policy predicates. [taterenner](https://www.taterenner.com/stchart.php)
+
+Those are not as “global” as 1102.5, but they add depth by tightening coverage for elder‑care, insurance/financial, and education fact patterns where you may want a specific statutory hook plus a Tameny theory. [whistleblower.house](https://whistleblower.house.gov/sites/evo-subsites/whistleblower-evo.house.gov/files/CRS_Selected_State_Statutes_on_Whistleblower_Protections.pdf)
+
+## More than one common‑law doctrine
+
+Beyond the Tameny wrongful‑termination tort, California courts recognize several related common‑law angles that often matter in whistleblower cases: [bamlawca](https://www.bamlawca.com/california-labor-laws/tameny-claims-based-on-whistleblower-laws-recent-california.html)
+
+- **Retaliatory constructive discharge in violation of public policy**  
+  - Tameny‑derived doctrine where the “termination” is constructive discharge (intolerable conditions imposed in retaliation for protected activity). [plaintiffmagazine](https://plaintiffmagazine.com/recent-issues/item/california-boasts-strong-protection-for-whistleblowers-robust-retaliation-laws)
+
+- **Common‑law retaliatory demotion/harassment tethered to public policy (non‑termination adverse actions)**  
+  - While classic Tameny is “wrongful termination,” courts have increasingly entertained tort‑style claims based on significant adverse actions (e.g., demotion) when closely tied to public policy and whistleblower statutes. [ogletree](https://ogletree.com/insights-resources/blog-posts/two-california-appellate-decisions-expand-the-scope-of-tameny-claims-based-on-whistleblower-laws/)
+
+- **Implied‑in‑fact contract and covenant of good faith/fair dealing, anchored to public policy**  
+  - Often paired with whistleblower facts: plaintiffs allege both statutory retaliation (e.g., 1102.5) and common‑law breach of implied contract/bad faith, with the public‑policy content supplied by the whistleblower norms. [plaintiffmagazine](https://plaintiffmagazine.com/recent-issues/item/california-boasts-strong-protection-for-whistleblowers-robust-retaliation-laws)
+
+Those doctrines can either be explicitly pled or used as structural support in your taxonomy to show how far whistleblower policy has migrated beyond pure discharge cases. [ogletree](https://ogletree.com/insights-resources/blog-posts/two-california-appellate-decisions-expand-the-scope-of-tameny-claims-based-on-whistleblower-laws/)
+
+## Additional case law beyond the ones you listed
+
+You already have high‑value modern authorities (Lawson, McDonald, Mize‑Kurzman, Garcia‑Brower, Cenis/WinCo).  To enrich both statutory and common‑law threads, here are more cases that recur in commentary: [seyfarth](https://www.seyfarth.com/news-insights/whistleblower-disclosure-includes-information-already-known-to-employer.html)
+
+- **Tameny architecture and expansion**  
+  - *Tameny v. Atlantic Richfield Co.* (Cal. 1980) – foundational wrongful termination in violation of public policy; essential to cite if you are naming the doctrine. [plaintiffmagazine](https://plaintiffmagazine.com/recent-issues/item/california-boasts-strong-protection-for-whistleblowers-robust-retaliation-laws)
+  - *Stevenson v. Superior Court* (1997) 16 Cal.4th 880 – articulates the four requirements for a public policy to support a Tameny claim (statutory/constitutional basis, public in nature, in existence at time of discharge, fundamental and substantial). [plaintiffmagazine](https://plaintiffmagazine.com/recent-issues/item/california-boasts-strong-protection-for-whistleblowers-robust-retaliation-laws)
+  - *Gantt v. Sentry Insurance* and its progeny – important in tracing which sources of public policy can support a Tameny claim (later refined/limited but historically significant). [plaintiffmagazine](https://plaintiffmagazine.com/recent-issues/item/california-boasts-strong-protection-for-whistleblowers-robust-retaliation-laws)
+
+- **Tameny claims based on whistleblower laws (broad reading of policy)**  
+  - *Ferrick v. Santa Clara University* – Court of Appeal allowed a Tameny claim rooted in whistleblower policy even where the plaintiff’s internal reporting status did not fit older, narrow readings of 1102.5. [bamlawca](https://www.bamlawca.com/california-labor-laws/tameny-claims-based-on-whistleblower-laws-recent-california.html)
+  - *Diego v. Pilgrim United Church of Christ* – Tameny claim allowed for an employee suspected of whistleblowing, emphasizing broad public policy behind 1102.5; often cited alongside Ferrick. [bamlawca](https://www.bamlawca.com/california-labor-laws/tameny-claims-based-on-whistleblower-laws-recent-california.html)
+
+- **Labor Code 1102.5 line**  
+  - *Lawson v. PPG Architectural Finishes, Inc.* – you already have this; it’s the leading Supreme Court case on the 1102.6 burden‑shifting standard rather than McDonnell Douglas. [seyfarth](https://www.seyfarth.com/news-insights/california-dances-away-from-the-whistleblower-three-step.html)
+  - *People ex rel. Garcia‑Brower v. Kolla’s, Inc.* – already in your list; key for “disclosure” including reports of conduct already known to the employer and for perceived whistleblowers. [perkinscoie](https://perkinscoie.com/insights/update/california-supreme-court-broadens-whistleblower-protections)
+
+- **Other useful whistleblower‑Tameny decisions**  
+  - Cases applying 1102.5/Tameny to internal complaints, perceived whistleblowers, and non‑formal “reports” (various Court of Appeal decisions cited in plaintiff/management‑side practice notes) are useful to show scope even if not individually controlling. [ogletree](https://ogletree.com/insights-resources/blog-posts/two-california-appellate-decisions-expand-the-scope-of-tameny-claims-based-on-whistleblower-laws/)
+
+If you want to push this further, a structured way to expand would be:
+
+- Add a **“Common‑law doctrines”** list for CA that includes Tameny, constructive discharge Tameny, and retaliatory demotion/harassment tied to public policy.  
+- Tag each statute you already have with **one or two exemplar cases** (e.g., Lawson and Garcia‑Brower for 1102.5/1102.6) and then separately maintain a **“foundational cases”** cluster (Tameny, Stevenson, Gantt, Ferrick, Diego, etc.). [bamlawca](https://www.bamlawca.com/california-labor-laws/tameny-claims-based-on-whistleblower-laws-recent-california.html)

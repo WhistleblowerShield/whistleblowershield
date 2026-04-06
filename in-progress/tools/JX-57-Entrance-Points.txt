@@ -1,0 +1,86 @@
+A complete, jurisdiction‑by‑jurisdiction starter table that cleanly reflects “single” vs. “patchwork” would still be unavoidably judgment‑heavy and longer than fits here in a readable way, but the framework below gives a reasonable entrance point and pattern you can extend.
+
+## Federal baseline
+
+| Jurisdiction | Characterization | Main entrance point(s) |
+| --- | --- | --- |
+| Federal (U.S.) | Single core | 5 U.S.C. § 2302(b)(8) (Whistleblower Protection Act) for most federal employees; supplemented by the False Claims Act, 31 U.S.C. §§ 3729–3733 (fraud against federal programs) and sectoral anti‑retaliation statutes (e.g., SOX, OSHA 11(c)).  [whistleblowers](https://www.whistleblowers.gov/statutes) |
+
+## Sample “single‑statute” states (public‑employee focus)
+
+These are states where one public‑employee statute is widely treated as the primary whistleblower protection; private‑sector and federal remedies may also apply. [worldpopulationreview](https://worldpopulationreview.com/state-rankings/whistleblower-laws-by-state)
+
+| State | Characterization | Main entrance point(s) |
+| --- | --- | --- |
+| Alabama | Single core | Ala. Code § 36‑26A‑1 et seq. (State Employee Protection Act – retaliation ban for state workers who report violations to public authorities).  [paycor](https://www.paycor.com/resource-center/articles/whistleblower-laws-by-state/) |
+| Alaska | Single core | Alaska Stat. § 39.90.100–39.90.150 (Public Employee Whistleblower Act – protects good‑faith reports on matters of public concern).  [paycor](https://www.paycor.com/resource-center/articles/whistleblower-laws-by-state/) |
+| Colorado | Single core | Colo. Rev. Stat. § 24‑50.5‑101 et seq. (state employee disclosures of illegal or improper governmental actions).  [paycor](https://www.paycor.com/resource-center/articles/whistleblower-laws-by-state/) |
+| Iowa | Single core | Iowa Code § 70A.28 (state employee whistleblower protections against retaliation for reporting mismanagement, waste, or violations of law).  [paycor](https://www.paycor.com/resource-center/articles/whistleblower-laws-by-state/) |
+| Missouri | Single core | Mo. Rev. Stat. § 105.055 (protects employees reporting violations of law, fraud, mismanagement, or threats to public health).  [paycor](https://www.paycor.com/resource-center/articles/whistleblower-laws-by-state/) |
+| Oklahoma | Single core | Okla. Stat. tit. 74, § 840‑2.5 (state‑employee whistleblower protections for disclosures of legal violations, waste, or risks to public health/safety).  [paycor](https://www.paycor.com/resource-center/articles/whistleblower-laws-by-state/) |
+| Pennsylvania | Single core | 43 Pa. Cons. Stat. § 1421 et seq. (Pennsylvania Whistleblower Law – reporting waste or wrongdoing to appropriate authorities).  [paycor](https://www.paycor.com/resource-center/articles/whistleblower-laws-by-state/) |
+| South Carolina | Single core | S.C. Code Ann. § 8‑27‑10 et seq. (public‑employee retaliation ban for reporting fraud, waste, corruption, or gross negligence).  [paycor](https://www.paycor.com/resource-center/articles/whistleblower-laws-by-state/) |
+| West Virginia | Single core | W. Va. Code § 6C‑1‑1 et seq. (West Virginia Whistle-Blower Law – protects public employees from retaliation for reporting waste or wrongdoing).  [paycor](https://www.paycor.com/resource-center/articles/whistleblower-laws-by-state/) |
+
+## Sample “patchwork” states
+
+Here, protection comes from multiple overlapping statutes (public, private, sector‑specific) plus common‑law claims, so there is no single clearly defining statute. [whistleblower.house](https://whistleblower.house.gov/sites/evo-subsites/whistleblower-evo.house.gov/files/CRS_Selected_State_Statutes_on_Whistleblower_Protections.pdf)
+
+| State | Characterization | Commonly used entrance points |
+| --- | --- | --- |
+| California | Patchwork | Cal. Lab. Code § 1102.5 (general whistleblower retaliation); Cal. Gov. Code §§ 53296–53299 (local public employees); Cal. Gov. Code §§ 8547–8547.12 (state‑employee Whistleblower Protection Act); Cal. False Claims Act, Gov. Code §§ 12650–12656 (qui tam fraud).  [sparrowllp](https://sparrowllp.com/how-california-law-protects-whistleblowers-from-retaliation/) |
+| New York | Patchwork | N.Y. Lab. Law § 740 (general whistleblower statute, recently broadened); N.Y. State Finance Law §§ 187–194 (NY False Claims Act); various sectoral anti‑retaliation provisions and common‑law wrongful‑discharge claims.  [phillipsandcohen](https://www.phillipsandcohen.com/state-false-claims-statutes/) |
+| Illinois | Patchwork | 740 ILCS 175 (Illinois False Claims Act); public‑employee ethics/whistleblower provisions; common‑law retaliatory discharge for reporting violations of public policy.  [phillipsandcohen](https://www.phillipsandcohen.com/state-false-claims-statutes/) |
+| Texas | Patchwork | Tex. Gov’t Code ch. 554 (Texas Whistleblower Act – public employees); Tex. Hum. Res. Code ch. 36 (Texas Medicaid Fraud Prevention Act); sector‑specific health/safety retaliation statutes and common‑law wrongful termination.  [phillipsandcohen](https://www.phillipsandcohen.com/state-false-claims-statutes/) |
+| Florida | Patchwork | Fla. Stat. §§ 112.3187–112.31895 (public‑sector Whistle-blower’s Act); Fla. Stat. §§ 448.101–448.105 (private‑sector retaliation); Florida False Claims Act, Fla. Stat. §§ 68.081–68.09.  [phillipsandcohen](https://www.phillipsandcohen.com/state-false-claims-statutes/) |
+
+## District of Columbia and example territories
+
+| Jurisdiction | Characterization | Commonly used entrance points |
+| --- | --- | --- |
+| District of Columbia | Patchwork | D.C. Whistleblower Protection Act, D.C. Code § 1‑615.51 et seq. (public employees); D.C. False Claims Act, D.C. Code § 2‑381.01 et seq.; tax‑fraud qui tam and general anti‑retaliation provisions.  [phillipsandcohen](https://www.phillipsandcohen.com/state-false-claims-statutes/) |
+| Puerto Rico | Patchwork | Local public‑employee whistleblower and ethics provisions; Puerto Rico’s False Claims‑style law for Medicaid fraud; OSHA‑related retaliation protections under its state‑plan regime.  [phillipsandcohen](https://www.phillipsandcohen.com/state-false-claims-statutes/) |
+| U.S. Virgin Islands | Patchwork | Territorial public‑employee and ethics statutes; OSHA‑linked retaliation protections recognized in federal/state‑plan materials; federal False Claims/sectoral statutes for many fraud and safety issues.  [whistleblowers](https://www.whistleblowers.gov/whistleblower-retaliation-rights) |
+
+## How to extend this to all 57
+
+- Use the Paycor chart as a quick pointer to each state’s primary **public‑sector** whistleblower statute or “none” notation, then confirm the statute citation in the CRS memorandum for current numbering and scope. [paycor](https://www.paycor.com/resource-center/articles/whistleblower-laws-by-state/)
+- Layer on the CRS memo’s lists of false‑claims titles, general anti‑retaliation statutes, and other “reporting wrongdoing” provisions for each state to decide whether to tag the jurisdiction as “single core” (one statute clearly dominates) or “patchwork” (multiple overlapping schemes plus common law). [taterenner](https://www.taterenner.com/stchart.php)
+- For territories, cross‑check OSHA state‑plan materials and any listed state‑plan whistleblower provisions (plus local false‑claims or Medicaid‑fraud laws) as entrance points, recognizing that these are especially patchwork and heavily supplemented by federal statutes. [osha](https://www.osha.gov/sites/default/files/publications/OSHA3638.pdf)
+
+If you want, the next step can be a machine‑readable scaffold (e.g., CSV with all 57 jurisdictions and empty “characterization/statute” columns) tailored to your preferred schema so you or counsel can fill in or refine the entrance points systematically.
+
+Yes, that Paycor table is visible, including the “None” entries.  Those “None” cells mean “no specific state whistleblower statute flagged in this HR‑oriented chart,” not “no protection at all,” so a reasonable way to fill the gaps is: [oig.ftc](https://oig.ftc.gov/whistleblower-protection)
+
+- Treat each “None” state as **patchwork**.  
+- Point to the most commonly cited **state‑level** doctrines/statutes (where they exist) plus the fact that employees still have access to **federal** whistleblower schemes (OSHA 11(c), SOX, FCA, etc.). [whistleblowers](https://www.whistleblowers.gov/statutes)
+
+Below is a compact “gap‑fill” table just for the states Paycor labels “None.” Citations are necessarily high‑level because these states often rely heavily on common‑law wrongful‑discharge/public‑policy claims and federal statutes rather than a single marquee state code section. [taterenner](https://www.taterenner.com/stchart.php)
+
+### States Paycor lists as “None”
+
+| State (Paycor = “None”) | Characterization | Commonly used entrance points (state + federal) |
+| --- | --- | --- |
+| Arizona | Patchwork | No single, broad Arizona whistleblower statute analogous to Pennsylvania or Kentucky; employees frequently rely on common‑law wrongful‑termination in violation of public policy (e.g., firing for refusing to engage in illegal acts or for reporting them) plus federal whistleblower statutes (OSHA 11(c), SOX, FCA, etc.).  [whistleblowers](https://www.whistleblowers.gov/statutes) |
+| Arkansas | Patchwork | Lacks a general, omnibus state whistleblower statute for private employees; protection typically arises through public‑policy wrongful‑discharge claims, specific retaliation provisions in subject‑matter statutes (e.g., health/safety, wage laws), and federal schemes (OSHA 11(c), FCA, etc.).  [whistleblowers](https://www.whistleblowers.gov/statutes) |
+| District of Columbia (DC) | Patchwork (Paycor gap) | Paycor shows “None,” but D.C. actually has a robust D.C. Whistleblower Protection Act, D.C. Code § 1‑615.51 et seq., and D.C. False Claims Act, D.C. Code § 2‑381.01 et seq., which together form the core local framework for public‑employee and fraud‑based whistleblowing.  [phillipsandcohen](https://www.phillipsandcohen.com/state-false-claims-statutes/) |
+| Georgia | Patchwork | No broad, general whistleblower statute covering all private employment; protections are largely through the Georgia Whistleblower Act for public employees (O.C.G.A. § 45‑1‑4, often discussed in practice though not highlighted in Paycor’s table) and through public‑policy wrongful‑discharge and federal whistleblower laws for others.  [worldpopulationreview](https://worldpopulationreview.com/state-rankings/whistleblower-laws-by-state) |
+| Idaho | Patchwork | Idaho does not have a widely cited, general private‑sector whistleblower statute; public‑sector whistleblowing is partially addressed (e.g., public‑employee laws), while many retaliation cases proceed as wrongful termination in violation of public policy or under federal whistleblower statutes.  [taterenner](https://www.taterenner.com/stchart.php) |
+| Maryland | Patchwork | Multiple targeted statutes protect certain public employees and specific subject areas, but there is no single, sweeping “Maryland Whistleblower Act” covering all workers; employees often use common‑law wrongful‑discharge claims tied to public policy and federal schemes (OSHA, SOX, FCA).  [taterenner](https://www.taterenner.com/stchart.php) |
+| Mississippi | Patchwork | No comprehensive whistleblower statute for private employees is highlighted in major compilations; public employees and certain sectors have targeted protections, and many retaliation issues are handled via public‑policy wrongful‑discharge and federal whistleblower programs.  [taterenner](https://www.taterenner.com/stchart.php) |
+| Montana | Patchwork | Montana’s Wrongful Discharge from Employment Act governs many termination disputes, and public‑employee statutes provide some reporting protection, but there is no single, broad whistleblower statute; workers often rely on WDEA concepts plus federal whistleblower provisions.  [taterenner](https://www.taterenner.com/stchart.php) |
+| Nevada | Patchwork | No single, general whistleblower act is consistently cited; protection is spread across various retaliation provisions (e.g., specific employment, safety, or discrimination statutes) and public‑policy wrongful‑discharge claims, with federal whistleblower regimes covering much of the practical space.  [taterenner](https://www.taterenner.com/stchart.php) |
+| New Mexico | Patchwork | New Mexico has some specific protections (including for public employees and under particular statutes) but not a single broad whistleblower law for all workers; common‑law public‑policy claims and federal whistleblower statutes are key entrance points.  [taterenner](https://www.taterenner.com/stchart.php) |
+| North Carolina | Patchwork | No omnibus private‑sector whistleblower statute is highlighted; North Carolina provides specific protections for certain public employees and contexts, while many whistleblower‑type claims are brought as wrongful discharge in violation of public policy or under federal regimes like OSHA/SOX.  [taterenner](https://www.taterenner.com/stchart.php) |
+| South Dakota | Patchwork | South Dakota lacks a broad, general whistleblower statute; protections arise from specific retaliation provisions in individual statutes, public‑policy wrongful‑termination claims, and federal whistleblower schemes.  [taterenner](https://www.taterenner.com/stchart.php) |
+| Texas | Patchwork (Paycor gap) | Paycor lists “None,” but Texas has the Texas Whistleblower Act (Tex. Gov’t Code ch. 554) for public employees and the Texas Medicaid Fraud Prevention Act (Tex. Hum. Res. Code ch. 36) in the fraud space; private workers often proceed under common‑law wrongful‑termination theories tied to public policy and federal whistleblower laws.  [phillipsandcohen](https://www.phillipsandcohen.com/state-false-claims-statutes/) |
+| Vermont | Patchwork | Vermont does not have a single, heavily cited general whistleblower statute covering all employees; protections are scattered among specific retaliation provisions and public‑policy wrongful‑discharge doctrines, with federal whistleblower statutes filling many gaps.  [taterenner](https://www.taterenner.com/stchart.php) |
+| Virginia | Patchwork (evolving) | Virginia historically lacked an omnibus whistleblower statute, relying on public‑policy wrongful‑discharge claims and targeted statutes; more recent developments have expanded retaliation protections, but still no single statute is treated in compilations like Paycor’s as the universal whistleblower law. Federal schemes remain central.  [worldpopulationreview](https://worldpopulationreview.com/state-rankings/whistleblower-laws-by-state) |
+| Wisconsin | Patchwork | Wisconsin has specific statutes covering certain public and private‑sector whistleblowing situations but no one law is consistently singled out across HR‑style charts as *the* whistleblower statute; common‑law public‑policy claims and federal protections therefore loom large in practice.  [taterenner](https://www.taterenner.com/stchart.php) |
+| Wyoming | Patchwork (“The Shield”) | Paycor shows “None,” but Wyoming’s framework effectively functions through a cluster of common‑law public‑policy wrongful‑discharge protections sometimes informally described as a protective “shield,” plus sector‑specific statutes and federal whistleblower schemes (e.g., OSHA, SOX, FCA) for many practical whistleblower scenarios.  [taterenner](https://www.taterenner.com/stchart.php) |
+
+This gives you an **entrance point** message for every Paycor “None” state:  
+- Assume **no single, state‑level omnibus statute**,  
+- Look first to **public‑policy wrongful‑discharge/common‑law retaliation**, any **targeted state whistleblower/ethics/fraud laws** (like Texas Gov’t Code ch. 554, Georgia’s public‑employee protections, or D.C.’s WPA, which Paycor under‑flags), and then  
+- Layer in **federal whistleblower programs** for the specific industry/violation type. [whistleblower.house](https://whistleblower.house.gov/sites/evo-subsites/whistleblower-evo.house.gov/files/CRS_Selected_State_Statutes_on_Whistleblower_Protections.pdf)
+

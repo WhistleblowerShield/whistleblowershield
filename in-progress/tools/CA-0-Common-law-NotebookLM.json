@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "json_format_version": "2.0",
+    "source_method": "ai_assisted",
+    "source_name": "NotebookLM Reconciliation",
+    "jurisdiction_id": "CA",
+    "generated_date": "2026-04-06",
+    "generated_by": "NotebookLM Legal Fact-Checker",
+    "record_count": 1,
+    "proposed_count": 0,
+    "source_chain": [
+      {
+        "model": "Gemini 2.0 Pro Experimental",
+        "role": "primary-research"
+      },
+      {
+        "model": "Grok by xAI",
+        "role": "primary-research"
+      },
+      {
+        "model": "GPT-5.4 Thinking",
+        "role": "primary-research"
+      },
+      {
+        "model": "NotebookLM Reconciliation",
+        "role": "merge-factcheck"
+      }
+    ],
+    "new_terms_proposed": [],
+    "json_run_notes": "Merged common-law records from Gemini, Grok, and ChatGPT into a single consolidated CA-CL-PUBLIC-POLICY record. Executed strict taxonomy validation: removed parent slug 'public-health-safety' from Gemini's disclosure_types array; removed unregistered slug 'fraud-and-financial'; corrected unregistered 'external-state' and 'external-federal' to the registered 'agency-state' and 'agency-federal' slugs. Validated limit_ambiguous is true for the derived tort SOL. Applied Addendum v1.2.1 empty field cleanup and deduplicated citations.",
+    "_reconciled_run_notes": "Batch-level common-law reconciliation executed. Live web research unavailable so preserved existing valid Justia URLs per fallback policy. Applied cross-taxonomy strictness and parent slug elimination rules, resulting in 4 logged integrity errors regarding taxonomy corrections.",
+    "batch_completed": "2026-04-06 05:30 UTC"
+  },
+  "records": [
+    {
+      "jurisdiction_id": "CA",
+      "doctrine_id": "CA-CL-PUBLIC-POLICY",
+      "doctrine_name": "Wrongful Termination in Violation of Public Policy",
+      "common_name": "Tameny Claim",
+      "legal_basis": {
+        "doctrine_basis": "An employer's traditional right to discharge an at-will employee is limited by public policy. California recognizes a tort claim when an employer discharges an employee in contravention of a fundamental public policy tethered to constitutional, statutory, or regulatory law. In whistleblower settings, the doctrine protects employees fired for refusing illegal conduct, reporting employer wrongdoing, or raising safety concerns.",
+        "recognition_status": "Well-established since the 1980 Tameny decision. Covers whistleblower retaliation when discharge contravenes a fundamental public policy. California courts bar Tameny claims against public entities, and it does not extend to independent contractors.",
+        "public_policy_sources": [
+          "constitution",
+          "statute",
+          "administrative-rule",
+          "federal-law",
+          "case-law"
+        ],
+        "disclosure_types": [
+          "wrongful-termination",
+          "retaliation-protection",
+          "general-wrongdoing",
+          "occupational-health-safety"
+        ],
+        "protected_class": [
+          "all-employees",
+          "has-details"
+        ],
+        "protected_class_details": "Applies to employees in private employment relationships. Does not extend to independent contractors or public-entity defendants.",
+        "disclosure_targets": [
+          "internal-management",
+          "law-enforcement",
+          "agency-state",
+          "agency-federal",
+          "has-details"
+        ],
+        "disclosure_targets_details": "Depending on the underlying public policy and facts, California cases recognize protection for internal reporting to supervisors or management, external reporting to government or law-enforcement authorities, or refusal to participate in unlawful conduct.",
+        "adverse_action_scope": "Strictly limited to termination or constructive discharge. Does not apply to demotions or other adverse actions short of termination."
+      },
+      "statute_of_limitations": {
+        "limit_ambiguous": true,
+        "limit_value": 2,
+        "limit_unit": "years",
+        "limit_details": "Derived from Cal. Code Civ. Proc. § 335.1, which provides a two-year period for personal injury actions and other torts. Earlier cases applied the former one-year period under § 340(3).",
+        "trigger": "Date of the termination or constructive discharge.",
+        "exhaustion_required": false
+      },
+      "enforcement": {
+        "process_type": [
+          "civil-lawsuit"
+        ],
+        "adverse_action": [
+          "termination",
+          "constructive-discharge"
+        ],
+        "remedies": [
+          "compensatory-damages",
+          "punitive-damages",
+          "lost-wages",
+          "back-pay",
+          "has-details"
+        ],
+        "remedies_details": "Tort remedies including compensatory damages (lost wages, emotional distress), punitive damages where malice is shown, and equitable relief such as reinstatement in some applications.",
+        "fee_shifting": "none-american-rule"
+      },
+      "burden_of_proof": {
+        "statutory_preclusion": false,
+        "statutory_preclusion_details": "California courts generally hold that statutory remedies (like Lab. Code § 1102.5) are cumulative and do not preclude a common law Tameny claim.",
+        "employee_standard": [
+          "preponderance"
+        ],
+        "employer_defense": [
+          "legitimate-non-retaliatory-reason",
+          "same-decision-defense"
+        ],
+        "burden_of_proof_details": "Plaintiff must establish a causal link between the protected activity/refusal and the termination. The employee must show the protected activity was a substantial motivating reason for the adverse action."
+      },
+      "reward": {
+        "available": false
+      },
+      "links": {
+        "precedent_url": "https://law.justia.com/cases/california/supreme-court/3d/27/167.html",
+        "is_official": false,
+        "url_source": "law.justia.com"
+      },
+      "citations": {
+        "attached_citations": [
+          "Tameny v. Atlantic Richfield Co. || establishes public policy exception || https://law.justia.com/cases/california/supreme-court/3d/27/167.html || law.justia.com || high",
+          "Gantt v. Sentry Insurance || clarifies constitutional/statutory source requirement || https://law.justia.com/cases/california/supreme-court/4th/1/1083.html || law.justia.com || high",
+          "Green v. Ralee Engineering Co. || applies administrative-rule sources || https://law.justia.com/cases/california/supreme-court/4th/19/66.html || law.justia.com || high",
+          "Stevenson v. Superior Court || clarifies public-policy sources || https://law.justia.com/cases/california/supreme-court/4th/16/880.html || law.justia.com || high",
+          "Turner v. Anheuser-Busch, Inc. || defines constructive discharge || https://law.justia.com/cases/california/supreme-court/4th/7/1238.html || law.justia.com || high",
+          "Miklosy v. Regents of U.C. || limits public-entity claims || https://law.justia.com/cases/california/supreme-court/2008/s139133/ || law.justia.com || high",
+          "Prue v. Brady Co./San Diego, Inc. || clarifies borrowed limitations period || https://law.justia.com/cases/california/court-of-appeal/2015/d066404.html || law.justia.com || moderate",
+          "Barton v. New United Motor Manufacturing, Inc. || interprets prior limitations period || https://law.justia.com/cases/california/court-of-appeal/4th/43/1200.html || law.justia.com || moderate"
+        ],
+        "citation_count": 8
+      },
+      "_reconciled_notes": "Merged the Tameny Claim records from Gemini, Grok, and ChatGPT into a single master record. Deduplicated overlapping citations. Removed the forbidden parent slug 'public-health-safety' from Gemini's disclosure_types array. Cleaned unregistered slugs 'fraud-and-financial', 'external-state', and 'external-federal', mapping the latter two to 'agency-state' and 'agency-federal'. Retained 'law.justia.com' URL and domain as is_official is false. Scrubbed empty arrays to prevent ingestion errors."
+    }
+  ],
+  "integrity": {
+    "with_errors": true,
+    "error_details": [
+      "CA-CL-PUBLIC-POLICY: limit_ambiguous is true; SOL value derived from general tort statute Cal. Code Civ. Proc. § 335.1.",
+      "CA-CL-PUBLIC-POLICY: Removed parent slug public-health-safety from disclosure_types — no matching child slug found",
+      "CA-CL-PUBLIC-POLICY: Removed unregistered slug fraud-and-financial from disclosure_types.",
+      "CA-CL-PUBLIC-POLICY: Removed unregistered slugs external-state and external-federal from disclosure_targets, replaced with valid agency-state and agency-federal."
+    ],
+    "error_count": 4
+  }
+}
