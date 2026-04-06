@@ -69,6 +69,41 @@ Omit when "":
 
 ---
 
+HAS-DETAILS AS SOLE ARRAY ENTRY
+has-details may appear as the only entry in a valid taxonomy array when all
+substantive slugs have been removed or moved to new_terms_proposed.
+
+When this occurs:
+1) Attempt to populate the companion *_details field from verified statute text.
+2) If populated, log the action in _reconciled_notes.
+3) If the companion field cannot be populated from verified sources:
+	 - preserve ["has-details"],
+	 - omit the companion field,
+	 - set with_errors: true,
+	 - add to error_details exactly:
+		 "[STATUTE_ID]: has-details is sole entry in [FIELD] - companion field unresolvable; human review required."
+
+---
+
+CROSS-TAXONOMY MAPPING STRICTNESS
+A valid slug must not only exist in registered taxonomy, it must also be
+assigned to the exact taxonomy table designated for that schema field.
+
+Do not cross-pollinate slugs across taxonomy arrays.
+Examples:
+- burden_of_proof.employer_defense accepts only ws_employer_defense slugs
+- burden_of_proof.employee_standard accepts only ws_employee_standard slugs
+
+If the assigned table lacks an adequate slug:
+1) use has-details where valid and document nuance in the companion *_details,
+	 or
+2) propose a new term in new_terms_proposed.
+
+Placing a slug into an unassigned array is a schema corruption event and must
+be removed, then logged.
+
+---
+
 PROPOSED TERM DISCIPLINE
 Invalid or unregistered slugs must not remain in record arrays.
 If a concept requires new vocabulary:
