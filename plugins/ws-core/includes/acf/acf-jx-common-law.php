@@ -80,6 +80,10 @@ defined( 'ABSPATH' ) || exit;
  *   ws_cl_reward_available             Reward available (true_false)
  *   ws_cl_reward_details         Reward Details (textarea, conditional)
  *
+ * Relationships tab:
+ *   ws_cl_citation_ids            Related Citations (post_object, multiple)
+ *   ws_cl_interpretation_ids      Related Interpretations (post_object, multiple)
+ *
  * @package    WhistleblowerShield
  * @since      3.13.0
  * @version    3.13.0
@@ -736,6 +740,42 @@ function ws_register_acf_jx_common_law() {
                     'operator' => '==',
                     'value'    => '1',
                 ] ] ],
+            ],
+
+            // ── Relationships ────────────────────────────────────────────
+
+            [
+                'key'   => 'field_jx_cl_relationships_tab',
+                'label' => 'Relationships',
+                'type'  => 'tab',
+            ],
+
+            [
+                'key'           => 'field_jx_cl_citation_ids',
+                'label'         => 'Related Citations',
+                'name'          => 'ws_cl_citation_ids',
+                'type'          => 'post_object',
+                'post_type'     => [ 'jx-citation' ],
+                'instructions'  => 'Link citations that directly support this doctrine. Optional.',
+                'required'      => 0,
+                'multiple'      => 1,
+                'allow_null'    => 1,
+                'ui'            => 1,
+                'return_format' => 'id',
+            ],
+
+            [
+                'key'           => 'field_jx_cl_interpretation_ids',
+                'label'         => 'Related Interpretations',
+                'name'          => 'ws_cl_interpretation_ids',
+                'type'          => 'post_object',
+                'post_type'     => [ 'jx-interpretation' ],
+                'instructions'  => 'Link interpretations that directly analyze this doctrine. Optional.',
+                'required'      => 0,
+                'multiple'      => 1,
+                'allow_null'    => 1,
+                'ui'            => 1,
+                'return_format' => 'id',
             ],
 
             // ── Reference Materials ───────────────────────────────────────

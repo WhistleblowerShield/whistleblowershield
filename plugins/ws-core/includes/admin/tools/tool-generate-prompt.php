@@ -1210,6 +1210,7 @@ RECORD SCHEMA
   "jurisdiction_id":   "[TWO-LETTER CODE]",
   "citation_id":       "[JX]-CIT-[YEAR]-[SHORT-SLUG e.g. NJ-CIT-2003-DZWONAR]",
   "parent_statute_id": "[STATUTE_ID this citation directly supports e.g. NJ-34:19-1]",
+    "parent_common_law_id": "[OPTIONAL DOCTRINE_ID when citation supports common-law e.g. PA-CL-WRONGFUL-DISCHARGE]",
   "case_name":         "[FULL CASE NAME e.g. Dzwonar v. McDevitt]",
   "court":             "[COURT SHORTHAND from list above e.g. NJ-SUP]",
   "effective_date":    "[YYYY-MM-DD — operative date of ruling]",
@@ -1246,6 +1247,10 @@ SCHEMA NOTES
 
 citation_id: Format [JX]-CIT-[YEAR]-[SHORT-SLUG]. Year is ruling year.
 Short slug is first meaningful word of the case name.
+
+parent linkage: provide at least one of parent_statute_id or
+parent_common_law_id. Provide both only when the citation directly supports
+both records.
 
 taxonomy arrays: Tag sparingly. In almost all cases a citation addresses
 exactly one taxonomy axis — tag one term with confidence rather than
@@ -1287,6 +1292,7 @@ RECORD SCHEMA
   "jurisdiction_id":   "[TWO-LETTER CODE]",
   "interpretation_id": "[JX]-INTERP-[YEAR]-[SHORT-SLUG]",
   "parent_statute_id": "[STATUTE_ID this interpretation directly addresses]",
+    "parent_common_law_id": "[OPTIONAL DOCTRINE_ID when interpretation addresses common-law doctrine]",
   "case_name":         "[FULL CASE NAME]",
   "court":             "[COURT SHORTHAND from list above]",
   "effective_date":    "[YYYY-MM-DD — operative date of ruling]",
@@ -1323,6 +1329,10 @@ RECORD SCHEMA
 SCHEMA NOTES
 
 taxonomy arrays: Tag sparingly — same rules as citations. One taxonomy axis
+parent linkage: provide at least one of parent_statute_id or
+parent_common_law_id. Provide both only when the interpretation directly
+addresses both records.
+
 almost always. Multiple tags require _multi_taxonomy_notes.
 
 favorable: Only when the ruling materially expands or clarifies protection.

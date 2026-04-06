@@ -42,7 +42,8 @@
  *   ws_jx_interp_employee_standard Taxonomy — ws_employee_standard terms.
  *
  * Relationships tab:
- *   ws_jx_interp_statute_id    Post object — parent jx-statute (single, required).
+ *   ws_jx_interp_statute_id    Post object — parent jx-statute (single, optional).
+ *   ws_jx_interp_common_law_id Post object — parent jx-common-law (single, optional).
  *   ws_jx_interp_affected_jx   Taxonomy — ws_jurisdiction terms. Auto-computed on
  *                               save from the court's ws_jx_codes in the court matrix.
  *                               Empty = SCOTUS (all jx). 'other' court = skip.
@@ -476,10 +477,24 @@ function ws_register_acf_jx_interpretations() {
                 'name'          => 'ws_jx_interp_statute_id',
                 'type'          => 'post_object',
                 'post_type'     => [ 'jx-statute' ],
-                'instructions'  => 'The federal statute this case interprets.',
-                'required'      => 1,
+                'instructions'  => 'Parent statute this case interprets, when statute-linked.',
+                'required'      => 0,
                 'multiple'      => 0,
-                'allow_null'    => 0,
+                'allow_null'    => 1,
+                'ui'            => 1,
+                'return_format' => 'id',
+            ],
+
+            [
+                'key'           => 'field_jx_interp_common_law_id',
+                'label'         => 'Parent Common Law Doctrine',
+                'name'          => 'ws_jx_interp_common_law_id',
+                'type'          => 'post_object',
+                'post_type'     => [ 'jx-common-law' ],
+                'instructions'  => 'Parent common-law doctrine this case interprets, when doctrine-linked.',
+                'required'      => 0,
+                'multiple'      => 0,
+                'allow_null'    => 1,
                 'ui'            => 1,
                 'return_format' => 'id',
             ],

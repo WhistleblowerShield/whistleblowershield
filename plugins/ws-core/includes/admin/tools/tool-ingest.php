@@ -60,13 +60,17 @@
  *
  * @package    WhistleblowerShield
  * @since      3.14.0
- * @version    3.14.2
+ * @version    3.14.3
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
  * VERSION
  * -------
+ * 3.14.3  Citation dedupe + common-law relationship linkage:
+ *         - citation stub dedupe keyed by normalized case name + parent record
+ *         - optional parent_common_law_id linkage for citation and interpretation records
+ *         - common-law interpretation back-link support via ws_cl_interpretation_ids
  * 3.14.2  Citation + interpretation ingest and neutral logging:
  *         - dedicated jx-citation field map and processor
  *         - dedicated jx-interpretation field map and processor
@@ -90,7 +94,7 @@ defined( 'ABSPATH' ) || exit;
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-define( 'WS_INGEST_VERSION',       '3.14.2' );
+define( 'WS_INGEST_VERSION',       '3.14.3' );
 define( 'WS_INGEST_SCHEMA_VERSION', '2.0' );
 define( 'WS_PROPOSED_TERMS_LOG',   WP_CONTENT_DIR . '/logs/ws-ingest/proposed-terms-log.json' );
 define( 'WS_INGEST_LOG_DIR',       WP_CONTENT_DIR . '/logs/ws-ingest/' );
@@ -504,9 +508,10 @@ function ws_ingest_preflight( array $data ): array {
         }
 
         if ( in_array( $record_type, [ 'citation', 'interpretation' ], true ) ) {
-            $parent_statute_id = trim( (string) ( $record['parent_statute_id'] ?? '' ) );
-            if ( $parent_statute_id === '' ) {
-                $result['warnings'][] = "record[$i]: missing parent_statute_id (statute linkage will be skipped).";
+            $parent_statute_id    = trim( (string) ( $record['parent_statute_id'] ?? '' ) );
+            $parent_common_law_id = trim( (string) ( $record['parent_common_law_id'] ?? '' ) );
+            if ( $parent_statute_id === '' && $parent_common_law_id === '' ) {
+                $result['warnings'][] = "record[$i]: missing parent_statute_id and parent_common_law_id (relationship linkage will be skipped).";
             }
         }
     }
@@ -829,6 +834,53 @@ function ws_ingest_find_statute_post_id_by_statute_id( string $statute_id, strin
 
     $fallback = get_posts( [
         'post_type'      => 'jx-statute',
+        'post_status'    => 'any',
+        'posts_per_page' => 1,
+        'fields'         => 'ids',
+        'no_found_rows'  => true,
+        'meta_query'     => [ [
+            'key'     => '_ws_ingest_record_key',
+            'value'   => $record_key,
+            'compare' => '=',
+        ] ],
+    ] );
+
+    return ! empty( $fallback ) ? (int) $fallback[0] : 0;
+}
+
+/**
+ * Finds a common-law post by canonical doctrine ID.
+ */
+function ws_ingest_find_common_law_post_id_by_doctrine_id( string $doctrine_id, string $jx_slug ): int {
+    $doctrine_id = strtoupper( trim( $doctrine_id ) );
+    if ( $doctrine_id === '' ) {
+        return 0;
+    }
+
+    $existing = get_posts( [
+        'post_type'      => 'jx-common-law',
+        'post_status'    => 'any',
+        'posts_per_page' => 1,
+        'fields'         => 'ids',
+        'no_found_rows'  => true,
+        'meta_query'     => [ [
+            'key'     => '_ws_cl_doctrine_id',
+            'value'   => $doctrine_id,
+            'compare' => '=',
+        ] ],
+    ] );
+
+    if ( ! empty( $existing ) ) {
+        return (int) $existing[0];
+    }
+
+    $record_key = strtolower( trim( $jx_slug ) . '|' . $doctrine_id );
+    if ( $record_key === '' ) {
+        return 0;
+    }
+
+    $fallback = get_posts( [
+        'post_type'      => 'jx-common-law',
         'post_status'    => 'any',
         'posts_per_page' => 1,
         'fields'         => 'ids',
@@ -1200,10 +1252,61 @@ function ws_ingest_citation_type_from_batch( array $meta ): string {
 /**
  * Builds a stable dedupe key for citation stubs created during ingest.
  */
-function ws_ingest_build_citation_key( string $jx_slug, int $statute_post_id, string $citation_text ): string {
-    $normalized = strtolower( trim( preg_replace( '/\s+/', ' ', $citation_text ) ) );
-    $payload    = strtolower( $jx_slug ) . '|' . (int) $statute_post_id . '|' . $normalized;
+function ws_ingest_normalize_case_name( string $case_name ): string {
+    $normalized = strtolower( trim( preg_replace( '/\s+/', ' ', $case_name ) ) );
+    $normalized = preg_replace( '/[^a-z0-9]+/', '', (string) $normalized );
+    return (string) $normalized;
+}
+
+/**
+ * Builds a stable dedupe key for citation stubs created during ingest.
+ */
+function ws_ingest_build_citation_key( string $jx_slug, string $parent_type, int $parent_post_id, string $case_name ): string {
+    $normalized_case = ws_ingest_normalize_case_name( $case_name );
+    $payload         = strtolower( $jx_slug ) . '|' . strtolower( $parent_type ) . '|' . (int) $parent_post_id . '|' . $normalized_case;
     return hash( 'sha256', $payload );
+}
+
+/**
+ * Finds an existing citation linked to the same parent by case name.
+ */
+function ws_ingest_find_citation_by_parent_and_case( string $parent_meta_key, int $parent_post_id, string $case_name ): int {
+    if ( $parent_post_id <= 0 || trim( $case_name ) === '' ) {
+        return 0;
+    }
+
+    $case_name = sanitize_text_field( $case_name );
+
+    $existing = get_posts( [
+        'post_type'      => 'jx-citation',
+        'post_status'    => 'any',
+        'posts_per_page' => 1,
+        'fields'         => 'ids',
+        'no_found_rows'  => true,
+        'meta_query'     => [
+            'relation' => 'AND',
+            [
+                'key'     => $parent_meta_key,
+                'value'   => '"' . (int) $parent_post_id . '"',
+                'compare' => 'LIKE',
+            ],
+            [
+                'relation' => 'OR',
+                [
+                    'key'     => 'ws_jx_citation_official_name',
+                    'value'   => $case_name,
+                    'compare' => '=',
+                ],
+                [
+                    'key'     => 'ws_jx_citation_common_name',
+                    'value'   => $case_name,
+                    'compare' => '=',
+                ],
+            ],
+        ],
+    ] );
+
+    return ! empty( $existing ) ? (int) $existing[0] : 0;
 }
 
 /**
@@ -1257,8 +1360,11 @@ function ws_ingest_create_citation_stubs_for_statute( int $statute_post_id, arra
             $case_name = trim( $citation_text );
         }
 
-        $citation_key = ws_ingest_build_citation_key( $jx_slug, $statute_post_id, $citation_text );
+        $citation_key = ws_ingest_build_citation_key( $jx_slug, 'statute', $statute_post_id, $case_name );
         $existing_id  = ws_ingest_find_citation_by_key( $citation_key );
+        if ( ! $existing_id ) {
+            $existing_id = ws_ingest_find_citation_by_parent_and_case( 'ws_jx_citation_statute_ids', $statute_post_id, $case_name );
+        }
 
         if ( $existing_id ) {
             $raw_statute_ids = get_post_meta( $existing_id, 'ws_jx_citation_statute_ids', true );
@@ -1266,6 +1372,9 @@ function ws_ingest_create_citation_stubs_for_statute( int $statute_post_id, arra
             if ( ! in_array( $statute_post_id, $statute_ids, true ) ) {
                 $statute_ids[] = $statute_post_id;
                 update_post_meta( $existing_id, 'ws_jx_citation_statute_ids', array_values( array_unique( $statute_ids ) ) );
+            }
+            if ( get_post_meta( $existing_id, '_ws_ingest_citation_key', true ) === '' ) {
+                update_post_meta( $existing_id, '_ws_ingest_citation_key', $citation_key );
             }
             $linked[] = $existing_id;
             continue;
@@ -1356,8 +1465,11 @@ function ws_ingest_create_citation_stubs_for_common_law( int $common_law_post_id
             $case_name = trim( $citation_text );
         }
 
-        $citation_key = ws_ingest_build_citation_key( $jx_slug, $common_law_post_id, $citation_text );
+        $citation_key = ws_ingest_build_citation_key( $jx_slug, 'common-law', $common_law_post_id, $case_name );
         $existing_id  = ws_ingest_find_citation_by_key( $citation_key );
+        if ( ! $existing_id ) {
+            $existing_id = ws_ingest_find_citation_by_parent_and_case( 'ws_jx_citation_common_law_ids', $common_law_post_id, $case_name );
+        }
 
         if ( $existing_id ) {
             $raw_common_law_ids = get_post_meta( $existing_id, 'ws_jx_citation_common_law_ids', true );
@@ -1365,6 +1477,9 @@ function ws_ingest_create_citation_stubs_for_common_law( int $common_law_post_id
             if ( ! in_array( $common_law_post_id, $common_law_ids, true ) ) {
                 $common_law_ids[] = $common_law_post_id;
                 update_post_meta( $existing_id, 'ws_jx_citation_common_law_ids', array_values( array_unique( $common_law_ids ) ) );
+            }
+            if ( get_post_meta( $existing_id, '_ws_ingest_citation_key', true ) === '' ) {
+                update_post_meta( $existing_id, '_ws_ingest_citation_key', $citation_key );
             }
             $linked[] = $existing_id;
             continue;
@@ -2147,10 +2262,27 @@ function ws_ingest_process_citation_record( array $record, array $meta, array $b
     if ( $parent_statute_id !== '' ) {
         $statute_post_id = ws_ingest_find_statute_post_id_by_statute_id( $parent_statute_id, $jx_slug );
         if ( $statute_post_id > 0 ) {
-            update_post_meta( $post_id, 'ws_jx_citation_statute_ids', [ $statute_post_id ] );
+            $raw_statute_ids = get_post_meta( $post_id, 'ws_jx_citation_statute_ids', true );
+            $statute_ids     = is_array( $raw_statute_ids ) ? array_map( 'intval', $raw_statute_ids ) : [];
+            $statute_ids[]   = $statute_post_id;
+            update_post_meta( $post_id, 'ws_jx_citation_statute_ids', array_values( array_unique( $statute_ids ) ) );
             $result['log'][] = "$cid: linked parent statute {$parent_statute_id} (post #{$statute_post_id})";
         } else {
             $result['warnings'][] = "$cid: parent_statute_id {$parent_statute_id} not found in jx-statute.";
+        }
+    }
+
+    $parent_common_law_id = trim( (string) ( $record['parent_common_law_id'] ?? '' ) );
+    if ( $parent_common_law_id !== '' ) {
+        $common_law_post_id = ws_ingest_find_common_law_post_id_by_doctrine_id( $parent_common_law_id, $jx_slug );
+        if ( $common_law_post_id > 0 ) {
+            $raw_common_law_ids = get_post_meta( $post_id, 'ws_jx_citation_common_law_ids', true );
+            $common_law_ids     = is_array( $raw_common_law_ids ) ? array_map( 'intval', $raw_common_law_ids ) : [];
+            $common_law_ids[]   = $common_law_post_id;
+            update_post_meta( $post_id, 'ws_jx_citation_common_law_ids', array_values( array_unique( $common_law_ids ) ) );
+            $result['log'][] = "$cid: linked parent common-law {$parent_common_law_id} (post #{$common_law_post_id})";
+        } else {
+            $result['warnings'][] = "$cid: parent_common_law_id {$parent_common_law_id} not found in jx-common-law.";
         }
     }
 
@@ -2334,6 +2466,25 @@ function ws_ingest_process_interpretation_record( array $record, array $meta, ar
             $result['log'][] = "$iid: linked parent statute {$parent_statute_id} (post #{$statute_post_id})";
         } else {
             $result['warnings'][] = "$iid: parent_statute_id {$parent_statute_id} not found in jx-statute.";
+        }
+    }
+
+    $parent_common_law_id = trim( (string) ( $record['parent_common_law_id'] ?? '' ) );
+    if ( $parent_common_law_id !== '' ) {
+        $common_law_post_id = ws_ingest_find_common_law_post_id_by_doctrine_id( $parent_common_law_id, $jx_slug );
+        if ( $common_law_post_id > 0 ) {
+            update_post_meta( $post_id, 'ws_jx_interp_common_law_id', (int) $common_law_post_id );
+
+            $raw_interp_ids = get_post_meta( $common_law_post_id, 'ws_cl_interpretation_ids', true );
+            $interp_ids     = is_array( $raw_interp_ids ) ? array_map( 'intval', $raw_interp_ids ) : [];
+            if ( ! in_array( (int) $post_id, $interp_ids, true ) ) {
+                $interp_ids[] = (int) $post_id;
+                update_post_meta( $common_law_post_id, 'ws_cl_interpretation_ids', array_values( array_unique( $interp_ids ) ) );
+            }
+
+            $result['log'][] = "$iid: linked parent common-law {$parent_common_law_id} (post #{$common_law_post_id})";
+        } else {
+            $result['warnings'][] = "$iid: parent_common_law_id {$parent_common_law_id} not found in jx-common-law.";
         }
     }
 

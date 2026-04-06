@@ -73,6 +73,33 @@ Omit when "":
 
 ---
 
+ATTACHED CITATION DEDUPE (PARENT-SCOPED)
+
+For citations.attached_citations rows in the same record:
+
+1) Dedupe key
+- Use CASE (first token before "||") as the canonical identity.
+- CASE matching is case-insensitive and whitespace-insensitive.
+- Do not emit duplicate rows for the same CASE within one parent record.
+
+2) Merge rule when IMPACT/URL differ for same CASE
+- Keep one row.
+- IMPACT: keep the most specific action-verbed statement; if both add distinct facts,
+	merge into one concise IMPACT sentence.
+- URL: keep one best approved-source URL. If one URL is clearly superior
+	(official/authoritative), keep that one.
+- SOURCE/QUALITY: keep values aligned to the selected URL/source confidence.
+
+3) Conflict logging
+- When duplicate CASE rows were merged because IMPACT or URL disagreed,
+	add a note in _reconciled_notes describing the consolidation choice.
+
+4) Prohibited output
+- Never output two attached_citations rows for the same CASE under the same
+	parent record.
+
+---
+
 FOR COMMON LAW RECORD TYPES
 In record.burden_of_proof:
 If statutory_preclusion is set true, statutory_preclusion_details must accompy it,
