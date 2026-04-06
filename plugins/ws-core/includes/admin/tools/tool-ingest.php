@@ -419,6 +419,12 @@ function ws_ingest_preflight( array $data ): array {
 
     // Record identity checks
     foreach ( $records as $i => $record ) {
+        if ( ! is_array( $record ) ) {
+            $result['errors'][] = "record[$i]: must be an object.";
+            $result['pass'] = false;
+            continue;
+        }
+
         $jx = $record['jurisdiction_id'] ?? '';
         $sid = ws_ingest_get_record_identifier( (array) $record, $record_type );
         if ( empty( $jx ) ) {
@@ -436,12 +442,13 @@ function ws_ingest_preflight( array $data ): array {
             }
         }
 
-        if ( in_array( $record_type, [ 'citation', 'interpretation' ], true ) ) {
-            $parent_statute_id    = trim( (string) ( $record['parent_statute_id'] ?? '' ) );
-            $parent_common_law_id = trim( (string) ( $record['parent_common_law_id'] ?? '' ) );
-            if ( $parent_statute_id === '' && $parent_common_law_id === '' ) {
-                $result['warnings'][] = "record[$i]: missing parent_statute_id and parent_common_law_id (relationship linkage will be skipped).";
-            }
+        $shape = ws_ingest_validate_record_shape( $record, $record_type, $i );
+        if ( ! empty( $shape['errors'] ) ) {
+            $result['errors'] = array_merge( $result['errors'], $shape['errors'] );
+            $result['pass'] = false;
+        }
+        if ( ! empty( $shape['warnings'] ) ) {
+            $result['warnings'] = array_merge( $result['warnings'], $shape['warnings'] );
         }
     }
 
@@ -498,6 +505,164 @@ function ws_ingest_get_record_identifier( array $record, string $record_type ): 
         return (string) ( $record['interpretation_id'] ?? 'UNKNOWN' );
     }
     return (string) ( $record['statute_id'] ?? 'UNKNOWN' );
+}
+
+/**
+ * Returns allowed top-level keys for each record type.
+ */
+function ws_ingest_allowed_record_keys( string $record_type ): array {
+    $common = [
+        'jurisdiction_id',
+        'common_name',
+        'legal_basis',
+        'statute_of_limitations',
+        'enforcement',
+        'burden_of_proof',
+        'reward',
+        'links',
+        'citations',
+        '_review_notes',
+        '_reconciled_notes',
+    ];
+
+    if ( $record_type === 'common-law' ) {
+        return array_merge( $common, [ 'doctrine_id', 'doctrine_name' ] );
+    }
+
+    if ( $record_type === 'citation' ) {
+        return [
+            'jurisdiction_id',
+            'citation_id',
+            'parent_statute_id',
+            'parent_common_law_id',
+            'case_name',
+            'common_name',
+            'court',
+            'effective_date',
+            'ruling_date',
+            'specific_impact',
+            'favorable',
+            'disclosure_types',
+            'protected_class',
+            'protected_class_details',
+            'disclosure_targets',
+            'disclosure_targets_details',
+            'adverse_action',
+            'adverse_action_details',
+            'remedies',
+            'remedies_details',
+            'process_type',
+            'fee_shifting',
+            'employer_defense',
+            'employer_defense_details',
+            'employee_standard',
+            'employee_standard_details',
+            '_multi_taxonomy_notes',
+            'links',
+            'quality',
+            '_review_notes',
+        ];
+    }
+
+    if ( $record_type === 'interpretation' ) {
+        return [
+            'jurisdiction_id',
+            'interpretation_id',
+            'parent_statute_id',
+            'parent_common_law_id',
+            'case_name',
+            'common_name',
+            'court',
+            'effective_date',
+            'ruling_date',
+            'specific_impact',
+            'favorable',
+            'disclosure_types',
+            'protected_class',
+            'protected_class_details',
+            'disclosure_targets',
+            'disclosure_targets_details',
+            'adverse_action',
+            'adverse_action_details',
+            'remedies',
+            'remedies_details',
+            'process_type',
+            'fee_shifting',
+            'employer_defense',
+            'employer_defense_details',
+            'employee_standard',
+            'employee_standard_details',
+            '_multi_taxonomy_notes',
+            'links',
+            'quality',
+            '_review_notes',
+        ];
+    }
+
+    // statute
+    return array_merge( $common, [ 'statute_id', 'official_name' ] );
+}
+
+/**
+ * Strict shape validation for one record.
+ * Returns [ 'errors' => string[], 'warnings' => string[] ]
+ */
+function ws_ingest_validate_record_shape( array $record, string $record_type, int $index ): array {
+    $errors = [];
+    $warnings = [];
+
+    $id_key = 'statute_id';
+    if ( $record_type === 'common-law' ) {
+        $id_key = 'doctrine_id';
+    } elseif ( $record_type === 'citation' ) {
+        $id_key = 'citation_id';
+    } elseif ( $record_type === 'interpretation' ) {
+        $id_key = 'interpretation_id';
+    }
+
+    $sid = ws_ingest_get_record_identifier( $record, $record_type );
+
+    $allowed_keys = ws_ingest_allowed_record_keys( $record_type );
+    foreach ( array_keys( $record ) as $key ) {
+        if ( ! in_array( (string) $key, $allowed_keys, true ) ) {
+            $errors[] = "$sid: unknown top-level key '{$key}' in record[$index].";
+        }
+    }
+
+    if ( trim( (string) ( $record['jurisdiction_id'] ?? '' ) ) === '' ) {
+        $errors[] = "$sid: missing required jurisdiction_id in record[$index].";
+    }
+    if ( trim( (string) ( $record[ $id_key ] ?? '' ) ) === '' ) {
+        $errors[] = "$sid: missing required {$id_key} in record[$index].";
+    }
+
+    if ( in_array( $record_type, [ 'citation', 'interpretation' ], true ) ) {
+        $parent_statute_id    = trim( (string) ( $record['parent_statute_id'] ?? '' ) );
+        $parent_common_law_id = trim( (string) ( $record['parent_common_law_id'] ?? '' ) );
+        if ( $parent_statute_id === '' && $parent_common_law_id === '' ) {
+            $errors[] = "$sid: missing parent_statute_id and parent_common_law_id in record[$index].";
+        }
+    }
+
+    if ( isset( $record['citations'] ) ) {
+        if ( ! is_array( $record['citations'] ) ) {
+            $errors[] = "$sid: citations must be an object when present.";
+        } else {
+            $attached = $record['citations']['attached_citations'] ?? null;
+            if ( $attached !== null && ! is_array( $attached ) && ! is_string( $attached ) ) {
+                $errors[] = "$sid: citations.attached_citations must be an array or string when present.";
+            }
+            if ( is_array( $attached ) ) {
+                foreach ( $attached as $row_i => $row ) {
+                    if ( ! is_string( $row ) ) {
+                        $errors[] = "$sid: citations.attached_citations[$row_i] must be a string.";
+                    }
+                }
+            }
+        }
+    }
+
+    return [ 'errors' => $errors, 'warnings' => $warnings ];
 }
 
 
@@ -1273,7 +1438,30 @@ function ws_ingest_create_citation_stubs_for_statute( int $statute_post_id, arra
     $raw       = $record['citations']['attached_citations'] ?? [];
     $citations = ws_ingest_parse_attached_citations( $raw );
     if ( empty( $citations ) ) {
-        return [ 'created' => $created, 'linked' => $linked, 'warnings' => $warnings, 'count' => 0 ];
+        return [ 'created' => $created, 'linked' => $linked, 'warnings' => $warnings, 'count' => 0, 'unique_case_count' => 0, 'duplicate_case_rows' => 0 ];
+    }
+
+    $case_counts = [];
+    foreach ( $citations as $citation_text ) {
+        $entry = ws_ingest_parse_citation_entry( (string) $citation_text );
+        $case_name = trim( (string) ( $entry['case_name'] ?? '' ) );
+        if ( $case_name === '' ) {
+            $case_name = trim( (string) $citation_text );
+        }
+        $case_key = ws_ingest_normalize_case_name( $case_name );
+        if ( $case_key === '' ) {
+            $case_key = strtolower( trim( preg_replace( '/\s+/', ' ', (string) $case_name ) ) );
+        }
+        if ( $case_key === '' ) {
+            continue;
+        }
+        $case_counts[ $case_key ] = (int) ( $case_counts[ $case_key ] ?? 0 ) + 1;
+    }
+    $duplicate_case_rows = 0;
+    foreach ( $case_counts as $c ) {
+        if ( $c > 1 ) {
+            $duplicate_case_rows += ( $c - 1 );
+        }
     }
 
     $jx_term = get_term_by( 'slug', strtolower( $jx_slug ), WS_JURISDICTION_TAXONOMY );
@@ -1321,7 +1509,8 @@ function ws_ingest_create_citation_stubs_for_statute( int $statute_post_id, arra
             continue;
         }
 
-        update_post_meta( $post_id, 'ws_jx_citation_type', ws_ingest_citation_type_from_batch( $meta ) );
+        // Common-law attached citations are case law by definition.
+        update_post_meta( $post_id, 'ws_jx_citation_type', [ 'case_law' ] );
         update_post_meta( $post_id, 'ws_jx_citation_common_name', sanitize_text_field( $case_name ) );
         update_post_meta( $post_id, 'ws_jx_citation_official_name', sanitize_text_field( $case_name ) );
 
@@ -1364,6 +1553,8 @@ function ws_ingest_create_citation_stubs_for_statute( int $statute_post_id, arra
         'linked'   => array_values( array_unique( $linked ) ),
         'warnings' => $warnings,
         'count'    => count( $citations ),
+        'unique_case_count' => count( $case_counts ),
+        'duplicate_case_rows' => $duplicate_case_rows,
     ];
 }
 
@@ -1378,7 +1569,30 @@ function ws_ingest_create_citation_stubs_for_common_law( int $common_law_post_id
     $raw       = $record['citations']['attached_citations'] ?? [];
     $citations = ws_ingest_parse_attached_citations( $raw );
     if ( empty( $citations ) ) {
-        return [ 'created' => $created, 'linked' => $linked, 'warnings' => $warnings, 'count' => 0 ];
+        return [ 'created' => $created, 'linked' => $linked, 'warnings' => $warnings, 'count' => 0, 'unique_case_count' => 0, 'duplicate_case_rows' => 0 ];
+    }
+
+    $case_counts = [];
+    foreach ( $citations as $citation_text ) {
+        $entry = ws_ingest_parse_citation_entry( (string) $citation_text );
+        $case_name = trim( (string) ( $entry['case_name'] ?? '' ) );
+        if ( $case_name === '' ) {
+            $case_name = trim( (string) $citation_text );
+        }
+        $case_key = ws_ingest_normalize_case_name( $case_name );
+        if ( $case_key === '' ) {
+            $case_key = strtolower( trim( preg_replace( '/\s+/', ' ', (string) $case_name ) ) );
+        }
+        if ( $case_key === '' ) {
+            continue;
+        }
+        $case_counts[ $case_key ] = (int) ( $case_counts[ $case_key ] ?? 0 ) + 1;
+    }
+    $duplicate_case_rows = 0;
+    foreach ( $case_counts as $c ) {
+        if ( $c > 1 ) {
+            $duplicate_case_rows += ( $c - 1 );
+        }
     }
 
     $jx_term = get_term_by( 'slug', strtolower( $jx_slug ), WS_JURISDICTION_TAXONOMY );
@@ -1426,7 +1640,7 @@ function ws_ingest_create_citation_stubs_for_common_law( int $common_law_post_id
             continue;
         }
 
-        update_post_meta( $post_id, 'ws_jx_citation_type', ws_ingest_citation_type_from_batch( $meta ) );
+        update_post_meta( $post_id, 'ws_jx_citation_type', [ ws_ingest_citation_type_from_batch( $meta ) ] );
         update_post_meta( $post_id, 'ws_jx_citation_common_name', sanitize_text_field( $case_name ) );
         update_post_meta( $post_id, 'ws_jx_citation_official_name', sanitize_text_field( $case_name ) );
 
@@ -1469,6 +1683,8 @@ function ws_ingest_create_citation_stubs_for_common_law( int $common_law_post_id
         'linked'   => array_values( array_unique( $linked ) ),
         'warnings' => $warnings,
         'count'    => count( $citations ),
+        'unique_case_count' => count( $case_counts ),
+        'duplicate_case_rows' => $duplicate_case_rows,
     ];
 }
 
@@ -1725,6 +1941,16 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
     if ( ! empty( $citation_stub_result['warnings'] ) ) {
         foreach ( $citation_stub_result['warnings'] as $warning ) {
             $result['warnings'][] = "$sid: $warning";
+        }
+    }
+
+    if ( (int) ( $citation_stub_result['count'] ?? 0 ) > 0 ) {
+        $rows = (int) ( $citation_stub_result['count'] ?? 0 );
+        $unique_cases = (int) ( $citation_stub_result['unique_case_count'] ?? 0 );
+        $dupes = (int) ( $citation_stub_result['duplicate_case_rows'] ?? 0 );
+        $result['log'][] = "$sid: citation rows={$rows}, unique_case_keys={$unique_cases}, created=" . count( (array) ( $citation_stub_result['created'] ?? [] ) ) . ', linked=' . count( (array) ( $citation_stub_result['linked'] ?? [] ) );
+        if ( $dupes > 0 ) {
+            $result['warnings'][] = "$sid: attached_citations contains {$dupes} duplicate CASE row(s); dedupe collapsed rows by CASE identity before/create-link pass.";
         }
     }
 
@@ -1987,6 +2213,16 @@ function ws_ingest_process_common_law_record( array $record, array $meta, array 
         }
     }
 
+    if ( (int) ( $citation_stub_result['count'] ?? 0 ) > 0 ) {
+        $rows = (int) ( $citation_stub_result['count'] ?? 0 );
+        $unique_cases = (int) ( $citation_stub_result['unique_case_count'] ?? 0 );
+        $dupes = (int) ( $citation_stub_result['duplicate_case_rows'] ?? 0 );
+        $result['log'][] = "$did: citation rows={$rows}, unique_case_keys={$unique_cases}, created=" . count( (array) ( $citation_stub_result['created'] ?? [] ) ) . ', linked=' . count( (array) ( $citation_stub_result['linked'] ?? [] ) );
+        if ( $dupes > 0 ) {
+            $result['warnings'][] = "$did: attached_citations contains {$dupes} duplicate CASE row(s); dedupe collapsed rows by CASE identity before/create-link pass.";
+        }
+    }
+
     $primary_agency = (string) ws_ingest_get_value( $record, 'enforcement.primary_agency' );
     if ( trim( $primary_agency ) !== '' ) {
         $agency_labels = ws_ingest_extract_agency_labels( $primary_agency );
@@ -2092,7 +2328,7 @@ function ws_ingest_process_citation_record( array $record, array $meta, array $b
     update_post_meta( $post_id, 'ws_auto_source_name',   sanitize_text_field( $meta['source_name']   ?? '' ) );
     update_post_meta( $post_id, 'ws_verification_status', 'unverified' );
     update_post_meta( $post_id, 'ws_needs_review',        0 );
-    update_post_meta( $post_id, 'ws_jx_citation_type',    'case_law' );
+    update_post_meta( $post_id, 'ws_jx_citation_type',    [ 'case_law' ] );
 
     if ( ! empty( $meta['source_chain'] ) && is_array( $meta['source_chain'] ) ) {
         update_post_meta( $post_id, '_ws_auto_source_chain', wp_json_encode( $meta['source_chain'] ) );
@@ -2209,6 +2445,12 @@ function ws_ingest_process_citation_record( array $record, array $meta, array $b
             $common_law_ids     = is_array( $raw_common_law_ids ) ? array_map( 'intval', $raw_common_law_ids ) : [];
             $common_law_ids[]   = $common_law_post_id;
             update_post_meta( $post_id, 'ws_jx_citation_common_law_ids', array_values( array_unique( $common_law_ids ) ) );
+            $raw_types = get_post_meta( $post_id, 'ws_jx_citation_type', true );
+            $types     = is_array( $raw_types ) ? array_map( 'sanitize_key', $raw_types ) : [];
+            if ( ! in_array( 'case_law', $types, true ) ) {
+                $types[] = 'case_law';
+            }
+            update_post_meta( $post_id, 'ws_jx_citation_type', array_values( array_unique( $types ) ) );
             $result['log'][] = "$cid: linked parent common-law {$parent_common_law_id} (post #{$common_law_post_id})";
         } else {
             $result['warnings'][] = "$cid: parent_common_law_id {$parent_common_law_id} not found in jx-common-law.";

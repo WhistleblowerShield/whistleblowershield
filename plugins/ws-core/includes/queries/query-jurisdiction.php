@@ -626,6 +626,8 @@ function ws_get_jx_citation_data( $jx_term_id ) {
         $rows = [];
         foreach ( $q->posts as $citation ) {
             $cid    = $citation->ID;
+            $type_raw = get_post_meta( $cid, 'ws_jx_citation_type', true );
+            $type_list = is_array( $type_raw ) ? array_values( array_filter( array_map( 'sanitize_key', $type_raw ) ) ) : [];
             $rows[] = [
                 'id'      => $cid,
                 'title'   => get_the_title( $cid ),
@@ -634,7 +636,7 @@ function ws_get_jx_citation_data( $jx_term_id ) {
                 'content' => get_post_field( 'post_content', $cid ),
                 'is_fed'  => $is_fed,
                 // Citation-specific fields
-                'type'            => get_post_meta( $cid, 'ws_jx_citation_type',          true ),
+                'types'           => $type_list,
                 'disclosure_type' => get_field( 'ws_jx_citation_disclosure_type', $cid ),
                 'official_name'   => get_post_meta( $cid, 'ws_jx_citation_official_name',           true ),
                 'common_name'     => get_post_meta( $cid, 'ws_jx_citation_common_name',             true ),

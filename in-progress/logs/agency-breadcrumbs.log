@@ -1,348 +1,174 @@
-[2026-04-06 19:43:27 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1432
+[2026-04-06 20:47:18 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1432
   labels: California Department of Public Health (CDPH)
-  matched_ids: 2588
-  created_stub_ids: 2588
+  matched_ids: 3028
+  created_stub_ids: 3028
 ---
 
-[2026-04-06 19:43:27 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1569.37
+[2026-04-06 20:47:18 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1569.37
   labels: California Department of Social Services
-  matched_ids: 2590
-  created_stub_ids: 2590
+  matched_ids: 3030
+  created_stub_ids: 3030
 ---
 
-[2026-04-06 19:43:27 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1871.7
+[2026-04-06 20:47:19 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1871.7
   labels: California Department of Insurance
-  matched_ids: 2592
-  created_stub_ids: 2592
+  matched_ids: 3032
+  created_stub_ids: 3032
 ---
 
-[2026-04-06 19:43:27 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-230
+[2026-04-06 20:47:19 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-230
   labels: Labor Commissioner's Office (DLSE)
-  matched_ids: 2594
-  created_stub_ids: 2594
+  matched_ids: 3034
+  created_stub_ids: 3034
 ---
 
-[2026-04-06 19:43:27 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-232
+[2026-04-06 20:47:19 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-232
   labels: Labor Commissioner's Office
-  matched_ids: 2594
+  matched_ids: 3034
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:27 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-244
+[2026-04-06 20:47:19 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-244
   labels: Labor Commissioner's Office
-  matched_ids: 2594
+  matched_ids: 3034
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:28 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1101
+[2026-04-06 20:47:19 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1101
   labels: Labor Commissioner's Office
-  matched_ids: 2594
+  matched_ids: 3034
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:28 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1198.3
+[2026-04-06 20:47:19 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1198.3
   labels: Labor Commissioner's Office
-  matched_ids: 2594
+  matched_ids: 3034
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:28 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-12940
+[2026-04-06 20:47:19 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-12940
   labels: Civil Rights Department (CRD)
-  matched_ids: 2600
-  created_stub_ids: 2600
+  matched_ids: 3040
+  created_stub_ids: 3040
 ---
 
-[2026-04-06 19:43:28 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-8547
+[2026-04-06 20:47:19 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-8547
   labels: State Personnel Board (SPB)
-  matched_ids: 2602
-  created_stub_ids: 2602
+  matched_ids: 3042
+  created_stub_ids: 3042
 ---
 
-[2026-04-06 19:43:28 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-8547.7
+[2026-04-06 20:47:19 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-8547.7
   labels: State Personnel Board
-  matched_ids: 2602
+  matched_ids: 3042
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:28 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-6310
+[2026-04-06 20:47:19 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-6310
   labels: Division of Labor Standards Enforcement (DLSE) | Cal | OSHA
-  matched_ids: 2588, 2590, 2592
+  matched_ids: 3028, 3030, 3032
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:28 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-1102.5
+[2026-04-06 20:47:19 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-1102.5
   labels: California Labor Commissioner | Division of Labor Standards Enforcement
-  matched_ids: 2617, 2618
-  created_stub_ids: 2617, 2618
+  matched_ids: 3057, 3058
+  created_stub_ids: 3057, 3058
 ---
 
-[2026-04-06 19:43:28 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-1278.5
+[2026-04-06 20:47:19 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-1278.5
   labels: California Department of Public Health
-  matched_ids: 2588
+  matched_ids: 3028
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:28 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-98.6
+[2026-04-06 20:47:19 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-98.6
   labels: Labor Commissioner's Office (DLSE)
-  matched_ids: 2594
+  matched_ids: 3034
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:28 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-12653
+[2026-04-06 20:47:20 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-12653
   labels: Office of the Attorney General
-  matched_ids: 2622
-  created_stub_ids: 2622
+  matched_ids: 3062
+  created_stub_ids: 3062
 ---
 
-[2026-04-06 19:43:28 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-232.5
+[2026-04-06 20:47:20 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-232.5
   labels: Labor Commissioner's Office
-  matched_ids: 2594
+  matched_ids: 3034
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:28 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-98.7
+[2026-04-06 20:47:20 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-98.7
   labels: Division of Labor Standards Enforcement (Labor Commissioner)
-  matched_ids: 2618
+  matched_ids: 3058
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:29 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-1102.8
+[2026-04-06 20:47:20 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-1102.8
   labels: Labor Commissioner
-  matched_ids: 2617, 2594
+  matched_ids: 3034, 3057
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:29 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-6399.7
+[2026-04-06 20:47:20 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-6399.7
   labels: Division of Labor Standards Enforcement
-  matched_ids: 2618
+  matched_ids: 3058
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:29 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-1596.881
+[2026-04-06 20:47:20 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-1596.881
   labels: Division of Labor Standards Enforcement
-  matched_ids: 2618
+  matched_ids: 3058
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:29 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-6312
+[2026-04-06 20:47:20 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-6312
   labels: Labor Commissioner
-  matched_ids: 2617, 2594
+  matched_ids: 3034, 3057
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:29 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-8547.8
+[2026-04-06 20:47:20 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-8547.8
   labels: State Personnel Board
-  matched_ids: 2602
+  matched_ids: 3042
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:29 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-8547.13
+[2026-04-06 20:47:20 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-8547.13
   labels: State Personnel Board
-  matched_ids: 2602
+  matched_ids: 3042
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:29 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-87160
+[2026-04-06 20:47:20 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-87160
   labels: State Personnel Board
-  matched_ids: 2602
+  matched_ids: 3042
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:29 UTC]  MA-7-Statute-NotebookLM.json  MA  MA-149-187
+[2026-04-06 20:47:20 UTC]  MA-7-Statute-NotebookLM.json  MA  MA-149-187
   labels: Massachusetts Attorney General
-  matched_ids: 2650
-  created_stub_ids: 2650
+  matched_ids: 3090
+  created_stub_ids: 3090
 ---
 
-[2026-04-06 19:43:29 UTC]  MA-7-Statute-NotebookLM.json  MA  MA-149-148A
+[2026-04-06 20:47:21 UTC]  MA-7-Statute-NotebookLM.json  MA  MA-149-148A
   labels: Massachusetts Attorney General
-  matched_ids: 2650
+  matched_ids: 3090
   created_stub_ids: none
 ---
 
-[2026-04-06 19:43:30 UTC]  NJ-7-Statute-NotebookLM.json  NJ  NJ-34:5A-17
+[2026-04-06 20:47:21 UTC]  NJ-7-Statute-NotebookLM.json  NJ  NJ-34:5A-17
   labels: New Jersey Department of Labor
-  matched_ids: 2672
-  created_stub_ids: 2672
+  matched_ids: 3112
+  created_stub_ids: 3112
 ---
 
-[2026-04-06 19:43:30 UTC]  PA-11-Statute-NotebookLM.json  PA  PA-1108
+[2026-04-06 20:47:22 UTC]  PA-11-Statute-NotebookLM.json  PA  PA-1108
   labels: State Ethics Commission
-  matched_ids: 2689
-  created_stub_ids: 2689
----
-
-[2026-04-06 19:53:34 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1432
-  labels: California Department of Public Health (CDPH)
-  matched_ids: 2804
-  created_stub_ids: 2804
----
-
-[2026-04-06 19:53:34 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1569.37
-  labels: California Department of Social Services
-  matched_ids: 2806
-  created_stub_ids: 2806
----
-
-[2026-04-06 19:53:34 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1871.7
-  labels: California Department of Insurance
-  matched_ids: 2808
-  created_stub_ids: 2808
----
-
-[2026-04-06 19:53:34 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-230
-  labels: Labor Commissioner's Office (DLSE)
-  matched_ids: 2810
-  created_stub_ids: 2810
----
-
-[2026-04-06 19:53:34 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-232
-  labels: Labor Commissioner's Office
-  matched_ids: 2810
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:34 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-244
-  labels: Labor Commissioner's Office
-  matched_ids: 2810
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:35 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1101
-  labels: Labor Commissioner's Office
-  matched_ids: 2810
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:35 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1198.3
-  labels: Labor Commissioner's Office
-  matched_ids: 2810
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:35 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-12940
-  labels: Civil Rights Department (CRD)
-  matched_ids: 2816
-  created_stub_ids: 2816
----
-
-[2026-04-06 19:53:35 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-8547
-  labels: State Personnel Board (SPB)
-  matched_ids: 2818
-  created_stub_ids: 2818
----
-
-[2026-04-06 19:53:35 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-8547.7
-  labels: State Personnel Board
-  matched_ids: 2818
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:35 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-6310
-  labels: Division of Labor Standards Enforcement (DLSE) | Cal | OSHA
-  matched_ids: 2804, 2806, 2808
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:35 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-1102.5
-  labels: California Labor Commissioner | Division of Labor Standards Enforcement
-  matched_ids: 2833, 2834
-  created_stub_ids: 2833, 2834
----
-
-[2026-04-06 19:53:35 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-1278.5
-  labels: California Department of Public Health
-  matched_ids: 2804
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:35 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-98.6
-  labels: Labor Commissioner's Office (DLSE)
-  matched_ids: 2810
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:35 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-12653
-  labels: Office of the Attorney General
-  matched_ids: 2838
-  created_stub_ids: 2838
----
-
-[2026-04-06 19:53:35 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-232.5
-  labels: Labor Commissioner's Office
-  matched_ids: 2810
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:35 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-98.7
-  labels: Division of Labor Standards Enforcement (Labor Commissioner)
-  matched_ids: 2834
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:35 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-1102.8
-  labels: Labor Commissioner
-  matched_ids: 2833, 2810
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:36 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-6399.7
-  labels: Division of Labor Standards Enforcement
-  matched_ids: 2834
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:36 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-1596.881
-  labels: Division of Labor Standards Enforcement
-  matched_ids: 2834
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:36 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-6312
-  labels: Labor Commissioner
-  matched_ids: 2833, 2810
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:36 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-8547.8
-  labels: State Personnel Board
-  matched_ids: 2818
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:36 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-8547.13
-  labels: State Personnel Board
-  matched_ids: 2818
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:36 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-87160
-  labels: State Personnel Board
-  matched_ids: 2818
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:36 UTC]  MA-7-Statute-NotebookLM.json  MA  MA-149-187
-  labels: Massachusetts Attorney General
-  matched_ids: 2866
-  created_stub_ids: 2866
----
-
-[2026-04-06 19:53:36 UTC]  MA-7-Statute-NotebookLM.json  MA  MA-149-148A
-  labels: Massachusetts Attorney General
-  matched_ids: 2866
-  created_stub_ids: none
----
-
-[2026-04-06 19:53:37 UTC]  NJ-7-Statute-NotebookLM.json  NJ  NJ-34:5A-17
-  labels: New Jersey Department of Labor
-  matched_ids: 2888
-  created_stub_ids: 2888
----
-
-[2026-04-06 19:53:37 UTC]  PA-11-Statute-NotebookLM.json  PA  PA-1108
-  labels: State Ethics Commission
-  matched_ids: 2905
-  created_stub_ids: 2905
+  matched_ids: 3128
+  created_stub_ids: 3128
 ---
 

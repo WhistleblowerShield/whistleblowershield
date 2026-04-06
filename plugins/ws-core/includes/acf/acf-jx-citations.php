@@ -10,7 +10,7 @@
  *
  * @package WhistleblowerShield
  * @since   2.3.0
- * @version 3.12.1
+ * @version 3.12.3
  *
  * VERSION
  * -------
@@ -25,6 +25,10 @@
  *         including has-details sentinel pattern and companion _details fields.
  * 3.12.1  Added ws_jx_citation_summary as a compact WYSIWYG summary field
  *         for editorial drafting and ingest starter hints.
+ * 3.12.2  Added ws_jx_citation_common_law_ids relationship field for
+ *         doctrine-linked citations (separate from statute linkage).
+ * 3.12.3  ws_jx_citation_type changed from single select to multi-select
+ *         to support citations that cover multiple source categories.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -71,15 +75,17 @@ function ws_register_acf_jx_citations() {
                 'name'         => 'ws_jx_citation_type',
                 'type'         => 'select',
                 'required'     => 1,
-                'instructions' => 'Select the type of source this citation references.',
+                'instructions' => 'Select one or more source categories this citation references.',
                 'choices'      => [
                     'case_law'   => 'Case Law',
                     'statute'    => 'Statute',
                     'regulatory' => 'Regulatory',
                     'secondary'  => 'Secondary Source',
                 ],
-                'default_value' => 'case_law',
+                'default_value' => [ 'case_law' ],
                 'allow_null'    => 0,
+                'multiple'      => 1,
+                'return_format' => 'value',
                 'ui'            => 1,
             ],
 			[
@@ -377,10 +383,10 @@ function ws_register_acf_jx_citations() {
 
             // ── Tab: Relationships ────────────────────────────────────────
             //
-            // Links this citation back to the statute(s) it interprets or
-            // supports. Optional — a citation may be jurisdiction-wide without
-            // a statute parent. Multiple — one citation may be relevant to
-            // more than one statute in the same jurisdiction.
+            // Links this citation back to statute and/or common-law doctrine
+            // parent records. Optional — a citation may be jurisdiction-wide
+            // without a parent link. Multiple — one citation may be relevant
+            // to more than one record in the same jurisdiction.
 
             [
                 'key'   => 'field_jx_citation_relationships_tab',
@@ -395,6 +401,20 @@ function ws_register_acf_jx_citations() {
                 'type'          => 'post_object',
                 'post_type'     => [ 'jx-statute' ],
                 'instructions'  => 'Link this citation to the statute(s) it interprets or supports. Optional — leave blank for jurisdiction-wide citations not tied to a specific statute.',
+                'required'      => 0,
+                'multiple'      => 1,
+                'allow_null'    => 1,
+                'ui'            => 1,
+                'return_format' => 'id',
+            ],
+
+            [
+                'key'           => 'field_jx_citation_common_law_ids',
+                'label'         => 'Related Common Law Doctrines',
+                'name'          => 'ws_jx_citation_common_law_ids',
+                'type'          => 'post_object',
+                'post_type'     => [ 'jx-common-law' ],
+                'instructions'  => 'Link this citation to common-law doctrine record(s) it interprets or supports. Optional.',
                 'required'      => 0,
                 'multiple'      => 1,
                 'allow_null'    => 1,

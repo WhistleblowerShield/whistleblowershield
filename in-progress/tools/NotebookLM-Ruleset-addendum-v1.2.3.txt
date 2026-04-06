@@ -1,4 +1,4 @@
-WhistleblowerShield.org NotebookLM Ruleset - Addendum v1.2.2
+WhistleblowerShield.org NotebookLM Ruleset - Addendum v1.2.3
 
 PURPOSE
 This addendum carries edge-case and operational policy for NotebookLM
@@ -74,7 +74,6 @@ Omit when "":
 ---
 
 ATTACHED CITATION DEDUPE (PARENT-SCOPED)
-
 For citations.attached_citations rows in the same record:
 
 1) Dedupe key

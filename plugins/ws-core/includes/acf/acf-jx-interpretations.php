@@ -54,7 +54,7 @@
  *
  * @package    WhistleblowerShield
  * @since      2.4.0
- * @version 3.12.0
+ * @version 3.12.1
  *
  * VERSION
  * -------
@@ -70,6 +70,9 @@
  *        (moved from Summary tab), ws_remedies, ws_fee_shifting,
  *        ws_employer_defense, ws_employee_standard — mirrors jx-statute palette
  *        including has-details sentinel pattern and companion _details fields.
+ * 3.12.1 Relationships expanded for dual parent linkage:
+ *        ws_jx_interp_common_law_id added; court scope and URL prefill now
+ *        resolve from statute_id and common_law_id parent context.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -461,7 +464,7 @@ function ws_register_acf_jx_interpretations() {
             // ────────────────────────────────────────────────────────────────
             // Tab: Relationships
             //
-            // Links this interpretation back to its parent statute.
+            // Links this interpretation back to statute and/or common-law parent.
             // Jurisdiction scope is provided by ws_jurisdiction taxonomy.
             // ────────────────────────────────────────────────────────────────
 
@@ -607,7 +610,7 @@ function ws_jx_interp_details_conditional( $field ) {
 
 // ── Court choices: context-aware select population ────────────────────────────
 //
-// Builds the court select list based on the parent statute's scope:
+// Builds the court select list based on parent record scope:
 //
 //   Federal statute (has 'us' ws_jurisdiction term):
 //     All federal courts (SCOTUS + circuits + districts) merged with all
@@ -617,11 +620,11 @@ function ws_jx_interp_details_conditional( $field ) {
 //     State courts only ($ws_state_court_matrix). Federal courts do not
 //     interpret state statutes.
 //
-//   Unknown (no parent statute resolved yet):
+//   Unknown (no parent resolved yet):
 //     Defaults to showing all courts (federal + state) as a safe fallback.
 //
-// Parent statute is resolved from saved meta (existing records) or the
-// statute_id URL parameter (new records created from the statute metabox).
+// Parent context is resolved from saved meta (existing records) or URL
+// parameters (new records): statute_id, then common_law_id.
 //
 // The 'other' entry (level=99) sorts last and reveals the free-text
 // ws_jx_interp_court_name field for courts not in either matrix.
@@ -638,17 +641,22 @@ function ws_interp_load_court_choices( $field ) {
         return $field;
     }
 
-    // Resolve parent statute ID — saved meta first, URL param fallback.
-    $statute_id = 0;
+    // Resolve parent context — saved meta first, URL param fallback.
+    $parent_id = 0;
     if ( $post && get_post_type( $post->ID ) === 'jx-interpretation' && get_post_status( $post->ID ) !== 'auto-draft' ) {
         $statute_id = (int) get_post_meta( $post->ID, 'ws_jx_interp_statute_id', true );
+        $common_law_id = (int) get_post_meta( $post->ID, 'ws_jx_interp_common_law_id', true );
+        $parent_id = $statute_id > 0 ? $statute_id : $common_law_id;
     }
-    if ( ! $statute_id && isset( $_GET['statute_id'] ) ) {
-        $statute_id = absint( $_GET['statute_id'] );
+    if ( ! $parent_id && isset( $_GET['statute_id'] ) ) {
+        $parent_id = absint( $_GET['statute_id'] );
+    }
+    if ( ! $parent_id && isset( $_GET['common_law_id'] ) ) {
+        $parent_id = absint( $_GET['common_law_id'] );
     }
 
-    // Determine statute scope. Unknown parent defaults to showing all courts.
-    $is_federal = ! $statute_id || has_term( 'us', WS_JURISDICTION_TAXONOMY, $statute_id );
+    // Determine parent scope. Unknown parent defaults to showing all courts.
+    $is_federal = ! $parent_id || has_term( 'us', WS_JURISDICTION_TAXONOMY, $parent_id );
 
     $candidates = $is_federal
         ? array_merge( $ws_court_matrix, $ws_state_court_matrix ?: [] )
@@ -682,6 +690,7 @@ function ws_interp_load_court_choices( $field ) {
 // parameter is present, we return $value unchanged.
 
 add_filter( 'acf/load_value/key=field_jx_interp_statute_id', 'ws_interp_prefill_statute_id', 5, 3 );
+add_filter( 'acf/load_value/key=field_jx_interp_common_law_id', 'ws_interp_prefill_common_law_id', 5, 3 );
 
 function ws_interp_prefill_statute_id( $value, $post_id, $field ) {
 
@@ -699,6 +708,30 @@ function ws_interp_prefill_statute_id( $value, $post_id, $field ) {
 
     if ( $statute_id && get_post_type( $statute_id ) === 'jx-statute' ) {
         return $statute_id;
+    }
+
+    return $value;
+}
+
+/**
+ * Pre-populate ws_jx_interp_common_law_id from ?common_law_id= URL parameter.
+ */
+function ws_interp_prefill_common_law_id( $value, $post_id, $field ) {
+
+    // Only pre-fill on brand-new auto-draft posts.
+    if ( get_post_status( $post_id ) !== 'auto-draft' ) {
+        return $value;
+    }
+
+    // Only act when the URL carries a valid common_law_id.
+    if ( ! isset( $_GET['common_law_id'] ) ) {
+        return $value;
+    }
+
+    $common_law_id = absint( $_GET['common_law_id'] );
+
+    if ( $common_law_id && get_post_type( $common_law_id ) === 'jx-common-law' ) {
+        return $common_law_id;
     }
 
     return $value;
