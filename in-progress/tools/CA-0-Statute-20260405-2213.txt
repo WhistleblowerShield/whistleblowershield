@@ -34,10 +34,8 @@ or leave it as "" or [] depending on the field type. Do not use null, "N/A",
 The following fields are routinely empty in a well-produced run and their
 absence is never penalized:
   - tolling_notes
-  - exhaustion_details
   - rebuttable_presumption
   - burden_of_proof_details
-  - reward_details
   - statute_url
   - attached_citations
   - _review_notes
@@ -664,8 +662,33 @@ RUN SCOPE
 
 Jurisdiction:       California
 Jurisdiction ID:    CA
-Legislature URL:    https://legislature.ca.gov/
+Legislature URL:    https://www.legislature.ca.gov
 Record type:        statute
+Records Requested:  as many as you can comfortably find
+Scope:              state-level whistleblower laws and protections
+Exclusion list:     Do not produce records for any statute in this list:
+                    CA-98.6
+                    CA-98.7
+                    CA-232.5
+                    CA-1102.5
+                    CA-1102.6
+                    CA-1102.8
+                    CA-1278.5
+                    CA-1596.881
+                    CA-6310
+                    CA-6311
+                    CA-6312
+                    CA-6399.7
+                    CA-6409.6
+                    CA-8547.8
+                    CA-8547.10
+                    CA-8547.12
+                    CA-8547.13
+                    CA-9149.30
+                    CA-12653
+                    CA-44112
+                    CA-53296
+                    CA-87160
 
 
 This template covers `statute` records only.

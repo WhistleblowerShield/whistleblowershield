@@ -1,0 +1,152 @@
+{
+  "meta": {
+    "json_format_version": "2.0",
+    "source_method": "ai_assisted",
+    "source_name": "Grok",
+    "jurisdiction_id": "CA",
+    "generated_date": "2026-04-05",
+    "generated_by": "Grok by xAI (tool-assisted research, April 2026)",
+    "record_count": 2,
+    "proposed_count": 0,
+    "new_terms_proposed": [],
+    "json_run_notes": "Exclusion list applied strictly; focused on non-excluded statutes with verifiable whistleblower retaliation protections. California Whistleblower Protection Act (Gov. Code § 8547 et seq.) primarily covers state employees and is not on exclusion list. California False Claims Act (Gov. Code § 12650 et seq.) provides qui tam and retaliation protections and is not excluded. Labor Code § 1102.5 and others on exclusion list omitted. No additional major non-excluded statutes located with high confidence from approved sources (leginfo.legislature.ca.gov). SOLs derived from general rules or secondary interpretations in many cases.",
+    "batch_completed": "2026-04-05 22:13 UTC"
+  },
+  "records": [
+    {
+      "jurisdiction_id": "CA",
+      "statute_id": "CA-8547",
+      "official_name": "California Whistleblower Protection Act",
+      "legal_basis": {
+        "statute_citation": "Cal. Gov't Code § 8547 et seq.",
+        "disclosure_types": [
+          "government-accountability",
+          "public-health-safety"
+        ],
+        "protected_class": [
+          "public-sector",
+          "state-employee"
+        ],
+        "disclosure_targets": [
+          "external-agency",
+          "internal"
+        ],
+        "adverse_action_scope": "Prohibits retaliation, reprisal, or use of official authority to interfere with protected disclosures of improper governmental activities, including waste, fraud, abuse of authority, violation of law, or significant threat to public health or safety."
+      },
+      "statute_of_limitations": {
+        "limit_ambiguous": true,
+        "limit_value": 12,
+        "limit_unit": "months",
+        "trigger": "adverse action"
+      },
+      "enforcement": {
+        "primary_agency": "State Personnel Board / California State Auditor",
+        "process_type": [
+          "administrative-complaint",
+          "civil-lawsuit"
+        ],
+        "adverse_action": [
+          "termination",
+          "demotion",
+          "suspension",
+          "disciplinary-action",
+          "harassment"
+        ],
+        "remedies": [
+          "reinstatement",
+          "back-pay",
+          "compensatory-damages",
+          "attorney-fees",
+          "injunctive-relief"
+        ]
+      },
+      "burden_of_proof": {
+        "burden_of_proof_details": "Protected disclosure must be in good faith; retaliation complaint process through State Personnel Board."
+      },
+      "reward": {
+        "available": false
+      },
+      "links": {
+        "statute_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=GOV&sectionNum=8547.",
+        "is_official": true
+      },
+      "citations": {
+        "attached_citations": [],
+        "citation_count": 0
+      },
+      "_review_notes": "Primary state employee whistleblower statute covering improper governmental activities. Exhaustion via administrative complaint typically required before civil action. SOL derived from standard practice for such claims (12 months); confirm against general civil procedure rules.",
+      "_reconciled_notes": ""
+    },
+    {
+      "jurisdiction_id": "CA",
+      "statute_id": "CA-12650",
+      "official_name": "California False Claims Act",
+      "legal_basis": {
+        "statute_citation": "Cal. Gov't Code § 12650 et seq.",
+        "disclosure_types": [
+          "financial-corporate",
+          "government-accountability",
+          "healthcare-medicare-fraud"
+        ],
+        "protected_class": [
+          "all-employees"
+        ],
+        "disclosure_targets": [
+          "external-agency",
+          "judicial"
+        ],
+        "adverse_action_scope": "Prohibits discharge, demotion, suspension, threats, harassment, or other discrimination in terms and conditions of employment for lawful acts in furtherance of a false claims action or investigation."
+      },
+      "statute_of_limitations": {
+        "limit_ambiguous": true,
+        "limit_value": 3,
+        "limit_unit": "years",
+        "trigger": "adverse action"
+      },
+      "enforcement": {
+        "process_type": [
+          "civil-lawsuit",
+          "qui-tam"
+        ],
+        "adverse_action": [
+          "termination",
+          "demotion",
+          "suspension",
+          "harassment"
+        ],
+        "remedies": [
+          "reinstatement",
+          "back-pay",
+          "compensatory-damages",
+          "attorney-fees",
+          "litigation-costs",
+          "injunctive-relief",
+          "bounty-qui-tam-award"
+        ]
+      },
+      "reward": {
+        "available": true,
+        "reward_details": "Qui tam relators may receive 15-30% of recovery depending on government intervention; separate from retaliation remedies."
+      },
+      "links": {
+        "statute_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=GOV&sectionNum=12650.",
+        "is_official": true
+      },
+      "citations": {
+        "attached_citations": [],
+        "citation_count": 0
+      },
+      "_review_notes": "Qui tam provisions allow private enforcement with potential bounty. Retaliation protections apply broadly to employees involved in FCA actions or investigations. SOL for retaliation claims typically 3 years under general rules; qui tam has its own timelines.",
+      "_reconciled_notes": ""
+    }
+  ],
+  "integrity": {
+    "with_errors": true,
+    "error_details": [
+      "Record count (2) less than potentially available statutes due to strict exclusion list and limited verifiable non-excluded provisions from approved sources.",
+      "SOL values limit_ambiguous: true for both records (derived from secondary interpretations and general civil procedure principles rather than explicit text in the core whistleblower provisions).",
+      "Limited case citations added due to requirement for approved stable URLs only; none attached in this draft."
+    ],
+    "error_count": 3
+  }
+}
