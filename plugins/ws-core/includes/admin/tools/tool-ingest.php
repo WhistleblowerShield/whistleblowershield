@@ -1329,6 +1329,105 @@ function ws_ingest_create_citation_stubs_for_statute( int $statute_post_id, arra
     ];
 }
 
+/**
+ * Creates citation stubs from record.citations.attached_citations for common-law records.
+ */
+function ws_ingest_create_citation_stubs_for_common_law( int $common_law_post_id, array $record, string $jx_slug, array $meta ): array {
+    $created  = [];
+    $linked   = [];
+    $warnings = [];
+
+    $raw       = $record['citations']['attached_citations'] ?? [];
+    $citations = ws_ingest_parse_attached_citations( $raw );
+    if ( empty( $citations ) ) {
+        return [ 'created' => $created, 'linked' => $linked, 'warnings' => $warnings, 'count' => 0 ];
+    }
+
+    $jx_term = get_term_by( 'slug', strtolower( $jx_slug ), WS_JURISDICTION_TAXONOMY );
+
+    foreach ( $citations as $citation_text ) {
+        $entry        = ws_ingest_parse_citation_entry( $citation_text );
+        $case_name    = trim( (string) $entry['case_name'] );
+        $impact_seed  = trim( (string) $entry['specific_impact'] );
+        $citation_url = trim( (string) $entry['url'] );
+        $source_label = trim( (string) $entry['source'] );
+
+        if ( $case_name === '' ) {
+            $case_name = trim( $citation_text );
+        }
+
+        $citation_key = ws_ingest_build_citation_key( $jx_slug, $common_law_post_id, $citation_text );
+        $existing_id  = ws_ingest_find_citation_by_key( $citation_key );
+
+        if ( $existing_id ) {
+            $raw_common_law_ids = get_post_meta( $existing_id, 'ws_jx_citation_common_law_ids', true );
+            $common_law_ids     = is_array( $raw_common_law_ids ) ? array_map( 'intval', $raw_common_law_ids ) : [];
+            if ( ! in_array( $common_law_post_id, $common_law_ids, true ) ) {
+                $common_law_ids[] = $common_law_post_id;
+                update_post_meta( $existing_id, 'ws_jx_citation_common_law_ids', array_values( array_unique( $common_law_ids ) ) );
+            }
+            $linked[] = $existing_id;
+            continue;
+        }
+
+        $post_id = wp_insert_post( [
+            'post_type'   => 'jx-citation',
+            'post_status' => 'draft',
+            'post_title'  => substr( $case_name, 0, 180 ),
+            'post_author' => get_current_user_id(),
+        ] );
+
+        if ( is_wp_error( $post_id ) || ! $post_id ) {
+            $warnings[] = 'Citation stub create failed for: ' . substr( $case_name, 0, 80 );
+            continue;
+        }
+
+        update_post_meta( $post_id, 'ws_jx_citation_type', ws_ingest_citation_type_from_batch( $meta ) );
+        update_post_meta( $post_id, 'ws_jx_citation_common_name', sanitize_text_field( $case_name ) );
+        update_post_meta( $post_id, 'ws_jx_citation_official_name', sanitize_text_field( $case_name ) );
+
+        if ( $citation_url !== '' ) {
+            $safe_url = esc_url_raw( $citation_url );
+            if ( $safe_url !== '' ) {
+                update_post_meta( $post_id, 'ws_jx_citation_url', $safe_url );
+            }
+        }
+
+        if ( $impact_seed !== '' ) {
+            $impact_text = sanitize_text_field( $impact_seed );
+            $summary     = '<p><strong>Starter hint:</strong> ' . esc_html( $impact_text ) . '</p>';
+            update_post_meta( $post_id, 'ws_jx_citation_summary', wp_kses_post( $summary ) );
+        }
+
+        if ( $source_label !== '' ) {
+            update_post_meta( $post_id, '_ws_citation_stub_source_label', sanitize_text_field( $source_label ) );
+        }
+
+        update_post_meta( $post_id, 'ws_jx_citation_common_law_ids', [ $common_law_post_id ] );
+        update_post_meta( $post_id, 'ws_attach_flag', 0 );
+        update_post_meta( $post_id, 'ws_verification_status', 'unverified' );
+        update_post_meta( $post_id, 'ws_needs_review', 0 );
+        update_post_meta( $post_id, 'ws_auto_source_method', sanitize_text_field( $meta['source_method'] ?? 'ai_assisted' ) );
+        update_post_meta( $post_id, 'ws_auto_source_name', sanitize_text_field( $meta['source_name'] ?? '' ) );
+        update_post_meta( $post_id, '_ws_ingest_citation_key', $citation_key );
+        update_post_meta( $post_id, '_ws_citation_stub', 1 );
+        update_post_meta( $post_id, '_ws_citation_stub_source', 'ingest.attached_citations' );
+
+        if ( $jx_term && ! is_wp_error( $jx_term ) ) {
+            wp_set_object_terms( $post_id, [ (int) $jx_term->term_id ], WS_JURISDICTION_TAXONOMY );
+        }
+
+        $created[] = (int) $post_id;
+    }
+
+    return [
+        'created'  => array_values( array_unique( $created ) ),
+        'linked'   => array_values( array_unique( $linked ) ),
+        'warnings' => $warnings,
+        'count'    => count( $citations ),
+    ];
+}
+
 
 // ── Post title builder ────────────────────────────────────────────────────────
 
@@ -1371,6 +1470,8 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
         'post_id'  => null,
         'log'      => [],
         'warnings' => [],
+        'citation_stub_created' => 0,
+        'agency_stub_created'   => 0,
         'agency_breadcrumbs' => [
             'labels'      => [],
             'matched_ids' => [],
@@ -1571,6 +1672,7 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
     }
 
     if ( ! empty( $citation_stub_result['created'] ) ) {
+        $result['citation_stub_created'] = count( array_unique( array_map( 'intval', (array) $citation_stub_result['created'] ) ) );
         $result['log'][] = "$sid: created " . count( $citation_stub_result['created'] ) . ' citation stub record(s) from citations.attached_citations';
     }
     if ( ! empty( $citation_stub_result['linked'] ) ) {
@@ -1599,6 +1701,7 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
             }
             $matched_ids = array_values( array_unique( $created_stub_ids ) );
             if ( ! empty( $matched_ids ) ) {
+                $result['agency_stub_created'] = count( $matched_ids );
                 $result['log'][] = "$sid: created " . count( $matched_ids ) . " agency stub record(s) from enforcement.primary_agency";
             }
         }
@@ -1644,6 +1747,8 @@ function ws_ingest_process_common_law_record( array $record, array $meta, array 
         'post_id'  => null,
         'log'      => [],
         'warnings' => [],
+        'citation_stub_created' => 0,
+        'agency_stub_created'   => 0,
         'agency_breadcrumbs' => [
             'labels'      => [],
             'matched_ids' => [],
@@ -1813,6 +1918,31 @@ function ws_ingest_process_common_law_record( array $record, array $meta, array 
         update_post_meta( $post_id, 'ws_cl_bop_has_details', 1 );
     }
 
+    // citations.attached_citations: create draft jx-citation stubs and link to this common-law record.
+    $citation_stub_result = ws_ingest_create_citation_stubs_for_common_law( $post_id, $record, $jx_slug, $meta );
+    $citation_ids = array_values( array_unique( array_merge(
+        $citation_stub_result['created'] ?? [],
+        $citation_stub_result['linked'] ?? []
+    ) ) );
+
+    if ( ! empty( $citation_ids ) ) {
+        update_post_meta( $post_id, 'ws_cl_citation_ids', array_map( 'intval', $citation_ids ) );
+        $result['log'][] = "$did: attached " . count( $citation_ids ) . ' citation ID(s) on common-law record';
+    }
+
+    if ( ! empty( $citation_stub_result['created'] ) ) {
+        $result['citation_stub_created'] = count( array_unique( array_map( 'intval', (array) $citation_stub_result['created'] ) ) );
+        $result['log'][] = "$did: created " . count( $citation_stub_result['created'] ) . ' citation stub record(s) from citations.attached_citations';
+    }
+    if ( ! empty( $citation_stub_result['linked'] ) ) {
+        $result['log'][] = "$did: linked " . count( $citation_stub_result['linked'] ) . ' existing citation record(s) from citations.attached_citations';
+    }
+    if ( ! empty( $citation_stub_result['warnings'] ) ) {
+        foreach ( $citation_stub_result['warnings'] as $warning ) {
+            $result['warnings'][] = "$did: $warning";
+        }
+    }
+
     $primary_agency = (string) ws_ingest_get_value( $record, 'enforcement.primary_agency' );
     if ( trim( $primary_agency ) !== '' ) {
         $agency_labels = ws_ingest_extract_agency_labels( $primary_agency );
@@ -1829,6 +1959,7 @@ function ws_ingest_process_common_law_record( array $record, array $meta, array 
             }
             $matched_ids = array_values( array_unique( $created_stub_ids ) );
             if ( ! empty( $matched_ids ) ) {
+                $result['agency_stub_created'] = count( $matched_ids );
                 $result['log'][] = "$did: created " . count( $matched_ids ) . ' agency stub record(s) from enforcement.primary_agency';
             }
         }
@@ -2264,6 +2395,8 @@ function ws_ingest_write_run_log( array $result, string $batch_filename = '' ): 
     $lines[] = 'Created:          ' . ( $summary['created']  ?? 0 );
     $lines[] = 'Skipped (dupe):   ' . ( $summary['skipped']  ?? 0 );
     $lines[] = 'Failed:           ' . ( $summary['failed']   ?? 0 );
+    $lines[] = 'Citation stubs:   ' . ( $summary['citation_stubs_created'] ?? 0 );
+    $lines[] = 'Agency stubs:     ' . ( $summary['agency_stubs_created'] ?? 0 );
     $lines[] = 'Proposed new:     ' . ( $summary['proposed_new']    ?? 0 );
     $lines[] = 'Proposed merged:  ' . ( $summary['proposed_merged'] ?? 0 );
     $lines[] = 'Blacklist size:   ' . ( $summary['blacklist_size']  ?? 0 );
@@ -2327,8 +2460,10 @@ function ws_ingest_log_imported_batch( string $filename, array $summary, bool $w
     $created = (int) ( $summary['created']  ?? 0 );
     $skipped = (int) ( $summary['skipped']  ?? 0 );
     $failed  = (int) ( $summary['failed']   ?? 0 );
+    $citation_stubs = (int) ( $summary['citation_stubs_created'] ?? 0 );
+    $agency_stubs   = (int) ( $summary['agency_stubs_created'] ?? 0 );
     $errors  = $with_errors ? 'true' : 'false';
-    $line    = "[{$ts} UTC]  {$filename}  {$jx}  created:{$created}  skipped:{$skipped}  failed:{$failed}  errors:{$errors}" . PHP_EOL;
+    $line    = "[{$ts} UTC]  {$filename}  {$jx}  created:{$created}  skipped:{$skipped}  failed:{$failed}  citation_stubs:{$citation_stubs}  agency_stubs:{$agency_stubs}  errors:{$errors}" . PHP_EOL;
     return file_put_contents( $path, $line, FILE_APPEND | LOCK_EX ) !== false;
 }
 
@@ -2404,6 +2539,8 @@ function ws_ingest_process_batch_data( array $data, string $batch_filename ): ar
     $created  = 0;
     $skipped  = 0;
     $failed   = 0;
+    $citation_stubs_created = 0;
+    $agency_stubs_created   = 0;
     $all_logs = [];
 
     foreach ( $records as $record ) {
@@ -2456,6 +2593,9 @@ function ws_ingest_process_batch_data( array $data, string $batch_filename ): ar
         } else {
             $failed++;
         }
+
+        $citation_stubs_created += (int) ( $record_result['citation_stub_created'] ?? 0 );
+        $agency_stubs_created   += (int) ( $record_result['agency_stub_created'] ?? 0 );
     }
 
     $result['records'] = $all_logs;
@@ -2463,6 +2603,8 @@ function ws_ingest_process_batch_data( array $data, string $batch_filename ): ar
         'created'         => $created,
         'skipped'         => $skipped,
         'failed'          => $failed,
+        'citation_stubs_created' => $citation_stubs_created,
+        'agency_stubs_created'   => $agency_stubs_created,
         'proposed_new'    => $merge_counts['new'],
         'proposed_merged' => $merge_counts['merged'],
         'blacklist_size'  => count( $blacklist ),
@@ -2507,6 +2649,8 @@ function ws_handle_ingest_folder_submission(): array {
             'created_total'      => 0,
             'skipped_total'      => 0,
             'failed_total'       => 0,
+            'citation_stubs_total' => 0,
+            'agency_stubs_total'   => 0,
             'limit'              => 0,
             'dry_run'            => false,
             'files'              => [],
@@ -2636,6 +2780,8 @@ function ws_handle_ingest_folder_submission(): array {
         $result['folder']['created_total'] += (int) ( $batch_result['summary']['created'] ?? 0 );
         $result['folder']['skipped_total'] += (int) ( $batch_result['summary']['skipped'] ?? 0 );
         $result['folder']['failed_total']  += (int) ( $batch_result['summary']['failed'] ?? 0 );
+        $result['folder']['citation_stubs_total'] += (int) ( $batch_result['summary']['citation_stubs_created'] ?? 0 );
+        $result['folder']['agency_stubs_total']   += (int) ( $batch_result['summary']['agency_stubs_created'] ?? 0 );
 
         $archived_payload = ws_ingest_stamp_archive_notes( $data, $all_corrections );
         $archive_ok = ws_ingest_archive_json_file( $source_path, $filename, $archived_payload );
@@ -2654,9 +2800,11 @@ function ws_handle_ingest_folder_submission(): array {
     }
 
     $result['summary'] = [
-        'created' => $result['folder']['created_total'],
-        'skipped' => $result['folder']['skipped_total'],
-        'failed'  => $result['folder']['failed_total'],
+        'created'                => $result['folder']['created_total'],
+        'skipped'                => $result['folder']['skipped_total'],
+        'failed'                 => $result['folder']['failed_total'],
+        'citation_stubs_created' => $result['folder']['citation_stubs_total'],
+        'agency_stubs_created'   => $result['folder']['agency_stubs_total'],
     ];
 
     return $result;
@@ -2821,6 +2969,10 @@ function ws_render_ingest_tool_page() {
                     ⏭ Skipped (duplicate): <strong><?php echo (int) $s['skipped']; ?></strong> &nbsp;|&nbsp;
                     ❌ Failed: <strong><?php echo (int) $s['failed']; ?></strong>
                 </p>
+                <p>
+                    🧾 Citation stubs created: <strong><?php echo (int) ( $s['citation_stubs_created'] ?? 0 ); ?></strong>
+                    &nbsp;|&nbsp; 🏛 Agency stubs created: <strong><?php echo (int) ( $s['agency_stubs_created'] ?? 0 ); ?></strong>
+                </p>
                 <?php if ( (int) $s['skipped'] > 0 ): ?>
                     <p>Batch process detected duplicates. Duplicates were skipped.</p>
                 <?php endif; ?>
@@ -2896,6 +3048,10 @@ function ws_render_ingest_tool_page() {
                         &nbsp;|&nbsp; ⏭ Skipped: <strong><?php echo (int) ( $f['skipped_total'] ?? 0 ); ?></strong>
                         &nbsp;|&nbsp; ❌ Failed: <strong><?php echo (int) ( $f['failed_total'] ?? 0 ); ?></strong>
                     </p>
+                    <p>
+                        Stubs — 🧾 Citation: <strong><?php echo (int) ( $f['citation_stubs_total'] ?? 0 ); ?></strong>
+                        &nbsp;|&nbsp; 🏛 Agency: <strong><?php echo (int) ( $f['agency_stubs_total'] ?? 0 ); ?></strong>
+                    </p>
                     <?php if ( (int) ( $f['skipped_total'] ?? 0 ) > 0 ): ?>
                         <p>Batch process detected duplicates. Duplicates were skipped.</p>
                     <?php endif; ?>
@@ -2918,7 +3074,9 @@ function ws_render_ingest_tool_page() {
                             <?php else: ?>
                                 created <?php echo (int) ( $item['summary']['created'] ?? 0 ); ?>,
                                 skipped <?php echo (int) ( $item['summary']['skipped'] ?? 0 ); ?>,
-                                failed <?php echo (int) ( $item['summary']['failed'] ?? 0 ); ?>
+                                failed <?php echo (int) ( $item['summary']['failed'] ?? 0 ); ?>,
+                                citation stubs <?php echo (int) ( $item['summary']['citation_stubs_created'] ?? 0 ); ?>,
+                                agency stubs <?php echo (int) ( $item['summary']['agency_stubs_created'] ?? 0 ); ?>
                             <?php endif; ?>
                         </p>
                     <?php endif; ?>
