@@ -51,7 +51,9 @@ defined( 'ABSPATH' ) || exit;
  *   ws_jx_statute_fee_shifting       Fee Shifting taxonomy (checkbox)
  *   ws_jx_statute_remedies           Available Remedies taxonomy (checkbox)
  *   ws_jx_statute_remedies_details   Remedies Detail (textarea, conditional on has-details term)
- *   ws_jx_statute_related_agencies   Primary Oversight Agencies (post_object)
+ *   ws_jx_statute_local_agencies     Local Agencies (post_object)
+ *   ws_jx_statute_federal_agencies   Federal Agencies (post_object)
+ *   ws_jx_statute_enforcement_channel Enforcement Channel Notes (textarea)
  *
  * Burden of Proof tab:
  *   ws_jx_statute_employee_standard  Employee Standard taxonomy (checkbox)
@@ -105,7 +107,7 @@ defined( 'ABSPATH' ) || exit;
  *          exhaustion_required → has_exhaustion (label retained: "Exhaustion Required?").
  *        - tolling_notes retired; replaced by tolling_has_details / tolling_details.
  *        - New tab: Enforcement — process_type, adverse_action, fee_shifting,
- *          remedies, related_agencies (moved from former Relationships tab).
+ *          remedies, and agency linkage fields.
  *        - New tab: Burden of Proof — bop_standard, employer_defense (new
  *          ws_employer_defense taxonomy stub), rebuttable_has_details /
  *          rebuttable_details, bop_has_details / bop_details.
@@ -509,16 +511,39 @@ function ws_register_acf_jx_statutes() {
             ],
 
             [
-                'key'           => 'field_jx_statute_related_agencies',
-                'label'         => 'Primary Oversight Agencies',
-                'name'          => 'ws_jx_statute_related_agencies',
+                'key'           => 'field_jx_statute_local_agencies',
+                'label'         => 'Local Agencies',
+                'name'          => 'ws_jx_statute_local_agencies',
                 'type'          => 'post_object',
                 'post_type'     => [ 'ws-agency' ],
-                'instructions'  => 'Select agencies that enforce or provide intake for this statute.',
+                'instructions'  => 'Select non-federal agencies that enforce or provide intake for this statute (state, territory, district, tribal, or local bodies).',
                 'multiple'      => 1,
                 'allow_null'    => 1,
                 'ui'            => 1,
                 'return_format' => 'id',
+            ],
+
+            [
+                'key'           => 'field_jx_statute_federal_agencies',
+                'label'         => 'Federal Agencies',
+                'name'          => 'ws_jx_statute_federal_agencies',
+                'type'          => 'post_object',
+                'post_type'     => [ 'ws-agency' ],
+                'instructions'  => 'Select federal agencies that enforce or provide intake for this statute.',
+                'multiple'      => 1,
+                'allow_null'    => 1,
+                'ui'            => 1,
+                'return_format' => 'id',
+            ],
+
+            [
+                'key'          => 'field_jx_statute_enforcement_channel',
+                'label'        => 'Enforcement Channel Notes',
+                'name'         => 'ws_jx_statute_enforcement_channel',
+                'type'         => 'textarea',
+                'rows'         => 3,
+                'instructions' => 'Capture agency/channel nuance not represented by linked agency records (for example, split intake paths, courts, or board-specific routing).',
+                'required'     => 0,
             ],
 
             // ────────────────────────────────────────────────────────────────
@@ -807,4 +832,74 @@ function ws_jx_statute_details_conditional( $field ) {
     ] ] ];
 
     return $field;
+}
+
+
+add_filter( 'acf/prepare_field/name=ws_jx_statute_local_agencies', 'ws_jx_statute_prepare_local_agencies_field' );
+add_filter( 'acf/fields/post_object/query/name=ws_jx_statute_local_agencies', 'ws_jx_statute_local_agencies_query', 10, 3 );
+add_filter( 'acf/fields/post_object/query/name=ws_jx_statute_federal_agencies', 'ws_jx_statute_federal_agencies_query', 10, 3 );
+
+/**
+ * Resolve the first ws_jurisdiction term assigned to the given statute post.
+ */
+function ws_jx_statute_get_term_for_post( $post_id ) {
+    $post_id = (int) $post_id;
+    if ( ! $post_id ) {
+        return null;
+    }
+
+    $terms = wp_get_post_terms( $post_id, WS_JURISDICTION_TAXONOMY );
+    if ( is_wp_error( $terms ) || empty( $terms ) ) {
+        return null;
+    }
+
+    return $terms[0];
+}
+
+/**
+ * Hide local agencies when the statute jurisdiction is US/federal scope.
+ */
+function ws_jx_statute_prepare_local_agencies_field( $field ) {
+    $post_id = (int) ( $_GET['post'] ?? 0 );
+    $term    = ws_jx_statute_get_term_for_post( $post_id );
+
+    if ( $term && strtolower( (string) $term->slug ) === 'us' ) {
+        return false;
+    }
+
+    return $field;
+}
+
+/**
+ * Scope state agency chooser to the statute's assigned jurisdiction term.
+ */
+function ws_jx_statute_local_agencies_query( $args, $field, $post_id ) {
+    $term = ws_jx_statute_get_term_for_post( $post_id );
+
+    if ( $term && strtolower( (string) $term->slug ) !== 'us' ) {
+        $args['tax_query'] = [ [
+            'taxonomy' => WS_JURISDICTION_TAXONOMY,
+            'field'    => 'term_id',
+            'terms'    => [ (int) $term->term_id ],
+        ] ];
+    }
+
+    return $args;
+}
+
+/**
+ * Scope federal agency chooser to the US jurisdiction term.
+ */
+function ws_jx_statute_federal_agencies_query( $args, $field, $post_id ) {
+    $us_term = get_term_by( 'slug', 'us', WS_JURISDICTION_TAXONOMY );
+
+    if ( $us_term && ! is_wp_error( $us_term ) ) {
+        $args['tax_query'] = [ [
+            'taxonomy' => WS_JURISDICTION_TAXONOMY,
+            'field'    => 'term_id',
+            'terms'    => [ (int) $us_term->term_id ],
+        ] ];
+    }
+
+    return $args;
 }

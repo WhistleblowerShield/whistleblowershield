@@ -10,7 +10,7 @@
  *
  * @package WhistleblowerShield
  * @since   2.3.0
- * @version 3.12.0
+ * @version 3.12.1
  *
  * VERSION
  * -------
@@ -23,6 +23,8 @@
  *         ws_adverse_action_types, ws_process_type, ws_remedies, ws_fee_shifting,
  *         ws_employer_defense, ws_employee_standard — mirrors jx-statute palette
  *         including has-details sentinel pattern and companion _details fields.
+ * 3.12.1  Added ws_jx_citation_summary as a compact WYSIWYG summary field
+ *         for editorial drafting and ingest starter hints.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -117,6 +119,19 @@ function ws_register_acf_jx_citations() {
                 'type'         => 'url',
                 'instructions' => 'Direct link to the source document, case, or statute.',
             ],
+
+            [
+                'key'          => 'field_jx_citation_summary',
+                'label'        => 'Citation Summary',
+                'name'         => 'ws_jx_citation_summary',
+                'type'         => 'wysiwyg',
+                'instructions' => 'Short editorial summary of why this citation matters. This can start from ingest hints and be refined by a human editor.',
+                'tabs'         => 'visual',
+                'toolbar'      => 'basic',
+                'media_upload' => 0,
+                'delay'        => 0,
+            ],
+
             [
                 'key'           => 'field_jx_citation_is_pdf',
                 'label'         => 'PDF Link',

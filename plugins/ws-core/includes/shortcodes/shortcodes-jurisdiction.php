@@ -595,7 +595,9 @@ function ws_shortcode_jx_limitations() {
 //   exhaustion_details   string  Details on exhaustion requirements
 //   burden_of_proof      string  Burden of proof standard
 //   remedies             string  Available remedies description
-//   related_agencies     mixed   ACF relationship field value (agency post objects)
+//   local_agencies       mixed   ACF relationship field value (non-federal agency post objects)
+//   federal_agencies     mixed   ACF relationship field value (federal agency post objects)
+//   enforcement_channel  string  Free-text enforcement/intake channel notes
 //   last_reviewed        string  Date last reviewed (Y-m-d)
 //   ref_materials        array   Approved ws-reference items -- see ws_get_ref_materials()
 //   plain[ ... ]   See PLAIN SUB-ARRAY above

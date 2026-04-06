@@ -516,7 +516,7 @@ function ws_ingest_statute_field_map_v2(): array {
         'enforcement.fee_shifting'           => [ 'ws_jx_statute_fee_shifting',      'tax', 'ws_fee_shifting'          ],
         'enforcement.remedies'               => [ 'ws_jx_statute_remedies',          'tax', 'ws_remedies'              ],
         'enforcement.remedies_details'       => [ 'ws_jx_statute_remedies_details',  'textarea' ],
-        'enforcement.primary_agency'         => [ null, 'omit' ], // no ACF field — log in run report
+        'enforcement.primary_agency'         => [ 'ws_jx_statute_enforcement_channel', 'textarea' ],
 
         // ── Burden of Proof ───────────────────────────────────────────────
         'burden_of_proof.employee_standard'         => [ 'ws_jx_statute_employee_standard',         'tax', 'ws_employee_standard' ],
@@ -544,7 +544,7 @@ function ws_ingest_statute_field_map_v2(): array {
         '_reconciled_notes' => [ null, 'omit' ],
 
         // ── Citations ─────────────────────────────────────────────────────
-        'citations.attached_citations' => [ null, 'omit' ], // separate CPT — not ingested here
+        'citations.attached_citations' => [ null, 'omit' ], // handled in stub pass (jx-citation)
         'citations.citation_count'     => [ null, 'omit' ], // advisory
     ];
 }
@@ -635,6 +635,406 @@ function ws_ingest_get_value( array $record, string $path ) {
     return $current;
 }
 
+/**
+ * Normalizes a free-text agency label for loose matching.
+ */
+function ws_ingest_normalize_agency_label( string $value ): string {
+    $value = strtolower( trim( $value ) );
+    if ( $value === '' ) {
+        return '';
+    }
+
+    $value = preg_replace( '/\(.*?\)/', ' ', $value );
+    $value = preg_replace( '/[^a-z0-9]+/', ' ', (string) $value );
+    $value = preg_replace( '/\s+/', ' ', (string) $value );
+    return trim( (string) $value );
+}
+
+/**
+ * Splits a primary_agency string into agency-like labels.
+ */
+function ws_ingest_extract_agency_labels( string $primary_agency ): array {
+    $value = trim( $primary_agency );
+    if ( $value === '' ) {
+        return [];
+    }
+
+    $parts = preg_split( '/\s*(?:\/|;|,|\band\b|\bor\b)\s*/i', $value );
+    if ( ! is_array( $parts ) ) {
+        return [ $value ];
+    }
+
+    $parts = array_values( array_filter( array_map( 'trim', $parts ) ) );
+    return empty( $parts ) ? [ $value ] : $parts;
+}
+
+/**
+ * Finds ws-agency IDs assigned to a jurisdiction term that match agency labels.
+ */
+function ws_ingest_match_agencies_for_jx( array $labels, string $jx_slug ): array {
+    $jx_slug = strtolower( trim( $jx_slug ) );
+    if ( empty( $labels ) || $jx_slug === '' ) {
+        return [];
+    }
+
+    $term = get_term_by( 'slug', $jx_slug, WS_JURISDICTION_TAXONOMY );
+    if ( ! $term || is_wp_error( $term ) ) {
+        return [];
+    }
+
+    $q = new WP_Query( [
+        'post_type'      => 'ws-agency',
+        'post_status'    => 'any',
+        'posts_per_page' => -1,
+        'fields'         => 'ids',
+        'no_found_rows'  => true,
+        'tax_query'      => [ [
+            'taxonomy' => WS_JURISDICTION_TAXONOMY,
+            'field'    => 'term_id',
+            'terms'    => [ (int) $term->term_id ],
+        ] ],
+    ] );
+
+    if ( empty( $q->posts ) ) {
+        return [];
+    }
+
+    $normalized_needles = [];
+    foreach ( $labels as $label ) {
+        $normalized = ws_ingest_normalize_agency_label( (string) $label );
+        if ( $normalized !== '' ) {
+            $normalized_needles[] = $normalized;
+        }
+    }
+    $normalized_needles = array_values( array_unique( $normalized_needles ) );
+
+    if ( empty( $normalized_needles ) ) {
+        return [];
+    }
+
+    $matched_ids = [];
+
+    foreach ( $q->posts as $agency_id ) {
+        $candidates = [
+            ws_ingest_normalize_agency_label( get_the_title( $agency_id ) ),
+            ws_ingest_normalize_agency_label( (string) get_post_meta( $agency_id, 'ws_agency_name', true ) ),
+            ws_ingest_normalize_agency_label( (string) get_post_meta( $agency_id, 'ws_agency_code', true ) ),
+        ];
+        $candidates = array_values( array_unique( array_filter( $candidates ) ) );
+
+        foreach ( $normalized_needles as $needle ) {
+            foreach ( $candidates as $candidate ) {
+                if ( $needle === $candidate || str_contains( $needle, $candidate ) || str_contains( $candidate, $needle ) ) {
+                    $matched_ids[] = (int) $agency_id;
+                    continue 3;
+                }
+            }
+        }
+    }
+
+    return array_values( array_unique( $matched_ids ) );
+}
+
+/**
+ * Returns true when a parsed label looks like an agency body, not a forum/path.
+ */
+function ws_ingest_should_create_agency_stub( string $label ): bool {
+    $label = trim( $label );
+    if ( $label === '' || strlen( $label ) < 2 ) {
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Creates a draft ws-agency stub for an unmatched primary_agency label.
+ */
+function ws_ingest_create_agency_stub( string $label, string $jx_slug ) {
+    $label = trim( $label );
+    if ( ! ws_ingest_should_create_agency_stub( $label ) ) {
+        return 0;
+    }
+
+    $jx_slug = strtolower( trim( $jx_slug ) );
+    $term    = get_term_by( 'slug', $jx_slug, WS_JURISDICTION_TAXONOMY );
+    if ( ! $term || is_wp_error( $term ) ) {
+        return 0;
+    }
+
+    $post_id = wp_insert_post( [
+        'post_type'   => 'ws-agency',
+        'post_status' => 'draft',
+        'post_title'  => $label,
+        'post_name'   => sanitize_title( $jx_slug . '-' . $label ),
+        'post_author' => get_current_user_id(),
+    ] );
+
+    if ( is_wp_error( $post_id ) || ! $post_id ) {
+        return 0;
+    }
+
+    update_post_meta( $post_id, 'ws_agency_name', $label );
+    update_post_meta( $post_id, 'ws_agency_code', sanitize_title( $label ) );
+    update_post_meta( $post_id, '_ws_agency_stub', 1 );
+    update_post_meta( $post_id, '_ws_agency_stub_source', 'ingest.primary_agency' );
+
+    wp_set_object_terms( $post_id, [ (int) $term->term_id ], WS_JURISDICTION_TAXONOMY );
+
+    return (int) $post_id;
+}
+
+/**
+ * Parses attached citations from array or free-text input into citation strings.
+ */
+function ws_ingest_parse_attached_citations( $raw ): array {
+    $items = [];
+
+    if ( is_array( $raw ) ) {
+        foreach ( $raw as $entry ) {
+            if ( is_string( $entry ) ) {
+                $items[] = $entry;
+            }
+        }
+    } elseif ( is_string( $raw ) ) {
+        $items[] = $raw;
+    } else {
+        return [];
+    }
+
+    $parsed = [];
+    foreach ( $items as $item ) {
+        $lines = preg_split( '/(?:\r\n|\n|\r)+/', $item );
+        if ( ! is_array( $lines ) ) {
+            $lines = [ $item ];
+        }
+
+        $chunks = [];
+        foreach ( $lines as $line ) {
+            $line = trim( (string) $line );
+            if ( $line === '' ) {
+                continue;
+            }
+
+            // Keep canonical prompt rows intact: CASE || IMPACT || URL || SOURCE || QUALITY
+            if ( str_contains( $line, '||' ) ) {
+                $chunks[] = $line;
+                continue;
+            }
+
+            // Fallback split for legacy free-text lists.
+            $legacy_chunks = preg_split( '/(?:;|\|)+/', $line );
+            if ( is_array( $legacy_chunks ) ) {
+                $chunks = array_merge( $chunks, $legacy_chunks );
+            } else {
+                $chunks[] = $line;
+            }
+        }
+
+        if ( ! is_array( $chunks ) ) {
+            $chunks = [ $item ];
+        }
+
+        foreach ( $chunks as $chunk ) {
+            $clean = trim( (string) $chunk );
+            $clean = preg_replace( '/^[\-*\x{2022}\d\)\.\s]+/u', '', $clean );
+            $clean = trim( (string) $clean );
+            if ( $clean !== '' ) {
+                $parsed[] = $clean;
+            }
+        }
+    }
+
+    return array_values( array_unique( $parsed ) );
+}
+
+/**
+ * Parses one citation row into structured values.
+ * Expected row shape: CASE || IMPACT || URL || SOURCE || QUALITY
+ */
+function ws_ingest_parse_citation_entry( string $citation_text ): array {
+    $entry = [
+        'case_name'       => trim( $citation_text ),
+        'specific_impact' => '',
+        'url'             => '',
+        'source'          => '',
+        'quality'         => '',
+        'raw'             => trim( $citation_text ),
+    ];
+
+    if ( ! str_contains( $citation_text, '||' ) ) {
+        return $entry;
+    }
+
+    $parts = array_map( 'trim', explode( '||', $citation_text ) );
+    if ( ! empty( $parts[0] ) ) {
+        $entry['case_name'] = $parts[0];
+    }
+    if ( ! empty( $parts[1] ) ) {
+        $entry['specific_impact'] = $parts[1];
+    }
+    if ( ! empty( $parts[2] ) ) {
+        $entry['url'] = $parts[2];
+    }
+    if ( ! empty( $parts[3] ) ) {
+        $entry['source'] = $parts[3];
+    }
+    if ( ! empty( $parts[4] ) ) {
+        $entry['quality'] = $parts[4];
+    }
+
+    return $entry;
+}
+
+/**
+ * Derives citation type from ingest batch context.
+ */
+function ws_ingest_citation_type_from_batch( array $meta ): string {
+    $record_type = strtolower( trim( (string) ( $meta['record_type'] ?? 'statute' ) ) );
+
+    $map = [
+        'statute'        => 'statute',
+        'citation'       => 'case_law',
+        'interpretation' => 'case_law',
+        'common-law'     => 'case_law',
+        'regulatory'     => 'regulatory',
+        'secondary'      => 'secondary',
+    ];
+
+    return $map[ $record_type ] ?? 'statute';
+}
+
+/**
+ * Builds a stable dedupe key for citation stubs created during ingest.
+ */
+function ws_ingest_build_citation_key( string $jx_slug, int $statute_post_id, string $citation_text ): string {
+    $normalized = strtolower( trim( preg_replace( '/\s+/', ' ', $citation_text ) ) );
+    $payload    = strtolower( $jx_slug ) . '|' . (int) $statute_post_id . '|' . $normalized;
+    return hash( 'sha256', $payload );
+}
+
+/**
+ * Finds an existing jx-citation by hidden ingest key.
+ */
+function ws_ingest_find_citation_by_key( string $citation_key ): int {
+    if ( $citation_key === '' ) {
+        return 0;
+    }
+
+    $existing = get_posts( [
+        'post_type'      => 'jx-citation',
+        'post_status'    => 'any',
+        'posts_per_page' => 1,
+        'fields'         => 'ids',
+        'no_found_rows'  => true,
+        'meta_query'     => [ [
+            'key'     => '_ws_ingest_citation_key',
+            'value'   => $citation_key,
+            'compare' => '=',
+        ] ],
+    ] );
+
+    return ! empty( $existing ) ? (int) $existing[0] : 0;
+}
+
+/**
+ * Creates citation stubs from record.citations.attached_citations.
+ */
+function ws_ingest_create_citation_stubs_for_statute( int $statute_post_id, array $record, string $jx_slug, array $meta ): array {
+    $created  = [];
+    $linked   = [];
+    $warnings = [];
+
+    $raw       = $record['citations']['attached_citations'] ?? [];
+    $citations = ws_ingest_parse_attached_citations( $raw );
+    if ( empty( $citations ) ) {
+        return [ 'created' => $created, 'linked' => $linked, 'warnings' => $warnings, 'count' => 0 ];
+    }
+
+    $jx_term = get_term_by( 'slug', strtolower( $jx_slug ), WS_JURISDICTION_TAXONOMY );
+
+    foreach ( $citations as $citation_text ) {
+        $entry        = ws_ingest_parse_citation_entry( $citation_text );
+        $case_name    = trim( (string) $entry['case_name'] );
+        $impact_seed  = trim( (string) $entry['specific_impact'] );
+        $citation_url = trim( (string) $entry['url'] );
+        $source_label = trim( (string) $entry['source'] );
+
+        if ( $case_name === '' ) {
+            $case_name = trim( $citation_text );
+        }
+
+        $citation_key = ws_ingest_build_citation_key( $jx_slug, $statute_post_id, $citation_text );
+        $existing_id  = ws_ingest_find_citation_by_key( $citation_key );
+
+        if ( $existing_id ) {
+            $raw_statute_ids = get_post_meta( $existing_id, 'ws_jx_citation_statute_ids', true );
+            $statute_ids     = is_array( $raw_statute_ids ) ? array_map( 'intval', $raw_statute_ids ) : [];
+            if ( ! in_array( $statute_post_id, $statute_ids, true ) ) {
+                $statute_ids[] = $statute_post_id;
+                update_post_meta( $existing_id, 'ws_jx_citation_statute_ids', array_values( array_unique( $statute_ids ) ) );
+            }
+            $linked[] = $existing_id;
+            continue;
+        }
+
+        $post_id = wp_insert_post( [
+            'post_type'   => 'jx-citation',
+            'post_status' => 'draft',
+            'post_title'  => substr( $case_name, 0, 180 ),
+            'post_author' => get_current_user_id(),
+        ] );
+
+        if ( is_wp_error( $post_id ) || ! $post_id ) {
+            $warnings[] = 'Citation stub create failed for: ' . substr( $case_name, 0, 80 );
+            continue;
+        }
+
+        update_post_meta( $post_id, 'ws_jx_citation_type', ws_ingest_citation_type_from_batch( $meta ) );
+        update_post_meta( $post_id, 'ws_jx_citation_common_name', sanitize_text_field( $case_name ) );
+        update_post_meta( $post_id, 'ws_jx_citation_official_name', sanitize_text_field( $case_name ) );
+
+        if ( $citation_url !== '' ) {
+            $safe_url = esc_url_raw( $citation_url );
+            if ( $safe_url !== '' ) {
+                update_post_meta( $post_id, 'ws_jx_citation_url', $safe_url );
+            }
+        }
+
+        if ( $impact_seed !== '' ) {
+            $impact_text = sanitize_text_field( $impact_seed );
+            $summary     = '<p><strong>Starter hint:</strong> ' . esc_html( $impact_text ) . '</p>';
+            update_post_meta( $post_id, 'ws_jx_citation_summary', wp_kses_post( $summary ) );
+        }
+
+        if ( $source_label !== '' ) {
+            update_post_meta( $post_id, '_ws_citation_stub_source_label', sanitize_text_field( $source_label ) );
+        }
+
+        update_post_meta( $post_id, 'ws_jx_citation_statute_ids', [ $statute_post_id ] );
+        update_post_meta( $post_id, 'ws_attach_flag', 0 );
+        update_post_meta( $post_id, 'ws_verification_status', 'unverified' );
+        update_post_meta( $post_id, 'ws_needs_review', 0 );
+        update_post_meta( $post_id, 'ws_auto_source_method', sanitize_text_field( $meta['source_method'] ?? 'ai_assisted' ) );
+        update_post_meta( $post_id, 'ws_auto_source_name', sanitize_text_field( $meta['source_name'] ?? '' ) );
+        update_post_meta( $post_id, '_ws_ingest_citation_key', $citation_key );
+        update_post_meta( $post_id, '_ws_citation_stub', 1 );
+        update_post_meta( $post_id, '_ws_citation_stub_source', 'ingest.attached_citations' );
+
+        if ( $jx_term && ! is_wp_error( $jx_term ) ) {
+            wp_set_object_terms( $post_id, [ (int) $jx_term->term_id ], WS_JURISDICTION_TAXONOMY );
+        }
+
+        $created[] = (int) $post_id;
+    }
+
+    return [
+        'created'  => array_values( array_unique( $created ) ),
+        'linked'   => array_values( array_unique( $linked ) ),
+        'warnings' => $warnings,
+        'count'    => count( $citations ),
+    ];
+}
+
 
 // ── Post title builder ────────────────────────────────────────────────────────
 
@@ -717,9 +1117,9 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
     update_post_meta( $post_id, 'ws_needs_review',        0 );
 
     // Source chain — full provenance record of all contributing models.
-    // Populated by NotebookLM from its input files. Stored as JSON string.
+    // Populated by NotebookLM from its input files. Stored as hidden JSON string.
     if ( ! empty( $meta['source_chain'] ) && is_array( $meta['source_chain'] ) ) {
-        update_post_meta( $post_id, 'ws_auto_source_chain', wp_json_encode( $meta['source_chain'] ) );
+        update_post_meta( $post_id, '_ws_auto_source_chain', wp_json_encode( $meta['source_chain'] ) );
     }
 
     // ── Step 4: Assign ws_jurisdiction taxonomy term ──────────────────────
@@ -837,6 +1237,50 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
     $bop_details = ws_ingest_get_value( $record, 'burden_of_proof.burden_of_proof_details' );
     if ( $bop_details ) {
         update_post_meta( $post_id, 'ws_jx_statute_bop_has_details', 1 );
+    }
+
+    // citations.attached_citations: create draft jx-citation stubs and link to this statute.
+    $citation_stub_result = ws_ingest_create_citation_stubs_for_statute( $post_id, $record, $jx_slug, $meta );
+    if ( ! empty( $citation_stub_result['created'] ) ) {
+        $result['log'][] = "$sid: created " . count( $citation_stub_result['created'] ) . ' citation stub record(s) from citations.attached_citations';
+    }
+    if ( ! empty( $citation_stub_result['linked'] ) ) {
+        $result['log'][] = "$sid: linked " . count( $citation_stub_result['linked'] ) . ' existing citation record(s) from citations.attached_citations';
+    }
+    if ( ! empty( $citation_stub_result['warnings'] ) ) {
+        foreach ( $citation_stub_result['warnings'] as $warning ) {
+            $result['warnings'][] = "$sid: $warning";
+        }
+    }
+
+    // enforcement.primary_agency: preserve text channel and attempt agency linking.
+    $primary_agency = (string) ws_ingest_get_value( $record, 'enforcement.primary_agency' );
+    if ( trim( $primary_agency ) !== '' ) {
+        $agency_labels = ws_ingest_extract_agency_labels( $primary_agency );
+        $target_jx     = ( $jx_slug === 'us' ) ? 'us' : $jx_slug;
+        $matched_ids   = ws_ingest_match_agencies_for_jx( $agency_labels, $target_jx );
+
+        if ( empty( $matched_ids ) ) {
+            $created_stub_ids = [];
+            foreach ( $agency_labels as $label ) {
+                $stub_id = ws_ingest_create_agency_stub( (string) $label, $target_jx );
+                if ( $stub_id ) {
+                    $created_stub_ids[] = $stub_id;
+                }
+            }
+            $matched_ids = array_values( array_unique( $created_stub_ids ) );
+            if ( ! empty( $matched_ids ) ) {
+                $result['log'][] = "$sid: created " . count( $matched_ids ) . " agency stub record(s) from enforcement.primary_agency";
+            }
+        }
+
+        if ( ! empty( $matched_ids ) ) {
+            $agency_key = ( $jx_slug === 'us' ) ? 'ws_jx_statute_federal_agencies' : 'ws_jx_statute_local_agencies';
+            update_post_meta( $post_id, $agency_key, $matched_ids );
+            $result['log'][] = "$sid: linked " . count( $matched_ids ) . " agency record(s) from enforcement.primary_agency";
+        } else {
+            $result['warnings'][] = "$sid: no ws-agency matches found and no stub was created for enforcement.primary_agency text.";
+        }
     }
 
     // ── Step 7: Log tax removals ─────────────────────────────────────────
@@ -957,7 +1401,7 @@ function ws_ingest_log_imported_batch( string $filename, array $summary, bool $w
 /**
  * Appends citation breadcrumbs to citations-breadcrumbs.log.
  * One entry per statute that has attached_citations.
- * Human review trail only — not enough data for a jx-citation record.
+ * Retained as a human review trail even when citation stubs are auto-created.
  */
 function ws_ingest_log_citation_breadcrumbs( string $filename, string $jx, string $statute_id, array $citations ): bool {
     if ( empty( $citations ) ) return true;
@@ -1007,9 +1451,10 @@ function ws_ingest_process_batch_data( array $data, string $batch_filename ): ar
         $record_result = ws_ingest_process_statute_record( $record, $meta, $blacklist );
         $sid           = $record['statute_id'] ?? 'UNKNOWN';
 
-        $raw_citations = $record['citations']['attached_citations'] ?? [];
-        if ( ! empty( $raw_citations ) ) {
-            if ( ! ws_ingest_log_citation_breadcrumbs( $batch_filename, $meta['jurisdiction_id'] ?? '', $sid, $raw_citations ) ) {
+        $raw_citations    = $record['citations']['attached_citations'] ?? [];
+        $parsed_citations = ws_ingest_parse_attached_citations( $raw_citations );
+        if ( ! empty( $parsed_citations ) ) {
+            if ( ! ws_ingest_log_citation_breadcrumbs( $batch_filename, $meta['jurisdiction_id'] ?? '', $sid, $parsed_citations ) ) {
                 $result['runtime_warnings'][] = "$sid: failed to append citation breadcrumb log.";
             }
         }

@@ -478,11 +478,13 @@ function ws_get_jx_statute_data( $jx_term_id ) {
                 'exhaustion_details'  => get_post_meta( $sid, 'ws_jx_statute_exhaustion_details',  true ),
 
                 // ── Enforcement ───────────────────────────────────────────
-                'process_type'     => get_field( 'ws_jx_statute_process_type',     $sid ),
-                'adverse_action'   => get_field( 'ws_jx_statute_adverse_action',   $sid ),
-                'fee_shifting'     => get_field( 'ws_jx_statute_fee_shifting',     $sid ),
-                'remedies'         => get_field( 'ws_jx_statute_remedies',         $sid ),
-                'related_agencies' => get_field( 'ws_jx_statute_related_agencies', $sid ),
+                'process_type'         => get_field( 'ws_jx_statute_process_type',          $sid ),
+                'adverse_action'       => get_field( 'ws_jx_statute_adverse_action',        $sid ),
+                'fee_shifting'         => get_field( 'ws_jx_statute_fee_shifting',          $sid ),
+                'remedies'             => get_field( 'ws_jx_statute_remedies',              $sid ),
+                'local_agencies'       => get_field( 'ws_jx_statute_local_agencies',        $sid ),
+                'federal_agencies'     => get_field( 'ws_jx_statute_federal_agencies',      $sid ),
+                'enforcement_channel'  => get_post_meta( $sid, 'ws_jx_statute_enforcement_channel', true ),
 
                 // ── Burden of Proof ───────────────────────────────────────
                 'bop_standard'             => get_post_meta( $sid, 'ws_jx_statute_bop_standard',             true ),
