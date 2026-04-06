@@ -735,7 +735,6 @@ absence is never penalized:
   - reward_details
   - statute_url
   - _review_notes
-  - _reconciled_notes   → must exist, must be empty, used by second pass legal fact checker
 
 The following fields must be omitted entirely when empty — do not include
 them as empty arrays [] or empty strings "":
@@ -1055,8 +1054,7 @@ RECORD SCHEMA
         "citation_count":     "[omit if attached_citations is omitted; otherwise must equal length of attached_citations]"
   },
 
-  "_review_notes":      "",
-  "_reconciled_notes":  "[Field must be added, it must exist — leave this key empty. Research models must not populate this field.]"
+    "_review_notes":      ""
 }
 
 ---
@@ -1075,9 +1073,6 @@ verifiably zero; use this only when literally correct.
 remedies: If a statute refers to "actual damages" map to compensatory-damages
 and note in _review_notes. If "special damages" map to consequential-damages
 and note in _review_notes.
-
-_reconciled_notes key must exist, and must be empty "", it is used by
-the second pass legal fact checker who reconciles the records objects.
 
 CALCULATED FIELDS — compute last, after all records are finalized:
   meta.record_count         — must equal length of records array
@@ -1161,8 +1156,7 @@ RECORD SCHEMA
         "citation_count":     "[omit if attached_citations is omitted; otherwise must equal length of attached_citations]"
   },
 
-  "_review_notes":     "",
-  "_reconciled_notes": "[NOTEBOOKLM ONLY — leave this key empty. Research models must not populate this field.]"
+    "_review_notes":     ""
 }
 
 ---
@@ -1225,8 +1219,7 @@ RECORD SCHEMA
 
   "quality":          "[high | moderate | low]",
 
-  "_review_notes":     "",
-  "_reconciled_notes": "[NOTEBOOKLM ONLY — leave this key empty. Research models must not populate this field.]"
+    "_review_notes":     ""
 }
 
 ---
@@ -1302,8 +1295,7 @@ RECORD SCHEMA
 
   "quality": "[high | moderate | low]",
 
-  "_review_notes":     "",
-  "_reconciled_notes": "[NOTEBOOKLM ONLY — leave this key empty. Research models must not populate this field.]"
+    "_review_notes":     ""
 }
 
 ---
