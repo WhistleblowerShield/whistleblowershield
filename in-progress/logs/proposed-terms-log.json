@@ -15,9 +15,13 @@
                 "CA-8547.12",
                 "CA-8547.13",
                 "CA-53296",
-                "CA-87160"
+                "CA-87160",
+                "CA-8547",
+                "CA-8547.3",
+                "CA-8547.7",
+                "CA-8547.11"
             ],
-            "count": 10,
+            "count": 14,
             "status": "pending",
             "resolved_on": null,
             "resolution": null
@@ -69,9 +73,10 @@
             "term_label": "Child Abuse Reporting",
             "notes": "Used for statutes protecting reports of suspected child abuse. Existing terms like general-wrongdoing are only a rough fallback and do not capture the specific child-protection reporting context.",
             "seen_in": [
-                "PA-6320"
+                "PA-6320",
+                "CA-11166"
             ],
-            "count": 1,
+            "count": 2,
             "status": "pending",
             "resolved_on": null,
             "resolution": null
@@ -111,6 +116,20 @@
                 "PA-1108"
             ],
             "count": 1,
+            "status": "pending",
+            "resolved_on": null,
+            "resolution": null
+        },
+        {
+            "taxonomy": "ws_disclosure_type",
+            "term_id": "patient-abuse-reporting",
+            "term_label": "Patient Abuse Reporting",
+            "notes": "Used for statutes protecting reports of suspected patient abuse or neglect in hospitals and similar facilities. Existing terms do not cleanly capture this reporting context.",
+            "seen_in": [
+                "CA-11161.8",
+                "CA-11161.9"
+            ],
+            "count": 2,
             "status": "pending",
             "resolved_on": null,
             "resolution": null
