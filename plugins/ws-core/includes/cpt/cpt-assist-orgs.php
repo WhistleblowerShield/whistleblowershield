@@ -12,13 +12,16 @@
  *
  * @package WhistleblowerShield
  * @since   1.0.0
- * @version 3.10.0
+ * @version 3.11.0
  *
  * VERSION
  * -------
  * 1.0.0   Initial release.
  * 1.0.1   menu_position corrected from 31 to 30.
  * 3.7.0   ws_employment_sector taxonomy added.
+ * 3.11.0  Expanded local taxonomy declarations for ws-assist-org to include
+ *         process type, case stage, languages, disclosure targets, org type,
+ *         employment sector, cost model, services, and jurisdiction.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -89,7 +92,18 @@ function ws_register_cpt_assist_org() {
 
         // ── Taxonomies ────────────────────────────────────────────────────
 
-        'taxonomies' => [ 'ws_disclosure_type' ],
+        'taxonomies' => [
+            'ws_disclosure_type',
+            'ws_process_type',
+            'ws_disclosure_targets',
+            'ws_case_stage',
+            'ws_languages',
+            'ws_aorg_type',
+            'ws_employment_sector',
+            'ws_aorg_cost_model',
+            'ws_aorg_service',
+            'ws_jurisdiction',
+        ],
 
     ];
 

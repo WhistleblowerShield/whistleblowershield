@@ -42,13 +42,32 @@
  *
  * @package    WhistleblowerShield
  * @since      3.14.0
- * @version    3.14.2
+ * @version    3.15.3
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
  * VERSION
  * -------
+ * 3.15.3  Omission/integrity language hardened across prompt types:
+ *         - explicit omit-over-false guidance
+ *         - concrete harm example for bad data
+ *         - explicit permission to fail a record or full batch when uncertain
+ * 3.15.2  Prompt taxonomy tables now include registered object-type annotations,
+ *         and assist-org runs include assist-org taxonomies (including ws_languages).
+ * 3.15.1  Taxonomy table output is now record-type scoped so prompts include
+ *         only the taxonomy tables needed for the selected record type.
+ * 3.15.0  Added flexible assist-org sourcing mode to prompt generator:
+ *         - new record type: assist-org
+ *         - proposal_count control (operator-defined batch size)
+ *         - nationwide_only toggle and jurisdiction-aware run scope
+ *         - assist-org auto-exclusions via ws-assist-org post type
+ * 3.14.4  Added optional phased assist-org sourcing form block (6-7 candidates)
+ *         to statute/common-law prompt templates for fallback-layer expansion runs.
+ * 3.14.3  Non-statute exclusion hardening:
+ *         - citation exclusions now prefer _ws_jx_citation_id
+ *         - interpretation exclusions now prefer _ws_jx_interpretation_id
+ *         - removed redundant empty-check branch in auto-exclusion query path
  * 3.14.2  Strict canonical scoping in auto-exclusions:
  *         - removed legacy/fallback post scans
  *         - relies on canonical taxonomy-scoped records only
@@ -136,12 +155,15 @@ function ws_prompt_record_type_to_post_type( string $record_type ): string {
             return 'jx-citation';
         case 'interpretation':
             return 'jx-interpretation';
+        case 'assist-org':
+            return 'ws-assist-org';
         default:
             return '';
     }
 }
 
 function ws_prompt_extract_record_identifier( string $record_type, int $post_id ): string {
+    // @todo cite exclusion ids not yet implemented.
     if ( $record_type === 'statute' ) {
         return trim( (string) get_post_meta( $post_id, '_ws_jx_statute_id', true ) );
     }
@@ -150,6 +172,27 @@ function ws_prompt_extract_record_identifier( string $record_type, int $post_id 
         $doctrine_id = trim( (string) get_post_meta( $post_id, '_ws_cl_doctrine_id', true ) );
         if ( $doctrine_id !== '' ) {
             return $doctrine_id;
+        }
+    }
+
+    if ( $record_type === 'citation' ) {
+        $citation_id = trim( (string) get_post_meta( $post_id, '_ws_jx_citation_id', true ) );
+        if ( $citation_id !== '' ) {
+            return $citation_id;
+        }
+    }
+
+    if ( $record_type === 'interpretation' ) {
+        $interpretation_id = trim( (string) get_post_meta( $post_id, '_ws_jx_interpretation_id', true ) );
+        if ( $interpretation_id !== '' ) {
+            return $interpretation_id;
+        }
+    }
+
+    if ( $record_type === 'assist-org' ) {
+        $assist_org_id = trim( (string) get_post_meta( $post_id, 'ws_aorg_internal_id', true ) );
+        if ( $assist_org_id !== '' ) {
+            return $assist_org_id;
         }
     }
 
@@ -223,10 +266,6 @@ function ws_prompt_get_auto_exclusions( string $record_type, string $jx_id ): ar
             ],
         ],
     ] );
-
-    if ( empty( $posts ) ) {
-        return [];
-    }
 
     if ( empty( $posts ) ) {
         return [];
@@ -441,11 +480,14 @@ function ws_prompt_read_flat_taxonomy( string $taxonomy ): array {
 
 // ── Taxonomy table renderers ──────────────────────────────────────────────
 
-function ws_prompt_render_hierarchical_table( string $slug, string $label, string $applies_to, string $description, array $hierarchy, bool $has_sentinel = false ): string {
+function ws_prompt_render_hierarchical_table( string $slug, string $label, string $applies_to, string $description, array $hierarchy, bool $has_sentinel = false, array $object_types = [] ): string {
     $pad = 35;
     $out  = str_repeat( '─', 76 ) . "\n";
     $out .= "TAXONOMY: {$slug}\n";
     $out .= "Applies to: {$applies_to}\n";
+    if ( ! empty( $object_types ) ) {
+        $out .= 'Registered on: ' . implode( ', ', $object_types ) . "\n";
+    }
     $out .= "Hierarchical: YES — use child slugs only\n";
     $out .= "Description: {$description}\n";
     $out .= str_repeat( '─', 76 ) . "\n\n";
@@ -467,11 +509,14 @@ function ws_prompt_render_hierarchical_table( string $slug, string $label, strin
     return $out;
 }
 
-function ws_prompt_render_flat_table( string $slug, string $label, string $applies_to, string $description, array $terms ): string {
+function ws_prompt_render_flat_table( string $slug, string $label, string $applies_to, string $description, array $terms, array $object_types = [] ): string {
     $pad = 35;
     $out  = str_repeat( '─', 76 ) . "\n";
     $out .= "TAXONOMY: {$slug}\n";
     $out .= "Applies to: {$applies_to}\n";
+    if ( ! empty( $object_types ) ) {
+        $out .= 'Registered on: ' . implode( ', ', $object_types ) . "\n";
+    }
     $out .= "Hierarchical: NO — flat list\n";
     $out .= "Description: {$description}\n";
     $out .= str_repeat( '─', 76 ) . "\n\n";
@@ -645,8 +690,14 @@ function ws_prompt_omission_rules(): string {
 
 OMISSION
 
+Primary rule: OMIT before false confidence.
+
 If you cannot find a value with reasonable confidence, omit the key entirely.
 Do not use null, "N/A", "unknown", empty placeholders, or guessed values.
+
+You have explicit permission to fail a record when needed. If confidence is
+insufficient, omit the uncertain fields or omit the full record and report the
+reason in integrity.error_details.
 
 Use empty "" or [] only when the schema explicitly says the key must exist
 and be empty. Field-level schema rules override this global omission block.
@@ -686,6 +737,11 @@ them as empty arrays [] or empty strings "":
 An honest incomplete record can be enriched over time.
 A confidently wrong record causes harm and cannot be trusted.
 
+Concrete harm example:
+    - A guessed filing deadline or fabricated citation may cause a real user to
+        miss a legal deadline or rely on law that does not exist.
+    - An omitted field does not create that risk.
+
 ---
 
 RULES;
@@ -695,9 +751,11 @@ RULES;
 // ── Taxonomy tables block (shared across record types) ────────────────────
 
 function ws_prompt_taxonomy_tables( string $applies_to ): string {
+    $record_type = strtolower( trim( $applies_to ) );
+
     $out  = str_repeat( '=', 80 ) . "\n";
     $out .= "TAXONOMY TABLES\n";
-    $out .= "Notes: Full doctrinal palette. Use child slugs only for hierarchical\n";
+    $out .= "Notes: Record-type scoped palette. Use child slugs only for hierarchical\n";
     $out .= "       taxonomies. Tag only what is genuinely supported by the source\n";
     $out .= "       material. Many axes will be sparsely used on any single record.\n";
     $out .= str_repeat( '=', 80 ) . "\n\n\n";
@@ -721,13 +779,29 @@ function ws_prompt_taxonomy_tables( string $applies_to ): string {
         ],
     ];
 
-    foreach ( $hierarchical as $slug => $config ) {
+    $hierarchical_by_record_type = [
+        'jx-statute'        => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_targets' ],
+        'jx-common-law'     => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_targets' ],
+        'jx-citation'       => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_targets' ],
+        'jx-interpretation' => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_targets' ],
+    ];
+
+    $selected_hierarchical = $hierarchical_by_record_type[ $record_type ] ?? [];
+
+    foreach ( $selected_hierarchical as $slug ) {
+        if ( ! isset( $hierarchical[ $slug ] ) ) {
+            continue;
+        }
+
+        $config = $hierarchical[ $slug ];
         $data = ws_prompt_read_hierarchical_taxonomy( $slug );
+        $object_types = ws_prompt_registered_object_types( $slug );
         $out .= ws_prompt_render_hierarchical_table(
             $slug, $config['label'], $applies_to,
             $config['description'],
             $data['hierarchy'],
-            $data['has_sentinel']
+            $data['has_sentinel'],
+            $object_types
         );
     }
 
@@ -757,10 +831,50 @@ function ws_prompt_taxonomy_tables( string $applies_to ): string {
             'label'       => 'Employee Standard',
             'description' => "Burden-of-proof standard the employee must meet. Tag all that explicitly\n             apply. Omit entirely if no standard is named — do not infer.",
         ],
+        'ws_case_stage' => [
+            'label'       => 'Case Stage',
+            'description' => "Lifecycle stage where help is needed. Choose the closest stage for the org\n             fit (for example pre-report, retaliation-active, litigation).",
+        ],
+        'ws_languages' => [
+            'label'       => 'Languages',
+            'description' => "Languages the organization can handle for intake or support. Tag all\n             available language options.",
+        ],
+        'ws_aorg_type' => [
+            'label'       => 'Assist-Org Type',
+            'description' => "Primary organization classification for directory filters.",
+        ],
+        'ws_employment_sector' => [
+            'label'       => 'Employment Sector',
+            'description' => "Employment sectors the organization serves. Tag all supported sectors.",
+        ],
+        'ws_aorg_cost_model' => [
+            'label'       => 'Assist-Org Cost Model',
+            'description' => "Cost structure of the help pathway.",
+        ],
+        'ws_aorg_service' => [
+            'label'       => 'Assist-Org Service',
+            'description' => "Services offered by the organization. Tag all service types supported.",
+        ],
     ];
 
-    foreach ( $flat as $slug => $config ) {
+    $flat_by_record_type = [
+        'jx-statute'        => [ 'ws_adverse_action_types', 'ws_process_type', 'ws_remedies', 'ws_fee_shifting', 'ws_employer_defense', 'ws_employee_standard' ],
+        'jx-common-law'     => [ 'ws_adverse_action_types', 'ws_process_type', 'ws_remedies', 'ws_fee_shifting', 'ws_employer_defense', 'ws_employee_standard' ],
+        'jx-citation'       => [ 'ws_adverse_action_types', 'ws_process_type', 'ws_remedies', 'ws_employer_defense', 'ws_employee_standard' ],
+        'jx-interpretation' => [ 'ws_adverse_action_types', 'ws_process_type', 'ws_remedies', 'ws_employer_defense', 'ws_employee_standard' ],
+        'ws-assist-org'     => [ 'ws_process_type', 'ws_case_stage', 'ws_languages', 'ws_aorg_type', 'ws_employment_sector', 'ws_aorg_cost_model', 'ws_aorg_service' ],
+    ];
+
+    $selected_flat = $flat_by_record_type[ $record_type ] ?? [];
+
+    foreach ( $selected_flat as $slug ) {
+        if ( ! isset( $flat[ $slug ] ) ) {
+            continue;
+        }
+
+        $config = $flat[ $slug ];
         $terms = ws_prompt_read_flat_taxonomy( $slug );
+        $object_types = ws_prompt_registered_object_types( $slug );
         // Fix sentinel label to reference correct companion field
         if ( isset( $terms['has-details'] ) ) {
             $field_map = [
@@ -775,11 +889,34 @@ function ws_prompt_taxonomy_tables( string $applies_to ): string {
         $out .= ws_prompt_render_flat_table(
             $slug, $config['label'], $applies_to,
             $config['description'],
-            $terms
+            $terms,
+            $object_types
         );
     }
 
     return $out;
+}
+
+function ws_prompt_registered_object_types( string $taxonomy ): array {
+    $map = [
+        'ws_disclosure_type'   => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-agency', 'ws-ag-procedure', 'ws-assist-org' ],
+        'ws_process_type'      => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-agency', 'ws-assist-org' ],
+        'ws_remedies'          => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
+        'ws_protected_class'   => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
+        'ws_adverse_action_types' => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
+        'ws_languages'         => [ 'ws-agency', 'ws-assist-org' ],
+        'ws_case_stage'        => [ 'ws-assist-org' ],
+        'ws_disclosure_targets'=> [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-assist-org' ],
+        'ws_fee_shifting'      => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
+        'ws_employer_defense'  => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
+        'ws_aorg_type'         => [ 'ws-assist-org' ],
+        'ws_employment_sector' => [ 'ws-assist-org' ],
+        'ws_aorg_cost_model'   => [ 'ws-assist-org' ],
+        'ws_aorg_service'      => [ 'ws-assist-org' ],
+        'ws_employee_standard' => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
+    ];
+
+    return $map[ $taxonomy ] ?? [];
 }
 
 
@@ -899,12 +1036,139 @@ with_errors must be true if ANY of the following occurred:
   - A parent slug was detected and removed during self-check
   - Anything a human reviewer should know about this batch
 
+Fail-safe policy:
+    - It is acceptable to fail one or more records instead of guessing.
+    - It is acceptable to fail the full batch if source quality is insufficient.
+    - In either case, set with_errors: true and explain exactly why.
+
 OMISSION RULE: If with_errors is false, omit error_details and error_count
 entirely. The ingest tool treats a missing key differently from an empty array.
 
 ---
 
 BLOCK;
+}
+
+function ws_prompt_assist_org_sourcing_form_block(): string {
+        return <<<'BLOCK'
+
+---
+
+OPTIONAL ADDENDUM — ASSIST-ORG SOURCING FORM (PHASED MODE)
+
+Use this addendum only when the run explicitly requests assist-org expansion.
+If the run is legal-record generation only, ignore this addendum.
+
+Batch size discipline:
+    - Return 6-7 organizations only (not more)
+
+Inclusion focus:
+    - U.S.-nationwide or clearly multi-state support
+    - Direct help or fast path to qualified help
+    - Prioritize Maya/James user outcomes (help-first, not reporting-first)
+
+Exclude:
+    - Pure government reporting channels
+    - Media tip lines without user support pathways
+    - Regional-only entries when nationwide coverage is required
+
+For each candidate, provide:
+    1) organization_name
+    2) official_website_url
+    3) intake_or_contact_url
+    4) nationwide_evidence (one line)
+    5) help_mode [legal-representation | legal-referral | legal-aid-locator | advocacy-support]
+    6) cost_model [free | pro-bono | fee | mixed | unknown]
+    7) anonymous_preconsult_possible [yes | no | unclear]
+    8) has_attorneys [yes | no | unclear]
+    9) stage_fit [pre-report | post-report | retaliation-active | litigation]
+    10) disclosure_target_fit [attorney-counsel | public-nonprofit]
+    11) confidence_score [1-5]
+    12) confidence_note (one sentence)
+    13) verification_source_1
+    14) verification_source_2
+    15) checked_date_utc [YYYY-MM-DD]
+    16) url_status [works | redirects | broken]
+
+---
+
+BLOCK;
+}
+
+function ws_generate_assist_org_prompt( array $scope ): string {
+    $jx              = strtoupper( sanitize_text_field( $scope['jx_id'] ) );
+    $jx_name         = sanitize_text_field( $scope['jx_name'] );
+    $proposal_count  = max( 1, (int) ( $scope['proposal_count'] ?? 7 ) );
+    $nationwide_only = ! empty( $scope['nationwide_only'] );
+    $focus_notes     = sanitize_textarea_field( (string) ( $scope['assist_org_focus_notes'] ?? '' ) );
+    $excludes        = sanitize_textarea_field( (string) ( $scope['exclusion_list'] ?? '' ) );
+
+    $out  = "You are a research assistant building a vetted shortlist of assist organizations\n";
+    $out .= "for WhistleblowerShield.org fallback routing.\n\n";
+    $out .= "Objective: return a high-confidence, low-noise batch for Maya/James user flows\n";
+    $out .= "where the user needs direct help or a fast path to qualified help.\n\n";
+    $out .= "Keep the batch tight and practical. Do not return extra organizations.\n\n";
+    $out .= "---\n\n";
+    $out .= "OUTPUT FORMAT\n\n";
+    $out .= "Return exactly {$proposal_count} candidates as a JSON array.\n";
+    $out .= "Each candidate object must include:\n";
+    $out .= "  - organization_name\n";
+    $out .= "  - official_website_url\n";
+    $out .= "  - intake_or_contact_url\n";
+    $out .= "  - nationwide_evidence\n";
+    $out .= "  - help_mode                [legal-representation | legal-referral | legal-aid-locator | advocacy-support]\n";
+    $out .= "  - cost_model               [free | pro-bono | fee | mixed | unknown]\n";
+    $out .= "  - anonymous_preconsult_possible [yes | no | unclear]\n";
+    $out .= "  - has_attorneys            [yes | no | unclear]\n";
+    $out .= "  - stage_fit                [pre-report | post-report | retaliation-active | litigation]\n";
+    $out .= "  - disclosure_target_fit    [attorney-counsel | public-nonprofit]\n";
+    $out .= "  - confidence_score         [1-5]\n";
+    $out .= "  - confidence_note\n";
+    $out .= "  - verification_source_1\n";
+    $out .= "  - verification_source_2\n";
+    $out .= "  - checked_date_utc         [YYYY-MM-DD]\n";
+    $out .= "  - url_status               [works | redirects | broken]\n\n";
+    $out .= "INCLUSION RULES\n";
+    $out .= "  - Must provide direct help or a fast referral pathway.\n";
+    $out .= "  - Prioritize actionable intake pathways over general information pages.\n\n";
+    $out .= "EXCLUSION RULES\n";
+    $out .= "  - Exclude pure government reporting channels.\n";
+    $out .= "  - Exclude media tip lines without user support pathways.\n";
+    $out .= "  - Exclude entries with broken URLs or unclear user path.\n\n";
+    $out .= "TAXONOMY TABLES\n\n";
+    $out .= "Use only registered taxonomy slugs from the tables below when assigning\n";
+    $out .= "fields such as help mode, stage fit, sector, language, and service profile.\n\n";
+    $out .= ws_prompt_taxonomy_tables( 'ws-assist-org' );
+
+    $out .= "RUN SCOPE\n\n";
+    $out .= "Record type:        assist-org\n";
+    $out .= "Jurisdiction:       {$jx_name}\n";
+    $out .= "Jurisdiction ID:    {$jx}\n";
+    $out .= "Proposal count:     {$proposal_count}\n";
+    $out .= 'Nationwide only:    ' . ( $nationwide_only ? 'yes' : 'no' ) . "\n";
+    if ( $focus_notes !== '' ) {
+        $out .= "Focus notes:        {$focus_notes}\n";
+    }
+    if ( $excludes !== '' ) {
+        $out .= "Exclusion list:     Do not return organizations already known in this list:\n";
+        foreach ( explode( "\n", $excludes ) as $line ) {
+            $line = trim( $line );
+            if ( $line !== '' ) {
+                $out .= "                    {$line}\n";
+            }
+        }
+    }
+
+    if ( $nationwide_only ) {
+        $out .= "\nWhen nationwide_only is yes, return only nationwide or clearly multi-state organizations.\n";
+    } else {
+        $out .= "\nWhen nationwide_only is no, include strong {$jx} fits and optional broader coverage.\n";
+    }
+
+    $out .= "\n---\n\n";
+    $out .= "Return only the JSON array in a single code block, with no extra commentary.\n";
+
+    return $out;
 }
 
 
@@ -1340,6 +1604,7 @@ function ws_generate_statute_prompt( array $scope ): string {
     $out .= ws_prompt_meta_schema( 'statute' );
     $out .= ws_prompt_statute_schema();
     $out .= ws_prompt_integrity_block();
+    $out .= ws_prompt_assist_org_sourcing_form_block();
 
     // RUN SCOPE
     $out .= "RUN SCOPE\n\n";
@@ -1409,6 +1674,7 @@ function ws_generate_common_law_prompt( array $scope ): string {
     $out .= ws_prompt_meta_schema( 'common-law' );
     $out .= ws_prompt_common_law_schema();
     $out .= ws_prompt_integrity_block();
+    $out .= ws_prompt_assist_org_sourcing_form_block();
 
     $out .= "RUN SCOPE\n\n";
     $out .= "Jurisdiction:       {$jx_name}\n";
@@ -1578,10 +1844,20 @@ function ws_handle_prompt_generation(): array {
     $record_type = sanitize_text_field( $_POST['record_type'] ?? '' );
     $jx_id       = strtoupper( sanitize_text_field( $_POST['jx_id'] ?? '' ) );
     $records_requested = max( 0, (int) ( $_POST['records_requested'] ?? 0 ) );
+    $proposal_count = max( 0, (int) ( $_POST['proposal_count'] ?? 0 ) );
 
     if ( ! $record_type || ! preg_match( '/^[A-Z]{2}$/', $jx_id ) ) {
         $result['message'] = 'Record type and a valid two-letter jurisdiction code are required.';
         return $result;
+    }
+
+    if ( $record_type === 'assist-org' && $proposal_count < 1 ) {
+        $result['message'] = 'Proposal count is required for assist-org runs.';
+        return $result;
+    }
+
+    if ( $record_type === 'assist-org' ) {
+        $records_requested = $proposal_count;
     }
 
     $jx_context = ws_prompt_resolve_jx_context( $jx_id );
@@ -1606,7 +1882,10 @@ function ws_handle_prompt_generation(): array {
         'jx_name'         => $jx_name,
         'legislature_url' => $leg_url,
         'records_requested' => $records_requested,
+        'proposal_count'  => $proposal_count,
         'scope_notes'     => $scope_notes,
+        'assist_org_focus_notes' => sanitize_textarea_field( $_POST['assist_org_focus_notes'] ?? '' ),
+        'nationwide_only' => ! empty( $_POST['assist_org_nationwide'] ) ? 1 : 0,
         'exclusion_list'  => $exclusion_list,
         'min_quality'     => sanitize_text_field( $_POST['min_quality'] ?? 'moderate' ),
         'statute_type'    => sanitize_text_field( $_POST['statute_type'] ?? 'state' ),
@@ -1624,6 +1903,9 @@ function ws_handle_prompt_generation(): array {
             break;
         case 'interpretation':
             $prompt = ws_generate_interpretation_prompt( $scope );
+            break;
+        case 'assist-org':
+            $prompt = ws_generate_assist_org_prompt( $scope );
             break;
         default:
             $result['message'] = 'Unknown record type.';
@@ -1671,6 +1953,9 @@ function ws_render_prompt_generator_page() {
     }
 
     $record_type = sanitize_text_field( $_POST['record_type'] ?? 'statute' );
+    $proposal_count_value = max( 1, (int) ( $_POST['proposal_count'] ?? 7 ) );
+    $assist_org_nationwide = ! empty( $_POST['assist_org_nationwide'] );
+    $assist_org_focus_notes = sanitize_textarea_field( $_POST['assist_org_focus_notes'] ?? '' );
     $posted_jx   = strtoupper( sanitize_text_field( $_POST['jx_id'] ?? '' ) );
     $auto_exclusions = ( $posted_jx && $record_type ) ? ws_prompt_get_auto_exclusions( $record_type, $posted_jx ) : [];
     $missing_statute_hidden_ids = ( $record_type === 'statute' && $posted_jx )
@@ -1690,6 +1975,18 @@ function ws_render_prompt_generator_page() {
     $auto_count = count( ws_prompt_split_lines( $auto_exclusions_text ) );
     $manual_count = count( ws_prompt_split_lines( $manual_exclusions ) );
     $merged_count = count( ws_prompt_split_lines( ws_prompt_merge_exclusions( $manual_exclusions, ws_prompt_split_lines( $auto_exclusions_text ) ) ) );
+    $auto_exclusion_key_label = 'canonical record identifier (when available)';
+    if ( $record_type === 'statute' ) {
+        $auto_exclusion_key_label = '_ws_jx_statute_id';
+    } elseif ( $record_type === 'common-law' ) {
+        $auto_exclusion_key_label = '_ws_cl_doctrine_id';
+    } elseif ( $record_type === 'citation' ) {
+        $auto_exclusion_key_label = '_ws_jx_citation_id (fallback: case title)';
+    } elseif ( $record_type === 'interpretation' ) {
+        $auto_exclusion_key_label = '_ws_jx_interpretation_id (fallback: case title)';
+    } elseif ( $record_type === 'assist-org' ) {
+        $auto_exclusion_key_label = 'ws_aorg_internal_id (fallback: organization title)';
+    }
     $jx_terms = get_terms( [
         'taxonomy'   => WS_JURISDICTION_TAXONOMY,
         'hide_empty' => false,
@@ -1727,9 +2024,11 @@ function ws_render_prompt_generator_page() {
                             <option value="common-law"     <?php selected( $record_type, 'common-law' ); ?>>Common Law</option>
                             <option value="citation"       <?php selected( $record_type, 'citation' ); ?>>Citation</option>
                             <option value="interpretation" <?php selected( $record_type, 'interpretation' ); ?>>Interpretation</option>
+                            <option value="assist-org"     <?php selected( $record_type, 'assist-org' ); ?>>Assist Org</option>
                         </select>
                         <p class="description">Statute and Common Law produce full research prompts.
-                           Citation and Interpretation produce enrichment prompts anchored to existing records.</p>
+                           Citation and Interpretation produce enrichment prompts anchored to existing records.
+                           Assist Org produces phased sourcing prompts for fallback layer expansion.</p>
                     </td>
                 </tr>
 
@@ -1762,6 +2061,35 @@ function ws_render_prompt_generator_page() {
                                value="<?php echo esc_attr( $_POST['records_requested'] ?? 0 ); ?>"
                                class="small-text" min="0" max="20" placeholder="0 = no limit">
                         <p class="description">Required. Set to 0 to tell the model: as many as you can comfortably find.</p>
+                    </td>
+                </tr>
+
+                <tr class="ws-field-assist-org" style="display:none;">
+                    <th scope="row"><label for="proposal_count">Proposal Count</label></th>
+                    <td>
+                        <input type="number" name="proposal_count" id="proposal_count"
+                               value="<?php echo esc_attr( $proposal_count_value ); ?>"
+                               class="small-text" min="1" max="20" placeholder="e.g. 7">
+                        <p class="description">Required for assist-org runs. Recommended: 6 to 7 per batch.</p>
+                    </td>
+                </tr>
+
+                <tr class="ws-field-assist-org" style="display:none;">
+                    <th scope="row"><label for="assist_org_nationwide">Nationwide Only</label></th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="assist_org_nationwide" id="assist_org_nationwide" value="1" <?php checked( $assist_org_nationwide ); ?>>
+                            Restrict to nationwide or clearly multi-state organizations.
+                        </label>
+                    </td>
+                </tr>
+
+                <tr class="ws-field-assist-org" style="display:none;">
+                    <th scope="row"><label for="assist_org_focus_notes">Assist-Org Focus Notes</label></th>
+                    <td>
+                        <textarea name="assist_org_focus_notes" id="assist_org_focus_notes" rows="3" class="large-text"
+                                  placeholder="Optional guidance, for example: prioritize worker legal referral pathways over general advocacy pages."><?php echo esc_textarea( $assist_org_focus_notes ); ?></textarea>
+                        <p class="description">Optional. Add operator-specific priorities for this sourcing batch.</p>
                     </td>
                 </tr>
 
@@ -1811,7 +2139,7 @@ function ws_render_prompt_generator_page() {
                         <input type="hidden" name="exclusion_list_auto_edited" id="exclusion_list_auto_edited" value="0">
                         <textarea name="exclusion_list_auto" id="exclusion_list_auto" rows="4" class="large-text code"
                                   placeholder="No existing draft exclusions found for this jurisdiction/CPT."><?php echo esc_textarea( $auto_exclusions_text ); ?></textarea>
-                        <p class="description">Prefilled from existing records for this jurisdiction + CPT using canonical hidden statute key <code>_ws_jx_statute_id</code>. Editable if you want to intentionally regenerate an existing record.</p>
+                        <p class="description">Prefilled from existing records for this jurisdiction + CPT using <code><?php echo esc_html( $auto_exclusion_key_label ); ?></code>. Editable if you want to intentionally regenerate an existing record.</p>
                         <?php if ( ! empty( $missing_statute_hidden_ids ) ): ?>
                             <p class="description" style="color:#c00;">
                                 Flag: <?php echo (int) count( $missing_statute_hidden_ids ); ?> statute post(s) are missing <code>_ws_jx_statute_id</code> and are not auto-excluded.
@@ -1824,7 +2152,7 @@ function ws_render_prompt_generator_page() {
                     <th scope="row"><label for="exclusion_list_manual">Manual Exclusions (Optional)</label></th>
                     <td>
                         <textarea name="exclusion_list_manual" id="exclusion_list_manual" rows="4" class="large-text"
-                                  placeholder="NJ-34:19-1&#10;NJ-2A:32C-10"><?php echo esc_textarea( $manual_exclusions ); ?></textarea>
+                                  placeholder="One ID or title per line"><?php echo esc_textarea( $manual_exclusions ); ?></textarea>
                         <p class="description">Add any extra IDs. Manual and auto exclusions are merged into the prompt.</p>
                         <p class="description"><strong>Merged exclusions:</strong> <?php echo (int) $merged_count; ?> unique (<?php echo (int) $auto_count; ?> auto + <?php echo (int) $manual_count; ?> manual before dedupe).</p>
                     </td>
@@ -1896,8 +2224,9 @@ function ws_render_prompt_generator_page() {
             'common-law':     ['ws-field-statute', 'ws-field-common-law'],
             'citation':       ['ws-field-citation'],
             'interpretation': ['ws-field-citation', 'ws-field-interpretation'],
+            'assist-org':     ['ws-field-assist-org'],
         };
-        var allClasses = ['ws-field-statute', 'ws-field-common-law', 'ws-field-citation', 'ws-field-interpretation'];
+        var allClasses = ['ws-field-statute', 'ws-field-common-law', 'ws-field-citation', 'ws-field-interpretation', 'ws-field-assist-org'];
         allClasses.forEach(function(cls) {
             document.querySelectorAll('.' + cls).forEach(function(el) {
                 el.style.display = 'none';
@@ -1912,6 +2241,11 @@ function ws_render_prompt_generator_page() {
         var countInput = document.getElementById('records_requested');
         if (countInput) {
             countInput.required = (type === 'statute' || type === 'common-law');
+        }
+
+        var proposalInput = document.getElementById('proposal_count');
+        if (proposalInput) {
+            proposalInput.required = (type === 'assist-org');
         }
     }
 
