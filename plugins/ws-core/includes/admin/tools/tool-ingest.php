@@ -1305,16 +1305,21 @@ function ws_ingest_prepare_agency_stub_label( string $label, string $jx_slug ): 
 
     $jx_slug = strtolower( trim( $jx_slug ) );
     $prefixed = ws_ingest_replace_jx_names_with_ids( $label );
-    $upper_jx = strtoupper( $jx_slug );
+    $term = get_term_by( 'slug', $jx_slug, WS_JURISDICTION_TAXONOMY );
+    $jx_id = strtoupper( (string) $jx_slug );
+    $jx_name = '';
+    if ( $term && ! is_wp_error( $term ) ) {
+        $jx_name = trim( (string) ( $term->name ?? '' ) );
+        if ( $jx_id === '' ) {
+            $jx_id = strtoupper( (string) ( $term->slug ?? '' ) );
+        }
+    }
 
-    $looks_state_body = (bool) preg_match(
-        '/^(state\b|office\s+of\s+(the\s+)?attorney\s+general\b|attorney\s+general\b|labor\s+commissioner\b|labor\s+commissioner\'s\s+office\b|department\b|division\b|board\b|commission\b)/i',
-        $prefixed
-    );
-    $already_prefixed = (bool) preg_match( '/^' . preg_quote( $upper_jx, '/' ) . '\b/i', $prefixed );
+    $starts_with_id = ( $jx_id !== '' ) && (bool) preg_match( '/^' . preg_quote( $jx_id, '/' ) . '\b/i', $prefixed );
+    $starts_with_name = ( $jx_name !== '' ) && (bool) preg_match( '/^' . preg_quote( $jx_name, '/' ) . '\b/i', $prefixed );
 
-    if ( $looks_state_body && ! $already_prefixed && $upper_jx !== '' ) {
-        $prefixed = $upper_jx . ' ' . $prefixed;
+    if ( $jx_id !== '' && ! $starts_with_id && ! $starts_with_name ) {
+        $prefixed = $jx_id . ' ' . $prefixed;
     }
 
     return trim( preg_replace( '/\s+/', ' ', $prefixed ) );
