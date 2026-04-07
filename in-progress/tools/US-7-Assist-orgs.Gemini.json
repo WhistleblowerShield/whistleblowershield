@@ -1,0 +1,378 @@
+{
+  "meta": {
+    "json_format_version": "2.0",
+    "source_method": "ai_assisted",
+    "source_name": "Gemini",
+    "jurisdiction_id": "US",
+    "generated_date": "2026-04-07",
+    "generated_by": "Gemini 2.0 Pro Experimental",
+    "record_count": 7,
+    "json_run_notes": "Successfully identified 7 nationwide whistleblower assistance organizations. All records include verified official URLs and specific intake pathways. Metadata and integrity checks performed to ensure zero parent-slug leakage and alignment with US-7-Assist-org-20260407-0733 schema.",
+    "batch_completed": "2026-04-07 13:15 UTC"
+  },
+  "records": [
+    {
+      "organization_name": "National Whistleblower Center",
+      "official_homepage_url": "https://www.whistleblowers.org",
+      "general_description": "A leading nonprofit advocacy and legal assistance organization for whistleblowers worldwide. The center operates an Attorney Referral Program to help whistleblowers obtain representation in high-impact cases. They specialize in reward-based reporting programs including securities, commodities, and tax fraud.",
+      "common_name": "NWC",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-07 13:05 UTC",
+      "intake_or_contact_url": "https://www.report-fraud-now.info/",
+      "nationwide_example": "NWC is the leading nonprofit organization dedicated to protecting and rewarding whistleblowers... assisting whistleblowers globally in exposing corruption and protecting their rights.",
+      "disclosure_types": [
+        "securities-commodities-fraud",
+        "banking-aml-compliance",
+        "tax-evasion-fraud",
+        "environmental-protection",
+        "public-corruption-ethics"
+      ],
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "nonprofit"
+      ],
+      "employment_sectors": [
+        "all-sectors"
+      ],
+      "cost_model": [
+        "mixed"
+      ],
+      "services_provided": [
+        "referral",
+        "advocacy"
+      ],
+      "process_types": [
+        "qui-tam",
+        "regulatory-tip",
+        "civil-lawsuit"
+      ],
+      "anonymous_pre_consult_possible": "yes",
+      "has_attorneys": "yes",
+      "case_stages": [
+        "pre-report",
+        "litigation"
+      ],
+      "disclosure_targets": [
+        "agency-federal",
+        "agency-state",
+        "attorney-counsel"
+      ],
+      "whistleblower_scope": 3,
+      "whistleblower_note": "A nonprofit educational and advocacy organization... help whistleblowers obtain representation through its Attorney Referral Program.",
+      "_review_notes": "Strong focus on False Claims Act and reward programs. Intake allows pseudonyms for early-stage anonymity."
+    },
+    {
+      "organization_name": "Government Accountability Project",
+      "official_homepage_url": "https://www.whistleblower.org",
+      "general_description": "The nation's leading whistleblower protection and advocacy organization, specializing in litigating whistleblower cases and promoting accountability. Since 1977, they have helped thousands of whistleblowers expose wrongdoing while protecting their careers. They focus on public health, food safety, national security, and environmental issues.",
+      "common_name": "GAP",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-07 13:06 UTC",
+      "intake_or_contact_url": "https://whistleblower.org/intake/",
+      "nationwide_example": "Government Accountability Project is the nation’s leading whistleblower protection and advocacy organization.",
+      "disclosure_types": [
+        "general-wrongdoing",
+        "public-corruption-ethics",
+        "food-drug-safety",
+        "environmental-protection",
+        "national-security"
+      ],
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "advocacy"
+      ],
+      "employment_sectors": [
+        "all-sectors"
+      ],
+      "cost_model": [
+        "mixed"
+      ],
+      "services_provided": [
+        "legal-rep",
+        "consultation",
+        "advocacy"
+      ],
+      "process_types": [
+        "civil-lawsuit",
+        "internal-disclosure",
+        "congressional-disclosure"
+      ],
+      "anonymous_pre_consult_possible": "unclear",
+      "has_attorneys": "yes",
+      "case_stages": [
+        "pre-report",
+        "retaliation-active",
+        "litigation"
+      ],
+      "disclosure_targets": [
+        "internal-management",
+        "agency-federal",
+        "legislative-federal",
+        "public-media"
+      ],
+      "whistleblower_scope": 3,
+      "whistleblower_note": "A non-partisan public-interest group, GAP litigates whistleblower cases, helps expose wrongdoing to the public, and actively promotes government and corporate accountability.",
+      "_review_notes": "Highly established litigation history. Intake coordinator listed for direct phone contact."
+    },
+    {
+      "organization_name": "Whistleblowers of America",
+      "official_homepage_url": "https://www.whistleblowersofamerica.org",
+      "general_description": "A nonprofit organization focused on providing evidence-based peer support to whistleblowers suffering from retaliation and traumatic stress. They offer training for clinicians and attorneys to understand the 'toxic tactics' of retaliation. Their mission includes mediation services to resolve conflicts and mitigate the psychosocial impact of whistleblowing.",
+      "common_name": "WoA",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-07 13:07 UTC",
+      "intake_or_contact_url": "https://www.whistleblowersofamerica.org/contact-us/",
+      "nationwide_example": "WoA is a nonprofit organization assisting whistleblowers who have suffered retaliation after having identified harm to individuals or the public.",
+      "disclosure_types": [
+        "retaliation-protection",
+        "wrongful-termination"
+      ],
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "advocacy"
+      ],
+      "employment_sectors": [
+        "all-sectors"
+      ],
+      "cost_model": [
+        "free"
+      ],
+      "services_provided": [
+        "additional",
+        "consultation",
+        "media"
+      ],
+      "process_types": [
+        "internal-disclosure"
+      ],
+      "anonymous_pre_consult_possible": "unclear",
+      "has_attorneys": "unclear",
+      "case_stages": [
+        "retaliation-active",
+        "other"
+      ],
+      "case_stage_details": "Focuses on post-report retaliation and long-term psychosocial recovery support.",
+      "disclosure_targets": [
+        "internal-hr",
+        "internal-management",
+        "public-media"
+      ],
+      "whistleblower_scope": 3,
+      "whistleblower_note": "Our primary mission is to provide evidence-based peer support... designed to reduce the stress on the whistleblower and assist in problem-solving and decision-making.",
+      "_review_notes": "Unique focus on peer support and 'Whistleblower Protection Advocate' certification. Not a law firm."
+    },
+    {
+      "organization_name": "Public Employees for Environmental Responsibility",
+      "official_homepage_url": "https://peer.org",
+      "general_description": "PEER provides legal and strategic assistance to public employees who blow the whistle on environmental and public health threats. They represent federal, state, and local government workers anonymously if necessary. Their services include First Amendment protection and scientific integrity policy defense.",
+      "common_name": "PEER",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-07 13:08 UTC",
+      "intake_or_contact_url": "https://peer.org/about-us/contact-us/",
+      "nationwide_example": "At PEER, our dedicated attorneys represent federal, state, and local government whistleblowers who wish to expose their agency’s wrongdoings on environmental, public health, and scientific issues.",
+      "disclosure_types": [
+        "environmental-protection",
+        "public-health-safety",
+        "occupational-health-safety"
+      ],
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "nonprofit"
+      ],
+      "employment_sectors": [
+        "federal-employee",
+        "state-local-employee"
+      ],
+      "cost_model": [
+        "pro-bono"
+      ],
+      "services_provided": [
+        "legal-rep",
+        "consultation",
+        "retaliation"
+      ],
+      "process_types": [
+        "civil-lawsuit",
+        "administrative-complaint",
+        "internal-disclosure"
+      ],
+      "anonymous_pre_consult_possible": "yes",
+      "has_attorneys": "yes",
+      "case_stages": [
+        "pre-report",
+        "retaliation-active",
+        "litigation"
+      ],
+      "disclosure_targets": [
+        "agency-federal",
+        "agency-state",
+        "legislative-state",
+        "attorney-counsel"
+      ],
+      "whistleblower_scope": 2,
+      "whistleblower_note": "PEER is committed to helping employees report wrongdoing while protecting their careers... and represent federal, state, and local government whistleblowers.",
+      "_review_notes": "Strictly serves public sector employees. All services reported as free/pro-bono to clients."
+    },
+    {
+      "organization_name": "The Anti-Fraud Coalition",
+      "official_homepage_url": "https://www.taf.org",
+      "general_description": "Formerly known as Taxpayers Against Fraud, this coalition focuses on combatting fraud against the government through the use of whistleblower laws. They provide educational resources and referrals to specialized False Claims Act attorneys. Their expertise covers healthcare, procurement, and financial fraud programs.",
+      "common_name": "TAF",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-07 13:09 UTC",
+      "intake_or_contact_url": "https://www.taf.org/resources/whistleblower-resources/",
+      "nationwide_example": "The Anti-Fraud Coalition offers a range of resources examining fraud, whistleblower programs, and efforts to combat corruption.",
+      "disclosure_types": [
+        "healthcare-medicare-fraud",
+        "procurement-spending-fraud",
+        "tax-evasion-fraud",
+        "securities-commodities-fraud"
+      ],
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "advocacy"
+      ],
+      "employment_sectors": [
+        "all-sectors"
+      ],
+      "cost_model": [
+        "mixed"
+      ],
+      "services_provided": [
+        "referral",
+        "advocacy"
+      ],
+      "process_types": [
+        "qui-tam",
+        "regulatory-tip"
+      ],
+      "anonymous_pre_consult_possible": "unclear",
+      "has_attorneys": "yes",
+      "case_stages": [
+        "pre-report",
+        "litigation"
+      ],
+      "disclosure_targets": [
+        "agency-federal",
+        "attorney-counsel"
+      ],
+      "whistleblower_scope": 2,
+      "whistleblower_note": "Together, with the help of whistleblowers with successful cases, we’ve put together resources for those considering bringing a case forward.",
+      "_review_notes": "Primary resource hub for reward-based qui tam and False Claims Act matters."
+    },
+    {
+      "organization_name": "Project On Government Oversight",
+      "official_homepage_url": "https://www.pogo.org",
+      "general_description": "A nonpartisan independent watchdog that investigates corruption and abuse of power within the federal government. POGO works directly with whistleblowers to expose waste and champion reforms for a more ethical federal government. They provide a secure submission system for tips and disclosures.",
+      "common_name": "POGO",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-07 13:10 UTC",
+      "intake_or_contact_url": "https://www.pogo.org/submit-a-tip/",
+      "nationwide_example": "The Project On Government Oversight (POGO) is a nonpartisan independent watchdog... We champion reforms to achieve a more effective, ethical, and accountable federal government.",
+      "disclosure_types": [
+        "public-corruption-ethics",
+        "procurement-spending-fraud",
+        "military-defense-reporting",
+        "general-wrongdoing"
+      ],
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "advocacy"
+      ],
+      "employment_sectors": [
+        "federal-employee",
+        "military-defense"
+      ],
+      "cost_model": [
+        "free"
+      ],
+      "services_provided": [
+        "advocacy",
+        "hotline",
+        "media"
+      ],
+      "process_types": [
+        "internal-disclosure",
+        "congressional-disclosure"
+      ],
+      "anonymous_pre_consult_possible": "yes",
+      "has_attorneys": "unclear",
+      "case_stages": [
+        "pre-report"
+      ],
+      "disclosure_targets": [
+        "agency-federal",
+        "legislative-federal",
+        "public-media"
+      ],
+      "whistleblower_scope": 3,
+      "whistleblower_note": "POGO was founded... to help bring attention to disclosures from Pentagon whistleblowers. Since then, we have worked with whistleblowers on countless investigative projects.",
+      "_review_notes": "More of a watchdog/investigative partner than a direct legal representation firm, but offers critical media and advocacy paths."
+    },
+    {
+      "organization_name": "The Signals Network",
+      "official_homepage_url": "https://thesignalsnetwork.org",
+      "general_description": "An international nonprofit that provides holistic support to whistleblowers who share public interest information. Their support includes legal assistance, psychological counseling, physical security measures, and media coordination. They aim to protect the safety and well-being of individuals who speak out against corporate and governmental misconduct.",
+      "common_name": "TSN",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-07 13:11 UTC",
+      "intake_or_contact_url": "https://thesignalsnetwork.org/whistleblowers/",
+      "nationwide_example": "The Signals Network (TSN) is a 501(c)(3) non-profit organization... The organization supports whistleblowers who have shared public interest information.",
+      "disclosure_types": [
+        "general-wrongdoing",
+        "public-corruption-ethics",
+        "healthcare-medicare-fraud"
+      ],
+      "languages_supported": [
+        "english",
+        "french"
+      ],
+      "assistance_types": [
+        "nonprofit"
+      ],
+      "employment_sectors": [
+        "all-sectors"
+      ],
+      "cost_model": [
+        "free"
+      ],
+      "services_provided": [
+        "additional",
+        "media",
+        "consultation"
+      ],
+      "process_types": [
+        "internal-disclosure",
+        "regulatory-tip"
+      ],
+      "anonymous_pre_consult_possible": "yes",
+      "has_attorneys": "yes",
+      "case_stages": [
+        "pre-report",
+        "retaliation-active"
+      ],
+      "disclosure_targets": [
+        "public-media",
+        "agency-federal"
+      ],
+      "whistleblower_scope": 3,
+      "whistleblower_note": "TSN's Whistleblower Protection Program aims to help whistleblowers navigate the legal, physical, psychological and economic consequences of speaking out.",
+      "_review_notes": "Holistic support model including psychological and security services often missing from legal-only organizations."
+    }
+  ],
+  "integrity": {
+    "with_errors": false
+  }
+}

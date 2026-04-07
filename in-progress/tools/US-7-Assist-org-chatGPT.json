@@ -1,0 +1,383 @@
+{
+  "meta": {
+    "json_format_version": "2.0",
+    "source_method": "ai_assisted",
+    "source_name": "OpenAI",
+    "jurisdiction_id": "US",
+    "generated_date": "2026-04-07",
+    "generated_by": "GPT-5.4 Thinking",
+    "record_count": 7,
+    "json_run_notes": "Federal, nationwide-focused batch emphasizing practical intake or referral pathways for people considering disclosure and for people already facing retaliation. This batch mixes nonprofit assistance/referral organizations with nationally scoped whistleblower law practices where official sites clearly present whistleblower intake or representation pathways. Several fields were intentionally omitted where the official site did not support a confident taxonomy assignment.",
+    "batch_completed": "2026-04-07 14:22 UTC"
+  },
+  "records": [
+    {
+      "organization_name": "Government Accountability Project",
+      "official_homepage_url": "https://whistleblower.org/",
+      "general_description": "Government Accountability Project is a long-running nonprofit whistleblower protection organization that provides direct support, legal representation, and advocacy across multiple public-interest subject areas. Its work spans corporate and financial accountability, public health, national security, democracy protection, environmental matters, and government accountability. The organization presents a secure intake pathway for people seeking whistleblower protection assistance and also indicates it works with private attorneys and partner organizations when needed. It is a strong fallback option for users who need either direct help or a credible path to qualified help.",
+      "common_name": "GAP",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-07 14:22 UTC",
+      "intake_or_contact_url": "https://crm.whistleblower.org/form/online-intake-application",
+      "nationwide_example": "Government Accountability Project has empowered over 8,000 whistleblowers with legal protection and advocacy expertise.",
+      "disclosure_types": [
+        "general-wrongdoing",
+        "public-corruption-ethics",
+        "environmental-protection",
+        "food-drug-safety",
+        "intelligence-community",
+        "classified-information",
+        "securities-commodities-fraud"
+      ],
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "nonprofit"
+      ],
+      "employment_sectors": [
+        "all-sectors"
+      ],
+      "services_provided": [
+        "legal-rep",
+        "consultation",
+        "referral",
+        "advocacy",
+        "retaliation"
+      ],
+      "process_types": [
+        "administrative-complaint",
+        "civil-lawsuit",
+        "internal-disclosure",
+        "regulatory-tip",
+        "congressional-disclosure",
+        "state-agency-complaint"
+      ],
+      "anonymous_pre_consult_possible": "unclear",
+      "has_attorneys": "yes",
+      "case_stages": [
+        "pre-report",
+        "post-report",
+        "retaliation-active",
+        "litigation"
+      ],
+      "disclosure_targets": [
+        "internal-compliance",
+        "agency-federal",
+        "agency-state",
+        "legislative-federal",
+        "court-filing",
+        "attorney-counsel"
+      ],
+      "whistleblower_scope": 3,
+      "whistleblower_note": "\"The Corporate and Financial Accountability program investigates and litigates corporate whistleblower claims\" and the organization states its Government Accountability program protects \"federal, state, and local government whistleblowers\" while its National Security program \"helps whistleblowers make protected disclosures.\"",
+      "_review_notes": "High-confidence inclusion. Official site clearly supports direct whistleblower assistance and legal representation across multiple issue areas, not just a single niche. Secure intake exists, but the homepage text reviewed did not clearly state whether a prospective user may remain anonymous before consultation, so that field is marked unclear."
+    },
+    {
+      "organization_name": "National Whistleblower Center",
+      "official_homepage_url": "https://www.whistleblowers.org/",
+      "general_description": "National Whistleblower Center is a national nonprofit focused on protecting and rewarding whistleblowers, educating the public, and helping whistleblowers find legal assistance. Its official site directs users seeking help to a legal assistance pathway and states that submitted information will be reviewed by an attorney. The organization is especially useful as a nationwide referral and education hub for users who need a quick path to counsel before reporting or after retaliation begins. It is practical for fallback routing because the intake path is prominent and the mission is squarely whistleblower-specific.",
+      "common_name": "NWC",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-07 14:22 UTC",
+      "intake_or_contact_url": "https://www.report-fraud-now.info/",
+      "nationwide_example": "The National Whistleblower Center (NWC) is the leading nonprofit dedicated to protecting and rewarding whistleblowers around the world. We assist whistleblowers in finding legal aid, advocate for stronger whistleblower protection laws, and educate the public about whistleblowers’ critical role in protecting democracy and the rule of law.",
+      "disclosure_types": [
+        "general-wrongdoing"
+      ],
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "nonprofit"
+      ],
+      "services_provided": [
+        "referral",
+        "advocacy"
+      ],
+      "process_types": [
+        "regulatory-tip",
+        "internal-disclosure",
+        "administrative-complaint",
+        "civil-lawsuit"
+      ],
+      "anonymous_pre_consult_possible": "yes",
+      "has_attorneys": "yes",
+      "case_stages": [
+        "pre-report",
+        "post-report",
+        "retaliation-active"
+      ],
+      "disclosure_targets": [
+        "agency-federal",
+        "agency-state",
+        "internal-compliance",
+        "attorney-counsel"
+      ],
+      "whistleblower_scope": 3,
+      "whistleblower_note": "\"We assist whistleblowers in finding legal aid\" and NWC states that people seeking legal assistance should use its form, where submitted information \"will be reviewed by an attorney.\"",
+      "_review_notes": "Strong national referral option. The official contact page explicitly says users may use a pseudonym if they do not want to use their real name, supporting anonymous_pre_consult_possible = yes. NWC also states it does not itself provide legal advice over the phone, so service tags were kept conservative and focused on referral/advocacy rather than direct legal consultation."
+    },
+    {
+      "organization_name": "Whistleblower Aid",
+      "official_homepage_url": "https://whistlebloweraid.org/",
+      "general_description": "Whistleblower Aid is a nonprofit legal organization that helps public- and private-sector workers report wrongdoing safely, lawfully, and responsibly. Its site describes a holistic support model that includes legal representation, disclosure strategy, advocacy, media strategy, anonymity protection, and wellbeing support. The organization is especially well suited to people who are still deciding how to come forward and want structured help before taking risky steps. It also remains relevant for users already under pressure or retaliation because it emphasizes client safety and ongoing support.",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-07 14:22 UTC",
+      "intake_or_contact_url": "https://whistlebloweraid.org/become-a-whistleblower/",
+      "nationwide_example": "Whistleblower Aid is a pioneering non-profit legal organization that helps public and private sector workers report and expose wrongdoing — safely, lawfully, and responsibly.",
+      "disclosure_types": [
+        "general-wrongdoing"
+      ],
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "nonprofit"
+      ],
+      "cost_model": [
+        "pro-bono"
+      ],
+      "services_provided": [
+        "legal-rep",
+        "consultation",
+        "advocacy",
+        "media",
+        "additional"
+      ],
+      "process_types": [
+        "internal-disclosure",
+        "regulatory-tip",
+        "administrative-complaint",
+        "congressional-disclosure"
+      ],
+      "anonymous_pre_consult_possible": "unclear",
+      "has_attorneys": "yes",
+      "case_stages": [
+        "pre-report",
+        "post-report",
+        "retaliation-active"
+      ],
+      "disclosure_targets": [
+        "internal-management",
+        "internal-compliance",
+        "agency-federal",
+        "legislative-federal",
+        "public-media",
+        "attorney-counsel"
+      ],
+      "whistleblower_scope": 3,
+      "whistleblower_note": "\"Whistleblower Aid is a pioneering non-profit legal organization that helps public and private sector workers report and expose wrongdoing — safely, lawfully, and responsibly\" and it states it provides \"top notch legal representation\" and protects client anonymity.",
+      "_review_notes": "Very strong practical fit for Maya and also useful for James. Official site clearly shows legal support and no-cost representation. I used services_provided = additional because the site describes anonymity protection, digital/physical security, and wellbeing support that exceed the listed service taxonomy."
+    },
+    {
+      "organization_name": "Whistleblowers of America",
+      "official_homepage_url": "https://www.whistleblowersofamerica.org/",
+      "general_description": "Whistleblowers of America is a nonprofit support organization focused on helping whistleblowers cope with retaliation, traumatic stress, and decision-making after coming forward or while considering disclosure. Its official site emphasizes peer support, advocacy, training, and resource navigation rather than direct legal representation. This makes it a useful fallback organization for people in acute retaliation situations who need immediate support, problem-solving help, and connections to broader resources. It is especially relevant where the user may need emotional stabilization and navigation help in addition to legal options.",
+      "common_name": "WoA",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-07 14:22 UTC",
+      "intake_or_contact_url": "https://www.whistleblowersofamerica.org/learn-more/peer-support",
+      "nationwide_example": "WoA is a nonprofit organization assisting whistleblowers who have suffered retaliation after having identified harm to individuals or the public.",
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "nonprofit"
+      ],
+      "cost_model": [
+        "mixed"
+      ],
+      "services_provided": [
+        "referral",
+        "advocacy",
+        "additional",
+        "media"
+      ],
+      "process_types": [
+        "internal-disclosure",
+        "regulatory-tip"
+      ],
+      "anonymous_pre_consult_possible": "unclear",
+      "has_attorneys": "no",
+      "case_stages": [
+        "pre-report",
+        "post-report",
+        "retaliation-active"
+      ],
+      "disclosure_targets": [],
+      "whistleblower_scope": 3,
+      "whistleblower_note": "\"We help whistleblowers overcome the traumatic stress caused by retaliation and help with problem-solving\" and the organization says it is \"assisting whistleblowers who have suffered retaliation after having identified harm to individuals or the public.\"",
+      "_review_notes": "Included because retaliation support is explicit and practical, even though this is not a direct legal-services organization. Disclosure_targets left blank because the official pages reviewed describe helping users figure out what to report and to whom, but they do not confidently map to specific target slugs. Cost model marked mixed because the site shows free roundtables and support offerings, but also paid membership tiers and storytelling services."
+    },
+    {
+      "organization_name": "The Anti-Fraud Coalition",
+      "official_homepage_url": "https://www.taf.org/",
+      "general_description": "The Anti-Fraud Coalition is a national nonprofit dedicated to empowering whistleblowers who expose fraud against the government and financial markets. Its official site prominently offers a whistleblower attorney directory and educational resources designed to help prospective whistleblowers find experienced counsel. The organization is narrower than a general whistleblower-support nonprofit because it centers anti-fraud, False Claims Act, and financial-market matters, but it remains highly practical for users whose concerns fit those areas. It is best viewed as a high-value referral hub rather than a general-purpose retaliation-support organization.",
+      "common_name": "TAF Coalition",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-07 14:22 UTC",
+      "intake_or_contact_url": "https://www.taf.org/whistleblower-attorneys/",
+      "nationwide_example": "The Anti-Fraud Coalition (TAF Coalition) is a public interest, non-profit organization dedicated to defending and empowering whistleblowers who expose fraud on the government and the financial markets.",
+      "disclosure_types": [
+        "procurement-spending-fraud",
+        "healthcare-medicare-fraud",
+        "securities-commodities-fraud",
+        "banking-aml-compliance",
+        "tax-evasion-fraud"
+      ],
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "nonprofit"
+      ],
+      "services_provided": [
+        "referral",
+        "advocacy"
+      ],
+      "process_types": [
+        "qui-tam",
+        "regulatory-tip",
+        "civil-lawsuit",
+        "state-agency-complaint"
+      ],
+      "anonymous_pre_consult_possible": "unclear",
+      "has_attorneys": "unclear",
+      "case_stages": [
+        "pre-report",
+        "post-report"
+      ],
+      "disclosure_targets": [
+        "agency-federal",
+        "agency-state",
+        "attorney-counsel"
+      ],
+      "whistleblower_scope": 2,
+      "whistleblower_note": "\"Through our membership directory of top whistleblower attorneys, we help prospective whistleblowers find the best representation to win these tough cases\" and the organization says it is dedicated to whistleblowers who expose fraud on government and financial markets.",
+      "_review_notes": "High-confidence inclusion as a practical attorney-referral pathway for anti-fraud matters, but not a good fit for every retaliation-only case. has_attorneys marked unclear because the official pages reviewed emphasize its coalition and attorney-directory role rather than clearly offering in-house attorney consultation."
+    },
+    {
+      "organization_name": "Phillips & Cohen LLP",
+      "official_homepage_url": "https://www.phillipsandcohen.com/",
+      "general_description": "Phillips & Cohen LLP is a nationally recognized whistleblower law firm with a dedicated intake pathway for confidential case review. Its official site shows a focused practice serving U.S. and international whistleblowers in qui tam, SEC, CFTC, AML, and related fraud matters. The firm is a strong option when the user likely needs experienced counsel rather than general education or peer support, particularly in reward-program or fraud cases. It is less suitable for broad workplace-only concerns that do not connect to fraud or whistleblower statutes the firm handles.",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-07 14:22 UTC",
+      "intake_or_contact_url": "https://www.phillipsandcohen.com/contact-us/",
+      "nationwide_example": "PHILLIPS & COHEN IS THE MOST SUCCESSFUL, EXPERIENCED WHISTLEBLOWER LAW FIRM REPRESENTING U.S. AND INTERNATIONAL CLIENTS WHO EXPOSE FRAUD AND CORRUPTION.",
+      "disclosure_types": [
+        "procurement-spending-fraud",
+        "healthcare-medicare-fraud",
+        "securities-commodities-fraud",
+        "banking-aml-compliance",
+        "tax-evasion-fraud",
+        "export-sanctions-compliance"
+      ],
+      "languages_supported": [
+        "english",
+        "spanish",
+        "mandarin",
+        "french",
+        "portuguese",
+        "korean",
+        "russian",
+        "additional"
+      ],
+      "languages_additional": "German",
+      "assistance_types": [
+        "law-firm"
+      ],
+      "services_provided": [
+        "legal-rep",
+        "consultation",
+        "doc-review",
+        "retaliation"
+      ],
+      "process_types": [
+        "qui-tam",
+        "civil-lawsuit",
+        "regulatory-tip",
+        "administrative-complaint"
+      ],
+      "anonymous_pre_consult_possible": "unclear",
+      "has_attorneys": "yes",
+      "case_stages": [
+        "pre-report",
+        "post-report",
+        "retaliation-active",
+        "litigation"
+      ],
+      "disclosure_targets": [
+        "agency-federal",
+        "agency-state",
+        "court-filing",
+        "attorney-counsel"
+      ],
+      "whistleblower_scope": 2,
+      "whistleblower_note": "\"The whistleblower attorneys at our firm focus on cases for U.S. and international clients\" and the site offers a \"Confidential, Free Case Review.\"",
+      "_review_notes": "Very practical law-firm option with strong official intake visibility and unusually clear language support on the homepage. Included as a targeted legal path rather than a general support organization. anonymous_pre_consult_possible is marked unclear because the site clearly promises confidentiality, but the pages reviewed did not expressly state that a user may consult anonymously or under a pseudonym."
+    },
+    {
+      "organization_name": "Sanford Heisler Sharp McKnight, LLP",
+      "official_homepage_url": "https://sanfordheisler.com/",
+      "general_description": "Sanford Heisler Sharp McKnight is a national plaintiffs' firm with a substantial whistleblower and qui tam practice. Its whistleblower practice page describes experience representing whistleblowers in claims involving federal and state government recoveries, financial misconduct, procurement fraud, banking issues, digital advertising fraud, healthcare fraud, and retaliation matters. The firm is particularly useful where the user appears to need experienced counsel for fraud-related disclosures or retaliation connected to formal whistleblower claims. It is a multi-jurisdictional legal option rather than a nonprofit support or referral hub.",
+      "common_name": "Sanford Heisler",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-07 14:22 UTC",
+      "intake_or_contact_url": "https://sanfordheisler.com/whistleblower-qui-tam/",
+      "nationwide_example": "The Washington, DC office serves as the central hub for Sanford Heisler Sharp McKnight’s Whistleblower and Qui Tam Practice.",
+      "disclosure_types": [
+        "procurement-spending-fraud",
+        "healthcare-medicare-fraud",
+        "securities-commodities-fraud",
+        "consumer-data-protection",
+        "banking-aml-compliance"
+      ],
+      "languages_supported": [
+        "english",
+        "french",
+        "mandarin",
+        "korean",
+        "japanese",
+        "hindi",
+        "additional"
+      ],
+      "languages_additional": "Several other languages not individually specified on the official page",
+      "assistance_types": [
+        "law-firm"
+      ],
+      "services_provided": [
+        "legal-rep",
+        "consultation",
+        "retaliation"
+      ],
+      "process_types": [
+        "qui-tam",
+        "civil-lawsuit",
+        "regulatory-tip",
+        "administrative-complaint",
+        "state-agency-complaint"
+      ],
+      "anonymous_pre_consult_possible": "unclear",
+      "has_attorneys": "yes",
+      "case_stages": [
+        "pre-report",
+        "post-report",
+        "retaliation-active",
+        "litigation"
+      ],
+      "disclosure_targets": [
+        "agency-federal",
+        "agency-state",
+        "court-filing",
+        "attorney-counsel"
+      ],
+      "whistleblower_scope": 2,
+      "whistleblower_note": "\"Over the last decade, the attorneys in our Whistleblower and Qui Tam Practice Group have represented whistleblowers in helping the federal and state governments recover over $4 billion\" and the page expressly references representing whistleblowers and protecting them from retaliation.",
+      "_review_notes": "Included as a large multi-jurisdictional law-firm option with clear whistleblower practice content on the official site. Scope is narrower than an all-purpose whistleblower support nonprofit because the practice is anchored in fraud, qui tam, and related retaliation work. The official page gave unusually good language information, but did not clearly confirm anonymous pre-consultation."
+    }
+  ],
+  "integrity": {
+    "with_errors": false
+  }
+}
