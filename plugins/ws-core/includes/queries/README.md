@@ -59,6 +59,10 @@ verify  → source_method, source_name, verified_by, verified_by_name,
 Top-level keys are unprefixed and context-scoped. See each function's
 `@return` docblock for the complete key reference.
 
+Multi-value taxonomy and relationship fields are normalized to stable array
+shapes in the query layer. Callers should not assume scalar fallbacks for
+fields that are modeled as multi-value in ACF.
+
 ---
 
 ## Caching
@@ -75,6 +79,16 @@ Top-level keys are unprefixed and context-scoped. See each function's
 Sitewide legal updates cache stores up to 100 items. Requests ≤ 100
 served via `array_slice()`. Requests > 100 bypass the cache.
 Per-jurisdiction calls are never cached.
+
+---
+
+## Recent Hardening Notes
+
+- Query pass includes defensive normalization for mixed scalar/array/object
+    payloads from ACF/meta reads.
+- Dataset mappings were synced to current non-hidden ACF fields for statute,
+    citation, interpretation, common-law, agency, assist-org, and procedures.
+- Retired/stale key reads were removed where schema ownership changed.
 
 ---
 

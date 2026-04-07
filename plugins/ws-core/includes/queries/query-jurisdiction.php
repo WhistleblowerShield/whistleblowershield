@@ -93,7 +93,7 @@
  *
  * @package    WhistleblowerShield
  * @since      1.0.0
- * @version 3.10.0
+ * @version 3.10.3
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -113,10 +113,14 @@
  * 3.8.0   Court label resolution via ws_court_lookup(). Reference page anchor support.
  * 3.9.0   Summary gate on index. Frontend repeater fallback. Services via taxonomy.
  * 3.10.0  ws_procedure_type taxonomy reads added.
- *
- * @package WhistleblowerShield
- * @since   1.0.0
- * @version 3.10.2
+ * 3.10.3  Query hardening + schema sync pass:
+ *         - added normalization helpers for mixed scalar/array/object/meta payloads
+ *         - aligned statute/citation/interpretation/common-law datasets with current
+ *           non-hidden ACF fields (including relationship/detail fields)
+ *         - removed stale statute bop_standard key read; employee_standard taxonomy
+ *           is now the canonical burden standard source
+ *         - added defensive handling for WP_Error taxonomy lookups and mixed
+ *           ws_ref_materials relationship return shapes
  */
 
 defined( 'ABSPATH' ) || exit;

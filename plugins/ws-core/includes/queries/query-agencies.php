@@ -41,7 +41,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.9.0
- * @version 3.10.0
+ * @version 3.10.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -54,6 +54,10 @@
  *        on ws_procedure_type in both ws_build_agency_procedure_row() and
  *        ws_get_procedures_for_statute(). Returns first term slug as plain
  *        string; empty string when no term assigned.
+ * 3.10.1 Query hardening + field coverage sync:
+ *        - procedure rows now expose statute_ids (normalized)
+ *        - procedure rows now expose stat_override
+ *        - relationship ID normalization aligned with query-jurisdiction helpers
  */
 
 defined( 'ABSPATH' ) || exit;
