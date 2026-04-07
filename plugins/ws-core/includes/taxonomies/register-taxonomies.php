@@ -4,7 +4,7 @@
  *
  * @package WhistleblowerShield
  * @since   2.1.0
- * @version 3.13.0
+ * @version 3.14.2
  *
  * VERSION
  * -------
@@ -35,6 +35,8 @@
  *         ws_adverse_action_types, ws_process_type, ws_remedies, ws_fee_shifting,
  *         ws_employer_defense, ws_employee_standard, ws_jurisdiction.
  *         jx-citation and jx-interpretation also added to taxonomies where missing.
+ * 3.14.2  ws_disclosure_type and ws_process_type set to non-public.
+ *         Both remain visible in wp-admin and available to internal tooling.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -73,11 +75,14 @@ function ws_register_taxonomies() {
                     'new_item_name'     => 'New Disclosure Category Name',
                     'menu_name'         => 'Disclosure Categories',
                 ],
-                'public'            => true,
+                'public'            => false,
+                'publicly_queryable'=> false,
                 'hierarchical'      => true,
+                'show_ui'           => true,
                 'show_in_rest'      => true,
                 'show_admin_column' => true,
-                'rewrite'           => [ 'slug' => 'disclosure' ],
+                'rewrite'           => false,
+                'query_var'         => false,
                 'capabilities'      => ws_get_taxonomy_caps(),
             ]
         );
@@ -102,11 +107,14 @@ function ws_register_taxonomies() {
                     'new_item_name'     => 'New Process Type Name',
                     'menu_name'         => 'Process Types',
                 ],
-                'public'            => true,
+                'public'            => false,
+                'publicly_queryable'=> false,
                 'hierarchical'      => false,
+                'show_ui'           => true,
                 'show_in_rest'      => true,
                 'show_admin_column' => true,
-                'rewrite'           => [ 'slug' => 'process-type' ],
+                'rewrite'           => false,
+                'query_var'         => false,
                 'capabilities'      => ws_get_taxonomy_caps(),
             ]
         );

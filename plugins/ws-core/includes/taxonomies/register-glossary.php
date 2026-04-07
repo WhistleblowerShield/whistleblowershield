@@ -49,7 +49,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.2.0
- * @version 3.10.1
+ * @version 3.10.7
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -79,6 +79,31 @@
  *        be matched by a subsequent regex pass and double-injected into the
  *        attribute itself, corrupting the output. Fix: collect all matches
  *        from $plain first via preg_match, then apply spans in a second pass.
+ * 3.10.2 Scanner hardening/perf pass:
+ *        - Precompute match entries once per scan to avoid rebuilding regex
+ *          and span fragments per text node.
+ *        - Match against escaped term text (not raw term) so aliases with
+ *          apostrophes/special chars still match escaped node content.
+ *        - Added mb-safe lowercase helper for stable case-insensitive keys.
+ * 3.10.3 Matching semantics hardening:
+ *        - Replaced sequential per-term preg_replace calls with one combined
+ *          preg_replace_callback pass over original text to prevent any chance
+ *          of matching inside previously injected markup.
+ *        - Switched from \b boundaries to unicode-aware lookaround boundaries
+ *          for cleaner behavior around punctuation and hyphenated phrases.
+ * 3.10.4 Debug instrumentation:
+ *        - Added callback-accurate scanner debug summary and matched-term list.
+ *        - Debug output is enabled by default and sent via error_log.
+ * 3.10.5 Debug output routing:
+ *        - Debug output now writes to wp-content/logs/glossary-scan.log
+ *          instead of the shared debug.log stream.
+ * 3.10.6 Optional log rotation scaffold:
+ *        - Added size-based glossary log rotation helper.
+ *        - Rotation call is intentionally commented out for high-volume
+ *          population/debug phases.
+ * 3.10.7 Operator toggles:
+ *        - Added easy true/false flags for scanner debug and log rotation.
+ *        - Debug and rotation behavior now follow those flags.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -295,6 +320,14 @@ function ws_glossary_invalidate_cache() {
 
 add_filter( 'ws_glossary_scan', 'ws_apply_glossary_tooltips' );
 
+// Operator toggles (easy to find and flip).
+if ( ! defined( 'WS_GLOSSARY_SCAN_DEBUG' ) ) {
+    define( 'WS_GLOSSARY_SCAN_DEBUG', true );
+}
+if ( ! defined( 'WS_GLOSSARY_SCAN_LOG_ROTATE' ) ) {
+    define( 'WS_GLOSSARY_SCAN_LOG_ROTATE', false );
+}
+
 /**
  * Scans an HTML string and injects ws-term-highlight spans around first
  * occurrences of registered glossary terms in text nodes.
@@ -316,12 +349,37 @@ function ws_apply_glossary_tooltips( $html ) {
         return $html;
     }
 
+    // Precompute escaped term + tooltip entries once per scan pass.
+    $entries = [];
+    foreach ( $lookup as $term => $definition ) {
+        $term_lower   = ws_glossary_lower( $term );
+        $term_escaped = htmlspecialchars( $term, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+
+        $entries[ $term_lower ] = [
+            'term_escaped' => $term_escaped,
+            'tooltip'      => esc_attr( $definition ),
+        ];
+    }
+
+    if ( empty( $entries ) ) {
+        return $html;
+    }
+
     // Tags whose text content must never receive tooltip injection.
     $skip_tags = [ 'a', 'span', 'abbr', 'button', 'script', 'style', 'code', 'pre', 'h1', 'h2', 'h3' ];
 
     // Track which terms have already been matched in this scan pass.
     // Keyed by lowercase term string — first match wins.
     $matched = [];
+
+    $debug = ws_glossary_debug_enabled();
+    $scan_stats = [
+        'nodes_total'        => 0,
+        'nodes_non_empty'    => 0,
+        'nodes_with_pending' => 0,
+        'callback_hits'      => 0,
+        'replacements'       => 0,
+    ];
 
     // ── DOMDocument setup ─────────────────────────────────────────────────
     //
@@ -350,12 +408,20 @@ function ws_apply_glossary_tooltips( $html ) {
 		$text_nodes = [];
 		ws_glossary_collect_text_nodes( $body, $skip_tags, $text_nodes );
 
-		foreach ( $text_nodes as $text_node ) {
+        foreach ( $text_nodes as $text_node ) {
+
+            $scan_stats['nodes_total']++;
+
+            if ( count( $matched ) >= count( $entries ) ) {
+                break; // Everything already matched once in this content block.
+            }
 
 			$original = $text_node->nodeValue;
 			if ( empty( trim( $original ) ) ) {
 				continue;
 			}
+
+            $scan_stats['nodes_non_empty']++;
 
 			// ── Match against original text only ─────────────────────────────
 			//
@@ -372,50 +438,88 @@ function ws_apply_glossary_tooltips( $html ) {
 			// span, touching only the original text positions.
 
 			$plain   = htmlspecialchars( $original, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
-			$pending = []; // term_lower => [ 'span' => string, 'pattern' => string ]
+            $pending = []; // term_lower => [ 'term_escaped' => string, 'tooltip' => string ]
 
-			foreach ( $lookup as $term => $definition ) {
-
-				$term_lower = strtolower( $term );
+            foreach ( $entries as $term_lower => $entry ) {
 
 				if ( isset( $matched[ $term_lower ] ) ) {
 					continue;
 				}
 
-				$pattern = '/\b(' . preg_quote( $term, '/' ) . ')\b/iu';
-
 				// Test against $plain — the unmodified original text only.
-				preg_match( $pattern, $plain, $m );
+                preg_match( ws_glossary_term_pattern( $entry['term_escaped'] ), $plain, $m );
 				if ( empty( $m ) ) {
 					continue;
 				}
 
-				$pending[ $term_lower ] = [
-					'pattern' => $pattern,
-					'span'    => '<span class="ws-term-highlight" data-tooltip="'
-							   . esc_attr( $definition )
-							   . '">$1</span>',
-				];
+                $pending[ $term_lower ] = $entry;
 			}
 
 			if ( empty( $pending ) ) {
 				continue;
 			}
 
-			// Apply all pending replacements to $plain in a single pass.
-			// Each term replaces exactly once (limit = 1) and is then marked
-			// matched so it cannot fire again in this or any later text node.
-			$fragment_html = $plain;
-			$modified      = false;
+            $scan_stats['nodes_with_pending']++;
 
-			foreach ( $pending as $term_lower => $entry ) {
-				$new_html = preg_replace( $entry['pattern'], $entry['span'], $fragment_html, 1, $count );
-				if ( $count > 0 && null !== $new_html ) {
-					$fragment_html          = $new_html;
-					$matched[ $term_lower ] = true;
-					$modified               = true;
-				}
-			}
+            // Apply all pending replacements in one callback pass over original
+            // text, preserving deterministic left-to-right behavior and preventing
+            // any regex from ever seeing already-injected markup.
+            $pending_order = array_keys( $pending );
+            usort( $pending_order, function( $a, $b ) use ( $pending ) {
+                return strlen( $pending[ $b ]['term_escaped'] ) - strlen( $pending[ $a ]['term_escaped'] );
+            } );
+
+            $alternates      = [];
+            $pending_matches = []; // escaped_match_lower => term_lower
+            foreach ( $pending_order as $term_lower ) {
+                $term_escaped = $pending[ $term_lower ]['term_escaped'];
+                $alternates[] = preg_quote( $term_escaped, '/' );
+                $pending_matches[ ws_glossary_lower( $term_escaped ) ] = $term_lower;
+            }
+
+            $fragment_html = $plain;
+            $modified      = false;
+            $node_matched  = [];
+
+            if ( ! empty( $alternates ) ) {
+                $combined_pattern = '/(?<![\\p{L}\\p{N}_])(' . implode( '|', $alternates ) . ')(?![\\p{L}\\p{N}_])/iu';
+
+                $new_html = preg_replace_callback(
+                    $combined_pattern,
+                    function( $m ) use ( &$modified, &$node_matched, $pending, $pending_matches, &$scan_stats ) {
+                        $scan_stats['callback_hits']++;
+
+                        $match_key = ws_glossary_lower( $m[1] );
+                        if ( ! isset( $pending_matches[ $match_key ] ) ) {
+                            return $m[1];
+                        }
+
+                        $term_lower = $pending_matches[ $match_key ];
+                        if ( isset( $node_matched[ $term_lower ] ) ) {
+                            return $m[1];
+                        }
+
+                        $node_matched[ $term_lower ] = true;
+                        $modified = true;
+                        $scan_stats['replacements']++;
+
+                        return '<span class="ws-term-highlight" data-tooltip="'
+                            . $pending[ $term_lower ]['tooltip']
+                            . '">' . $m[1] . '</span>';
+                    },
+                    $plain
+                );
+
+                if ( is_string( $new_html ) ) {
+                    $fragment_html = $new_html;
+                }
+            }
+
+            if ( ! empty( $node_matched ) ) {
+                foreach ( array_keys( $node_matched ) as $term_lower ) {
+                    $matched[ $term_lower ] = true;
+                }
+            }
 
 			if ( ! $modified ) {
 				continue;
@@ -460,6 +564,21 @@ function ws_apply_glossary_tooltips( $html ) {
 		foreach ( $body->childNodes as $child ) {
 			$result .= $doc->saveHTML( $child );
 		}
+
+        if ( $debug ) {
+            ws_glossary_debug_log(
+                sprintf(
+                    'scan_summary nodes_total=%d nodes_non_empty=%d nodes_with_pending=%d callback_hits=%d replacements=%d unique_terms=%d terms=[%s]',
+                    (int) $scan_stats['nodes_total'],
+                    (int) $scan_stats['nodes_non_empty'],
+                    (int) $scan_stats['nodes_with_pending'],
+                    (int) $scan_stats['callback_hits'],
+                    (int) $scan_stats['replacements'],
+                    count( $matched ),
+                    implode( ', ', array_keys( $matched ) )
+                )
+            );
+        }
 
 		return $result ?: $html;
 
@@ -692,4 +811,98 @@ function ws_seed_glossary_taxonomy() {
             }
         }
     }
+}
+
+/**
+ * Lowercase helper with mbstring fallback for stable keying.
+ *
+ * @param  string $value Input string.
+ * @return string
+ */
+function ws_glossary_lower( $value ) {
+    if ( function_exists( 'mb_strtolower' ) ) {
+        return mb_strtolower( (string) $value, 'UTF-8' );
+    }
+
+    return strtolower( (string) $value );
+}
+
+/**
+ * Builds a unicode-aware boundary regex for one escaped glossary term.
+ *
+ * @param  string $term_escaped HTML-escaped glossary term.
+ * @return string
+ */
+function ws_glossary_term_pattern( $term_escaped ) {
+    return '/(?<![\\p{L}\\p{N}_])(' . preg_quote( $term_escaped, '/' ) . ')(?![\\p{L}\\p{N}_])/iu';
+}
+
+/**
+ * Glossary scanner debug toggle.
+ *
+ * Enabled by default for active scanner diagnostics.
+ *
+ * @return bool
+ */
+function ws_glossary_debug_enabled() {
+    return (bool) WS_GLOSSARY_SCAN_DEBUG;
+}
+
+/**
+ * Writes glossary scanner debug output to wp-content/logs/glossary-scan.log.
+ *
+ * @param string $message Debug message.
+ */
+function ws_glossary_debug_log( $message ) {
+    $prefix = '[ws-core][glossary-debug]';
+    $line   = gmdate( 'Y-m-d H:i:s' ) . ' UTC ' . $prefix . ' ' . (string) $message . PHP_EOL;
+
+    $base_dir = defined( 'WP_CONTENT_DIR' ) ? WP_CONTENT_DIR : ABSPATH . 'wp-content';
+    $log_dir  = trailingslashit( $base_dir ) . 'logs';
+
+    if ( ! is_dir( $log_dir ) ) {
+        wp_mkdir_p( $log_dir );
+    }
+
+    $log_file = trailingslashit( $log_dir ) . 'glossary-scan.log';
+
+    // Optional safety valve for later: rotate if file grows too large.
+    if ( WS_GLOSSARY_SCAN_LOG_ROTATE ) {
+        ws_glossary_maybe_rotate_log( $log_file, 5 * 1024 * 1024 ); // 5 MB
+    }
+
+    // Use append + lock to keep lines coherent under concurrent requests.
+    @file_put_contents( $log_file, $line, FILE_APPEND | LOCK_EX );
+}
+
+/**
+ * Rotates glossary log file when it exceeds a size threshold.
+ *
+ * Rename strategy:
+ * - glossary-scan.log -> glossary-scan.log.1
+ * - Existing .1 is replaced.
+ *
+ * @param string $log_file Path to glossary log file.
+ * @param int    $max_bytes Maximum file size before rotation.
+ */
+function ws_glossary_maybe_rotate_log( $log_file, $max_bytes ) {
+    if ( empty( $log_file ) || ! is_string( $log_file ) ) {
+        return;
+    }
+
+    if ( ! file_exists( $log_file ) ) {
+        return;
+    }
+
+    $size = @filesize( $log_file );
+    if ( false === $size || $size < (int) $max_bytes ) {
+        return;
+    }
+
+    $rotated = $log_file . '.1';
+    if ( file_exists( $rotated ) ) {
+        @unlink( $rotated );
+    }
+
+    @rename( $log_file, $rotated );
 }
