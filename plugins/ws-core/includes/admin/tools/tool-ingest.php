@@ -1263,6 +1263,184 @@ function ws_ingest_match_agencies_for_jx( array $labels, string $jx_slug ): arra
 }
 
 /**
+ * Replaces jurisdiction names with their IDs/slugs using the taxonomy table.
+ */
+function ws_ingest_replace_jx_names_with_ids( string $value ): string {
+    $value = trim( $value );
+    if ( $value === '' ) {
+        return '';
+    }
+
+    $terms = get_terms( [
+        'taxonomy'   => WS_JURISDICTION_TAXONOMY,
+        'hide_empty' => false,
+    ] );
+    if ( is_wp_error( $terms ) || empty( $terms ) ) {
+        return $value;
+    }
+
+    foreach ( $terms as $term ) {
+        if ( ! isset( $term->name, $term->slug ) ) {
+            continue;
+        }
+        $name = trim( (string) $term->name );
+        $slug = strtoupper( trim( (string) $term->slug ) );
+        if ( $name === '' || $slug === '' ) {
+            continue;
+        }
+        $value = (string) preg_replace( '/\b' . preg_quote( $name, '/' ) . '\b/i', $slug, $value );
+    }
+
+    return trim( preg_replace( '/\s+/', ' ', $value ) );
+}
+
+/**
+ * Prefixes state-level agency labels with jurisdiction ID when missing.
+ */
+function ws_ingest_prepare_agency_stub_label( string $label, string $jx_slug ): string {
+    $label = trim( preg_replace( '/\s+/', ' ', $label ) );
+    if ( $label === '' ) {
+        return '';
+    }
+
+    $jx_slug = strtolower( trim( $jx_slug ) );
+    $prefixed = ws_ingest_replace_jx_names_with_ids( $label );
+    $upper_jx = strtoupper( $jx_slug );
+
+    $looks_state_body = (bool) preg_match(
+        '/^(state\b|office\s+of\s+(the\s+)?attorney\s+general\b|attorney\s+general\b|labor\s+commissioner\b|labor\s+commissioner\'s\s+office\b|department\b|division\b|board\b|commission\b)/i',
+        $prefixed
+    );
+    $already_prefixed = (bool) preg_match( '/^' . preg_quote( $upper_jx, '/' ) . '\b/i', $prefixed );
+
+    if ( $looks_state_body && ! $already_prefixed && $upper_jx !== '' ) {
+        $prefixed = $upper_jx . ' ' . $prefixed;
+    }
+
+    return trim( preg_replace( '/\s+/', ' ', $prefixed ) );
+}
+
+/**
+ * Builds an abbreviated agency code slug with no hard length cap.
+ */
+function ws_ingest_build_agency_stub_code( string $label ): string {
+    $slug = strtolower( trim( $label ) );
+    if ( $slug === '' ) {
+        return '';
+    }
+
+    $slug = ws_ingest_replace_jx_names_with_ids( $slug );
+
+    $phrase_replacements = [
+        'attorney general' => 'ag',
+    ];
+    foreach ( $phrase_replacements as $from => $to ) {
+        $slug = str_ireplace( $from, $to, $slug );
+    }
+
+    $word_replacements = [
+        'commissioner' => 'commr',
+        'department'   => 'dept',
+        'division'     => 'div',
+        'standards'    => 'stds',
+        'enforcement'  => 'enf',
+        'personnel'    => 'pers',
+        'office'       => 'ofc',
+        'board'        => 'bd',
+        'commission'   => 'comm',
+        'state'        => 'st',
+        'public'       => 'pub',
+        'health'       => 'hlth',
+        'social'       => 'soc',
+        'services'     => 'svcs',
+    ];
+    foreach ( $word_replacements as $from => $to ) {
+        $slug = (string) preg_replace( '/\b' . preg_quote( $from, '/' ) . '\b/i', $to, $slug );
+    }
+
+    $slug = preg_replace( '/[^a-z0-9]+/', '-', (string) $slug );
+    $slug = preg_replace( '/-+/', '-', (string) $slug );
+    return trim( (string) $slug, '-' );
+}
+
+/**
+ * Returns true when post is assigned to the jurisdiction term.
+ */
+function ws_ingest_post_has_jx_term( int $post_id, int $term_id ): bool {
+    if ( $post_id <= 0 || $term_id <= 0 ) {
+        return false;
+    }
+    $terms = wp_get_post_terms( $post_id, WS_JURISDICTION_TAXONOMY, [ 'fields' => 'ids' ] );
+    if ( is_wp_error( $terms ) || empty( $terms ) ) {
+        return false;
+    }
+    return in_array( $term_id, array_map( 'intval', $terms ), true );
+}
+
+/**
+ * Finds an existing agency by normalized code/name within a jurisdiction.
+ */
+function ws_ingest_find_existing_agency_stub( string $display_label, string $agency_code, int $term_id ): int {
+    if ( $term_id <= 0 ) {
+        return 0;
+    }
+
+    $display_label = trim( $display_label );
+    $agency_code   = trim( $agency_code );
+
+    if ( $agency_code !== '' ) {
+        $by_path = get_page_by_path( $agency_code, OBJECT, 'ws-agency' );
+        if ( $by_path instanceof WP_Post && ws_ingest_post_has_jx_term( (int) $by_path->ID, $term_id ) ) {
+            return (int) $by_path->ID;
+        }
+
+        $by_code = get_posts( [
+            'post_type'      => 'ws-agency',
+            'post_status'    => 'any',
+            'posts_per_page' => 1,
+            'fields'         => 'ids',
+            'no_found_rows'  => true,
+            'tax_query'      => [ [
+                'taxonomy' => WS_JURISDICTION_TAXONOMY,
+                'field'    => 'term_id',
+                'terms'    => [ $term_id ],
+            ] ],
+            'meta_query'     => [ [
+                'key'   => 'ws_agency_code',
+                'value' => $agency_code,
+            ] ],
+        ] );
+        if ( ! empty( $by_code ) ) {
+            return (int) $by_code[0];
+        }
+    }
+
+    if ( $display_label !== '' ) {
+        $by_name = get_posts( [
+            'post_type'      => 'ws-agency',
+            'post_status'    => 'any',
+            'posts_per_page' => 1,
+            'fields'         => 'ids',
+            'no_found_rows'  => true,
+            'tax_query'      => [ [
+                'taxonomy' => WS_JURISDICTION_TAXONOMY,
+                'field'    => 'term_id',
+                'terms'    => [ $term_id ],
+            ] ],
+            'meta_query'     => [ [
+                'key'   => 'ws_agency_name',
+                'value' => $display_label,
+            ] ],
+        ] );
+        if ( ! empty( $by_name ) ) {
+            return (int) $by_name[0];
+        }
+    }
+
+    return 0;
+}
+
+/**
  * Returns true when a parsed label looks like an agency body, not a forum/path.
  */
 function ws_ingest_should_create_agency_stub( string $label ): bool {
@@ -1276,7 +1454,8 @@ function ws_ingest_should_create_agency_stub( string $label ): bool {
 /**
  * Creates a draft ws-agency stub for an unmatched primary_agency label.
  */
-function ws_ingest_create_agency_stub( string $label, string $jx_slug ) {
+function ws_ingest_create_agency_stub( string $label, string $jx_slug, ?bool &$was_created = null ) {
+    $was_created = false;
     $label = trim( $label );
     if ( ! ws_ingest_should_create_agency_stub( $label ) ) {
         return 0;
@@ -1288,11 +1467,25 @@ function ws_ingest_create_agency_stub( string $label, string $jx_slug ) {
         return 0;
     }
 
+    $display_label = ws_ingest_prepare_agency_stub_label( $label, $jx_slug );
+    if ( $display_label === '' ) {
+        $display_label = $label;
+    }
+    $agency_code = ws_ingest_build_agency_stub_code( $display_label );
+    if ( $agency_code === '' ) {
+        $agency_code = sanitize_title( $display_label );
+    }
+
+    $existing_id = ws_ingest_find_existing_agency_stub( $display_label, $agency_code, (int) $term->term_id );
+    if ( $existing_id > 0 ) {
+        return (int) $existing_id;
+    }
+
     $post_id = wp_insert_post( [
         'post_type'   => 'ws-agency',
         'post_status' => 'draft',
-        'post_title'  => $label,
-        'post_name'   => sanitize_title( $jx_slug . '-' . $label ),
+        'post_title'  => $display_label,
+        'post_name'   => $agency_code,
         'post_author' => get_current_user_id(),
     ] );
 
@@ -1300,12 +1493,14 @@ function ws_ingest_create_agency_stub( string $label, string $jx_slug ) {
         return 0;
     }
 
-    update_post_meta( $post_id, 'ws_agency_name', $label );
-    update_post_meta( $post_id, 'ws_agency_code', sanitize_title( $label ) );
+    update_post_meta( $post_id, 'ws_agency_name', $display_label );
+    update_post_meta( $post_id, 'ws_agency_code', $agency_code );
     update_post_meta( $post_id, '_ws_agency_stub', 1 );
     update_post_meta( $post_id, '_ws_agency_stub_source', 'ingest.primary_agency' );
 
     wp_set_object_terms( $post_id, [ (int) $term->term_id ], WS_JURISDICTION_TAXONOMY );
+
+    $was_created = true;
 
     return (int) $post_id;
 }
@@ -2052,16 +2247,36 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
         $created_stub_ids = [];
 
         if ( empty( $matched_ids ) ) {
+            $resolved_ids = [];
+            $seen_keys    = [];
             foreach ( $agency_labels as $label ) {
-                $stub_id = ws_ingest_create_agency_stub( (string) $label, $target_jx );
+                $prepared_label = ws_ingest_prepare_agency_stub_label( (string) $label, $target_jx );
+                if ( $prepared_label === '' ) {
+                    $prepared_label = trim( (string) $label );
+                }
+                $prepared_code = ws_ingest_build_agency_stub_code( $prepared_label );
+                $dedupe_key = $target_jx . '|' . $prepared_code;
+                if ( $prepared_code !== '' && isset( $seen_keys[ $dedupe_key ] ) ) {
+                    continue;
+                }
+                $seen_keys[ $dedupe_key ] = true;
+
+                $created_now = false;
+                $stub_id = ws_ingest_create_agency_stub( (string) $label, $target_jx, $created_now );
                 if ( $stub_id ) {
-                    $created_stub_ids[] = $stub_id;
+                    $resolved_ids[] = (int) $stub_id;
+                    if ( $created_now ) {
+                        $created_stub_ids[] = (int) $stub_id;
+                    }
                 }
             }
-            $matched_ids = array_values( array_unique( $created_stub_ids ) );
+            $matched_ids = array_values( array_unique( $resolved_ids ) );
             if ( ! empty( $matched_ids ) ) {
-                $result['agency_stub_created'] = count( $matched_ids );
-                $result['log'][] = "$sid: created " . count( $matched_ids ) . " agency stub record(s) from enforcement.primary_agency";
+                $created_count = count( array_values( array_unique( $created_stub_ids ) ) );
+                $result['agency_stub_created'] = $created_count;
+                if ( $created_count > 0 ) {
+                    $result['log'][] = "$sid: created " . $created_count . " agency stub record(s) from enforcement.primary_agency";
+                }
             }
         }
 
@@ -2323,16 +2538,36 @@ function ws_ingest_process_common_law_record( array $record, array $meta, array 
         $created_stub_ids = [];
 
         if ( empty( $matched_ids ) ) {
+            $resolved_ids = [];
+            $seen_keys    = [];
             foreach ( $agency_labels as $label ) {
-                $stub_id = ws_ingest_create_agency_stub( (string) $label, $target_jx );
+                $prepared_label = ws_ingest_prepare_agency_stub_label( (string) $label, $target_jx );
+                if ( $prepared_label === '' ) {
+                    $prepared_label = trim( (string) $label );
+                }
+                $prepared_code = ws_ingest_build_agency_stub_code( $prepared_label );
+                $dedupe_key = $target_jx . '|' . $prepared_code;
+                if ( $prepared_code !== '' && isset( $seen_keys[ $dedupe_key ] ) ) {
+                    continue;
+                }
+                $seen_keys[ $dedupe_key ] = true;
+
+                $created_now = false;
+                $stub_id = ws_ingest_create_agency_stub( (string) $label, $target_jx, $created_now );
                 if ( $stub_id ) {
-                    $created_stub_ids[] = $stub_id;
+                    $resolved_ids[] = (int) $stub_id;
+                    if ( $created_now ) {
+                        $created_stub_ids[] = (int) $stub_id;
+                    }
                 }
             }
-            $matched_ids = array_values( array_unique( $created_stub_ids ) );
+            $matched_ids = array_values( array_unique( $resolved_ids ) );
             if ( ! empty( $matched_ids ) ) {
-                $result['agency_stub_created'] = count( $matched_ids );
-                $result['log'][] = "$did: created " . count( $matched_ids ) . ' agency stub record(s) from enforcement.primary_agency';
+                $created_count = count( array_values( array_unique( $created_stub_ids ) ) );
+                $result['agency_stub_created'] = $created_count;
+                if ( $created_count > 0 ) {
+                    $result['log'][] = "$did: created " . $created_count . ' agency stub record(s) from enforcement.primary_agency';
+                }
             }
         }
 

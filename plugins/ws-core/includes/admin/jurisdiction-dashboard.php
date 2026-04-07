@@ -119,31 +119,38 @@ function ws_render_jurisdiction_dashboard() {
 
         // ── Summary (one-to-one: show publish/draft/missing) ──────────────
         $summary_status = ws_jx_dashboard_one_status( $term_id, 'jx-summary' );
-        echo ws_jx_dashboard_status_cell( $summary_status );
+        $summary_unpublished = ws_jx_dashboard_unpublished_count( $term_id, 'jx-summary' );
+        echo ws_jx_dashboard_status_cell( $summary_status, $summary_unpublished );
 
         // ── Statutes (count of editorially curated / attach_flag = 1) ─────
         $statute_count = ws_jx_dashboard_count( $term_id, 'jx-statute', true );
-        echo ws_jx_dashboard_count_cell( $statute_count );
+        $statute_unpublished = ws_jx_dashboard_unpublished_count( $term_id, 'jx-statute' );
+        echo ws_jx_dashboard_count_cell( $statute_count, $statute_unpublished );
 
         // ── Citations (curated count via shared helper) ────────────────────
         $cite_count = ws_get_attached_citation_count( $jx->ID );
-        echo ws_jx_dashboard_count_cell( $cite_count );
+        $cite_unpublished = ws_jx_dashboard_unpublished_count( $term_id, 'jx-citation' );
+        echo ws_jx_dashboard_count_cell( $cite_count, $cite_unpublished );
 
         // ── Interpretations (count of editorially curated) ────────────────
         $interp_count = ws_jx_dashboard_count( $term_id, 'jx-interpretation', true );
-        echo ws_jx_dashboard_count_cell( $interp_count );
+        $interp_unpublished = ws_jx_dashboard_unpublished_count( $term_id, 'jx-interpretation' );
+        echo ws_jx_dashboard_count_cell( $interp_count, $interp_unpublished );
 
         // ── Legal Updates (any published for this jurisdiction) ───────────
         $update_count = ws_jx_dashboard_count( $term_id, 'ws-legal-update', false );
-        echo ws_jx_dashboard_count_cell( $update_count );
+        $update_unpublished = ws_jx_dashboard_unpublished_count( $term_id, 'ws-legal-update' );
+        echo ws_jx_dashboard_count_cell( $update_count, $update_unpublished );
 
         // ── Agencies (any published for this jurisdiction) ────────────────
         $agency_count = ws_jx_dashboard_count( $term_id, 'ws-agency', false );
-        echo ws_jx_dashboard_count_cell( $agency_count );
+        $agency_unpublished = ws_jx_dashboard_unpublished_count( $term_id, 'ws-agency' );
+        echo ws_jx_dashboard_count_cell( $agency_count, $agency_unpublished );
 
         // ── Assist-Orgs (any published for this jurisdiction) ─────────────
         $org_count = ws_jx_dashboard_count( $term_id, 'ws-assist-org', false );
-        echo ws_jx_dashboard_count_cell( $org_count );
+        $org_unpublished = ws_jx_dashboard_unpublished_count( $term_id, 'ws-assist-org' );
+        echo ws_jx_dashboard_count_cell( $org_count, $org_unpublished );
 
         echo '</tr>';
     }
@@ -236,18 +243,41 @@ function ws_jx_dashboard_count( $term_id, $post_type, $attach_only = false ) {
 }
 
 /**
+ * Returns the count of unpublished records (draft/pending/future/private)
+ * of $post_type for $term_id.
+ *
+ * @param  int    $term_id   ws_jurisdiction term ID.
+ * @param  string $post_type CPT slug.
+ * @return int
+ */
+function ws_jx_dashboard_unpublished_count( $term_id, $post_type ) {
+    if ( ! $term_id ) return 0;
+    $q = new WP_Query( [
+        'post_type'      => $post_type,
+        'post_status'    => [ 'draft', 'pending', 'future', 'private' ],
+        'posts_per_page' => 1,
+        'fields'         => 'ids',
+        'no_found_rows'  => false,
+        'tax_query'      => [ [ 'taxonomy' => WS_JURISDICTION_TAXONOMY, 'field' => 'term_id', 'terms' => $term_id ] ],
+    ] );
+    return (int) $q->found_posts;
+}
+
+/**
  * Renders a status cell for a one-to-one relationship (publish/draft/missing).
  *
  * @param  string|null $status
+ * @param  int         $unpublished
  * @return string HTML <td>
  */
-function ws_jx_dashboard_status_cell( $status ) {
+function ws_jx_dashboard_status_cell( $status, $unpublished = 0 ) {
+    $suffix = ( (int) $unpublished > 0 ) ? ' <span style="color:#777;">(' . (int) $unpublished . ')</span>' : '';
     if ( $status === 'publish' ) {
-        return '<td style="color:#46b450;">✔ Published</td>';
+        return '<td style="color:#46b450;">✔ Published' . $suffix . '</td>';
     } elseif ( $status ) {
-        return '<td style="color:#ffa500;">⚠ ' . esc_html( ucfirst( $status ) ) . '</td>';
+        return '<td style="color:#ffa500;">⚠ ' . esc_html( ucfirst( $status ) ) . $suffix . '</td>';
     }
-    return '<td style="color:#dc3232;">✘ Missing</td>';
+    return '<td style="color:#dc3232;">✘ Missing' . $suffix . '</td>';
 }
 
 /**
@@ -256,11 +286,15 @@ function ws_jx_dashboard_status_cell( $status ) {
  * @param  int $count
  * @return string HTML <td>
  */
-function ws_jx_dashboard_count_cell( $count ) {
-    if ( $count === 0 ) {
-        return '<td style="color:#dc3232;font-weight:600;">0</td>';
-    } elseif ( $count <= 2 ) {
-        return '<td style="color:#ffa500;font-weight:600;">' . $count . '</td>';
+function ws_jx_dashboard_count_cell( $count, $unpublished = 0 ) {
+    $display = (int) $count;
+    if ( (int) $unpublished > 0 ) {
+        $display .= ' <span style="color:#777;">(' . (int) $unpublished . ')</span>';
     }
-    return '<td style="color:#46b450;font-weight:600;">' . $count . '</td>';
+    if ( $count === 0 ) {
+        return '<td style="color:#dc3232;font-weight:600;">' . $display . '</td>';
+    } elseif ( $count <= 2 ) {
+        return '<td style="color:#ffa500;font-weight:600;">' . $display . '</td>';
+    }
+    return '<td style="color:#46b450;font-weight:600;">' . $display . '</td>';
 }

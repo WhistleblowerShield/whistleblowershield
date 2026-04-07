@@ -1,0 +1,203 @@
+[2026-04-07 01:07:57 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1432
+  labels: California Department of Public Health (CDPH)
+  matched_ids: 4145
+  match_reasons: none
+  created_stub_ids: 4145
+---
+
+[2026-04-07 01:07:57 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1569.37
+  labels: California Department of Social Services
+  matched_ids: 4147
+  match_reasons: none
+  created_stub_ids: 4147
+---
+
+[2026-04-07 01:07:58 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1871.7
+  labels: California Department of Insurance
+  matched_ids: 4149
+  match_reasons: none
+  created_stub_ids: 4149
+---
+
+[2026-04-07 01:07:58 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-230
+  labels: Labor Commissioner's Office (DLSE)
+  matched_ids: 4151
+  match_reasons: none
+  created_stub_ids: 4151
+---
+
+[2026-04-07 01:07:58 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-232
+  labels: Labor Commissioner's Office
+  matched_ids: 4151
+  match_reasons: agency#4151 via containment+token_overlap (needle='labor commissioner s office', candidate='ca labor commissioner s office')
+  created_stub_ids: none
+---
+
+[2026-04-07 01:07:58 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-244
+  labels: Labor Commissioner's Office
+  matched_ids: 4151
+  match_reasons: agency#4151 via containment+token_overlap (needle='labor commissioner s office', candidate='ca labor commissioner s office')
+  created_stub_ids: none
+---
+
+[2026-04-07 01:07:58 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1101
+  labels: Labor Commissioner's Office
+  matched_ids: 4151
+  match_reasons: agency#4151 via containment+token_overlap (needle='labor commissioner s office', candidate='ca labor commissioner s office')
+  created_stub_ids: none
+---
+
+[2026-04-07 01:07:58 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-1198.3
+  labels: Labor Commissioner's Office
+  matched_ids: 4151
+  match_reasons: agency#4151 via containment+token_overlap (needle='labor commissioner s office', candidate='ca labor commissioner s office')
+  created_stub_ids: none
+---
+
+[2026-04-07 01:07:58 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-12940
+  labels: Civil Rights Department (CRD)
+  matched_ids: 4157
+  match_reasons: none
+  created_stub_ids: 4157
+---
+
+[2026-04-07 01:07:58 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-8547
+  labels: State Personnel Board (SPB)
+  matched_ids: 4159
+  match_reasons: none
+  created_stub_ids: 4159
+---
+
+[2026-04-07 01:07:58 UTC]  CA-18-Statute-NotebookLM.json  CA  CA-8547.7
+  labels: State Personnel Board
+  matched_ids: 4163
+  match_reasons: none
+  created_stub_ids: 4163
+---
+
+[2026-04-07 01:07:58 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-6310
+  labels: Division of Labor Standards Enforcement (DLSE) / Cal/OSHA
+  matched_ids: 4172
+  match_reasons: none
+  created_stub_ids: 4172
+---
+
+[2026-04-07 01:07:58 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-1102.5
+  labels: California Labor Commissioner / Division of Labor Standards Enforcement
+  matched_ids: 4176
+  match_reasons: none
+  created_stub_ids: 4176
+---
+
+[2026-04-07 01:07:58 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-1278.5
+  labels: California Department of Public Health
+  matched_ids: 4178
+  match_reasons: none
+  created_stub_ids: 4178
+---
+
+[2026-04-07 01:07:58 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-98.6
+  labels: Labor Commissioner's Office (DLSE)
+  matched_ids: 4151
+  match_reasons: agency#4151 via containment+token_overlap (needle='labor commissioner s office', candidate='ca labor commissioner s office')
+  created_stub_ids: none
+---
+
+[2026-04-07 01:07:59 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-12653
+  labels: Office of the Attorney General
+  matched_ids: 4181
+  match_reasons: none
+  created_stub_ids: 4181
+---
+
+[2026-04-07 01:07:59 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-232.5
+  labels: Labor Commissioner's Office
+  matched_ids: 4151
+  match_reasons: agency#4151 via containment+token_overlap (needle='labor commissioner s office', candidate='ca labor commissioner s office')
+  created_stub_ids: none
+---
+
+[2026-04-07 01:07:59 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-98.7
+  labels: Division of Labor Standards Enforcement (Labor Commissioner)
+  matched_ids: 4172, 4176
+  match_reasons: agency#4172 via containment+token_overlap (needle='division of labor standards enforcement', candidate='ca division of labor standards enforcement cal osha') | agency#4176 via containment+token_overlap (needle='division of labor standards enforcement', candidate='ca labor commissioner division of labor standards enforcement')
+  created_stub_ids: none
+---
+
+[2026-04-07 01:07:59 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-1102.8
+  labels: Labor Commissioner
+  matched_ids: 4151, 4176
+  match_reasons: agency#4151 via containment+token_overlap (needle='labor commissioner', candidate='ca labor commissioner 8217 s office') | agency#4176 via containment+token_overlap (needle='labor commissioner', candidate='ca labor commissioner division of labor standards enforcement')
+  created_stub_ids: none
+---
+
+[2026-04-07 01:07:59 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-6399.7
+  labels: Division of Labor Standards Enforcement
+  matched_ids: 4172, 4176
+  match_reasons: agency#4172 via containment+token_overlap (needle='division of labor standards enforcement', candidate='ca division of labor standards enforcement cal osha') | agency#4176 via containment+token_overlap (needle='division of labor standards enforcement', candidate='ca labor commissioner division of labor standards enforcement')
+  created_stub_ids: none
+---
+
+[2026-04-07 01:07:59 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-1596.881
+  labels: Division of Labor Standards Enforcement
+  matched_ids: 4172, 4176
+  match_reasons: agency#4172 via containment+token_overlap (needle='division of labor standards enforcement', candidate='ca division of labor standards enforcement cal osha') | agency#4176 via containment+token_overlap (needle='division of labor standards enforcement', candidate='ca labor commissioner division of labor standards enforcement')
+  created_stub_ids: none
+---
+
+[2026-04-07 01:07:59 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-6312
+  labels: Labor Commissioner
+  matched_ids: 4151, 4176
+  match_reasons: agency#4151 via containment+token_overlap (needle='labor commissioner', candidate='ca labor commissioner 8217 s office') | agency#4176 via containment+token_overlap (needle='labor commissioner', candidate='ca labor commissioner division of labor standards enforcement')
+  created_stub_ids: none
+---
+
+[2026-04-07 01:07:59 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-8547.8
+  labels: State Personnel Board
+  matched_ids: 4195
+  match_reasons: none
+  created_stub_ids: 4195
+---
+
+[2026-04-07 01:07:59 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-8547.13
+  labels: State Personnel Board
+  matched_ids: 4199
+  match_reasons: none
+  created_stub_ids: 4199
+---
+
+[2026-04-07 01:07:59 UTC]  CA-22-Statute-NotebookLM.json  CA  CA-87160
+  labels: State Personnel Board
+  matched_ids: 4203
+  match_reasons: none
+  created_stub_ids: 4203
+---
+
+[2026-04-07 01:08:00 UTC]  MA-7-Statute-NotebookLM.json  MA  MA-149-187
+  labels: Massachusetts Attorney General
+  matched_ids: 4212
+  match_reasons: none
+  created_stub_ids: 4212
+---
+
+[2026-04-07 01:08:00 UTC]  MA-7-Statute-NotebookLM.json  MA  MA-149-148A
+  labels: Massachusetts Attorney General
+  matched_ids: 4218
+  match_reasons: none
+  created_stub_ids: 4218
+---
+
+[2026-04-07 01:08:00 UTC]  NJ-7-Statute-NotebookLM.json  NJ  NJ-34:5A-17
+  labels: New Jersey Department of Labor
+  matched_ids: 4235
+  match_reasons: none
+  created_stub_ids: 4235
+---
+
+[2026-04-07 01:08:01 UTC]  PA-11-Statute-NotebookLM.json  PA  PA-1108
+  labels: State Ethics Commission
+  matched_ids: 4251
+  match_reasons: none
+  created_stub_ids: 4251
+---
+
