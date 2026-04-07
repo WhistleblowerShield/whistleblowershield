@@ -573,7 +573,7 @@ function ws_shortcode_jx_limitations() {
 // ----------------------------------------
 //   content      string  Summary body wysiwyg (raw -- apply wp_kses_post before echo)
 //   sources      string  Sources & citations textarea
-//   limitations  string  Limitations wysiwyg
+//   limitations  array   Repeater rows: [ { ws_jx_limit_label, ws_jx_limit_text }, ... ]
 //   notes        string  Internal notes
 //   plain[ ... ]   See PLAIN SUB-ARRAY above
 //   verify[ ... ]  See VERIFY SUB-ARRAY above
@@ -585,19 +585,47 @@ function ws_shortcode_jx_limitations() {
 //   order                int     Display sort order
 //   is_fed               bool    True when appended from the US federal scope
 //   official_name        string  Full official statute name
-//   disclosure_type      mixed   ACF select value (disclosure category)
+//   citation             string  Official statute citation
+//   common_name          string  Common/informal statute name
+//   disclosure_type      array   Disclosure category term IDs
+//   protected_class      array   Protected class term IDs
+//   protected_class_details string Free-text details for protected class nuance
+//   disclosure_targets   array   Disclosure target term IDs
+//   disclosure_targets_details string Free-text details for target nuance
+//   adverse_action_scope string  Free-text scope notes
 //   attach_flag          bool    True when attached to this jurisdiction page
-//   limit_value          string  Statute of limitations value
-//   limit_unit           string  Statute of limitations unit (days, years, etc.)
-//   trigger              string  Event that starts the limitations clock
-//   tolling_notes        string  Notes on tolling or clock suspension
-//   exhaustion_required  bool    True when administrative exhaustion is required
+//   sol_value            string  Statute of limitations value
+//   sol_unit             string  Statute of limitations unit (days, months, years)
+//   sol_trigger          string  Event that starts the limitations clock
+//   sol_has_details      bool    True when SOL has supplementary detail
+//   sol_details          string  SOL details text
+//   tolling_has_details  bool    True when tolling details are present
+//   tolling_details      string  Tolling/extension detail text
+//   has_exhaustion       bool    True when administrative exhaustion is required
 //   exhaustion_details   string  Details on exhaustion requirements
-//   burden_of_proof      string  Burden of proof standard
-//   remedies             string  Available remedies description
-//   local_agencies       mixed   ACF relationship field value (non-federal agency post objects)
-//   federal_agencies     mixed   ACF relationship field value (federal agency post objects)
+//   process_type         array   Process type term IDs
+//   adverse_action       array   Adverse action term IDs
+//   adverse_action_details string Free-text adverse-action nuance
+//   fee_shifting         array   Fee-shifting term IDs
+//   remedies             array   Remedy term IDs
+//   remedies_details     string  Free-text remedy nuance
+//   local_agencies       array   Local/regional agency post IDs
+//   federal_agencies     array   Federal agency post IDs
 //   enforcement_channel  string  Free-text enforcement/intake channel notes
+//   citation_ids         array   Related jx-citation post IDs
+//   employee_standard    array   Employee-standard term IDs
+//   employee_standard_details string Free-text employee-standard nuance
+//   employer_defense     mixed   Employer-defense taxonomy value(s)
+//   employer_defense_details string Free-text employer-defense nuance
+//   rebuttable_has_details bool  True when rebuttable-presumption detail exists
+//   rebuttable_details   string  Rebuttable-presumption details
+//   bop_has_details      bool    True when burden detail exists
+//   bop_details          string  Burden-of-proof detail text
+//   bop_flag             string  Short burden-signal phrase
+//   has_reward           bool    True when reward is available
+//   reward_details       string  Reward details text
+//   statute_url          string  Primary statute URL
+//   url_is_pdf           bool    True when statute_url is a PDF
 //   last_reviewed        string  Date last reviewed (Y-m-d)
 //   ref_materials        array   Approved ws-reference items -- see ws_get_ref_materials()
 //   plain[ ... ]   See PLAIN SUB-ARRAY above
@@ -608,11 +636,30 @@ function ws_shortcode_jx_limitations() {
 // ----------------------------------------
 //   content        string  Citation body (raw post_content)
 //   is_fed         bool    True when appended from the US federal scope
-//   type           string  Citation type identifier
-//   disclosure_type mixed  ACF select value (disclosure category)
+//   types          array   Citation type slug list (case_law/statute/regulatory/secondary)
+//   disclosure_type array  Disclosure category term IDs
+//   official_name  string  Full citation name
+//   common_name    string  Short/common citation name
 //   label          string  Display label for this citation
 //   cite_url       string  URL of the cited source
+//   summary        string  Editorial citation summary
 //   is_pdf         bool    True when the cited source is a PDF
+//   protected_class array  Protected class term IDs
+//   protected_class_details string Free-text protected-class nuance
+//   disclosure_targets array Disclosure target term IDs
+//   disclosure_targets_details string Free-text disclosure-target nuance
+//   adverse_action array  Adverse action term IDs
+//   adverse_action_details string Free-text adverse-action nuance
+//   process_type   array   Process type term IDs
+//   remedies       array   Remedy term IDs
+//   remedies_details string Free-text remedy nuance
+//   fee_shifting   array   Fee-shifting term IDs
+//   employer_defense array Employer-defense term IDs
+//   employer_defense_details string Free-text employer-defense nuance
+//   employee_standard array Employee-standard term IDs
+//   employee_standard_details string Free-text employee-standard nuance
+//   statute_ids    array   Related jx-statute post IDs
+//   common_law_ids array   Related jx-common-law post IDs
 //   attach_flag    bool    True when attached to this jurisdiction page
 //   order          int     Display sort order
 //   last_reviewed  string  Date last reviewed (Y-m-d)
@@ -626,15 +673,32 @@ function ws_shortcode_jx_limitations() {
 //   content            string  Interpretation body (raw post_content)
 //   order              int     Display sort order
 //   is_fed             bool    True when appended from the US federal scope
-//   case_name          string  Full case name
+//   official_name      string  Full case name
+//   common_name        string  Common/short case name
 //   citation           string  Legal citation string (e.g. 123 F.3d 456)
 //   opinion_url        string  URL to the court opinion
 //   court              string  Court name
-//   year               string  Year of decision
+//   year               int     Year of decision
 //   favorable          bool    True when the outcome favors the whistleblower
 //   summary            string  Plain-text summary of the holding
+//   disclosure_type    array   Disclosure category term IDs
+//   protected_class    array   Protected class term IDs
+//   protected_class_details string Free-text protected-class nuance
+//   disclosure_targets array   Disclosure target term IDs
+//   disclosure_targets_details string Free-text disclosure-target nuance
+//   adverse_action     array   Adverse action term IDs
+//   adverse_action_details string Free-text adverse-action nuance
+//   process_type       array   Process type term IDs
+//   remedies           array   Remedy term IDs
+//   remedies_details   string  Free-text remedy nuance
+//   fee_shifting       array   Fee-shifting term IDs
+//   employer_defense   array   Employer-defense term IDs
+//   employer_defense_details string Free-text employer-defense nuance
+//   employee_standard  array   Employee-standard term IDs
+//   employee_standard_details string Free-text employee-standard nuance
 //   parent_statute_id  int     Post ID of the related jx-statute record
-//   process_type       mixed   ACF select value (disclosure process type)
+//   parent_common_law_id int   Post ID of the related jx-common-law record
+//   affected_jx        array   Affected jurisdiction term IDs
 //   attach_flag        bool    True when attached to this jurisdiction page
 //   last_reviewed      string  Date last reviewed (Y-m-d)
 //   ref_materials      array   Approved ws-reference items -- see ws_get_ref_materials()
@@ -647,8 +711,9 @@ function ws_shortcode_jx_limitations() {
 //   code                   string  Internal agency code
 //   name                   string  Full agency name
 //   logo                   mixed   ACF image field value
-//   disclosure_type        mixed   ACF select value (disclosure category)
-//   process_type           mixed   ACF select value (disclosure process type)
+//   disclosure_type        array   Disclosure category term IDs
+//   disclosure_targets     array   Disclosure target term IDs
+//   process_type           array   Process type term IDs
 //   website_url            string  Agency main website URL
 //   reporting_url          string  Direct URL to the reporting/complaint portal
 //   phone                  string  Agency contact phone number
@@ -665,12 +730,17 @@ function ws_shortcode_jx_limitations() {
 // ws_get_assist_org_data( $jx_term_id )  -- returns array of items
 // ----------------------------------------
 //   internal_id          string  Internal reference ID
-//   type                 string  Organization type identifier
+//   type                 mixed   Organization type term object (or null)
+//   description          string  Organization description
 //   logo                 mixed   ACF image field value
 //   serves_nationwide    bool    True when the org serves all jurisdictions
-//   disclosure_type      mixed   ACF select value (disclosure category)
-//   services             string  Description of services offered
-//   employment_sectors   string  Employment sectors served
+//   disclosure_type      array   Disclosure category term IDs
+//   disclosure_targets   array   Disclosure target term IDs
+//   disclosure_targets_details string Free-text disclosure-target nuance
+//   case_stages          array   Case-stage term IDs
+//   services             array   Service term names
+//   additional_services  string  Free-text additional services
+//   employment_sectors   array   Employment sector term names
 //   website_url          string  Organization main website URL
 //   intake_url           string  Direct URL to the intake or contact form
 //   phone                string  Organization phone number
@@ -678,7 +748,7 @@ function ws_shortcode_jx_limitations() {
 //   mailing_address      string  Mailing address
 //   languages            mixed   ACF select value (supported languages)
 //   additional_languages string  Free-text additional language notes
-//   cost_model           string  Cost model slug (free, pro-bono, sliding-scale, etc.)
+//   cost_model           array   Cost-model term names
 //   income_limit         string  Income threshold for eligibility (if applicable)
 //   income_limit_notes   string  Notes on income limit or eligibility criteria
 //   anonymous            bool    True when anonymous inquiries are accepted
@@ -691,6 +761,70 @@ function ws_shortcode_jx_limitations() {
 //   plain[ ... ]   See PLAIN SUB-ARRAY above
 //   verify[ ... ]  See VERIFY SUB-ARRAY above
 //   record[ ... ]  See RECORD SUB-ARRAY above
+//
+// ws_get_jx_common_law_data( $jx_term_id )  -- returns array of items
+// ----------------------------------------
+//   content                string  Doctrine body (raw post_content)
+//   order                  int     Display sort order
+//   is_fed                 bool    True when appended from US federal scope
+//   doctrine_name          string  Doctrine title
+//   doctrine_id            string  Doctrine stable ID
+//   common_name            string  Common doctrine name
+//   precedent_url          string  Leading precedent URL
+//   public_policy_sources  array   Source slugs
+//   other_sources          string  Free-text other-source details
+//   doctrine_basis         string  Doctrine basis text
+//   recognition_status     string  Recognition status text
+//   disclosure_type        array   Disclosure category term IDs
+//   protected_class        array   Protected class term IDs
+//   protected_class_details string Free-text protected-class nuance
+//   disclosure_targets     array   Disclosure target term IDs
+//   disclosure_targets_details string Free-text disclosure-target nuance
+//   adverse_action_scope   string  Free-text adverse-action scope
+//   attach_flag            bool    True when attached to jurisdiction page
+//   sol_value, sol_unit, sol_trigger, sol_has_details, sol_details
+//   tolling_has_details, tolling_details, has_exhaustion, exhaustion_details
+//   process_type, adverse_action, fee_shifting, remedies, related_agencies  (arrays)
+//   adverse_action_details, remedies_details (strings)
+//   statutory_preclusion   bool
+//   statutory_preclusion_details string
+//   employee_standard      array   Employee-standard term IDs
+//   employee_standard_details string
+//   employer_defense       array   Employer-defense term IDs
+//   employer_defense_details string
+//   rebuttable_has_details bool
+//   rebuttable_details     string
+//   bop_has_details        bool
+//   bop_details            string
+//   bop_flag               string
+//   has_reward             bool
+//   reward_details         string
+//   citation_ids           array   Related jx-citation post IDs
+//   interpretation_ids     array   Related jx-interpretation post IDs
+//   ref_materials          array   Approved ws-reference items
+//   plain[ ... ]   See PLAIN SUB-ARRAY above
+//   verify[ ... ]  See VERIFY SUB-ARRAY above
+//   record[ ... ]  See RECORD SUB-ARRAY above
+//
+// ws_get_agency_procedures( $agency_id )  -- returns array of items
+// ----------------------------------------
+//   id, title, url, agency_id, agency_name, agency_url
+//   type                 string  Procedure type slug
+//   jurisdiction         array   WP_Term objects from ws_jurisdiction
+//   disclosure_types     array   WP_Term objects from ws_disclosure_type
+//   statute_ids          array   Related statute post IDs
+//   entry_point, intake_url, phone, identity_policy, clock_start
+//   intake_only, has_prereqs, stat_override  (bools)
+//   deadline_days        int
+//   prereq_note, walkthrough, exclusivity_note, last_reviewed
+//   record[ ... ]  See RECORD SUB-ARRAY above
+//
+// ws_get_procedures_for_statute( $statute_id )  -- returns array of items
+// ----------------------------------------
+//   id, title, url, type, agency_id, agency_name, agency_url
+//   statute_ids          array   Related statute post IDs
+//   deadline_days        int
+//   intake_only          bool
 //
 // ws_get_legal_updates_data( $jx_id, $count )  -- returns array of items
 //   $jx_id  int  Jurisdiction post ID to scope results. 0 = site-wide.
