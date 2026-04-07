@@ -5,7 +5,7 @@ model, editorial workflow, and public-facing output for the platform.
 
 **Stack:** WordPress + ACF Pro
 **Requires:** PHP 8.0+, WordPress 6.0+, ACF Pro
-**Version:** 3.14.0
+**Version:** 3.15.0
 
 Full project documentation is in `/documentation/`. This file covers the
 rules a developer needs open while writing code.
@@ -23,6 +23,7 @@ Matrix Layer      Idempotent seeders — run once on install (admin only)
 Admin Layer       ACF hooks, audit trail, monitoring, dashboard (admin only)
 Tools Layer       Admin tools in includes/admin/tools/ — prompt generator,
                   ingest tool. Write to wp-content/logs/ws-ingest/.
+                  See includes/admin/tools/README.md for operator workflow.
 Assembly Layer    Render functions + shortcodes → HTML (frontend only)
 Assets            Conditionally loaded CSS + JS
 ```

@@ -22,7 +22,7 @@ Subdirectories:
 | `admin-procedure-watch.php` | Statute link validation + publish gate for `ws-ag-procedure` |
 | `admin-citation-metabox.php` | Citation context metabox on `jx-citation` edit screen |
 | `admin-interpretation-metabox.php` | Court select pre-population on `jx-interpretation` edit screen |
-| `jurisdiction-dashboard.php` | Jurisdiction completion tracker dashboard page |
+| `jurisdiction-dashboard.php` | Jurisdiction completion tracker dashboard page (published counts with optional unpublished parenthetical) |
 | `admin-health-check.php` | Runtime dependency checks surfaced as admin notices |
 
 **tools/ subdirectory:**
@@ -30,7 +30,7 @@ Subdirectories:
 | File | Purpose |
 |---|---|
 | `tools/tool-generate-prompt.php` | Generates AI research prompts from live taxonomy data. Writes to `wp-content/logs/ws-prompts/` |
-| `tools/tool-ingest.php` | Processes validated JSON batches and writes statute records to `jx-statute` CPT. Writes ledger logs to `wp-content/logs/ws-ingest/` and detailed run logs to `wp-content/logs/ws-ingest/ingested/` |
+| `tools/tool-ingest.php` | Processes validated JSON batches for `jx-statute`, `jx-common-law`, `jx-citation`, and `jx-interpretation`. Writes ledger logs to `wp-content/logs/ws-ingest/` and detailed run logs to `wp-content/logs/ws-ingest/ingested/` |
 
 **Ingest log files** (`wp-content/logs/ws-ingest/`):
 

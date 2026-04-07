@@ -10,7 +10,7 @@
  *
  * @package WhistleblowerShield
  * @since   2.3.0
- * @version 3.12.3
+ * @version 3.12.4
  *
  * VERSION
  * -------
@@ -29,6 +29,7 @@
  *         doctrine-linked citations (separate from statute linkage).
  * 3.12.3  ws_jx_citation_type changed from single select to multi-select
  *         to support citations that cover multiple source categories.
+ * 3.12.4  Header and field-summary documentation sync.
  */
 
 defined( 'ABSPATH' ) || exit;

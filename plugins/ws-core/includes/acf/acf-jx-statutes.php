@@ -76,7 +76,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @package    WhistleblowerShield
  * @since      2.0.0
- * @version 3.12.0
+ * @version 3.12.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -124,6 +124,7 @@ defined( 'ABSPATH' ) || exit;
  *        disclosure_targets, adverse_action_types, remedies, employer_defense,
  *        employee_standard — each gains a _has_details toggle and conditional
  *        _details textarea. employer_defense_details made conditional.
+ * 3.12.1 Header and field-summary documentation sync.
  */
 
 add_action( 'acf/init', 'ws_register_acf_jx_statutes' );

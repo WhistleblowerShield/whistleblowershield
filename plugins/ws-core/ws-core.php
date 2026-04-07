@@ -21,7 +21,7 @@
  * Plugin Name:  WhistleblowerShield Core
  * Description:  Core architecture for WhistleblowerShield.org. Assembles
  *               public whistleblower protection pages for 57 U.S. jurisdictions.
- * Version:      3.13.0
+ * Version:      3.15.0
  * Author:       Whistleblower Shield
  * Author URI:   https://whistleblowershield.org
  *
@@ -35,7 +35,7 @@ defined( 'ABSPATH' ) || exit;
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-define( 'WS_CORE_VERSION', '3.10.2' );
+define( 'WS_CORE_VERSION', '3.15.0' );
 define( 'WS_CORE_PATH',    plugin_dir_path( __FILE__ ) );
 define( 'WS_CORE_URL',     plugin_dir_url( __FILE__ ) );
 

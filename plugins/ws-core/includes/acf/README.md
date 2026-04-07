@@ -93,7 +93,8 @@ signal phrase for non-standard burden shifts (text, 120 char max).
 | `ws_jx_statute_fee_shifting` | taxonomy | `ws_fee_shifting` |
 | `ws_jx_statute_remedies` | taxonomy | `ws_remedies` — has-details |
 | `ws_jx_statute_remedies_details` | textarea | Conditional on has-details |
-| `ws_jx_statute_related_agencies` | post_object | `ws-agency` |
+| `ws_jx_statute_local_agencies` | post_object | `ws-agency` (local/regional) |
+| `ws_jx_statute_federal_agencies` | post_object | `ws-agency` (federal) |
 
 **Burden of Proof tab:**
 
@@ -183,11 +184,12 @@ SOL is almost always `limit_ambiguous: true` for common law.
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_jx_citation_type` | select | |
+| `ws_jx_citation_type` | select | Multi-select (`case_law`, `statute`, `regulatory`, `secondary`) |
 | `ws_jx_citation_disclosure_type` | taxonomy | `ws_disclosure_type` |
 | `ws_jx_citation_official_name` | text | |
 | `ws_jx_citation_common_name` | text | |
 | `ws_jx_citation_url` | url | |
+| `ws_jx_citation_summary` | wysiwyg | Compact editorial summary field |
 | `ws_jx_citation_is_pdf` | true_false | |
 | `ws_attach_flag` | true_false | |
 | `ws_display_order` | number | |
@@ -211,6 +213,7 @@ SOL is almost always `limit_ambiguous: true` for common law.
 | `ws_jx_citation_employee_standard` | taxonomy | `ws_employee_standard` — has-details |
 | `ws_jx_citation_employee_standard_details` | textarea | |
 | `ws_jx_citation_statute_ids` | textarea | Pipe-delimited statute IDs this citation supports |
+| `ws_jx_citation_common_law_ids` | relationship | `jx-common-law` linkage |
 | `ws_ref_materials` | relationship | `ws-reference` |
 | `ws_jx_citation_last_reviewed` | text | |
 
@@ -225,11 +228,12 @@ SOL is almost always `limit_ambiguous: true` for common law.
 | `ws_jx_interp_case_citation` | text | |
 | `ws_jx_interp_court` | select | Court matrix shorthand |
 | `ws_jx_interp_court_name` | text | |
-| `ws_jx_interp_year` | text | |
+| `ws_jx_interp_year` | number | |
 | `ws_jx_interp_favorable` | true_false | Only when ruling materially expands protection |
 | `ws_jx_interp_summary` | textarea | |
 | `ws_jx_interp_url` | url | |
-| `ws_jx_interp_statute_id` | text | Anchor statute |
+| `ws_jx_interp_statute_id` | post_object | Anchor statute (`jx-statute`) |
+| `ws_jx_interp_common_law_id` | post_object | Anchor doctrine (`jx-common-law`) |
 | `ws_jx_interp_affected_jx` | taxonomy | `ws_jurisdiction` — `save_terms: 0` |
 | `ws_jx_interp_disclosure_type` | taxonomy | `ws_disclosure_type` |
 | `ws_jx_interp_protected_class` | taxonomy | `ws_protected_class` — has-details |

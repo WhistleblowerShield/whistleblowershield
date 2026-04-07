@@ -20,6 +20,7 @@
  * - statute (jx-statute CPT)
  * - common-law (jx-common-law CPT)
  * - citation (jx-citation CPT)
+ * - interpretation (jx-interpretation CPT)
  *
  * PIPELINE PHASES
  * ---------------
@@ -60,13 +61,20 @@
  *
  * @package    WhistleblowerShield
  * @since      3.14.0
- * @version    3.14.3
+ * @version    3.15.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
  * VERSION
  * -------
+ * 3.15.0  Ingest reliability + UX polish:
+ *         - detailed run logs moved to logs/ws-ingest/ingested/
+ *         - folder dry-run shows expandable per-file preflight warnings
+ *         - agency stub normalization uses jurisdiction ID prefixing rule
+ *         - agency code normalization includes AG/ST/COMMR abbreviations
+ *         - agency stub create-or-reuse path added to prevent duplicate stubs
+ *         - in-pass agency label dedupe by normalized code key
  * 3.14.3  Citation dedupe + common-law relationship linkage:
  *         - citation stub dedupe keyed by normalized case name + parent record
  *         - optional parent_common_law_id linkage for citation and interpretation records
@@ -94,7 +102,7 @@ defined( 'ABSPATH' ) || exit;
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-define( 'WS_INGEST_VERSION',       '3.14.3' );
+define( 'WS_INGEST_VERSION',       '3.15.0' );
 define( 'WS_INGEST_SCHEMA_VERSION', '2.0' );
 define( 'WS_PROPOSED_TERMS_LOG',   WP_CONTENT_DIR . '/logs/ws-ingest/proposed-terms-log.json' );
 define( 'WS_INGEST_LOG_DIR',       WP_CONTENT_DIR . '/logs/ws-ingest/' );

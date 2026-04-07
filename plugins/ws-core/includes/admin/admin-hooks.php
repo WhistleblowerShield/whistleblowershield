@@ -87,10 +87,11 @@
  * 3.6.0   Statute reverse index hooks added (citation and interpretation).
  * 3.9.0   Rule 3b: plain_reviewed resets on substantial content change.
  * 3.10.0  ws-ag-procedure added to $ws_stamp_cpts and ws_source_verify_post_types().
+ * 3.10.1  Header documentation refresh for current cross-CPT responsibilities.
  *
  * @package WhistleblowerShield
  * @since   2.1.0
- * @version 3.10.0
+ * @version 3.10.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;

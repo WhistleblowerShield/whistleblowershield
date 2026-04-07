@@ -42,13 +42,14 @@
  *
  * @package    WhistleblowerShield
  * @since      3.14.0
- * @version    3.14.0
+ * @version    3.14.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
  * VERSION
  * -------
+ * 3.14.1  Header documentation sync.
  * 3.14.0  Prompt quality hardening:
  *         - record-neutral shared boilerplate text
  *         - clarified omission guidance for statute_url / precedent_url / case_url

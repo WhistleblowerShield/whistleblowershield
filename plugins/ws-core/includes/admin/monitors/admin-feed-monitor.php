@@ -34,13 +34,14 @@
  *
  * @package WhistleblowerShield
  * @since   3.2.0
- * @version 3.10.0
+ * @version 3.10.1
  *
  * VERSION
  * -------
  * 3.2.0   Initial release.
  * 3.8.1   LOCK_EX added to file writes. Feed staged pruning added.
  *         ws_feed_monitor_default_jx_code filter added.
+ * 3.10.1  Header documentation sync.
  */
 
 defined( 'ABSPATH' ) || exit;

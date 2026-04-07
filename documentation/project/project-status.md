@@ -1,7 +1,7 @@
 # Project Status
 
-**Last updated:** 2026-04-04
-**Plugin version:** 3.14.0
+**Last updated:** 2026-04-06
+**Plugin version:** 3.15.0
 **Prompt template version:** v2.0.14
 **NotebookLM Ruleset version:** v1.0.8
 **Environment:** Live — behind construction page at whistleblowershield.org
@@ -44,12 +44,12 @@ JSON ingest schema keys exactly. All downstream references in
 New field: `ws_jx_statute_bop_flag` / `ws_cl_bop_flag`.
 
 **Admin tools** (`includes/admin/tools/`):
-- `tool-generate-prompt.php` (v3.13.1) — generates AI research prompts
+- `tool-generate-prompt.php` (v3.14.1) — generates AI research prompts
   from live WordPress taxonomy data via `get_terms()`. Four record types:
   statute, common-law, citation, interpretation. Outputs to
   `wp-content/logs/ws-prompts/[JX]-[N]-[Type]-[timestamp].txt`.
-- `tool-ingest.php` (v3.14.0) — processes validated JSON batches and
-  writes statute records to `jx-statute` CPT. Three-phase pipeline:
+- `tool-ingest.php` (v3.15.0) — processes validated JSON batches for
+  statute, common-law, citation, and interpretation records. Three-phase pipeline:
   pre-flight validation → admin confirmation → record processing.
   Four ledger/breadcrumb logs in `wp-content/logs/ws-ingest/`; detailed run logs in `wp-content/logs/ws-ingest/ingested/`.
 
@@ -57,8 +57,8 @@ New field: `ws_jx_statute_bop_flag` / `ws_cl_bop_flag`.
 with human review gate. See pipeline section below.
 
 **Documentation** — 16-document set in `/documentation/` plus plugin-level
-README and 10 directory-level READMEs in `ws-core/includes/`. All updated
-to reflect v3.14.0 state.
+README and 10 directory-level READMEs in `ws-core/includes/`. Updated
+for current v3.15.0 ingest/admin state.
 
 ---
 

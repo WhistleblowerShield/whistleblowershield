@@ -61,7 +61,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.2.0
- * @version 3.10.0
+ * @version 3.10.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -76,6 +76,7 @@
  * 3.8.1  posts_per_page => 1000 ceiling on get_posts() in cron handler.
  *        detected timestamp now preserved for existing warnings/failures so
  *        cron reruns no longer reset the "first seen" date to today.
+ * 3.10.1 Header documentation sync.
  */
 
 defined( 'ABSPATH' ) || exit;

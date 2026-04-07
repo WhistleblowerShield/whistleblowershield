@@ -38,10 +38,11 @@
  *        - ws_agency_last_reviewed retained as a content-owned field.
  * 3.12.0 ws_agency_disclosure_targets field added to Agency Identity tab.
  *        Mirrors taxonomy-agencies.txt flat disclosure_targets palette.
+ * 3.12.1 Header and field-group documentation sync.
  *
  * @package WhistleblowerShield
  * @since   2.3.1
- * @version 3.12.0
+ * @version 3.12.1
  */
 
 defined( 'ABSPATH' ) || exit;

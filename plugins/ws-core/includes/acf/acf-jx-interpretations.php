@@ -54,7 +54,7 @@
  *
  * @package    WhistleblowerShield
  * @since      2.4.0
- * @version 3.12.1
+ * @version 3.12.2
  *
  * VERSION
  * -------
@@ -73,6 +73,7 @@
  * 3.12.1 Relationships expanded for dual parent linkage:
  *        ws_jx_interp_common_law_id added; court scope and URL prefill now
  *        resolve from statute_id and common_law_id parent context.
+ * 3.12.2 Header and field-summary documentation sync.
  */
 
 defined( 'ABSPATH' ) || exit;
