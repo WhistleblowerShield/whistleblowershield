@@ -157,10 +157,11 @@
  * 3.10.2  ws-statute-bold added to render files.
  * 3.13.0  cpt-jx-common-law and acf-jx-common-law added.
  * 3.13.1  tool-generate-prompt added to tools load block.
+ * 3.13.2  tool-taxonomy-term-audit added to tools load block.
  *
  * @package WhistleblowerShield
  * @since   2.1.0
- * @version 3.13.0
+ * @version 3.13.2
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -480,6 +481,7 @@ if ( is_admin() ) {
     $tool_files = [
         'tool-generate-prompt',
         'tool-ingest',
+		'tool-taxonomy-term-audit',
     ];
     foreach ( $tool_files as $file ) {
         $path = WS_CORE_PATH . "/includes/admin/tools/{$file}.php";

@@ -10,6 +10,7 @@ human-reviewed pipeline:
 This folder currently contains:
 - `tool-generate-prompt.php`
 - `tool-ingest.php`
+- `tool-taxonomy-term-audit.php`
 
 ---
 
@@ -36,6 +37,7 @@ which reduces remediation load and keeps taxonomy/data drift low.
 |---|---|---|
 | `tool-generate-prompt.php` | Builds prompt templates for statute/common-law/citation/interpretation runs | `wp-content/logs/ws-prompts/` |
 | `tool-ingest.php` | Validates and ingests JSON records into ws-core CPTs | `wp-content/logs/ws-ingest/` and `wp-content/logs/ws-ingest/ingested/` |
+| `tool-taxonomy-term-audit.php` | Diffs live `ws_*` taxonomy terms against `register-taxonomies.php` seed declarations | In-page report only |
 
 ---
 
@@ -89,6 +91,26 @@ That dramatically lowers invalid term proposals and cleanup work downstream.
 - `citations-breadcrumbs.log`
 - `proposed-terms-log.json`
 - `ingested/[JX]-[record_count]-[timestamp]-ingest.txt`
+
+---
+
+## Taxonomy Term Audit Tool
+
+### What it does
+
+- Scans all live `ws_*` taxonomies (excluding `ws_glossary`).
+- Parses `register-taxonomies.php` seed functions to derive expected slugs.
+- Reports:
+  - extra terms (live but not seed-declared)
+  - missing terms (seed-declared but not live)
+- Includes a focused spot check for `ws_protected_class`:
+  - `all-sectors`
+  - `all-employees`
+
+### Why it matters
+
+This gives operators a fast admin-side drift check without running WP-CLI,
+and it catches taxonomy-term divergence early during ingest-heavy phases.
 
 ---
 
