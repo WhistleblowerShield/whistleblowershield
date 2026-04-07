@@ -53,7 +53,7 @@
  *
  *      Universal Layer (frontend + admin):
  *      1) CPT definitions
- *      2) Query layer (helpers → shared → jurisdiction → agencies)
+ *      2) Query layer (helpers → shared → jurisdiction → general → assist-orgs → agencies)
  *      3) Taxonomies
  *
  *      Admin Layer (is_admin() only):
@@ -158,10 +158,14 @@
  * 3.13.0  cpt-jx-common-law and acf-jx-common-law added.
  * 3.13.1  tool-generate-prompt added to tools load block.
  * 3.13.2  tool-taxonomy-term-audit added to tools load block.
+ * 3.13.3  query-assist-orgs added; assist-org query functions extracted from
+ *         query-jurisdiction.php.
+ * 3.13.4  query-general added; legal-updates/reference queries extracted from
+ *         query-jurisdiction.php.
  *
  * @package WhistleblowerShield
  * @since   2.1.0
- * @version 3.13.2
+ * @version 3.13.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -216,13 +220,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	}
 
 	// QUERY Layer: The "Data API" for both Admin and Frontend
-	// Load order is non-negotiable: helpers → shared → jurisdiction → agencies.
+	// Load order is non-negotiable: helpers → shared → jurisdiction → general → assist-orgs → agencies.
 	//   query-helpers.php      — pure utilities (no WP meta reads)
 	//   query-shared.php       — cross-CPT sub-array builders (depend on helpers)
 	//   query-jurisdiction.php — jurisdiction dataset functions (depend on shared)
+	//   query-general.php      — cross-cutting datasets (depends on jurisdiction/shared)
+	//   query-assist-orgs.php  — assist-org dataset functions (depend on shared)
 	//   query-agencies.php     — agency/procedure dataset functions (depend on shared)
 	$query_files = [
-		'query-helpers', 'query-shared', 'query-jurisdiction', 'query-agencies',
+		'query-helpers', 'query-shared', 'query-jurisdiction', 'query-general', 'query-assist-orgs', 'query-agencies',
 	];
 	foreach ( $query_files as $file ) {
 		$path = WS_CORE_PATH . "includes/queries/{$file}.php";

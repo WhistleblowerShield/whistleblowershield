@@ -27,10 +27,12 @@ Load order is non-negotiable. Each file depends on the one before it.
 query-helpers.php       Pure utilities — no DB reads, no side effects
 query-shared.php        Sub-array builders — depend on helpers
 query-jurisdiction.php  Primary dataset API — depends on shared
+query-general.php       Cross-cutting datasets — depends on shared/jurisdiction
+query-assist-orgs.php   Assist-org dataset API — depends on shared
 query-agencies.php      Agency/procedure API — depends on shared
 ```
 
-All four files are in the Universal Layer — loaded on both frontend
+All six files are in the Universal Layer — loaded on both frontend
 and admin via `loader.php`.
 
 ---

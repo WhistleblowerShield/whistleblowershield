@@ -19,7 +19,7 @@
  *
  * @package WhistleblowerShield
  * @since   1.0.0
- * @version 3.12.0
+ * @version 3.12.4
  *
  * VERSION
  * -------
@@ -33,6 +33,19 @@
  *         textarea appears when 'has-details' term is selected.
  *         ws_ao_case_stage field added to Scope of Service tab (was in text
  *         table but missing from ACF).
+ * 3.12.1  Internal Relationship tab added for non-public org contact fields.
+ *         These fields are admin-only operational metadata and are not
+ *         consumed by frontend/query-layer renders.
+ * 3.12.2  ws_aorg_community_scope field added to Scope of Service tab.
+ *         Captures community-level or city/region coverage (for orgs that are
+ *         not statewide/nationwide), e.g. San Francisco Bay Area, Los Angeles.
+ * 3.12.3  Scope controls expanded:
+ *         - ws_aorg_serves_nationwide explicitly treated as 57-jurisdiction flag.
+ *         - ws_aorg_limited_scope flag added; ws_aorg_community_scope now
+ *           appears only for limited, non-nationwide orgs.
+ * 3.12.4  Removed explicit ws_aorg_federal_only field.
+ *         Federal-only status is derived from scope rules:
+ *         serves_nationwide = 0 and jurisdiction = ['us'].
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -144,14 +157,31 @@ function ws_register_acf_assist_org() {
 
             [
                 'key'           => 'field_aorg_serves_nationwide',
-                'label'         => 'Serves All U.S. Jurisdictions',
+                'label'         => 'Nationwide (All 57 Jurisdictions)',
                 'name'          => 'ws_aorg_serves_nationwide',
                 'type'          => 'true_false',
-                'instructions'  => 'Enable if this organization operates in all 50 states, territories, and federal jurisdictions. If enabled, the Jurisdictions field below is not required.',
+                'instructions'  => 'Enable to mark this organization as nationwide across all 57 jurisdictions (states, territories, and federal). This is the core nationwide trigger for directory logic.',
                 'ui'            => 1,
                 'ui_on_text'    => 'Nationwide',
                 'ui_off_text'   => 'Limited',
                 'default_value' => 0,
+            ],
+
+            [
+                'key'           => 'field_aorg_limited_scope',
+                'label'         => 'Community / Local Scope',
+                'name'          => 'ws_aorg_limited_scope',
+                'type'          => 'true_false',
+                'instructions'  => 'Enable when coverage is limited to specific cities/regions within a jurisdiction (for example, San Francisco or Los Angeles County).',
+                'ui'            => 1,
+                'ui_on_text'    => 'Local/Community',
+                'ui_off_text'   => 'Jurisdiction-wide',
+                'default_value' => 0,
+                'conditional_logic' => [ [ [
+                    'field'    => 'field_aorg_serves_nationwide',
+                    'operator' => '==',
+                    'value'    => '0',
+                ] ] ],
             ],
 
             [
@@ -168,6 +198,28 @@ function ws_register_acf_assist_org() {
                 'load_terms'    => 1,
                 'return_format' => 'id',
                 'allow_null'    => 1,
+            ],
+
+            [
+                'key'          => 'field_aorg_community_scope',
+                'label'        => 'Community Scope',
+                'name'         => 'ws_aorg_community_scope',
+                'type'         => 'textarea',
+                'instructions' => 'Optional local-service footprint for community-driven organizations. Examples: "San Francisco", "Los Angeles County", "Inland Empire", "Bay Area".',
+                'required'     => 0,
+                'rows'         => 2,
+                'conditional_logic' => [ [
+                    [
+                    'field'    => 'field_aorg_serves_nationwide',
+                    'operator' => '==',
+                    'value'    => '0',
+                    ],
+                    [
+                        'field'    => 'field_aorg_limited_scope',
+                        'operator' => '==',
+                        'value'    => '1',
+                    ],
+                ] ],
             ],
 
             [
@@ -490,6 +542,80 @@ function ws_register_acf_assist_org() {
                 'display_format' => 'F j, Y',
                 'return_format'  => 'Y-m-d',
                 'first_day'      => 1,
+            ],
+
+            // ────────────────────────────────────────────────────────────────
+            // Tab: Internal Relationship
+            //
+            // Private operator metadata for relationship building and
+            // outreach continuity. Not surfaced in public output.
+            // ────────────────────────────────────────────────────────────────
+
+            [
+                'key'   => 'field_aorg_internal_rel_tab',
+                'label' => 'Internal Relationship',
+                'type'  => 'tab',
+            ],
+
+            [
+                'key'          => 'field_aorg_internal_contact_name',
+                'label'        => 'Internal Contact Name',
+                'name'         => 'ws_aorg_internal_contact_name',
+                'type'         => 'text',
+                'instructions' => 'Internal-use only. Primary relationship contact at the organization. This field is never shown publicly.',
+                'required'     => 0,
+                'placeholder'  => 'Jane Doe',
+            ],
+
+            [
+                'key'          => 'field_aorg_internal_contact_role',
+                'label'        => 'Internal Contact Role/Title',
+                'name'         => 'ws_aorg_internal_contact_role',
+                'type'         => 'text',
+                'instructions' => 'Internal-use only. Role/title for context during outreach.',
+                'required'     => 0,
+                'placeholder'  => 'Director of Intake',
+            ],
+
+            [
+                'key'          => 'field_aorg_internal_contact_email',
+                'label'        => 'Internal Contact Email',
+                'name'         => 'ws_aorg_internal_contact_email',
+                'type'         => 'email',
+                'instructions' => 'Internal-use only. Direct working contact email (if available).',
+                'required'     => 0,
+            ],
+
+            [
+                'key'          => 'field_aorg_internal_contact_phone',
+                'label'        => 'Internal Contact Phone',
+                'name'         => 'ws_aorg_internal_contact_phone',
+                'type'         => 'text',
+                'instructions' => 'Internal-use only. Direct phone/extension for relationship follow-up.',
+                'required'     => 0,
+                'placeholder'  => '(555) 000-0000 x123',
+            ],
+
+            [
+                'key'            => 'field_aorg_internal_last_contacted',
+                'label'          => 'Internal Last Contacted',
+                'name'           => 'ws_aorg_internal_last_contacted',
+                'type'           => 'date_picker',
+                'instructions'   => 'Internal-use only. Most recent direct outreach date.',
+                'required'       => 0,
+                'display_format' => 'F j, Y',
+                'return_format'  => 'Y-m-d',
+                'first_day'      => 1,
+            ],
+
+            [
+                'key'          => 'field_aorg_internal_relationship_notes',
+                'label'        => 'Internal Relationship Notes',
+                'name'         => 'ws_aorg_internal_relationship_notes',
+                'type'         => 'textarea',
+                'instructions' => 'Internal-use only. Keep concise, factual notes for relationship continuity and follow-up context.',
+                'required'     => 0,
+                'rows'         => 4,
             ],
 
             // ── Tab: Plain Language ───────────────────────────────────────

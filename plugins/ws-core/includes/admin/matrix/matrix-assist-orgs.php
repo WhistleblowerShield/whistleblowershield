@@ -4,7 +4,7 @@
  *
  * @package WhistleblowerShield
  * @since   3.0.0
- * @version 3.10.0
+ * @version 3.10.5
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -189,90 +189,67 @@ $_ws_assist_org_matrix = [
         'case_stages'          => [ 'post-report', 'retaliation-active' ],
     ],
 
-    // ── Federal oversight / intake channels ───────────────────────────────
-
     [
-        'internal_id'          => 'gao-fraudnet',
-        'title'                => 'Government Accountability Office — FraudNet',
-        'slug'                 => 'gao-fraudnet',
-        'description'          => 'Receives allegations of fraud, waste, abuse, and mismanagement of federal funds. Referrals are made to the appropriate Inspector General or law enforcement agency.',
-        'post_content'         => 'Receives allegations of fraud, waste, abuse, and mismanagement of federal funds. Referrals are made to the appropriate Inspector General or law enforcement agency.',
-        'ws_aorg_website_url'  => 'https://www.gao.gov/about/what-gao-does/fraudnet',
-        'ws_aorg_intake_url'   => 'https://www.gao.gov/about/what-gao-does/fraudnet',
-        'ws_aorg_phone'        => '1-800-424-5454',
+        'internal_id'          => 'nela-national',
+        'title'                => 'National Employment Lawyers Association',
+        'slug'                 => 'national-employment-lawyers-association',
+        'description'          => 'National professional association of lawyers representing employees in labor, employment, and civil rights disputes. Provides a lawyer finder to connect workers with plaintiff-side employment counsel.',
+        'post_content'         => 'National professional association of lawyers representing employees in labor, employment, and civil rights disputes. Provides a lawyer finder to connect workers with plaintiff-side employment counsel.',
+        'ws_aorg_website_url'  => 'https://www.nela.org',
+        'ws_aorg_intake_url'   => 'https://exchange.nela.org/memberdirectory/findalawyer',
+        'ws_aorg_phone'        => '(202) 420-0007',
         'ws_aorg_email'        => '',
-        'aorg_type'            => 'oversight-office',
-        'cost_model'           => 'free',
-        'is_nationwide'        => 0,
-        'accepts_anon'         => 1,
+        'aorg_type'            => 'bar-program',
+        'cost_model'           => 'fee-for-service',
+        'is_nationwide'        => 1,
+        'accepts_anon'         => 0,
         'has_attorneys'        => 0,
-        'services'             => [ 'hotline', 'referral' ],
-        'sectors'              => [ 'federal-employee' ],
-        'disclosure_types'     => [ 'public-corruption-ethics', 'procurement-spending-fraud', 'banking-aml-compliance', 'tax-evasion-fraud' ],
-        'case_stages'          => [ 'pre-report' ],
+        'services'             => [ 'referral' ],
+        'sectors'              => [ 'all-sectors' ],
+        'disclosure_types'     => [ 'retaliation-protection', 'wrongful-termination', 'occupational-health-safety', 'public-corruption-ethics' ],
+        'case_stages'          => [ 'post-report', 'retaliation-active', 'litigation' ],
     ],
 
     [
-        'internal_id'          => 'ig-community',
-        'title'                => 'Inspector General Community',
-        'slug'                 => 'ig-community',
-        'description'          => 'The Council of the Inspectors General on Integrity and Efficiency coordinates federal oversight activities and provides a directory of agency IGs who receive whistleblower disclosures.',
-        'post_content'         => 'The Council of the Inspectors General on Integrity and Efficiency coordinates federal oversight activities and provides a directory of agency IGs who receive whistleblower disclosures.',
-        'ws_aorg_website_url'  => 'https://www.ignet.gov',
-        'ws_aorg_intake_url'   => 'https://www.ignet.gov/content/inspectors-general-directory',
-        'ws_aorg_phone'        => '',
+        'internal_id'          => 'lsc-national',
+        'title'                => 'Legal Services Corporation - Find Legal Aid',
+        'slug'                 => 'legal-services-corporation-find-legal-aid',
+        'description'          => 'National legal aid locator supported by the Legal Services Corporation, helping users find local nonprofit legal aid providers for civil legal issues, including workplace retaliation and employment-related matters.',
+        'post_content'         => 'National legal aid locator supported by the Legal Services Corporation, helping users find local nonprofit legal aid providers for civil legal issues, including workplace retaliation and employment-related matters.',
+        'ws_aorg_website_url'  => 'https://www.lsc.gov',
+        'ws_aorg_intake_url'   => 'https://www.lsc.gov/about-lsc/what-legal-aid/get-legal-help',
+        'ws_aorg_phone'        => '(202) 295-1500',
         'ws_aorg_email'        => '',
-        'aorg_type'            => 'oversight-office',
+        'aorg_type'            => 'legal-aid',
         'cost_model'           => 'free',
-        'is_nationwide'        => 0,
-        'accepts_anon'         => 1,
+        'is_nationwide'        => 1,
+        'accepts_anon'         => 0,
         'has_attorneys'        => 0,
-        'services'             => [ 'hotline', 'referral' ],
-        'sectors'              => [ 'federal-employee' ],
-        'disclosure_types'     => [ 'public-corruption-ethics', 'procurement-spending-fraud', 'healthcare-medicare-fraud', 'environmental-protection' ],
-        'case_stages'          => [ 'pre-report', 'post-report' ],
-    ],
-
-    [
-        'internal_id'          => 'osc-federal',
-        'title'                => 'U.S. Office of Special Counsel',
-        'slug'                 => 'us-office-of-special-counsel',
-        'description'          => 'Independent federal agency that protects federal employees from prohibited personnel practices and provides a secure channel for whistleblower disclosures.',
-        'post_content'         => 'Independent federal agency that protects federal employees from prohibited personnel practices and provides a secure channel for whistleblower disclosures.',
-        'ws_aorg_website_url'  => 'https://osc.gov',
-        'ws_aorg_intake_url'   => 'https://osc.gov/Services/Pages/Reporting-Wrongdoing.aspx',
-        'ws_aorg_phone'        => '',
-        'ws_aorg_email'        => '',
-        'aorg_type'            => 'oversight-office',
-        'cost_model'           => 'free',
-        'is_nationwide'        => 0,
-        'accepts_anon'         => 1,
-        'has_attorneys'        => 0,
-        'services'             => [ 'hotline', 'referral' ],
-        'sectors'              => [ 'federal-employee' ],
-        'disclosure_types'     => [ 'retaliation-protection', 'wrongful-termination', 'public-corruption-ethics', 'procurement-spending-fraud' ],
+        'services'             => [ 'referral' ],
+        'sectors'              => [ 'all-sectors' ],
+        'disclosure_types'     => [ 'retaliation-protection', 'wrongful-termination', 'occupational-health-safety', 'public-corruption-ethics' ],
         'case_stages'          => [ 'pre-report', 'post-report', 'retaliation-active' ],
     ],
 
     [
-        'internal_id'          => 'opm-oig',
-        'title'                => 'OPM Office of Inspector General — Whistleblower Rights & Protections',
-        'slug'                 => 'opm-oig-whistleblower-rights',
-        'description'          => 'Provides information on whistleblower rights and protections for federal employees and channels for reporting wrongdoing affecting OPM programs and operations.',
-        'post_content'         => 'Provides information on whistleblower rights and protections for federal employees and channels for reporting wrongdoing affecting OPM programs and operations.',
-        'ws_aorg_website_url'  => 'https://oig.opm.gov/report-oig/whistleblower-rights-protections',
-        'ws_aorg_intake_url'   => 'https://oig.opm.gov/report-oig',
-        'ws_aorg_phone'        => '',
+        'internal_id'          => 'nlada-national',
+        'title'                => 'National Legal Aid and Defender Association',
+        'slug'                 => 'national-legal-aid-and-defender-association',
+        'description'          => 'National association supporting civil legal aid and public defense providers, with resources and member pathways that help users locate legal-aid support channels.',
+        'post_content'         => 'National association supporting civil legal aid and public defense providers, with resources and member pathways that help users locate legal-aid support channels.',
+        'ws_aorg_website_url'  => 'https://www.nlada.org',
+        'ws_aorg_intake_url'   => 'https://www.nlada.org',
+        'ws_aorg_phone'        => '(202) 452-0620',
         'ws_aorg_email'        => '',
-        'aorg_type'            => 'oversight-office',
+        'aorg_type'            => 'advocacy',
         'cost_model'           => 'free',
-        'is_nationwide'        => 0,
-        'accepts_anon'         => 1,
+        'is_nationwide'        => 1,
+        'accepts_anon'         => 0,
         'has_attorneys'        => 0,
-        'services'             => [ 'hotline', 'referral' ],
-        'sectors'              => [ 'federal-employee' ],
-        'disclosure_types'     => [ 'public-corruption-ethics', 'procurement-spending-fraud', 'retaliation-protection' ],
-        'case_stages'          => [ 'pre-report', 'post-report' ],
+        'services'             => [ 'referral', 'advocacy' ],
+        'sectors'              => [ 'all-sectors' ],
+        'disclosure_types'     => [ 'retaliation-protection', 'wrongful-termination', 'occupational-health-safety', 'public-corruption-ethics' ],
+        'case_stages'          => [ 'pre-report', 'post-report', 'retaliation-active' ],
     ],
 
     // ── Bar / attorney referral programs ──────────────────────────────────
@@ -343,13 +320,20 @@ function ws_seed_assist_org_matrix() {
 
     foreach ( $_ws_assist_org_matrix as $org ) {
 
-        $existing  = get_page_by_path( $org['slug'], OBJECT, 'ws-assist-org' );
+        $existing = get_page_by_path( $org['slug'], OBJECT, 'ws-assist-org' );
+        $content  = (string) ( $org['post_content'] ?? '' );
+
+        // Optional matrix-level HTML comment block for this org.
+        if ( ! empty( $org['html_comment'] ) ) {
+            $content = rtrim( $content ) . "\n\n" . trim( (string) $org['html_comment'] );
+        }
+
         $post_data = [
             'post_title'   => $org['title'],
             'post_name'    => $org['slug'],
             'post_type'    => 'ws-assist-org',
             'post_status'  => 'publish',
-            'post_content' => $org['post_content'] ?? '',
+            'post_content' => $content,
         ];
 
         if ( $existing ) {
@@ -376,6 +360,8 @@ function ws_seed_assist_org_matrix() {
             'ws_aorg_phone'              => $org['ws_aorg_phone']       ?? '',
             'ws_aorg_email'              => $org['ws_aorg_email']       ?? '',
             'ws_aorg_serves_nationwide'  => $org['is_nationwide']       ?? 0,
+            'ws_aorg_limited_scope'      => $org['is_limited_scope']    ?? 0,
+            'ws_aorg_community_scope'    => $org['community_scope']     ?? '',
             'ws_aorg_accepts_anonymous'  => $org['accepts_anon']        ?? 0,
             'ws_aorg_licensed_attorneys' => $org['has_attorneys']       ?? 0,
         ];
@@ -390,36 +376,41 @@ function ws_seed_assist_org_matrix() {
 
         // Organization type (single slug).
         if ( ! empty( $org['aorg_type'] ) ) {
-            wp_set_object_terms( $post_id, $org['aorg_type'], 'ws_aorg_type' );
+            ws_matrix_assign_terms( $post_id, [ $org['aorg_type'] ], 'ws_aorg_type' );
         }
 
         // Cost model (single slug — must match ws_aorg_cost_model seeder).
         if ( ! empty( $org['cost_model'] ) ) {
-            wp_set_object_terms( $post_id, $org['cost_model'], 'ws_aorg_cost_model' );
+            ws_matrix_assign_terms( $post_id, [ $org['cost_model'] ], 'ws_aorg_cost_model' );
         }
 
         // Disclosure types (array of slugs — must match ws_disclosure_type seeder).
         if ( ! empty( $org['disclosure_types'] ) ) {
-            wp_set_object_terms( $post_id, $org['disclosure_types'], 'ws_disclosure_type' );
+            ws_matrix_assign_terms( $post_id, $org['disclosure_types'], 'ws_disclosure_type' );
+        }
+
+        // Optional disclosure targets (array of slugs).
+        if ( ! empty( $org['disclosure_targets'] ) ) {
+            ws_matrix_assign_terms( $post_id, $org['disclosure_targets'], 'ws_disclosure_targets' );
         }
 
         // Case stages (array of slugs).
         if ( ! empty( $org['case_stages'] ) ) {
-            wp_set_object_terms( $post_id, $org['case_stages'], 'ws_case_stage' );
+            ws_matrix_assign_terms( $post_id, $org['case_stages'], 'ws_case_stage' );
         }
 
         // Services offered (array of ws_aorg_service slugs — must match seeder).
         if ( ! empty( $org['services'] ) ) {
-            wp_set_object_terms( $post_id, $org['services'], 'ws_aorg_service' );
+            ws_matrix_assign_terms( $post_id, $org['services'], 'ws_aorg_service' );
         }
 
         // Employment sectors (array of ws_employment_sector slugs).
         if ( ! empty( $org['sectors'] ) ) {
-            wp_set_object_terms( $post_id, $org['sectors'], 'ws_employment_sector' );
+            ws_matrix_assign_terms( $post_id, $org['sectors'], 'ws_employment_sector' );
         }
 
         // Language: English (all seeded national orgs operate in English).
-        wp_set_object_terms( $post_id, 'english', 'ws_languages' );
+        ws_matrix_assign_terms( $post_id, [ 'english' ], 'ws_languages' );
 
         // Jurisdiction: US.
         wp_set_object_terms( $post_id, $us_term_id, WS_JURISDICTION_TAXONOMY );
@@ -433,8 +424,8 @@ function ws_seed_assist_org_matrix() {
 // ── Gate ──────────────────────────────────────────────────────────────────────
 
 add_action( 'admin_init', function() {
-    if ( get_option( 'ws_seeded_assist_org_matrix' ) !== '1.0.0' ) {
+    if ( get_option( 'ws_seeded_assist_org_matrix' ) !== '1.0.4' ) {
         ws_seed_assist_org_matrix();
-        update_option( 'ws_seeded_assist_org_matrix', '1.0.0' );
+        update_option( 'ws_seeded_assist_org_matrix', '1.0.4' );
     }
 } );

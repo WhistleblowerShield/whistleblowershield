@@ -42,13 +42,16 @@
  *
  * @package    WhistleblowerShield
  * @since      3.14.0
- * @version    3.14.1
+ * @version    3.14.2
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
  * VERSION
  * -------
+ * 3.14.2  Strict canonical scoping in auto-exclusions:
+ *         - removed legacy/fallback post scans
+ *         - relies on canonical taxonomy-scoped records only
  * 3.14.1  Header documentation sync.
  * 3.14.0  Prompt quality hardening:
  *         - record-neutral shared boilerplate text
@@ -187,36 +190,6 @@ function ws_prompt_get_auto_exclusions( string $record_type, string $jx_id ): ar
             ],
         ] );
 
-        // Fallback: include statute posts with canonical hidden IDs even if
-        // taxonomy assignment is missing/inconsistent.
-        if ( empty( $posts ) ) {
-            $all_statute_posts = get_posts( [
-                'post_type'              => $post_type,
-                'post_status'            => $allowed_statuses,
-                'posts_per_page'         => -1,
-                'fields'                 => 'ids',
-                'no_found_rows'          => true,
-                'update_post_meta_cache' => false,
-                'update_post_term_cache' => false,
-                'meta_query'             => [
-                    [
-                        'key'     => '_ws_jx_statute_id',
-                        'value'   => '',
-                        'compare' => '!=',
-                    ],
-                ],
-            ] );
-
-            $prefix = strtoupper( $jx_id ) . '-';
-            foreach ( (array) $all_statute_posts as $pid ) {
-                $sid = strtoupper( trim( (string) get_post_meta( (int) $pid, '_ws_jx_statute_id', true ) ) );
-                if ( $sid !== '' && str_starts_with( $sid, $prefix ) ) {
-                    $posts[] = (int) $pid;
-                }
-            }
-            $posts = array_values( array_unique( array_map( 'intval', (array) $posts ) ) );
-        }
-
         if ( empty( $posts ) ) {
             return [];
         }
@@ -233,36 +206,6 @@ function ws_prompt_get_auto_exclusions( string $record_type, string $jx_id ): ar
         sort( $ids, SORT_NATURAL | SORT_FLAG_CASE );
         return $ids;
     }
-
-    $post_matches_jx = static function( int $pid ) use ( $record_type, $jx_id, $jx_slug ): bool {
-        $terms = wp_get_post_terms( $pid, WS_JURISDICTION_TAXONOMY, [ 'fields' => 'slugs' ] );
-        if ( ! is_wp_error( $terms ) && in_array( $jx_slug, array_map( 'strtolower', (array) $terms ), true ) ) {
-            return true;
-        }
-
-        if ( $record_type === 'statute' ) {
-            $rk = strtoupper( trim( (string) get_post_meta( $pid, '_ws_ingest_record_key', true ) ) );
-            if ( $rk !== '' && str_starts_with( $rk, strtoupper( $jx_id ) . '|' ) ) {
-                return true;
-            }
-        }
-
-        if ( $record_type === 'common-law' ) {
-            $did = strtoupper( trim( (string) get_post_meta( $pid, '_ws_cl_doctrine_id', true ) ) );
-            if ( $did !== '' && str_starts_with( $did, strtoupper( $jx_id ) . '-CL-' ) ) {
-                return true;
-            }
-        }
-
-        if ( in_array( $record_type, [ 'citation', 'interpretation' ], true ) ) {
-            $title = strtoupper( trim( (string) get_the_title( $pid ) ) );
-            if ( $title !== '' && str_starts_with( $title, strtoupper( $jx_id ) . '-' ) ) {
-                return true;
-            }
-        }
-
-        return false;
-    };
 
     $posts = get_posts( [
         'post_type'              => $post_type,
@@ -281,43 +224,8 @@ function ws_prompt_get_auto_exclusions( string $record_type, string $jx_id ): ar
         ],
     ] );
 
-    // Statute fallback: handle records where taxonomy scope was not assigned
-    // but ingest key exists and can still scope by jurisdiction code.
-    if ( empty( $posts ) && $record_type === 'statute' ) {
-        $posts = get_posts( [
-            'post_type'              => $post_type,
-            'post_status'            => $allowed_statuses,
-            'posts_per_page'         => -1,
-            'fields'                 => 'ids',
-            'no_found_rows'          => true,
-            'update_post_meta_cache' => false,
-            'update_post_term_cache' => false,
-            'meta_query'             => [
-                [
-                    'key'     => '_ws_ingest_record_key',
-                    'value'   => strtolower( $jx_id ) . '|',
-                    'compare' => 'LIKE',
-                ],
-            ],
-        ] );
-    }
-
-    // Final fallback for mixed legacy data: scan all posts of this CPT and
-    // include anything that can be confidently matched to this JX.
     if ( empty( $posts ) ) {
-        $all_posts = get_posts( [
-            'post_type'              => $post_type,
-            'post_status'            => $allowed_statuses,
-            'posts_per_page'         => -1,
-            'fields'                 => 'ids',
-            'no_found_rows'          => true,
-            'update_post_meta_cache' => false,
-            'update_post_term_cache' => false,
-        ] );
-
-        if ( ! empty( $all_posts ) ) {
-            $posts = array_values( array_filter( array_map( 'intval', $all_posts ), $post_matches_jx ) );
-        }
+        return [];
     }
 
     if ( empty( $posts ) ) {
