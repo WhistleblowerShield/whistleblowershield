@@ -162,10 +162,12 @@
  *         query-jurisdiction.php.
  * 3.13.4  query-general added; legal-updates/reference queries extracted from
  *         query-jurisdiction.php.
+ * 3.13.5  query-assist-orgs renamed to query-directory for assembly-facing
+ *         directory terminology consistency.
  *
  * @package WhistleblowerShield
  * @since   2.1.0
- * @version 3.13.4
+ * @version 3.13.5
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -220,15 +222,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	}
 
 	// QUERY Layer: The "Data API" for both Admin and Frontend
-	// Load order is non-negotiable: helpers → shared → jurisdiction → general → assist-orgs → agencies.
+	// Load order is non-negotiable: helpers → shared → jurisdiction → general → directory → agencies.
 	//   query-helpers.php      — pure utilities (no WP meta reads)
 	//   query-shared.php       — cross-CPT sub-array builders (depend on helpers)
 	//   query-jurisdiction.php — jurisdiction dataset functions (depend on shared)
 	//   query-general.php      — cross-cutting datasets (depends on jurisdiction/shared)
-	//   query-assist-orgs.php  — assist-org dataset functions (depend on shared)
+	//   query-directory.php    — assist-org directory dataset functions (depend on shared)
 	//   query-agencies.php     — agency/procedure dataset functions (depend on shared)
 	$query_files = [
-		'query-helpers', 'query-shared', 'query-jurisdiction', 'query-general', 'query-assist-orgs', 'query-agencies',
+		'query-helpers', 'query-shared', 'query-jurisdiction', 'query-general', 'query-directory', 'query-agencies',
 	];
 	foreach ( $query_files as $file ) {
 		$path = WS_CORE_PATH . "includes/queries/{$file}.php";

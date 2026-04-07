@@ -28,7 +28,7 @@ query-helpers.php       Pure utilities — no DB reads, no side effects
 query-shared.php        Sub-array builders — depend on helpers
 query-jurisdiction.php  Primary dataset API — depends on shared
 query-general.php       Cross-cutting datasets — depends on shared/jurisdiction
-query-assist-orgs.php   Assist-org dataset API — depends on shared
+query-directory.php     Assist-org directory dataset API — depends on shared
 query-agencies.php      Agency/procedure API — depends on shared
 ```
 

@@ -1,12 +1,12 @@
 <?php
 /**
- * query-assist-orgs.php
+ * query-directory.php
  *
- * Assist Organization Query Layer
+ * Directory Query Layer
  *
  * PURPOSE
  * -------
- * Dedicated data access functions for ws-assist-org records.
+ * Dedicated data access functions for the public assist-org directory.
  *
  * This file was split from query-jurisdiction.php to keep jurisdiction
  * datasets focused and prevent the jurisdiction module from becoming a
@@ -18,7 +18,7 @@
  *
  * @package WhistleblowerShield
  * @since   3.10.4
- * @version 3.10.4
+ * @version 3.10.6
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -66,7 +66,7 @@ function ws_q_build_assist_org_row( $oid ) {
         'mailing_address'      => get_post_meta( $oid, 'ws_aorg_mailing_address',            true ),
         'languages'            => get_field( 'ws_languages', $oid ),
         'additional_languages' => get_post_meta( $oid, 'ws_aorg_additional_languages',       true ),
-        'cost_model'           => ( ( $_cm = wp_get_object_terms( $oid, 'ws_aorg_cost_model', [ 'fields' => 'names' ] ) ) && ! is_wp_error( $_cm ) ) ? $_cm : [],
+        'cost_model'           => ( ( $_cm = wp_get_object_terms( $oid, 'ws_aorg_cost_model', [ 'fields' => 'slugs' ] ) ) && ! is_wp_error( $_cm ) ) ? $_cm : [],
         'income_limit'         => get_post_meta( $oid, 'ws_aorg_income_limit',               true ),
         'income_limit_notes'   => get_post_meta( $oid, 'ws_aorg_income_limit_notes',         true ),
         'anonymous'            => (bool) get_post_meta( $oid, 'ws_aorg_accepts_anonymous',   true ),

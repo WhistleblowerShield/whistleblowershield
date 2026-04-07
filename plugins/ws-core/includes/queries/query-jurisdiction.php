@@ -121,7 +121,7 @@
  *           is now the canonical burden standard source
  *         - added defensive handling for WP_Error taxonomy lookups and mixed
  *           ws_ref_materials relationship return shapes
- * 3.10.4  Assist-org datasets moved to query-assist-orgs.php.
+ * 3.10.4  Assist-org datasets moved to query-directory.php.
  * 3.10.5  Cross-cutting legal updates/reference functions moved to
  *         query-general.php.
  */
