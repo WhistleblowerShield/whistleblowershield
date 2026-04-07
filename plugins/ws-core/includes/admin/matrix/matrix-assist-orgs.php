@@ -4,7 +4,7 @@
  *
  * @package WhistleblowerShield
  * @since   3.0.0
- * @version 3.10.5
+ * @version 3.10.7
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -37,6 +37,7 @@ $_ws_assist_org_matrix = [
         'services'             => [ 'legal-rep', 'consultation', 'advocacy', 'media' ],
         'sectors'              => [ 'federal-employee', 'private-sector', 'nonprofit-ngo' ],
         'disclosure_types'     => [ 'public-corruption-ethics', 'procurement-spending-fraud', 'environmental-protection', 'occupational-health-safety', 'securities-commodities-fraud' ],
+        'disclosure_targets'   => [ 'attorney-counsel', 'public-nonprofit' ],
         'case_stages'          => [ 'pre-report', 'post-report', 'retaliation-active', 'litigation' ],
     ],
 
@@ -58,6 +59,7 @@ $_ws_assist_org_matrix = [
         'services'             => [ 'referral', 'advocacy', 'media' ],
         'sectors'              => [ 'all-sectors' ],
         'disclosure_types'     => [ 'securities-commodities-fraud', 'tax-evasion-fraud', 'public-corruption-ethics', 'procurement-spending-fraud', 'healthcare-medicare-fraud', 'environmental-protection' ],
+        'disclosure_targets'   => [ 'public-nonprofit' ],
         'case_stages'          => [ 'pre-report', 'post-report' ],
     ],
 
@@ -79,6 +81,7 @@ $_ws_assist_org_matrix = [
         'services'             => [ 'legal-rep', 'consultation', 'doc-review', 'retaliation' ],
         'sectors'              => [ 'federal-employee', 'private-sector' ],
         'disclosure_types'     => [ 'public-corruption-ethics', 'classified-information', 'intelligence-community', 'environmental-protection', 'cybersecurity-disclosure' ],
+        'disclosure_targets'   => [ 'attorney-counsel' ],
         'case_stages'          => [ 'pre-report', 'post-report', 'retaliation-active', 'litigation' ],
     ],
 
@@ -100,6 +103,7 @@ $_ws_assist_org_matrix = [
         'services'             => [ 'advocacy', 'media' ],
         'sectors'              => [ 'federal-employee', 'military-defense' ],
         'disclosure_types'     => [ 'public-corruption-ethics', 'procurement-spending-fraud', 'military-defense-reporting', 'environmental-protection' ],
+        'disclosure_targets'   => [ 'public-nonprofit' ],
         'case_stages'          => [ 'pre-report', 'post-report' ],
     ],
 
@@ -121,6 +125,7 @@ $_ws_assist_org_matrix = [
         'services'             => [ 'referral', 'advocacy' ],
         'sectors'              => [ 'all-sectors' ],
         'disclosure_types'     => [ 'securities-commodities-fraud', 'healthcare-medicare-fraud', 'procurement-spending-fraud', 'tax-evasion-fraud' ],
+        'disclosure_targets'   => [ 'attorney-counsel', 'public-nonprofit' ],
         'case_stages'          => [ 'pre-report', 'post-report', 'litigation' ],
     ],
 
@@ -142,6 +147,7 @@ $_ws_assist_org_matrix = [
         'services'             => [ 'advocacy', 'financial' ],
         'sectors'              => [ 'all-sectors' ],
         'disclosure_types'     => [ 'retaliation-protection', 'wrongful-termination', 'occupational-health-safety', 'healthcare-medicare-fraud' ],
+        'disclosure_targets'   => [ 'public-nonprofit' ],
         'case_stages'          => [ 'post-report', 'retaliation-active' ],
     ],
 
@@ -163,6 +169,7 @@ $_ws_assist_org_matrix = [
         'services'             => [ 'referral', 'advocacy' ],
         'sectors'              => [ 'all-sectors' ],
         'disclosure_types'     => [ 'public-corruption-ethics', 'election-integrity', 'environmental-protection', 'cybersecurity-disclosure', 'consumer-data-protection' ],
+        'disclosure_targets'   => [ 'public-nonprofit' ],
         'case_stages'          => [ 'pre-report', 'post-report' ],
     ],
 
@@ -186,6 +193,7 @@ $_ws_assist_org_matrix = [
         'services'             => [ 'advocacy' ],
         'sectors'              => [ 'private-sector', 'nonprofit-ngo' ],
         'disclosure_types'     => [ 'retaliation-protection', 'wage-hour-violations', 'occupational-health-safety' ],
+        'disclosure_targets'   => [ 'public-nonprofit' ],
         'case_stages'          => [ 'post-report', 'retaliation-active' ],
     ],
 
@@ -207,6 +215,7 @@ $_ws_assist_org_matrix = [
         'services'             => [ 'referral' ],
         'sectors'              => [ 'all-sectors' ],
         'disclosure_types'     => [ 'retaliation-protection', 'wrongful-termination', 'occupational-health-safety', 'public-corruption-ethics' ],
+        'disclosure_targets'   => [ 'attorney-counsel' ],
         'case_stages'          => [ 'post-report', 'retaliation-active', 'litigation' ],
     ],
 
@@ -228,6 +237,7 @@ $_ws_assist_org_matrix = [
         'services'             => [ 'referral' ],
         'sectors'              => [ 'all-sectors' ],
         'disclosure_types'     => [ 'retaliation-protection', 'wrongful-termination', 'occupational-health-safety', 'public-corruption-ethics' ],
+        'disclosure_targets'   => [ 'attorney-counsel' ],
         'case_stages'          => [ 'pre-report', 'post-report', 'retaliation-active' ],
     ],
 
@@ -249,6 +259,7 @@ $_ws_assist_org_matrix = [
         'services'             => [ 'referral', 'advocacy' ],
         'sectors'              => [ 'all-sectors' ],
         'disclosure_types'     => [ 'retaliation-protection', 'wrongful-termination', 'occupational-health-safety', 'public-corruption-ethics' ],
+        'disclosure_targets'   => [ 'public-nonprofit' ],
         'case_stages'          => [ 'pre-report', 'post-report', 'retaliation-active' ],
     ],
 
@@ -272,6 +283,7 @@ $_ws_assist_org_matrix = [
         'services'             => [ 'referral' ],
         'sectors'              => [ 'all-sectors' ],
         'disclosure_types'     => [ 'securities-commodities-fraud', 'tax-evasion-fraud', 'public-corruption-ethics', 'procurement-spending-fraud', 'healthcare-medicare-fraud' ],
+        'disclosure_targets'   => [ 'attorney-counsel' ],
         'case_stages'          => [ 'pre-report', 'post-report', 'litigation' ],
     ],
 
@@ -293,6 +305,7 @@ $_ws_assist_org_matrix = [
         'services'             => [ 'referral' ],
         'sectors'              => [ 'all-sectors' ],
         'disclosure_types'     => [ 'retaliation-protection', 'wrongful-termination', 'securities-commodities-fraud', 'occupational-health-safety', 'healthcare-medicare-fraud' ],
+        'disclosure_targets'   => [ 'attorney-counsel' ],
         'case_stages'          => [ 'pre-report', 'post-report', 'litigation' ],
     ],
 
@@ -424,8 +437,8 @@ function ws_seed_assist_org_matrix() {
 // ── Gate ──────────────────────────────────────────────────────────────────────
 
 add_action( 'admin_init', function() {
-    if ( get_option( 'ws_seeded_assist_org_matrix' ) !== '1.0.5' ) {
+    if ( get_option( 'ws_seeded_assist_org_matrix' ) !== '1.0.6' ) {
         ws_seed_assist_org_matrix();
-        update_option( 'ws_seeded_assist_org_matrix', '1.0.5' );
+        update_option( 'ws_seeded_assist_org_matrix', '1.0.6' );
     }
 } );
