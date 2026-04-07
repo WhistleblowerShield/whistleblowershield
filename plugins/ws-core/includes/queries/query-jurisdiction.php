@@ -222,6 +222,124 @@ function ws_resolve_jx_id( $input ) {
     return is_numeric( $input ) ? (int) $input : (int) ws_get_id_by_code( (string) $input );
 }
 
+/**
+ * Normalizes mixed scalar/array/meta payloads to a clean integer ID list.
+ *
+ * Accepts ACF post_object/taxonomy returns, serialized meta strings,
+ * comma-delimited strings, and mixed object arrays.
+ *
+ * @param mixed $value Raw value from get_field()/get_post_meta().
+ * @return array<int>
+ */
+function ws_q_normalize_id_list( $value ) {
+    $value = maybe_unserialize( $value );
+
+    if ( $value instanceof WP_Post ) {
+        return [ (int) $value->ID ];
+    }
+
+    if ( is_object( $value ) ) {
+        if ( isset( $value->ID ) ) {
+            return [ (int) $value->ID ];
+        }
+        if ( isset( $value->term_id ) ) {
+            return [ (int) $value->term_id ];
+        }
+        return [];
+    }
+
+    if ( is_string( $value ) ) {
+        $value = trim( $value );
+        if ( $value === '' ) {
+            return [];
+        }
+        if ( strpos( $value, ',' ) !== false ) {
+            $value = array_map( 'trim', explode( ',', $value ) );
+        } else {
+            $value = [ $value ];
+        }
+    }
+
+    if ( ! is_array( $value ) ) {
+        $value = [ $value ];
+    }
+
+    $ids = [];
+    foreach ( $value as $item ) {
+        if ( $item instanceof WP_Post ) {
+            $ids[] = (int) $item->ID;
+            continue;
+        }
+        if ( is_object( $item ) ) {
+            if ( isset( $item->ID ) ) {
+                $ids[] = (int) $item->ID;
+                continue;
+            }
+            if ( isset( $item->term_id ) ) {
+                $ids[] = (int) $item->term_id;
+                continue;
+            }
+            continue;
+        }
+        if ( is_numeric( $item ) ) {
+            $ids[] = (int) $item;
+        }
+    }
+
+    $ids = array_values( array_filter( array_unique( $ids ) ) );
+    return $ids;
+}
+
+/**
+ * Returns the first normalized ID from a mixed value, else 0.
+ *
+ * @param mixed $value Raw value from get_field()/get_post_meta().
+ * @return int
+ */
+function ws_q_first_id( $value ) {
+    $ids = ws_q_normalize_id_list( $value );
+    return ! empty( $ids ) ? (int) $ids[0] : 0;
+}
+
+/**
+ * Normalizes mixed scalar/array/meta payloads to a clean text list.
+ *
+ * @param mixed  $value Raw value from get_field()/get_post_meta().
+ * @param string $sanitize Sanitizer callback name.
+ * @return array<string>
+ */
+function ws_q_normalize_text_list( $value, $sanitize = 'sanitize_text_field' ) {
+    $value = maybe_unserialize( $value );
+
+    if ( is_string( $value ) ) {
+        $value = trim( $value );
+        if ( $value === '' ) {
+            return [];
+        }
+        if ( strpos( $value, ',' ) !== false ) {
+            $value = array_map( 'trim', explode( ',', $value ) );
+        } else {
+            $value = [ $value ];
+        }
+    }
+
+    if ( ! is_array( $value ) ) {
+        $value = [ $value ];
+    }
+
+    $items = [];
+    foreach ( $value as $item ) {
+        if ( is_scalar( $item ) ) {
+            $text = call_user_func( $sanitize, (string) $item );
+            if ( $text !== '' ) {
+                $items[] = $text;
+            }
+        }
+    }
+
+    return array_values( array_unique( $items ) );
+}
+
 
 // ════════════════════════════════════════════════════════════════════════════
 // Master Jurisdiction Data Fetcher
@@ -460,9 +578,11 @@ function ws_get_jx_statute_data( $jx_term_id ) {
                 'official_name'        => get_post_meta( $sid, 'ws_jx_statute_official_name',       true ),
                 'citation'             => get_post_meta( $sid, 'ws_jx_statute_citation',             true ),
                 'common_name'          => get_post_meta( $sid, 'ws_jx_statute_common_name',          true ),
-                'disclosure_type'      => get_field( 'ws_jx_statute_disclosure_type',      $sid ),
-                'protected_class'      => get_field( 'ws_jx_statute_protected_class',      $sid ),
-                'disclosure_targets'   => get_field( 'ws_jx_statute_disclosure_targets',   $sid ),
+                'disclosure_type'      => ws_q_normalize_id_list( get_field( 'ws_jx_statute_disclosure_type',      $sid ) ),
+                'protected_class'      => ws_q_normalize_id_list( get_field( 'ws_jx_statute_protected_class',      $sid ) ),
+                'protected_class_details' => get_post_meta( $sid, 'ws_jx_statute_protected_class_details', true ),
+                'disclosure_targets'   => ws_q_normalize_id_list( get_field( 'ws_jx_statute_disclosure_targets',   $sid ) ),
+                'disclosure_targets_details' => get_post_meta( $sid, 'ws_jx_statute_disclosure_targets_details', true ),
                 'adverse_action_scope' => get_post_meta( $sid, 'ws_jx_statute_adverse_action_scope', true ),
                 'attach_flag'          => (bool) get_post_meta( $sid, 'ws_attach_flag',              true ),
 
@@ -478,22 +598,27 @@ function ws_get_jx_statute_data( $jx_term_id ) {
                 'exhaustion_details'  => get_post_meta( $sid, 'ws_jx_statute_exhaustion_details',  true ),
 
                 // ── Enforcement ───────────────────────────────────────────
-                'process_type'         => get_field( 'ws_jx_statute_process_type',          $sid ),
-                'adverse_action'       => get_field( 'ws_jx_statute_adverse_action',        $sid ),
-                'fee_shifting'         => get_field( 'ws_jx_statute_fee_shifting',          $sid ),
-                'remedies'             => get_field( 'ws_jx_statute_remedies',              $sid ),
-                'local_agencies'       => get_field( 'ws_jx_statute_local_agencies',        $sid ),
-                'federal_agencies'     => get_field( 'ws_jx_statute_federal_agencies',      $sid ),
+                'process_type'         => ws_q_normalize_id_list( get_field( 'ws_jx_statute_process_type',          $sid ) ),
+                'adverse_action'       => ws_q_normalize_id_list( get_field( 'ws_jx_statute_adverse_action',        $sid ) ),
+                'adverse_action_details' => get_post_meta( $sid, 'ws_jx_statute_adverse_action_details', true ),
+                'fee_shifting'         => ws_q_normalize_id_list( get_field( 'ws_jx_statute_fee_shifting',          $sid ) ),
+                'remedies'             => ws_q_normalize_id_list( get_field( 'ws_jx_statute_remedies',              $sid ) ),
+                'remedies_details'     => get_post_meta( $sid, 'ws_jx_statute_remedies_details', true ),
+                'local_agencies'       => ws_q_normalize_id_list( get_field( 'ws_jx_statute_local_agencies',        $sid ) ),
+                'federal_agencies'     => ws_q_normalize_id_list( get_field( 'ws_jx_statute_federal_agencies',      $sid ) ),
                 'enforcement_channel'  => get_post_meta( $sid, 'ws_jx_statute_enforcement_channel', true ),
+                'citation_ids'         => ws_q_normalize_id_list( get_post_meta( $sid, 'ws_jx_statute_citation_ids', true ) ),
 
                 // ── Burden of Proof ───────────────────────────────────────
-                'bop_standard'             => get_post_meta( $sid, 'ws_jx_statute_bop_standard',             true ),
+                'employee_standard'        => ws_q_normalize_id_list( get_field( 'ws_jx_statute_employee_standard', $sid ) ),
+                'employee_standard_details' => get_post_meta( $sid, 'ws_jx_statute_employee_standard_details', true ),
                 'employer_defense'         => get_field( 'ws_jx_statute_employer_defense', $sid ),
                 'employer_defense_details' => get_post_meta( $sid, 'ws_jx_statute_employer_defense_details', true ),
                 'rebuttable_has_details'   => (bool) get_post_meta( $sid, 'ws_jx_statute_rebuttable_has_presumption', true ),
                 'rebuttable_details'       => get_post_meta( $sid, 'ws_jx_statute_rebuttable_presumption',       true ),
                 'bop_has_details'          => (bool) get_post_meta( $sid, 'ws_jx_statute_bop_has_details',   true ),
                 'bop_details'              => get_post_meta( $sid, 'ws_jx_statute_burden_of_proof_details',              true ),
+                'bop_flag'                 => get_post_meta( $sid, 'ws_jx_statute_bop_flag', true ),
 
                 // ── Reward ────────────────────────────────────────────────
                 'has_reward'     => (bool) get_post_meta( $sid, 'ws_jx_statute_reward_available',     true ),
@@ -627,7 +752,7 @@ function ws_get_jx_citation_data( $jx_term_id ) {
         foreach ( $q->posts as $citation ) {
             $cid    = $citation->ID;
             $type_raw = get_post_meta( $cid, 'ws_jx_citation_type', true );
-            $type_list = is_array( $type_raw ) ? array_values( array_filter( array_map( 'sanitize_key', $type_raw ) ) ) : [];
+            $type_list = ws_q_normalize_text_list( $type_raw, 'sanitize_key' );
             $rows[] = [
                 'id'      => $cid,
                 'title'   => get_the_title( $cid ),
@@ -637,14 +762,31 @@ function ws_get_jx_citation_data( $jx_term_id ) {
                 'is_fed'  => $is_fed,
                 // Citation-specific fields
                 'types'           => $type_list,
-                'disclosure_type' => get_field( 'ws_jx_citation_disclosure_type', $cid ),
+                'disclosure_type' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_disclosure_type', $cid ) ),
                 'official_name'   => get_post_meta( $cid, 'ws_jx_citation_official_name',           true ),
                 'common_name'     => get_post_meta( $cid, 'ws_jx_citation_common_name',             true ),
                 'label'           => get_post_meta( $cid, 'ws_jx_citation_common_name',           true )
                                    ?: get_post_meta( $cid, 'ws_jx_citation_official_name',             true )
                                    ?: get_the_title( $cid ),
                 'cite_url'        => get_post_meta( $cid, 'ws_jx_citation_url',           true ),
+                'summary'         => get_post_meta( $cid, 'ws_jx_citation_summary', true ),
                 'is_pdf'          => (bool) get_post_meta( $cid, 'ws_jx_citation_is_pdf', true ),
+                'protected_class' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_protected_class', $cid ) ),
+                'protected_class_details' => get_post_meta( $cid, 'ws_jx_citation_protected_class_details', true ),
+                'disclosure_targets' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_disclosure_targets', $cid ) ),
+                'disclosure_targets_details' => get_post_meta( $cid, 'ws_jx_citation_disclosure_targets_details', true ),
+                'adverse_action' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_adverse_action', $cid ) ),
+                'adverse_action_details' => get_post_meta( $cid, 'ws_jx_citation_adverse_action_details', true ),
+                'process_type' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_process_type', $cid ) ),
+                'remedies' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_remedies', $cid ) ),
+                'remedies_details' => get_post_meta( $cid, 'ws_jx_citation_remedies_details', true ),
+                'fee_shifting' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_fee_shifting', $cid ) ),
+                'employer_defense' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_employer_defense', $cid ) ),
+                'employer_defense_details' => get_post_meta( $cid, 'ws_jx_citation_employer_defense_details', true ),
+                'employee_standard' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_employee_standard', $cid ) ),
+                'employee_standard_details' => get_post_meta( $cid, 'ws_jx_citation_employee_standard_details', true ),
+                'statute_ids' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_statute_ids', $cid ) ),
+                'common_law_ids' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_common_law_ids', $cid ) ),
                 'attach_flag'     => (bool) get_post_meta( $cid, 'ws_attach_flag',        true ),
                 'order'           => (int)  get_post_meta( $cid, 'ws_display_order',      true ),
                 'last_reviewed'   => get_post_meta( $cid, 'ws_jx_citation_last_reviewed', true ),
@@ -737,11 +879,27 @@ function ws_get_jx_interpretation_data( $jx_term_id ) {
                 'court'         => ( ( $_ck = get_post_meta( $iid, 'ws_jx_interp_court', true ) ) === 'other' )
                                         ? ( get_post_meta( $iid, 'ws_jx_interp_court_name', true ) ?: 'Other' )
                                         : ( ( $crt = ws_court_lookup( $_ck ) ) ? $crt['short'] : $_ck ),
-                'year'          => get_post_meta( $iid, 'ws_jx_interp_year',             true ),
+                'year'          => (int) get_post_meta( $iid, 'ws_jx_interp_year',             true ),
                 'favorable'     => (bool) get_post_meta( $iid, 'ws_jx_interp_favorable', true ),
                 'summary'       => get_post_meta( $iid, 'ws_jx_interp_summary',          true ),
-                'parent_statute_id' => (int) get_post_meta( $iid, 'ws_jx_interp_statute_id', true ),
-                'process_type'  => ( ( $_pt = wp_get_object_terms( $iid, 'ws_process_type', [ 'fields' => 'slugs' ] ) ) && ! is_wp_error( $_pt ) && ! empty( $_pt ) ) ? $_pt[0] : '',
+                'disclosure_type' => ws_q_normalize_id_list( get_field( 'ws_jx_interp_disclosure_type', $iid ) ),
+                'protected_class' => ws_q_normalize_id_list( get_field( 'ws_jx_interp_protected_class', $iid ) ),
+                'protected_class_details' => get_post_meta( $iid, 'ws_jx_interp_protected_class_details', true ),
+                'disclosure_targets' => ws_q_normalize_id_list( get_field( 'ws_jx_interp_disclosure_targets', $iid ) ),
+                'disclosure_targets_details' => get_post_meta( $iid, 'ws_jx_interp_disclosure_targets_details', true ),
+                'adverse_action' => ws_q_normalize_id_list( get_field( 'ws_jx_interp_adverse_action', $iid ) ),
+                'adverse_action_details' => get_post_meta( $iid, 'ws_jx_interp_adverse_action_details', true ),
+                'process_type'  => ws_q_normalize_id_list( get_field( 'ws_jx_interp_process_type', $iid ) ),
+                'remedies' => ws_q_normalize_id_list( get_field( 'ws_jx_interp_remedies', $iid ) ),
+                'remedies_details' => get_post_meta( $iid, 'ws_jx_interp_remedies_details', true ),
+                'fee_shifting' => ws_q_normalize_id_list( get_field( 'ws_jx_interp_fee_shifting', $iid ) ),
+                'employer_defense' => ws_q_normalize_id_list( get_field( 'ws_jx_interp_employer_defense', $iid ) ),
+                'employer_defense_details' => get_post_meta( $iid, 'ws_jx_interp_employer_defense_details', true ),
+                'employee_standard' => ws_q_normalize_id_list( get_field( 'ws_jx_interp_employee_standard', $iid ) ),
+                'employee_standard_details' => get_post_meta( $iid, 'ws_jx_interp_employee_standard_details', true ),
+                'parent_statute_id' => ws_q_first_id( get_post_meta( $iid, 'ws_jx_interp_statute_id', true ) ),
+                'parent_common_law_id' => ws_q_first_id( get_post_meta( $iid, 'ws_jx_interp_common_law_id', true ) ),
+                'affected_jx' => ws_q_normalize_id_list( get_field( 'ws_jx_interp_affected_jx', $iid ) ),
                 'attach_flag'   => (bool) get_post_meta( $iid, 'ws_attach_flag',         true ),
                 'last_reviewed' => get_post_meta( $iid, 'ws_jx_interp_last_reviewed',    true ),
                 'ref_materials' => ws_get_ref_materials( $iid ),
@@ -810,8 +968,9 @@ function ws_get_agency_data( $jx_term_id ) {
             'code'                  => get_post_meta( $aid, 'ws_agency_code',                    true ),
             'name'                  => get_post_meta( $aid, 'ws_agency_name',                    true ),
             'logo'                  => get_field( 'ws_agency_logo', $aid ),
-            'disclosure_type'       => get_field( 'ws_agency_disclosure_type', $aid ),
-            'process_type'          => ( ( $_pt = wp_get_object_terms( $aid, 'ws_process_type', [ 'fields' => 'slugs' ] ) ) && ! is_wp_error( $_pt ) && ! empty( $_pt ) ) ? $_pt[0] : '',
+            'disclosure_type'       => ws_q_normalize_id_list( get_field( 'ws_agency_disclosure_type', $aid ) ),
+            'disclosure_targets'    => ws_q_normalize_id_list( get_field( 'ws_agency_disclosure_targets', $aid ) ),
+            'process_type'          => ws_q_normalize_id_list( get_field( 'ws_process_type', $aid ) ),
             'website_url'           => get_post_meta( $aid, 'ws_agency_url',                     true ),
             'reporting_url'         => get_post_meta( $aid, 'ws_agency_reporting_url',           true ),
             'phone'                 => get_post_meta( $aid, 'ws_agency_phone',                   true ),
@@ -880,10 +1039,13 @@ function ws_get_assist_org_data( $jx_term_id ) {
             'description'          => get_post_meta( $oid, 'ws_aorg_description',                true ),
             'logo'                 => get_field( 'ws_aorg_logo', $oid ),
             'serves_nationwide'    => (bool) get_post_meta( $oid, 'ws_aorg_serves_nationwide',   true ),
-            'disclosure_type'      => get_field( 'ws_aorg_disclosure_type', $oid ),
-            'services'             => wp_get_object_terms( $oid, 'ws_aorg_service', [ 'fields' => 'names' ] ),
+            'disclosure_type'      => ws_q_normalize_id_list( get_field( 'ws_aorg_disclosure_type', $oid ) ),
+            'disclosure_targets'   => ws_q_normalize_id_list( get_field( 'ws_aorg_disclosure_targets', $oid ) ),
+            'disclosure_targets_details' => get_post_meta( $oid, 'ws_aorg_disclosure_targets_details', true ),
+            'case_stages'          => ws_q_normalize_id_list( get_field( 'ws_ao_case_stage', $oid ) ),
+            'services'             => ( ( $_sv = wp_get_object_terms( $oid, 'ws_aorg_service', [ 'fields' => 'names' ] ) ) && ! is_wp_error( $_sv ) ) ? $_sv : [],
             'additional_services'  => get_post_meta( $oid, 'ws_aorg_additional_services',        true ),
-            'employment_sectors'   => wp_get_object_terms( $oid, 'ws_employment_sector', [ 'fields' => 'names' ] ),
+            'employment_sectors'   => ( ( $_es = wp_get_object_terms( $oid, 'ws_employment_sector', [ 'fields' => 'names' ] ) ) && ! is_wp_error( $_es ) ) ? $_es : [],
             'website_url'          => get_post_meta( $oid, 'ws_aorg_website_url',                true ),
             'intake_url'           => get_post_meta( $oid, 'ws_aorg_intake_url',                 true ),
             'phone'                => get_post_meta( $oid, 'ws_aorg_phone',                      true ),
@@ -891,7 +1053,7 @@ function ws_get_assist_org_data( $jx_term_id ) {
             'mailing_address'      => get_post_meta( $oid, 'ws_aorg_mailing_address',            true ),
             'languages'            => get_field( 'ws_languages', $oid ),
             'additional_languages' => get_post_meta( $oid, 'ws_aorg_additional_languages',       true ),
-            'cost_model'           => wp_get_object_terms( $oid, 'ws_aorg_cost_model', [ 'fields' => 'names' ] ),
+            'cost_model'           => ( ( $_cm = wp_get_object_terms( $oid, 'ws_aorg_cost_model', [ 'fields' => 'names' ] ) ) && ! is_wp_error( $_cm ) ) ? $_cm : [],
             'income_limit'         => get_post_meta( $oid, 'ws_aorg_income_limit',               true ),
             'income_limit_notes'   => get_post_meta( $oid, 'ws_aorg_income_limit_notes',         true ),
             'anonymous'            => (bool) get_post_meta( $oid, 'ws_aorg_accepts_anonymous',   true ),
@@ -1017,10 +1179,13 @@ function ws_get_nationwide_assist_org_data( $filters = [] ) {
             'description'          => get_post_meta( $oid, 'ws_aorg_description',                true ),
             'logo'                 => get_field( 'ws_aorg_logo', $oid ),
             'serves_nationwide'    => (bool) get_post_meta( $oid, 'ws_aorg_serves_nationwide',   true ),
-            'disclosure_type'      => get_field( 'ws_aorg_disclosure_type', $oid ),
-            'services'             => wp_get_object_terms( $oid, 'ws_aorg_service', [ 'fields' => 'names' ] ),
+            'disclosure_type'      => ws_q_normalize_id_list( get_field( 'ws_aorg_disclosure_type', $oid ) ),
+            'disclosure_targets'   => ws_q_normalize_id_list( get_field( 'ws_aorg_disclosure_targets', $oid ) ),
+            'disclosure_targets_details' => get_post_meta( $oid, 'ws_aorg_disclosure_targets_details', true ),
+            'case_stages'          => ws_q_normalize_id_list( get_field( 'ws_ao_case_stage', $oid ) ),
+            'services'             => ( ( $_sv = wp_get_object_terms( $oid, 'ws_aorg_service', [ 'fields' => 'names' ] ) ) && ! is_wp_error( $_sv ) ) ? $_sv : [],
             'additional_services'  => get_post_meta( $oid, 'ws_aorg_additional_services',        true ),
-            'employment_sectors'   => wp_get_object_terms( $oid, 'ws_employment_sector', [ 'fields' => 'names' ] ),
+            'employment_sectors'   => ( ( $_es = wp_get_object_terms( $oid, 'ws_employment_sector', [ 'fields' => 'names' ] ) ) && ! is_wp_error( $_es ) ) ? $_es : [],
             'website_url'          => get_post_meta( $oid, 'ws_aorg_website_url',                true ),
             'intake_url'           => get_post_meta( $oid, 'ws_aorg_intake_url',                 true ),
             'phone'                => get_post_meta( $oid, 'ws_aorg_phone',                      true ),
@@ -1028,7 +1193,7 @@ function ws_get_nationwide_assist_org_data( $filters = [] ) {
             'mailing_address'      => get_post_meta( $oid, 'ws_aorg_mailing_address',            true ),
             'languages'            => get_field( 'ws_languages', $oid ),
             'additional_languages' => get_post_meta( $oid, 'ws_aorg_additional_languages',       true ),
-            'cost_model'           => wp_get_object_terms( $oid, 'ws_aorg_cost_model', [ 'fields' => 'names' ] ),
+            'cost_model'           => ( ( $_cm = wp_get_object_terms( $oid, 'ws_aorg_cost_model', [ 'fields' => 'names' ] ) ) && ! is_wp_error( $_cm ) ) ? $_cm : [],
             'income_limit'         => get_post_meta( $oid, 'ws_aorg_income_limit',               true ),
             'income_limit_notes'   => get_post_meta( $oid, 'ws_aorg_income_limit_notes',         true ),
             'anonymous'            => (bool) get_post_meta( $oid, 'ws_aorg_accepts_anonymous',   true ),
@@ -1341,8 +1506,15 @@ function ws_get_ref_materials( $post_id ) {
 
     $items = [];
     foreach ( $refs as $ref ) {
-        if ( ! ( $ref instanceof WP_Post ) ) continue;
-        $rid = $ref->ID;
+        $rid = 0;
+        if ( $ref instanceof WP_Post ) {
+            $rid = (int) $ref->ID;
+        } elseif ( is_object( $ref ) && isset( $ref->ID ) ) {
+            $rid = (int) $ref->ID;
+        } elseif ( is_numeric( $ref ) ) {
+            $rid = (int) $ref;
+        }
+        if ( ! $rid ) continue;
 
         $title = get_post_meta( $rid, 'ws_ref_title', true );
         if ( empty( $title ) ) {
@@ -1493,13 +1665,15 @@ function ws_get_jx_common_law_data( $jx_term_id ) {
                 'doctrine_id'            => get_post_meta( $rid, 'ws_cl_doctrine_id',             true ),
                 'common_name'            => get_post_meta( $rid, 'ws_cl_common_name',             true ),
                 'precedent_url'          => get_post_meta( $rid, 'ws_cl_precedent_url',           true ),
-                'public_policy_sources'  => get_post_meta( $rid, 'ws_cl_public_policy_sources',  true ),
+                'public_policy_sources'  => ws_q_normalize_text_list( get_post_meta( $rid, 'ws_cl_public_policy_sources',  true ), 'sanitize_key' ),
                 'other_sources'          => get_post_meta( $rid, 'ws_cl_other_sources',           true ),
                 'doctrine_basis'         => get_post_meta( $rid, 'ws_cl_doctrine_basis',          true ),
                 'recognition_status'     => get_post_meta( $rid, 'ws_cl_recognition_status',      true ),
-                'disclosure_type'      => get_field( 'ws_cl_disclosure_type',      $rid ),
-                'protected_class'      => get_field( 'ws_cl_protected_class',      $rid ),
-                'disclosure_targets'   => get_field( 'ws_cl_disclosure_targets',   $rid ),
+                'disclosure_type'      => ws_q_normalize_id_list( get_field( 'ws_cl_disclosure_type',      $rid ) ),
+                'protected_class'      => ws_q_normalize_id_list( get_field( 'ws_cl_protected_class',      $rid ) ),
+                'protected_class_details' => get_post_meta( $rid, 'ws_cl_protected_class_details', true ),
+                'disclosure_targets'   => ws_q_normalize_id_list( get_field( 'ws_cl_disclosure_targets',   $rid ) ),
+                'disclosure_targets_details' => get_post_meta( $rid, 'ws_cl_disclosure_targets_details', true ),
                 'adverse_action_scope' => get_post_meta( $rid, 'ws_cl_adverse_action_scope',  true ),
                 'attach_flag'          => (bool) get_post_meta( $rid, 'ws_attach_flag',        true ),
 
@@ -1515,26 +1689,33 @@ function ws_get_jx_common_law_data( $jx_term_id ) {
                 'exhaustion_details'  => get_post_meta( $rid, 'ws_cl_exhaustion_details',  true ),
 
                 // ── Enforcement ───────────────────────────────────────────
-                'process_type'     => get_field( 'ws_cl_process_type',     $rid ),
-                'adverse_action'   => get_field( 'ws_cl_adverse_action',   $rid ),
-                'fee_shifting'     => get_field( 'ws_cl_fee_shifting',     $rid ),
-                'remedies'         => get_field( 'ws_cl_remedies',         $rid ),
-                'related_agencies' => get_field( 'ws_cl_related_agencies', $rid ),
+                'process_type'     => ws_q_normalize_id_list( get_field( 'ws_cl_process_type',     $rid ) ),
+                'adverse_action'   => ws_q_normalize_id_list( get_field( 'ws_cl_adverse_action',   $rid ) ),
+                'adverse_action_details' => get_post_meta( $rid, 'ws_cl_adverse_action_details', true ),
+                'fee_shifting'     => ws_q_normalize_id_list( get_field( 'ws_cl_fee_shifting',     $rid ) ),
+                'remedies'         => ws_q_normalize_id_list( get_field( 'ws_cl_remedies',         $rid ) ),
+                'remedies_details' => get_post_meta( $rid, 'ws_cl_remedies_details', true ),
+                'related_agencies' => ws_q_normalize_id_list( get_field( 'ws_cl_related_agencies', $rid ) ),
 
                 // ── Burden of Proof ───────────────────────────────────────
                 'statutory_preclusion'         => (bool) get_post_meta( $rid, 'ws_cl_statutory_preclusion',         true ),
                 'statutory_preclusion_details' => get_post_meta( $rid, 'ws_cl_statutory_preclusion_details', true ),
-                'employee_standard'        => get_field( 'ws_cl_employee_standard',        $rid ),
-                'employer_defense'         => get_field( 'ws_cl_employer_defense',         $rid ),
+                'employee_standard'        => ws_q_normalize_id_list( get_field( 'ws_cl_employee_standard',        $rid ) ),
+                'employee_standard_details' => get_post_meta( $rid, 'ws_cl_employee_standard_details', true ),
+                'employer_defense'         => ws_q_normalize_id_list( get_field( 'ws_cl_employer_defense',         $rid ) ),
                 'employer_defense_details' => get_post_meta( $rid, 'ws_cl_employer_defense_details', true ),
                 'rebuttable_has_details'   => (bool) get_post_meta( $rid, 'ws_cl_rebuttable_has_presumption', true ),
                 'rebuttable_details'       => get_post_meta( $rid, 'ws_cl_rebuttable_presumption',       true ),
                 'bop_has_details'          => (bool) get_post_meta( $rid, 'ws_cl_bop_has_details',   true ),
                 'bop_details'              => get_post_meta( $rid, 'ws_cl_burden_of_proof_details',              true ),
+                'bop_flag'                 => get_post_meta( $rid, 'ws_cl_bop_flag', true ),
 
                 // ── Reward ────────────────────────────────────────────────
                 'has_reward'     => (bool) get_post_meta( $rid, 'ws_cl_reward_available',     true ),
                 'reward_details' => get_post_meta( $rid, 'ws_cl_reward_details', true ),
+                'citation_ids'   => ws_q_normalize_id_list( get_field( 'ws_cl_citation_ids', $rid ) ),
+                'interpretation_ids' => ws_q_normalize_id_list( get_field( 'ws_cl_interpretation_ids', $rid ) ),
+                'ref_materials'  => ws_get_ref_materials( $rid ),
 
                 // Record management
                 'plain'  => ws_build_plain_english_array( $rid ),

@@ -187,6 +187,7 @@ function ws_build_agency_procedure_row( $pid ) {
         'type'             => $proc_type,
         'jurisdiction'     => ( $jx_terms   && ! is_wp_error( $jx_terms   ) ) ? $jx_terms   : [],
         'disclosure_types' => ( $disc_types && ! is_wp_error( $disc_types ) ) ? $disc_types : [],
+        'statute_ids'      => ws_q_normalize_id_list( get_post_meta( $pid, 'ws_proc_statute_ids', true ) ),
         'entry_point'      => get_post_meta( $pid, 'ws_proc_entry_point',           true ),
         'intake_url'       => get_post_meta( $pid, 'ws_proc_intake_url',            true ),
         'phone'            => get_post_meta( $pid, 'ws_proc_phone',                 true ),
@@ -200,6 +201,7 @@ function ws_build_agency_procedure_row( $pid ) {
         // Sanitize with wp_kses_post() before output; never echo raw.
         'walkthrough'      => get_post_meta( $pid, 'ws_proc_walkthrough',           true ),
         'exclusivity_note' => get_post_meta( $pid, 'ws_proc_exclusivity_note',      true ),
+        'stat_override'    => (bool) get_post_meta( $pid, 'ws_proc_stat_override',  true ),
         'last_reviewed'    => get_post_meta( $pid, 'ws_proc_last_reviewed',         true ),
         // Standard authorship stamp sub-array (created_by, edited_by, dates).
         'record'           => ws_build_record_array( $pid ),
@@ -295,6 +297,7 @@ function ws_get_procedures_for_statute( $statute_id ) {
             'agency_id'     => $agency_id,
             'agency_name'   => $agency_id ? get_the_title( $agency_id )  : '',
             'agency_url'    => $agency_id ? (string) get_permalink( $agency_id ) : '',
+            'statute_ids'   => ws_q_normalize_id_list( get_post_meta( $pid, 'ws_proc_statute_ids', true ) ),
             'deadline_days' => (int)  get_post_meta( $pid, 'ws_proc_deadline_days', true ),
             'intake_only'   => (bool) get_post_meta( $pid, 'ws_proc_intake_only',   true ),
         ];
