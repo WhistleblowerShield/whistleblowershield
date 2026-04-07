@@ -424,8 +424,8 @@ function ws_seed_assist_org_matrix() {
 // ── Gate ──────────────────────────────────────────────────────────────────────
 
 add_action( 'admin_init', function() {
-    if ( get_option( 'ws_seeded_assist_org_matrix' ) !== '1.0.4' ) {
+    if ( get_option( 'ws_seeded_assist_org_matrix' ) !== '1.0.5' ) {
         ws_seed_assist_org_matrix();
-        update_option( 'ws_seeded_assist_org_matrix', '1.0.4' );
+        update_option( 'ws_seeded_assist_org_matrix', '1.0.5' );
     }
 } );
