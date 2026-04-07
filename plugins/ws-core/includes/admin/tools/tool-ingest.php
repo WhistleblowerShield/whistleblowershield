@@ -3170,6 +3170,7 @@ function ws_handle_ingest_folder_submission(): array {
                 'would_records'       => count( (array) ( $data['records'] ?? [] ) ),
                 'preflight_warnings'  => count( (array) ( $preflight['warnings'] ?? [] ) ),
             ];
+            $file_report['preflight_warnings'] = array_values( (array) ( $preflight['warnings'] ?? [] ) );
 
             $result['folder']['processed_files']++;
             $result['folder']['ready_files']++;
@@ -3334,7 +3335,6 @@ function ws_render_ingest_tool_page() {
     ?>
     <div class="wrap">
         <h1>WS Ingest Tool <span style="font-size:13px;color:#666;font-weight:normal;">v<?php echo esc_html( WS_INGEST_VERSION ); ?> — schema <?php echo esc_html( WS_INGEST_SCHEMA_VERSION ); ?></span></h1>
-        <p>Paste a validated JSON batch below. Pre-flight checks run first — you must confirm before records are written.</p>
         <p><strong>This version handles:</strong> <code>statute</code>, <code>common-law</code>, <code>citation</code>, and <code>interpretation</code> records, <code>json_format_version 2.0</code> only.</p>
 
         <?php if ( ! empty( $run_result['errors'] ) ): ?>
@@ -3480,6 +3480,17 @@ function ws_render_ingest_tool_page() {
                                 agency stubs <?php echo (int) ( $item['summary']['agency_stubs_created'] ?? 0 ); ?>
                             <?php endif; ?>
                         </p>
+                    <?php endif; ?>
+
+                    <?php if ( ! empty( $f['dry_run'] ) && ! empty( $item['preflight_warnings'] ) ): ?>
+                        <details style="margin:4px 0 8px 0;">
+                            <summary>Show pre-flight warnings (<?php echo (int) count( (array) $item['preflight_warnings'] ); ?>)</summary>
+                            <ul style="margin:6px 0 0 18px;color:#555;">
+                                <?php foreach ( (array) $item['preflight_warnings'] as $warn ): ?>
+                                    <li><?php echo esc_html( $warn ); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </details>
                     <?php endif; ?>
 
                     <?php if ( ! empty( $item['errors'] ) ): ?>
