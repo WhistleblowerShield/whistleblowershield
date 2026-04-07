@@ -98,6 +98,7 @@ define( 'WS_INGEST_VERSION',       '3.14.3' );
 define( 'WS_INGEST_SCHEMA_VERSION', '2.0' );
 define( 'WS_PROPOSED_TERMS_LOG',   WP_CONTENT_DIR . '/logs/ws-ingest/proposed-terms-log.json' );
 define( 'WS_INGEST_LOG_DIR',       WP_CONTENT_DIR . '/logs/ws-ingest/' );
+define( 'WS_INGEST_RUN_LOG_DIR',   WP_CONTENT_DIR . '/logs/ws-ingest/ingested/' );
 define( 'WS_INGEST_INBOX_DIR',     WP_CONTENT_DIR . '/logs/ws-ingest/inbox/' );
 define( 'WS_INGEST_ARCHIVE_DIR',   WP_CONTENT_DIR . '/logs/ws-ingest/archive/' );
 define( 'WS_INGEST_CONFIRM_TTL',   30 * MINUTE_IN_SECONDS );
@@ -125,6 +126,10 @@ function ws_ingest_bootstrap_log_dir(): void {
     if ( ! file_exists( WS_INGEST_LOG_DIR ) ) {
         wp_mkdir_p( WS_INGEST_LOG_DIR );
         file_put_contents( WS_INGEST_LOG_DIR . '.htaccess', "Deny from all\n" );
+    }
+    if ( ! file_exists( WS_INGEST_RUN_LOG_DIR ) ) {
+        wp_mkdir_p( WS_INGEST_RUN_LOG_DIR );
+        file_put_contents( trailingslashit( WS_INGEST_RUN_LOG_DIR ) . '.htaccess', "Deny from all\n" );
     }
     if ( ! file_exists( WS_INGEST_INBOX_DIR ) ) {
         wp_mkdir_p( WS_INGEST_INBOX_DIR );
@@ -2767,7 +2772,7 @@ function ws_ingest_process_interpretation_record( array $record, array $meta, ar
 // ── Run log writer ────────────────────────────────────────────────────────────
 
 /**
- * Writes a persistent run log to wp-content/logs/ws-ingest/.
+ * Writes a persistent run log to wp-content/logs/ws-ingest/ingested/.
  * Filename: [JX]-[YYYYMMDD-HHmm]-ingest.txt
  * FTP-accessible, .htaccess protected.
  */
@@ -2780,15 +2785,17 @@ function ws_ingest_extract_batch_count_from_filename( string $filename ): int {
 }
 
 function ws_ingest_write_run_log( array $result, string $batch_filename = '' ): bool {
+    ws_ingest_bootstrap_log_dir();
+
     $summary = $result['summary'] ?? [];
     $jx      = strtoupper( $summary['jurisdiction'] ?? 'XX' );
     $batch_count = ws_ingest_extract_batch_count_from_filename( $batch_filename );
     $ts      = date( 'Ymd-His' );
     $count_part = $batch_count > 0 ? "{$batch_count}-" : '';
-    $path    = WS_INGEST_LOG_DIR . "{$jx}-{$count_part}{$ts}-ingest.txt";
+    $path    = WS_INGEST_RUN_LOG_DIR . "{$jx}-{$count_part}{$ts}-ingest.txt";
 
     if ( file_exists( $path ) ) {
-        $path = WS_INGEST_LOG_DIR . "{$jx}-{$count_part}{$ts}-" . wp_generate_password( 4, false, false ) . '-ingest.txt';
+        $path = WS_INGEST_RUN_LOG_DIR . "{$jx}-{$count_part}{$ts}-" . wp_generate_password( 4, false, false ) . '-ingest.txt';
     }
 
     $lines   = [];

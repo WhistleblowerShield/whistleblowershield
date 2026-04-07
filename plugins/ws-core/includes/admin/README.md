@@ -30,7 +30,7 @@ Subdirectories:
 | File | Purpose |
 |---|---|
 | `tools/tool-generate-prompt.php` | Generates AI research prompts from live taxonomy data. Writes to `wp-content/logs/ws-prompts/` |
-| `tools/tool-ingest.php` | Processes validated JSON batches and writes statute records to `jx-statute` CPT. Writes four log files to `wp-content/logs/ws-ingest/` |
+| `tools/tool-ingest.php` | Processes validated JSON batches and writes statute records to `jx-statute` CPT. Writes ledger logs to `wp-content/logs/ws-ingest/` and detailed run logs to `wp-content/logs/ws-ingest/ingested/` |
 
 **Ingest log files** (`wp-content/logs/ws-ingest/`):
 
@@ -39,7 +39,7 @@ Subdirectories:
 | `preflight-errors.log` | Append-only. One line per failed preflight with filename and reason |
 | `imported.log` | Append-only. One line per completed batch — filename, jurisdiction, counts, has_warnings flag, has_failures flag |
 | `citations-breadcrumbs.log` | Append-only. Full citation strings from ingested batches — research trail for future jx-citation records |
-| `[JX]-[timestamp]-ingest.txt` | Full detail run log per batch — per-record status, taxonomy removals, omitted fields |
+| `ingested/[JX]-[timestamp]-ingest.txt` | Full detail run log per batch — per-record status, taxonomy removals, omitted fields |
 
 ---
 

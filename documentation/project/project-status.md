@@ -51,7 +51,7 @@ New field: `ws_jx_statute_bop_flag` / `ws_cl_bop_flag`.
 - `tool-ingest.php` (v3.14.0) — processes validated JSON batches and
   writes statute records to `jx-statute` CPT. Three-phase pipeline:
   pre-flight validation → admin confirmation → record processing.
-  Four log files in `wp-content/logs/ws-ingest/`.
+  Four ledger/breadcrumb logs in `wp-content/logs/ws-ingest/`; detailed run logs in `wp-content/logs/ws-ingest/ingested/`.
 
 **Ingest pipeline** — fully operational multi-model AI research pipeline
 with human review gate. See pipeline section below.
@@ -129,7 +129,7 @@ Key additions since initial ruleset:
 | `preflight-errors.log` | Append-only. Failed preflights with filename and reason |
 | `imported.log` | Append-only. Completed batches — filename, JX, counts, has_warnings flag, has_failures flag |
 | `citations-breadcrumbs.log` | Append-only. Full citation strings — research trail for future jx-citation records |
-| `[JX]-[timestamp]-ingest.txt` | Full detail run log per batch |
+| `ingested/[JX]-[timestamp]-ingest.txt` | Full detail run log per batch |
 
 ### Taxonomy proposals — pending human review
 
