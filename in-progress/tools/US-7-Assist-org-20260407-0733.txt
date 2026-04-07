@@ -81,7 +81,7 @@ RECORD SCHEMA
   "has_attorneys": "[required - yes | no | unclear]",
   "case_stages": [],
   "case_stage_details": "[omit unless case_stages includes other]",
-  "disclosure_targets": [],
+  "disclosure_targets": [acceptable blank array if undetermined],
   "disclosure_targets_details": "[omit unless disclosure_targets includes has-details]",
 
   "coverage_exceptions": "[omit if none]",
