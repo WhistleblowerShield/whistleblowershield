@@ -985,7 +985,11 @@ function ws_get_assist_org_data( $jx_term_id ) {
             'status'        => get_post_status( $oid ),
             // Assist-org fields
             'internal_id'          => get_post_meta( $oid, 'ws_aorg_internal_id',               true ),
-            'type'                 => ( ( $_aorg_type = get_the_terms( $oid, 'ws_aorg_type' ) ) && ! is_wp_error( $_aorg_type ) ) ? $_aorg_type[0] : null,
+            'type'                 => ( ( $_aorg_type = wp_get_object_terms( $oid, 'ws_aorg_type', [
+                'number'  => 1,
+                'orderby' => 'name',
+                'order'   => 'ASC',
+            ] ) ) && ! is_wp_error( $_aorg_type ) ) ? $_aorg_type[0] : null,
             'description'          => get_post_meta( $oid, 'ws_aorg_description',                true ),
             'logo'                 => get_field( 'ws_aorg_logo', $oid ),
             'serves_nationwide'    => (bool) get_post_meta( $oid, 'ws_aorg_serves_nationwide',   true ),
@@ -1000,7 +1004,11 @@ function ws_get_assist_org_data( $jx_term_id ) {
             'mailing_address'      => get_post_meta( $oid, 'ws_aorg_mailing_address',            true ),
             'languages'            => get_field( 'ws_languages', $oid ),
             'additional_languages' => get_post_meta( $oid, 'ws_aorg_additional_languages',       true ),
-            'cost_model'           => wp_get_object_terms( $oid, 'ws_aorg_cost_model', [ 'fields' => 'slugs' ] ),
+            'cost_model'           => wp_get_object_terms( $oid, 'ws_aorg_cost_model', [
+                'fields'  => 'slugs',
+                'orderby' => 'name',
+                'order'   => 'ASC',
+            ] ),
             'income_limit'         => get_post_meta( $oid, 'ws_aorg_income_limit',               true ),
             'income_limit_notes'   => get_post_meta( $oid, 'ws_aorg_income_limit_notes',         true ),
             'anonymous'            => (bool) get_post_meta( $oid, 'ws_aorg_accepts_anonymous',   true ),
@@ -1122,7 +1130,11 @@ function ws_get_nationwide_assist_org_data( $filters = [] ) {
             'status' => get_post_status( $oid ),
             // Assist-org fields — identical shape to ws_get_assist_org_data().
             'internal_id'          => get_post_meta( $oid, 'ws_aorg_internal_id',               true ),
-            'type'                 => ( ( $_t = get_the_terms( $oid, 'ws_aorg_type' ) ) && ! is_wp_error( $_t ) ) ? $_t[0] : null,
+            'type'                 => ( ( $_t = wp_get_object_terms( $oid, 'ws_aorg_type', [
+                'number'  => 1,
+                'orderby' => 'name',
+                'order'   => 'ASC',
+            ] ) ) && ! is_wp_error( $_t ) ) ? $_t[0] : null,
             'description'          => get_post_meta( $oid, 'ws_aorg_description',                true ),
             'logo'                 => get_field( 'ws_aorg_logo', $oid ),
             'serves_nationwide'    => (bool) get_post_meta( $oid, 'ws_aorg_serves_nationwide',   true ),
@@ -1137,7 +1149,11 @@ function ws_get_nationwide_assist_org_data( $filters = [] ) {
             'mailing_address'      => get_post_meta( $oid, 'ws_aorg_mailing_address',            true ),
             'languages'            => get_field( 'ws_languages', $oid ),
             'additional_languages' => get_post_meta( $oid, 'ws_aorg_additional_languages',       true ),
-            'cost_model'           => wp_get_object_terms( $oid, 'ws_aorg_cost_model', [ 'fields' => 'slugs' ] ),
+            'cost_model'           => wp_get_object_terms( $oid, 'ws_aorg_cost_model', [
+                'fields'  => 'slugs',
+                'orderby' => 'name',
+                'order'   => 'ASC',
+            ] ),
             'income_limit'         => get_post_meta( $oid, 'ws_aorg_income_limit',               true ),
             'income_limit_notes'   => get_post_meta( $oid, 'ws_aorg_income_limit_notes',         true ),
             'anonymous'            => (bool) get_post_meta( $oid, 'ws_aorg_accepts_anonymous',   true ),

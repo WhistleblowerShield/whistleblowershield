@@ -257,8 +257,8 @@ function ws_sync_legal_authority_label($value, $post_id, $field) {
         return 'special';
     }
 	
-    // Puerto Rico: OSC is the primary protection agency
-	if (str_starts_with($slug, 'puerto-rico')) {
+    // Puerto Rico: Secretary of Justice is the primary legal authority.
+	if ( strpos( (string) $slug, 'puerto-rico' ) === 0 ) {
         return 'secretary';
     }
 

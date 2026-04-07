@@ -247,9 +247,16 @@ function ws_render_directory_card( $org ) {
 
     $type_name = ( $org['type'] instanceof WP_Term ) ? $org['type']->name : '';
     $type_slug = ( $org['type'] instanceof WP_Term ) ? $org['type']->slug : '';
+    if ( ! $type_name && is_string( $org['type'] ?? null ) ) {
+        $type_slug = sanitize_title( $org['type'] );
+        $type_name = ucwords( str_replace( '-', ' ', $type_slug ) );
+    }
 
     $cost_slug  = $org['cost_model'][0] ?? '';
     $cost_label = $_ws_dir_cost_labels[ $cost_slug ] ?? '';
+    if ( ! $cost_label && $cost_slug ) {
+        $cost_label = ucwords( str_replace( [ '-', '_' ], ' ', $cost_slug ) );
+    }
 
     $services = is_array( $org['services'] ) ? $org['services'] : [];
 

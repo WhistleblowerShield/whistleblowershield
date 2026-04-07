@@ -62,6 +62,10 @@ function ws_register_jurisdiction_cpt() {
  */
 add_action( 'admin_init', 'ws_bridge_taxonomy_to_acf', 5 ); // Priority 5 runs BEFORE cleanup
 function ws_bridge_taxonomy_to_acf() {
+    if ( ! function_exists( 'update_field' ) ) {
+        return; // ACF not active yet.
+    }
+
     if ( get_option( 'ws_jx_type_taxonomy_cleanup' ) ) {
         return; // Don't run if cleanup is already done
     }

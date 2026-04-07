@@ -88,6 +88,7 @@ function ws_migrate_ws_update_cpt() {
     $legacy_slugs  = [ 'legal-update', 'ws-update' ];
     $total_updated = 0;
     $results       = [];
+    $had_error     = false;
 
     foreach ( $legacy_slugs as $old_slug ) {
         $updated = $wpdb->update(
@@ -97,13 +98,20 @@ function ws_migrate_ws_update_cpt() {
             [ '%s' ],
             [ '%s' ]
         );
-        if ( $updated ) {
+        if ( $updated === false ) {
+            $had_error = true;
+            continue;
+        }
+
+        if ( $updated > 0 ) {
             $results[ $old_slug ] = $updated;
             $total_updated       += $updated;
         }
     }
 
-    update_option( 'ws_migrate_ws_update_cpt_v1', true );
+    if ( ! $had_error ) {
+        update_option( 'ws_migrate_ws_update_cpt_v1', true );
+    }
 
     if ( $total_updated > 0 ) {
         // Clean up rewrite cache so the new slug takes effect immediately
@@ -118,6 +126,14 @@ function ws_migrate_ws_update_cpt() {
             echo '<div class="notice notice-success is-dismissible"><p>';
             echo "<strong>WhistleblowerShield Core:</strong> Migrated {$total_updated} post(s) to the ";
             echo "<code>ws-legal-update</code> post type: {$detail}.";
+            echo '</p></div>';
+        } );
+    }
+
+    if ( $had_error ) {
+        add_action( 'admin_notices', function() {
+            echo '<div class="notice notice-error"><p>';
+            echo '<strong>WhistleblowerShield Core:</strong> Legal Update CPT migration encountered a database error and will retry on the next admin load.';
             echo '</p></div>';
         } );
     }
