@@ -1199,7 +1199,11 @@ function ws_generate_assist_org_prompt( array $scope ): string {
     $out .= "Record type:        assist-org\n";
     $out .= "Jurisdiction:       {$jx_name}\n";
     $out .= "Jurisdiction ID:    {$jx}\n";
-    $out .= "Requested Records:  {$proposal_count}\n";
+    if ( $proposal_count > 0 ) {
+        $out .= "Requested Records:  {$proposal_count}\n";
+    } else {
+        $out .= "Requested Records:  as many as you can confidently verify (fewer is correct)\n";
+    }
     $out .= 'Nationwide only:    ' . ( $nationwide_only ? 'yes' : 'no' ) . "\n";
     if ( $focus_notes !== '' ) {
         $out .= "Focus notes:        {$focus_notes}\n";
@@ -1973,11 +1977,6 @@ function ws_handle_prompt_generation(): array {
         return $result;
     }
 
-    if ( $record_type === 'assist-org' && $proposal_count < 1 ) {
-        $result['message'] = 'Proposal count is required for assist-org runs.';
-        return $result;
-    }
-
     if ( $record_type === 'assist-org' ) {
         $records_requested = $proposal_count;
     }
@@ -2075,7 +2074,7 @@ function ws_render_prompt_generator_page() {
     }
 
     $record_type = sanitize_text_field( $_POST['record_type'] ?? 'statute' );
-    $proposal_count_value = max( 1, (int) ( $_POST['proposal_count'] ?? 7 ) );
+    $proposal_count_value = max( 0, (int) ( $_POST['proposal_count'] ?? 0 ) );
     $assist_org_nationwide = ! empty( $_POST['assist_org_nationwide'] );
     $assist_org_focus_notes = sanitize_textarea_field( $_POST['assist_org_focus_notes'] ?? '' );
     $posted_jx   = strtoupper( sanitize_text_field( $_POST['jx_id'] ?? '' ) );
@@ -2191,8 +2190,8 @@ function ws_render_prompt_generator_page() {
                     <td>
                         <input type="number" name="proposal_count" id="proposal_count"
                                value="<?php echo esc_attr( $proposal_count_value ); ?>"
-                               class="small-text" min="1" max="20" placeholder="e.g. 7">
-                        <p class="description">Required for assist-org runs. Recommended: 6 to 7 per batch.</p>
+                               class="small-text" min="0" max="20" placeholder="0 = no limit">
+                        <p class="description">Set to 0 to tell the model: as many as you can confidently verify (fewer is correct). Recommended focused batch: 6 to 7.</p>
                     </td>
                 </tr>
 
