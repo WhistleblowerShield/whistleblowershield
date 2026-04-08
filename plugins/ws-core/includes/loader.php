@@ -291,9 +291,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		}
 	}
 
-	// Cascade layer — filter config and resolver
+	// Cascade layer — filter config and resolver(context)
 	// Loaded on both frontend and admin
 	require_once WS_CORE_PATH . 'includes/cascade/ws-filter-config.php';
+	require_once WS_CORE_PATH . 'includes/cascade/ws-filter-context.php';
 
 	// CRON SCHEDULES: Must register universally — WP-Cron fires on frontend
 	// requests where is_admin() is false and admin-url-monitor.php never loads.

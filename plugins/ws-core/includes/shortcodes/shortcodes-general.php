@@ -342,48 +342,43 @@ add_shortcode( 'ws_jurisdiction_index', function() {
 add_shortcode( 'ws_assist_org_directory', 'ws_shortcode_assist_org_directory' );
 function ws_shortcode_assist_org_directory( $atts ) {
 
-    $atts = shortcode_atts( [
-        'type'       => '',
-        'sector'     => '',
-        'stage'      => '',
-        'cost_model' => '',
-    ], $atts, 'ws_assist_org_directory' );
+    // Phase 2: all filter resolution goes through ws_resolve_filter_context().
+    // Shortcode atts are intentionally unused — filter state lives in GET params
+    // so that filtered URLs are bookmarkable and shareable.
+    //
+    // Legacy atts (type, sector, stage, cost_model) are accepted but ignored.
+    // Remove them from shortcode usage when convenient — they have no effect.
 
-    // Build filters — URL params take priority over shortcode atts.
-    // All values are sanitized before use.
-    $filters = [];
+    // ── Resolve filter context ────────────────────────────────────────────
+    $context = ws_resolve_filter_context();
 
-    $type = ! empty( $_GET['aorg_type'] )
-        ? sanitize_key( wp_unslash( $_GET['aorg_type'] ) )
-        : sanitize_key( $atts['type'] );
-    if ( $type ) {
-        $filters['type'] = $type;
+    // ── Build query filters from context ─────────────────────────────────
+    // Pass validated slugs to the query layer. Absence means no filter on
+    // that axis — query returns all records for that taxonomy.
+    $query_filters = [];
+
+    if ( $context['sector'] !== null ) {
+        $query_filters['sector'] = $context['sector'];
+    }
+    if ( $context['stage'] !== null ) {
+        $query_filters['stage'] = $context['stage'];
     }
 
-    $sector = ! empty( $_GET['aorg_sector'] )
-        ? sanitize_text_field( wp_unslash( $_GET['aorg_sector'] ) )
-        : sanitize_text_field( $atts['sector'] );
-    if ( $sector ) {
-        $filters['sector'] = $sector;
+    // Concern is routed to the correct taxonomy by the context resolver.
+    // The query layer needs both the slug and the taxonomy name.
+    if ( $context['concern'] !== null && $context['concern_tax'] !== null ) {
+        $query_filters['concern']     = $context['concern'];
+        $query_filters['concern_tax'] = $context['concern_tax'];
     }
 
-    $stage = ! empty( $_GET['aorg_stage'] )
-        ? sanitize_key( wp_unslash( $_GET['aorg_stage'] ) )
-        : sanitize_key( $atts['stage'] );
-    if ( $stage ) {
-        $filters['stage'] = $stage;
-    }
+    // ── Fetch results ─────────────────────────────────────────────────────
+    // Targeted: jurisdiction-scoped orgs (empty for directory — directory
+    // is nationwide by definition; targeted tier reserved for JX pages).
+    $targeted   = [];
+    $nationwide = ws_get_nationwide_assist_org_data( $query_filters );
 
-    $cost_model = ! empty( $_GET['aorg_cost'] )
-        ? sanitize_key( wp_unslash( $_GET['aorg_cost'] ) )
-        : sanitize_key( $atts['cost_model'] );
-    if ( $cost_model ) {
-        $filters['cost_model'] = $cost_model;
-    }
-
-    $items = ws_get_nationwide_assist_org_data( $filters );
-
-    return ws_render_directory_page( $items );
+    // ── Render ───────────────────────────────────────────────────────────
+    return ws_render_directory_page( $targeted, $nationwide, $context );
 }
 
 

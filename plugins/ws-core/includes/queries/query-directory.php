@@ -172,6 +172,21 @@ function ws_get_nationwide_assist_org_data( $filters = [] ) {
         ];
     }
 
+    // Phase 2: concern filter — routed to correct taxonomy by context resolver.
+    // $filters['concern_tax'] is either 'ws_disclosure_type' or
+    // 'ws_adverse_action_types' depending on the user's stage selection.
+    if ( ! empty( $filters['concern'] ) && ! empty( $filters['concern_tax'] ) ) {
+        $allowed_concern_taxonomies = [ 'ws_disclosure_type', 'ws_adverse_action_types' ];
+        $concern_tax = sanitize_key( $filters['concern_tax'] );
+        if ( in_array( $concern_tax, $allowed_concern_taxonomies, true ) ) {
+            $query_args['tax_query'][] = [
+                'taxonomy' => $concern_tax,
+                'field'    => 'slug',
+                'terms'    => sanitize_key( $filters['concern'] ),
+            ];
+        }
+    }
+
     $q    = new WP_Query( $query_args );
     $rows = [];
 

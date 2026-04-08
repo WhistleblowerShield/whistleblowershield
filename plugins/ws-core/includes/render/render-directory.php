@@ -5,52 +5,378 @@
  * Renders the [ws_assist_org_directory] shortcode output.
  * Loaded in Assembly Layer (! is_admin()) only.
  *
- * ws_render_directory_taxonomy_guide() is a Phase 2 stub — returns ''.
- * Do not remove it.
- *
  * @package WhistleblowerShield
  * @since   3.6.0
- * @version 3.10.2
+ * @version 3.15.0
  *
  * VERSION
  * -------
  * 3.6.0   Initial release.
  * 3.7.0   ws_render_directory_taxonomy_guide() Phase 2 stub added.
  * 3.7.1   ws_render_directory_card() — services rendered from taxonomy terms.
+ * 3.15.0  Phase 2 implementation: ws_render_directory_taxonomy_guide() built.
+ *         ws_render_directory_page() updated to consume filter context and
+ *         scored/sorted results. Filter panel is server-rendered GET form.
+ *         Result tiers: targeted orgs first, nationwide by score, then
+ *         unmatched nationwide. Zero targeted → fallback message + nationwide.
  */
 
 defined( 'ABSPATH' ) || exit;
 
 
 // ════════════════════════════════════════════════════════════════════════════
-// ws_render_directory_page( $items )
-//
-// Top-level render for the standalone Directory page. Wraps the intro,
-// listing, and (Phase 2) taxonomy guide. Called by [ws_assist_org_directory].
-//
-// @param  array  $items  Assist-org data arrays from ws_get_nationwide_assist_org_data().
-// @return string  HTML output.
+// ws_render_directory_page()
 // ════════════════════════════════════════════════════════════════════════════
 
-function ws_render_directory_page( $items ) {
+/**
+ * Top-level render for the Directory page.
+ *
+ * Accepts a normalized filter context from ws_resolve_filter_context() and
+ * a pre-fetched set of org rows. Splits rows into tiers, scores and sorts
+ * each tier, then renders the filter panel + results.
+ *
+ * Called by [ws_assist_org_directory] shortcode.
+ *
+ * @param array $targeted   Jurisdiction-scoped org rows (may be empty).
+ * @param array $nationwide All published nationwide org rows.
+ * @param array $context    Normalized filter context from ws_resolve_filter_context().
+ * @return string HTML output.
+ */
+function ws_render_directory_page( array $targeted, array $nationwide, array $context ): string {
     ob_start();
     ?>
     <div class="ws-directory">
 
-        <div class="ws-directory__intro">
-            <p>The organizations listed below provide free or low-cost legal support,
-            confidential guidance, and advocacy services to whistleblowers across
-            the United States. All listings are reviewed by our editorial team.</p>
-        </div>
+        <?php // ── Filter panel (left or top depending on layout) ─────────── ?>
+        <?php echo ws_render_directory_taxonomy_guide( $context ); // phpcs:ignore ?>
 
-        <div class="ws-directory__content">
-            <?php if ( empty( $items ) ) : ?>
-                <?php echo ws_render_directory_empty(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-            <?php else : ?>
-                <?php echo ws_render_directory_listing( $items ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+        <div class="ws-directory__results">
+
+            <?php // ── Intro ────────────────────────────────────────────────── ?>
+            <div class="ws-directory__intro">
+                <p>The organizations listed below provide free or low-cost legal
+                support, confidential guidance, and advocacy services to
+                whistleblowers across the United States. All listings are
+                reviewed by our editorial team.</p>
+            </div>
+
+            <?php
+            // ── Score and sort each tier ──────────────────────────────────────
+            $targeted   = ws_filter_sort_orgs( $targeted,   $context, true  );
+            $nationwide = ws_filter_sort_orgs( $nationwide, $context, false );
+
+            $targeted_count = count( $targeted );
+            ?>
+
+            <?php // ── Targeted results ─────────────────────────────────────── ?>
+            <?php if ( ! empty( $targeted ) ) : ?>
+                <div class="ws-directory__section ws-directory__section--targeted">
+                    <h2 class="ws-directory__section-heading">
+                        Organizations in Your Area
+                    </h2>
+                    <?php echo ws_render_directory_listing( $targeted ); // phpcs:ignore ?>
+                </div>
             <?php endif; ?>
-        </div>
 
+            <?php // ── Zero targeted fallback message ───────────────────────── ?>
+            <?php if ( $targeted_count === 0 && $context['has_filters'] ) : ?>
+                <?php echo ws_render_directory_fallback_message( $context ); // phpcs:ignore ?>
+            <?php endif; ?>
+
+            <?php // ── Nationwide results ───────────────────────────────────── ?>
+            <?php if ( ! empty( $nationwide ) ) : ?>
+                <div class="ws-directory__section ws-directory__section--nationwide">
+                    <?php if ( ! empty( $targeted ) ) : ?>
+                        <h2 class="ws-directory__section-heading">
+                            Nationwide Organizations
+                        </h2>
+                    <?php endif; ?>
+                    <?php echo ws_render_directory_listing( $nationwide ); // phpcs:ignore ?>
+                </div>
+            <?php endif; ?>
+
+            <?php // ── Truly empty (no targeted, no nationwide) ─────────────── ?>
+            <?php if ( empty( $targeted ) && empty( $nationwide ) ) : ?>
+                <?php echo ws_render_directory_empty(); // phpcs:ignore ?>
+            <?php endif; ?>
+
+        </div><?php // .ws-directory__results ?>
+
+    </div><?php // .ws-directory ?>
+    <?php
+    return ob_get_clean();
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// ws_render_directory_taxonomy_guide()
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Renders the situation-based filter panel for the directory.
+ *
+ * Server-rendered GET form. No AJAX required for core functionality.
+ * JS may be layered on for progressive enhancement later.
+ *
+ * Filter axes rendered (all optional — absence = "not sure" = broadest match):
+ *   1. Situation stage (ws_case_stage)
+ *   2. Concern (ws_disclosure_type or ws_adverse_action_types, routed by stage)
+ *   3. Employment sector (ws_employment_sector)
+ *   4. Disclosure target — optional, shown as "optional refinement"
+ *
+ * Wide/narrow toggle is always shown when any filter is active.
+ *
+ * @param array $context Normalized filter context from ws_resolve_filter_context().
+ * @return string HTML output.
+ */
+function ws_render_directory_taxonomy_guide( array $context ): string {
+    $current_url = esc_url( strtok( $_SERVER['REQUEST_URI'] ?? '', '?' ) );
+
+    ob_start();
+    ?>
+    <div class="ws-directory__filter-panel" role="search" aria-label="Filter organizations by your situation">
+
+        <form method="get" action="<?php echo $current_url; ?>" class="ws-filter-form">
+
+            <div class="ws-filter-form__header">
+                <h2 class="ws-filter-form__heading">Find Help For Your Situation</h2>
+                <p class="ws-filter-form__hint">Answer what applies — leave anything blank if you're not sure.</p>
+            </div>
+
+            <?php // ── Stage ────────────────────────────────────────────────── ?>
+            <fieldset class="ws-filter-group" id="ws-filter-stage">
+                <legend class="ws-filter-group__label">
+                    Where are you right now?
+                    <span class="ws-filter-group__hint">Choose the closest description.</span>
+                </legend>
+                <div class="ws-filter-group__options">
+                    <?php
+                    $stage_options = [
+                        'pre-report'         => 'I\'m thinking about reporting something',
+                        'post-report'        => 'I\'ve already reported',
+                        'retaliation-active' => 'I\'m facing retaliation right now',
+                        'litigation'         => 'I\'m in or considering legal action',
+                        'research'           => 'I\'m researching, not ready to act',
+                    ];
+                    foreach ( $stage_options as $slug => $label ) :
+                        $checked = ( $context['stage'] === $slug ) ? 'checked' : '';
+                        ?>
+                        <label class="ws-filter-option">
+                            <input type="radio"
+                                   name="<?php echo esc_attr( WS_FILTER_PARAM_STAGE ); ?>"
+                                   value="<?php echo esc_attr( $slug ); ?>"
+                                   <?php echo $checked; ?>>
+                            <?php echo esc_html( $label ); ?>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+            </fieldset>
+
+            <?php // ── Concern ──────────────────────────────────────────────── ?>
+            <?php
+            // Show concern options appropriate to the selected stage.
+            // Pre-report / research / null → disclosure types
+            // Retaliation / litigation → adverse action types
+            $show_adverse = in_array( $context['stage'], [ 'retaliation-active', 'litigation' ], true );
+
+            $concern_label = $show_adverse
+                ? 'What happened to you?'
+                : 'What are you concerned about?';
+
+            $concern_hint = $show_adverse
+                ? 'Select the action taken against you.'
+                : 'Select the type of wrongdoing you witnessed or reported.';
+
+            $concern_options = $show_adverse
+                ? ws_filter_get_adverse_action_options()
+                : ws_filter_get_disclosure_type_options();
+            ?>
+            <fieldset class="ws-filter-group" id="ws-filter-concern">
+                <legend class="ws-filter-group__label">
+                    <?php echo esc_html( $concern_label ); ?>
+                    <span class="ws-filter-group__hint"><?php echo esc_html( $concern_hint ); ?></span>
+                </legend>
+                <div class="ws-filter-group__options ws-filter-group__options--grid">
+                    <?php foreach ( $concern_options as $slug => $label ) :
+                        $checked = ( $context['concern'] === $slug ) ? 'checked' : '';
+                        ?>
+                        <label class="ws-filter-option">
+                            <input type="radio"
+                                   name="<?php echo esc_attr( WS_FILTER_PARAM_CONCERN ); ?>"
+                                   value="<?php echo esc_attr( $slug ); ?>"
+                                   <?php echo $checked; ?>>
+                            <?php echo esc_html( $label ); ?>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+            </fieldset>
+
+            <?php // ── Sector ───────────────────────────────────────────────── ?>
+            <fieldset class="ws-filter-group" id="ws-filter-sector">
+                <legend class="ws-filter-group__label">
+                    What kind of employer do you work for?
+                    <span class="ws-filter-group__hint">This helps match organizations licensed to help in your sector.</span>
+                </legend>
+                <div class="ws-filter-group__options">
+                    <?php
+                    $sector_options = [
+                        'federal-employee'     => 'Federal government',
+                        'state-local-employee' => 'State or local government',
+                        'private-sector'       => 'Private company',
+                        'nonprofit-ngo'        => 'Nonprofit or NGO',
+                        'military-defense'     => 'Military or defense',
+                                    ];
+                    foreach ( $sector_options as $slug => $label ) :
+                        $checked = ( $context['sector'] === $slug ) ? 'checked' : '';
+                        ?>
+                        <label class="ws-filter-option">
+                            <input type="radio"
+                                   name="<?php echo esc_attr( WS_FILTER_PARAM_SECTOR ); ?>"
+                                   value="<?php echo esc_attr( $slug ); ?>"
+                                   <?php echo $checked; ?>>
+                            <?php echo esc_html( $label ); ?>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+            </fieldset>
+
+            <?php // ── Target (optional refinement) ─────────────────────────── ?>
+            <fieldset class="ws-filter-group ws-filter-group--optional" id="ws-filter-target">
+                <legend class="ws-filter-group__label">
+                    Who did you report to, or plan to report to?
+                    <span class="ws-filter-group__hint">Optional — skip if you're not sure yet.</span>
+                </legend>
+                <div class="ws-filter-group__options ws-filter-group__options--grid">
+                    <?php
+                    $target_options = [
+                        'internal-supervisor' => 'My supervisor or manager',
+                        'internal-hr'         => 'Human Resources',
+                        'internal-compliance' => 'Compliance or ethics hotline',
+                        'internal-management' => 'General management',
+                        'agency-federal'      => 'A federal agency',
+                        'agency-state'        => 'A state agency',
+                        'public-media'        => 'News media or press',
+                        'law-enforcement'     => 'Law enforcement',
+                    ];
+                    foreach ( $target_options as $slug => $label ) :
+                        $checked = ( $context['target'] === $slug ) ? 'checked' : '';
+                        ?>
+                        <label class="ws-filter-option">
+                            <input type="radio"
+                                   name="<?php echo esc_attr( WS_FILTER_PARAM_TARGET ); ?>"
+                                   value="<?php echo esc_attr( $slug ); ?>"
+                                   <?php echo $checked; ?>>
+                            <?php echo esc_html( $label ); ?>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+            </fieldset>
+
+            <?php // ── Submit + Clear ────────────────────────────────────────── ?>
+            <div class="ws-filter-form__actions">
+                <button type="submit" class="ws-btn ws-btn--primary">
+                    Find Organizations
+                </button>
+                <?php if ( $context['has_filters'] ) : ?>
+                    <a href="<?php echo $current_url; ?>"
+                       class="ws-btn ws-btn--ghost ws-filter-form__clear"
+                       aria-label="Clear all filters and show all organizations">
+                        Show All
+                    </a>
+                <?php endif; ?>
+            </div>
+
+            <?php // ── Wide/Narrow toggle ───────────────────────────────────── ?>
+            <?php if ( $context['has_filters'] ) : ?>
+                <div class="ws-filter-form__breadth-controls" role="group" aria-label="Adjust search breadth">
+                    <p class="ws-filter-form__breadth-hint">
+                        Not finding what you need?
+                    </p>
+                    <a href="<?php echo esc_url( ws_filter_broaden_url( $context ) ); ?>"
+                       class="ws-btn ws-btn--outline ws-btn--sm">
+                        Widen My Search
+                        <span class="ws-filter-form__breadth-tip">Remove one filter to see more options</span>
+                    </a>
+                    <?php if ( ws_filter_can_narrow( $context ) ) : ?>
+                        <span class="ws-filter-form__breadth-tip">
+                            Add more details above to narrow results
+                        </span>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
+        </form>
+
+    </div><?php // .ws-directory__filter-panel ?>
+    <?php
+    return ob_get_clean();
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// ws_filter_sort_orgs()
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Scores and sorts an array of org rows against the active filter context.
+ *
+ * @param array $orgs     Org rows from query layer.
+ * @param array $context  Normalized filter context.
+ * @param bool  $targeted Whether these are jurisdiction-scoped orgs.
+ * @return array Sorted org rows, highest score first.
+ */
+function ws_filter_sort_orgs( array $orgs, array $context, bool $targeted ): array {
+    if ( empty( $orgs ) ) {
+        return [];
+    }
+
+    // Score each org
+    $scored = [];
+    foreach ( $orgs as $org ) {
+        $scored[] = [
+            'org'   => $org,
+            'score' => ws_filter_score_org( $org, $context, $targeted ),
+        ];
+    }
+
+    // Sort by score descending, then by org title ascending as tiebreaker
+    usort( $scored, function( $a, $b ) {
+        if ( $b['score'] !== $a['score'] ) {
+            return $b['score'] - $a['score'];
+        }
+        return strcmp(
+            $a['org']['title'] ?? '',
+            $b['org']['title'] ?? ''
+        );
+    } );
+
+    return array_column( $scored, 'org' );
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// ws_render_directory_fallback_message()
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Renders the zero-targeted-result fallback message.
+ *
+ * Only shown when targeted_count === 0 and filters are active.
+ * Nationwide orgs still render below this message.
+ *
+ * @param array $context Normalized filter context.
+ * @return string HTML output.
+ */
+function ws_render_directory_fallback_message( array $context ): string {
+    global $ws_filter_fallback_copy;
+
+    $variant = $ws_filter_fallback_copy['default'] ?? 'compassionate';
+    $message = $ws_filter_fallback_copy[ $variant ] ?? $ws_filter_fallback_copy['compassionate'];
+
+    ob_start();
+    ?>
+    <div class="ws-directory__fallback" role="status" aria-live="polite">
+        <p class="ws-directory__fallback-message"><?php echo esc_html( $message ); ?></p>
     </div>
     <?php
     return ob_get_clean();
@@ -58,13 +384,111 @@ function ws_render_directory_page( $items ) {
 
 
 // ════════════════════════════════════════════════════════════════════════════
-// ws_render_directory_listing( $items )
-//
-// Renders the full card grid from a ws_get_nationwide_assist_org_data()
-// result set. Iterates items and calls ws_render_directory_card() for each.
-//
-// @param  array  $items  Non-empty assist-org data array.
-// @return string  HTML output.
+// ws_filter_broaden_url()
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Returns a URL with the least-significant active filter removed.
+ *
+ * Removal priority (remove least specific first):
+ *   target → concern → sector → stage
+ *
+ * @param array $context Normalized filter context.
+ * @return string URL with one filter removed.
+ */
+function ws_filter_broaden_url( array $context ): string {
+    $remove_order = [
+        WS_FILTER_PARAM_TARGET,
+        WS_FILTER_PARAM_CONCERN,
+        WS_FILTER_PARAM_SECTOR,
+        WS_FILTER_PARAM_STAGE,
+    ];
+
+    foreach ( $remove_order as $param ) {
+        if ( $context[ str_replace( 'ws_', '', $param ) ] !== null ) {
+            return esc_url( remove_query_arg( $param ) );
+        }
+    }
+
+    // All filters already absent — return clean URL
+    return esc_url( strtok( $_SERVER['REQUEST_URI'] ?? '', '?' ) );
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// ws_filter_can_narrow()
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Returns true if there are filter axes the user hasn't set yet.
+ *
+ * Used to decide whether to show the "add more details to narrow" hint.
+ *
+ * @param array $context Normalized filter context.
+ * @return bool
+ */
+function ws_filter_can_narrow( array $context ): bool {
+    return ( $context['stage']   === null
+          || $context['concern'] === null
+          || $context['sector']  === null );
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// Concern option helpers
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Returns plain-language disclosure type options for the concern fieldset.
+ *
+ * @return array slug => label
+ */
+function ws_filter_get_disclosure_type_options(): array {
+    return [
+        'general-wrongdoing'            => 'General wrongdoing or law violation',
+        'public-corruption-ethics'      => 'Government corruption or ethics violation',
+        'procurement-spending-fraud'    => 'Government spending or contracting fraud',
+        'healthcare-medicare-fraud'     => 'Healthcare or Medicare fraud',
+        'securities-commodities-fraud'  => 'Securities or financial fraud',
+        'environmental-protection'      => 'Environmental harm',
+        'occupational-health-safety'    => 'Workplace safety violation',
+        'wage-hour-violations'          => 'Wage theft or unpaid overtime',
+        'tax-evasion-fraud'             => 'Tax fraud or evasion',
+        'consumer-data-protection'      => 'Data privacy or consumer protection',
+        'cybersecurity-disclosure'      => 'Cybersecurity threat',
+        'food-drug-safety'              => 'Food or drug safety',
+        'military-defense-reporting'    => 'Military or defense misconduct',
+        'election-integrity'            => 'Election integrity',
+        'classified-information'        => 'Classified information misuse',
+    ];
+}
+
+/**
+ * Returns plain-language adverse action options for the concern fieldset.
+ *
+ * @return array slug => label
+ */
+function ws_filter_get_adverse_action_options(): array {
+    return [
+        'termination'            => 'Fired or laid off',
+        'constructive-discharge' => 'Forced to resign',
+        'demotion'               => 'Demoted',
+        'suspension'             => 'Suspended',
+        'harassment'             => 'Harassment or hostile environment',
+        'pay-reduction'          => 'Pay cut or benefits reduced',
+        'disciplinary-action'    => 'Written up or disciplined',
+        'transfer'               => 'Transferred against my will',
+        'blacklisting'           => 'Blacklisted or reference sabotage',
+        'contract-non-renewal'   => 'Contract not renewed',
+        'security-clearance-action' => 'Security clearance threatened',
+        'immigration-threat'     => 'Immigration status threatened',
+        'privilege-revocation'   => 'Access or privileges revoked',
+    ];
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// ws_render_directory_listing()
 // ════════════════════════════════════════════════════════════════════════════
 
 function ws_render_directory_listing( $items ) {
@@ -72,7 +496,7 @@ function ws_render_directory_listing( $items ) {
     ?>
     <div class="ws-directory__grid" role="list">
         <?php foreach ( $items as $org ) : ?>
-            <?php echo ws_render_directory_card( $org ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+            <?php echo ws_render_directory_card( $org ); // phpcs:ignore ?>
         <?php endforeach; ?>
     </div>
     <?php
@@ -81,22 +505,11 @@ function ws_render_directory_listing( $items ) {
 
 
 // ════════════════════════════════════════════════════════════════════════════
-// ws_render_directory_card( $org )
-//
-// Renders a single assist-org card. Sections rendered:
-//   - Name (linked to CPT permalink), type badge, cost badge, attorney/anon flags
-//   - Description (plain text, wpautop applied)
-//   - Services as inline tag pills
-//   - Phone and email contact lines
-//   - CTA buttons: "Get Help Now" (intake_url) and "Visit Website" (website_url)
-//
-// @param  array  $org  Single assist-org data array (from the query layer).
-// @return string  HTML output.
+// ws_render_directory_card()  — unchanged from v3.7.1
 // ════════════════════════════════════════════════════════════════════════════
 
 function ws_render_directory_card( $org ) {
 
-    // Cost map inlined — avoids global variable scope issues.
     $cost_labels = [
         'free'            => 'Free',
         'pro-bono'        => 'Pro Bono',
@@ -105,8 +518,6 @@ function ws_render_directory_card( $org ) {
         'fee-for-service' => 'Fee for Service',
         'mixed'           => 'Mixed',
     ];
-
-    // ── Resolve display values ─────────────────────────────────────────────
 
     $type_name = ( $org['type'] instanceof WP_Term ) ? $org['type']->name : '';
     $type_slug = ( $org['type'] instanceof WP_Term ) ? $org['type']->slug : '';
@@ -121,11 +532,6 @@ function ws_render_directory_card( $org ) {
     $anchor_id = ! empty( $org['internal_id'] )
         ? 'aorg-' . sanitize_html_class( $org['internal_id'] )
         : 'aorg-' . absint( $org['id'] );
-
-    // ── Build services string ──────────────────────────────────────────────
-    //
-    // "Services Provided: Foo, Bar & Baz"
-    // Oxford-style: comma-separated, last item joined with &.
 
     $services_html = '';
     if ( ! empty( $services ) ) {
@@ -148,62 +554,45 @@ function ws_render_directory_card( $org ) {
          data-type="<?php echo esc_attr( $type_slug ); ?>"
          data-cost="<?php echo esc_attr( $cost_slug ); ?>">
 
-        <?php // ── Header: name + badge row ────────────────────────────────────── ?>
         <div class="ws-aorg-card__header">
-
-            <h2 class="ws-aorg-card__name">
-
-                <?php echo esc_html( $org['title'] ); ?>
-
-            </h2>
-
-            <div class="ws-aorg-card__badges"
-                 aria-label="<?php echo esc_attr( $org['title'] ); ?> details">
-
+            <h2 class="ws-aorg-card__name"><?php echo esc_html( $org['title'] ); ?></h2>
+            <div class="ws-aorg-card__badges" aria-label="<?php echo esc_attr( $org['title'] ); ?> details">
                 <?php if ( $type_name ) : ?>
                     <span class="ws-aorg-card__badge ws-aorg-card__badge--type"
                           data-slug="<?php echo esc_attr( $type_slug ); ?>">
                         <?php echo esc_html( $type_name ); ?>
                     </span>
                 <?php endif; ?>
-
                 <?php if ( $cost_label ) : ?>
                     <span class="ws-aorg-card__badge ws-aorg-card__badge--cost">
                         <?php echo esc_html( $cost_label ); ?>
                     </span>
                 <?php endif; ?>
-
                 <?php if ( ! empty( $org['licensed_attorneys'] ) ) : ?>
                     <span class="ws-aorg-card__badge ws-aorg-card__badge--attorneys">
                         Licensed Attorneys
                     </span>
                 <?php endif; ?>
-
                 <?php if ( ! empty( $org['anonymous'] ) ) : ?>
                     <span class="ws-aorg-card__badge ws-aorg-card__badge--anon">
                         Accepts Anonymous
                     </span>
                 <?php endif; ?>
-
             </div>
-
         </div>
 
-        <?php // ── Description ─────────────────────────────────────────────────── ?>
         <?php if ( ! empty( $org['description'] ) ) : ?>
             <div class="ws-aorg-card__description">
                 <?php echo wp_kses_post( wpautop( $org['description'] ) ); ?>
             </div>
         <?php endif; ?>
 
-        <?php // ── Services ────────────────────────────────────────────────────── ?>
         <?php if ( $services_html ) : ?>
             <div class="ws-aorg-card__services">
                 <strong>Services Provided:</strong> <?php echo $services_html; ?>
             </div>
         <?php endif; ?>
 
-        <?php // ── Contact ─────────────────────────────────────────────────────── ?>
         <?php if ( ! empty( $org['phone'] ) || ! empty( $org['email'] ) ) : ?>
             <div class="ws-aorg-card__contact">
                 <?php if ( ! empty( $org['phone'] ) ) : ?>
@@ -217,7 +606,7 @@ function ws_render_directory_card( $org ) {
                 <?php if ( ! empty( $org['email'] ) ) : ?>
                     <span class="ws-aorg-card__email">
                         <a href="mailto:<?php echo esc_attr( sanitize_email( $org['email'] ) ); ?>"
-                           aria-label="Email <?php echo esc_attr( $org['title'] ); ?>: <?php echo esc_attr( sanitize_email( $org['email'] ) ); ?>">
+                           aria-label="Email <?php echo esc_attr( $org['title'] ); ?>">
                             <?php echo esc_html( $org['email'] ); ?>
                         </a>
                     </span>
@@ -225,13 +614,6 @@ function ws_render_directory_card( $org ) {
             </div>
         <?php endif; ?>
 
-        <?php
-        // ── CTA buttons ──────────────────────────────────────────────────────
-        // Visit Website first, Get Started second.
-        // aria-label includes org name so each link is unique in the
-        // accessibility tree. "(opens in new tab)" satisfies WCAG 2.1
-        // SC 3.2.2 and SC 3.2.5 for _blank links.
-        ?>
         <div class="ws-aorg-card__actions">
             <?php if ( ! empty( $org['website_url'] ) ) : ?>
                 <a href="<?php echo esc_url( $org['website_url'] ); ?>"
@@ -263,47 +645,14 @@ function ws_render_directory_card( $org ) {
 
 // ════════════════════════════════════════════════════════════════════════════
 // ws_render_directory_empty()
-//
-// Fallback rendered when no assist-orgs match the active filter combination.
-//
-// @return string  HTML output.
 // ════════════════════════════════════════════════════════════════════════════
 
 function ws_render_directory_empty() {
     ob_start();
     ?>
     <div class="ws-directory__empty" role="status" aria-live="polite">
-        <p>No organizations match the selected filters. Try broadening your
-        search or <a href="<?php echo esc_url( remove_query_arg( [ 'aorg_type', 'aorg_sector', 'aorg_stage', 'aorg_cost' ] ) ); ?>"
-                    aria-label="Clear all directory filters and show all organizations">clear all filters</a>
-        to see all available organizations.</p>
+        <p>No organizations are available right now. Please check back soon.</p>
     </div>
     <?php
     return ob_get_clean();
-}
-
-
-// ════════════════════════════════════════════════════════════════════════════
-// ws_render_directory_taxonomy_guide()
-//
-// !! PHASE 2 PRIORITY — DO NOT REMOVE !!
-//
-// Renders the right-side taxonomy cascade filtering panel for the Directory.
-// Presents taxonomy terms as plain-language filter questions (industry,
-// disclosure type, etc.). Operates on the full nationwide assist-org dataset
-// without a jurisdiction scope — contrast with ws_render_jx_filtered() in
-// render-jurisdiction.php, which is scoped to a single jurisdiction.
-//
-// Implementation approach (Phase 2):
-//   - PHP-only: panel submits a GET form; page re-renders with $_GET params.
-//   - No AJAX required for core functionality; JS may be layered on for UX.
-//   - attach_flag is not applicable to the directory dataset.
-//   - Filtered URLs are bookmarkable and shareable.
-//
-// @return string  Empty string until Phase 2 implementation.
-// ════════════════════════════════════════════════════════════════════════════
-
-function ws_render_directory_taxonomy_guide() {
-    // Phase 2: Taxonomy cascade panel for Directory — see block comment above.
-    return '';
 }

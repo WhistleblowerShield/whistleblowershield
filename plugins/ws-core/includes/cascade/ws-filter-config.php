@@ -78,7 +78,6 @@ $ws_filter_allowed = [
         'shareholder-rights'            => 'shareholder-rights',
         'tax-evasion-fraud'             => 'tax-evasion-fraud',
         'healthcare-medicare-fraud'     => 'healthcare-medicare-fraud',
-        'pharmaceutical-safety'         => 'pharmaceutical-safety',
         'food-drug-safety'              => 'food-drug-safety',
         'environmental-protection'      => 'environmental-protection',
         'nuclear-energy-safety'         => 'nuclear-energy-safety',
@@ -116,7 +115,6 @@ $ws_filter_allowed = [
         'private-sector'     => 'private-sector',
         'nonprofit-ngo'      => 'nonprofit-ngo',
         'military-defense'   => 'military-defense',
-        'contractor-gig'     => 'contractor-gig',
         'all-sectors'        => 'all-sectors',
     ],
 
@@ -169,7 +167,6 @@ $ws_filter_score_weights = [
 
 // Stages where has_attorneys_bonus applies
 $ws_filter_attorney_stages = [
-    'pre-report',
     'retaliation-active',
     'litigation',
 ];
