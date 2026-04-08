@@ -26,6 +26,12 @@
  * @since      3.15.0
  * @version    3.15.0
  *
+ * @uses       Included by ws-core.php at core_init() — loaded before any
+ *             renderer, query builder, or shortcode that needs the constants
+ *             or config arrays. Do not include this file directly; rely on
+ *             the core loader so the global declarations run in the correct
+ *             sequence.
+ *
  * VERSION LOG
  * -----------
  * 3.15.0  Initial release. Directory filter cascade config.
@@ -175,7 +181,10 @@ $ws_filter_score_weights = [
     'targeted_org_bonus'    =>  2,
 ];
 
-// Stages where has_attorneys_bonus applies
+// Stages where has_attorneys_bonus applies.
+// pre-report intentionally excluded: that stage signals Maya (early/uncertain),
+// who needs a consult more than a referral. Skewing referral orgs with attorney
+// bonuses at that stage was a misstep — she benefits from broader options first.
 $ws_filter_attorney_stages = [
     'retaliation-active',
     'litigation',

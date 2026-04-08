@@ -9,43 +9,48 @@
  * Tabs: Identity | Scope of Service | Contact | Eligibility & Cost | Credentials
  *
  * Key fields:
- *   ws_aorg_serves_nationwide  — true = surfaces in nationwide directory query
- *   ws_jurisdiction            — taxonomy field (save_terms: 1)
- *   ws_languages               — taxonomy field; additional_languages text triggers
- *                                 'additional' term auto-assign via admin-hooks.php
- *   ws_aorg_cost_model         — taxonomy radio (save_terms: 1) — Phase 2 filter axis
- *   ws_employment_sector       — taxonomy (save_terms: 1) — Phase 2 filter axis
- *   ws_case_stage              — taxonomy (save_terms: 1) — Phase 2 filter axis
+ *   ws_aorg_serves_nationwide      — true = surfaces in nationwide directory query
+ *   ws_aorg_whistleblower_scope    — integer 1-3; drives base score in ws_filter_score_org()
+ *   ws_jurisdiction                — taxonomy field (save_terms: 1)
+ *   ws_languages                   — taxonomy field; additional_languages text triggers
+ *                                    'additional' term auto-assign via admin-hooks.php
+ *   ws_aorg_cost_model             — taxonomy radio (save_terms: 1) — Phase 2 filter axis
+ *   ws_employment_sector           — taxonomy (save_terms: 1) — Phase 2 filter axis
+ *   ws_case_stage                  — taxonomy (save_terms: 1) — Phase 2 filter axis
+ *
+ * META KEY NOTE
+ * -------------
+ * ws_aorg_internal_id is stored WITHOUT a leading underscore. ACF uses the
+ * _ws_aorg_internal_id key (underscore prefix) for its own internal field
+ * reference — writing a value there clobbers ACF's mapping. Ingest must write
+ * to ws_aorg_internal_id. The leading underscore in prompt JSON schema output
+ * is a naming convention only; ingest strips it during mapping.
  *
  * @package WhistleblowerShield
  * @since   1.0.0
- * @version 3.12.4
+ * @version 3.15.1
  *
  * VERSION
  * -------
- * 1.0.0   Initial release.
- * 3.0.0   ws_jx_code join retired; ws_jurisdiction taxonomy used throughout.
- * 3.7.0   ws_employment_sector converted from ACF checkbox to taxonomy field.
- *         ws_aorg_cost_model converted from select to taxonomy radio.
- * 3.9.0   ws_case_stage taxonomy field added.
- * 3.12.0  ws_aorg_disclosure_targets field added to Scope of Service tab.
- *         has-details sentinel pattern: ws_aorg_disclosure_targets_details
- *         textarea appears when 'has-details' term is selected.
- *         ws_ao_case_stage field added to Scope of Service tab (was in text
- *         table but missing from ACF).
- * 3.12.1  Internal Relationship tab added for non-public org contact fields.
- *         These fields are admin-only operational metadata and are not
- *         consumed by frontend/query-layer renders.
- * 3.12.2  ws_aorg_community_scope field added to Scope of Service tab.
- *         Captures community-level or city/region coverage (for orgs that are
- *         not statewide/nationwide), e.g. San Francisco Bay Area, Los Angeles.
+ * 3.15.1  ws_aorg_whistleblower_scope (number 1-3) added to Scope of Service tab.
+ *         ws_aorg_whistleblower_note (textarea) added — editorial justification for scope.
+ *         ws_aorg_common_name (text) added to Identity tab.
+ * 3.12.4  Removed explicit ws_aorg_federal_only field.
+ *         Federal-only status is derived from scope rules:
+ *         serves_nationwide = 0 and jurisdiction = ['us'].
  * 3.12.3  Scope controls expanded:
  *         - ws_aorg_serves_nationwide explicitly treated as 57-jurisdiction flag.
  *         - ws_aorg_limited_scope flag added; ws_aorg_community_scope now
  *           appears only for limited, non-nationwide orgs.
- * 3.12.4  Removed explicit ws_aorg_federal_only field.
- *         Federal-only status is derived from scope rules:
- *         serves_nationwide = 0 and jurisdiction = ['us'].
+ * 3.12.2  ws_aorg_community_scope field added to Scope of Service tab.
+ * 3.12.1  Internal Relationship tab added for non-public org contact fields.
+ * 3.12.0  ws_aorg_disclosure_targets field added to Scope of Service tab.
+ *         ws_ao_case_stage field added to Scope of Service tab.
+ * 3.9.0   ws_case_stage taxonomy field added.
+ * 3.7.0   ws_employment_sector converted from ACF checkbox to taxonomy field.
+ *         ws_aorg_cost_model converted from select to taxonomy radio.
+ * 3.0.0   ws_jx_code join retired; ws_jurisdiction taxonomy used throughout.
+ * 1.0.0   Initial release.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -129,6 +134,16 @@ function ws_register_acf_assist_org() {
 
 
             [
+                'key'          => 'field_aorg_common_name',
+                'label'        => 'Common Name / Abbreviation',
+                'name'         => 'ws_aorg_common_name',
+                'type'         => 'text',
+                'instructions' => 'Short name or abbreviation used in citations and exclusion lists — e.g., "GAP", "NWC", "PEER". Leave blank if the organization does not use a common abbreviation.',
+                'required'     => 0,
+                'placeholder'  => 'GAP',
+            ],
+
+            [
                 'key'           => 'field_aorg_logo',
                 'label'         => 'Organization Logo',
                 'name'          => 'ws_aorg_logo',
@@ -165,6 +180,36 @@ function ws_register_acf_assist_org() {
                 'ui_on_text'    => 'Nationwide',
                 'ui_off_text'   => 'Limited',
                 'default_value' => 0,
+            ],
+
+            [
+                'key'          => 'field_aorg_whistleblower_scope',
+                'label'        => 'Whistleblower Focus Score',
+                'name'         => 'ws_aorg_whistleblower_scope',
+                'type'         => 'number',
+                'instructions' => 'How dedicated is this organization to whistleblower assistance specifically? 0 = not applicable (org does not serve whistleblowers — ingest will reject; requires justification in note field); 1 = tangential (general legal aid that can assist); 2 = significant focus (one program among several); 3 = primary mission (whistleblowers are the core constituency). Used as a base score multiplier in directory sorting. A score of 0 must be explained in the Scope Justification field below — it exists only to flag LLM-sourced records that slipped through topic screening.',
+                'required'     => 1,
+                'default_value'=> 1,
+                'min'          => 0,
+                'max'          => 3,
+                'step'         => 1,
+                'prepend'      => '',
+                'append'       => '/ 3',
+            ],
+
+            [
+                'key'          => 'field_aorg_whistleblower_note',
+                'label'        => 'Scope Justification',
+                'name'         => 'ws_aorg_whistleblower_note',
+                'type'         => 'textarea',
+                'instructions' => 'Supporting quote or editorial note that justifies the scope score above. Paste a direct quote from the organization\'s own website. Required when score is 0 — explain why the record exists and what should happen to it. Used for editorial review, not surfaced publicly.',
+                'required'     => 0,
+                'rows'         => 3,
+                'new_lines'    => '',
+                'conditional_logic' => 0,
+                // Score = 0 makes this functionally required by editorial policy,
+                // not enforced by ACF conditional required (ACF can't do required-if).
+                // Ingest enforces: zero scope without a note is a hard reject.
             ],
 
             [

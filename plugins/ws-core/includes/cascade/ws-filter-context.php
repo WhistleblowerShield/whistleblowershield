@@ -241,6 +241,11 @@ function ws_filter_score_org( array $org, array $context, bool $targeted = false
     $w     = $ws_filter_score_weights;
     $score = 0;
 
+    // @todo: batch-fetch all org terms before the scoring loop using
+    // wp_get_object_terms() with an array of post IDs + fields='all_with_object_id'
+    // to replace the N×4 per-org term lookups with a single query.
+    // Not urgent at current dataset size; required before any caching pass.
+
     // Base score from whistleblower scope (1-3)
     $scope  = (int) get_post_meta( $org['id'], 'ws_aorg_whistleblower_scope', true );
     $score += max( 0, $scope ) * (int) ( $w['scope_per_level'] ?? 10 );
@@ -287,7 +292,7 @@ function ws_filter_score_org( array $org, array $context, bool $targeted = false
     }
 
     // Attorney bonus — applies when stage signals legal need
-    $attorney_stages = $ws_filter_attorney_stages ?? [ 'pre-report', 'retaliation-active', 'litigation' ];
+    $attorney_stages = $ws_filter_attorney_stages ?? [ 'retaliation-active', 'litigation' ];
     if ( $context['stage'] !== null && in_array( $context['stage'], $attorney_stages, true ) ) {
         if ( (bool) get_post_meta( $org['id'], 'ws_aorg_licensed_attorneys', true ) ) {
             $score += (int) ( $w['has_attorneys_bonus'] ?? 4 );
