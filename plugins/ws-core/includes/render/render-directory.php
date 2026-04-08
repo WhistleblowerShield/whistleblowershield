@@ -362,10 +362,9 @@ function ws_filter_sort_orgs( array $orgs, array $context, bool $targeted ): arr
  * @return string HTML output.
  */
 function ws_render_directory_fallback_message( array $context ): string {
-    global $ws_filter_fallback_copy;
-
-    $variant = $ws_filter_fallback_copy['default'] ?? 'compassionate';
-    $message = $ws_filter_fallback_copy[ $variant ] ?? $ws_filter_fallback_copy['compassionate'];
+    $copy    = ws_filter_fallback_copy();
+    $variant = $copy['default'] ?? 'compassionate';
+    $message = $copy[ $variant ] ?? ( $copy['compassionate'] ?? '' );
 
     ob_start();
     ?>

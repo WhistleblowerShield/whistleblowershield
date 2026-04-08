@@ -12,7 +12,7 @@
  *   jx-summary, jx-statute, jx-citation, jx-interpretation, ws-ag-procedure
  *
  * When an editor checks `is_major_edit` and provides a description,
- * ws_acf_log_major_edit() in admin-hooks.php intercepts the save,
+ * ws_acf_log_major_edit() in admin-major-edit-hook.php intercepts the save,
  * creates a ws-legal-update post with auto-stamped metadata, then
  * resets both fields so they are clean for the next save.
  *
@@ -26,12 +26,17 @@
  *                              Required: enforced in ws_acf_log_major_edit()
  *                              — a missing description bails with an admin
  *                              notice rather than creating an empty changelog
- *                              entry. Both fields are reset to empty on every
- *                              save where is_major_edit = 1.
+ *                              entry. Trigger fields are reset after processing.
+ *
+ *   major_edit_update_type   — select. Conditional on is_major_edit = 1.
+ *                              Label: "Legal Update Type"
+ *                              Default: auto (derive from source CPT).
+ *                              Allows explicit override for internal/other
+ *                              stub-only entries when needed.
  *
  * INTEGRATION
  * -----------
- * The save hook that consumes these fields lives in admin-hooks.php.
+ * The save hook that consumes these fields lives in admin-major-edit-hook.php.
  * See ws_acf_log_major_edit() (acf/save_post priority 20).
  *
  * @package    WhistleblowerShield
@@ -103,6 +108,36 @@ function ws_register_acf_major_edit() {
 				'instructions'      => 'Briefly describe what changed and why. This text will appear as the summary in the Legal Updates changelog entry. Both this field and the flag above are automatically cleared after saving.',
 				'rows'              => 4,
 				'placeholder'       => 'e.g. Updated filing deadline from 180 days to 300 days following the 2026 amendment to the State Whistleblower Act.',
+				'conditional_logic' => [ [ [
+					'field'    => 'field_is_major_edit',
+					'operator' => '==',
+					'value'    => '1',
+				] ] ],
+			],
+
+			// ── major_edit_update_type ────────────────────────────────────────
+			[
+				'key'               => 'field_major_edit_update_type',
+				'label'             => 'Legal Update Type',
+				'name'              => 'ws_major_edit_update_type',
+				'type'              => 'select',
+				'instructions'      => 'Optional override for the generated Legal Update type. Use Auto to derive from the source record type.',
+				'choices'           => [
+					'auto'           => 'Auto (derive from source record)',
+					'statute'        => 'Statutory Change',
+					'citation'       => 'Citation Update',
+					'summary'        => 'Summary Update',
+					'interpretation' => 'Interpretation Update',
+					'regulation'     => 'Regulatory Change',
+					'policy'         => 'Agency Policy',
+					'procedure'      => 'Agency Procedure',
+					'internal'       => 'WhistleblowerShield.org Internal Adjustment',
+					'other'          => 'Other',
+				],
+				'default_value'     => 'auto',
+				'allow_null'        => 0,
+				'ui'                => 1,
+				'return_format'     => 'value',
 				'conditional_logic' => [ [ [
 					'field'    => 'field_is_major_edit',
 					'operator' => '==',

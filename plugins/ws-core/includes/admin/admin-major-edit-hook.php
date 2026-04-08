@@ -32,6 +32,7 @@ function ws_acf_log_major_edit( $post_id ) {
 	}
 
 	$description = trim( (string) get_post_meta( $post_id, 'ws_major_edit_description', true ) );
+	$requested_type = sanitize_key( (string) get_post_meta( $post_id, 'ws_major_edit_update_type', true ) );
 
 	// ── Bail with warning if description is empty ─────────────────────────
 
@@ -40,6 +41,7 @@ function ws_acf_log_major_edit( $post_id ) {
 		// attempt: clear fields so this does not keep re-firing on every save.
 		update_post_meta( $post_id, 'ws_is_major_edit',          0  );
 		update_post_meta( $post_id, 'ws_major_edit_description', '' );
+		update_post_meta( $post_id, 'ws_major_edit_update_type', 'auto' );
 		set_transient(
 			'ws_major_edit_notice_' . get_current_user_id(),
 			'missing_description',
@@ -101,9 +103,16 @@ function ws_acf_log_major_edit( $post_id ) {
 
 	// ── Update date and type ──────────────────────────────────────────────────
 	update_post_meta( $update_id, 'ws_legal_update_date', $now_local );
-	$update_type = ( $post_type === 'ws-ag-procedure' )
+	$default_update_type = ( $post_type === 'ws-ag-procedure' )
 		? 'procedure'
 		: str_replace( 'jx-', '', $post_type );
+	$allowed_update_types = [
+		'statute', 'citation', 'summary', 'interpretation',
+		'regulation', 'policy', 'procedure', 'internal', 'other',
+	];
+	$update_type = in_array( $requested_type, $allowed_update_types, true )
+		? $requested_type
+		: $default_update_type;
 	update_post_meta( $update_id, 'ws_legal_update_type', $update_type );
 
 	// ── Law name — pull from the source post's best naming field ─────────────
@@ -137,6 +146,7 @@ function ws_acf_log_major_edit( $post_id ) {
 	// and its required metadata were written successfully.
 	update_post_meta( $post_id, 'ws_is_major_edit',          0  );
 	update_post_meta( $post_id, 'ws_major_edit_description', '' );
+	update_post_meta( $post_id, 'ws_major_edit_update_type', 'auto' );
 
 	// ── Queue success notice ──────────────────────────────────────────────
 

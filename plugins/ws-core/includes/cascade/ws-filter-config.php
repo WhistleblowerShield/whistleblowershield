@@ -28,9 +28,8 @@
  *
  * @uses       Included by ws-core.php at core_init() — loaded before any
  *             renderer, query builder, or shortcode that needs the constants
- *             or config arrays. Do not include this file directly; rely on
- *             the core loader so the global declarations run in the correct
- *             sequence.
+ *             or config accessors. Do not include this file directly; rely on
+ *             the core loader so shared helpers are available in sequence.
  *
  * VERSION LOG
  * -----------
@@ -40,16 +39,6 @@
  */
 
 defined( 'ABSPATH' ) || exit;
-
-// ── Global variable declarations ─────────────────────────────────────────────
-// These variables are defined at file scope but must be explicitly declared
-// global here so they survive into function scope when the config file is
-// included inside a function or class context by the loader.
-global $ws_filter_allowed,
-       $ws_filter_score_weights,
-       $ws_filter_attorney_stages,
-       $ws_filter_fallback_copy,
-       $ws_filter_jx_thresholds;
 
 // ── GET Parameter Names ───────────────────────────────────────────────────────
 // Provisional names — do not couple external URLs to these until reviewed
@@ -68,90 +57,98 @@ define( 'WS_FILTER_PARAM_TARGET',  'ws_target'  ); // ws_disclosure_targets (opt
 // Values listed here are the only accepted inputs. Anything else is ignored
 // and the axis is treated as absent (broadest match).
 
-$ws_filter_allowed = [
+function ws_filter_allowed_map(): array {
+    static $allowed = null;
+    if ( $allowed !== null ) {
+        return $allowed;
+    }
 
-    WS_FILTER_PARAM_STAGE => [
-        'pre-report'        => 'pre-report',
-        'post-report'       => 'post-report',
-        'retaliation-active'=> 'retaliation-active',
-        'litigation'        => 'litigation',
-        'research'          => 'research',
-    ],
+    $allowed = [
+        WS_FILTER_PARAM_STAGE => [
+            'pre-report'         => 'pre-report',
+            'post-report'        => 'post-report',
+            'retaliation-active' => 'retaliation-active',
+            'litigation'         => 'litigation',
+            'research'           => 'research',
+        ],
 
-    // Concern maps to different taxonomies depending on stage.
-    // pre-report / research → ws_disclosure_type
-    // retaliation-active / litigation → ws_adverse_action_types
-    // post-report → either (resolver picks based on stage)
-    // The resolver handles the taxonomy routing; config just validates values.
-    WS_FILTER_PARAM_CONCERN => [
-        // ws_disclosure_type children (pre-report branch)
-        'wage-hour-violations'          => 'wage-hour-violations',
-        'occupational-health-safety'    => 'occupational-health-safety',
-        'collective-bargaining'         => 'collective-bargaining',
-        'securities-commodities-fraud'  => 'securities-commodities-fraud',
-        'consumer-financial-protection' => 'consumer-financial-protection',
-        'banking-aml-compliance'        => 'banking-aml-compliance',
-        'shareholder-rights'            => 'shareholder-rights',
-        'tax-evasion-fraud'             => 'tax-evasion-fraud',
-        'healthcare-medicare-fraud'     => 'healthcare-medicare-fraud',
-        'food-drug-safety'              => 'food-drug-safety',
-        'environmental-protection'      => 'environmental-protection',
-        'nuclear-energy-safety'         => 'nuclear-energy-safety',
-        'transportation-safety'         => 'transportation-safety',
-        'public-corruption-ethics'      => 'public-corruption-ethics',
-        'procurement-spending-fraud'    => 'procurement-spending-fraud',
-        'election-integrity'            => 'election-integrity',
-        'consumer-data-protection'      => 'consumer-data-protection',
-        'cybersecurity-disclosure'      => 'cybersecurity-disclosure',
-        'intelligence-community'        => 'intelligence-community',
-        'classified-information'        => 'classified-information',
-        'export-sanctions-compliance'   => 'export-sanctions-compliance',
-        'general-wrongdoing'            => 'general-wrongdoing',
-        'military-defense-reporting'    => 'military-defense-reporting',
-        // ws_adverse_action_types (retaliation branch)
-        'termination'                   => 'termination',
-        'constructive-discharge'        => 'constructive-discharge',
-        'demotion'                      => 'demotion',
-        'suspension'                    => 'suspension',
-        'disciplinary-action'           => 'disciplinary-action',
-        'transfer'                      => 'transfer',
-        'schedule-change'               => 'schedule-change',
-        'pay-reduction'                 => 'pay-reduction',
-        'harassment'                    => 'harassment',
-        'blacklisting'                  => 'blacklisting',
-        'security-clearance-action'     => 'security-clearance-action',
-        'contract-non-renewal'          => 'contract-non-renewal',
-        'privilege-revocation'          => 'privilege-revocation',
-        'immigration-threat'            => 'immigration-threat',
-    ],
+        // Concern maps to different taxonomies depending on stage.
+        // pre-report / research → ws_disclosure_type
+        // retaliation-active / litigation → ws_adverse_action_types
+        // post-report → either (resolver picks based on stage)
+        // The resolver handles the taxonomy routing; config just validates values.
+        WS_FILTER_PARAM_CONCERN => [
+            // ws_disclosure_type children (pre-report branch)
+            'wage-hour-violations'          => 'wage-hour-violations',
+            'occupational-health-safety'    => 'occupational-health-safety',
+            'collective-bargaining'         => 'collective-bargaining',
+            'securities-commodities-fraud'  => 'securities-commodities-fraud',
+            'consumer-financial-protection' => 'consumer-financial-protection',
+            'banking-aml-compliance'        => 'banking-aml-compliance',
+            'shareholder-rights'            => 'shareholder-rights',
+            'tax-evasion-fraud'             => 'tax-evasion-fraud',
+            'healthcare-medicare-fraud'     => 'healthcare-medicare-fraud',
+            'food-drug-safety'              => 'food-drug-safety',
+            'environmental-protection'      => 'environmental-protection',
+            'nuclear-energy-safety'         => 'nuclear-energy-safety',
+            'transportation-safety'         => 'transportation-safety',
+            'public-corruption-ethics'      => 'public-corruption-ethics',
+            'procurement-spending-fraud'    => 'procurement-spending-fraud',
+            'election-integrity'            => 'election-integrity',
+            'consumer-data-protection'      => 'consumer-data-protection',
+            'cybersecurity-disclosure'      => 'cybersecurity-disclosure',
+            'intelligence-community'        => 'intelligence-community',
+            'classified-information'        => 'classified-information',
+            'export-sanctions-compliance'   => 'export-sanctions-compliance',
+            'general-wrongdoing'            => 'general-wrongdoing',
+            'military-defense-reporting'    => 'military-defense-reporting',
+            // ws_adverse_action_types (retaliation branch)
+            'termination'                   => 'termination',
+            'constructive-discharge'        => 'constructive-discharge',
+            'demotion'                      => 'demotion',
+            'suspension'                    => 'suspension',
+            'disciplinary-action'           => 'disciplinary-action',
+            'transfer'                      => 'transfer',
+            'schedule-change'               => 'schedule-change',
+            'pay-reduction'                 => 'pay-reduction',
+            'harassment'                    => 'harassment',
+            'blacklisting'                  => 'blacklisting',
+            'security-clearance-action'     => 'security-clearance-action',
+            'contract-non-renewal'          => 'contract-non-renewal',
+            'privilege-revocation'          => 'privilege-revocation',
+            'immigration-threat'            => 'immigration-threat',
+        ],
 
-    WS_FILTER_PARAM_SECTOR => [
-        'federal-employee'   => 'federal-employee',
-        'state-local-employee' => 'state-local-employee',
-        'private-sector'     => 'private-sector',
-        'nonprofit-ngo'      => 'nonprofit-ngo',
-        'military-defense'   => 'military-defense',
-        'all-sectors'        => 'all-sectors',
-    ],
+        WS_FILTER_PARAM_SECTOR => [
+            'federal-employee'     => 'federal-employee',
+            'state-local-employee' => 'state-local-employee',
+            'private-sector'       => 'private-sector',
+            'nonprofit-ngo'        => 'nonprofit-ngo',
+            'military-defense'     => 'military-defense',
+            'all-sectors'          => 'all-sectors',
+        ],
 
-    WS_FILTER_PARAM_TARGET => [
-        'internal-supervisor'   => 'internal-supervisor',
-        'internal-hr'           => 'internal-hr',
-        'internal-compliance'   => 'internal-compliance',
-        'internal-legal'        => 'internal-legal',
-        'internal-management'   => 'internal-management',
-        'agency-federal'        => 'agency-federal',
-        'agency-state'          => 'agency-state',
-        'agency-local'          => 'agency-local',
-        'legislative-federal'   => 'legislative-federal',
-        'legislative-state'     => 'legislative-state',
-        'judicial-federal'      => 'judicial-federal',
-        'judicial-state'        => 'judicial-state',
-        'public-media'          => 'public-media',
-        'public-general'        => 'public-general',
-        'law-enforcement'       => 'law-enforcement',
-    ],
-];
+        WS_FILTER_PARAM_TARGET => [
+            'internal-supervisor' => 'internal-supervisor',
+            'internal-hr'         => 'internal-hr',
+            'internal-compliance' => 'internal-compliance',
+            'internal-legal'      => 'internal-legal',
+            'internal-management' => 'internal-management',
+            'agency-federal'      => 'agency-federal',
+            'agency-state'        => 'agency-state',
+            'agency-local'        => 'agency-local',
+            'legislative-federal' => 'legislative-federal',
+            'legislative-state'   => 'legislative-state',
+            'judicial-federal'    => 'judicial-federal',
+            'judicial-state'      => 'judicial-state',
+            'public-media'        => 'public-media',
+            'public-general'      => 'public-general',
+            'law-enforcement'     => 'law-enforcement',
+        ],
+    ];
+
+    return $allowed;
+}
 
 // ── Scoring Weights — Directory Sort ─────────────────────────────────────────
 // Controls result ordering in ws_render_directory_taxonomy_guide().
@@ -161,7 +158,13 @@ $ws_filter_allowed = [
 // Adjust here when filter log data suggests reweighting. Promote to
 // resolver constants when weights prove stable across multiple review cycles.
 
-$ws_filter_score_weights = [
+function ws_filter_score_weights(): array {
+    static $weights = null;
+    if ( $weights !== null ) {
+        return $weights;
+    }
+
+    $weights = [
 
     // Base weight per scope level (1, 2, or 3)
     // Applied as: scope_score = scope_level * scope_per_level
@@ -179,16 +182,18 @@ $ws_filter_score_weights = [
 
     // Tiebreaker: jurisdiction-scoped org vs nationwide
     'targeted_org_bonus'    =>  2,
-];
+    ];
+
+    return $weights;
+}
 
 // Stages where has_attorneys_bonus applies.
 // pre-report intentionally excluded: that stage signals Maya (early/uncertain),
 // who needs a consult more than a referral. Skewing referral orgs with attorney
 // bonuses at that stage was a misstep — she benefits from broader options first.
-$ws_filter_attorney_stages = [
-    'retaliation-active',
-    'litigation',
-];
+function ws_filter_attorney_stages(): array {
+    return [ 'retaliation-active', 'litigation' ];
+}
 
 // ── Directory Ordering Rules ──────────────────────────────────────────────────
 // The directory never suppresses results. Nationwide/general orgs are always
@@ -211,7 +216,13 @@ define( 'WS_FILTER_DIR_ZERO_RESULT_THRESHOLD', 0 ); // targeted orgs only
 // Used when targeted_count === 0. Renderer picks the variant; default is
 // 'compassionate'. A/B testing or context-based selection is a future concern.
 
-$ws_filter_fallback_copy = [
+function ws_filter_fallback_copy(): array {
+    static $copy = null;
+    if ( $copy !== null ) {
+        return $copy;
+    }
+
+    $copy = [
 
     'default' => 'compassionate',
 
@@ -220,7 +231,10 @@ $ws_filter_fallback_copy = [
     'concise' => "We could not find a close match for all selected details. The organizations below are trusted and can help across a broad range of whistleblower situations.",
 
     'formal' => "WhistleblowerShield is committed to helping you identify an appropriate assistance organization. Based on the criteria provided, your matter appears broader than our current filter model. The organizations below are established, reputable, and capable of supporting a wide spectrum of needs.",
-];
+    ];
+
+    return $copy;
+}
 
 // ── Jurisdiction Statute Cascade Thresholds ───────────────────────────────────
 // Near-zero threshold for the JX statute cascade (Phase 2 proper).
@@ -235,17 +249,21 @@ $ws_filter_fallback_copy = [
 define( 'WS_FILTER_JX_THRESHOLD_MIN', 3    );
 define( 'WS_FILTER_JX_THRESHOLD_PCT', 0.10 );
 
-$ws_filter_jx_thresholds = [
-    'wy' => 2,
-    'as' => 1,
-    'gu' => 1,
-    'mp' => 1,
-    'vi' => 1,
-    'pr' => 2,
-];
+function ws_filter_jx_threshold_overrides(): array {
+    return [
+        'wy' => 2,
+        'as' => 1,
+        'gu' => 1,
+        'mp' => 1,
+        'vi' => 1,
+        'pr' => 2,
+    ];
+}
 
 // ── Thin Result Copy ──────────────────────────────────────────────────────────
 // Used when result count <= threshold in the JX statute cascade.
 // Always shows matched results alongside the message — never hides valid matches.
 
-$ws_filter_thin_result_copy = "WhistleblowerShield is dedicated to helping you find the right assistance organization. Based on what you shared, your situation appears broader than our current filter set. The organizations below are trusted, reputable, and equipped to help across a wide range of needs.";
+function ws_filter_thin_result_copy(): string {
+    return "WhistleblowerShield is dedicated to helping you find the right assistance organization. Based on what you shared, your situation appears broader than our current filter set. The organizations below are trusted, reputable, and equipped to help across a wide range of needs.";
+}

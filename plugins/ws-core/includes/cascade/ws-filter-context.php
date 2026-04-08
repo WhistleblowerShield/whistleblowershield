@@ -68,15 +68,6 @@ add_filter( 'query_vars', function( $vars ) {
  * @return array Normalized filter context. See file header for shape.
  */
 function ws_resolve_filter_context(): array {
-    global $ws_filter_allowed;
-
-    if ( ! is_array( $ws_filter_allowed ) ) {
-        $ws_filter_allowed = [];
-        if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-            error_log( '[ws-core] ws_resolve_filter_context(): ws_filter_allowed was not initialized as an array.' );
-        }
-    }
-
     // ── 1. Sanitize raw input ─────────────────────────────────────────────
     // Use get_query_var() first (registered params on pretty permalink pages),
     // fall back to $_GET for non-pretty permalink setups or direct access.
@@ -143,17 +134,13 @@ function ws_resolve_filter_context(): array {
  * @return string|null
  */
 function ws_filter_validate( string $value, string $param ): ?string {
-    global $ws_filter_allowed;
-
-    if ( ! is_array( $ws_filter_allowed ) ) {
-        return null;
-    }
+    $allowed_map = ws_filter_allowed_map();
 
     if ( $value === '' ) {
         return null;
     }
 
-    $allowed = $ws_filter_allowed[ $param ] ?? [];
+    $allowed = $allowed_map[ $param ] ?? [];
 
     if ( empty( $allowed ) || ! isset( $allowed[ $value ] ) ) {
         return null;
@@ -226,7 +213,7 @@ function ws_filter_is_adverse_action_slug( string $slug ): bool {
  * Higher score = more relevant. Used to sort results within each tier
  * (targeted orgs sorted by score desc, then nationwide orgs by score desc).
  *
- * Weights are defined in $ws_filter_score_weights in ws-filter-config.php.
+ * Weights are defined in ws_filter_score_weights() in ws-filter-config.php.
  * Adjust weights there; do not hardcode numbers here.
  *
  * @param array $org     Normalized org row from ws_q_build_assist_org_row().
@@ -235,9 +222,7 @@ function ws_filter_is_adverse_action_slug( string $slug ): bool {
  * @return int Score.
  */
 function ws_filter_score_org( array $org, array $context, bool $targeted = false ): int {
-    global $ws_filter_score_weights, $ws_filter_attorney_stages;
-
-    $w     = $ws_filter_score_weights;
+    $w     = ws_filter_score_weights();
     $score = 0;
 
     // @todo: batch-fetch all org terms before the scoring loop using
@@ -291,7 +276,7 @@ function ws_filter_score_org( array $org, array $context, bool $targeted = false
     }
 
     // Attorney bonus — applies when stage signals legal need
-    $attorney_stages = $ws_filter_attorney_stages ?? [ 'retaliation-active', 'litigation' ];
+    $attorney_stages = ws_filter_attorney_stages();
     if ( $context['stage'] !== null && in_array( $context['stage'], $attorney_stages, true ) ) {
         if ( (bool) get_post_meta( $org['id'], 'ws_aorg_licensed_attorneys', true ) ) {
             $score += (int) ( $w['has_attorneys_bonus'] ?? 4 );
