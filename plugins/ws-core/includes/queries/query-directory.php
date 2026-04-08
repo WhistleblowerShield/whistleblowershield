@@ -112,6 +112,7 @@ function ws_get_assist_org_data( $jx_term_id ) {
     foreach ( $q->posts as $org ) {
         $rows[] = ws_q_build_assist_org_row( $org->ID );
     }
+    wp_reset_postdata();
 
     return $rows;
 }
@@ -139,14 +140,6 @@ function ws_get_nationwide_assist_org_data( $filters = [] ) {
             ],
         ],
     ];
-
-    if ( ! empty( $filters['type'] ) ) {
-        $query_args['tax_query'][] = [
-            'taxonomy' => 'ws_aorg_type',
-            'field'    => 'slug',
-            'terms'    => sanitize_key( $filters['type'] ),
-        ];
-    }
 
     if ( ! empty( $filters['sector'] ) ) {
         $query_args['tax_query'][] = [
@@ -193,6 +186,7 @@ function ws_get_nationwide_assist_org_data( $filters = [] ) {
     foreach ( $q->posts as $org ) {
         $rows[] = ws_q_build_assist_org_row( $org->ID );
     }
+    wp_reset_postdata();
 
     return $rows;
 }

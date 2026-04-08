@@ -35,6 +35,16 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// ── Global variable declarations ─────────────────────────────────────────────
+// These variables are defined at file scope but must be explicitly declared
+// global here so they survive into function scope when the config file is
+// included inside a function or class context by the loader.
+global $ws_filter_allowed,
+       $ws_filter_score_weights,
+       $ws_filter_attorney_stages,
+       $ws_filter_fallback_copy,
+       $ws_filter_jx_thresholds;
+
 // ── GET Parameter Names ───────────────────────────────────────────────────────
 // Provisional names — do not couple external URLs to these until reviewed
 // for readability at pre-launch stage.

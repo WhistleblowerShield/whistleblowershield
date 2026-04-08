@@ -428,6 +428,12 @@ function ws_filter_broaden_url( array $context ): string {
  * @return bool
  */
 function ws_filter_can_narrow( array $context ): bool {
+    // Only show the "add more details" hint when at least one filter is
+    // already active AND at least one axis is still unset. On a fresh
+    // unfiltered page there is nothing to narrow.
+    if ( ! $context['has_filters'] ) {
+        return false;
+    }
     return ( $context['stage']   === null
           || $context['concern'] === null
           || $context['sector']  === null );

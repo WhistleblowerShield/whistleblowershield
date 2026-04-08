@@ -1,4 +1,3 @@
-
 [07-Apr-2026 00:00:59 UTC] Automatic updates starting...
 [07-Apr-2026 00:00:59 UTC] Automatic updates complete.
 [07-Apr-2026 02:21:17 UTC] PHP Warning:  ws_jx_term_by_code(): uppercase code 'CA' — use lowercase to match ws_jurisdiction taxonomy slugs. in /home/customer/www/whistleblowershield.org/public_html/wp-content/plugins/ws-core/includes/queries/query-helpers.php on line 96
@@ -80,3 +79,17 @@
 [08-Apr-2026 02:00:07 UTC] WS FILTER VALIDATE: param=ws_concern value=occupational-health-safety allowed_count=0 match=no
 [08-Apr-2026 02:00:07 UTC] WS FILTER VALIDATE: param=ws_sector value=state-local-employee allowed_count=0 match=no
 [08-Apr-2026 02:00:07 UTC] WS FILTER VALIDATE: param=ws_target value=internal-hr allowed_count=0 match=no
+[08-Apr-2026 02:29:17 UTC] WS FILTER RAW: Array
+(
+    [ws_stage] => retaliation-active
+    [ws_concern] => occupational-health-safety
+    [ws_sector] => state-local-employee
+    [ws_target] => internal-hr
+)
+
+[08-Apr-2026 02:29:17 UTC] WS FILTER CONST CHECK: STAGE=ws_stage
+[08-Apr-2026 02:29:17 UTC] WS FILTER ALLOWED COUNT: 4
+[08-Apr-2026 02:29:17 UTC] WS FILTER VALIDATE: param=ws_stage value=retaliation-active allowed_count=5 match=yes
+[08-Apr-2026 02:29:17 UTC] WS FILTER VALIDATE: param=ws_concern value=occupational-health-safety allowed_count=37 match=yes
+[08-Apr-2026 02:29:17 UTC] WS FILTER VALIDATE: param=ws_sector value=state-local-employee allowed_count=6 match=yes
+[08-Apr-2026 02:29:17 UTC] WS FILTER VALIDATE: param=ws_target value=internal-hr allowed_count=15 match=yes

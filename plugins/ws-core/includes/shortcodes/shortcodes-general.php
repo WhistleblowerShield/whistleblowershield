@@ -36,13 +36,10 @@
  *       and alphabetical grid. Placed on a standalone WP page — not called
  *       by the assembler. Moved here from shortcodes-jurisdiction.php (v3.6.0).
  *
- *   [ws_assist_org_directory type="" sector="" stage="" cost_model=""]
- *       Renders the nationwide assist-org directory. Shortcode attributes
- *       pre-filter results; all attributes are optional (omit = show all).
- *       URL query params aorg_type, aorg_sector, aorg_stage, aorg_cost
- *       take priority over shortcode attributes, enabling deep-linking from
- *       jurisdiction pages. Data from ws_get_nationwide_assist_org_data();
- *       render via ws_render_directory_page() in render-directory.php.
+ *   [ws_assist_org_directory]
+ *       Renders the nationwide assist-org directory. Filter state lives
+ *       in GET params (ws_stage, ws_concern, ws_sector, ws_target).
+ *       Shortcode attributes are unused — all filtering via GET params
  *
  * VERSION
  * -------
@@ -374,8 +371,14 @@ function ws_shortcode_assist_org_directory( $atts ) {
     // ── Fetch results ─────────────────────────────────────────────────────
     // Targeted: jurisdiction-scoped orgs (empty for directory — directory
     // is nationwide by definition; targeted tier reserved for JX pages).
+    //
+    // For the directory, fetch ALL published nationwide orgs unfiltered.
+    // Taxonomy filtering is handled by ws_filter_score_org() in the render
+    // layer — scoring ranks relevant orgs to the top rather than excluding
+    // non-matches. A strict tax_query AND across four axes would return
+    // almost nothing and hide valid orgs from users.
     $targeted   = [];
-    $nationwide = ws_get_nationwide_assist_org_data( $query_filters );
+    $nationwide = ws_get_nationwide_assist_org_data( [] );
 
     // ── Render ───────────────────────────────────────────────────────────
     return ws_render_directory_page( $targeted, $nationwide, $context );
