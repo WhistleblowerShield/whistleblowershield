@@ -949,7 +949,7 @@ limited to {$list} — you must:
   2. Leave the array empty if no valid child slug applies
   3. Note the removed slug in json_run_notes
   4. Set with_errors: true in the integrity block
-    5. Add to error_details: "[RECORD_ID]: Removed parent slug [SLUG] from
+  5. Add to error_details: "[RECORD_ID]: Removed parent slug [SLUG] from
      [FIELD] — no matching child slug found"
 
 A parent slug in a record array corrupts the database. This self-check
@@ -982,9 +982,9 @@ Propose it.
 
 Before proposing, consider two things — not as gates, but as guidance:
 
-    1. Is this concept likely to appear in other records across other
-         jurisdictions? If yes, it is a strong candidate. If it feels entirely
-         specific to one record in one jurisdiction, note it in json_run_notes
+  1. Is this concept likely to appear in other records across other
+     jurisdictions? If yes, it is a strong candidate. If it feels entirely
+     specific to one record in one jurisdiction, note it in json_run_notes
      as well so the human reviewer has full context.
 
   2. Can this concept be accurately represented by combining three or fewer
@@ -993,7 +993,7 @@ Before proposing, consider two things — not as gates, but as guidance:
      A workaround combination and a clean proposal are not mutually exclusive.
 
 Do not propose new taxonomy tables or new parent terms. Use json_run_notes
-to recommend them
+to recommend them.
 
   {
     "taxonomy":   "[REGISTERED TAXONOMY TABLE SLUG]",
@@ -1034,8 +1034,8 @@ you can make to the reliability of this platform.
 }
 
 with_errors must be true if ANY of the following occurred:
-    - record_count is less than requested (fewer records returned than requested)
-    - A required record could not be researched with sufficient confidence
+  - record_count is less than requested (fewer records returned than requested)
+  - A required record could not be researched with sufficient confidence
   - Any schema rule was knowingly violated
   - A citation was omitted because a URL could not be verified
   - A SOL value was derived rather than explicit (limit_ambiguous: true)
@@ -1043,9 +1043,9 @@ with_errors must be true if ANY of the following occurred:
   - Anything a human reviewer should know about this batch
 
 Fail-safe policy:
-    - It is acceptable to fail one or more records instead of guessing.
-    - It is acceptable to fail the full batch if source quality is insufficient.
-    - In either case, set with_errors: true and explain exactly why.
+  - It is acceptable to fail one or more records instead of guessing.
+  - It is acceptable to fail the full batch if source quality is insufficient.
+  - In either case, set with_errors: true and explain exactly why.
 
 OMISSION RULE: If with_errors is false, omit error_details and error_count
 entirely. The ingest tool treats a missing key differently from an empty array.
@@ -1055,29 +1055,21 @@ entirely. The ingest tool treats a missing key differently from an empty array.
 BLOCK;
 }
 
-function ws_generate_assist_org_prompt( array $scope ): string {
-    $jx              = strtoupper( sanitize_text_field( $scope['jx_id'] ) );
-    $jx_name         = sanitize_text_field( $scope['jx_name'] );
-    $proposal_count  = max( 1, (int) ( $scope['proposal_count'] ?? 7 ) );
-    $nationwide_only = ! empty( $scope['nationwide_only'] );
-    $focus_notes     = sanitize_textarea_field( (string) ( $scope['assist_org_focus_notes'] ?? '' ) );
-    $excludes        = sanitize_textarea_field( (string) ( $scope['exclusion_list'] ?? '' ) );
-
-    $out = <<<'STATIC'
+function ws_prompt_assist_org_research_block(): string {
+    return <<<'BLOCK'
 You are a research assistant building a vetted shortlist of assist organizations
-for WhistleblowerShield.org fallback routing. When our database, you helped build,
-doesn't surface a specific shortlist of targeted assistance organizations, the
-fallback list must be ready to help the end users in need.
+for WhistleblowerShield.org fallback routing.
 
-Persona(1) Maya  - Considering coming forward to expose wrongdoing.
-Persona(2) James - Has already come forward and is under direct retaliation.
+Persona(1) Maya  - considering coming forward to expose wrongdoing.
+Persona(2) James - has already come forward and is under direct retaliation.
 
-
-Objective: return a high-confidence, low-noise batch for Maya and James
-where the user needs direct help or a fast path to qualified help.
+Objective: return a high-confidence, low-noise batch where the user needs
+direct help or a fast path to qualified help.
 
 Keep the batch tight and practical. Do not return more than requested records.
 Do not return records where you are not confident about included data.
+
+---
 
 RECORD SCHEMA
 
@@ -1091,7 +1083,7 @@ RECORD SCHEMA
   "homepage_url_status": "[required - verified | redirects | unverified]",
   "verified_date_url": "[YYYY-MM-DD HH:MM UTC - omit if unverified]",
   "intake_or_contact_url": "[omit if unavailable or unverified]",
-  "nationwide_example": "[acceptable blank string if not found]",
+  "nationwide_example": "[required string - use \"\" if not found]",
 
   "disclosure_types": [],
   "languages_supported": [],
@@ -1105,7 +1097,7 @@ RECORD SCHEMA
   "has_attorneys": "[required - yes | no | unclear]",
   "case_stages": [],
   "case_stage_details": "[omit unless case_stages includes other]",
-  "disclosure_targets": [acceptable blank array if undetermined],
+  "disclosure_targets": [],
   "disclosure_targets_details": "[omit unless disclosure_targets includes has-details]",
 
   "coverage_exceptions": "[omit if none]",
@@ -1114,110 +1106,77 @@ RECORD SCHEMA
   "_review_notes": "[required - use default note if none]"
 }
 
+---
 
-PER RECORD.KEY DETAILS
-Each candidate organization must include as much verified information as possible:
-  - organization_name         [required - full official name]
-  - official_homepage_url     [required - official domain name URL]
-  - general_description       [required - 3 to 5 sentences describing nature of organization]
--IMPORTANT- It is expected and permissible to omit record entirely, if any of the above three cannot be confidently verified.
+FIELD RULES
 
-The following record.keys are noted as acceptable to leave blank ("" or []):
-record.nationwide_example: ""
-record.disclosure_targets: []
+Hard fail record rule:
+  - organization_name, official_homepage_url, and general_description are all
+    required. If any one cannot be confidently verified, omit the full record.
 
-Unless 'required' omit any record.key you cannot confidently find data for.
-POSSIBLE OMIT LIST:
-record.source_url
-record.common_name
-record.verified_date_url
-record.intake_or_contact_url
-record.disclosure_types
-record.languages_additional
-record.assistance_types
-record.employment_sectors
-record.cost_model
-record.services_provided
-record.process_types
-record.case_stage_details
-record.disclosure_targets_details
-record.coverage_exceptions
+Required keys:
+  - homepage_url_status: verified | redirects | unverified
+  - anonymous_pre_consult_possible: yes | no | unclear
+  - has_attorneys: yes | no | unclear
+  - nationwide_example: required string; use "" when no confident quote exists
+  - languages_supported: required array; include at least one language
+  - case_stages: required array; if uncertain, use ["other"] and explain in case_stage_details
+  - disclosure_targets: required array; if no confident child slug, use []
+  - whistleblower_scope: required integer (0-3)
+  - whistleblower_note: required quote or inclusion rationale
+  - _review_notes: required; default to "researcher had no notes on current record"
 
-REQUIRED RECORD.KEYS:
-record.anonymous_pre_consult_possible is 'yes' when the official homepage expresses anonymity is possible, it is 'no' when the official homepage expresses anonymity is not possible, in all other cases it is 'unclear'.
-record.has_attorneys                  is 'yes' when the official homepage expresses licensed attorneys are available, it is 'no' when the official homepage expresses licensed attorneys are not available, in all other cases it is 'unclear'.
-record.homepage_url_status            is 'verified' only if you can access the official homepage, is 'redirects' when the official homepage links to an official page that is not the homepage, in all other cases is 'unverified'.
-record.nationwide_example             is required as a string. If no quote from source page or mission statement can be confidently located, use "" (do not omit). When nationwide_example is "", add brief reason in _review_notes.
-record.languages_supported            must include at least one language, prioritize organizations that have 'english', but do not exclude organizations that provide for languages that are not 'english'.
-record.whistleblower_scope            determine the scope (0 to 3) which organization supports whistleblower concerns, see inline examples.
-record.whistleblower_note             use quoted text from source url to detail whistleblower_scope rating, or detail reason for inclusion if whistleblower_scope is zero.
-record.case_stages                    do not omit, do not leave blank, use single slug 'other' and provide details in case_stage_details if case_stages are difficult to determine confidently.
-record.disclosure_targets             is required as an array. If no confident child slug can be assigned, use [] (do not omit key). When disclosure_targets is [], add a brief reason in _review_notes.
-record._review_notes                  do not omit, do not leave blank, if you have no specific notes use default message: "researcher had no notes on current record".
+Optional keys (omit when unknown unless explicitly required above):
+  source_url, common_name, verified_date_url, intake_or_contact_url,
+  disclosure_types, languages_additional, assistance_types, employment_sectors,
+  cost_model, services_provided, process_types, case_stage_details,
+  disclosure_targets_details, coverage_exceptions
 
-  - source_url                [if organization information was sourced from anywhere other than an official domain, provide complete URL to source page, omit if official domain homepage was used]
-  - common_name               [publicly recognizable shorthand name or acronym for organization, omit if unavailable]
-  - homepage_url_status       [required - verified | redirects | unverified]
-  - verified_date_url         [YYYY-MM-DD HH:MM UTC, omit if unverified]
-  - intake_or_contact_url     [omit if unverified or unavailable]
-  - nationwide_example        [required - quoted sentence up to 3 from source page or mission statement that shows nationwide intent, acceptable to leave blank if not found]
-  - disclosure_types          [Use Approved Taxonomy CHILD slugs from ws_disclosure_type, multiple may apply, omit if unavailable or ambiguous]
-  - languages_supported       [required - Use Approved Taxonomy slugs from ws_languages, list all you can find]
-  - languages_additional      [If languages_supported includes 'additional' slug, list languages not covered in taxonomy, omit if no additional languages]
-  - assistance_types          [Use Approved Taxonomy slugs from ws_aorg_type table, best fit single slug only, omit if unavailable or ambiguous]
-  - employment_sectors        [Use Approved Taxonomy slugs from ws_employment_sector table, multiple may apply, omit if unavailable or ambiguous]
-  - cost_model                [Use Approved Taxonomy slugs from ws_aorg_cost_model table, best fit single slug only, omit if unavailable or ambiguous]
-  - services_provided         [Use Approved Taxonomy slugs from ws_aorg_service table, multiple may apply, omit if unavailable or ambiguous]
-  - process_types             [Use Approved Taxonomy slugs from ws_process_type table, multiple may apply, omit if unavailable or ambiguous]
-  - anonymous_pre_consult_possible [required - yes | no | unclear]
-  - has_attorneys                  [required - yes | no | unclear]
-  - case_stages                    [required - Use Approved Taxonomy slugs from ws_case_stage table, multiple may apply, if 'other' slug is selected provide details in case_stage_details]
-  - case_stage_details             [If case_stages array includes slug 'other' provide details, omit if case_stages does not include slug 'other']
-  - disclosure_targets             [required - Use Approved Taxonomy CHILD slugs from ws_disclosure_targets, multiple may apply, may use 'has-details', it is acceptable to be left blank]
-  - disclosure_targets_details     [If disclosure_targets includes 'has-details', provide details, omit if disclosure_targets does not include 'has-details']
-  - coverage_exceptions            [freetext describing any coverage gaps self reported by the organization, example: nationwide except texas, list all gaps found, omit if none]
-  - whistleblower_scope            [required - INTEGER - rate 0 to 3, example(1) not whistleblower specific, general help such as ABA lawyer referral, example(2) sub-set of whistleblower concerns such as Tax Payers Against Fraud (securities, ethics, fraud), example(3) all whistleblower concerns such as Whistleblowers of America, set as 0 if scope is unclear]
-  - whistleblower_note             [required - quoted sentence up to 3 from source page or mission statement that describes scope of whistleblower assistance, if whistleblower_scope is 0 describe reason for inclusion]
-  - _review_notes                  [required - free form notes about omitted data or notable detail of organization not covered in schema, example: good notes may include why services_provided was hard to determine, second example: organization is well-regarded but currently not accepting intake clients. Be verbose about details the human reviewer may need to know]
+Taxonomy usage:
+  - disclosure_types: ws_disclosure_type child slugs only
+  - disclosure_targets: ws_disclosure_targets child slugs only; has-details allowed
+  - languages_supported: ws_languages
+  - assistance_types: ws_aorg_type (best-fit single slug)
+  - employment_sectors: ws_employment_sector
+  - cost_model: ws_aorg_cost_model (best-fit single slug)
+  - services_provided: ws_aorg_service
+  - process_types: ws_process_type
+  - case_stages: ws_case_stage
 
-OTHER GOOD NOTE EXAMPLES
-Intake limitations:
-- "Intake form requires creating an account before any information about services is visible — may deter anonymous users"
-- "Phone hotline listed but website states 2-3 week callback wait; not suitable for urgent retaliation situations"
-- "Intake is through a third-party scheduling tool that requires a valid email address"
+---
 
-Scope edge cases:
-- "Homepage claims nationwide but FAQ states they only take cases in states where they have licensed attorneys — currently 23 states"
-- "Primarily serves federal employees despite broad mission language; private sector cases accepted but rarely taken"
-- "Focuses on high-value False Claims Act cases; unlikely to take smaller retaliation-only matters"
+_review_notes examples (good):
+  - intake requires account creation before service details
+  - stated callback delay is too long for urgent retaliation cases
+  - "nationwide" claim is narrowed in FAQ to licensed states only
+  - secure drop/media coaching capability not represented in current taxonomy
 
-Practical warnings:
-- "Organization is well-regarded but currently has a stated 6-month intake backlog as of last review"
-- "Free consultation offered but representation is contingency only with minimum case value threshold"
-- "Spanish-language support listed but only available through a partner referral, not direct intake"
-
-Taxonomy gaps:
-- "Provides media coaching and source protection services not captured by any ws_aorg_service slug"
-- "Operates a secure document submission system for anonymous tips — closer to a secure drop than a hotline"
-- "Researcher has a new proposed taxonomy term, where it applies, and with detailed reason"
+---
 
 ORGANIZATION INCLUSION RULES
-  - Must provide direct help or referral pathway.
-  - Prioritize actionable intake pathways over general information pages.
+  - Must provide direct help or a referral pathway.
+  - Prioritize actionable intake paths over informational pages.
 
 ORGANIZATION EXCLUSION RULES
   - Exclude pure government reporting channels.
-  - Exclude media tip lines without user support pathways.
-  - Exclude entries with broken URLs or unclear user path.
-  - Exclude private law firms. A law firm is a for-profit legal practice whose
-    primary intake model is billable-hour engagement. Organizations offering
-    contingency-fee representation, pro bono services, or legal aid are not
-    excluded under this rule — only firms whose standard model is charging
-    by the hour regardless of outcome.
+  - Exclude media tip lines without user-support pathways.
+  - Exclude broken URLs or unclear user paths.
+  - Exclude private law firms with billable-hour primary intake.
+    (Contingency-fee, pro bono, and legal-aid models are not excluded by default.)
 
-STATIC;
+BLOCK;
+}
 
-    $out  = ws_prompt_what_you_are_producing( 'assistance organization records' ) . $out;
+function ws_generate_assist_org_prompt( array $scope ): string {
+    $jx              = strtoupper( sanitize_text_field( $scope['jx_id'] ) );
+    $jx_name         = sanitize_text_field( $scope['jx_name'] );
+    $proposal_count  = max( 1, (int) ( $scope['proposal_count'] ?? 7 ) );
+    $nationwide_only = ! empty( $scope['nationwide_only'] );
+    $focus_notes     = sanitize_textarea_field( (string) ( $scope['assist_org_focus_notes'] ?? '' ) );
+    $excludes        = sanitize_textarea_field( (string) ( $scope['exclusion_list'] ?? '' ) );
+
+    $out  = ws_prompt_what_you_are_producing( 'assistance organization records' );
+    $out .= ws_prompt_assist_org_research_block();
     $out .= ws_prompt_assist_org_meta_schema();
     $out .= ws_prompt_taxonomy_tables( 'ws-assist-org' );
     $out .= ws_prompt_integrity_block();
@@ -1458,7 +1417,7 @@ RECORD SCHEMA
   "jurisdiction_id":   "[TWO-LETTER CODE]",
   "citation_id":       "[JX]-CIT-[YEAR]-[SHORT-SLUG e.g. NJ-CIT-2003-DZWONAR]",
   "parent_statute_id": "[STATUTE_ID this citation directly supports e.g. NJ-34:19-1]",
-    "parent_common_law_id": "[OPTIONAL DOCTRINE_ID when citation supports common-law e.g. PA-CL-WRONGFUL-DISCHARGE]",
+  "parent_common_law_id": "[OPTIONAL DOCTRINE_ID when citation supports common-law e.g. PA-CL-WRONGFUL-DISCHARGE]",
   "case_name":         "[FULL CASE NAME e.g. Dzwonar v. McDevitt]",
   "court":             "[COURT SHORTHAND from list above e.g. NJ-SUP]",
   "effective_date":    "[YYYY-MM-DD — operative date of ruling]",
@@ -1484,9 +1443,8 @@ RECORD SCHEMA
     "is_pdf":      "[omit if false]"
   },
 
-  "quality":          "[high | moderate | low]",
-
-    "_review_notes":     ""
+  "quality": "[high | moderate | low]",
+  "_review_notes": ""
 }
 
 ---
@@ -1560,7 +1518,7 @@ ENDSCHEMA;
 
 // ── Meta block schema (shared) ────────────────────────────────────────────
 
-function ws_prompt_meta_schema( string $record_type ): string {
+function ws_prompt_meta_schema(): string {
     return <<<ENDSCHEMA
 
 META BLOCK SCHEMA
@@ -1585,6 +1543,39 @@ batch_completed: Always use UTC. Format: YYYY-MM-DD HH:MM UTC.
 Written last, after all records, proposals, and calculated fields are final.
 
 ENDSCHEMA;
+}
+
+function ws_prompt_legal_research_intro(): string {
+    $out  = "You are a legal research assistant generating structured JSON data for\n";
+    $out .= "WhistleblowerShield.org, a public-interest reference site covering U.S.\n";
+    $out .= "whistleblower protections across all 57 U.S. jurisdictions. Please read\n";
+    $out .= "the entire prompt before execution.\n\n";
+    return $out;
+}
+
+function ws_prompt_case_law_source_block(): string {
+    return ws_prompt_citation_rules()
+        . ws_prompt_get_court_shorthand();
+}
+
+function ws_prompt_case_taxonomy_discipline_block( string $label ): string {
+    $mode = strtoupper( trim( $label ) );
+    if ( $mode === 'INTERPRETATION' ) {
+        return "TAXONOMY TAGGING — INTERPRETATION DISCIPLINE\n\n"
+            . "Tag only what this specific ruling directly interprets or clarifies.\n"
+            . "In almost all cases a court ruling addresses exactly one taxonomy axis.\n"
+            . "Tag one term with confidence. If the ruling genuinely addresses multiple\n"
+            . "axes, tag all and populate _multi_taxonomy_notes.\n\n";
+    }
+
+    return "TAXONOMY TAGGING — CITATION DISCIPLINE\n\n"
+        . "Tag only what this specific ruling directly addresses. In almost all cases\n"
+        . "a citation addresses exactly one taxonomy axis — tag one term with confidence\n"
+        . "rather than several terms with uncertainty.\n\n"
+        . "If and only if the ruling explicitly and materially addresses multiple\n"
+        . "taxonomy axes in a single holding, tag all that apply AND populate\n"
+        . "_multi_taxonomy_notes with a prose explanation of how the ruling touched\n"
+        . "each axis. Multiple tags without _multi_taxonomy_notes is an error.\n\n";
 }
 
 function ws_prompt_what_you_are_producing( string $records_label ): string {
@@ -1689,10 +1680,18 @@ BLOCK;
 function ws_prompt_truncation_permission(): string {
     return <<<'BLOCK'
 
-Please attempt to find the number of requested records. It is permissible and
-acceptable to return fewer records if it is clear no more can be confidently
-found. A truncated batch with fewer confirmed records is correct — a larger
-batch that forces unreliable records is not.
+As many as you can confidently verify (fewer is correct).
+Attempt to find the requested number of records, but confidence is the hard
+constraint.
+
+Permission to fail and omit is explicit:
+  - omit uncertain fields instead of guessing
+  - omit uncertain records instead of padding the batch
+  - set with_errors: true and explain gaps in integrity.error_details
+
+Why this matters: fabricated or guessed legal information can cause real harm
+(for example, missed filing deadlines, invalid venue assumptions, or reliance
+on nonexistent precedent).
 
 BLOCK;
 }
@@ -1745,10 +1744,7 @@ function ws_generate_statute_prompt( array $scope ): string {
     $notes    = sanitize_textarea_field( $scope['scope_notes'] );
     $excludes = sanitize_textarea_field( $scope['exclusion_list'] );
 
-    $out  = "You are a legal research assistant generating structured JSON data for\n";
-    $out .= "WhistleblowerShield.org, a public-interest reference site covering U.S.\n";
-    $out .= "whistleblower protections across all 57 U.S. jurisdictions. Please read\n";
-    $out .= "the entire prompt before execution.\n\n";
+    $out  = ws_prompt_legal_research_intro();
     $out .= "This data will enter a human review queue before anything is published.\n";
     $out .= "You are not the final authority — you are the first pass. Your job is to\n";
     $out .= "produce the most accurate draft you can, and to be honest about what you\n";
@@ -1764,7 +1760,7 @@ function ws_generate_statute_prompt( array $scope ): string {
     $out .= ws_prompt_proposal_block();
     $out .= ws_prompt_statute_rules();
     $out .= ws_prompt_citation_rules();
-    $out .= ws_prompt_meta_schema( 'statute' );
+    $out .= ws_prompt_meta_schema();
     $out .= ws_prompt_statute_schema();
     $out .= ws_prompt_integrity_block();
 
@@ -1777,7 +1773,7 @@ function ws_generate_statute_prompt( array $scope ): string {
     if ( $records > 0 ) {
         $out .= "Records Requested:  {$records}\n";
     } else {
-        $out .= "Records Requested:  as many as you can comfortably find\n";
+        $out .= "Records Requested:  as many as you can confidently verify (fewer is correct)\n";
     }
     if ( $notes ) {
         $out .= "Scope:              {$notes}\n";
@@ -1803,10 +1799,7 @@ function ws_generate_common_law_prompt( array $scope ): string {
     $notes    = sanitize_textarea_field( $scope['scope_notes'] );
     $excludes = sanitize_textarea_field( $scope['exclusion_list'] );
 
-    $out  = "You are a legal research assistant generating structured JSON data for\n";
-    $out .= "WhistleblowerShield.org, a public-interest reference site covering U.S.\n";
-    $out .= "whistleblower protections across all 57 U.S. jurisdictions. Please read\n";
-    $out .= "the entire prompt before execution.\n\n";
+    $out  = ws_prompt_legal_research_intro();
     $out .= "This template covers `common-law` records ONLY — judicially-recognized\n";
     $out .= "whistleblower protections that exist outside codified statute. Do not\n";
     $out .= "produce records for statutory protections — those use a separate template.\n\n";
@@ -1814,12 +1807,13 @@ function ws_generate_common_law_prompt( array $scope ): string {
     $out .= "Honest gaps do not. When in doubt, always choose omission.\n\n";
     $out .= ws_prompt_what_you_are_producing( 'common law doctrine records' );
     $out .= ws_prompt_omission_rules();
+    $out .= "\n";
     $out .= ws_prompt_legal_taxonomy_fields();
     $out .= ws_prompt_parent_slug_block();
     $out .= ws_prompt_taxonomy_tables( 'jx-common-law' );
     $out .= ws_prompt_proposal_block();
     $out .= ws_prompt_citation_rules();
-    $out .= ws_prompt_meta_schema( 'common-law' );
+    $out .= ws_prompt_meta_schema();
     $out .= ws_prompt_common_law_schema();
     $out .= ws_prompt_integrity_block();
 
@@ -1831,7 +1825,7 @@ function ws_generate_common_law_prompt( array $scope ): string {
     if ( $records > 0 ) {
         $out .= "Records Requested:  {$records}\n";
     } else {
-        $out .= "Records Requested:  as many as you can comfortably find\n";
+        $out .= "Records Requested:  as many as you can confidently verify (fewer is correct)\n";
     }
     if ( $notes ) {
         $out .= "Scope:              {$notes}\n";
@@ -1862,20 +1856,13 @@ function ws_generate_citation_prompt( array $scope ): string {
     $out .= "A fabricated citation could cause real harm. If you cannot supply both a\n";
     $out .= "real case with reasonable confidence AND a verifiable URL from an approved\n";
     $out .= "source, omit the citation entirely.\n\n";
-    $out .= "---\n\n";
-    $out .= ws_prompt_citation_rules();
-    $out .= ws_prompt_get_court_shorthand();
-    $out .= "\n---\n\n";
-    $out .= "TAXONOMY TAGGING — CITATION DISCIPLINE\n\n";
-    $out .= "Tag only what this specific ruling directly addresses. In almost all cases\n";
-    $out .= "a citation addresses exactly one taxonomy axis — tag one term with confidence\n";
-    $out .= "rather than several terms with uncertainty.\n\n";
-    $out .= "If and only if the ruling explicitly and materially addresses multiple\n";
-    $out .= "taxonomy axes in a single holding, tag all that apply AND populate\n";
-    $out .= "_multi_taxonomy_notes with a prose explanation of how the ruling touched\n";
-    $out .= "each axis. Multiple tags without _multi_taxonomy_notes is an error.\n\n";
+    $out .= ws_prompt_what_you_are_producing( 'citation records' );
+    $out .= ws_prompt_omission_rules();
+    $out .= ws_prompt_parent_slug_block();
+    $out .= ws_prompt_case_law_source_block();
+    $out .= ws_prompt_case_taxonomy_discipline_block( 'citation' );
     $out .= ws_prompt_taxonomy_tables( 'jx-citation' );
-    $out .= ws_prompt_meta_schema( 'citation' );
+    $out .= ws_prompt_meta_schema();
     $out .= ws_prompt_citation_schema();
     $out .= ws_prompt_integrity_block();
 
@@ -1915,17 +1902,13 @@ function ws_generate_interpretation_prompt( array $scope ): string {
     $out .= "how it is applied, or where its limits lie.\n\n";
     $out .= "A fabricated citation could cause real harm. If you cannot supply both a real\n";
     $out .= "case with reasonable confidence AND a verifiable URL, omit it entirely.\n\n";
-    $out .= "---\n\n";
-    $out .= ws_prompt_citation_rules();
-    $out .= ws_prompt_get_court_shorthand();
-    $out .= "\n---\n\n";
-    $out .= "TAXONOMY TAGGING — INTERPRETATION DISCIPLINE\n\n";
-    $out .= "Tag only what this specific ruling directly interprets or clarifies.\n";
-    $out .= "In almost all cases a court ruling addresses exactly one taxonomy axis.\n";
-    $out .= "Tag one term with confidence. If the ruling genuinely addresses multiple\n";
-    $out .= "axes, tag all and populate _multi_taxonomy_notes.\n\n";
+    $out .= ws_prompt_what_you_are_producing( 'interpretation records' );
+    $out .= ws_prompt_omission_rules();
+    $out .= ws_prompt_parent_slug_block();
+    $out .= ws_prompt_case_law_source_block();
+    $out .= ws_prompt_case_taxonomy_discipline_block( 'interpretation' );
     $out .= ws_prompt_taxonomy_tables( 'jx-interpretation' );
-    $out .= ws_prompt_meta_schema( 'interpretation' );
+    $out .= ws_prompt_meta_schema();
     $out .= ws_prompt_interpretation_schema( $statute_type );
     $out .= ws_prompt_integrity_block();
 
@@ -2185,7 +2168,7 @@ function ws_render_prompt_generator_page() {
                         <input type="number" name="records_requested" id="records_requested"
                                value="<?php echo esc_attr( $_POST['records_requested'] ?? 0 ); ?>"
                                class="small-text" min="0" max="20" placeholder="0 = no limit">
-                        <p class="description">Required. Set to 0 to tell the model: as many as you can comfortably find.</p>
+                        <p class="description">Required. Set to 0 to tell the model: as many as you can confidently verify (fewer is correct).</p>
                     </td>
                 </tr>
 
