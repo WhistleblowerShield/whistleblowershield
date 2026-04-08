@@ -885,21 +885,153 @@ add_filter( 'acf/update_value/key=field_create_author', function( $value, $post_
     $stored = get_post_meta( $post_id, 'ws_auto_create_author', true );
     return $stored !== '' ? $stored : $value;
 }, 10, 2 );
-// ── Jurisdiction CPT — Conditional Button to Wikimedia Flag when URL is present
-// ---------------------------------------------------------------
-// Direct get_post_meta() call is intentional here. ws_matrix_source is an
-// administrative flag...
-// ---------------------------------------------------------------
-// ACF Field Presentation Overrides
-// ---------------------------------------------------------------
-add_filter( 'acf/prepare_field/key=field_jx_flag_source_url', function( $field ) {
-    $post_id = get_the_ID();
-    $url     = get_post_meta( $post_id, 'ws_jx_flag_source_url', true );
-    if ( $url ) {
-        $field['instructions'] .= ' <a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer nofollow">Open Commons page &rarr;</a>';
+// ── ACF URL fields — Open-in-new-tab helper button (global, workflow-excluded)
+//
+// Adds a small "Open in new tab" button to every ACF URL field that has a
+// populated value. Button state updates live while typing/editing.
+//
+// Workflow groups are intentionally excluded to keep workflow panels clean.
+
+add_filter( 'acf/prepare_field/type=url', 'ws_acf_prepare_url_open_button' );
+add_action( 'acf/input/admin_footer', 'ws_acf_render_url_button_script' );
+
+/**
+ * Returns true when an ACF field belongs to a workflow group.
+ */
+function ws_acf_is_workflow_field( array $field ): bool {
+    $workflow_groups = [
+        'group_major_edit_metadata',
+        'group_source_verify_metadata',
+        'group_stamp_metadata',
+        'group_plain_english_metadata',
+    ];
+
+    $parent_key = (string) ( $field['parent'] ?? '' );
+    $depth = 0;
+
+    // Walk up nested field parents until we hit the root group key.
+    while ( strpos( $parent_key, 'field_' ) === 0 && function_exists( 'acf_get_field' ) && $depth < 12 ) {
+        $parent_field = acf_get_field( $parent_key );
+        if ( ! is_array( $parent_field ) ) {
+            break;
+        }
+        $next_parent = (string) ( $parent_field['parent'] ?? '' );
+        if ( $next_parent === '' || $next_parent === $parent_key ) {
+            break;
+        }
+        $parent_key = $next_parent;
+        $depth++;
     }
+
+    return in_array( $parent_key, $workflow_groups, true );
+}
+
+/**
+ * Appends a helper button to URL field instructions.
+ */
+function ws_acf_prepare_url_open_button( $field ) {
+    if ( ! is_array( $field ) ) {
+        return $field;
+    }
+    if ( ws_acf_is_workflow_field( $field ) ) {
+        return $field;
+    }
+
+    $value = '';
+    if ( isset( $field['value'] ) && is_string( $field['value'] ) ) {
+        $value = trim( $field['value'] );
+    }
+
+    $url      = esc_url_raw( $value );
+    $has_url  = $url !== '';
+    $href     = $has_url ? esc_url( $url ) : '#';
+    $state    = $has_url ? '' : ' is-disabled';
+    $a11y     = $has_url ? '' : ' aria-disabled="true" tabindex="-1"';
+
+    $button = sprintf(
+        ' <a class="button button-small ws-acf-open-url-btn%s" href="%s" target="_blank" rel="noopener noreferrer nofollow"%s>Open in new tab</a>',
+        esc_attr( $state ),
+        esc_url( $href ),
+        $a11y
+    );
+
+    $field['instructions'] = trim( (string) ( $field['instructions'] ?? '' ) ) . $button;
     return $field;
-} );
+}
+
+/**
+ * Live toggle for URL helper buttons on ACF edit screens.
+ */
+function ws_acf_render_url_button_script() {
+    ?>
+    <script>
+    (function() {
+        function cleanUrl(raw) {
+            return (raw || '').trim();
+        }
+
+        function applyState(fieldEl) {
+            if (!fieldEl) return;
+            var input = fieldEl.querySelector('input[type="url"]');
+            var btn = fieldEl.querySelector('.ws-acf-open-url-btn');
+            if (!input || !btn) return;
+
+            var url = cleanUrl(input.value);
+            var hasUrl = url.length > 0;
+
+            if (hasUrl) {
+                btn.href = url;
+                btn.classList.remove('is-disabled');
+                btn.removeAttribute('aria-disabled');
+                btn.removeAttribute('tabindex');
+            } else {
+                btn.href = '#';
+                btn.classList.add('is-disabled');
+                btn.setAttribute('aria-disabled', 'true');
+                btn.setAttribute('tabindex', '-1');
+            }
+        }
+
+        function bindField(fieldEl) {
+            if (!fieldEl || fieldEl.dataset.wsUrlButtonBound === '1') return;
+            var input = fieldEl.querySelector('input[type="url"]');
+            var btn = fieldEl.querySelector('.ws-acf-open-url-btn');
+            if (!input || !btn) return;
+
+            fieldEl.dataset.wsUrlButtonBound = '1';
+
+            input.addEventListener('input', function() { applyState(fieldEl); });
+            input.addEventListener('change', function() { applyState(fieldEl); });
+            applyState(fieldEl);
+        }
+
+        function scan(root) {
+            var scope = root || document;
+            var fields = scope.querySelectorAll('.acf-field[data-type="url"]');
+            fields.forEach(bindField);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() { scan(document); });
+
+        if (window.acf && typeof window.acf.addAction === 'function') {
+            window.acf.addAction('ready', function($el) { scan($el && $el[0] ? $el[0] : document); });
+            window.acf.addAction('append', function($el) { scan($el && $el[0] ? $el[0] : document); });
+        }
+    })();
+    </script>
+    <style>
+    .ws-acf-open-url-btn {
+        margin-left: 8px;
+        vertical-align: middle;
+    }
+    .ws-acf-open-url-btn.is-disabled {
+        pointer-events: none;
+        opacity: .55;
+        cursor: default;
+    }
+    </style>
+    <?php
+}
 // ════════════════════════════════════════════════════════════════════════════
 // SOURCE & VERIFICATION HOOKS (5 of 5)
 //
