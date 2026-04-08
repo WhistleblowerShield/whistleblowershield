@@ -1095,6 +1095,8 @@ RECORD SCHEMA
   "process_types": [],
   "anonymous_pre_consult_possible": "[required - yes | no | unclear]",
   "has_attorneys": "[required - yes | no | unclear]",
+  "income_eligibility_required": "[required - yes | no | unclear]",
+  "eligibility_notes": "[required when income_eligibility_required = yes]",
   "case_stages": [],
   "case_stage_details": "[omit unless case_stages includes other]",
   "disclosure_targets": [],
@@ -1118,6 +1120,7 @@ Required keys:
   - homepage_url_status: verified | redirects | unverified
   - anonymous_pre_consult_possible: yes | no | unclear
   - has_attorneys: yes | no | unclear
+  - income_eligibility_required: yes | no | unclear
   - nationwide_example: required string; use "" when no confident quote exists
   - languages_supported: required array; include at least one language
   - case_stages: required array; if uncertain, use ["other"] and explain in case_stage_details
@@ -1130,7 +1133,18 @@ Optional keys (omit when unknown unless explicitly required above):
   source_url, common_name, verified_date_url, intake_or_contact_url,
   disclosure_types, languages_additional, assistance_types, employment_sectors,
   cost_model, services_provided, process_types, case_stage_details,
+  eligibility_notes,
   disclosure_targets_details, coverage_exceptions
+
+Income eligibility rules:
+  - If income_eligibility_required = yes, eligibility_notes is mandatory and
+    must describe the threshold/criteria.
+  - If income_eligibility_required = no, eligibility_notes must be omitted.
+  - If income_eligibility_required = unclear, eligibility_notes must be omitted.
+  - If income_eligibility_required = no, use no only when confidently verified
+    that no income gate exists.
+  - If income_eligibility_required = unclear, keep unclear and explain briefly
+    in _review_notes.
 
 Taxonomy usage:
   - disclosure_types: ws_disclosure_type child slugs only

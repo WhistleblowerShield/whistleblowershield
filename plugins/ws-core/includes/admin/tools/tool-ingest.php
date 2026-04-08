@@ -1113,6 +1113,56 @@ function ws_ingest_get_value( array $record, string $path ) {
 }
 
 /**
+ * Parses boolean-like payload values with explicit handling for ternary strings.
+ *
+ * Accepted true values:  true, 1, "1", "true", "yes", "y", "on"
+ * Accepted false values: false, 0, "0", "false", "no", "n", "off", ""
+ *
+ * Special handling:
+ * - "unclear" is coerced to 0 and logged as a warning.
+ * - Unknown non-empty strings are coerced to 0 and logged as warnings.
+ */
+function ws_ingest_parse_boolish_value( $value, string $record_id, string $json_path, array &$warnings ): int {
+    if ( is_bool( $value ) ) {
+        return $value ? 1 : 0;
+    }
+
+    if ( is_int( $value ) || is_float( $value ) ) {
+        return ( (float) $value ) > 0 ? 1 : 0;
+    }
+
+    if ( is_string( $value ) ) {
+        $raw = trim( $value );
+        $v   = strtolower( $raw );
+
+        if ( $v === '' || in_array( $v, [ '0', 'false', 'no', 'n', 'off' ], true ) ) {
+            return 0;
+        }
+        if ( in_array( $v, [ '1', 'true', 'yes', 'y', 'on' ], true ) ) {
+            return 1;
+        }
+
+        $tri_keys = [ 'anonymous_pre_consult_possible', 'has_attorneys', 'income_eligibility_required' ];
+        $is_tri_key = in_array( $json_path, $tri_keys, true );
+        if ( $v === 'unclear' ) {
+            $warnings[] = $is_tri_key
+                ? "{$record_id}: {$json_path}='unclear' coerced to 0 (no) for ingest; meat-bag review required."
+                : "{$record_id}: {$json_path}='unclear' coerced to 0 (false) for ingest.";
+            return 0;
+        }
+
+        $warnings[] = "{$record_id}: {$json_path} has unsupported boolean value '{$raw}'; coerced to 0 (false).";
+        return 0;
+    }
+
+    if ( $value === null ) {
+        return 0;
+    }
+
+    return (int) (bool) $value;
+}
+
+/**
  * Normalizes a free-text agency label for loose matching.
  */
 function ws_ingest_normalize_agency_label( string $value ): string {
@@ -2158,7 +2208,7 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
                 break;
 
             case 'bool':
-                update_post_meta( $post_id, $meta_key, (int)(bool) $value );
+                update_post_meta( $post_id, $meta_key, ws_ingest_parse_boolish_value( $value, $sid, $json_path, $result['warnings'] ) );
                 break;
 
             case 'number':
@@ -2457,7 +2507,7 @@ function ws_ingest_process_common_law_record( array $record, array $meta, array 
                 }
                 break;
             case 'bool':
-                update_post_meta( $post_id, $meta_key, (int) (bool) $value );
+                update_post_meta( $post_id, $meta_key, ws_ingest_parse_boolish_value( $value, $did, $json_path, $result['warnings'] ) );
                 break;
             case 'number':
                 if ( $value !== '' && $value !== null ) {
@@ -2738,7 +2788,7 @@ function ws_ingest_process_citation_record( array $record, array $meta, array $b
                 }
                 break;
             case 'bool':
-                update_post_meta( $post_id, $meta_key, (int)(bool) $value );
+                update_post_meta( $post_id, $meta_key, ws_ingest_parse_boolish_value( $value, $cid, $json_path, $result['warnings'] ) );
                 break;
             case 'number':
                 if ( $value !== '' && $value !== null ) {
@@ -2936,7 +2986,7 @@ function ws_ingest_process_interpretation_record( array $record, array $meta, ar
                 }
                 break;
             case 'bool':
-                update_post_meta( $post_id, $meta_key, (int)(bool) $value );
+                update_post_meta( $post_id, $meta_key, ws_ingest_parse_boolish_value( $value, $iid, $json_path, $result['warnings'] ) );
                 break;
             case 'number':
                 if ( $value !== '' && $value !== null ) {
