@@ -1,24 +1,13 @@
 <?php
 /**
- * render-directory.php — Assist org directory render functions.
+ * Assist-organization directory render functions.
  *
- * Renders the [ws_assist_org_directory] shortcode output.
- * Loaded in Assembly Layer (! is_admin()) only.
+ * Renders [ws_assist_org_directory] output in the Assembly Layer.
+ * For broader architecture notes, see includes/render/README.md.
  *
  * @package WhistleblowerShield
  * @since   3.6.0
  * @version 3.15.0
- *
- * VERSION
- * -------
- * 3.6.0   Initial release.
- * 3.7.0   ws_render_directory_taxonomy_guide() Phase 2 stub added.
- * 3.7.1   ws_render_directory_card() — services rendered from taxonomy terms.
- * 3.15.0  Phase 2 implementation: ws_render_directory_taxonomy_guide() built.
- *         ws_render_directory_page() updated to consume filter context and
- *         scored/sorted results. Filter panel is server-rendered GET form.
- *         Result tiers: targeted orgs first, nationwide by score, then
- *         unmatched nationwide. Zero targeted → fallback message + nationwide.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -130,7 +119,12 @@ function ws_render_directory_page( array $targeted, array $nationwide, array $co
  * @return string HTML output.
  */
 function ws_render_directory_taxonomy_guide( array $context ): string {
-    $current_url = esc_url( strtok( $_SERVER['REQUEST_URI'] ?? '', '?' ) );
+    $request_uri = wp_unslash( $_SERVER['REQUEST_URI'] ?? '/' );
+    $path_only   = strtok( (string) $request_uri, '?' );
+    if ( ! is_string( $path_only ) || $path_only === '' ) {
+        $path_only = '/';
+    }
+    $current_url = esc_url( $path_only );
 
     ob_start();
     ?>
@@ -405,13 +399,19 @@ function ws_filter_broaden_url( array $context ): string {
     ];
 
     foreach ( $remove_order as $param ) {
-        if ( $context[ str_replace( 'ws_', '', $param ) ] !== null ) {
+        $context_key = str_replace( 'ws_', '', $param );
+        if ( array_key_exists( $context_key, $context ) && $context[ $context_key ] !== null ) {
             return esc_url( remove_query_arg( $param ) );
         }
     }
 
     // All filters already absent — return clean URL
-    return esc_url( strtok( $_SERVER['REQUEST_URI'] ?? '', '?' ) );
+    $request_uri = wp_unslash( $_SERVER['REQUEST_URI'] ?? '/' );
+    $path_only   = strtok( (string) $request_uri, '?' );
+    if ( ! is_string( $path_only ) || $path_only === '' ) {
+        $path_only = '/';
+    }
+    return esc_url( $path_only );
 }
 
 
@@ -497,6 +497,12 @@ function ws_filter_get_adverse_action_options(): array {
 // ws_render_directory_listing()
 // ════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Renders a directory grid from normalized org rows.
+ *
+ * @param array<int,array<string,mixed>> $items Org rows from query layer.
+ * @return string HTML output.
+ */
 function ws_render_directory_listing( $items ) {
     ob_start();
     ?>
@@ -514,6 +520,12 @@ function ws_render_directory_listing( $items ) {
 // ws_render_directory_card()  — unchanged from v3.7.1
 // ════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Renders a single assist-organization card.
+ *
+ * @param array<string,mixed> $org Normalized org row.
+ * @return string HTML output.
+ */
 function ws_render_directory_card( $org ) {
 
     $cost_labels = [
@@ -653,6 +665,11 @@ function ws_render_directory_card( $org ) {
 // ws_render_directory_empty()
 // ════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Renders the directory empty-state message.
+ *
+ * @return string HTML output.
+ */
 function ws_render_directory_empty() {
     ob_start();
     ?>

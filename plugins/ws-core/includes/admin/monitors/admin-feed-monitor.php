@@ -480,9 +480,25 @@ function ws_feed_monitor_read_staged() {
         return [];
     }
 
-    $raw  = file_get_contents( $file );
-    if ( false === $raw ) {
+    $handle = @fopen( $file, 'rb' );
+    if ( ! $handle ) {
         ws_feed_monitor_set_error( 'Unable to read staged feed file. Check filesystem permissions.' );
+        return [];
+    }
+
+    // Shared lock coordinates with writer LOCK_EX to avoid partial reads.
+    if ( ! @flock( $handle, LOCK_SH ) ) {
+        fclose( $handle );
+        ws_feed_monitor_set_error( 'Unable to lock staged feed file for read.' );
+        return [];
+    }
+
+    $raw = stream_get_contents( $handle );
+    @flock( $handle, LOCK_UN );
+    fclose( $handle );
+
+    if ( false === $raw ) {
+        ws_feed_monitor_set_error( 'Unable to read staged feed file contents.' );
         return [];
     }
 

@@ -31,6 +31,14 @@ function ws_matrix_assign_terms( $post_id, array $slugs, $taxonomy ) {
         }
     }
     if ( ! empty( $term_ids ) ) {
-        wp_set_object_terms( $post_id, $term_ids, $taxonomy );
+        $result = wp_set_object_terms( $post_id, $term_ids, $taxonomy );
+        if ( is_wp_error( $result ) ) {
+            error_log( sprintf(
+                '[ws-core] ws_matrix_assign_terms(): wp_set_object_terms failed for post %d taxonomy %s — %s',
+                (int) $post_id,
+                (string) $taxonomy,
+                $result->get_error_message()
+            ) );
+        }
     }
 }

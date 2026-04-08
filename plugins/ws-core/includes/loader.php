@@ -293,8 +293,32 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 	// Cascade layer — filter config and resolver(context)
 	// Loaded on both frontend and admin
-	require_once WS_CORE_PATH . 'includes/cascade/ws-filter-config.php';
-	require_once WS_CORE_PATH . 'includes/cascade/ws-filter-context.php';
+	$cascade_files = [
+		'ws-filter-config',
+		'ws-filter-context',
+	];
+	foreach ( $cascade_files as $file ) {
+		$path = WS_CORE_PATH . "includes/cascade/{$file}.php";
+		if ( file_exists( $path ) ) {
+			require_once $path;
+		} else {
+			error_log( sprintf(
+				'[ws-core] Missing CASCADE file: %s (expected at %s, referenced from %s line %d)',
+				$file . '.php',
+				$path,
+				__FILE__,
+				__LINE__
+			) );
+			add_action( 'admin_notices', function() use ( $file ) {
+				echo '<div class="notice notice-error"><p>';
+				printf(
+					'<strong>WhistleblowerShield:</strong> Missing cascade file: <code>%s.php</code> — check error log for details.',
+					esc_html( $file )
+				);
+				echo '</p></div>';
+			} );
+		}
+	}
 
 	// CRON SCHEDULES: Must register universally — WP-Cron fires on frontend
 	// requests where is_admin() is false and admin-url-monitor.php never loads.

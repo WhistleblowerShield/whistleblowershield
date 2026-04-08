@@ -1,142 +1,13 @@
 <?php
 /**
- * File: shortcodes-jurisdiction.php
+ * Jurisdiction page shortcodes.
  *
- * WhistleblowerShield Core Plugin
+ * These shortcodes are assembler-facing (render-jurisdiction.php) and route
+ * all reads through the query layer (no direct meta calls in shortcode logic).
  *
- * PURPOSE
- * -------
- * Registers shortcodes responsible for rendering Jurisdiction page
- * sections. These shortcodes are called automatically by the assembler
- * in render-jurisdiction.php — editors do not insert them manually.
- *
- * Each shortcode retrieves its dataset via the query layer, then passes
- * content to the section renderer for output.
- *
- *
- * SHORTCODES REGISTERED
- * ---------------------
- *
- *   [ws_jx_header]
- *       Renders the full jurisdiction header: name (H1), flag with
- *       attribution, and government offices box. Called first by
- *       the assembler for every jurisdiction page.
- *
- *   [ws_jx_summary]
- *       Renders the jurisdiction summary: WYSIWYG content from the
- *       linked jx-summary post, plus review badges, author, dates,
- *       and sources & citations.
- *
- *   [ws_jx_statutes]
- *       Renders statutes content from the linked jx-statute post.
- *
- *   [ws_jx_flag jx="CA"]
- *       Standalone flag shortcode. Renders flag + attribution only.
- *       Accepts optional jx parameter (jurisdiction code or slug).
- *       Falls back to the current global $post if omitted.
- *
- *   [ws_jx_review_status]
- *       Renders human-reviewed and legal-review status badges.
- *       Reads from the linked jx-summary post.
- *
- *   [ws_jx_citation]
- *       Renders the case law / citations section for the current jurisdiction.
- *       Queries published jx-citation records scoped by ws_jurisdiction
- *       taxonomy with attach_flag = 1, ordered by display_order ascending.
- *       Outputs citation body content, footnote anchors, and return links.
- *       Returns empty string if no attached citations exist.
- *       (Formerly [ws_jx_case_law] — renamed v3.6.0.)
- *
- *   [ws_jx_limitations]
- *       Renders the ws-limitations section for the current jurisdiction.
- *       Reads the limitations key from ws_get_jx_summary_data().
- *       Returns empty string if the field is empty.
- *
- * ARCHITECTURE
- * ------------
- *
- *   Query layer:     includes/queries/query-jurisdiction.php
- *   Render layer:    includes/render/render-section.php
- *   Assembler:       includes/render/render-jurisdiction.php
- *
- *
- * DATA SOURCES
- * ------------
- *
- * All data is retrieved via the query layer (query-jurisdiction.php).
- * Shortcodes never call get_field() or get_post_meta() directly.
- *
- * Key contracts (return array keys from the query layer):
- *
- *   ws_get_jurisdiction_data()   → jx_term_id, name, gov{}, record{}
- *   ws_get_jx_summary_data()     → content, sources, limitations, plain{},
- *                                   record{}
- *   ws_get_jx_statute_data()     → array of statute entries, each with
- *                                   post_id, content, attach_flag,
- *                                   display_order, is_fed, record{},
- *                                   plain{}, ref_materials[]
- *   ws_get_jx_citation_data()    → array of citation entries, each with
- *                                   post_id, content, attach_flag,
- *                                   display_order, is_fed, record{},
- *                                   ref_materials[]
- *   ws_get_legal_updates_data()  → array of update entries, each with
- *                                   id, update_date, type,
- *                                   law_name, source_url, summary,
- *                                   source_post_id, source_post_type
- *
- * See query-jurisdiction.php file header for full return-array contracts.
- *
- *
- * VERSION
- * -------
- * 2.1.0  Refactored shortcode layer
- * 2.1.3  Fixed summary to read from ACF fields (not post_content)
- *         Fixed [ws_jx_review_status] field names
- *         Fixed [ws_jx_flag] to use correct ACF field names
- *         Added full summary footer: author, dates, badges, sources
- * 2.3.0  Added [ws_jx_case_law] and [ws_jx_limitations] shortcodes.
- *         Case law section moved out of ws_jurisdiction_summary wysiwyg
- *         and into jx-citation CPT records rendered via [ws_jx_case_law].
- *         Limitations section moved out of wysiwyg into ws_jx_limitations
- *         ACF field on jx-summary, rendered via [ws_jx_limitations].
- * 2.3.1  Fixed all shortcodes to use query layer array access instead of
- *         post object property access. Fixed field name ws_last_reviewed →
- *         ws_jx_sum_last_reviewed. Fixed author lookup to use
- *         ws_jx_sum_create_author stamp (ws_jx_sum_author is not a
- *         registered ACF field). Rewrote [ws_jx_statutes] to handle the
- *         array-of-arrays return from ws_get_jx_statutes() including the
- *         state + federal merge with per-record is_fed labeling.
- * 3.1.0  Added "→ External References" button to [ws_jx_statutes] and
- *         [ws_jx_case_law] per-record rendering. Button only renders when
- *         ws_get_ref_materials() returns non-empty results AND the
- *         reference materials page resolves via ws_get_reference_page_url().
- * 3.3.2  Updated all query layer return key references to match the
- *         simplified key names introduced in query-jurisdiction.php v3.3.2.
- *         record: author_name → created_by_name, editor_name → edited_by_name,
- *         date_created → created_date, last_edited → edited_date.
- *         plain: ws_plain_english_reviewed → is_reviewed,
- *         plain_english_reviewed_name → reviewed_by_name.
- *         gov: wb_auth_url → authority_url, wb_auth_label → authority_label.
- * 3.3.3  DATA SOURCES docblock: corrected source_method value list
- *         (ai_assist → ai_assisted; added bulk_import).
- * 3.6.0  [ws_jurisdiction_index] moved to shortcodes-general.php — it is a
- *         site-wide listing shortcode, not a jurisdiction-page shortcode.
- *         QUERY LAYER RETURN REFERENCE block: added reviewed_date to PLAIN
- *         SUB-ARRAY; removed duplicate copy from shortcodes-general.php.
- *         [ws_jx_case_law] renamed to [ws_jx_citation]; shortcode tag updated.
- * 3.9.0  [ws_jx_limitations] updated: ws_jx_limitations field changed from
- *         wysiwyg to repeater. Shortcode now passes array to render layer
- *         directly; wp_kses_post() call removed (plain text fields, no HTML).
- * 3.7.0  [ws_jx_interpretation] implemented. "→ External References" button
- *         included — handled inside ws_render_jx_interpretations() in
- *         render-section.php. Shortcode wired into assembler after citations.
- * 3.10.1 [ws_jx_summary]: glossary scan wired in. Summary content now passes
- *         through apply_filters('ws_glossary_scan', ...) before render.
- *         Existing manual tooltip spans are skipped by the scanner's <span>
- *         skip-tag rule — no duplication of hand-crafted instances.
- * 3.10.2 [ws_jx_summary]: statute bold scan wired in after glossary scan.
- *         jx_name resolved from ws_get_jurisdiction_data() and passed as
- *         second argument to apply_filters('ws_statute_bold_scan', ...).
+ * For deep return-shape references, use:
+ * - includes/queries/README.md
+ * - documentation/development/ws-core-query-layer.md
  *
  * @package WhistleblowerShield
  * @since   2.1.0
@@ -235,6 +106,11 @@ add_shortcode( 'ws_jx_summary', function() {
 // or no federal records), a single flat section is rendered.
 
 add_shortcode( 'ws_jx_statutes', 'ws_shortcode_jx_statutes' );
+/**
+ * Renders jurisdiction statutes section (local + optional federal append).
+ *
+ * @return string
+ */
 function ws_shortcode_jx_statutes() {
 
     global $post;
@@ -352,6 +228,11 @@ add_shortcode( 'ws_jx_flag', function( $atts ) {
 // Controlled via .ws-footnote-return in ws-core-front.css.
 
 add_shortcode( 'ws_jx_citation', 'ws_shortcode_jx_citation' );
+/**
+ * Renders jurisdiction citation section.
+ *
+ * @return string
+ */
 function ws_shortcode_jx_citation() {
 
     global $post;
@@ -448,6 +329,11 @@ function ws_shortcode_jx_citation() {
 // Returns empty string silently if no attached interpretations exist.
 
 add_shortcode( 'ws_jx_interpretation', 'ws_shortcode_jx_interpretation' );
+/**
+ * Renders jurisdiction interpretation section.
+ *
+ * @return string
+ */
 function ws_shortcode_jx_interpretation() {
 
     global $post;
@@ -471,6 +357,11 @@ function ws_shortcode_jx_interpretation() {
 // is linked to the current jurisdiction.
 
 add_shortcode( 'ws_jx_limitations', 'ws_shortcode_jx_limitations' );
+/**
+ * Renders summary limitations section.
+ *
+ * @return string
+ */
 function ws_shortcode_jx_limitations() {
 
     global $post;
@@ -486,378 +377,6 @@ function ws_shortcode_jx_limitations() {
 }
 
 
-// ============================================================================
-// QUERY LAYER RETURN REFERENCE
-//
-// Quick reference for every key returned by the query layer. All keys are
-// plain PHP array keys -- the ws_ / ws_auto_ meta key prefixes are stripped
-// at the query layer and must not reappear here.
-//
-// Use this as a map when building new shortcodes. All data reads must go
-// through the query layer functions below -- no direct get_field() or
-// get_post_meta() calls in shortcodes.
-//
-// Query layer: includes/queries/query-jurisdiction.php
-// ============================================================================
-//
-// UNIVERSAL KEYS (every dataset function)
-// ----------------------------------------
-//   id           int     Post ID
-//   title        string  Post title (get_the_title)
-//   url          string  Permalink
-//   status       string  WP post status (publish, draft, pending, etc.)
-//
-// RECORD SUB-ARRAY  $data['record']
-// Stamp fields written by ws_acf_write_stamp_fields() on every save.
-// ----------------------------------------
-//   created_by        int     WP user ID of the record creator
-//   created_by_name   string  Display name resolved from created_by
-//   created_date      string  Creation date (Y-m-d local)
-//   edited_by         int     WP user ID of the most recent editor
-//   edited_by_name    string  Display name resolved from edited_by
-//   edited_date       string  Date of most recent edit (Y-m-d local)
-//
-// PLAIN SUB-ARRAY  $data['plain']
-// Present on: jx-statute, jx-citation, jx-interpretation,
-//             jx-summary, ws-agency, ws-assist-org.
-// ----------------------------------------
-//   has_content        bool    True when a plain-language version exists
-//   plain_content      string  Plain-language wysiwyg body (safe to echo)
-//   written_by         int     WP user ID of the plain-language author
-//   written_by_name    string  Display name resolved from written_by
-//   written_date       string  Date plain-language version was written (Y-m-d)
-//   is_reviewed        bool    True when plain-language review is complete
-//   reviewed_by        int     WP user ID of the plain-language reviewer
-//   reviewed_by_name   string  Display name resolved from reviewed_by
-//   reviewed_date      string  Date plain-language review was completed (Y-m-d)
-//
-// VERIFY SUB-ARRAY  $data['verify']
-// Present on all CPTs.
-// ----------------------------------------
-//   source_method    string  How the record was created:
-//                            human_created | matrix_seed | feed_import |
-//                            ai_assisted | bulk_import
-//   source_name      string  Human-readable source label (e.g. publication name)
-//   verified_by      int     WP user ID of the person who verified the record
-//   verified_by_name string  Display name resolved from verified_by
-//   verified_date    string  Date the record was verified (Y-m-d)
-//   verify_status    string  Verification workflow status value
-//   needs_review     bool    True when the record has been flagged for re-review
-//
-// ws_get_jurisdiction_data( $input )
-// ----------------------------------------
-//   id           int     Jurisdiction post ID
-//   name         string  Jurisdiction display name
-//   class        string  Type: state | territory | district | federal
-//   code         string  Two-letter USPS code, uppercased (e.g. CA, TX, US)
-//   jx_term_id   int     ws_jurisdiction taxonomy term ID
-//   flag[
-//     url          string  Flag image URL
-//     attribution  string  Attribution credit string
-//     source_url   string  URL of the flag source
-//     license      string  License name or identifier
-//   ]
-//   gov[
-//     portal_url        string  Official government portal URL
-//     portal_label      string  Display label for the portal link
-//     executive_url     string  Head-of-government office URL
-//     executive_label   string  Display label for the executive link
-//     authority_url     string  Whistleblower authority office URL
-//     authority_label   string  Display label for the authority link
-//     legislature_url   string  Legislature URL
-//     legislature_label string  Display label for the legislature link
-//   ]
-//   record[ ... ]  See RECORD SUB-ARRAY above
-//
-// ws_get_jx_summary_data( $jx_term_id )
-// ----------------------------------------
-//   content      string  Summary body wysiwyg (raw -- apply wp_kses_post before echo)
-//   sources      string  Sources & citations textarea
-//   limitations  array   Repeater rows: [ { ws_jx_limit_label, ws_jx_limit_text }, ... ]
-//   notes        string  Internal notes
-//   plain[ ... ]   See PLAIN SUB-ARRAY above
-//   verify[ ... ]  See VERIFY SUB-ARRAY above
-//   record[ ... ]  See RECORD SUB-ARRAY above
-//
-// ws_get_jx_statute_data( $jx_term_id )  -- returns array of items
-// ----------------------------------------
-//   content              string  Statute body (raw post_content)
-//   order                int     Display sort order
-//   is_fed               bool    True when appended from the US federal scope
-//   official_name        string  Full official statute name
-//   citation             string  Official statute citation
-//   common_name          string  Common/informal statute name
-//   disclosure_type      array   Disclosure category term IDs
-//   protected_class      array   Protected class term IDs
-//   protected_class_details string Free-text details for protected class nuance
-//   disclosure_targets   array   Disclosure target term IDs
-//   disclosure_targets_details string Free-text details for target nuance
-//   adverse_action_scope string  Free-text scope notes
-//   attach_flag          bool    True when attached to this jurisdiction page
-//   sol_value            string  Statute of limitations value
-//   sol_unit             string  Statute of limitations unit (days, months, years)
-//   sol_trigger          string  Event that starts the limitations clock
-//   sol_has_details      bool    True when SOL has supplementary detail
-//   sol_details          string  SOL details text
-//   tolling_has_details  bool    True when tolling details are present
-//   tolling_details      string  Tolling/extension detail text
-//   has_exhaustion       bool    True when administrative exhaustion is required
-//   exhaustion_details   string  Details on exhaustion requirements
-//   process_type         array   Process type term IDs
-//   adverse_action       array   Adverse action term IDs
-//   adverse_action_details string Free-text adverse-action nuance
-//   fee_shifting         array   Fee-shifting term IDs
-//   remedies             array   Remedy term IDs
-//   remedies_details     string  Free-text remedy nuance
-//   local_agencies       array   Local/regional agency post IDs
-//   federal_agencies     array   Federal agency post IDs
-//   enforcement_channel  string  Free-text enforcement/intake channel notes
-//   citation_ids         array   Related jx-citation post IDs
-//   employee_standard    array   Employee-standard term IDs
-//   employee_standard_details string Free-text employee-standard nuance
-//   employer_defense     mixed   Employer-defense taxonomy value(s)
-//   employer_defense_details string Free-text employer-defense nuance
-//   rebuttable_has_details bool  True when rebuttable-presumption detail exists
-//   rebuttable_details   string  Rebuttable-presumption details
-//   bop_has_details      bool    True when burden detail exists
-//   bop_details          string  Burden-of-proof detail text
-//   bop_flag             string  Short burden-signal phrase
-//   has_reward           bool    True when reward is available
-//   reward_details       string  Reward details text
-//   statute_url          string  Primary statute URL
-//   url_is_pdf           bool    True when statute_url is a PDF
-//   last_reviewed        string  Date last reviewed (Y-m-d)
-//   ref_materials        array   Approved ws-reference items -- see ws_get_ref_materials()
-//   plain[ ... ]   See PLAIN SUB-ARRAY above
-//   verify[ ... ]  See VERIFY SUB-ARRAY above
-//   record[ ... ]  See RECORD SUB-ARRAY above
-//
-// ws_get_jx_citation_data( $jx_term_id )  -- returns array of items
-// ----------------------------------------
-//   content        string  Citation body (raw post_content)
-//   is_fed         bool    True when appended from the US federal scope
-//   types          array   Citation type slug list (case_law/statute/regulatory/secondary)
-//   disclosure_type array  Disclosure category term IDs
-//   official_name  string  Full citation name
-//   common_name    string  Short/common citation name
-//   label          string  Display label for this citation
-//   cite_url       string  URL of the cited source
-//   summary        string  Editorial citation summary
-//   is_pdf         bool    True when the cited source is a PDF
-//   protected_class array  Protected class term IDs
-//   protected_class_details string Free-text protected-class nuance
-//   disclosure_targets array Disclosure target term IDs
-//   disclosure_targets_details string Free-text disclosure-target nuance
-//   adverse_action array  Adverse action term IDs
-//   adverse_action_details string Free-text adverse-action nuance
-//   process_type   array   Process type term IDs
-//   remedies       array   Remedy term IDs
-//   remedies_details string Free-text remedy nuance
-//   fee_shifting   array   Fee-shifting term IDs
-//   employer_defense array Employer-defense term IDs
-//   employer_defense_details string Free-text employer-defense nuance
-//   employee_standard array Employee-standard term IDs
-//   employee_standard_details string Free-text employee-standard nuance
-//   statute_ids    array   Related jx-statute post IDs
-//   common_law_ids array   Related jx-common-law post IDs
-//   attach_flag    bool    True when attached to this jurisdiction page
-//   order          int     Display sort order
-//   last_reviewed  string  Date last reviewed (Y-m-d)
-//   ref_materials  array   Approved ws-reference items -- see ws_get_ref_materials()
-//   plain[ ... ]   See PLAIN SUB-ARRAY above
-//   verify[ ... ]  See VERIFY SUB-ARRAY above
-//   record[ ... ]  See RECORD SUB-ARRAY above
-//
-// ws_get_jx_interpretation_data( $jx_term_id )  -- returns array of items
-// ----------------------------------------
-//   content            string  Interpretation body (raw post_content)
-//   order              int     Display sort order
-//   is_fed             bool    True when appended from the US federal scope
-//   official_name      string  Full case name
-//   common_name        string  Common/short case name
-//   citation           string  Legal citation string (e.g. 123 F.3d 456)
-//   opinion_url        string  URL to the court opinion
-//   court              string  Court name
-//   year               int     Year of decision
-//   favorable          bool    True when the outcome favors the whistleblower
-//   summary            string  Plain-text summary of the holding
-//   disclosure_type    array   Disclosure category term IDs
-//   protected_class    array   Protected class term IDs
-//   protected_class_details string Free-text protected-class nuance
-//   disclosure_targets array   Disclosure target term IDs
-//   disclosure_targets_details string Free-text disclosure-target nuance
-//   adverse_action     array   Adverse action term IDs
-//   adverse_action_details string Free-text adverse-action nuance
-//   process_type       array   Process type term IDs
-//   remedies           array   Remedy term IDs
-//   remedies_details   string  Free-text remedy nuance
-//   fee_shifting       array   Fee-shifting term IDs
-//   employer_defense   array   Employer-defense term IDs
-//   employer_defense_details string Free-text employer-defense nuance
-//   employee_standard  array   Employee-standard term IDs
-//   employee_standard_details string Free-text employee-standard nuance
-//   parent_statute_id  int     Post ID of the related jx-statute record
-//   parent_common_law_id int   Post ID of the related jx-common-law record
-//   affected_jx        array   Affected jurisdiction term IDs
-//   attach_flag        bool    True when attached to this jurisdiction page
-//   last_reviewed      string  Date last reviewed (Y-m-d)
-//   ref_materials      array   Approved ws-reference items -- see ws_get_ref_materials()
-//   plain[ ... ]   See PLAIN SUB-ARRAY above
-//   verify[ ... ]  See VERIFY SUB-ARRAY above
-//   record[ ... ]  See RECORD SUB-ARRAY above
-//
-// ws_get_agency_data( $jx_term_id )  -- returns array of items
-// ----------------------------------------
-//   code                   string  Internal agency code
-//   name                   string  Full agency name
-//   logo                   mixed   ACF image field value
-//   disclosure_type        array   Disclosure category term IDs
-//   disclosure_targets     array   Disclosure target term IDs
-//   process_type           array   Process type term IDs
-//   website_url            string  Agency main website URL
-//   reporting_url          string  Direct URL to the reporting/complaint portal
-//   phone                  string  Agency contact phone number
-//   confidentiality_notes  string  Notes on confidentiality handling
-//   anonymous              bool    True when anonymous reports are accepted
-//   reward                 bool    True when a reward program exists
-//   languages              mixed   ACF select value (supported languages)
-//   additional_languages   string  Free-text additional language notes
-//   last_reviewed          string  Date last reviewed (Y-m-d)
-//   plain[ ... ]   See PLAIN SUB-ARRAY above
-//   verify[ ... ]  See VERIFY SUB-ARRAY above
-//   record[ ... ]  See RECORD SUB-ARRAY above
-//
-// ws_get_assist_org_data( $jx_term_id )  -- returns array of items
-// ----------------------------------------
-//   internal_id          string  Internal reference ID
-//   type                 mixed   Organization type term object (or null)
-//   description          string  Organization description
-//   logo                 mixed   ACF image field value
-//   serves_nationwide    bool    True when the org serves all jurisdictions
-//   disclosure_type      array   Disclosure category term IDs
-//   disclosure_targets   array   Disclosure target term IDs
-//   disclosure_targets_details string Free-text disclosure-target nuance
-//   case_stages          array   Case-stage term IDs
-//   services             array   Service term names
-//   additional_services  string  Free-text additional services
-//   employment_sectors   array   Employment sector term names
-//   website_url          string  Organization main website URL
-//   intake_url           string  Direct URL to the intake or contact form
-//   phone                string  Organization phone number
-//   email                string  Organization contact email
-//   mailing_address      string  Mailing address
-//   languages            mixed   ACF select value (supported languages)
-//   additional_languages string  Free-text additional language notes
-//   cost_model           array   Cost-model term names
-//   income_limit         string  Income threshold for eligibility (if applicable)
-//   income_limit_notes   string  Notes on income limit or eligibility criteria
-//   anonymous            bool    True when anonymous inquiries are accepted
-//   eligibility_notes    string  General eligibility notes
-//   licensed_attorneys   bool    True when licensed attorneys are on staff
-//   accreditation        string  Accreditation body or status
-//   bar_states           string  States where the org is bar-accredited
-//   verify_url           string  URL to an external accreditation verification page
-//   last_reviewed        string  Date last reviewed (Y-m-d)
-//   plain[ ... ]   See PLAIN SUB-ARRAY above
-//   verify[ ... ]  See VERIFY SUB-ARRAY above
-//   record[ ... ]  See RECORD SUB-ARRAY above
-//
-// ws_get_jx_common_law_data( $jx_term_id )  -- returns array of items
-// ----------------------------------------
-//   content                string  Doctrine body (raw post_content)
-//   order                  int     Display sort order
-//   is_fed                 bool    True when appended from US federal scope
-//   doctrine_name          string  Doctrine title
-//   doctrine_id            string  Doctrine stable ID
-//   common_name            string  Common doctrine name
-//   precedent_url          string  Leading precedent URL
-//   public_policy_sources  array   Source slugs
-//   other_sources          string  Free-text other-source details
-//   doctrine_basis         string  Doctrine basis text
-//   recognition_status     string  Recognition status text
-//   disclosure_type        array   Disclosure category term IDs
-//   protected_class        array   Protected class term IDs
-//   protected_class_details string Free-text protected-class nuance
-//   disclosure_targets     array   Disclosure target term IDs
-//   disclosure_targets_details string Free-text disclosure-target nuance
-//   adverse_action_scope   string  Free-text adverse-action scope
-//   attach_flag            bool    True when attached to jurisdiction page
-//   sol_value, sol_unit, sol_trigger, sol_has_details, sol_details
-//   tolling_has_details, tolling_details, has_exhaustion, exhaustion_details
-//   process_type, adverse_action, fee_shifting, remedies, related_agencies  (arrays)
-//   adverse_action_details, remedies_details (strings)
-//   statutory_preclusion   bool
-//   statutory_preclusion_details string
-//   employee_standard      array   Employee-standard term IDs
-//   employee_standard_details string
-//   employer_defense       array   Employer-defense term IDs
-//   employer_defense_details string
-//   rebuttable_has_details bool
-//   rebuttable_details     string
-//   bop_has_details        bool
-//   bop_details            string
-//   bop_flag               string
-//   has_reward             bool
-//   reward_details         string
-//   citation_ids           array   Related jx-citation post IDs
-//   interpretation_ids     array   Related jx-interpretation post IDs
-//   ref_materials          array   Approved ws-reference items
-//   plain[ ... ]   See PLAIN SUB-ARRAY above
-//   verify[ ... ]  See VERIFY SUB-ARRAY above
-//   record[ ... ]  See RECORD SUB-ARRAY above
-//
-// ws_get_agency_procedures( $agency_id )  -- returns array of items
-// ----------------------------------------
-//   id, title, url, agency_id, agency_name, agency_url
-//   type                 string  Procedure type slug
-//   jurisdiction         array   WP_Term objects from ws_jurisdiction
-//   disclosure_types     array   WP_Term objects from ws_disclosure_type
-//   statute_ids          array   Related statute post IDs
-//   entry_point, intake_url, phone, identity_policy, clock_start
-//   intake_only, has_prereqs, stat_override  (bools)
-//   deadline_days        int
-//   prereq_note, walkthrough, exclusivity_note, last_reviewed
-//   record[ ... ]  See RECORD SUB-ARRAY above
-//
-// ws_get_procedures_for_statute( $statute_id )  -- returns array of items
-// ----------------------------------------
-//   id, title, url, type, agency_id, agency_name, agency_url
-//   statute_ids          array   Related statute post IDs
-//   deadline_days        int
-//   intake_only          bool
-//
-// ws_get_legal_updates_data( $jx_id, $count )  -- returns array of items
-//   $jx_id  int  Jurisdiction post ID to scope results. 0 = site-wide.
-//                When non-zero, results are restricted to WS_LEGAL_UPDATE_SUMMARY_TYPES.
-//   $count  int  Maximum records to return. Pass 0 to auto-resolve:
-//                default 5 per-jurisdiction, 100 sitewide.
-// ----------------------------------------
-//   id                  int     Post ID
-//   title               string  Post title
-//   update_date         string  Date of the legal change (Y-m-d)
-//   effective_date      string  Date the change takes effect (Y-m-d)
-//   post_date           string  WordPress publish date (MySQL datetime)
-//   type                string  Update category (legislation, ruling, guidance, etc.)
-//   multi_jurisdiction  bool    True when the update affects multiple jurisdictions
-//   law_name            string  Name of the law or ruling
-//   source_url          string  URL of the primary source
-//   summary             string  Summary wysiwyg (wp_kses_post applied -- safe to echo)
-//   source_post_id      int     Post ID of the originating CPT record (if any)
-//   source_post_type    string  Post type of source_post_id (if any)
-//   verify[ ... ]  See VERIFY SUB-ARRAY above
-//   record[ ... ]  See RECORD SUB-ARRAY above
-//
-// ws_get_ref_materials( $post_id )  -- returns array of items
-// ----------------------------------------
-//   title        string  Reference item title
-//   url          string  URL of the external resource
-//   description  string  Brief description of the resource
-//   type         string  Resource type (statute, ruling, article, etc.)
-//   source_name  string  Name of the publishing source
-//
-// ws_get_reference_page_data( $parent_post_id )
-// ----------------------------------------
-//   parent_title  string  Title of the parent jx-statute / citation / interpretation
-//   parent_url    string  Permalink of the parent post
-//   references    array   Array of ref_materials items (see ws_get_ref_materials above)
-// ============================================================================
+// Query return contracts are documented in:
+// - includes/queries/README.md
+// - documentation/development/ws-core-query-layer.md

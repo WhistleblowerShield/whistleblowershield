@@ -70,6 +70,13 @@ add_filter( 'query_vars', function( $vars ) {
 function ws_resolve_filter_context(): array {
     global $ws_filter_allowed;
 
+    if ( ! is_array( $ws_filter_allowed ) ) {
+        $ws_filter_allowed = [];
+        if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+            error_log( '[ws-core] ws_resolve_filter_context(): ws_filter_allowed was not initialized as an array.' );
+        }
+    }
+
     // ── 1. Sanitize raw input ─────────────────────────────────────────────
     // Use get_query_var() first (registered params on pretty permalink pages),
     // fall back to $_GET for non-pretty permalink setups or direct access.
@@ -79,13 +86,6 @@ function ws_resolve_filter_context(): array {
         WS_FILTER_PARAM_SECTOR  => sanitize_key( (string) ( get_query_var( WS_FILTER_PARAM_SECTOR,  '' ) ?: wp_unslash( $_GET[ WS_FILTER_PARAM_SECTOR  ] ?? '' ) ) ),
         WS_FILTER_PARAM_TARGET  => sanitize_key( (string) ( get_query_var( WS_FILTER_PARAM_TARGET,  '' ) ?: wp_unslash( $_GET[ WS_FILTER_PARAM_TARGET  ] ?? '' ) ) ),
     ];
-
-    // Temporary debug — confirm raw made it this far and constants are defined
-    if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-        error_log( 'WS FILTER RAW: ' . print_r( $raw, true ) );
-        error_log( 'WS FILTER CONST CHECK: STAGE=' . ( defined( 'WS_FILTER_PARAM_STAGE' ) ? WS_FILTER_PARAM_STAGE : 'UNDEFINED' ) );
-        error_log( 'WS FILTER ALLOWED COUNT: ' . ( isset( $GLOBALS['ws_filter_allowed'] ) ? count( $GLOBALS['ws_filter_allowed'] ) : 'MISSING' ) );
-    }
 
     // ── 2. Validate against allowed values ───────────────────────────────
     // Invalid values → null (treated as absent / broadest match).
@@ -145,16 +145,15 @@ function ws_resolve_filter_context(): array {
 function ws_filter_validate( string $value, string $param ): ?string {
     global $ws_filter_allowed;
 
+    if ( ! is_array( $ws_filter_allowed ) ) {
+        return null;
+    }
+
     if ( $value === '' ) {
         return null;
     }
 
     $allowed = $ws_filter_allowed[ $param ] ?? [];
-
-    // Temporary debug — remove after confirming validation works
-    if ( defined( 'WP_DEBUG' ) && WP_DEBUG && $value !== '' ) {
-        error_log( "WS FILTER VALIDATE: param={$param} value={$value} allowed_count=" . count( $allowed ) . ' match=' . ( isset( $allowed[ $value ] ) ? 'yes' : 'no' ) );
-    }
 
     if ( empty( $allowed ) || ! isset( $allowed[ $value ] ) ) {
         return null;
@@ -329,9 +328,17 @@ function ws_filter_log_request( array $context ): void {
 
     if ( $log_dir === null ) {
         $log_dir = WP_CONTENT_DIR . '/logs/ws-filter';
-        if ( ! file_exists( $log_dir ) ) {
-            wp_mkdir_p( $log_dir );
-            file_put_contents( $log_dir . '/.htaccess', "Deny from all\n" );
+        if ( ! is_dir( $log_dir ) && ! wp_mkdir_p( $log_dir ) ) {
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                error_log( '[ws-core] ws_filter_log_request(): failed to create log directory: ' . $log_dir );
+            }
+            return;
+        }
+        if ( is_dir( $log_dir ) && ! file_exists( $log_dir . '/.htaccess' ) ) {
+            $htaccess_written = file_put_contents( $log_dir . '/.htaccess', "Deny from all\n", LOCK_EX );
+            if ( false === $htaccess_written && defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                error_log( '[ws-core] ws_filter_log_request(): failed to write .htaccess in ' . $log_dir );
+            }
         }
     }
 
@@ -339,14 +346,21 @@ function ws_filter_log_request( array $context ): void {
     $ts      = gmdate( 'Y-m-d H:i:s' );
     $stage   = $context['stage']   ?? '-';
     $concern = $context['concern'] ?? '-';
-    $tax     = $context['concern_tax'] ? str_replace( 'ws_', '', $context['concern_tax'] ) : '-';
+    $concern_tax = $context['concern_tax'] ?? null;
+    $tax     = $concern_tax ? str_replace( 'ws_', '', $concern_tax ) : '-';
     $sector  = $context['sector']  ?? '-';
     $target  = $context['target']  ?? '-';
     $filters = $context['has_filters'] ? 'yes' : 'no';
 
     $line = "[{$ts} UTC]  stage:{$stage}  concern:{$concern}({$tax})  sector:{$sector}  target:{$target}  filtered:{$filters}" . PHP_EOL;
 
-    file_put_contents( $path, $line, FILE_APPEND | LOCK_EX );
+    $write_ok = file_put_contents( $path, $line, FILE_APPEND | LOCK_EX );
+    if ( false === $write_ok ) {
+        if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+            error_log( '[ws-core] ws_filter_log_request(): failed to append log line to ' . $path );
+        }
+        return;
+    }
 
     // Prune only when not in development mode.
     // During development the full log history is preserved to surface

@@ -116,26 +116,14 @@ function ws_render_jx_navigation_box($post) {
     $statutes_post = null;
 
     if ( $term_id ) {
-        $summary_ids = get_posts( [
-            'post_type'      => 'jx-summary',
-            'post_status'    => [ 'publish', 'draft', 'pending' ],
-            'posts_per_page' => 1,
-            'fields'         => 'ids',
-            'tax_query'      => [ [ 'taxonomy' => WS_JURISDICTION_TAXONOMY, 'field' => 'term_id', 'terms' => $term_id ] ],
-        ] );
-        if ( ! empty( $summary_ids ) ) {
-            $summary_post = get_post( $summary_ids[0] );
+        $summary_id = ws_find_related_jx_record_id( 'jx-summary', $term_id );
+        if ( $summary_id ) {
+            $summary_post = get_post( $summary_id );
         }
 
-        $statute_ids = get_posts( [
-            'post_type'      => 'jx-statute',
-            'post_status'    => [ 'publish', 'draft', 'pending' ],
-            'posts_per_page' => 1,
-            'fields'         => 'ids',
-            'tax_query'      => [ [ 'taxonomy' => WS_JURISDICTION_TAXONOMY, 'field' => 'term_id', 'terms' => $term_id ] ],
-        ] );
-        if ( ! empty( $statute_ids ) ) {
-            $statutes_post = get_post( $statute_ids[0] );
+        $statute_id = ws_find_related_jx_record_id( 'jx-statute', $term_id );
+        if ( $statute_id ) {
+            $statutes_post = get_post( $statute_id );
         }
     }
 
@@ -150,6 +138,45 @@ function ws_render_jx_navigation_box($post) {
     ws_render_cpt_count_row( $post->ID, $term_slug, 'ws-assist-org',   'Assist Orgs' );
 
     echo '</div>';
+}
+
+/**
+ * Returns one related CPT record for a jurisdiction term, preferring publish.
+ *
+ * Uses deterministic ordering (`modified DESC`) within each status bucket.
+ *
+ * @param string $post_type CPT slug.
+ * @param int    $term_id   ws_jurisdiction term ID.
+ * @return int              Related post ID, or 0 when none found.
+ */
+function ws_find_related_jx_record_id( $post_type, $term_id ) {
+    $post_type = (string) $post_type;
+    $term_id   = (int) $term_id;
+    if ( $post_type === '' || ! $term_id ) {
+        return 0;
+    }
+
+    $base_args = [
+        'post_type'      => $post_type,
+        'posts_per_page' => 1,
+        'fields'         => 'ids',
+        'no_found_rows'  => true,
+        'orderby'        => 'modified',
+        'order'          => 'DESC',
+        'tax_query'      => [ [ 'taxonomy' => WS_JURISDICTION_TAXONOMY, 'field' => 'term_id', 'terms' => $term_id ] ],
+    ];
+
+    $publish_ids = get_posts( $base_args + [ 'post_status' => 'publish' ] );
+    if ( ! empty( $publish_ids ) ) {
+        return (int) $publish_ids[0];
+    }
+
+    $draft_ids = get_posts( $base_args + [ 'post_status' => [ 'draft', 'pending' ] ] );
+    if ( ! empty( $draft_ids ) ) {
+        return (int) $draft_ids[0];
+    }
+
+    return 0;
 }
 
 

@@ -33,17 +33,13 @@ function ws_acf_log_major_edit( $post_id ) {
 
 	$description = trim( (string) get_post_meta( $post_id, 'ws_major_edit_description', true ) );
 
-	// ── Always reset the flag and description field ───────────────────────
-	//
-	// Reset unconditionally so a second save never double-logs even if the
-	// notice was dismissed without being seen.
-
-	update_post_meta( $post_id, 'ws_is_major_edit',            0  );
-	update_post_meta( $post_id, 'ws_major_edit_description',   '' );
-
 	// ── Bail with warning if description is empty ─────────────────────────
 
 	if ( $description === '' ) {
+		// Empty description is treated as a completed (but invalid) major-edit
+		// attempt: clear fields so this does not keep re-firing on every save.
+		update_post_meta( $post_id, 'ws_is_major_edit',          0  );
+		update_post_meta( $post_id, 'ws_major_edit_description', '' );
 		set_transient(
 			'ws_major_edit_notice_' . get_current_user_id(),
 			'missing_description',
@@ -136,6 +132,11 @@ function ws_acf_log_major_edit( $post_id ) {
 	update_post_meta( $update_id, 'ws_auto_last_edited',        $now_local );
 	update_post_meta( $update_id, '_ws_auto_last_edited_gmt',   $now_gmt   );
 	update_post_meta( $update_id, 'ws_auto_last_edited_author', $user_id   );
+
+	// Clear major-edit trigger fields only after the legal-update post
+	// and its required metadata were written successfully.
+	update_post_meta( $post_id, 'ws_is_major_edit',          0  );
+	update_post_meta( $post_id, 'ws_major_edit_description', '' );
 
 	// ── Queue success notice ──────────────────────────────────────────────
 

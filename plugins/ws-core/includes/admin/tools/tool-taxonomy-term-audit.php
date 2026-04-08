@@ -26,6 +26,9 @@ defined( 'ABSPATH' ) || exit;
 
 add_action( 'admin_menu', 'ws_register_taxonomy_term_audit_page' );
 
+/**
+ * Registers the taxonomy audit page under Tools.
+ */
 function ws_register_taxonomy_term_audit_page() {
     add_submenu_page(
         'tools.php',
@@ -37,6 +40,9 @@ function ws_register_taxonomy_term_audit_page() {
     );
 }
 
+/**
+ * Renders the taxonomy audit admin page and optionally runs a scan.
+ */
 function ws_render_taxonomy_term_audit_page() {
     if ( ! current_user_can( 'manage_options' ) ) {
         wp_die( esc_html__( 'You do not have permission to access this page.', 'ws-core' ) );
@@ -120,6 +126,11 @@ function ws_render_taxonomy_term_audit_page() {
     <?php
 }
 
+/**
+ * Renders taxonomy/slugs rows as an admin table.
+ *
+ * @param array<int,array<string,mixed>> $rows Rows with keys: taxonomy, slugs.
+ */
 function ws_tax_audit_render_rows_table( $rows ) {
     echo '<table class="widefat striped" style="max-width: 1200px;">';
     echo '<thead><tr><th style="width:260px;">Taxonomy</th><th>Slugs</th></tr></thead><tbody>';

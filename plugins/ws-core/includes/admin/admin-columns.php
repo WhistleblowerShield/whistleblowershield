@@ -90,18 +90,22 @@ function ws_render_jx_status_column( $column, $post_id ) {
 
     $related_id = 0;
     if ( $term_id ) {
-        $ids = get_posts( [
-            'post_type'      => $cpt_map[ $column ],
-            'post_status'    => [ 'publish', 'draft', 'pending' ],
-            'posts_per_page' => 1,
-            'fields'         => 'ids',
-            'tax_query'      => [ [
-                'taxonomy' => WS_JURISDICTION_TAXONOMY,
-                'field'    => 'term_id',
-                'terms'    => $term_id,
-            ] ],
-        ] );
-        $related_id = ! empty( $ids ) ? $ids[0] : 0;
+        if ( function_exists( 'ws_find_related_jx_record_id' ) ) {
+            $related_id = (int) ws_find_related_jx_record_id( $cpt_map[ $column ], $term_id );
+        } else {
+            $ids = get_posts( [
+                'post_type'      => $cpt_map[ $column ],
+                'post_status'    => [ 'publish', 'draft', 'pending' ],
+                'posts_per_page' => 1,
+                'fields'         => 'ids',
+                'tax_query'      => [ [
+                    'taxonomy' => WS_JURISDICTION_TAXONOMY,
+                    'field'    => 'term_id',
+                    'terms'    => $term_id,
+                ] ],
+            ] );
+            $related_id = ! empty( $ids ) ? $ids[0] : 0;
+        }
     }
 
     if ( $related_id ) {

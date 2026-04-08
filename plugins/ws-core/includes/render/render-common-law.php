@@ -93,5 +93,10 @@ function ws_render_jx_common_law( array $common_law_data, array $options = [] ):
         error_log( '[ws-core] ws_render_jx_common_law() called but not yet implemented — ' . count( $common_law_data ) . ' record(s) available.' );
     }
 
+    // Avoid fully silent failures for editors during build-out.
+    if ( current_user_can( 'edit_posts' ) ) {
+        return '<div class="ws-section ws-section--placeholder"><h2 class="ws-section-title">Common Law Protections</h2><p>Common law records exist for this jurisdiction, but the renderer is not implemented yet.</p></div>';
+    }
+
     return '';
 }

@@ -131,27 +131,39 @@ function ws_register_ingest_tool_page() {
 // ── Log directory bootstrap ───────────────────────────────────────────────────
 
 function ws_ingest_bootstrap_log_dir(): void {
-    if ( ! file_exists( WS_INGEST_LOG_DIR ) ) {
-        wp_mkdir_p( WS_INGEST_LOG_DIR );
-        file_put_contents( WS_INGEST_LOG_DIR . '.htaccess', "Deny from all\n" );
+    if ( ! is_dir( WS_INGEST_LOG_DIR ) ) {
+        if ( ! wp_mkdir_p( WS_INGEST_LOG_DIR ) ) {
+            error_log( '[ws-core] ws_ingest_bootstrap_log_dir(): failed to create log dir ' . WS_INGEST_LOG_DIR );
+            return;
+        }
+        file_put_contents( WS_INGEST_LOG_DIR . '.htaccess', "Deny from all\n", LOCK_EX );
     }
-    if ( ! file_exists( WS_INGEST_RUN_LOG_DIR ) ) {
-        wp_mkdir_p( WS_INGEST_RUN_LOG_DIR );
-        file_put_contents( trailingslashit( WS_INGEST_RUN_LOG_DIR ) . '.htaccess', "Deny from all\n" );
+    if ( ! is_dir( WS_INGEST_RUN_LOG_DIR ) ) {
+        if ( ! wp_mkdir_p( WS_INGEST_RUN_LOG_DIR ) ) {
+            error_log( '[ws-core] ws_ingest_bootstrap_log_dir(): failed to create run-log dir ' . WS_INGEST_RUN_LOG_DIR );
+            return;
+        }
+        file_put_contents( trailingslashit( WS_INGEST_RUN_LOG_DIR ) . '.htaccess', "Deny from all\n", LOCK_EX );
     }
-    if ( ! file_exists( WS_INGEST_INBOX_DIR ) ) {
-        wp_mkdir_p( WS_INGEST_INBOX_DIR );
-        file_put_contents( trailingslashit( WS_INGEST_INBOX_DIR ) . '.htaccess', "Deny from all\n" );
+    if ( ! is_dir( WS_INGEST_INBOX_DIR ) ) {
+        if ( ! wp_mkdir_p( WS_INGEST_INBOX_DIR ) ) {
+            error_log( '[ws-core] ws_ingest_bootstrap_log_dir(): failed to create inbox dir ' . WS_INGEST_INBOX_DIR );
+            return;
+        }
+        file_put_contents( trailingslashit( WS_INGEST_INBOX_DIR ) . '.htaccess', "Deny from all\n", LOCK_EX );
     }
-    if ( ! file_exists( WS_INGEST_ARCHIVE_DIR ) ) {
-        wp_mkdir_p( WS_INGEST_ARCHIVE_DIR );
-        file_put_contents( trailingslashit( WS_INGEST_ARCHIVE_DIR ) . '.htaccess', "Deny from all\n" );
+    if ( ! is_dir( WS_INGEST_ARCHIVE_DIR ) ) {
+        if ( ! wp_mkdir_p( WS_INGEST_ARCHIVE_DIR ) ) {
+            error_log( '[ws-core] ws_ingest_bootstrap_log_dir(): failed to create archive dir ' . WS_INGEST_ARCHIVE_DIR );
+            return;
+        }
+        file_put_contents( trailingslashit( WS_INGEST_ARCHIVE_DIR ) . '.htaccess', "Deny from all\n", LOCK_EX );
     }
     if ( ! file_exists( WS_PROPOSED_TERMS_LOG ) ) {
         file_put_contents( WS_PROPOSED_TERMS_LOG, json_encode(
             [ 'proposed_terms' => [] ],
             JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
-        ) );
+        ), LOCK_EX );
     }
 }
 
@@ -198,7 +210,16 @@ function ws_ingest_archive_json_file( string $source_path, string $filename, arr
         return [ 'ok' => false, 'path' => '', 'error' => 'Failed to write archive JSON file.' ];
     }
 
-    if ( ! @unlink( $source_path ) ) {
+    if ( file_exists( $source_path ) && ! is_writable( $source_path ) ) {
+        return [ 'ok' => false, 'path' => $target_path, 'error' => 'Archived copy written, but source file is not writable for deletion.' ];
+    }
+    $deleted = false;
+    if ( function_exists( 'wp_delete_file' ) ) {
+        $deleted = (bool) wp_delete_file( $source_path );
+    } else {
+        $deleted = unlink( $source_path );
+    }
+    if ( ! $deleted ) {
         return [ 'ok' => false, 'path' => $target_path, 'error' => 'Archived copy written, but failed to delete source file from inbox.' ];
     }
 
@@ -211,7 +232,10 @@ function ws_ingest_archive_raw_file( string $source_path, string $filename ): ar
     $stamp = gmdate( 'Ymd-His' );
     $target_path = trailingslashit( WS_INGEST_ARCHIVE_DIR ) . $stamp . '-' . basename( $filename );
 
-    if ( @rename( $source_path, $target_path ) ) {
+    if ( ! file_exists( $source_path ) ) {
+        return [ 'ok' => false, 'path' => '', 'error' => 'Source file no longer exists in inbox.' ];
+    }
+    if ( rename( $source_path, $target_path ) ) {
         return [ 'ok' => true, 'path' => $target_path, 'error' => '' ];
     }
 
@@ -1549,24 +1573,7 @@ function ws_ingest_parse_attached_citations( $raw ): array {
             if ( $line === '' ) {
                 continue;
             }
-
-            // Keep canonical prompt rows intact: CASE || IMPACT || URL || SOURCE || QUALITY
-            if ( str_contains( $line, '||' ) ) {
-                $chunks[] = $line;
-                continue;
-            }
-
-            // Fallback split for legacy free-text lists.
-            $legacy_chunks = preg_split( '/(?:;|\|)+/', $line );
-            if ( is_array( $legacy_chunks ) ) {
-                $chunks = array_merge( $chunks, $legacy_chunks );
-            } else {
-                $chunks[] = $line;
-            }
-        }
-
-        if ( ! is_array( $chunks ) ) {
-            $chunks = [ $item ];
+            $chunks[] = $line;
         }
 
         foreach ( $chunks as $chunk ) {
@@ -3351,7 +3358,14 @@ function ws_handle_ingest_folder_submission(): array {
             'archive'     => '',
         ];
 
-        $raw = @file_get_contents( $source_path );
+        if ( ! is_readable( $source_path ) ) {
+            $file_report['status'] = 'read-failed';
+            $file_report['errors'][] = 'Unable to read file from inbox.';
+            $result['folder']['files'][] = $file_report;
+            continue;
+        }
+
+        $raw = file_get_contents( $source_path );
         if ( $raw === false ) {
             $file_report['status'] = 'read-failed';
             $file_report['errors'][] = 'Unable to read file from inbox.';

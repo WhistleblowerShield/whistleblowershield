@@ -150,21 +150,12 @@ Render Functions
 ---------------------------------------------------------
 */
 
-// ════════════════════════════════════════════════════════════════════════════
-// ws_render_agency_procedures( $procedures )
-//
-// Top-level render for the procedures section on an agency page.
-// Groups procedures by type (disclosure → retaliation → both), renders a
-// section heading for each non-empty group, and calls
-// ws_render_agency_procedure_card() for each procedure in the group.
-//
-// Returns empty string when $procedures is empty — the agency page content
-// is not modified when no published procedures exist.
-//
-// @param  array  $procedures  Flat array from ws_get_agency_procedures().
-// @return string  HTML output, or '' when empty.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Renders grouped procedures for an agency page.
+ *
+ * @param  array<int,array<string,mixed>> $procedures Flat array from ws_get_agency_procedures().
+ * @return string HTML output, or empty string when no procedures exist.
+ */
 function ws_render_agency_procedures( $procedures ) {
 
     if ( empty( $procedures ) ) {
@@ -229,27 +220,12 @@ function ws_render_agency_procedures( $procedures ) {
 }
 
 
-// ════════════════════════════════════════════════════════════════════════════
-// ws_render_agency_procedure_card( $proc )
-//
-// Renders a single procedure card. Sections rendered in order:
-//
-//   1. Header: title (linked to procedure permalink)
-//   2. Intake-only warning (if intake_only === true) — prominent callout
-//   3. Meta dl: identity policy, filing deadline (with clock start), entry point
-//   4. Prerequisites notice (if has_prereqs === true)
-//   5. Walkthrough (WYSIWYG HTML — sanitized with wp_kses_post)
-//   6. Exclusivity notice (if exclusivity_note is set)
-//   7. CTA buttons: intake form URL and/or direct phone
-//   8. Last verified date
-//
-// Sections 2, 4, 6 are callout blocks styled to attract attention; 3 is a
-// structured metadata list; 5 is the primary user-facing content.
-//
-// @param  array  $proc  Single procedure data array from ws_get_agency_procedures().
-// @return string  HTML output.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Renders a single procedure card.
+ *
+ * @param  array<string,mixed> $proc Single procedure row from query layer.
+ * @return string HTML output.
+ */
 function ws_render_agency_procedure_card( $proc ) {
 
     global $_ws_proc_identity_labels, $_ws_proc_clock_labels, $_ws_proc_entry_labels;

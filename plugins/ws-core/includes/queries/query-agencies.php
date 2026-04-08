@@ -95,10 +95,12 @@ defined( 'ABSPATH' ) || exit;
 //   last_reviewed    string  Y-m-d date. Empty if not yet verified.
 //   record           array   ws_build_record_array() sub-array (authorship stamps).
 //
-// @param  int    $agency_id  Post ID of the parent ws-agency.
-// @return array              Flat array of procedure data rows, or empty array.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Returns all published procedures for a single agency.
+ *
+ * @param  int $agency_id Post ID of the parent ws-agency.
+ * @return array<int,array<string,mixed>> Flat procedure rows (empty when none).
+ */
 function ws_get_agency_procedures( $agency_id ) {
 
     $agency_id = (int) $agency_id;
@@ -241,10 +243,12 @@ function ws_build_agency_procedure_row( $pid ) {
 // Result cached per statute (ws_statute_procs_{id}, 24h).
 // Invalidated by the acf/save_post stash hooks below.
 //
-// @param  int    $statute_id  Post ID of the jx-statute.
-// @return array               Flat array of procedure rows, or empty array.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Returns all published procedures linked to a statute.
+ *
+ * @param  int $statute_id Post ID of the jx-statute.
+ * @return array<int,array<string,mixed>> Flat procedure rows (empty when none).
+ */
 function ws_get_procedures_for_statute( $statute_id ) {
 
     $statute_id = (int) $statute_id;

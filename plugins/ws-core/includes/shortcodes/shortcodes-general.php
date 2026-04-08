@@ -1,69 +1,10 @@
 <?php
 /**
- * File: shortcodes-general.php
+ * Site-wide shortcodes (not jurisdiction-assembler sections).
  *
- * General purpose shortcodes not tied to specific jurisdiction data.
- * These shortcodes are available site-wide and may be placed manually
- * on any page, or called by the auto-renderer in render-jurisdiction.php.
- *
- * Shortcodes registered here:
- *
- *   [ws_not_legal_advice_disclaimer_notice]
- *       Renders the standard "not legal advice" notice box.
- *       Copy is managed centrally in this file — editing $notice_text
- *       propagates to all jurisdiction pages automatically.
- *
- *   [ws_footer]
- *       Renders the site-wide footer block: mission statement,
- *       policy page links, contact email, and copyright line.
- *
- *   [ws_legal_updates jx="CA" count="5"]
- *       Renders recent legal updates. Scoped to a jurisdiction when jx
- *       is provided; site-wide when omitted. Jurisdiction calls restrict
- *       to WS_LEGAL_UPDATE_SUMMARY_TYPES automatically. Queries the
- *       ws-legal-update CPT.
- *
- *   [ws_reference_page post_id="123"]
- *       Renders the full reference materials page for a given jx-statute,
- *       jx-citation, or jx-interpretation post. Displays a back link,
- *       the parent post title, and a list of approved ws-reference items.
- *       If no approved references exist, renders a fallback message.
- *       All data reads delegated to ws_get_reference_page_data() in the
- *       query layer.
- *
- *   [ws_jurisdiction_index]
- *       Renders the full filterable jurisdiction index with type filter tabs
- *       and alphabetical grid. Placed on a standalone WP page — not called
- *       by the assembler. Moved here from shortcodes-jurisdiction.php (v3.6.0).
- *
- *   [ws_assist_org_directory]
- *       Renders the nationwide assist-org directory. Filter state lives
- *       in GET params (ws_stage, ws_concern, ws_sector, ws_target).
- *       Shortcode attributes are unused — all filtering via GET params
- *
- * VERSION
- * -------
- * 2.1.3  Full implementations restored from v2.0.0
- * 3.0.0  Phase 12.2: [ws_legal_updates] field reads moved to
- *         ws_get_legal_updates_data() in query-jurisdiction.php.
- *         Shortcode now delegates all data access to the query layer.
- * 3.1.0  Added [ws_reference_page] shortcode for ws-reference CPT system.
- * 3.3.3  DATA SOURCES docblock: corrected source_method value list (ai_assist →
- *         ai_assisted; added bulk_import). Evaluated ws_get_reference_page_url()
- *         relocation — no move needed, apply_filters() pattern is correct.
- * 3.6.0  [ws_jurisdiction_index] moved here from shortcodes-jurisdiction.php.
- *         Duplicate QUERY LAYER RETURN REFERENCE block removed — canonical copy
- *         lives in shortcodes-jurisdiction.php.
- * 3.7.0  Added [ws_assist_org_directory] shortcode. Delegates to
- *         ws_get_nationwide_assist_org_data() + ws_render_directory_page().
- *         Supports shortcode atts and URL param overrides for deep-linking.
- * 3.8.0  ws_get_reference_page_url() updated to accept optional $section param;
- *         appends section as query arg for anchor targeting in the assembler
- *         (id="ws-{section}" wrappers in render-jurisdiction.php).
- *         [ws_reference_page] shortcode reads $section from URL and appends
- *         #ws-{section} to the back link. Two disclaimers added to reference
- *         page output. External reference links use target="_blank" with
- *         rel="noopener noreferrer" and window.opener JS for tab management.
+ * For broader contracts and architecture notes, see:
+ * - includes/shortcodes/README.md
+ * - documentation/development/ws-core-output-layer.md
  *
  * @package WhistleblowerShield
  * @since   2.1.3
@@ -168,30 +109,7 @@ function ws_shortcode_legal_updates( $atts ) {
 }
 
 
-// ── [ws_reference_page] ───────────────────────────────────────────────────────
-//
-// Renders the reference materials page for a jx-statute, jx-citation, or
-// jx-interpretation post. Intended to be placed on a dedicated WP page.
-//
-// Usage:
-//   [ws_reference_page post_id="123"]
-//
-// post_id must resolve to a jx-statute, jx-citation, or jx-interpretation.
-// The "More Info" button in statute/citation shortcodes links here only when
-// references exist — so the fallback message below is defensive only.
-
-// ── ws_get_reference_page_url() ───────────────────────────────────────────────
-//
-// Returns the URL of the dedicated reference materials page, appending
-// ?post_id=N for the given parent post. Looks up a published WP page at
-// the slug defined by the filter ws_reference_page_slug (default:
-// 'reference-materials'). Returns '' if no such page exists.
-//
-// Relocation evaluated (v3.3.3): function uses apply_filters() for the page
-// slug, making it overridable without a constant. No relocation needed --
-// this is the correct pattern and the correct file.
-//
-// Usage: ws_get_reference_page_url( $post_id )
+// ── [ws_reference_page] + URL helper ───────────────────────────────────────
 
 function ws_get_reference_page_url( $post_id, $section = '' ) {
     $slug = apply_filters( 'ws_reference_page_slug', 'reference-materials' );
@@ -337,6 +255,15 @@ add_shortcode( 'ws_jurisdiction_index', function() {
 //   aorg_cost     — cost model value
 
 add_shortcode( 'ws_assist_org_directory', 'ws_shortcode_assist_org_directory' );
+/**
+ * Directory shortcode entrypoint.
+ *
+ * Filter state is sourced from GET params via ws_resolve_filter_context()
+ * so URLs remain shareable/bookmarkable.
+ *
+ * @param array<string,mixed> $atts Shortcode attributes (accepted for BC, ignored).
+ * @return string HTML output.
+ */
 function ws_shortcode_assist_org_directory( $atts ) {
 
     // Phase 2: all filter resolution goes through ws_resolve_filter_context().
@@ -348,25 +275,6 @@ function ws_shortcode_assist_org_directory( $atts ) {
 
     // ── Resolve filter context ────────────────────────────────────────────
     $context = ws_resolve_filter_context();
-
-    // ── Build query filters from context ─────────────────────────────────
-    // Pass validated slugs to the query layer. Absence means no filter on
-    // that axis — query returns all records for that taxonomy.
-    $query_filters = [];
-
-    if ( $context['sector'] !== null ) {
-        $query_filters['sector'] = $context['sector'];
-    }
-    if ( $context['stage'] !== null ) {
-        $query_filters['stage'] = $context['stage'];
-    }
-
-    // Concern is routed to the correct taxonomy by the context resolver.
-    // The query layer needs both the slug and the taxonomy name.
-    if ( $context['concern'] !== null && $context['concern_tax'] !== null ) {
-        $query_filters['concern']     = $context['concern'];
-        $query_filters['concern_tax'] = $context['concern_tax'];
-    }
 
     // ── Fetch results ─────────────────────────────────────────────────────
     // Targeted: jurisdiction-scoped orgs (empty for directory — directory
@@ -385,10 +293,6 @@ function ws_shortcode_assist_org_directory( $atts ) {
 }
 
 
-// ============================================================================
-// QUERY LAYER RETURN REFERENCE
-//
-// Canonical copy lives in shortcodes-jurisdiction.php.
-// Refer there for the full return-key reference for all dataset functions.
-// ============================================================================
-
+// Query return contracts:
+// - includes/queries/README.md
+// - documentation/development/ws-core-query-layer.md

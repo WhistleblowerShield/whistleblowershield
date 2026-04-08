@@ -74,9 +74,8 @@ function ws_resolve_display_name( $user_id ) {
 // ws_jx_term_by_code()
 //
 // Single chokepoint for all ws_jurisdiction term lookups by USPS code.
-// Accepts any case — normalises to lowercase internally — but fires an
-// E_USER_WARNING in WP_DEBUG so uppercase inputs are caught in development
-// and fixed at the source rather than silently corrected at runtime.
+// Accepts any case and normalizes to lowercase internally so callers can pass
+// human-entered values without failing term resolution.
 //
 // Use this everywhere a USPS code needs to resolve to a ws_jurisdiction term.
 // For callers that only need the term ID, use ws_get_term_id_by_code() in
@@ -114,8 +113,7 @@ function ws_jx_term_by_code( $code ) {
 // --------------------
 // ws_jx_codes values MUST be lowercase in the matrix source files
 // (e.g. 'ca', 'tx', 'us') to match ws_jurisdiction taxonomy term slugs.
-// This function does NOT silently normalize — it asserts in WP_DEBUG mode
-// so typos are caught during development, not silently swallowed.
+// This function does not normalize matrix payloads; it expects exact keys.
 //
 // ════════════════════════════════════════════════════════════════════════════
 
@@ -123,7 +121,9 @@ function ws_jx_term_by_code( $code ) {
  * Returns the court entry array for a given court key.
  *
  * @param  string     $court_key  The stored ws_jx_interp_court meta value.
- * @return array|null             Court entry array, or null if not found.
+ * @return array|null             Court entry (typically includes 'short',
+ *                                'name', and optional 'ws_jx_codes'), or
+ *                                null if not found.
  */
 function ws_court_lookup( $court_key ) {
     global $ws_court_matrix, $ws_state_court_matrix;

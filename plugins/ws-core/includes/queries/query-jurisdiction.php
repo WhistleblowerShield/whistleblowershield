@@ -426,43 +426,6 @@ function ws_get_jurisdiction_data( $input = null ) {
 
 
 // ════════════════════════════════════════════════════════════════════════════
-// ws_parse_jx_limitations_meta()
-//
-// Frontend fallback for the ws_jx_limitations ACF repeater.
-//
-// ACF field definitions are only registered in the admin layer, so
-// get_field() returns false on the frontend for repeater fields. This
-// function reads the raw post meta keys that ACF writes for repeaters
-// and returns them in the same shape get_field() would return:
-//   [ ['ws_jx_limit_label' => '...', 'ws_jx_limit_text' => '...'], ... ]
-//
-// Only called when get_field() returns false (frontend or WP-CLI context).
-//
-// @param  int    $sid  jx-summary post ID.
-// @return array        Rows array, or empty array if none saved.
-// ════════════════════════════════════════════════════════════════════════════
-
-function ws_parse_jx_limitations_meta( $sid ) {
-    $count = (int) get_post_meta( $sid, 'ws_jx_limitations', true );
-    if ( ! $count ) {
-        return [];
-    }
-    $rows = [];
-    for ( $i = 0; $i < $count; $i++ ) {
-        $label = (string) get_post_meta( $sid, "ws_jx_limitations_{$i}_ws_jx_limit_label", true );
-        $text  = (string) get_post_meta( $sid, "ws_jx_limitations_{$i}_ws_jx_limit_text",  true );
-        if ( $label || $text ) {
-            $rows[] = [
-                'ws_jx_limit_label' => $label,
-                'ws_jx_limit_text'  => $text,
-            ];
-        }
-    }
-    return $rows;
-}
-
-
-// ════════════════════════════════════════════════════════════════════════════
 // Dataset: Summary
 //
 // Retrieves the jx-summary post assigned to the given ws_jurisdiction term
@@ -509,7 +472,7 @@ function ws_get_jx_summary_data( $jx_term_id ) {
         // Content fields
         'content'       => get_post_meta( $sid, 'ws_jurisdiction_summary_wysiwyg', true ),
         'sources'       => get_post_meta( $sid, 'ws_jx_summary_sources',   true ),
-        'limitations'   => ws_parse_jx_limitations_meta( $sid ),
+        'limitations'   => (array) get_field( 'ws_jx_limitations', $sid ),
         'notes'         => get_post_meta( $sid, 'ws_jx_summary_notes',        true ),
         // jx-summary is inherently plain English; ws_has_plain_english is
         // implicitly true and no per-record toggle is stored or returned here.

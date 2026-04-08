@@ -120,18 +120,25 @@ function ws_core_init() {
         return;
     }
 
-    // ── Developer ───────────────────────────────────────────────────────────
-	//
-	// Sentry loaded by /vendor/autoload.php
-
-	if (file_exists(__DIR__ . '/vendor/autoload.php')) {
-		require_once __DIR__ . '/vendor/autoload.php';
-	}
-	define('WS_ENABLE_SENTRY', true);
+    // ── Error monitoring bootstrap ────────────────────────────────────────
+    // Only enable Sentry when the SDK autoloader is available.
+    $sentry_autoload = __DIR__ . '/vendor/autoload.php';
+    $sentry_enabled  = false;
+    if ( file_exists( $sentry_autoload ) ) {
+        require_once $sentry_autoload;
+        $sentry_enabled = true;
+    } elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+        error_log( '[ws-core] Sentry SDK autoload not found; continuing without Sentry.' );
+    }
+    if ( ! defined( 'WS_ENABLE_SENTRY' ) ) {
+        define( 'WS_ENABLE_SENTRY', $sentry_enabled );
+    }
 
     require_once WS_CORE_PATH . 'includes/loader.php';
 	
-	ws_sentry_init();
+    if ( function_exists( 'ws_sentry_init' ) ) {
+        ws_sentry_init();
+    }
 
     // Flush rewrite rules once after activation — deferred so all CPTs are
     // registered before the flush runs.
@@ -150,18 +157,26 @@ function ws_core_init() {
 //                             .ws-jx-filter-nav is absent
 
 add_action( 'wp_enqueue_scripts', 'ws_core_enqueue_assets' );
+add_action( 'admin_enqueue_scripts', 'ws_core_enqueue_admin_assets' );
+
+/**
+ * Enqueues ws-core admin styles.
+ *
+ * Kept separate from frontend enqueue hook because wp_enqueue_scripts does
+ * not run in wp-admin.
+ *
+ * @return void
+ */
+function ws_core_enqueue_admin_assets() {
+    wp_enqueue_style(
+        'ws-core-admin',
+        WS_CORE_URL . 'ws-core-admin.css',
+        [ 'acf-input' ],
+        WS_CORE_VERSION
+    );
+}
 
 function ws_core_enqueue_assets() {
-
-    if ( is_admin() ) {
-
-        wp_enqueue_style(
-			'ws-core-admin',
-			WS_CORE_URL . 'ws-core-admin.css',
-			[ 'acf-input' ],
-			WS_CORE_VERSION
-		);
-    }
 	
     if ( is_singular() ) {
 
