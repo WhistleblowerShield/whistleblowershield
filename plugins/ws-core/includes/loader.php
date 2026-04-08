@@ -67,7 +67,7 @@
  *      9) Shortcodes
  *
  *
- * IMPORTANT — TAXONOMY TWO-PHASE BEHAVIOUR
+ * IMPORTANT — TAXONOMY TWO-PHASE BEHAVIOR
  * -----------------------------------------
  * require_once on register-taxonomies.php registers the taxonomy
  * registration functions and hooks them to 'init'. It does NOT
@@ -151,7 +151,7 @@
  * 3.6.1   admin-health-check added.
  * 3.7.0   matrix-state-courts added.
  * 3.9.0   cpt/query/acf/render/admin files for ws-ag-procedure added.
- * 3.10.0  TAXONOMY TWO-PHASE BEHAVIOUR and MATRIX LAYER DEPENDENCY CHAIN
+ * 3.10.0  TAXONOMY TWO-PHASE BEHAVIOR and MATRIX LAYER DEPENDENCY CHAIN
  *         sections added. acf/workflow/ and admin/monitors/ subdirectory
  *         load blocks added.
  * 3.10.2  ws-statute-bold added to render files.
@@ -290,6 +290,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			} );
 		}
 	}
+
+	// Cascade layer — filter config and resolver
+	// Loaded on both frontend and admin
+	require_once WS_CORE_PATH . 'includes/cascade/ws-filter-config.php';
 
 	// CRON SCHEDULES: Must register universally — WP-Cron fires on frontend
 	// requests where is_admin() is false and admin-url-monitor.php never loads.

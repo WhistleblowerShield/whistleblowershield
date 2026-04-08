@@ -91,14 +91,10 @@ function ws_resolve_display_name( $user_id ) {
  * @return WP_Term|false       Term object, or false if not found.
  */
 function ws_jx_term_by_code( $code ) {
-    $code = (string) $code;
-    if ( defined( 'WP_DEBUG' ) && WP_DEBUG && $code !== strtolower( $code ) ) {
-        trigger_error(
-            "ws_jx_term_by_code(): uppercase code '{$code}' — use lowercase to match ws_jurisdiction taxonomy slugs.",
-            E_USER_WARNING
-        );
-    }
-    return get_term_by( 'slug', strtolower( $code ), WS_JURISDICTION_TAXONOMY );
+    // Normalize to lowercase — USPS codes are stored as lowercase slugs.
+    // Silently corrects uppercase input rather than warning; callers should
+    // pass lowercase but the function handles either form gracefully.
+    return get_term_by( 'slug', strtolower( (string) $code ), WS_JURISDICTION_TAXONOMY );
 }
 
 

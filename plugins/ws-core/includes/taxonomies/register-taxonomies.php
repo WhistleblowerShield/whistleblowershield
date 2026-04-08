@@ -28,7 +28,10 @@
  * 3.12.0  ws_employee_standard added
  * 3.14.1  all-sectors added to ws_protected_class as parent; all-employees added as child.
  *          internal-management added to ws_disclosure_targets under internal parent.
- *          general-legal parent + general-wrongdoing child added to ws_disclosure_type. (jx-statute). Flat taxonomy replacing freetext
+ *          general-legal parent + general-wrongdoing child added to ws_disclosure_type.
+ * 3.14.2  retaliation-protection and wrongful-termination removed from ws_disclosure_type
+ *          (workplace-employment children). These are adverse action types, not disclosure
+ *          types. Disclosure gate bumped to 1.2.0. (jx-statute). Flat taxonomy replacing freetext
  *         employee_standard field. Seven terms including has-details sentinel.
  * 3.13.0  jx-common-law added to object_types for all shared doctrinal taxonomies:
  *         ws_disclosure_type, ws_protected_class, ws_disclosure_targets,
@@ -687,9 +690,9 @@ function ws_bulk_insert_hierarchical( array $hierarchy, string $taxonomy ) {
 
 add_action( 'admin_init', function() {
 
-    if ( get_option( 'ws_seeded_disclosure_type' ) !== '1.1.0' ) {
+    if ( get_option( 'ws_seeded_disclosure_type' ) !== '1.2.0' ) {
         ws_seed_disclosure_taxonomy();
-        update_option( 'ws_seeded_disclosure_type', '1.1.0' );
+        update_option( 'ws_seeded_disclosure_type', '1.2.0' );
     }
     if ( get_option( 'ws_seeded_process_type' ) !== '1.0.0' ) {
         ws_seed_process_taxonomy();
@@ -771,8 +774,6 @@ function ws_seed_disclosure_taxonomy() {
         'workplace-employment' => [
             'name'     => 'Workplace & Employment',
             'children' => [
-                'retaliation-protection'     => 'Retaliation Protection',
-                'wrongful-termination'       => 'Wrongful Termination',
                 'wage-hour-violations'       => 'Wage & Hour Violations',
                 'occupational-health-safety' => 'Occupational Health & Safety',
                 'collective-bargaining'      => 'Collective Bargaining Rights',
