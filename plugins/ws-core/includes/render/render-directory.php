@@ -541,6 +541,9 @@ function ws_render_directory_card( $org ) {
 
     $cost_slug  = is_array( $org['cost_model'] ) ? ( $org['cost_model'][0] ?? '' ) : '';
     $cost_label = $cost_labels[ $cost_slug ] ?? '';
+    $has_secure_channel = ! empty( $org['has_secure_channel'] );
+    $secure_contact_url = trim( (string) ( $org['secure_contact_url'] ?? '' ) );
+    $secure_contact_tool = trim( (string) ( $org['secure_contact_tool'] ?? '' ) );
 
     $services = ( is_array( $org['services'] ) && ! is_wp_error( $org['services'] ) )
         ? array_values( array_filter( $org['services'] ) )
@@ -593,6 +596,11 @@ function ws_render_directory_card( $org ) {
                 <?php if ( ! empty( $org['anonymous'] ) ) : ?>
                     <span class="ws-aorg-card__badge ws-aorg-card__badge--anon">
                         Accepts Anonymous
+                    </span>
+                <?php endif; ?>
+                <?php if ( $has_secure_channel ) : ?>
+                    <span class="ws-aorg-card__badge ws-aorg-card__badge--secure">
+                        Secure Channel
                     </span>
                 <?php endif; ?>
             </div>
@@ -649,6 +657,16 @@ function ws_render_directory_card( $org ) {
                    rel="noopener noreferrer"
                    aria-label="Get started with <?php echo esc_attr( $org['title'] ); ?> (opens in new tab)">
                     Get Started
+                    <span class="screen-reader-text">(opens in new tab)</span>
+                </a>
+            <?php endif; ?>
+            <?php if ( $has_secure_channel && $secure_contact_url !== '' ) : ?>
+                <a href="<?php echo esc_url( $secure_contact_url ); ?>"
+                   class="ws-btn ws-btn--secure ws-btn--sm"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Open secure contact for <?php echo esc_attr( $org['title'] ); ?><?php echo $secure_contact_tool !== '' ? ' via ' . esc_attr( $secure_contact_tool ) : ''; ?> (opens in new tab)">
+                    [Secure Contact]
                     <span class="screen-reader-text">(opens in new tab)</span>
                 </a>
             <?php endif; ?>

@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "json_format_version": "2.0",
+    "source_method": "ai_assisted",
+    "source_name": "Grok",
+    "jurisdiction_id": "US",
+    "generated_date": "2026-04-08",
+    "generated_by": "Grok by xAI (2026 model)",
+    "record_count": 2,
+    "json_run_notes": "Nationwide-focused search conducted excluding all listed organizations. Limited to high-confidence verifiable records with direct assistance pathways. Psst.org and Empower Oversight had insufficient detailed public intake/service data for full schema confidence after browsing; omitted to avoid uncertainty. The Signals Network and Whistleblowers of America met core verification thresholds for nationwide US whistleblower support.",
+    "_json_run_researcher_notes": "",
+    "batch_completed": "2026-04-08 23:53 UTC"
+  },
+  "records": [
+    {
+      "organization_name": "The Signals Network",
+      "official_homepage_url": "https://thesignalsnetwork.org/",
+      "general_description": "The Signals Network is a 501(c)(3) nonprofit organization dedicated to supporting whistleblowers who expose wrongdoing in the public interest. It provides customized assistance including legal support, confidentiality measures, psychological support, media relations, advocacy, and temporary retreats for selected whistleblowers. The organization helps individuals navigate decisions about disclosures safely and offers resources to strengthen whistleblower protections globally, with a strong presence supporting US cases.",
+      "homepage_url_status": "verified",
+      "intake_or_contact_url": "https://thesignalsnetwork.org/contact/",
+      "nationwide_example": "",
+      "disclosure_types": [],
+      "languages_supported": ["english"],
+      "assistance_types": ["advocacy"],
+      "employment_sectors": ["private-sector", "federal-employee"],
+      "cost_model": ["free"],
+      "services_provided": ["legal-rep", "consultation", "retaliation", "media", "advocacy"],
+      "process_types": [],
+      "anonymous_pre_consult_possible": "unclear",
+      "has_attorneys": "yes",
+      "income_eligibility_required": "no",
+      "case_stages": ["pre-report", "post-report", "retaliation-active"],
+      "disclosure_targets": [],
+      "whistleblower_scope": 3,
+      "whistleblower_note": "Provides pro bono-level legal, psychological, media, and advocacy support to public interest whistleblowers facing or considering disclosure and retaliation; works with US whistleblowers across sectors.",
+      "_review_notes": "researcher had no notes on current record"
+    },
+    {
+      "organization_name": "Whistleblowers of America",
+      "official_homepage_url": "https://www.whistleblowersofamerica.org/",
+      "general_description": "Whistleblowers of America (WoA) is a nonprofit organization that assists whistleblowers who have suffered retaliation after exposing harm to individuals or the public. It offers evidence-based peer support, matching mentors with mentees to reduce stress and aid problem-solving and decision-making. Additional services include advocacy, research, training, legislative efforts, and public education to combat stigma and strengthen protections.",
+      "homepage_url_status": "verified",
+      "intake_or_contact_url": "",
+      "nationwide_example": "",
+      "disclosure_types": [],
+      "languages_supported": ["english"],
+      "assistance_types": ["advocacy"],
+      "employment_sectors": ["all-sectors"],
+      "cost_model": ["free"],
+      "services_provided": ["referral", "retaliation", "advocacy"],
+      "process_types": [],
+      "anonymous_pre_consult_possible": "unclear",
+      "has_attorneys": "unclear",
+      "income_eligibility_required": "no",
+      "case_stages": ["retaliation-active", "post-report"],
+      "disclosure_targets": [],
+      "whistleblower_scope": 2,
+      "whistleblower_note": "Focuses on peer support and advocacy for whistleblowers experiencing retaliation; provides practical help to manage stress and navigate post-disclosure challenges.",
+      "_review_notes": "researcher had no notes on current record"
+    }
+  ],
+  "integrity": {
+    "with_errors": false
+  }
+}

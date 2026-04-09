@@ -1,0 +1,65 @@
+This is a strong reconciler output. Let me work through it systematically.
+
+***
+
+## What the Reconciler Got Right
+
+**Exclusion list enforcement:**
+- Dropped both Grok records (The Signals Network, Whistleblowers of America) ✓
+- Noted the reason explicitly in `reconciledrunnotes` ✓
+
+**Parent slug removal — all four caught and logged correctly:**
+- AIWI: `public-health-safety` removed ✓
+- WHISPeR: `national-security` removed ✓
+- Psst: `public-health-safety` removed ✓
+- RCFP: `national-security` removed ✓
+- `witherrors: true` with `errorcount: 4` matching `errordetails` length ✓
+
+**Law firm pull:**
+- National Security Counselors removed, reason stated ✓
+
+**`sourcechain` block** — genuinely useful addition. Not in the original prompt schema but high archival value.
+
+***
+
+## What Still Needs Attention
+
+**Carried forward unresolved:**
+
+1. **`incomeeligibilityrequired: unclear` on TIMES UP, A Better Balance, Legal Momentum, WorkLife Law** — the reconciler did not resolve these, which is the right call if web search was unavailable. But they need a flag so a human reviewer knows these are open, not confirmed. Currently they're just sitting as `unclear` with no note explaining why they weren't resolved.
+
+2. **RCFP `coverageexceptions` still missing** — the labor/employment exclusion is in `reviewnotes` only. The reconciler caught the parent slug but didn't promote that coverage gap to the correct field. Low severity but worth a pass.
+
+3. **`disclosuretypes` empty on all four GPT-sourced records** (TIMES UP, A Better Balance, Legal Momentum, WorkLife Law) — carried through from source unchanged. Permissible omit, but worth noting these four have zero disclosure type tags, which affects routing fidelity downstream.
+
+4. **`disclosuretargets` empty on A Better Balance, Legal Momentum, WorkLife Law** — same situation, carried through unchanged.
+
+5. **TIMES UP `nationwideexample`** — the value *"the only nationwide resource for people facing workplace sex harassment and retaliation to connect with legal help"* is a strong claim that warrants verification. The reconciler retained it without flagging it, and web search was unavailable. Should be a reviewer flag.
+
+**New reconciler-introduced issue:**
+
+6. **`employmentsectors` simplified to `all-sectors` where "redundant"** — this is stated in `reconciledrunnotes` as a deliberate decision, but `all-sectors` is a meaningful routing tag. Collapsing `federal-employee + private-sector` into `all-sectors` implies the org serves *every* sector, which may overstate scope. EMPOWR for example was originally tagged `federal-employee, private-sector, all-sectors` — the original already had `all-sectors` so the simplification is fine there. But this rule applied broadly could silently broaden scope on other records. Worth a note for the human reviewer to spot-check.
+
+7. **`verifieddateurl` format** — the reconciler carried `2026-04-08` (date only) on most records, but the schema specifies `YYYY-MM-DD HHMM UTC`. The timestamp component is missing on every record that came from Gemini. Not a hard fail but a format gap.
+
+***
+
+## Summary Assessment
+
+| Check | Result |
+|---|---|
+| Exclusion list enforcement | **Pass** |
+| Parent slug removal | **Pass — all 4 caught** |
+| Law firm exclusion | **Pass** |
+| `witherrors` / `errorcount` consistency | **Pass** |
+| Unresolved `incomeeligibilityrequired: unclear` flagged | **Miss — open items not surfaced** |
+| RCFP `coverageexceptions` promotion | **Miss** |
+| TIMES UP nationwide claim flagged | **Miss** |
+| `verifieddateurl` timestamp format | **Minor gap** |
+| `employmentsectors` simplification risk | **Noted but needs spot-check** |
+
+***
+
+## Bottom Line
+
+The reconciler is functioning well on the structural and compliance checks — exclusion list, parent slugs, org-type exclusions. The gap is on **semantic review**: it's passing through unresolved `unclear` values and unsupported strong claims without surfacing them as open items for the human reviewer. That's the next layer to build out.

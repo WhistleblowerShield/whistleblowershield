@@ -492,9 +492,6 @@ function ws_prompt_render_hierarchical_table( string $slug, string $label, strin
     $out  = str_repeat( '─', 76 ) . "\n";
     $out .= "TAXONOMY: {$slug}\n";
     $out .= "Applies to: {$applies_to}\n";
-    if ( ! empty( $object_types ) ) {
-        $out .= 'Registered on: ' . implode( ', ', $object_types ) . "\n";
-    }
     $out .= "Hierarchical: YES — use child slugs only\n";
     $out .= "Description: {$description}\n";
     $out .= str_repeat( '─', 76 ) . "\n\n";
@@ -521,9 +518,6 @@ function ws_prompt_render_flat_table( string $slug, string $label, string $appli
     $out  = str_repeat( '─', 76 ) . "\n";
     $out .= "TAXONOMY: {$slug}\n";
     $out .= "Applies to: {$applies_to}\n";
-    if ( ! empty( $object_types ) ) {
-        $out .= 'Registered on: ' . implode( ', ', $object_types ) . "\n";
-    }
     $out .= "Hierarchical: NO — flat list\n";
     $out .= "Description: {$description}\n";
     $out .= str_repeat( '─', 76 ) . "\n\n";
@@ -1018,6 +1012,7 @@ BLOCK;
 
 function ws_prompt_integrity_block(): string {
     return <<<'BLOCK'
+---
 
 INTEGRITY BLOCK
 
@@ -1040,7 +1035,10 @@ with_errors must be true if ANY of the following occurred:
   - A citation was omitted because a URL could not be verified
   - A SOL value was derived rather than explicit (limit_ambiguous: true)
   - A parent slug was detected and removed during self-check
+
+with_errors should not include items like:  
   - Anything a human reviewer should know about this batch
+  - use record._review_notes for these — they are expected and do not indicate an error in the batch
 
 Fail-safe policy:
   - It is acceptable to fail one or more records instead of guessing.
@@ -1058,7 +1056,9 @@ BLOCK;
 function ws_prompt_assist_org_research_block(): string {
     return <<<'BLOCK'
 You are a research assistant building a vetted shortlist of assist organizations
-for WhistleblowerShield.org fallback routing.
+for WhistleblowerShield.org fallback routing. When our database, you helped build,
+doesn't surface a specific shortlist of targeted assistance organizations, the
+fallback list must be ready to help the end users in need.
 
 Persona(1) Maya  - considering coming forward to expose wrongdoing.
 Persona(2) James - has already come forward and is under direct retaliation.
@@ -1069,8 +1069,145 @@ direct help or a fast path to qualified help.
 Keep the batch tight and practical. Do not return more than requested records.
 Do not return records where you are not confident about included data.
 
+BLOCK;
+}
+
+function ws_prompt_assist_org_field_rules_block(): string {
+    return <<<'BLOCK'
+
+FIELD RULES
+
+Omit when unable to confidently verify data.
+Omitting uncertain data is correct.
+Fabricating data is wrong.
+
+If using a trustworthy source, you can include an assistance organization even though you can't
+reach the official homepage right now. Note the source of the information in record.source_url.
+
 ---
 
+PER RECORD.KEY DETAILS
+Each candidate organization must include as much verified information as possible:
+  - organization_name         [required - full official name]
+  - official_homepage_url     [required - official domain name URL]
+  - general_description       [required - 3 to 5 sentences describing nature of organization]
+-IMPORTANT- It is expected and permissible to omit record entirely, if any of the above three cannot be confidently verified.
+
+The following record.keys are noted as acceptable to leave blank ("" or []):
+record.nationwide_example: ""
+record.disclosure_targets: []
+
+Unless 'required' omit any record.key you cannot confidently find data for.
+POSSIBLE OMIT LIST:
+record.source_url
+record.common_name
+record.verified_date_url
+record.intake_or_contact_url
+record.phone
+record.contact_email
+record.mailing_address
+record.secure_contact_url
+record.secure_contact_tool
+record.disclosure_types
+record.languages_additional
+record.employment_sectors
+record.cost_model
+record.services_provided
+record.process_types
+record.case_stage_details
+record.disclosure_targets_details
+record.coverage_exceptions
+record.eligibility_notes
+
+REQUIRED RECORD.KEYS:
+record.assistance_type                  is required and must be one of the child slugs from ws_aorg_type taxonomy, use 'mixed' if the organization fits multiple types or is ambiguous.
+record.has_secure_channel               is required and must be true or false.
+record.secure_contact_url               is required when has_secure_channel is true, omit when has_secure_channel is false.
+record.secure_contact_tool              is required when has_secure_channel is true, omit when has_secure_channel is false.
+record.anonymous_pre_consult_possible   is 'yes' when the official homepage expresses anonymity is possible, it is 'no' when the official homepage expresses anonymity is not possible, in all other cases it is 'unclear'.
+record.income_eligibility_required      is 'yes' when the official homepage expresses income eligibility requirements, it is 'no' when the official homepage expresses no income eligibility requirements, in all other cases it is 'unclear'.
+record.has_attorneys                    is 'yes' when the official homepage expresses licensed attorneys are available, it is 'no' when the official homepage expresses licensed attorneys are not available, in all other cases it is 'unclear'.
+record.homepage_url_status              is 'verified' only if you can access the official homepage, is 'redirects' when the official homepage links to an official page that is not the homepage, in all other cases is 'unverified'.
+record.nationwide_example               is required as a string. If no quote from source page or mission statement can be confidently located, use "" (do not omit). When nationwide_example is "", add brief reason in _review_notes.
+record.languages_supported              must include at least one language, prioritize organizations that have 'english', but do not exclude organizations that provide for languages that are not 'english'.
+record.whistleblower_scope              determine the scope (0 to 3) which organization supports whistleblower concerns, see inline examples.
+record.whistleblower_note               use quoted text from source url to detail whistleblower_scope rating, or detail reason for inclusion if whistleblower_scope is zero.
+record.case_stages                      do not omit, do not leave blank, use single slug 'other' and provide details in case_stage_details if case_stages are difficult to determine confidently.
+record.disclosure_targets               is required as an array. If no confident child slug can be assigned, use [] (do not omit key). When disclosure_targets is [], add a brief reason in _review_notes.
+record._review_notes                    do not omit, do not leave blank, if you have no specific notes use default message: "researcher had no notes on current record".
+
+  - source_url                [if organization information was sourced from anywhere other than an official domain, provide complete URL to source page, omit if official domain homepage was used]
+  - common_name               [publicly recognizable shorthand name or acronym for organization, omit if unavailable]
+  - homepage_url_status       [required - verified | redirects | unverified]
+  - verified_date_url         [YYYY-MM-DD, omit if unverified]
+  - intake_or_contact_url     [omit if unverified or unavailable]
+  - phone                     [public inquiry phone number, omit if unavailable or unverifiable]
+  - contact_email             [public inquiry email address, omit if unavailable or unverifiable]
+  - mailing_address           [public mailing address, omit if unavailable or unverifiable]
+  - has_secure_channel        [required - true | false]
+  - secure_contact_url        [required when has_secure_channel is true, omit otherwise]
+  - secure_contact_tool       [required when has_secure_channel is true, text example: Signal, SecureDrop, ProtonMail]
+  - nationwide_example        [required - quoted sentence up to 3 from source page or mission statement that shows nationwide intent, acceptable to leave blank if not found]
+  - disclosure_types          [Use Approved Taxonomy CHILD slugs from ws_disclosure_type, do not use PARENT slugs, multiple may apply, omit if unavailable or ambiguous]
+  - languages_supported       [required - Use Approved Taxonomy slugs from ws_languages, list all you can find]
+  - languages_additional      [If languages_supported includes 'additional' slug, list languages not covered in taxonomy, omit if no additional languages]
+  - assistance_type           [Required - Use Approved Taxonomy slugs from ws_aorg_type table, best fit single slug only, use 'mixed' if ambiguous]
+  - employment_sectors        [Use Approved Taxonomy slugs from ws_employment_sector table, multiple may apply, omit if unavailable or ambiguous]
+  - cost_model                [Use Approved Taxonomy slugs from ws_aorg_cost_model table, best fit single slug only, omit if unavailable or ambiguous]
+  - income_eligibility_required    [required - yes | no | unclear]
+  - eligibility_notes              [required when income_eligibility_required is yes, omit otherwise]   
+  - services_provided              [Use Approved Taxonomy slugs from ws_aorg_service table, multiple may apply, omit if unavailable or ambiguous]
+  - process_types                  [Use Approved Taxonomy slugs from ws_process_type table, multiple may apply, omit if unavailable or ambiguous]
+  - anonymous_pre_consult_possible [required - yes | no | unclear]
+  - has_attorneys                  [required - yes | no | unclear]
+  - case_stages                    [required - Use Approved Taxonomy slugs from ws_case_stage table, multiple may apply, if 'other' slug is selected provide details in case_stage_details]
+  - case_stage_details             [If case_stages array includes slug 'other' provide details, omit if case_stages does not include slug 'other']
+  - disclosure_targets             [required - Use Approved Taxonomy CHILD slugs from ws_disclosure_targets, do not use PARENT slugs, multiple may apply, may use 'has-details', it is acceptable to be left blank]
+  - disclosure_targets_details     [If disclosure_targets includes 'has-details', provide details, omit if disclosure_targets does not include 'has-details']
+  - coverage_exceptions            [freetext describing any jurisdictional coverage gaps self reported by the organization, example: nationwide except texas, second example: california but only san francisco,list all gaps found, omit if none]
+  - whistleblower_scope            [required - INTEGER - rate 0 to 3, example(1) not whistleblower specific, general help such as ABA lawyer referral, example(2) sub-set of whistleblower concerns such as Tax Payers Against Fraud (securities, ethics, fraud), example(3) all whistleblower concerns such as Whistleblowers of America, set as 0 if scope is unclear]
+  - whistleblower_note             [required - quoted sentence up to 3 from source page or mission statement that describes scope of whistleblower assistance, if whistleblower_scope is 0 describe reason for inclusion]
+  - _review_notes                  [required - free form notes about omitted data or notable detail of organization not covered in schema, example: good notes may include why services_provided was hard to determine, second example: organization is well-regarded but currently not accepting intake clients. Be verbose about details the human reviewer may need to know]
+
+OTHER GOOD NOTE EXAMPLES
+Intake limitations:
+- "Intake form requires creating an account before any information about services is visible — may deter anonymous users"
+- "Phone hotline listed but website states 2-3 week callback wait; not suitable for urgent retaliation situations"
+- "Intake is through a third-party scheduling tool that requires a valid email address"
+
+Scope edge cases:
+- "Homepage claims nationwide but FAQ states they only take cases in states where they have licensed attorneys — currently 23 states"
+- "Primarily serves federal employees despite broad mission language; private sector cases accepted but rarely taken"
+- "Focuses on high-value False Claims Act cases; unlikely to take smaller retaliation-only matters"
+
+Practical warnings:
+- "Organization is well-regarded but currently has a stated 6-month intake backlog as of last review"
+- "Free consultation offered but representation is contingency only with minimum case value threshold"
+- "Spanish-language support listed but only available through a partner referral, not direct intake"
+
+Taxonomy gaps:
+- "Provides media coaching and source protection services not captured by any ws_aorg_service slug"
+- "Operates a secure document submission system for anonymous tips — closer to a secure drop than a hotline"
+- "Researcher has a new proposed taxonomy term, where it applies, and with detailed reason"
+
+ORGANIZATION INCLUSION RULES
+  - Must provide direct help or referral pathway.
+  - Prioritize actionable intake pathways over general information pages.
+
+ORGANIZATION EXCLUSION RULES
+  - Exclude pure government reporting channels.
+  - Exclude media tip lines without user support pathways.
+  - Exclude entries with broken URLs or unclear user path.
+  - Exclude private law firms with billable-hour primary intake.
+    (Contingency-fee, pro bono, and legal-aid models are not excluded by default.)
+
+---
+
+BLOCK;
+}
+
+function ws_prompt_assist_org_record_schema_block(): string {
+    return <<<'BLOCK'
 RECORD SCHEMA
 
 {
@@ -1078,17 +1215,23 @@ RECORD SCHEMA
   "official_homepage_url": "[required - official homepage URL]",
   "general_description": "[required - 3 to 5 sentences]",
 
-  "source_url": "[omit if homepage used]",
+  "source_url": "[omit if official homepage used]",
   "common_name": "[omit if unavailable]",
   "homepage_url_status": "[required - verified | redirects | unverified]",
-  "verified_date_url": "[YYYY-MM-DD HH:MM UTC - omit if unverified]",
+  "verified_date_url": "[YYYY-MM-DD - omit if unverified]",
   "intake_or_contact_url": "[omit if unavailable or unverified]",
+  "phone": "[omit if unavailable or unverifiable]",
+  "contact_email": "[omit if unavailable or unverifiable]",
+  "mailing_address": "[omit if unavailable or unverifiable]",
+  "has_secure_channel": "[required - true | false]",
+  "secure_contact_url": "[required when has_secure_channel is true, omit otherwise]",
+  "secure_contact_tool": "[required when has_secure_channel is true, omit otherwise]",
   "nationwide_example": "[required string - use \"\" if not found]",
 
   "disclosure_types": [],
   "languages_supported": [],
   "languages_additional": "[omit if not needed]",
-  "assistance_types": [],
+  "assistance_type": "[]",
   "employment_sectors": [],
   "cost_model": [],
   "services_provided": [],
@@ -1096,87 +1239,17 @@ RECORD SCHEMA
   "anonymous_pre_consult_possible": "[required - yes | no | unclear]",
   "has_attorneys": "[required - yes | no | unclear]",
   "income_eligibility_required": "[required - yes | no | unclear]",
-  "eligibility_notes": "[required when income_eligibility_required = yes]",
+  "eligibility_notes": "[required when income_eligibility_required is yes]",
   "case_stages": [],
   "case_stage_details": "[omit unless case_stages includes other]",
   "disclosure_targets": [],
   "disclosure_targets_details": "[omit unless disclosure_targets includes has-details]",
 
   "coverage_exceptions": "[omit if none]",
-  "whistleblower_scope": 0,
+  "whistleblower_scope": "[required - 0 to 3]",
   "whistleblower_note": "[required - quote or reason for inclusion]",
   "_review_notes": "[required - use default note if none]"
 }
-
----
-
-FIELD RULES
-
-Hard fail record rule:
-  - organization_name, official_homepage_url, and general_description are all
-    required. If any one cannot be confidently verified, omit the full record.
-
-Required keys:
-  - homepage_url_status: verified | redirects | unverified
-  - anonymous_pre_consult_possible: yes | no | unclear
-  - has_attorneys: yes | no | unclear
-  - income_eligibility_required: yes | no | unclear
-  - nationwide_example: required string; use "" when no confident quote exists
-  - languages_supported: required array; include at least one language
-  - case_stages: required array; if uncertain, use ["other"] and explain in case_stage_details
-  - disclosure_targets: required array; if no confident child slug, use []
-  - whistleblower_scope: required integer (0-3)
-  - whistleblower_note: required quote or inclusion rationale
-  - _review_notes: required; default to "researcher had no notes on current record"
-
-Optional keys (omit when unknown unless explicitly required above):
-  source_url, common_name, verified_date_url, intake_or_contact_url,
-  disclosure_types, languages_additional, assistance_types, employment_sectors,
-  cost_model, services_provided, process_types, case_stage_details,
-  eligibility_notes,
-  disclosure_targets_details, coverage_exceptions
-
-Income eligibility rules:
-  - If income_eligibility_required = yes, eligibility_notes is mandatory and
-    must describe the threshold/criteria.
-  - If income_eligibility_required = no, eligibility_notes must be omitted.
-  - If income_eligibility_required = unclear, eligibility_notes must be omitted.
-  - If income_eligibility_required = no, use no only when confidently verified
-    that no income gate exists.
-  - If income_eligibility_required = unclear, keep unclear and explain briefly
-    in _review_notes.
-
-Taxonomy usage:
-  - disclosure_types: ws_disclosure_type child slugs only
-  - disclosure_targets: ws_disclosure_targets child slugs only; has-details allowed
-  - languages_supported: ws_languages
-  - assistance_types: ws_aorg_type (best-fit single slug)
-  - employment_sectors: ws_employment_sector
-  - cost_model: ws_aorg_cost_model (best-fit single slug)
-  - services_provided: ws_aorg_service
-  - process_types: ws_process_type
-  - case_stages: ws_case_stage
-
----
-
-_review_notes examples (good):
-  - intake requires account creation before service details
-  - stated callback delay is too long for urgent retaliation cases
-  - "nationwide" claim is narrowed in FAQ to licensed states only
-  - secure drop/media coaching capability not represented in current taxonomy
-
----
-
-ORGANIZATION INCLUSION RULES
-  - Must provide direct help or a referral pathway.
-  - Prioritize actionable intake paths over informational pages.
-
-ORGANIZATION EXCLUSION RULES
-  - Exclude pure government reporting channels.
-  - Exclude media tip lines without user-support pathways.
-  - Exclude broken URLs or unclear user paths.
-  - Exclude private law firms with billable-hour primary intake.
-    (Contingency-fee, pro bono, and legal-aid models are not excluded by default.)
 
 BLOCK;
 }
@@ -1184,14 +1257,17 @@ BLOCK;
 function ws_generate_assist_org_prompt( array $scope ): string {
     $jx              = strtoupper( sanitize_text_field( $scope['jx_id'] ) );
     $jx_name         = sanitize_text_field( $scope['jx_name'] );
-    $proposal_count  = max( 1, (int) ( $scope['proposal_count'] ?? 7 ) );
+    $proposal_count  = max( 0, (int) ( $scope['proposal_count'] ?? 0 ) );
     $nationwide_only = ! empty( $scope['nationwide_only'] );
     $focus_notes     = sanitize_textarea_field( (string) ( $scope['assist_org_focus_notes'] ?? '' ) );
     $excludes        = sanitize_textarea_field( (string) ( $scope['exclusion_list'] ?? '' ) );
 
-    $out  = ws_prompt_what_you_are_producing( 'assistance organization records' );
-    $out .= ws_prompt_assist_org_research_block();
+    $out  = ws_prompt_assist_org_research_block();
+    $out .= ws_prompt_what_you_are_producing( 'assistance organization records' );
     $out .= ws_prompt_assist_org_meta_schema();
+    $out .= ws_prompt_assist_org_field_rules_block();
+    $out .= ws_prompt_assist_org_record_schema_block();
+    $out .= ws_prompt_parent_slug_block();
     $out .= ws_prompt_taxonomy_tables( 'ws-assist-org' );
     $out .= ws_prompt_integrity_block();
 
@@ -1729,6 +1805,7 @@ TOP-LEVEL OUTPUT SCHEMA
     "generated_by": "[FULL MODEL NAME + VERSION]",
     "record_count": 0,
     "json_run_notes": "",
+    "_json_run_researcher_notes": "[OPTIONAL — any contextual researcher note that does not fit other fields. Example: domain appears unusual but resolves to a legitimate nonprofit homepage.]",
     "batch_completed": "[YYYY-MM-DD HH:MM UTC]"
   },
   "records": [],
@@ -1739,6 +1816,9 @@ TOP-LEVEL OUTPUT SCHEMA
 
 meta.json_run_notes: include any notes about the entire run that you
 feel a human reviewer would want to know.
+meta._json_run_researcher_notes: anything that isn't specifically
+task related, things that don't quite fit in *_notes. Stripped at ingest,
+but maintained in the archival records.
 
 meta.batch_completed: Always use UTC. Format: YYYY-MM-DD HH:MM UTC.
 Must exist, must be UTC, used for archival purposes.
@@ -1747,6 +1827,8 @@ Written last, after all records and calculated fields are final.
 CALCULATED FIELDS - write last
   - meta.record_count     must equal length of records array, not requested record count.
   - integrity.error_count must equal length of error_details (when with_errors is true)
+
+---
 
 ENDSCHEMA;
 }

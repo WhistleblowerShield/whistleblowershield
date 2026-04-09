@@ -1,4 +1,4 @@
-WhistleblowerShield.org NotebookLM Ruleset - Addendum v1.2.4
+WhistleblowerShield.org NotebookLM Ruleset - Addendum v1.2.5
 
 PURPOSE
 This addendum carries edge-case and operational policy for NotebookLM
@@ -244,17 +244,6 @@ If a gap is found, do not exploit it for permissive output; produce the safest c
 
 ---
 
-CHANGE CONTROL
-When NotebookLM surfaces a new loophole:
-1) record it first in insights doc,
-2) classify as core or edge,
-3) patch addendum first,
-4) promote to embed only after repeated confirmation.
-
-Keep addendum lean. Remove superseded entries once promoted to embed.
-
----
-
 ASSIST-ORG RECORD TYPE RULES
 
 These rules apply when reconciling ws-assist-org records. They supplement
@@ -294,6 +283,18 @@ When two or more source batches contain records for the same organization
    prefixed by model name. Example: "[Grok] Strong post-retaliation focus.
    [ChatGPT] Confirmed intake form available."
 
+EMPLOYMENT SECTOR GRANULARITY (NO COLLAPSE)
+For ws-assist-org.employment_sectors:
+1) Keep specific verified sector slugs when present.
+2) Do not replace specific sectors with all-sectors as a simplification step.
+3) Use all-sectors only when source evidence explicitly supports broad
+   all-sector eligibility/coverage.
+4) If evidence supports both broad and specific sectors, keep the specific
+   slugs and include all-sectors only when explicitly justified by source text.
+5) If a source value is uncertain, omit that sector slug rather than broadening.
+6) When conflict resolution changes sector granularity, log rationale in
+   _reconciled_notes.
+
 VALID EMPTY FIELDS (DO NOT FLAG AS ERRORS)
 The following fields are legitimately empty in assist-org records.
 Do not add to error_details for these, but do preserve them in the
@@ -310,8 +311,10 @@ with their empty value so the ingest tool has a consistent target.
 REQUIRED FIELDS (FLAG IF MISSING)
 The following fields are required on every assist-org record.
 If absent, add to error_details:
-- has_attorneys — flag as: "[ORG NAME]: has_attorneys missing; human review required."
+- has_attorneys                  — flag as: "[ORG NAME]: has_attorneys missing; human review required."
 - anonymous_pre_consult_possible — flag as: "[ORG NAME]: anonymous_pre_consult_possible missing; human review required."
+- income_eligibility_required    — flag as: "[ORG NAME]: income_eligibility_required missing; human review required."
+- has_secure_channel             — flag as: "[ORG NAME]: has_secure_channel missing; human review required."
 
 VERIFIED_DATE_URL POLICY
 Every record with an official_homepage_url or intake_or_contact_url must

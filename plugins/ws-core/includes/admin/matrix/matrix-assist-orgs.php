@@ -4,7 +4,7 @@
  *
  * @package WhistleblowerShield
  * @since   3.0.0
- * @version 3.15.1
+ * @version 3.15.2
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -20,7 +20,7 @@ $_ws_assist_org_matrix = [
     // ── Dedicated whistleblower nonprofits / legal aid ────────────────────
 
     [
-        'internal_id'          => 'gap-national',
+        'internal_id'          => 'gap-nat',
         'common_name'          => 'GAP',
         'title'                => 'Government Accountability Project',
         'slug'                 => 'government-accountability-project',
@@ -30,6 +30,9 @@ $_ws_assist_org_matrix = [
         'ws_aorg_intake_url'   => 'https://whistleblower.org/intake/',
         'ws_aorg_phone'        => '(202) 457-0034',
         'ws_aorg_email'        => 'info@whistleblower.org',
+        'mailing_address'      => 'Government Accountability Project, 1100 G Street NW, Suite 500, Washington, DC 20005',
+        'income_limit'         => 0,
+        'income_limit_notes'   => '',
         'aorg_type'            => 'nonprofit',
         'cost_model'           => 'pro-bono',
         'is_nationwide'        => 1,
@@ -55,6 +58,9 @@ $_ws_assist_org_matrix = [
         'ws_aorg_intake_url'   => 'https://www.report-fraud-now.info/',
         'ws_aorg_phone'        => '(202) 342-1903',
         'ws_aorg_email'        => 'contact@whistleblowers.org',
+        'mailing_address'      => 'National Whistleblower Center, 1140 Connecticut Ave NW, Suite 900, Washington, DC 20036',
+        'income_limit'         => 0,
+        'income_limit_notes'   => '',
         'aorg_type'            => 'nonprofit',
         'cost_model'           => 'mixed',
         'is_nationwide'        => 1,
@@ -79,6 +85,12 @@ $_ws_assist_org_matrix = [
         'ws_aorg_intake_url'   => 'https://whistlebloweraid.org/become-a-whistleblower/',
         'ws_aorg_phone'        => '',
         'ws_aorg_email'        => '',
+        'has_secure_channel'   => 1,
+        'secure_contact_url'   => 'https://whistlebloweraid.org/become-a-whistleblower/signal/',
+        'secure_contact_tool'  => 'Signal',
+        'mailing_address'      => 'Whistleblower Aid, 2001 S Street NW, Washington, DC 20009',
+        'income_limit'         => 0,
+        'income_limit_notes'   => '',
         'aorg_type'            => 'legal-aid',
         'cost_model'           => 'pro-bono',
         'is_nationwide'        => 1,
@@ -104,6 +116,9 @@ $_ws_assist_org_matrix = [
         'ws_aorg_intake_url'   => 'https://www.pogo.org/submit-a-tip/',
         'ws_aorg_phone'        => '(202) 347-1122',
         'ws_aorg_email'        => 'info@pogo.org',
+        'mailing_address'      => 'Project On Government Oversight, 1100 G Street NW, Suite 500, Washington, DC 20005',
+        'income_limit'         => 0,
+        'income_limit_notes'   => '',
         'aorg_type'            => 'advocacy',
         'cost_model'           => 'free',
         'is_nationwide'        => 1,
@@ -119,16 +134,19 @@ $_ws_assist_org_matrix = [
     ],
 
     [
-        'internal_id'          => 'tafc-national',
+        'internal_id'          => 'tafc-nat',
         'common_name'          => 'TAF Coalition',
         'title'                => 'Taxpayers Against Fraud Education Fund',
         'slug'                 => 'taxpayers-against-fraud-education-fund',
         'description'          => 'Supports whistleblowers and their counsel in False Claims Act and related anti-fraud cases, and maintains a network of qui tam attorneys.',
         'post_content'         => 'Supports whistleblowers and their counsel in False Claims Act and related anti-fraud cases, and maintains a network of qui tam attorneys.',
         'ws_aorg_website_url'  => 'https://taf.org',
-        'ws_aorg_intake_url'   => 'https://www.taf.org/whistleblower-attorneys/',
+        'ws_aorg_intake_url'   => 'https://www.taf.org/member-directory/',
         'ws_aorg_phone'        => '',
         'ws_aorg_email'        => '',
+        'mailing_address'      => 'Taxpayers Against Fraud Education Fund, 1140 Connecticut Ave NW, Suite 900, Washington, DC 20036',
+        'income_limit'         => 0,
+        'income_limit_notes'   => '',
         'aorg_type'            => 'advocacy',
         'cost_model'           => 'mixed',
         'is_nationwide'        => 1,
@@ -144,7 +162,7 @@ $_ws_assist_org_matrix = [
     ],
 
     [
-        'internal_id'          => 'woa-national',
+        'internal_id'          => 'woa-nat',
         'common_name'          => 'WoA',
         'title'                => 'Whistleblowers of America',
         'slug'                 => 'whistleblowers-of-america',
@@ -152,8 +170,11 @@ $_ws_assist_org_matrix = [
         'post_content'         => 'Provides peer support, advocacy, and guidance to whistleblowers, with a focus on retaliation response and trauma-informed support.',
         'ws_aorg_website_url'  => 'https://www.whistleblowersofamerica.org',
         'ws_aorg_intake_url'   => 'https://www.whistleblowersofamerica.org/learn-more/peer-support',
-        'ws_aorg_phone'        => '',
-        'ws_aorg_email'        => '',
+        'ws_aorg_phone'        => '202-643-1956',
+        'ws_aorg_email'        => 'info@whistleblowersofamerica.org',
+        'mailing_address'      => 'Whistleblowers of America, 11130 Lillian Highway, Pensacola, FL 32506',
+        'income_limit'         => 0,
+        'income_limit_notes'   => '',
         'aorg_type'            => 'advocacy',
         'cost_model'           => 'mixed',
         'is_nationwide'        => 1,
@@ -175,10 +196,13 @@ $_ws_assist_org_matrix = [
         'slug'                 => 'whistleblowing-international-network',
         'description'          => 'Global network of civil society organizations supporting whistleblowing, transparency, and accountability, including member groups operating in the United States.',
         'post_content'         => 'Global network of civil society organizations supporting whistleblowing, transparency, and accountability, including member groups operating in the United States.',
-        'ws_aorg_website_url'  => 'https://whistleblowingnetwork.org',
-        'ws_aorg_intake_url'   => 'https://whistleblowingnetwork.org/Contact',
+        'ws_aorg_website_url'  => 'https://whistleblowingnetwork.org/Home',
+        'ws_aorg_intake_url'   => 'https://whistleblowingnetwork.org/Contact-Us',
         'ws_aorg_phone'        => '',
-        'ws_aorg_email'        => '',
+        'ws_aorg_email'        => 'info@whistleblowingnetwork.org',
+        'mailing_address'      => 'Whistleblowing International Network (WIN) c/o SCVO, Edward House, 199 Sauchiehall Street, Glasgow, G2 3EX',
+        'income_limit'         => 0,
+        'income_limit_notes'   => '',
         'aorg_type'            => 'advocacy',
         'cost_model'           => 'free',
         'is_nationwide'        => 1,
@@ -196,16 +220,19 @@ $_ws_assist_org_matrix = [
     // ── National worker / employment focus ────────────────────────────────
 
     [
-        'internal_id'          => 'nelp-national',
+        'internal_id'          => 'nelp-nat',
         'common_name'          => 'NELP',
         'title'                => 'National Employment Law Project',
         'slug'                 => 'national-employment-law-project',
         'description'          => 'Champions the rights of low-wage and unemployed workers through research and advocacy, including for workers who face retaliation for reporting violations.',
         'post_content'         => 'Champions the rights of low-wage and unemployed workers through research and advocacy, including for workers who face retaliation for reporting violations.',
         'ws_aorg_website_url'  => 'https://www.nelp.org',
-        'ws_aorg_intake_url'   => 'https://www.nelp.org/contact-us/',
+        'ws_aorg_intake_url'   => 'https://www.nelp.org/about-us/contact-us/',
         'ws_aorg_phone'        => '(212) 285-3025',
-        'ws_aorg_email'        => '',
+        'ws_aorg_email'        => 'nelp@nelp.org',
+        'mailing_address'      => 'National Office: National Employment Law Project, PO Box 1779, New York, NY 10008',
+        'income_limit'         => 0,
+        'income_limit_notes'   => '',
         'aorg_type'            => 'advocacy',
         'cost_model'           => 'free',
         'is_nationwide'        => 1,
@@ -221,16 +248,19 @@ $_ws_assist_org_matrix = [
     ],
 
     [
-        'internal_id'          => 'nela-national',
+        'internal_id'          => 'nela-nat',
         'common_name'          => 'NELA',
         'title'                => 'National Employment Lawyers Association',
         'slug'                 => 'national-employment-lawyers-association',
         'description'          => 'National professional association of lawyers representing employees in labor, employment, and civil rights disputes. Provides a lawyer finder to connect workers with plaintiff-side employment counsel.',
         'post_content'         => 'National professional association of lawyers representing employees in labor, employment, and civil rights disputes. Provides a lawyer finder to connect workers with plaintiff-side employment counsel.',
         'ws_aorg_website_url'  => 'https://www.nela.org',
-        'ws_aorg_intake_url'   => 'https://exchange.nela.org/memberdirectory/findalawyer',
-        'ws_aorg_phone'        => '(202) 420-0007',
-        'ws_aorg_email'        => '',
+        'ws_aorg_intake_url'   => 'https://engagement.nela.org/NELA/findalawyer.aspx',
+        'ws_aorg_phone'        => '(415) 296-7629',
+        'ws_aorg_email'        => 'nelahq@nelahq.org',
+        'mailing_address'      => '1800 Sutter Street, Suite 210, Concord, CA 94520',
+        'income_limit'         => 0,
+        'income_limit_notes'   => '',
         'aorg_type'            => 'bar-program',
         'cost_model'           => 'fee-for-service',
         'is_nationwide'        => 1,
@@ -246,7 +276,7 @@ $_ws_assist_org_matrix = [
     ],
 
     [
-        'internal_id'          => 'lsc-national',
+        'internal_id'          => 'lsc-nat',
         'common_name'          => 'LSC',
         'title'                => 'Legal Services Corporation - Find Legal Aid',
         'slug'                 => 'legal-services-corporation-find-legal-aid',
@@ -256,6 +286,9 @@ $_ws_assist_org_matrix = [
         'ws_aorg_intake_url'   => 'https://www.lsc.gov/about-lsc/what-legal-aid/get-legal-help',
         'ws_aorg_phone'        => '(202) 295-1500',
         'ws_aorg_email'        => '',
+        'mailing_address'      => 'Legal Services Corporation, 3333 K Street NW, Washington, DC 20007',
+        'income_limit'         => 1,
+        'income_limit_notes'   => 'LSC-funded grantees are legally required to serve clients at or below 125% of Federal Poverty Guidelines per 45 CFR Part 1611; updated annually by HHS',
         'aorg_type'            => 'legal-aid',
         'cost_model'           => 'free',
         'is_nationwide'        => 1,
@@ -271,7 +304,7 @@ $_ws_assist_org_matrix = [
     ],
 
     [
-        'internal_id'          => 'nlada-national',
+        'internal_id'          => 'nlada-nat',
         'common_name'          => 'NLADA',
         'title'                => 'National Legal Aid and Defender Association',
         'slug'                 => 'national-legal-aid-and-defender-association',
@@ -281,6 +314,9 @@ $_ws_assist_org_matrix = [
         'ws_aorg_intake_url'   => 'https://www.nlada.org',
         'ws_aorg_phone'        => '(202) 452-0620',
         'ws_aorg_email'        => '',
+        'mailing_address'      => 'National Legal Aid and Defender Association, 1140 Connecticut Ave NW, Suite 900, Washington, DC 20036',
+        'income_limit'         => 0,
+        'income_limit_notes'   => '',
         'aorg_type'            => 'advocacy',
         'cost_model'           => 'free',
         'is_nationwide'        => 1,
@@ -298,7 +334,7 @@ $_ws_assist_org_matrix = [
     // ── Bar / attorney referral programs ──────────────────────────────────
 
     [
-        'internal_id'          => 'nwc-attorney-referral',
+        'internal_id'          => 'nwc-att-ref',
         'common_name'          => 'NWC Referral',
         'title'                => 'National Whistleblower Center — Attorney Referral Program',
         'slug'                 => 'national-whistleblower-center-attorney-referral',
@@ -306,8 +342,11 @@ $_ws_assist_org_matrix = [
         'post_content'         => 'Referral program connecting whistleblowers with experienced attorneys in False Claims Act, SEC, IRS, and other whistleblower law areas.',
         'ws_aorg_website_url'  => 'https://www.whistleblowers.org',
         'ws_aorg_intake_url'   => 'https://www.whistleblowers.org/find-a-whisteblower-attorney/',
-        'ws_aorg_phone'        => '',
-        'ws_aorg_email'        => '',
+        'ws_aorg_phone'        => '(202) 342-1900',
+        'ws_aorg_email'        => 'info@whistleblowers.org',
+        'mailing_address'      => 'National Whistleblower Center, 2001 S Street NW, Washington, DC 20009',
+        'income_limit'         => 0,
+        'income_limit_notes'   => '',
         'aorg_type'            => 'bar-program',
         'cost_model'           => 'fee-for-service',
         'is_nationwide'        => 1,
@@ -331,8 +370,11 @@ $_ws_assist_org_matrix = [
         'post_content'         => 'ABA information portal that directs the public to state and local lawyer referral services and bar-sponsored legal aid programs across the United States.',
         'ws_aorg_website_url'  => 'https://www.americanbar.org/groups/legal_services/flh-home/',
         'ws_aorg_intake_url'   => 'https://www.americanbar.org/groups/legal_services/flh-home/',
-        'ws_aorg_phone'        => '',
-        'ws_aorg_email'        => '',
+        'ws_aorg_phone'        => '(800) 285-2221',
+        'ws_aorg_email'        => 'info@americanbar.org',
+        'mailing_address'      => 'American Bar Association, 321 N Clark St, Chicago, IL 60654',
+        'income_limit'         => 1,
+        'income_limit_notes'   => 'Routes to LSC-funded and pro bono programs that apply income thresholds (typically ≤125-200% FPG); the referral tool itself does not screen income but downstream resources do',
         'aorg_type'            => 'bar-program',
         'cost_model'           => 'fee-for-service',
         'is_nationwide'        => 1,
@@ -350,7 +392,7 @@ $_ws_assist_org_matrix = [
     // ── From batch US-8 — new entries ─────────────────────────────────────
 
     [
-        'internal_id'          => 'peer-national',
+        'internal_id'          => 'peer-nat',
         'common_name'          => 'PEER',
         'title'                => 'Public Employees for Environmental Responsibility',
         'slug'                 => 'public-employees-for-environmental-responsibility',
@@ -358,8 +400,11 @@ $_ws_assist_org_matrix = [
         'post_content'         => 'PEER provides free legal and strategic assistance to federal, state, and local government employees who blow the whistle on environmental harm, public health threats, and scientific integrity violations.',
         'ws_aorg_website_url'  => 'https://peer.org',
         'ws_aorg_intake_url'   => 'https://peer.org/about-us/contact-us/',
-        'ws_aorg_phone'        => '',
-        'ws_aorg_email'        => '',
+        'ws_aorg_phone'        => '(202) 265-7337',
+        'ws_aorg_email'        => 'info@peer.org',
+        'mailing_address'      => 'PEER, 962 Wayne Ave, Suite 610, Silver Spring, MD 20910',
+        'income_limit'         => 0,
+        'income_limit_notes'   => '',
         'aorg_type'            => 'nonprofit',
         'cost_model'           => 'pro-bono',
         'is_nationwide'        => 1,
@@ -375,16 +420,19 @@ $_ws_assist_org_matrix = [
     ],
 
     [
-        'internal_id'          => 'tsn-national',
+        'internal_id'          => 'tsn-nat',
         'common_name'          => 'TSN',
         'title'                => 'The Signals Network',
         'slug'                 => 'the-signals-network',
-        'description'          => 'The Signals Network is a nonprofit that provides holistic support to whistleblowers who share public interest information — including legal assistance, psychological counseling, physical security, and media coordination.',
+        'description'          => 'The Signals Network is a nonprofit that provides holistic support to whistleblowers who share public interest information — including legal assistance, psychological counseling, physical security, and media coordination. Encrypted email via ProtonMail (account required): protect@thesignalsnetwork.org',
         'post_content'         => 'The Signals Network is a nonprofit that provides holistic support to whistleblowers who share public interest information — including legal assistance, psychological counseling, physical security, and media coordination.',
         'ws_aorg_website_url'  => 'https://thesignalsnetwork.org',
         'ws_aorg_intake_url'   => 'https://thesignalsnetwork.org/whistleblowers/',
         'ws_aorg_phone'        => '',
-        'ws_aorg_email'        => '',
+        'ws_aorg_email'        => 'info@thesignalsnetwork.org',
+        'mailing_address'      => 'The Signals Network, 416 Florida Ave NW #26152, Washington, DC 20001',
+        'income_limit'         => 0,
+        'income_limit_notes'   => '',
         'aorg_type'            => 'nonprofit',
         'cost_model'           => 'free',
         'is_nationwide'        => 1,
@@ -463,6 +511,12 @@ function ws_seed_assist_org_matrix() {
             'ws_aorg_intake_url'          => $org['ws_aorg_intake_url']   ?? '',
             'ws_aorg_phone'               => $org['ws_aorg_phone']        ?? '',
             'ws_aorg_email'               => $org['ws_aorg_email']        ?? '',
+            'ws_aorg_has_secure_channel'  => $org['has_secure_channel']   ?? 0,
+            'ws_aorg_secure_contact_url'  => $org['secure_contact_url']   ?? '',
+            'ws_aorg_secure_contact_tool' => $org['secure_contact_tool']  ?? '',
+            'ws_aorg_mailing_address'     => $org['mailing_address']       ?? '',
+            'ws_aorg_income_limit'        => $org['income_limit']          ?? '',
+            'ws_aorg_income_limit_notes'  => $org['income_limit_notes']    ?? '',
             'ws_aorg_serves_nationwide'   => $org['is_nationwide']        ?? 0,
             'ws_aorg_limited_scope'       => $org['is_limited_scope']     ?? 0,
             'ws_aorg_community_scope'     => $org['community_scope']      ?? '',
@@ -533,8 +587,8 @@ function ws_seed_assist_org_matrix() {
 // ── Gate ──────────────────────────────────────────────────────────────────────
 
 add_action( 'admin_init', function() {
-    if ( get_option( 'ws_seeded_assist_org_matrix' ) !== '1.0.7' ) {
+    if ( get_option( 'ws_seeded_assist_org_matrix' ) !== '1.0.9' ) {
         ws_seed_assist_org_matrix();
-        update_option( 'ws_seeded_assist_org_matrix', '1.0.7' );
+        update_option( 'ws_seeded_assist_org_matrix', '1.0.9' );
     }
 } );

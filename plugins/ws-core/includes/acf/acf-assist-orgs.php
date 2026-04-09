@@ -28,10 +28,14 @@
  *
  * @package WhistleblowerShield
  * @since   1.0.0
- * @version 3.15.1
+ * @version 3.15.2
  *
  * VERSION
  * -------
+ * 3.15.2  Contact & Intake secure-channel fields added:
+ *         - ws_aorg_has_secure_channel (true/false)
+ *         - ws_aorg_secure_contact_url (url)
+ *         - ws_aorg_secure_contact_tool (text; e.g., Signal, SecureDrop)
  * 3.15.1  ws_aorg_whistleblower_scope (number 1-3) added to Scope of Service tab.
  *         ws_aorg_whistleblower_note (textarea) added — editorial justification for scope.
  *         ws_aorg_common_name (text) added to Identity tab.
@@ -418,6 +422,45 @@ function ws_register_acf_assist_org() {
                 'type'         => 'textarea',
                 'instructions' => 'Physical or mailing address, if publicly available.',
                 'rows'         => 3,
+            ],
+
+            [
+                'key'           => 'field_aorg_has_secure_channel',
+                'label'         => 'Secure Contact Channel Available?',
+                'name'          => 'ws_aorg_has_secure_channel',
+                'type'          => 'true_false',
+                'instructions'  => 'Enable when the organization publishes a dedicated secure first-contact channel (for example, Signal or SecureDrop).',
+                'ui'            => 1,
+                'ui_on_text'    => 'Yes',
+                'ui_off_text'   => 'No',
+                'default_value' => 0,
+            ],
+
+            [
+                'key'          => 'field_aorg_secure_contact_url',
+                'label'        => 'Secure Contact URL',
+                'name'         => 'ws_aorg_secure_contact_url',
+                'type'         => 'url',
+                'instructions' => 'Direct URL to the secure contact method page.',
+                'conditional_logic' => [ [ [
+                    'field'    => 'field_aorg_has_secure_channel',
+                    'operator' => '==',
+                    'value'    => '1',
+                ] ] ],
+            ],
+
+            [
+                'key'          => 'field_aorg_secure_contact_tool',
+                'label'        => 'Secure Contact Tool',
+                'name'         => 'ws_aorg_secure_contact_tool',
+                'type'         => 'text',
+                'instructions' => 'Name of secure contact method. Example: "Signal", "SecureDrop", "ProtonMail".',
+                'placeholder'  => 'Signal',
+                'conditional_logic' => [ [ [
+                    'field'    => 'field_aorg_has_secure_channel',
+                    'operator' => '==',
+                    'value'    => '1',
+                ] ] ],
             ],
 
             [

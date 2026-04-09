@@ -1,0 +1,164 @@
+WhistleblowerShield.org NotebookLM Ruleset - Addendum v1.2.4
+PURPOSE This addendum carries edge-case and operational policy for NotebookLM reconciliation. It extends the embedded core ruleset.
+AUTHORITY MODEL
+Core embed remains baseline authority.
+Addendum rules refine implementation details.
+Addendum may override core only when explicitly marked as OVERRIDE.
+OVERRIDE FORMAT Use this exact header for any future override: [OVERRIDE <id>] Replaces core section: <name>
+If a rule is not marked as OVERRIDE, treat it as supplemental only.
+--------------------------------------------------------------------------------
+URL POLICY
+Existing URLs from source records If URL is already present and domain is approved, carry it forward unless:
+domain is actually unapproved,
+URL pattern is clearly malformed,
+source context indicates fabrication. Do not drop existing approved-source URLs solely because web search is unavailable.
+New URLs proposed during reconciliation Must be verified against a live page on an approved domain before inclusion. Do not claim internal-memory verification. If unverifiable, omit the field. Do not substitute homepage, root, or parent path as fallback.
+When web search is unavailable
+Keep existing approved-source URLs unchanged.
+Omit newly proposed URLs.
+Log this constraint in _reconciled_run_notes.
+--------------------------------------------------------------------------------
+EMPTY FIELD CLEANUP (PRE-OUTPUT)
+Apply cleanup before final output. Do not treat routine cleanup itself as an error unless it changes legal meaning.
+This list supersedes any general omission guidance. For listed fields, omit entirely when empty — do not include as [] or "".
+Omit when []:
+enforcement.fee_shifting
+enforcement.process_type
+enforcement.adverse_action
+enforcement.remedies
+legal_basis.disclosure_types
+legal_basis.protected_class
+legal_basis.disclosure_targets
+burden_of_proof.employee_standard
+burden_of_proof.employer_defense
+citations.attached_citations
+Omit when "":
+common_name
+enforcement.primary_agency
+burden_of_proof.burden_of_proof_flag
+statute_of_limitations.trigger
+statute_of_limitations.limit_details
+statute_of_limitations.exhaustion_details
+statute_of_limitations.tolling_notes
+reward.reward_details
+links.url_source
+_review_notes
+--------------------------------------------------------------------------------
+ATTACHED CITATION DEDUPE (PARENT-SCOPED) For citations.attached_citations rows in the same record:
+Dedupe key
+Use CASE (first token before "||") as the canonical identity.
+CASE matching is case-insensitive and whitespace-insensitive.
+Do not emit duplicate rows for the same CASE within one parent record.
+Merge rule when IMPACT/URL differ for same CASE
+Keep one row.
+IMPACT: keep the most specific action-verbed statement; if both add distinct facts, merge into one concise IMPACT sentence.
+URL: keep one best approved-source URL. If one URL is clearly superior (official/authoritative), keep that one.
+SOURCE/QUALITY: keep values aligned to the selected URL/source confidence.
+Conflict logging
+When duplicate CASE rows were merged because IMPACT or URL disagreed, add a note in _reconciled_notes describing the consolidation choice.
+Prohibited output
+Never output two attached_citations rows for the same CASE under the same parent record.
+--------------------------------------------------------------------------------
+FOR COMMON LAW RECORD TYPES In record.burden_of_proof: If statutory_preclusion is set true, statutory_preclusion_details must accompy it, if the field is empty correct statutory_preclusion to false, and note it in with error_details. If statutory_preclusion is set to false and statutory_preclusion_details has text, remove statutory_preclusion_details, and note it with error_details.
+Omit when "":
+burden_of_proof.statutory_preclusion_details
+--------------------------------------------------------------------------------
+HAS-DETAILS AS SOLE ARRAY ENTRY has-details may appear as the only entry in a valid taxonomy array when all substantive slugs have been removed or moved to new_terms_proposed.
+When this occurs:
+Attempt to populate the companion *_details field from verified statute text.
+If populated, log the action in _reconciled_notes.
+If the companion field cannot be populated from verified sources:
+preserve ["has-details"],
+omit the companion field,
+set with_errors: true,
+add to error_details exactly: "[STATUTE_ID]: has-details is sole entry in [FIELD] - companion field unresolvable; human review required."
+--------------------------------------------------------------------------------
+CROSS-TAXONOMY MAPPING STRICTNESS A valid slug must not only exist in registered taxonomy, it must also be assigned to the exact taxonomy table designated for that schema field.
+Do not cross-pollinate slugs across taxonomy arrays. Examples:
+burden_of_proof.employer_defense accepts only ws_employer_defense slugs
+burden_of_proof.employee_standard accepts only ws_employee_standard slugs
+If the assigned table lacks an adequate slug:
+use has-details where valid and document nuance in the companion *_details, or
+propose a new term in new_terms_proposed.
+Placing a slug into an unassigned array is a schema corruption event and must be removed, then logged.
+--------------------------------------------------------------------------------
+PROPOSED TERM DISCIPLINE Invalid or unregistered slugs must not remain in record arrays. If a concept requires new vocabulary:
+remove invalid slug from record array,
+add structured proposal in new_terms_proposed,
+keep proposal only in proposal list, never in record arrays.
+If a slug appears in both record array and new_terms_proposed, remove it from the record array.
+--------------------------------------------------------------------------------
+BROAD TERM RESOLUTION Before proposing a broad term:
+review existing child slugs,
+use existing child combinations when they remain accurate and specific,
+propose broader term only when existing combinations misrepresent coverage,
+document the comparison reasoning in _reconciled_notes.
+--------------------------------------------------------------------------------
+_RECONCILED_NOTES STANDARD _reconciled_notes is per-record audit detail. Use it when any record-level reconciliation action occurs.
+Minimum expected content when present:
+source choice rationale for conflicts,
+factual field changes and reasons,
+removal reasons for citations/links,
+unresolved gaps requiring reviewer attention,
+taxonomy selection reasoning when non-obvious.
+Omit only when no reconciliation action occurred for that record.
+--------------------------------------------------------------------------------
+_RECONCILED_RUN_NOTES STANDARD _reconciled_run_notes is batch-level audit detail in meta. Use it for:
+global policies applied across records,
+environment constraints (for example web search unavailable),
+cross-record normalization patterns,
+batch-level reviewer context.
+Omit when no batch-level note is needed.
+--------------------------------------------------------------------------------
+SOURCE CHAIN STANDARD source_chain is meta-level provenance. Populate from available inputs and include NotebookLM as final step.
+Recommended role vocabulary:
+primary-research
+source-material
+reformat
+merge-factcheck
+Entry format: { "model": "<model name>", "role": "<role>" }
+--------------------------------------------------------------------------------
+RULE EVOLUTION PERMISSION (EDGE CASES)
+You are authorized to propose new rules when you encounter an edge case not fully governed by current rules.
+Scope:
+Per-record proposals: use when the gap affects one record’s interpretation or validation. Batch-level proposals: use when the gap reflects a recurring pattern across records. Hard constraints:
+Do not invent new output schema keys. Do not change current behavior silently. Resolve the current run using existing rules and highest-authority precedence. Treat your proposal as advisory unless explicitly adopted by a human. Where to place proposals:
+Record-level: append under _reconciled_notes in a section titled Proposed Rule. Batch-level: append under _reconciled_run_notes in a section titled Proposed Rule. Required proposal format (exact fields):
+Trigger: what factual pattern caused the gap Conflict: which existing rules were insufficient or in tension Proposed Rule Text: one concise normative rule Impact: what this would change in future runs Risk if not adopted: concrete failure mode Scope: record-level, batch-level, or both Priority: high, medium, low Decision rule: If multiple possible proposals exist, provide the narrowest rule that resolves the gap without broadening model discretion.
+Loophole Guard: If a gap is found, do not exploit it for permissive output; produce the safest compliant output and emit a Proposed Rule entry.
+--------------------------------------------------------------------------------
+CHANGE CONTROL When NotebookLM surfaces a new loophole:
+record it first in insights doc,
+classify as core or edge,
+patch addendum first,
+promote to embed only after repeated confirmation.
+Keep addendum lean. Remove superseded entries once promoted to embed.
+--------------------------------------------------------------------------------
+ASSIST-ORG RECORD TYPE RULES
+These rules apply when reconciling ws-assist-org records. They supplement and in some cases override general statute-record behavior for fields that behave differently in the assist-org schema.
+NO LAW FIRMS Law firms are not assist organizations. A law firm is defined as an entity whose primary business is billing clients for legal representation. If a record's organization_name, general_description, or whistleblower_note identifies it as a law firm (LLP, PC, law offices, attorneys at law):
+Remove the record entirely from the output.
+Log the removal in _reconciled_run_notes with the org name and reason. Do not attempt to reclassify a law firm as an assist org. Attorney referral organizations (TAF model) are not law firms — flag them as borderline in _reconciled_notes and preserve the record with a note that human review should confirm they meet the assist-org definition.
+MULTI-SOURCE MERGE FOR SAME ORGANIZATION When two or more source batches contain records for the same organization (matched by official_homepage_url or organization_name, case-insensitive):
+Merge into one record — never output duplicate org records.
+For each field, apply the ground truth hierarchy:
+Verified URL source content beats researcher inference.
+More specific value beats more general (e.g. named sector beats all-sectors).
+Longer/richer description beats shorter when both are accurate.
+whistleblower_scope: use the highest justified score. If models disagree, use the score supported by the most specific whistleblower_note quote. Log the disagreement and resolution in _reconciled_notes.
+case_stages, employment_sectors, services_provided, cost_model: take the union of all source values, then remove any that are unsupported by verified content. Log additions in _reconciled_notes.
+whistleblower_note: keep the most specific direct quote from the org's own website. If multiple good quotes exist, keep the one most relevant to whistleblower scope. Do not merge multiple quotes into one string.
+_review_notes: merge all researcher notes into one chronological entry, prefixed by model name. Example: "[Grok] Strong post-retaliation focus. [ChatGPT] Confirmed intake form available."
+VALID EMPTY FIELDS (DO NOT FLAG AS ERRORS) The following fields are legitimately empty in assist-org records. Do not add to error_details for these, but do preserve them in the record as empty — do not omit them. The ingest tool handles flagging; NotebookLM's job is to leave them present so the ingest tool can see them.
+nationwide_example: "" is valid — keep as "" in the record.
+disclosure_targets: [] is valid — keep as [] in the record.
+whistleblower_scope: 0 is valid — org is included for completeness but does not directly serve whistleblowers; preserve and do not flag.
+If these keys are missing entirely from a source record, add them with their empty value so the ingest tool has a consistent target.
+REQUIRED FIELDS (FLAG IF MISSING) The following fields are required on every assist-org record. If absent, add to error_details:
+has_attorneys — flag as: "[ORG NAME]: has_attorneys missing; human review required."
+anonymous_pre_consult_possible — flag as: "[ORG NAME]: anonymous_pre_consult_possible missing; human review required."
+VERIFIED_DATE_URL POLICY Every record with an official_homepage_url or intake_or_contact_url must have a corresponding verified_date_url populated. If verified_date_url is absent on a record with a URL:
+Flag in error_details: "[ORG NAME]: verified_date_url missing; URL is unverified."
+Do not remove the URL — preserve it and flag for human verification. If verified_date_url exists but is more than 90 days old relative to batch_completed, note staleness in _reconciled_notes but do not flag as an error — staleness is advisory, not a schema violation.
+--------------------------------------------------------------------------------
+END OF ADDENDUM

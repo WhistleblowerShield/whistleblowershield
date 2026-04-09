@@ -1,0 +1,380 @@
+{
+  "meta": {
+    "json_format_version": "2.0",
+    "source_method": "ai_assisted",
+    "source_name": "Gemini",
+    "jurisdiction_id": "US",
+    "generated_date": "2026-04-08",
+    "generated_by": "Gemini 2.0 Pro Experimental",
+    "record_count": 7,
+    "json_run_notes": "Identified 7 nationwide whistleblower assistance organizations not present in the exclusion list. All records include verified official URLs and specific intake pathways focused on both pre-report guidance and retaliation defense. Mandatory parent-slug self-check performed; zero parent-slug leakage detected.",
+    "batch_completed": "2026-04-08 23:55 UTC"
+  },
+  "records": [
+    {
+      "organization_name": "Empower Oversight Whistleblowers & Research",
+      "official_homepage_url": "https://empowr.us",
+      "general_description": "A nonprofit, nonpartisan educational organization dedicated to enhancing independent oversight of government and corporate wrongdoing. EMPOWR works to help insiders document and report corruption to the proper authorities while also seeking to hold authorities accountable to act on those reports. The leadership team includes veterans of congressional investigations and experts who drafted modern whistleblower protection laws.",
+      "common_name": "EMPOWR",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-08 23:45 UTC",
+      "intake_or_contact_url": "https://empowr.us/contact/",
+      "nationwide_example": "EMPOWR works to help insiders document and report corruption to the proper authorities while also seeking to hold authorities accountable to act on those reports.",
+      "disclosure_types": [
+        "public-corruption-ethics",
+        "procurement-spending-fraud",
+        "general-wrongdoing"
+      ],
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "advocacy"
+      ],
+      "employment_sectors": [
+        "federal-employee",
+        "private-sector",
+        "all-sectors"
+      ],
+      "cost_model": [
+        "free"
+      ],
+      "services_provided": [
+        "referral",
+        "advocacy",
+        "consultation"
+      ],
+      "process_types": [
+        "congressional-disclosure",
+        "administrative-complaint"
+      ],
+      "anonymous_pre_consult_possible": "yes",
+      "has_attorneys": "yes",
+      "income_eligibility_required": "no",
+      "case_stages": [
+        "pre-report",
+        "retaliation-active"
+      ],
+      "disclosure_targets": [
+        "legislative-federal",
+        "agency-federal",
+        "law-enforcement"
+      ],
+      "whistleblower_scope": 3,
+      "whistleblower_note": "EMPOWR is well-positioned to combat waste, fraud, and abuse both inside and outside government... allowing him to demand answers on behalf of whistleblowers who report wrongdoing.",
+      "_review_notes": "Organization focuses on providing a bridge between whistleblowers and official oversight bodies like Congress and IGs. Leads pressure campaigns on behalf of those reporting wrongdoing."
+    },
+    {
+      "organization_name": "AI Whistleblower Initiative",
+      "official_homepage_url": "https://aiwi.org",
+      "general_description": "An independent non-profit project specialized in supporting frontier AI insiders who wish to flag risks in a safe and legal manner. AIWI provides a 'Third Opinion' service where insiders can obtain technical and legal gut-checks without disclosing sensitive information. They connect users with specialized pro-bono legal counsel and advocate for stronger AI whistleblower protections.",
+      "common_name": "AIWI",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-08 23:46 UTC",
+      "intake_or_contact_url": "https://aiwi.org/get-help/",
+      "nationwide_example": "AIWI is a non-profit, non-partisan organization specialized in supporting frontier AI insiders across North America and Europe.",
+      "disclosure_types": [
+        "cybersecurity-disclosure",
+        "public-health-safety",
+        "general-wrongdoing"
+      ],
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "nonprofit"
+      ],
+      "employment_sectors": [
+        "private-sector"
+      ],
+      "cost_model": [
+        "pro-bono"
+      ],
+      "services_provided": [
+        "consultation",
+        "referral",
+        "hotline"
+      ],
+      "process_types": [
+        "internal-disclosure",
+        "regulatory-tip"
+      ],
+      "anonymous_pre_consult_possible": "yes",
+      "has_attorneys": "yes",
+      "income_eligibility_required": "no",
+      "case_stages": [
+        "pre-report"
+      ],
+      "disclosure_targets": [
+        "internal-management",
+        "agency-federal",
+        "attorney-counsel"
+      ],
+      "whistleblower_scope": 2,
+      "whistleblower_note": "AI labs are headed into turbulent times... I think AIWI is the kind of resource that can help lab employees navigate the tough ethical challenges... by providing a way to safely and responsibly obtain independent guidance.",
+      "_review_notes": "Niche focus on AI safety and ethics. Operates an anonymous, end-to-end encrypted 'Third Opinion' process for early-stage evaluation."
+    },
+    {
+      "organization_name": "Whistleblower and Source Protection Program",
+      "official_homepage_url": "https://whisper.exposefacts.org",
+      "general_description": "A legal support program at ExposeFacts providing pro bono, direct legal representation to whistleblowers and media sources with a focus on human rights and civil liberties. WHISPeR protects those exposing misconduct in national security agencies and programs. Their model encompasses impact litigation, public advocacy, and the use of encryption technology for secure communication.",
+      "common_name": "WHISPeR",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-08 23:47 UTC",
+      "intake_or_contact_url": "https://whisper.exposefacts.org/",
+      "nationwide_example": "WHISPeR at ExposeFacts facilitates investigative journalism in the public interest by providing pro bono, direct legal representation to whistleblowers and media sources.",
+      "disclosure_types": [
+        "national-security",
+        "public-corruption-ethics",
+        "intelligence-community"
+      ],
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "legal-aid"
+      ],
+      "employment_sectors": [
+        "federal-employee",
+        "military-defense"
+      ],
+      "cost_model": [
+        "pro-bono"
+      ],
+      "services_provided": [
+        "legal-rep",
+        "media",
+        "advocacy"
+      ],
+      "process_types": [
+        "civil-lawsuit",
+        "internal-disclosure"
+      ],
+      "anonymous_pre_consult_possible": "yes",
+      "has_attorneys": "yes",
+      "income_eligibility_required": "no",
+      "case_stages": [
+        "pre-report",
+        "retaliation-active",
+        "litigation"
+      ],
+      "disclosure_targets": [
+        "public-media",
+        "agency-federal",
+        "legislative-federal"
+      ],
+      "whistleblower_scope": 2,
+      "whistleblower_note": "WHISPeR's work encompasses impact litigation, media outreach, and policy advocacy... protecting truth-tellers like Daniel Hale, Edward Snowden, and Thomas Drake.",
+      "_review_notes": "Focused heavily on national security and classified information disclosures. Uses SecureDrop and other encryption for source protection."
+    },
+    {
+      "organization_name": "National Security Counselors",
+      "official_homepage_url": "https://www.nationalsecuritylaw.org",
+      "general_description": "A non-profit public interest law firm specializing in national security law, including whistleblower retaliation and security clearance defense. NSC represents individuals in the Intelligence Community and other national security sectors who need help with employment-related issues. They also assist in obtaining declassified information through FOIA and the Privacy Act.",
+      "common_name": "NSC",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-08 23:48 UTC",
+      "intake_or_contact_url": "https://www.nationalsecuritylaw.org/get-help",
+      "nationwide_example": "National Security Counselors (NSC) is a non-profit public interest law firm, focused on national security employment law (including whistleblowing, security clearances, Inspector General and Congressional investigations...)",
+      "disclosure_types": [
+        "national-security",
+        "intelligence-community",
+        "retaliation-protection"
+      ],
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "law-firm"
+      ],
+      "employment_sectors": [
+        "federal-employee",
+        "military-defense"
+      ],
+      "cost_model": [
+        "mixed"
+      ],
+      "services_provided": [
+        "legal-rep",
+        "consultation",
+        "doc-review"
+      ],
+      "process_types": [
+        "administrative-complaint",
+        "civil-lawsuit",
+        "congressional-disclosure"
+      ],
+      "anonymous_pre_consult_possible": "unclear",
+      "has_attorneys": "yes",
+      "income_eligibility_required": "no",
+      "case_stages": [
+        "retaliation-active",
+        "litigation"
+      ],
+      "disclosure_targets": [
+        "agency-federal",
+        "legislative-federal",
+        "court-filing"
+      ],
+      "whistleblower_scope": 2,
+      "whistleblower_note": "NSC represents people who work in the national security sphere who need help with employment-related issues... [and] people who are attempting to shed light on what our government is getting up to.",
+      "_review_notes": "Operates as a non-profit law firm with specific expertise in the unique retaliation frameworks of the Intelligence Community (e.g., PPD-19)."
+    },
+    {
+      "organization_name": "Psst",
+      "official_homepage_url": "https://psst.org",
+      "general_description": "A non-partisan, non-profit public service that assists individuals in bringing forward public interest information while prioritizing safety and smart strategy. Psst provides full-service pro bono legal and media support for whistleblowers and anonymous sources. They emphasize collective action through the 'Psst Safe,' a secure vault for recording and vetting concerns.",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-08 23:49 UTC",
+      "intake_or_contact_url": "https://psst.org/",
+      "nationwide_example": "Psst is a non-partisan, non-profit public service that helps people bring forward public interest information. We provide full-service pro bono legal and media support and strategy.",
+      "disclosure_types": [
+        "general-wrongdoing",
+        "retaliation-protection",
+        "public-health-safety"
+      ],
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "nonprofit"
+      ],
+      "employment_sectors": [
+        "private-sector",
+        "all-sectors"
+      ],
+      "cost_model": [
+        "pro-bono"
+      ],
+      "services_provided": [
+        "legal-rep",
+        "media",
+        "consultation",
+        "additional"
+      ],
+      "process_types": [
+        "internal-disclosure",
+        "regulatory-tip"
+      ],
+      "anonymous_pre_consult_possible": "yes",
+      "has_attorneys": "yes",
+      "income_eligibility_required": "no",
+      "case_stages": [
+        "pre-report",
+        "retaliation-active"
+      ],
+      "disclosure_targets": [
+        "internal-management",
+        "public-media",
+        "attorney-counsel"
+      ],
+      "whistleblower_scope": 3,
+      "whistleblower_note": "Psst lets you save your information in our Safe and get immediate help... designed to put a team around you to diffuse the risks associated with whistleblowing while increasing the impact of disclosures.",
+      "_review_notes": "Unique model prioritizing 'collectivization' where multiple sources with similar concerns are offered joint legal advice. Includes digital evidence escrow services."
+    },
+    {
+      "organization_name": "Protect Democracy",
+      "official_homepage_url": "https://protectdemocracy.org",
+      "general_description": "A nonpartisan watchdog organization that uses litigation, advocacy, and research to prevent the consolidation of power and protect democratic institutions. They represent whistleblowers and dissenters who expose abuses of executive power or authoritarian threats. Their work spans election integrity, government transparency, and the rule of law.",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-08 23:50 UTC",
+      "intake_or_contact_url": "https://protectdemocracy.org/about/contact/",
+      "nationwide_example": "We stand up to leaders who abuse their power and work to build a resilient democracy that represents and serves all Americans.",
+      "disclosure_types": [
+        "public-corruption-ethics",
+        "election-integrity",
+        "general-wrongdoing"
+      ],
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "advocacy"
+      ],
+      "employment_sectors": [
+        "federal-employee",
+        "state-local-employee",
+        "all-sectors"
+      ],
+      "cost_model": [
+        "pro-bono"
+      ],
+      "services_provided": [
+        "legal-rep",
+        "advocacy",
+        "consultation"
+      ],
+      "process_types": [
+        "civil-lawsuit",
+        "congressional-disclosure"
+      ],
+      "anonymous_pre_consult_possible": "unclear",
+      "has_attorneys": "yes",
+      "income_eligibility_required": "no",
+      "case_stages": [
+        "litigation",
+        "retaliation-active"
+      ],
+      "disclosure_targets": [
+        "court-filing",
+        "legislative-federal",
+        "agency-federal"
+      ],
+      "whistleblower_scope": 2,
+      "whistleblower_note": "We oppose unchecked power, defend the rule of law, and protect the right to dissent... filed 100+ lawsuits to challenge authoritarian actions.",
+      "_review_notes": "Focused on systemic threats to democracy and executive overreach rather than individual employment grievances, but provides critical representation for high-level governance whistleblowers."
+    },
+    {
+      "organization_name": "Reporters Committee for Freedom of the Press",
+      "official_homepage_url": "https://www.rcfp.org",
+      "general_description": "Provides pro bono legal representation, amicus curiae support, and educational resources to protect the First Amendment rights of journalists and the public's right to know. RCFP operates a legal hotline for media and source-related concerns, including the protection of whistleblower identities and responses to subpoenas. They specialize in FOIA litigation and government transparency.",
+      "common_name": "RCFP",
+      "homepage_url_status": "verified",
+      "verified_date_url": "2026-04-08 23:51 UTC",
+      "intake_or_contact_url": "https://www.rcfp.org/legal-hotline/",
+      "nationwide_example": "The Reporters Committee for Freedom of the Press provides pro bono legal representation, amicus curiae support, and other resources to protect First Amendment freedoms.",
+      "disclosure_types": [
+        "general-wrongdoing",
+        "national-security"
+      ],
+      "languages_supported": [
+        "english"
+      ],
+      "assistance_types": [
+        "nonprofit"
+      ],
+      "employment_sectors": [
+        "all-sectors"
+      ],
+      "cost_model": [
+        "pro-bono"
+      ],
+      "services_provided": [
+        "consultation",
+        "legal-rep",
+        "hotline",
+        "media"
+      ],
+      "process_types": [
+        "civil-lawsuit",
+        "internal-disclosure"
+      ],
+      "anonymous_pre_consult_possible": "yes",
+      "has_attorneys": "yes",
+      "income_eligibility_required": "no",
+      "case_stages": [
+        "pre-report"
+      ],
+      "disclosure_targets": [
+        "public-media",
+        "attorney-counsel"
+      ],
+      "whistleblower_scope": 2,
+      "whistleblower_note": "We teach independent journalists and documentary filmmakers how to keep themselves and their sources safe... protecting the public's right to know.",
+      "_review_notes": "Primary fallback for whistleblowers intending to go to the press. Note: legal hotline cannot assist with standard labor and employment matters unless they intersect with press freedom."
+    }
+  ],
+  "integrity": {
+    "with_errors": false
+  }
+}
