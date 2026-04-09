@@ -516,10 +516,11 @@ if ( is_admin() ) {
     // TOOLS — Admin-only tools loaded from /includes/admin/tools/
     // Each tool registers its own admin menu page via add_submenu_page().
     $tool_files = [
+    	'ws-schema-constants', // loads first includes tool-based schema rules.
         'tool-generate-prompt',
         'tool-ingest',
 		'tool-taxonomy-term-audit',
-    ];
+     ];
     foreach ( $tool_files as $file ) {
         $path = WS_CORE_PATH . "/includes/admin/tools/{$file}.php";
         if ( file_exists( $path ) ) {
