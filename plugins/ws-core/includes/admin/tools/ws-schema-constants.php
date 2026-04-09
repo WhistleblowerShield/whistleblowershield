@@ -48,6 +48,7 @@
  * -----------
  * 3.16.0  Initial release.
  *         WS_SCHEMA_PHONE_TYPE          — phone scope for ws-assist-org and ws-agency
+ *         WS_SCHEMA_EMAIL_TYPE          — email scope for ws-assist-org and ws-agency
  *         WS_SCHEMA_URL_STATUS          — homepage_url_status across all research CPTs
  *         WS_SCHEMA_TRI_STATE           — yes | no | unclear for boolean-ish required fields
  *         WS_SCHEMA_SOURCE_METHOD       — source_method values (mirrors WS_SOURCE_* constants)
@@ -79,6 +80,23 @@ define( 'WS_SCHEMA_PHONE_TYPE', [
     'tty',           // TTY/TDD accessibility line
     'fax',           // Fax; still relevant in legal/administrative contexts
     'other',         // Fallback — requires note in prompt _review_notes
+] );
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// Email Type
+//
+// Controlled vocabulary for the `type` key in the `emails` array on
+// ws-assist-org and ws-agency records.
+// ════════════════════════════════════════════════════════════════════════════
+
+define( 'WS_SCHEMA_EMAIL_TYPE', [
+    'intake',
+    'general',
+    'legal',
+    'media',
+    'support',
+    'other',
 ] );
 
 
@@ -151,7 +169,7 @@ define( 'WS_SCHEMA_RECORD_TYPE', [
     'common-law',
     'citation',
     'interpretation',
-    'assist-org',    // Reserved — assist-org ingest not yet implemented in tool
+    'assist-org',
 ] );
 
 

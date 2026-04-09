@@ -27,7 +27,8 @@
         "model": "NotebookLM",
         "role": "merge-factcheck"
       }
-    ]
+    ],
+    "record_type": "assist-org"
   },
   "records": [
     {
@@ -37,7 +38,6 @@
       "common_name": "EMPOWR",
       "homepage_url_status": "verified",
       "verified_date_url": "2026-04-08",
-      "intake_or_contact_url": "https://empowr.us/contact/",
       "nationwide_example": "EMPOWR works to help insiders document and report corruption to the proper authorities while also seeking to hold authorities accountable to act on those reports.",
       "disclosure_types": [
         "public-corruption-ethics",
@@ -46,9 +46,6 @@
       ],
       "languages_supported": [
         "english"
-      ],
-      "assistance_types": [
-        "advocacy"
       ],
       "employment_sectors": [
         "all-sectors"
@@ -79,7 +76,9 @@
       ],
       "whistleblower_scope": 3,
       "whistleblower_note": "EMPOWR is well-positioned to combat waste, fraud, and abuse both inside and outside government... allowing him to demand answers on behalf of whistleblowers who report wrongdoing.",
-      "_review_notes": "[Gemini] Organization focuses on providing a bridge between whistleblowers and official oversight bodies like Congress and IGs. Leads pressure campaigns on behalf of those reporting wrongdoing."
+      "_review_notes": "[Gemini] Organization focuses on providing a bridge between whistleblowers and official oversight bodies like Congress and IGs. Leads pressure campaigns on behalf of those reporting wrongdoing.",
+      "assistance_type": "advocacy",
+      "contact_url": "https://empowr.us/contact/"
     },
     {
       "organization_name": "AI Whistleblower Initiative",
@@ -88,7 +87,6 @@
       "common_name": "AIWI",
       "homepage_url_status": "verified",
       "verified_date_url": "2026-04-08",
-      "intake_or_contact_url": "https://aiwi.org/get-help/",
       "nationwide_example": "AIWI is a non-profit, non-partisan organization specialized in supporting frontier AI insiders across North America and Europe.",
       "disclosure_types": [
         "cybersecurity-disclosure",
@@ -96,9 +94,6 @@
       ],
       "languages_supported": [
         "english"
-      ],
-      "assistance_types": [
-        "nonprofit"
       ],
       "employment_sectors": [
         "private-sector"
@@ -128,7 +123,9 @@
       ],
       "whistleblower_scope": 2,
       "whistleblower_note": "AI labs are headed into turbulent times... I think AIWI is the kind of resource that can help lab employees navigate the tough ethical challenges... by providing a way to safely and responsibly obtain independent guidance.",
-      "_review_notes": "[Gemini] Niche focus on AI safety and ethics. Operates an anonymous, end-to-end encrypted 'Third Opinion' process for early-stage evaluation."
+      "_review_notes": "[Gemini] Niche focus on AI safety and ethics. Operates an anonymous, end-to-end encrypted 'Third Opinion' process for early-stage evaluation.",
+      "assistance_type": "nonprofit",
+      "intake_url": "https://aiwi.org/get-help/"
     },
     {
       "organization_name": "Whistleblower and Source Protection Program",
@@ -137,7 +134,6 @@
       "common_name": "WHISPeR",
       "homepage_url_status": "verified",
       "verified_date_url": "2026-04-08",
-      "intake_or_contact_url": "https://whisper.exposefacts.org/",
       "nationwide_example": "WHISPeR at ExposeFacts facilitates investigative journalism in the public interest by providing pro bono, direct legal representation to whistleblowers and media sources.",
       "disclosure_types": [
         "public-corruption-ethics",
@@ -145,9 +141,6 @@
       ],
       "languages_supported": [
         "english"
-      ],
-      "assistance_types": [
-        "legal-aid"
       ],
       "employment_sectors": [
         "federal-employee",
@@ -180,7 +173,9 @@
       ],
       "whistleblower_scope": 2,
       "whistleblower_note": "WHISPeR's work encompasses impact litigation, media outreach, and policy advocacy... protecting truth-tellers like Daniel Hale, Edward Snowden, and Thomas Drake.",
-      "_review_notes": "[Gemini] Focused heavily on national security and classified information disclosures. Uses SecureDrop and other encryption for source protection."
+      "_review_notes": "[Gemini] Focused heavily on national security and classified information disclosures. Uses SecureDrop and other encryption for source protection.",
+      "assistance_type": "legal-aid",
+      "intake_url": "https://whisper.exposefacts.org/"
     },
     {
       "organization_name": "Psst",
@@ -188,17 +183,12 @@
       "general_description": "A non-partisan, non-profit public service that assists individuals in bringing forward public interest information while prioritizing safety and smart strategy. Psst provides full-service pro bono legal and media support for whistleblowers and anonymous sources. They emphasize collective action through the 'Psst Safe,' a secure vault for recording and vetting concerns.",
       "homepage_url_status": "verified",
       "verified_date_url": "2026-04-08",
-      "intake_or_contact_url": "https://psst.org/",
       "nationwide_example": "Psst is a non-partisan, non-profit public service that helps people bring forward public interest information. We provide full-service pro bono legal and media support and strategy.",
       "disclosure_types": [
-        "general-wrongdoing",
-        "retaliation-protection"
+        "general-wrongdoing"
       ],
       "languages_supported": [
         "english"
-      ],
-      "assistance_types": [
-        "nonprofit"
       ],
       "employment_sectors": [
         "all-sectors"
@@ -230,7 +220,9 @@
       ],
       "whistleblower_scope": 3,
       "whistleblower_note": "Psst lets you save your information in our Safe and get immediate help... designed to put a team around you to diffuse the risks associated with whistleblowing while increasing the impact of disclosures.",
-      "_review_notes": "[Gemini] Unique model prioritizing 'collectivization' where multiple sources with similar concerns are offered joint legal advice. Includes digital evidence escrow services."
+      "_review_notes": "[Gemini] Unique model prioritizing 'collectivization' where multiple sources with similar concerns are offered joint legal advice. Includes digital evidence escrow services.",
+      "assistance_type": "nonprofit",
+      "intake_url": "https://psst.org/"
     },
     {
       "organization_name": "Protect Democracy",
@@ -238,7 +230,6 @@
       "general_description": "A nonpartisan watchdog organization that uses litigation, advocacy, and research to prevent the consolidation of power and protect democratic institutions. They represent whistleblowers and dissenters who expose abuses of executive power or authoritarian threats. Their work spans election integrity, government transparency, and the rule of law.",
       "homepage_url_status": "verified",
       "verified_date_url": "2026-04-08",
-      "intake_or_contact_url": "https://protectdemocracy.org/about/contact/",
       "nationwide_example": "We stand up to leaders who abuse their power and work to build a resilient democracy that represents and serves all Americans.",
       "disclosure_types": [
         "public-corruption-ethics",
@@ -247,9 +238,6 @@
       ],
       "languages_supported": [
         "english"
-      ],
-      "assistance_types": [
-        "advocacy"
       ],
       "employment_sectors": [
         "all-sectors"
@@ -280,7 +268,9 @@
       ],
       "whistleblower_scope": 2,
       "whistleblower_note": "We oppose unchecked power, defend the rule of law, and protect the right to dissent... filed 100+ lawsuits to challenge authoritarian actions.",
-      "_review_notes": "[Gemini] Focused on systemic threats to democracy and executive overreach rather than individual employment grievances, but provides critical representation for high-level governance whistleblowers."
+      "_review_notes": "[Gemini] Focused on systemic threats to democracy and executive overreach rather than individual employment grievances, but provides critical representation for high-level governance whistleblowers.",
+      "assistance_type": "advocacy",
+      "contact_url": "https://protectdemocracy.org/about/contact/"
     },
     {
       "organization_name": "Reporters Committee for Freedom of the Press",
@@ -289,16 +279,12 @@
       "common_name": "RCFP",
       "homepage_url_status": "verified",
       "verified_date_url": "2026-04-08",
-      "intake_or_contact_url": "https://www.rcfp.org/legal-hotline/",
       "nationwide_example": "The Reporters Committee for Freedom of the Press provides pro bono legal representation, amicus curiae support, and other resources to protect First Amendment freedoms.",
       "disclosure_types": [
         "general-wrongdoing"
       ],
       "languages_supported": [
         "english"
-      ],
-      "assistance_types": [
-        "nonprofit"
       ],
       "employment_sectors": [
         "all-sectors"
@@ -328,7 +314,9 @@
       ],
       "whistleblower_scope": 2,
       "whistleblower_note": "We teach independent journalists and documentary filmmakers how to keep themselves and their sources safe... protecting the public's right to know.",
-      "_review_notes": "[Gemini] Primary fallback for whistleblowers intending to go to the press. Note: legal hotline cannot assist with standard labor and employment matters unless they intersect with press freedom."
+      "_review_notes": "[Gemini] Primary fallback for whistleblowers intending to go to the press. Note: legal hotline cannot assist with standard labor and employment matters unless they intersect with press freedom.",
+      "assistance_type": "nonprofit",
+      "intake_url": "https://www.rcfp.org/legal-hotline/"
     },
     {
       "organization_name": "TIME'S UP Legal Defense Fund",
@@ -337,7 +325,6 @@
       "common_name": "TIME'S UP Legal Defense Fund",
       "homepage_url_status": "verified",
       "verified_date_url": "2026-04-08",
-      "intake_or_contact_url": "https://nwlc.org/help-for-workers-facing-sex-discrimination-and-harassment/",
       "nationwide_example": "\"the only nationwide resource for people facing workplace sex harassment and retaliation to connect with legal help\"",
       "disclosure_types": [],
       "languages_supported": [
@@ -345,11 +332,8 @@
         "spanish"
       ],
       "languages_additional": "Spanish-language TIME'S UP Legal Defense Fund materials were verified; broader attorney-language capacity appears to vary by network member.",
-      "assistance_types": [
-        "nonprofit"
-      ],
       "cost_model": [
-        "mixed"
+        "unclear"
       ],
       "services_provided": [
         "referral",
@@ -371,7 +355,9 @@
       ],
       "whistleblower_scope": 3,
       "whistleblower_note": "Included because the program explicitly handles workplace retaliation matters, connects users to attorneys nationwide, and can support strategic public-facing cases with media assistance.",
-      "_review_notes": "[ChatGPT] Strong nationwide fit, but scope is limited to sex harassment, sex discrimination, and related retaliation rather than all whistleblower subject matters."
+      "_review_notes": "[ChatGPT] Strong nationwide fit, but scope is limited to sex harassment, sex discrimination, and related retaliation rather than all whistleblower subject matters.",
+      "assistance_type": "nonprofit",
+      "intake_url": "https://nwlc.org/help-for-workers-facing-sex-discrimination-and-harassment/"
     },
     {
       "organization_name": "A Better Balance",
@@ -380,14 +366,10 @@
       "common_name": "ABB",
       "homepage_url_status": "verified",
       "verified_date_url": "2026-04-08",
-      "intake_or_contact_url": "https://www.abetterbalance.org/get-help/",
       "nationwide_example": "\"We assist workers nationwide\"",
       "disclosure_types": [],
       "languages_supported": [
         "english"
-      ],
-      "assistance_types": [
-        "nonprofit"
       ],
       "cost_model": [
         "free"
@@ -407,7 +389,9 @@
       "disclosure_targets": [],
       "whistleblower_scope": 2,
       "whistleblower_note": "Included because ABB provides a real nationwide legal-help intake path for workers facing workplace-rights violations and retaliation, even though it is not a whistleblower-specialist organization.",
-      "_review_notes": "[ChatGPT] Useful fallback for retaliation-adjacent workplace disputes, especially around protected leave, pregnancy, caregiving, and accommodation issues; not a broad subject-matter whistleblower shop."
+      "_review_notes": "[ChatGPT] Useful fallback for retaliation-adjacent workplace disputes, especially around protected leave, pregnancy, caregiving, and accommodation issues; not a broad subject-matter whistleblower shop.",
+      "assistance_type": "nonprofit",
+      "intake_url": "https://www.abetterbalance.org/get-help/"
     },
     {
       "organization_name": "Legal Momentum",
@@ -415,15 +399,11 @@
       "general_description": "Legal Momentum operates a helpline that provides direct services, technical assistance, and referrals for women experiencing discrimination, harassment, or violence. Its employment-related help pathway includes employment discrimination and sexual harassment matters, and the organization states that its helpline responds to callers and email inquiries across the country. The organization also offers a request form and phone-based intake for legal help. It is a useful fallback option where the user's retaliation problem is tied to gender-based workplace discrimination or harassment.",
       "homepage_url_status": "verified",
       "verified_date_url": "2026-04-08",
-      "intake_or_contact_url": "https://www.legalmomentum.org/get-help-form",
       "nationwide_example": "\"responds to hundreds of telephone calls and emails across the country and from abroad\"",
       "disclosure_types": [],
       "languages_supported": [
         "english",
         "spanish"
-      ],
-      "assistance_types": [
-        "nonprofit"
       ],
       "cost_model": [
         "free"
@@ -443,7 +423,9 @@
       "disclosure_targets": [],
       "whistleblower_scope": 2,
       "whistleblower_note": "Included because Legal Momentum offers a verified nationwide-ish helpline and referral path for employment discrimination and harassment matters where retaliation risk is common and urgent legal triage can matter.",
-      "_review_notes": "[ChatGPT] Nationwide intake language is strong, but subject-matter scope is gender-justice oriented rather than general whistleblower law."
+      "_review_notes": "[ChatGPT] Nationwide intake language is strong, but subject-matter scope is gender-justice oriented rather than general whistleblower law.",
+      "assistance_type": "nonprofit",
+      "intake_url": "https://www.legalmomentum.org/get-help-form"
     },
     {
       "organization_name": "Center for WorkLife Law",
@@ -452,7 +434,6 @@
       "common_name": "WorkLife Law",
       "homepage_url_status": "verified",
       "verified_date_url": "2026-04-08",
-      "intake_or_contact_url": "https://worklifelaw.org/get-help/",
       "nationwide_example": "\"WorkLife Law is a national organization that directly serves workers and students in all 50 states, D.C., and Puerto Rico.\"",
       "disclosure_types": [],
       "languages_supported": [
@@ -460,9 +441,6 @@
         "spanish"
       ],
       "languages_additional": "Spanish-language helpline/help materials were verified in site content; broader language coverage was not confidently verified.",
-      "assistance_types": [
-        "nonprofit"
-      ],
       "cost_model": [
         "free"
       ],
@@ -481,7 +459,9 @@
       "disclosure_targets": [],
       "whistleblower_scope": 2,
       "whistleblower_note": "Included because WorkLife Law provides a verified national legal-helpline pathway for workers dealing with protected workplace-rights issues where retaliation can follow internal complaints or assertion of legal rights.",
-      "_review_notes": "[ChatGPT] Best fit for pregnancy, lactation, family-caregiving, leave, and related workplace-rights matters; not a general whistleblower-specialist intake."
+      "_review_notes": "[ChatGPT] Best fit for pregnancy, lactation, family-caregiving, leave, and related workplace-rights matters; not a general whistleblower-specialist intake.",
+      "assistance_type": "nonprofit",
+      "intake_url": "https://worklifelaw.org/get-help/"
     }
   ],
   "integrity": {

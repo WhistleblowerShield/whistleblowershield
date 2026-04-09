@@ -7,12 +7,12 @@
  *
  * ATTACHED CPTs
  * -------------
- * jx-statute, jx-citation, jx-interpretation, ws-agency
+ * jx-statute, jx-citation, jx-interpretation, ws-agency, ws-assist-org
  *
  * EXCLUDED CPTs (and why)
  * -----------------------
  * jx-summary      — IS the plain language document; carries its own review fields.
- * ws-assist-org   — Content is plain language by nature; no overlay needed.
+ * (none)
  * ws-legal-update — Changelog entries; no plain language companion use case.
  * ws-reference    — Outbound links with metadata; no prose to simplify.
  * jurisdiction    — Structured metadata container; not explanatory prose.
@@ -35,7 +35,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.4.0
- * @version 3.10.0
+ * @version 3.16.0
  *
  * VERSION
  * -------
@@ -43,6 +43,12 @@
  *        duplicated across four individual CPT ACF files.
  * 3.5.0  Group key renamed: group_ws_plain_english_fields → group_plain_english_metadata.
  * 3.6.0  Stamp field meta keys prefixed with ws_auto_.
+ * 3.16.0 ws-assist-org added to shared Plain Language workflow.
+ *        Semantic intent:
+ *          - ws_plain_english_wysiwyg is the enriched public profile body
+ *          - ws_plain_english_reviewed gates the "More about this organization" link
+ *          - ws_has_plain_english defaults on for assist-org ingest writes
+ *        Reuse of this workflow group for assist-org is intentional.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -69,7 +75,7 @@ function ws_register_acf_plain_english_fields() {
         'instruction_placement' => 'label',
         'active'                => true,
 
-        // Attaches to the 4 CPTs whose content warrants plain language companions.
+        // Attaches to CPTs whose content warrants plain language companions.
         // See file header for excluded CPTs and rationale.
         'location' => [
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-statute'        ] ],
@@ -77,6 +83,7 @@ function ws_register_acf_plain_english_fields() {
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-interpretation'  ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-common-law'      ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-agency'          ] ],
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-assist-org'      ] ],
         ],
 
         'fields' => [

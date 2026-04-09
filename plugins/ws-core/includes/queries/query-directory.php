@@ -18,10 +18,73 @@
  *
  * @package WhistleblowerShield
  * @since   3.10.4
- * @version 3.10.6
+ * @version 3.16.1
  */
 
 defined( 'ABSPATH' ) || exit;
+
+/**
+ * Returns normalized term payload (ids/slugs/names) for one taxonomy.
+ *
+ * @param int    $post_id   Post ID.
+ * @param string $taxonomy  Taxonomy slug.
+ * @return array{ids:array<int>,slugs:array<string>,names:array<string>}
+ */
+function ws_q_taxonomy_payload( $post_id, $taxonomy ) {
+    $terms = wp_get_object_terms( (int) $post_id, (string) $taxonomy );
+    if ( is_wp_error( $terms ) || ! is_array( $terms ) ) {
+        return [ 'ids' => [], 'slugs' => [], 'names' => [] ];
+    }
+
+    $ids = [];
+    $slugs = [];
+    $names = [];
+    foreach ( $terms as $term ) {
+        if ( ! ( $term instanceof WP_Term ) ) {
+            continue;
+        }
+        $ids[]   = (int) $term->term_id;
+        $slugs[] = (string) $term->slug;
+        $names[] = (string) $term->name;
+    }
+
+    return [
+        'ids'   => array_values( array_unique( $ids ) ),
+        'slugs' => array_values( array_unique( $slugs ) ),
+        'names' => array_values( array_unique( $names ) ),
+    ];
+}
+
+/**
+ * Normalizes assist-org repeater rows into [type, value] pairs.
+ *
+ * @param mixed  $rows         Raw repeater rows from ACF.
+ * @param string $type_key     Row key for channel type.
+ * @param string $value_key    Row key for channel value.
+ * @return array<int,array{type:string,value:string}>
+ */
+function ws_q_normalize_channel_rows( $rows, $type_key, $value_key ) {
+    if ( ! is_array( $rows ) ) {
+        return [];
+    }
+
+    $out = [];
+    foreach ( $rows as $row ) {
+        if ( ! is_array( $row ) ) {
+            continue;
+        }
+        $type  = strtolower( trim( (string) ( $row[ $type_key ] ?? '' ) ) );
+        $value = trim( (string) ( $row[ $value_key ] ?? '' ) );
+        if ( $type === '' || $value === '' ) {
+            continue;
+        }
+        $out[] = [
+            'type'  => $type,
+            'value' => $value,
+        ];
+    }
+    return $out;
+}
 
 
 /**
@@ -33,55 +96,137 @@ defined( 'ABSPATH' ) || exit;
 function ws_q_build_assist_org_row( $oid ) {
 
     $oid  = (int) $oid;
+    $tax_jx                = ws_q_taxonomy_payload( $oid, WS_JURISDICTION_TAXONOMY );
+    $tax_aorg_type         = ws_q_taxonomy_payload( $oid, 'ws_aorg_type' );
+    $tax_disclosure_type   = ws_q_taxonomy_payload( $oid, 'ws_disclosure_type' );
+    $tax_disclosure_target = ws_q_taxonomy_payload( $oid, 'ws_disclosure_targets' );
+    $tax_case_stage        = ws_q_taxonomy_payload( $oid, 'ws_case_stage' );
+    $tax_process_type      = ws_q_taxonomy_payload( $oid, 'ws_process_type' );
+    $tax_services          = ws_q_taxonomy_payload( $oid, 'ws_aorg_service' );
+    $tax_employment        = ws_q_taxonomy_payload( $oid, 'ws_employment_sector' );
+    $tax_languages         = ws_q_taxonomy_payload( $oid, 'ws_languages' );
+    $tax_cost_model        = ws_q_taxonomy_payload( $oid, 'ws_aorg_cost_model' );
+
     $_nw  = (bool) get_post_meta( $oid, 'ws_aorg_serves_nationwide', true );
-    $_jx  = wp_get_object_terms( $oid, WS_JURISDICTION_TAXONOMY, [ 'fields' => 'slugs' ] );
-    $_jx  = ( ! is_wp_error( $_jx ) && is_array( $_jx ) ) ? array_values( array_unique( array_map( 'strval', $_jx ) ) ) : [];
+    $_jx  = $tax_jx['slugs'];
     $_fed = ( ! $_nw && count( $_jx ) === 1 && strtolower( (string) $_jx[0] ) === 'us' );
+    $plain = ws_build_plain_english_array( $oid );
+    $legitimacy_url = (string) get_post_meta( $oid, 'ws_aorg_legitimacy_url', true );
 
     return [
         'id'            => $oid,
         'title'         => get_the_title( $oid ),
         'url'           => get_permalink( $oid ),
         'status'        => get_post_status( $oid ),
-        'internal_id'          => get_post_meta( $oid, 'ws_aorg_internal_id',               true ),
-        'common_name'          => get_post_meta( $oid, 'ws_aorg_common_name',               true ),
-        'type'                 => ( ( $_aorg_type = get_the_terms( $oid, 'ws_aorg_type' ) ) && ! is_wp_error( $_aorg_type ) ) ? $_aorg_type[0] : null,
-        'description'          => get_post_meta( $oid, 'ws_aorg_description',               true ),
+        'internal_id'          => (string) get_post_meta( $oid, 'ws_aorg_internal_id',               true ),
+        'official_name'        => (string) get_post_meta( $oid, 'ws_aorg_official_name',             true ),
+        'common_name'          => (string) get_post_meta( $oid, 'ws_aorg_common_name',               true ),
+        'type'                 => (string) ( $tax_aorg_type['slugs'][0] ?? '' ),
+        'type_label'           => (string) ( $tax_aorg_type['names'][0] ?? '' ),
+        'description'          => (string) get_post_meta( $oid, 'ws_aorg_description',               true ),
         'whistleblower_scope'  => (int) get_post_meta( $oid, 'ws_aorg_whistleblower_scope', true ),
+        'whistleblower_note'   => (string) get_post_meta( $oid, 'ws_aorg_whistleblower_note', true ),
         'logo'                 => get_field( 'ws_aorg_logo', $oid ),
         'serves_nationwide'    => $_nw,
         'nationwide_flag'      => $_nw,
         'federal_only'         => $_fed,
         'limited_scope'        => (bool) get_post_meta( $oid, 'ws_aorg_limited_scope',       true ),
-        'community_scope'      => get_post_meta( $oid, 'ws_aorg_community_scope',            true ),
-        'disclosure_type'      => ws_q_normalize_id_list( get_field( 'ws_aorg_disclosure_type', $oid ) ),
-        'disclosure_targets'   => ws_q_normalize_id_list( get_field( 'ws_aorg_disclosure_targets', $oid ) ),
-        'disclosure_targets_details' => get_post_meta( $oid, 'ws_aorg_disclosure_targets_details', true ),
-        'case_stages'          => ws_q_normalize_id_list( get_field( 'ws_ao_case_stage', $oid ) ),
-        'services'             => ( ( $_sv = wp_get_object_terms( $oid, 'ws_aorg_service', [ 'fields' => 'names' ] ) ) && ! is_wp_error( $_sv ) ) ? $_sv : [],
-        'additional_services'  => get_post_meta( $oid, 'ws_aorg_additional_services',        true ),
-        'employment_sectors'   => ( ( $_es = wp_get_object_terms( $oid, 'ws_employment_sector', [ 'fields' => 'names' ] ) ) && ! is_wp_error( $_es ) ) ? $_es : [],
-        'website_url'          => get_post_meta( $oid, 'ws_aorg_website_url',                true ),
-        'intake_url'           => get_post_meta( $oid, 'ws_aorg_intake_url',                 true ),
-        'phone'                => get_post_meta( $oid, 'ws_aorg_phone',                      true ),
-        'email'                => get_post_meta( $oid, 'ws_aorg_email',                      true ),
+        'community_scope'      => (string) get_post_meta( $oid, 'ws_aorg_community_scope',            true ),
+        // Forward-facing taxonomy values (slugs), with labels alongside.
+        'disclosure_types'     => $tax_disclosure_type['slugs'],
+        'disclosure_type_labels' => $tax_disclosure_type['names'],
+        'disclosure_type'      => $tax_disclosure_type['slugs'], // legacy alias
+        'disclosure_targets'   => $tax_disclosure_target['slugs'],
+        'disclosure_target_labels' => $tax_disclosure_target['names'],
+        'disclosure_targets_details' => (string) get_post_meta( $oid, 'ws_aorg_disclosure_targets_details', true ),
+        'case_stages'          => $tax_case_stage['slugs'],
+        'case_stage_labels'    => $tax_case_stage['names'],
+        'process_types'        => $tax_process_type['slugs'],
+        'process_type_labels'  => $tax_process_type['names'],
+        'services'             => $tax_services['names'], // render-facing labels
+        'service_slugs'        => $tax_services['slugs'],
+        'additional_services'  => (string) get_post_meta( $oid, 'ws_aorg_additional_services',        true ),
+        'employment_sectors'   => $tax_employment['slugs'],
+        'employment_sector_labels' => $tax_employment['names'],
+        'website_url'          => (string) get_post_meta( $oid, 'ws_aorg_website_url',                true ),
+        'intake_url'           => (string) get_post_meta( $oid, 'ws_aorg_intake_url',                 true ),
+        'contact_url'          => (string) get_post_meta( $oid, 'ws_aorg_contact_url',                true ),
+        'phones'               => ws_q_normalize_channel_rows( get_field( 'ws_aorg_phones', $oid ), 'ws_aorg_phone_type', 'ws_aorg_phone_number' ),
+        'emails'               => ws_q_normalize_channel_rows( get_field( 'ws_aorg_emails', $oid ), 'ws_aorg_email_type', 'ws_aorg_email_address' ),
         'has_secure_channel'   => (bool) get_post_meta( $oid, 'ws_aorg_has_secure_channel', true ),
-        'secure_contact_url'   => get_post_meta( $oid, 'ws_aorg_secure_contact_url',        true ),
-        'secure_contact_tool'  => get_post_meta( $oid, 'ws_aorg_secure_contact_tool',       true ),
-        'mailing_address'      => get_post_meta( $oid, 'ws_aorg_mailing_address',            true ),
-        'languages'            => get_field( 'ws_languages', $oid ),
-        'additional_languages' => get_post_meta( $oid, 'ws_aorg_additional_languages',       true ),
-        'cost_model'           => ( ( $_cm = wp_get_object_terms( $oid, 'ws_aorg_cost_model', [ 'fields' => 'slugs' ] ) ) && ! is_wp_error( $_cm ) ) ? $_cm : [],
-        'income_limit'         => get_post_meta( $oid, 'ws_aorg_income_limit',               true ),
-        'income_limit_notes'   => get_post_meta( $oid, 'ws_aorg_income_limit_notes',         true ),
+        'secure_contact_url'   => (string) get_post_meta( $oid, 'ws_aorg_secure_contact_url',        true ),
+        'secure_contact_tool'  => (string) get_post_meta( $oid, 'ws_aorg_secure_contact_tool',       true ),
+        'mailing_address'      => (string) get_post_meta( $oid, 'ws_aorg_mailing_address',            true ),
+        'languages'            => $tax_languages['slugs'],
+        'language_labels'      => $tax_languages['names'],
+        'additional_languages' => (string) get_post_meta( $oid, 'ws_aorg_additional_languages',       true ),
+        'cost_model'           => $tax_cost_model['slugs'],
+        'cost_model_labels'    => $tax_cost_model['names'],
+        'income_limit'         => (bool) get_post_meta( $oid, 'ws_aorg_income_limit',               true ),
+        'income_eligibility_required' => (bool) get_post_meta( $oid, 'ws_aorg_income_limit', true ),
+        'income_limit_notes'   => (string) get_post_meta( $oid, 'ws_aorg_income_limit_notes',         true ),
         'anonymous'            => (bool) get_post_meta( $oid, 'ws_aorg_accepts_anonymous',   true ),
-        'eligibility_notes'    => get_post_meta( $oid, 'ws_aorg_eligibility_notes',          true ),
+        'anonymous_pre_consult_possible' => (bool) get_post_meta( $oid, 'ws_aorg_accepts_anonymous', true ),
+        'eligibility_notes'    => (string) get_post_meta( $oid, 'ws_aorg_eligibility_notes',          true ),
         'licensed_attorneys'   => (bool) get_post_meta( $oid, 'ws_aorg_licensed_attorneys',  true ),
-        'accreditation'        => get_post_meta( $oid, 'ws_aorg_accreditation',              true ),
-        'bar_states'           => get_post_meta( $oid, 'ws_aorg_bar_states',                 true ),
-        'verify_url'           => get_post_meta( $oid, 'ws_aorg_verify_url',                 true ),
-        'last_reviewed'        => get_post_meta( $oid, 'ws_aorg_last_reviewed',              true ),
-        'plain'  => ws_build_plain_english_array( $oid ),
+        'has_attorneys'        => (bool) get_post_meta( $oid, 'ws_aorg_licensed_attorneys', true ),
+        'accreditation'        => (string) get_post_meta( $oid, 'ws_aorg_accreditation',              true ),
+        'bar_states'           => (string) get_post_meta( $oid, 'ws_aorg_bar_states',                 true ),
+        'legitimacy_url'       => $legitimacy_url,
+        'last_reviewed'        => (string) get_post_meta( $oid, 'ws_aorg_last_reviewed',              true ),
+        'jurisdictions'        => $tax_jx['slugs'],
+        'jurisdiction_labels'  => $tax_jx['names'],
+        // Full data object for future shortcode contributors.
+        'meta' => [
+            'internal_id'                  => (string) get_post_meta( $oid, 'ws_aorg_internal_id', true ),
+            'official_name'                => (string) get_post_meta( $oid, 'ws_aorg_official_name', true ),
+            'common_name'                  => (string) get_post_meta( $oid, 'ws_aorg_common_name', true ),
+            'description'                  => (string) get_post_meta( $oid, 'ws_aorg_description', true ),
+            'website_url'                  => (string) get_post_meta( $oid, 'ws_aorg_website_url', true ),
+            'intake_url'                   => (string) get_post_meta( $oid, 'ws_aorg_intake_url', true ),
+            'contact_url'                  => (string) get_post_meta( $oid, 'ws_aorg_contact_url', true ),
+            'has_secure_channel'           => (bool) get_post_meta( $oid, 'ws_aorg_has_secure_channel', true ),
+            'secure_contact_url'           => (string) get_post_meta( $oid, 'ws_aorg_secure_contact_url', true ),
+            'secure_contact_tool'          => (string) get_post_meta( $oid, 'ws_aorg_secure_contact_tool', true ),
+            'mailing_address'              => (string) get_post_meta( $oid, 'ws_aorg_mailing_address', true ),
+            'additional_languages'         => (string) get_post_meta( $oid, 'ws_aorg_additional_languages', true ),
+            'income_limit'                 => (bool) get_post_meta( $oid, 'ws_aorg_income_limit', true ),
+            'income_limit_notes'           => (string) get_post_meta( $oid, 'ws_aorg_income_limit_notes', true ),
+            'accepts_anonymous'            => (bool) get_post_meta( $oid, 'ws_aorg_accepts_anonymous', true ),
+            'eligibility_notes'            => (string) get_post_meta( $oid, 'ws_aorg_eligibility_notes', true ),
+            'licensed_attorneys'           => (bool) get_post_meta( $oid, 'ws_aorg_licensed_attorneys', true ),
+            'accreditation'                => (string) get_post_meta( $oid, 'ws_aorg_accreditation', true ),
+            'bar_states'                   => (string) get_post_meta( $oid, 'ws_aorg_bar_states', true ),
+            'legitimacy_url'               => $legitimacy_url,
+            'last_reviewed'                => (string) get_post_meta( $oid, 'ws_aorg_last_reviewed', true ),
+            'serves_nationwide'            => (bool) get_post_meta( $oid, 'ws_aorg_serves_nationwide', true ),
+            'limited_scope'                => (bool) get_post_meta( $oid, 'ws_aorg_limited_scope', true ),
+            'community_scope'              => (string) get_post_meta( $oid, 'ws_aorg_community_scope', true ),
+            'whistleblower_scope'          => (int) get_post_meta( $oid, 'ws_aorg_whistleblower_scope', true ),
+            'whistleblower_note'           => (string) get_post_meta( $oid, 'ws_aorg_whistleblower_note', true ),
+            'disclosure_targets_details'   => (string) get_post_meta( $oid, 'ws_aorg_disclosure_targets_details', true ),
+            'additional_services'          => (string) get_post_meta( $oid, 'ws_aorg_additional_services', true ),
+            'internal_contact_name'        => (string) get_post_meta( $oid, 'ws_aorg_internal_contact_name', true ),
+            'internal_contact_role'        => (string) get_post_meta( $oid, 'ws_aorg_internal_contact_role', true ),
+            'internal_contact_email'       => (string) get_post_meta( $oid, 'ws_aorg_internal_contact_email', true ),
+            'internal_contact_phone'       => (string) get_post_meta( $oid, 'ws_aorg_internal_contact_phone', true ),
+            'internal_last_contacted'      => (string) get_post_meta( $oid, 'ws_aorg_internal_last_contacted', true ),
+            'internal_relationship_notes'  => (string) get_post_meta( $oid, 'ws_aorg_internal_relationship_notes', true ),
+        ],
+        'taxonomies' => [
+            'jurisdiction'       => $tax_jx,
+            'aorg_type'          => $tax_aorg_type,
+            'disclosure_type'    => $tax_disclosure_type,
+            'disclosure_targets' => $tax_disclosure_target,
+            'case_stage'         => $tax_case_stage,
+            'process_type'       => $tax_process_type,
+            'aorg_service'       => $tax_services,
+            'employment_sector'  => $tax_employment,
+            'languages'          => $tax_languages,
+            'cost_model'         => $tax_cost_model,
+        ],
+        'plain'  => $plain,
+        'has_extended_profile' => ! empty( $plain['is_reviewed'] ),
         'verify' => ws_build_source_verify_array( $oid ),
         'record' => ws_build_record_array( $oid ),
     ];

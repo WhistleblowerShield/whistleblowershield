@@ -683,6 +683,20 @@
     flex-wrap: wrap;
 }
 
+.ws-aorg-card__more-link {
+    display: inline-block;
+    align-self: center;
+    font-size: 0.78rem;
+    color: #5f6368;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.ws-aorg-card__more-link:hover,
+.ws-aorg-card__more-link:focus {
+    color: #1f2937;
+}
+
 /* Small button modifier for directory cards */
 .ws-btn--sm {
     padding: 0.3rem 0.65rem;

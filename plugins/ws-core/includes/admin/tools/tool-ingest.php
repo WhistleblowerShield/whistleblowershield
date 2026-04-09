@@ -126,7 +126,7 @@ defined( 'ABSPATH' ) || exit;
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-define( 'WS_INGEST_VERSION',       '3.15.1' );
+define( 'WS_INGEST_VERSION',       '3.16.0' );
 define( 'WS_INGEST_SCHEMA_VERSION', '2.0' );
 define( 'WS_PROPOSED_TERMS_LOG',   WP_CONTENT_DIR . '/logs/ws-ingest/proposed-terms-log.json' );
 define( 'WS_INGEST_LOG_DIR',       WP_CONTENT_DIR . '/logs/ws-ingest/' );
@@ -430,7 +430,7 @@ function ws_ingest_strip_prefixed_keys( $value ) {
 
     $clean = [];
     foreach ( $value as $k => $v ) {
-        if ( is_string( $k ) && strpos( $k, '_' ) === 0 ) {
+        if ( is_string( $k ) && strpos( $k, '_' ) === 0 && $k !== '_review_notes' ) {
             continue;
         }
         $clean[ $k ] = ws_ingest_strip_prefixed_keys( $v );
@@ -440,18 +440,10 @@ function ws_ingest_strip_prefixed_keys( $value ) {
 
 /**
  * Applies record-level defaults derived from batch meta.
- * Currently used for assist-org batches where jurisdiction_id may be omitted
- * per-record and provided once at meta.jurisdiction_id.
+ * Record-level fallback behavior has been intentionally removed.
+ * Run-scope/meta values are authoritative.
  */
 function ws_ingest_apply_record_defaults( array $record, array $meta, string $record_type ): array {
-    if ( $record_type === 'assist-org' ) {
-        $record_jx = trim( (string) ( $record['jurisdiction_id'] ?? '' ) );
-        $meta_jx   = trim( (string) ( $meta['jurisdiction_id'] ?? '' ) );
-        if ( $record_jx === '' && $meta_jx !== '' ) {
-            $record['jurisdiction_id'] = $meta_jx;
-        }
-    }
-
     return $record;
 }
 
@@ -463,7 +455,7 @@ function ws_ingest_apply_record_defaults( array $record, array $meta, string $re
  *
  * @return array [ 'pass' => bool, 'errors' => string[], 'warnings' => string[] ]
  */
-function ws_ingest_preflight( array $data ): array {
+function ws_ingest_preflight( array $data, string $batch_filename = '' ): array {
     $result = [ 'pass' => true, 'errors' => [], 'warnings' => [] ];
 
     $meta      = isset( $data['meta'] ) ? ws_ingest_strip_prefixed_keys( $data['meta'] ) : null;
@@ -514,7 +506,7 @@ function ws_ingest_preflight( array $data ): array {
         }
     }
 
-    $record_type = ws_ingest_detect_record_type( $data );
+    $record_type = ws_ingest_detect_record_type( $data, $batch_filename );
 
     // Record identity checks
     foreach ( $records as $i => $record ) {
@@ -526,11 +518,7 @@ function ws_ingest_preflight( array $data ): array {
         $record = ws_ingest_strip_prefixed_keys( $record );
         $record = ws_ingest_apply_record_defaults( $record, is_array( $meta ) ? $meta : [], $record_type );
 
-        $jx = $record['jurisdiction_id'] ?? '';
         $sid = ws_ingest_get_record_identifier( (array) $record, $record_type );
-        if ( empty( $jx ) ) {
-            $result['warnings'][] = "$sid: missing jurisdiction_id.";
-        }
         if ( empty( $sid ) || $sid === 'UNKNOWN' ) {
             if ( $record_type === 'common-law' ) {
                 $result['warnings'][] = "record[$i]: missing doctrine_id.";
@@ -560,41 +548,46 @@ function ws_ingest_preflight( array $data ): array {
 
 /**
  * Detects record type for an ingest batch.
- * Prefers meta.record_type; falls back to first record shape.
+ * Prefers meta.record_type; falls back to run-scope filename token.
  */
-function ws_ingest_detect_record_type( array $data ): string {
+function ws_ingest_detect_record_type( array $data, string $batch_filename = '' ): string {
     $meta_type = strtolower( trim( (string) ( $data['meta']['record_type'] ?? '' ) ) );
     if ( in_array( $meta_type, [ 'statute', 'common-law', 'citation', 'interpretation', 'assist-org' ], true ) ) {
         return $meta_type;
     }
 
-    $records = $data['records'] ?? [];
-    if ( ! is_array( $records ) ) {
-        return 'statute';
-    }
-
-    foreach ( $records as $record ) {
-        if ( ! is_array( $record ) ) {
-            continue;
-        }
-        if ( ! empty( $record['doctrine_id'] ) ) {
-            return 'common-law';
-        }
-        if ( ! empty( $record['citation_id'] ) ) {
-            return 'citation';
-        }
-        if ( ! empty( $record['interpretation_id'] ) ) {
-            return 'interpretation';
-        }
-        if ( ! empty( $record['organization_name'] ) ) {
-            return 'assist-org';
-        }
-        if ( ! empty( $record['statute_id'] ) ) {
-            return 'statute';
-        }
+    $name_type = ws_ingest_detect_record_type_from_filename( $batch_filename );
+    if ( $name_type !== '' ) {
+        return $name_type;
     }
 
     return 'statute';
+}
+
+/**
+ * Extracts record type from run-scope batch filename.
+ */
+function ws_ingest_detect_record_type_from_filename( string $batch_filename ): string {
+    $base = strtolower( basename( $batch_filename ) );
+    if ( $base === '' ) {
+        return '';
+    }
+    if ( strpos( $base, 'assist-org' ) !== false || strpos( $base, 'assist_org' ) !== false ) {
+        return 'assist-org';
+    }
+    if ( strpos( $base, 'common-law' ) !== false || strpos( $base, 'common_law' ) !== false ) {
+        return 'common-law';
+    }
+    if ( strpos( $base, 'interpretation' ) !== false ) {
+        return 'interpretation';
+    }
+    if ( strpos( $base, 'citation' ) !== false ) {
+        return 'citation';
+    }
+    if ( strpos( $base, 'statute' ) !== false || strpos( $base, 'statutes' ) !== false ) {
+        return 'statute';
+    }
+    return '';
 }
 
 /**
@@ -727,9 +720,10 @@ function ws_ingest_allowed_record_keys( string $record_type ): array {
             'common_name',
             'homepage_url_status',
             'verified_date_url',
-            'intake_or_contact_url',
-            'phone',
-            'contact_email',
+            'intake_url',
+            'contact_url',
+            'phones',
+            'emails',
             'mailing_address',
             'has_secure_channel',
             'secure_contact_url',
@@ -792,9 +786,6 @@ function ws_ingest_validate_record_shape( array $record, string $record_type, in
         }
     }
 
-    if ( trim( (string) ( $record['jurisdiction_id'] ?? '' ) ) === '' ) {
-        $errors[] = "$sid: missing required jurisdiction_id in record[$index].";
-    }
     if ( trim( (string) ( $record[ $id_key ] ?? '' ) ) === '' ) {
         if ( $record_type === 'assist-org' ) {
             $warnings[] = "$sid: missing required {$id_key} in record[$index] (non-blocking; requires human review).";
@@ -809,6 +800,12 @@ function ws_ingest_validate_record_shape( array $record, string $record_type, in
         }
         if ( trim( (string) ( $record['general_description'] ?? '' ) ) === '' ) {
             $warnings[] = "$sid: missing required general_description in record[$index] (non-blocking; requires human review).";
+        }
+        if ( isset( $record['phones'] ) && ! is_array( $record['phones'] ) ) {
+            $warnings[] = "$sid: phones should be an array of {type,number} objects.";
+        }
+        if ( isset( $record['emails'] ) && ! is_array( $record['emails'] ) ) {
+            $warnings[] = "$sid: emails should be an array of {type,address} objects.";
         }
     }
 
@@ -1081,9 +1078,10 @@ function ws_ingest_assist_org_field_map_v2(): array {
         'official_name'             => [ 'ws_aorg_official_name',               'text'     ],
         'general_description'       => [ 'ws_aorg_description',                 'textarea' ],
         'official_homepage_url'     => [ 'ws_aorg_website_url',                 'url'      ],
-        'intake_or_contact_url'     => [ 'ws_aorg_intake_url',                  'url'      ],
-        'phone'                     => [ 'ws_aorg_phone',                       'text'     ],
-        'contact_email'             => [ 'ws_aorg_email',                       'text'     ],
+        'intake_url'                => [ 'ws_aorg_intake_url',                  'url'      ],
+        'contact_url'               => [ 'ws_aorg_contact_url',                 'url'      ],
+        'phones'                    => [ 'ws_aorg_phones',                      'repeater_phone' ],
+        'emails'                    => [ 'ws_aorg_emails',                      'repeater_email' ],
         'mailing_address'           => [ 'ws_aorg_mailing_address',             'textarea' ],
         'has_secure_channel'        => [ 'ws_aorg_has_secure_channel',          'bool'     ],
         'secure_contact_url'        => [ 'ws_aorg_secure_contact_url',          'url'      ],
@@ -1100,15 +1098,15 @@ function ws_ingest_assist_org_field_map_v2(): array {
         'disclosure_targets_details'=> [ 'ws_aorg_disclosure_targets_details',  'textarea' ],
 
         // ── Taxonomies ───────────────────────────────────────────────────
-        'disclosure_types'          => [ 'ws_aorg_disclosure_type',        'tax', 'ws_disclosure_type'    ],
+        'disclosure_types'          => [ 'ws_aorg_disclosure_types',       'tax', 'ws_disclosure_type'    ],
         'disclosure_targets'        => [ 'ws_aorg_disclosure_targets',     'tax', 'ws_disclosure_targets' ],
         'languages_supported'       => [ 'ws_languages',                   'tax', 'ws_languages'          ],
         'assistance_type'           => [ 'ws_aorg_type',                   'tax', 'ws_aorg_type'          ],
         'employment_sectors'        => [ 'ws_aorg_employment_sectors',     'tax', 'ws_employment_sector'  ],
         'cost_model'                => [ 'ws_aorg_cost_model',             'tax', 'ws_aorg_cost_model'    ],
         'services_provided'         => [ 'ws_aorg_services',               'tax', 'ws_aorg_service'       ],
-        'process_types'             => [ null,                             'tax', 'ws_process_type'       ],
-        'case_stages'               => [ 'ws_ao_case_stage',               'tax', 'ws_case_stage'         ],
+        'process_types'             => [ 'ws_aorg_process_types',          'tax', 'ws_process_type'       ],
+        'case_stages'               => [ 'ws_aorg_case_stages',            'tax', 'ws_case_stage'         ],
 
         // ── Advisory / omitted ───────────────────────────────────────────
         // organization_name is intentionally omitted from the field map loop.
@@ -1120,17 +1118,121 @@ function ws_ingest_assist_org_field_map_v2(): array {
         'internal_id'               => [ null, 'omit' ],
         'source_url'                => [ null, 'omit' ],
         'homepage_url_status'       => [ null, 'omit' ],
-        'nationwide_example'        => [ null, 'omit' ],
-        'case_stage_details'        => [ null, 'omit' ],
-        '_review_notes'             => [ null, 'omit' ],
+        'nationwide_example'        => [ null, 'seed' ],
+        'case_stage_details'        => [ null, 'seed' ],
+        '_review_notes'             => [ null, 'seed' ],
         '_reconciled_notes'         => [ null, 'omit' ],
     ];
 }
 
-function ws_ingest_build_assist_org_internal_id( array $record ): string {
+/**
+ * Normalizes phones array rows for ws_aorg_phones repeater writes.
+ *
+ * Expected input:
+ *   [ { "type": "hotline", "number": "(555) 000-0000" }, ... ]
+ *
+ * @return array<int,array<string,string>>
+ */
+function ws_ingest_normalize_phone_rows( $value ): array {
+    if ( ! is_array( $value ) ) {
+        return [];
+    }
+
+    $rows = [];
+    $allowed = defined( 'WS_SCHEMA_PHONE_TYPE' ) && is_array( WS_SCHEMA_PHONE_TYPE )
+        ? WS_SCHEMA_PHONE_TYPE
+        : [ 'hotline', 'intake', 'headquarters', 'regional', 'tty', 'fax', 'other' ];
+
+    foreach ( $value as $row ) {
+        if ( ! is_array( $row ) ) {
+            continue;
+        }
+        $type   = strtolower( trim( (string) ( $row['type'] ?? '' ) ) );
+        $number = trim( (string) ( $row['number'] ?? '' ) );
+        if ( $type === '' || $number === '' ) {
+            continue;
+        }
+        if ( ! in_array( $type, $allowed, true ) ) {
+            continue;
+        }
+        $rows[] = [
+            'ws_aorg_phone_type'   => $type,
+            'ws_aorg_phone_number' => $number,
+        ];
+    }
+
+    return $rows;
+}
+
+/**
+ * Normalizes emails array rows for ws_aorg_emails repeater writes.
+ *
+ * Expected input:
+ *   [ { "type": "intake", "address": "team@example.org" }, ... ]
+ *
+ * @return array<int,array<string,string>>
+ */
+function ws_ingest_normalize_email_rows( $value ): array {
+    if ( ! is_array( $value ) ) {
+        return [];
+    }
+
+    $rows = [];
+    $allowed = defined( 'WS_SCHEMA_EMAIL_TYPE' ) && is_array( WS_SCHEMA_EMAIL_TYPE )
+        ? WS_SCHEMA_EMAIL_TYPE
+        : [ 'intake', 'general', 'legal', 'media', 'support', 'other' ];
+
+    foreach ( $value as $row ) {
+        if ( ! is_array( $row ) ) {
+            continue;
+        }
+        $type    = strtolower( trim( (string) ( $row['type'] ?? '' ) ) );
+        $address = sanitize_email( (string) ( $row['address'] ?? '' ) );
+        if ( $type === '' || $address === '' ) {
+            continue;
+        }
+        if ( ! in_array( $type, $allowed, true ) ) {
+            continue;
+        }
+        $rows[] = [
+            'ws_aorg_email_type'    => $type,
+            'ws_aorg_email_address' => $address,
+        ];
+    }
+
+    return $rows;
+}
+
+/**
+ * Builds post_content seed append blocks from assist-org record fields.
+ */
+function ws_ingest_build_assist_org_seed_append( array $record ): string {
+    $nationwide_example = trim( (string) ws_ingest_get_value( $record, 'nationwide_example' ) );
+    $case_stage_details = trim( (string) ws_ingest_get_value( $record, 'case_stage_details' ) );
+    $review_notes       = trim( (string) ws_ingest_get_value( $record, '_review_notes' ) );
+
+    $blocks = [];
+    if ( $nationwide_example !== '' ) {
+        $blocks[] = "Nationwide scope note: {$nationwide_example}";
+    }
+    if ( $case_stage_details !== '' ) {
+        $blocks[] = "Case stage notes: {$case_stage_details}";
+    }
+    if ( $review_notes !== '' ) {
+        $blocks[] = "Researcher notes: {$review_notes}";
+    }
+
+    if ( empty( $blocks ) ) {
+        return '';
+    }
+
+    return "\n\n---\n" . implode( "\n\n---\n", array_map( 'trim', $blocks ) );
+}
+
+function ws_ingest_build_assist_org_internal_id( array $record, string $jx_slug = '' ): string {
     $org_name = trim( (string) ( $record['organization_name'] ?? '' ) );
     $homepage = trim( (string) ( $record['official_homepage_url'] ?? '' ) );
-    $jx_slug  = strtolower( trim( (string) ( $record['jurisdiction_id'] ?? '' ) ) );
+    $jx_slug  = strtolower( trim( (string) $jx_slug ) );
 
     $host = strtolower( (string) wp_parse_url( $homepage, PHP_URL_HOST ) );
     if ( str_starts_with( $host, 'www.' ) ) {
@@ -1489,6 +1591,24 @@ function ws_ingest_parse_boolish_value( $value, string $record_id, string $json_
     }
 
     return (int) (bool) $value;
+}
+
+/**
+ * Normalizes date-like values to YYYY-MM-DD.
+ * Used for legacy values like "2026-04-07 14:22 UTC".
+ * Returns empty string when no YYYY-MM-DD token is found.
+ */
+function ws_ingest_normalize_ymd_date( $value ): string {
+    $raw = trim( (string) $value );
+    if ( $raw === '' ) {
+        return '';
+    }
+
+    if ( preg_match( '/\b(\d{4}-\d{2}-\d{2})\b/', $raw, $m ) ) {
+        return $m[1];
+    }
+
+    return '';
 }
 
 /**
@@ -2372,8 +2492,8 @@ function ws_ingest_create_citation_stubs_for_common_law( int $common_law_post_id
 
 // ── Post title builder ────────────────────────────────────────────────────────
 
-function ws_ingest_build_post_title( array $record ): string {
-    $jx      = strtoupper( $record['jurisdiction_id'] ?? '' );
+function ws_ingest_build_post_title( array $record, string $jx_slug ): string {
+    $jx      = strtoupper( $jx_slug );
     $sid     = $record['statute_id']    ?? '';
     $name    = $record['official_name'] ?? '';
     $common  = $record['common_name']   ?? '';
@@ -2384,8 +2504,8 @@ function ws_ingest_build_post_title( array $record ): string {
     return trim( "$jx — $name" );
 }
 
-function ws_ingest_build_common_law_post_title( array $record ): string {
-    $jx      = strtoupper( $record['jurisdiction_id'] ?? '' );
+function ws_ingest_build_common_law_post_title( array $record, string $jx_slug ): string {
+    $jx      = strtoupper( $jx_slug );
     $name    = (string) ( $record['doctrine_name'] ?? '' );
     $common  = (string) ( $record['common_name'] ?? '' );
 
@@ -2423,7 +2543,7 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
     $sid = $record['statute_id'] ?? 'UNKNOWN';
 
     // ── Step 1: Check for duplicate ──────────────────────────────────────
-    $jx_slug     = strtolower( (string) ( $record['jurisdiction_id'] ?? '' ) );
+    $jx_slug     = strtolower( (string) ( $meta['jurisdiction_id'] ?? '' ) );
     $record_key  = $jx_slug && $sid !== 'UNKNOWN' ? strtolower( $jx_slug . '|' . $sid ) : '';
     $duplicates  = [];
 
@@ -2451,7 +2571,7 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
     $post_id = wp_insert_post( [
         'post_type'   => 'jx-statute',
         'post_status' => 'draft',
-        'post_title'  => ws_ingest_build_post_title( $record ),
+        'post_title'  => ws_ingest_build_post_title( $record, $jx_slug ),
         'post_author' => get_current_user_id(),
     ] );
 
@@ -2732,7 +2852,7 @@ function ws_ingest_process_common_law_record( array $record, array $meta, array 
 
     $did = $record['doctrine_id'] ?? 'UNKNOWN';
 
-    $jx_slug     = strtolower( (string) ( $record['jurisdiction_id'] ?? '' ) );
+    $jx_slug     = strtolower( (string) ( $meta['jurisdiction_id'] ?? '' ) );
     $record_key  = $jx_slug && $did !== 'UNKNOWN' ? strtolower( $jx_slug . '|' . $did ) : '';
     $duplicates  = [];
 
@@ -2759,7 +2879,7 @@ function ws_ingest_process_common_law_record( array $record, array $meta, array 
     $post_id = wp_insert_post( [
         'post_type'   => 'jx-common-law',
         'post_status' => 'draft',
-        'post_title'  => ws_ingest_build_common_law_post_title( $record ),
+        'post_title'  => ws_ingest_build_common_law_post_title( $record, $jx_slug ),
         'post_author' => get_current_user_id(),
     ] );
 
@@ -2816,6 +2936,12 @@ function ws_ingest_process_common_law_record( array $record, array $meta, array 
 
         $value = ws_ingest_get_value( $record, $json_path );
         if ( $value === null ) {
+            continue;
+        }
+
+        // Tri-choice bools are handled in a dedicated enforcement pass below
+        // so warnings are emitted once and review state is consistent.
+        if ( $type === 'bool' && in_array( $json_path, [ 'has_secure_channel', 'anonymous_pre_consult_possible', 'has_attorneys', 'income_eligibility_required' ], true ) ) {
             continue;
         }
 
@@ -3012,7 +3138,7 @@ function ws_ingest_process_citation_record( array $record, array $meta, array $b
     ];
 
     $cid = $record['citation_id'] ?? 'UNKNOWN';
-    $jx_slug = strtolower( (string) ( $record['jurisdiction_id'] ?? '' ) );
+    $jx_slug = strtolower( (string) ( $meta['jurisdiction_id'] ?? '' ) );
     $record_key = $jx_slug && $cid !== 'UNKNOWN' ? strtolower( $jx_slug . '|' . $cid ) : '';
 
     $duplicates = [];
@@ -3211,7 +3337,7 @@ function ws_ingest_process_interpretation_record( array $record, array $meta, ar
     ];
 
     $iid = $record['interpretation_id'] ?? 'UNKNOWN';
-    $jx_slug = strtolower( (string) ( $record['jurisdiction_id'] ?? '' ) );
+    $jx_slug = strtolower( (string) ( $meta['jurisdiction_id'] ?? '' ) );
     $record_key = $jx_slug && $iid !== 'UNKNOWN' ? strtolower( $jx_slug . '|' . $iid ) : '';
 
     $duplicates = [];
@@ -3411,15 +3537,13 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
         'log'      => [],
         'warnings' => [],
     ];
+    $needs_review = false;
 
     $org_name = trim( (string) ( $record['organization_name'] ?? '' ) );
     $org_name = $org_name !== '' ? $org_name : 'UNKNOWN';
-    $jx_slug  = strtolower( trim( (string) ( $record['jurisdiction_id'] ?? '' ) ) );
-    if ( $jx_slug === '' ) {
-        $jx_slug = strtolower( trim( (string) ( $meta['jurisdiction_id'] ?? '' ) ) );
-    }
+    $jx_slug  = strtolower( trim( (string) ( $meta['jurisdiction_id'] ?? '' ) ) );
     $homepage = esc_url_raw( (string) ( $record['official_homepage_url'] ?? '' ) );
-    $internal_id = ws_ingest_build_assist_org_internal_id( $record );
+    $internal_id = ws_ingest_build_assist_org_internal_id( $record, $jx_slug );
     $record_key  = $jx_slug !== '' ? strtolower( $jx_slug . '|assist-org|' . $internal_id ) : '';
 
     $existing_id = ws_ingest_find_assist_org_post_id( $record_key, $internal_id, $homepage );
@@ -3492,6 +3616,9 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
             }
             continue;
         }
+        if ( $type === 'seed' ) {
+            continue;
+        }
 
         $value = ws_ingest_get_value( $record, $json_path );
         if ( $value === null ) {
@@ -3501,6 +3628,13 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
         switch ( $type ) {
             case 'text':
                 if ( $meta_key !== null && $value !== '' ) {
+                    if ( $json_path === 'verified_date_url' ) {
+                        $normalized_date = ws_ingest_normalize_ymd_date( $value );
+                        if ( $normalized_date !== '' ) {
+                            update_post_meta( $post_id, $meta_key, $normalized_date );
+                        }
+                        break;
+                    }
                     update_post_meta( $post_id, $meta_key, sanitize_text_field( (string) $value ) );
                 }
                 break;
@@ -3516,6 +3650,28 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
                     $safe_url = esc_url_raw( (string) $value );
                     if ( $safe_url !== '' ) {
                         update_post_meta( $post_id, $meta_key, $safe_url );
+                    }
+                }
+                break;
+
+            case 'repeater_phone':
+                if ( $meta_key !== null ) {
+                    $rows = ws_ingest_normalize_phone_rows( $value );
+                    if ( function_exists( 'update_field' ) ) {
+                        update_field( $meta_key, $rows, $post_id );
+                    } else {
+                        update_post_meta( $post_id, $meta_key, $rows );
+                    }
+                }
+                break;
+
+            case 'repeater_email':
+                if ( $meta_key !== null ) {
+                    $rows = ws_ingest_normalize_email_rows( $value );
+                    if ( function_exists( 'update_field' ) ) {
+                        update_field( $meta_key, $rows, $post_id );
+                    } else {
+                        update_post_meta( $post_id, $meta_key, $rows );
                     }
                 }
                 break;
@@ -3576,16 +3732,42 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
         }
     }
 
+    // Tri-choice enforcement (non-blocking):
+    // Missing or "unclear" values are coerced to "no" (0) and flagged for human review.
+    $tri_choice_fields = [
+        'has_secure_channel'            => 'ws_aorg_has_secure_channel',
+        'anonymous_pre_consult_possible'=> 'ws_aorg_accepts_anonymous',
+        'has_attorneys'                 => 'ws_aorg_licensed_attorneys',
+        'income_eligibility_required'   => 'ws_aorg_income_limit',
+    ];
+    $tri_values = [];
+    foreach ( $tri_choice_fields as $json_key => $meta_key ) {
+        $raw_val = ws_ingest_get_value( $record, $json_key );
+        $missing = ( $raw_val === null ) || ( is_string( $raw_val ) && trim( $raw_val ) === '' );
+
+        if ( $missing ) {
+            update_post_meta( $post_id, $meta_key, 0 );
+            $tri_values[ $json_key ] = 0;
+            $needs_review = true;
+            $result['warnings'][] = "{$org_name}: {$json_key} missing/empty; coerced to 'no' (0). Meat-bag review required.";
+            continue;
+        }
+
+        $parsed = ws_ingest_parse_boolish_value( $raw_val, $org_name, $json_key, $result['warnings'] );
+        update_post_meta( $post_id, $meta_key, $parsed );
+        $tri_values[ $json_key ] = $parsed;
+
+        if ( is_string( $raw_val ) && strtolower( trim( $raw_val ) ) === 'unclear' ) {
+            $needs_review = true;
+        }
+    }
+
     // Non-blocking quality gates: surface "meat-bag-in-the-loop" failures.
     $required_presence = [
         'organization_name',
         'official_homepage_url',
         'general_description',
         'homepage_url_status',
-        'has_secure_channel',
-        'anonymous_pre_consult_possible',
-        'has_attorneys',
-        'income_eligibility_required',
         'whistleblower_scope',
         'whistleblower_note',
     ];
@@ -3620,12 +3802,7 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
         $result['warnings'][] = "{$org_name}: homepage_url_status '{$homepage_status}' invalid (expected verified|redirects|unverified).";
     }
 
-    $has_secure_channel = ws_ingest_parse_boolish_value(
-        ws_ingest_get_value( $record, 'has_secure_channel' ),
-        $org_name,
-        'has_secure_channel',
-        $result['warnings']
-    );
+    $has_secure_channel = (int) ( $tri_values['has_secure_channel'] ?? 0 );
     $secure_url  = trim( (string) ws_ingest_get_value( $record, 'secure_contact_url' ) );
     $secure_tool = trim( (string) ws_ingest_get_value( $record, 'secure_contact_tool' ) );
     if ( $has_secure_channel === 1 ) {
@@ -3641,12 +3818,7 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
         }
     }
 
-    $income_required = ws_ingest_parse_boolish_value(
-        ws_ingest_get_value( $record, 'income_eligibility_required' ),
-        $org_name,
-        'income_eligibility_required',
-        $result['warnings']
-    );
+    $income_required = (int) ( $tri_values['income_eligibility_required'] ?? 0 );
     $eligibility_notes = trim( (string) ws_ingest_get_value( $record, 'eligibility_notes' ) );
     if ( $income_required === 1 && $eligibility_notes === '' ) {
         $result['warnings'][] = "{$org_name}: income_eligibility_required is yes but eligibility_notes is missing.";
@@ -3674,6 +3846,27 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
         $result['log'][] = 'omitted (no ACF field): ' . $path . ' = ' . substr( $display, 0, 80 );
     }
 
+    // Seed append blocks (non-meta editorial content) are appended to post_content.
+    // Base content remains general_description.
+    $seed_append  = ws_ingest_build_assist_org_seed_append( $record );
+    $base_content = trim( (string) ( $record['general_description'] ?? '' ) );
+    $final_content = $base_content . $seed_append;
+    if ( $final_content !== '' ) {
+        wp_update_post( [
+            'ID'           => (int) $post_id,
+            'post_content' => wp_kses_post( $final_content ),
+        ] );
+
+        // Assist-org plain English workflow:
+        // duplicate assembled seed content into ws_plain_english_wysiwyg.
+        update_post_meta( $post_id, 'ws_has_plain_english', 1 );
+        update_post_meta( $post_id, 'ws_plain_english_wysiwyg', wp_kses_post( $final_content ) );
+    }
+
+    if ( $needs_review ) {
+        update_post_meta( $post_id, 'ws_needs_review', 1 );
+    }
+
     $result['success'] = true;
     $result['log'][]   = "{$org_name}: created as post #{$post_id} (draft, unverified)";
 
@@ -3685,7 +3878,8 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
 
 /**
  * Writes a persistent run log to wp-content/logs/ws-ingest/ingested/.
- * Filename: [JX]-[YYYYMMDD-HHmm]-ingest.txt
+ * Filename: [jx]-[record_count]-[record_type]-[YYYYMMDD-HHMMSS]-ingest.txt
+ * Collision safety for same-second runs: -01, -02, etc before -ingest.txt.
  * FTP-accessible, .htaccess protected.
  */
 function ws_ingest_extract_batch_count_from_filename( string $filename ): int {
@@ -3702,12 +3896,27 @@ function ws_ingest_write_run_log( array $result, string $batch_filename = '' ): 
     $summary = $result['summary'] ?? [];
     $jx      = strtoupper( $summary['jurisdiction'] ?? 'XX' );
     $batch_count = ws_ingest_extract_batch_count_from_filename( $batch_filename );
-    $ts      = date( 'Ymd-His' );
-    $count_part = $batch_count > 0 ? "{$batch_count}-" : '';
-    $path    = WS_INGEST_RUN_LOG_DIR . "{$jx}-{$count_part}{$ts}-ingest.txt";
+    $record_type = (string) ( $summary['record_type'] ?? 'unknown' );
+    $ts      = gmdate( 'Ymd-His' );
 
-    if ( file_exists( $path ) ) {
-        $path = WS_INGEST_RUN_LOG_DIR . "{$jx}-{$count_part}{$ts}-" . wp_generate_password( 4, false, false ) . '-ingest.txt';
+    $jx_part = strtolower( preg_replace( '/[^a-z0-9]+/', '', (string) $jx ) );
+    if ( $jx_part === '' ) {
+        $jx_part = 'xx';
+    }
+
+    $count_part = max( 0, (int) $batch_count );
+    $type_part  = strtolower( preg_replace( '/[^a-z0-9-]+/', '-', $record_type ) );
+    $type_part  = trim( preg_replace( '/-+/', '-', $type_part ), '-' );
+    if ( $type_part === '' ) {
+        $type_part = 'unknown';
+    }
+
+    $base = "{$jx_part}-{$count_part}-{$type_part}-{$ts}";
+    $path = WS_INGEST_RUN_LOG_DIR . "{$base}-ingest.txt";
+    $n    = 1;
+    while ( file_exists( $path ) ) {
+        $path = WS_INGEST_RUN_LOG_DIR . "{$base}-" . str_pad( (string) $n, 2, '0', STR_PAD_LEFT ) . "-ingest.txt";
+        $n++;
     }
 
     $lines   = [];
@@ -3865,7 +4074,7 @@ function ws_ingest_process_batch_data( array $data, string $batch_filename ): ar
     $blacklist = ws_ingest_build_blacklist( $log );
     $meta      = ws_ingest_strip_prefixed_keys( $data['meta'] ?? [] );
     $records   = ws_ingest_strip_prefixed_keys( $data['records'] ?? [] );
-    $record_type = ws_ingest_detect_record_type( $data );
+    $record_type = ws_ingest_detect_record_type( $data, $batch_filename );
 
     $created  = 0;
     $skipped  = 0;
@@ -4061,7 +4270,7 @@ function ws_handle_ingest_folder_submission(): array {
 
         $data = $decoded['data'];
 
-        $preflight = ws_ingest_preflight( $data );
+        $preflight = ws_ingest_preflight( $data, $filename );
         if ( ! $preflight['pass'] ) {
             $file_report['status'] = $dry_run ? 'preflight-failed-dry-run' : 'preflight-failed';
             $file_report['errors'] = array_merge( $file_report['errors'], $preflight['errors'] );
@@ -4211,7 +4420,7 @@ function ws_handle_ingest_submission(): array {
 
     // ── Phase 1: Pre-Flight ──────────────────────────────────────────────
     $result['phase']     = 'preflight';
-    $preflight           = ws_ingest_preflight( $data );
+    $preflight           = ws_ingest_preflight( $data, $batch_filename );
     $result['preflight'] = $preflight;
 
     if ( ! $preflight['pass'] ) {

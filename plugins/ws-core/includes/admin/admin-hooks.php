@@ -927,6 +927,22 @@ function ws_acf_is_workflow_field( array $field ): bool {
 }
 
 /**
+ * Defaults ws_has_plain_english to on for new ws-assist-org posts.
+ *
+ * This only applies when no value is stored yet.
+ */
+add_filter( 'acf/load_value/name=ws_has_plain_english', function( $value, $post_id, $field ) {
+    if ( $value !== null && $value !== '' ) {
+        return $value;
+    }
+    $post_type = get_post_type( $post_id );
+    if ( $post_type === 'ws-assist-org' ) {
+        return 1;
+    }
+    return $value;
+}, 10, 3 );
+
+/**
  * Appends a helper button to URL field instructions.
  */
 function ws_acf_prepare_url_open_button( $field ) {

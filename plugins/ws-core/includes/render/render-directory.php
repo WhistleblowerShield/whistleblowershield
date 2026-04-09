@@ -533,7 +533,7 @@ function ws_render_directory_card( $org ) {
         'sliding-scale'   => 'Sliding Scale',
         'contingency'     => 'Contingency Fee',
         'fee-for-service' => 'Fee for Service',
-        'mixed'           => 'Mixed',
+        'unclear'         => 'Unclear',
     ];
 
     $type_name = ( $org['type'] instanceof WP_Term ) ? $org['type']->name : '';
@@ -544,6 +544,34 @@ function ws_render_directory_card( $org ) {
     $has_secure_channel = ! empty( $org['has_secure_channel'] );
     $secure_contact_url = trim( (string) ( $org['secure_contact_url'] ?? '' ) );
     $secure_contact_tool = trim( (string) ( $org['secure_contact_tool'] ?? '' ) );
+    $phones = is_array( $org['phones'] ?? null ) ? $org['phones'] : [];
+    $emails = is_array( $org['emails'] ?? null ) ? $org['emails'] : [];
+
+    $card_phone = '';
+    foreach ( $phones as $row ) {
+        $t = strtolower( trim( (string) ( $row['type'] ?? '' ) ) );
+        $v = trim( (string) ( $row['value'] ?? '' ) );
+        if ( $v === '' ) {
+            continue;
+        }
+        if ( in_array( $t, [ 'hotline', 'intake' ], true ) ) {
+            $card_phone = $v;
+            break;
+        }
+    }
+
+    $email_priority = [ 'intake', 'legal' ];
+    $card_emails = [];
+    foreach ( $emails as $row ) {
+        $t = strtolower( trim( (string) ( $row['type'] ?? '' ) ) );
+        $v = sanitize_email( (string) ( $row['value'] ?? '' ) );
+        if ( $v === '' || ! in_array( $t, $email_priority, true ) ) {
+            continue;
+        }
+        if ( ! in_array( $v, $card_emails, true ) ) {
+            $card_emails[] = $v;
+        }
+    }
 
     $services = ( is_array( $org['services'] ) && ! is_wp_error( $org['services'] ) )
         ? array_values( array_filter( $org['services'] ) )
@@ -618,24 +646,24 @@ function ws_render_directory_card( $org ) {
             </div>
         <?php endif; ?>
 
-        <?php if ( ! empty( $org['phone'] ) || ! empty( $org['email'] ) ) : ?>
+        <?php if ( $card_phone !== '' || ! empty( $card_emails ) ) : ?>
             <div class="ws-aorg-card__contact">
-                <?php if ( ! empty( $org['phone'] ) ) : ?>
+                <?php if ( $card_phone !== '' ) : ?>
                     <span class="ws-aorg-card__phone">
-                        <a href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', $org['phone'] ) ); ?>"
-                           aria-label="Call <?php echo esc_attr( $org['title'] ); ?>: <?php echo esc_attr( $org['phone'] ); ?>">
-                            <?php echo esc_html( $org['phone'] ); ?>
+                        <a href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', $card_phone ) ); ?>"
+                           aria-label="Call <?php echo esc_attr( $org['title'] ); ?>: <?php echo esc_attr( $card_phone ); ?>">
+                            <?php echo esc_html( $card_phone ); ?>
                         </a>
                     </span>
                 <?php endif; ?>
-                <?php if ( ! empty( $org['email'] ) ) : ?>
+                <?php foreach ( $card_emails as $card_email ) : ?>
                     <span class="ws-aorg-card__email">
-                        <a href="mailto:<?php echo esc_attr( sanitize_email( $org['email'] ) ); ?>"
+                        <a href="mailto:<?php echo esc_attr( $card_email ); ?>"
                            aria-label="Email <?php echo esc_attr( $org['title'] ); ?>">
-                            <?php echo esc_html( $org['email'] ); ?>
+                            <?php echo esc_html( $card_email ); ?>
                         </a>
                     </span>
-                <?php endif; ?>
+                <?php endforeach; ?>
             </div>
         <?php endif; ?>
 
@@ -660,6 +688,16 @@ function ws_render_directory_card( $org ) {
                     <span class="screen-reader-text">(opens in new tab)</span>
                 </a>
             <?php endif; ?>
+            <?php if ( ! empty( $org['contact_url'] ) ) : ?>
+                <a href="<?php echo esc_url( $org['contact_url'] ); ?>"
+                   class="ws-btn ws-btn--secondary ws-btn--sm"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Open contact page for <?php echo esc_attr( $org['title'] ); ?> (opens in new tab)">
+                    Contact
+                    <span class="screen-reader-text">(opens in new tab)</span>
+                </a>
+            <?php endif; ?>
             <?php if ( $has_secure_channel && $secure_contact_url !== '' ) : ?>
                 <a href="<?php echo esc_url( $secure_contact_url ); ?>"
                    class="ws-btn ws-btn--secure ws-btn--sm"
@@ -668,6 +706,13 @@ function ws_render_directory_card( $org ) {
                    aria-label="Open secure contact for <?php echo esc_attr( $org['title'] ); ?><?php echo $secure_contact_tool !== '' ? ' via ' . esc_attr( $secure_contact_tool ) : ''; ?> (opens in new tab)">
                     [Secure Contact]
                     <span class="screen-reader-text">(opens in new tab)</span>
+                </a>
+            <?php endif; ?>
+            <?php if ( ! empty( $org['has_extended_profile'] ) && ! empty( $org['url'] ) ) : ?>
+                <a href="<?php echo esc_url( $org['url'] ); ?>"
+                   class="ws-aorg-card__more-link"
+                   aria-label="More about <?php echo esc_attr( $org['title'] ); ?>">
+                    More about this organization
                 </a>
             <?php endif; ?>
         </div>

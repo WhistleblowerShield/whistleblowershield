@@ -28,10 +28,17 @@
  *
  * @package WhistleblowerShield
  * @since   1.0.0
- * @version 3.16.0
+ * @version 3.16.2
  *
  * VERSION
  * -------
+ * 3.16.2  Naming normalization:
+ *         - ws_ao_case_stage fully replaced by ws_aorg_case_stages
+ *         - ws_aorg_disclosure_type fully replaced by ws_aorg_disclosure_types
+ *         - ws_aorg_process_types retained as multi-select taxonomy field
+ * 3.16.1  Process Types field added to Scope of Service tab:
+ *         - ws_process_type taxonomy (checkbox, save_terms/load_terms)
+ *         Query layer now returns process_types in assist-org payloads.
  * 3.16.0  ws_aorg_official_name (text) added to Identity tab immediately after
  *         ws_aorg_internal_id. Stores the full official organization name as a
  *         dedicated meta field. post_title mirrors this value at ingest time but
@@ -41,6 +48,13 @@
  *         - ws_aorg_has_secure_channel (true/false)
  *         - ws_aorg_secure_contact_url (url)
  *         - ws_aorg_secure_contact_tool (text; e.g., Signal, SecureDrop)
+ * 3.16.0  Contact model refactor:
+ *         - ws_aorg_intake_url and ws_aorg_contact_url are separate fields
+ *           (intake and contact are distinct concepts in render logic)
+ *         - ws_aorg_phone replaced by ws_aorg_phones repeater:
+ *             ws_aorg_phone_type, ws_aorg_phone_number
+ *         - ws_aorg_email replaced by ws_aorg_emails repeater:
+ *             ws_aorg_email_type, ws_aorg_email_address
  * 3.15.1  ws_aorg_whistleblower_scope (number 1-3) added to Scope of Service tab.
  *         ws_aorg_whistleblower_note (textarea) added — editorial justification for scope.
  *         ws_aorg_common_name (text) added to Identity tab.
@@ -54,7 +68,7 @@
  * 3.12.2  ws_aorg_community_scope field added to Scope of Service tab.
  * 3.12.1  Internal Relationship tab added for non-public org contact fields.
  * 3.12.0  ws_aorg_disclosure_targets field added to Scope of Service tab.
- *         ws_ao_case_stage field added to Scope of Service tab.
+ *         ws_aorg_case_stages (legacy key: ws_ao_case_stage) added to Scope of Service tab.
  * 3.9.0   ws_case_stage taxonomy field added.
  * 3.7.0   ws_employment_sector converted from ACF checkbox to taxonomy field.
  *         ws_aorg_cost_model converted from select to taxonomy radio.
@@ -289,9 +303,9 @@ function ws_register_acf_assist_org() {
             ],
 
             [
-                'key'           => 'field_aorg_disclosure_type',
+                'key'           => 'field_aorg_disclosure_types',
                 'label'         => 'Misconduct Categories Handled',
-                'name'          => 'ws_aorg_disclosure_type',
+                'name'          => 'ws_aorg_disclosure_types',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_disclosure_type',
                 'instructions'  => 'Select all types of misconduct this organization has experience assisting with.',
@@ -309,7 +323,7 @@ function ws_register_acf_assist_org() {
                 'name'          => 'ws_aorg_disclosure_targets',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_disclosure_targets',
-                'field_type'    => 'checkbox',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'Reporting channels this organization can help a whistleblower navigate or prepare for. Tag all that the org explicitly supports.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
@@ -328,17 +342,32 @@ function ws_register_acf_assist_org() {
             ],
 
             [
-                'key'           => 'field_aorg_case_stage',
+                'key'           => 'field_aorg_case_stages',
                 'label'         => 'Case Stage',
-                'name'          => 'ws_ao_case_stage',
+                'name'          => 'ws_aorg_case_stages',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_case_stage',
-                'field_type'    => 'checkbox',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'Stage of a whistleblower\'s situation where this organization is most useful. Tag all that genuinely apply.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,
                 'return_format' => 'id',
+            ],
+
+            [
+                'key'           => 'field_aorg_process_types',
+                'label'         => 'Process Types',
+                'name'          => 'ws_aorg_process_types',
+                'type'          => 'taxonomy',
+                'taxonomy'      => 'ws_process_type',
+                'field_type'    => 'multi_select',
+                'instructions'  => 'Process channels this organization can help users navigate (for example, agency complaint, internal complaint, court filing).',
+                'add_term'      => 0,
+                'save_terms'    => 1,
+                'load_terms'    => 1,
+                'return_format' => 'id',
+                'allow_null'    => 1,
             ],
 
             [
@@ -409,27 +438,83 @@ function ws_register_acf_assist_org() {
 
             [
                 'key'          => 'field_aorg_intake_url',
-                'label'        => 'Intake / Contact Form URL',
+                'label'        => 'Intake URL',
                 'name'         => 'ws_aorg_intake_url',
                 'type'         => 'url',
-                'instructions' => 'Direct link to an intake form, referral request, or secure contact page — if different from the main website.',
+                'instructions' => 'Direct link to intake or case-submission workflow.',
             ],
 
             [
-                'key'          => 'field_aorg_phone',
-                'label'        => 'Phone Number',
-                'name'         => 'ws_aorg_phone',
-                'type'         => 'text',
-                'instructions' => 'Public-facing phone number for whistleblower inquiries.',
-                'placeholder'  => '(555) 000-0000',
+                'key'          => 'field_aorg_contact_url',
+                'label'        => 'Contact URL',
+                'name'         => 'ws_aorg_contact_url',
+                'type'         => 'url',
+                'instructions' => 'General contact page URL when separate from intake.',
             ],
 
             [
-                'key'          => 'field_aorg_email',
-                'label'        => 'Contact Email',
-                'name'         => 'ws_aorg_email',
-                'type'         => 'email',
-                'instructions' => 'Public contact email address for whistleblower inquiries.',
+                'key'               => 'field_aorg_phones',
+                'label'             => 'Phone Numbers',
+                'name'              => 'ws_aorg_phones',
+                'type'              => 'repeater',
+                'instructions'      => 'Public phone lines. Use type values: hotline, intake, headquarters, regional, tty, fax, other.',
+                'required'          => 0,
+                'layout'            => 'table',
+                'button_label'      => 'Add Phone',
+                'sub_fields'        => [
+                    [
+                        'key'          => 'field_aorg_phone_type',
+                        'label'        => 'Type',
+                        'name'         => 'ws_aorg_phone_type',
+                        'type'         => 'text',
+                        'instructions' => 'hotline | intake | headquarters | regional | tty | fax | other',
+                        'required'     => 1,
+                        'placeholder'  => 'hotline',
+                        'wrapper'      => [ 'width' => '30' ],
+                    ],
+                    [
+                        'key'          => 'field_aorg_phone_number',
+                        'label'        => 'Number',
+                        'name'         => 'ws_aorg_phone_number',
+                        'type'         => 'text',
+                        'instructions' => 'Phone number in public format.',
+                        'required'     => 1,
+                        'placeholder'  => '(555) 000-0000',
+                        'wrapper'      => [ 'width' => '70' ],
+                    ],
+                ],
+            ],
+
+            [
+                'key'               => 'field_aorg_emails',
+                'label'             => 'Email Addresses',
+                'name'              => 'ws_aorg_emails',
+                'type'              => 'repeater',
+                'instructions'      => 'Public email channels. Use type values: intake, general, legal, media, support, other.',
+                'required'          => 0,
+                'layout'            => 'table',
+                'button_label'      => 'Add Email',
+                'sub_fields'        => [
+                    [
+                        'key'          => 'field_aorg_email_type',
+                        'label'        => 'Type',
+                        'name'         => 'ws_aorg_email_type',
+                        'type'         => 'text',
+                        'instructions' => 'intake | general | legal | media | support | other',
+                        'required'     => 1,
+                        'placeholder'  => 'intake',
+                        'wrapper'      => [ 'width' => '30' ],
+                    ],
+                    [
+                        'key'          => 'field_aorg_email_address',
+                        'label'        => 'Email',
+                        'name'         => 'ws_aorg_email_address',
+                        'type'         => 'email',
+                        'instructions' => 'Public mailbox address.',
+                        'required'     => 1,
+                        'wrapper'      => [ 'width' => '70' ],
+                    ],
+                ],
             ],
 
             [
@@ -622,9 +707,9 @@ function ws_register_acf_assist_org() {
             ],
 
             [
-                'key'          => 'field_aorg_verify_url',
-                'label'        => 'Verification / Transparency URL',
-                'name'         => 'ws_aorg_verify_url',
+                'key'          => 'field_aorg_legitimacy_url',
+                'label'        => 'Legitimacy / Transparency URL',
+                'name'         => 'ws_aorg_legitimacy_url',
                 'type'         => 'url',
                 'instructions' => 'Link to a page that verifies the organization\'s legitimacy — e.g., IRS Form 990, state bar directory, Charity Navigator, GuideStar.',
             ],
@@ -723,9 +808,8 @@ function ws_register_acf_assist_org() {
                 'rows'         => 4,
             ],
 
-            // ── Tab: Plain Language ───────────────────────────────────────
-            // Removed entirely — ws-assist-org content is plain language
-            // by nature; the plain language workflow does not apply.
+            // Plain Language fields are now provided by the shared
+            // group_plain_english_metadata workflow group.
 
         ], // end fields
 

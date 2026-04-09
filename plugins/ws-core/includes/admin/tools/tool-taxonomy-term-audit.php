@@ -610,14 +610,19 @@ function ws_tax_audit_write_php_log( $results ) {
     }
 
     // Immutable per-run log filename:
-    // include microseconds + random suffix to avoid any overwrite collisions.
-    $stamp = gmdate( 'Ymd-His' );
-    $micro = substr( str_replace( '0.', '', sprintf( '%.6F', microtime( true ) - floor( microtime( true ) ) ) ), 0, 6 );
-    $rand  = wp_generate_password( 4, false, false );
-    $filename = 'taxonomy-audit-' . $stamp . '-' . $micro . '-' . $rand . '.php.txt';
+    // human-readable date-hour-minute, with a small numeric suffix only on same-minute collisions.
+    $stamp = gmdate( 'Ymd-H-i' );
+    $filename = 'taxonomy-audit-' . $stamp . '.php.txt';
     $path     = trailingslashit( $dir ) . $filename;
     $latest   = trailingslashit( $dir ) . 'taxonomy-audit-latest.php.txt';
     $payload  = ws_tax_audit_build_php_block( $results );
+
+    $suffix = 1;
+    while ( file_exists( $path ) ) {
+        $filename = 'taxonomy-audit-' . $stamp . '-' . str_pad( (string) $suffix, 2, '0', STR_PAD_LEFT ) . '.php.txt';
+        $path     = trailingslashit( $dir ) . $filename;
+        $suffix++;
+    }
 
     // Write the immutable run file once; never rewrite historical files.
     if ( @file_put_contents( $path, $payload, LOCK_EX ) === false ) {

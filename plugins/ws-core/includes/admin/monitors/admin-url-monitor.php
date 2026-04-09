@@ -104,7 +104,9 @@ $ws_url_monitor_map = [
     'ws-assist-org' => [
         'ws_aorg_website_url',
         'ws_aorg_intake_url',
-        'ws_aorg_verify_url',
+        'ws_aorg_contact_url',
+        'ws_aorg_secure_contact_url',
+        'ws_aorg_legitimacy_url',
     ],
 ];
 
