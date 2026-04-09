@@ -87,6 +87,17 @@ function ws_render_taxonomy_term_audit_page() {
                 <li><strong>Taxonomies with missing seeded terms:</strong> <?php echo (int) count( $results['missing_rows'] ); ?></li>
             </ul>
 
+            <?php if ( ! empty( $results['parse_warnings'] ) ) : ?>
+                <div class="notice notice-warning inline">
+                    <p><strong>Parser Warnings</strong></p>
+                    <ul style="margin: 0 0 0 1.2rem;">
+                        <?php foreach ( (array) $results['parse_warnings'] as $warn ) : ?>
+                            <li><code><?php echo esc_html( (string) $warn ); ?></code></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+
             <?php if ( ! $has_extra && ! $has_missing ) : ?>
                 <div class="notice notice-success inline"><p><strong>MATCH_FOR_REGISTER_TAXONOMIES</strong></p></div>
             <?php endif; ?>
@@ -104,15 +115,6 @@ function ws_render_taxonomy_term_audit_page() {
             <?php else : ?>
                 <p>None.</p>
             <?php endif; ?>
-
-            <h2>Protected Class Spot Check</h2>
-            <p>
-                all-sectors:
-                <strong><?php echo ! empty( $results['protected_class']['all-sectors'] ) ? 'present' : 'missing'; ?></strong>
-                |
-                all-employees:
-                <strong><?php echo ! empty( $results['protected_class']['all-employees'] ) ? 'present' : 'missing'; ?></strong>
-            </p>
 
             <?php if ( $log_file !== '' ) : ?>
                 <h2>Output Log</h2>
@@ -135,9 +137,21 @@ function ws_tax_audit_render_rows_table( $rows ) {
     echo '<table class="widefat striped" style="max-width: 1200px;">';
     echo '<thead><tr><th style="width:260px;">Taxonomy</th><th>Slugs</th></tr></thead><tbody>';
     foreach ( $rows as $row ) {
+        $slugs = (array) ( $row['slugs'] ?? [] );
+        $parents = (array) ( $row['parents'] ?? [] );
+        $display = [];
+        foreach ( $slugs as $slug ) {
+            $slug = (string) $slug;
+            $parent_slug = (string) ( $parents[ $slug ] ?? '' );
+            if ( $parent_slug !== '' ) {
+                $display[] = $slug . ' (parent: ' . $parent_slug . ')';
+            } else {
+                $display[] = $slug;
+            }
+        }
         echo '<tr>';
         echo '<td><code>' . esc_html( (string) $row['taxonomy'] ) . '</code></td>';
-        echo '<td>' . esc_html( implode( ', ', (array) $row['slugs'] ) ) . '</td>';
+        echo '<td>' . esc_html( implode( ', ', $display ) ) . '</td>';
         echo '</tr>';
     }
     echo '</tbody></table>';
@@ -147,12 +161,14 @@ function ws_tax_audit_run() {
     $seed_map    = ws_tax_audit_get_seed_map();
     $live_map    = ws_tax_audit_get_live_map();
     $live_labels = ws_tax_audit_get_live_label_map();
+    $live_parent_map = ws_tax_audit_get_live_parent_map();
 
     $all_taxonomies = array_values( array_unique( array_merge( array_keys( $seed_map ), array_keys( $live_map ) ) ) );
     sort( $all_taxonomies );
 
     $extra_rows   = [];
     $missing_rows = [];
+    $parse_warnings = [];
 
     foreach ( $all_taxonomies as $taxonomy ) {
         $seed_slugs = isset( $seed_map[ $taxonomy ] ) ? array_values( array_unique( $seed_map[ $taxonomy ] ) ) : [];
@@ -161,13 +177,28 @@ function ws_tax_audit_run() {
         sort( $seed_slugs );
         sort( $live_slugs );
 
+        // If seed extraction produced no slugs for a taxonomy, skip diffing it.
+        // This prevents false positives where all live terms appear as "extra".
+        if ( empty( $seed_slugs ) ) {
+            $parse_warnings[] = sprintf(
+                '%s: seed slug extraction returned empty set; skipped from extra/missing diff.',
+                $taxonomy
+            );
+            continue;
+        }
+
         $extra   = array_values( array_diff( $live_slugs, $seed_slugs ) );
         $missing = array_values( array_diff( $seed_slugs, $live_slugs ) );
 
         if ( ! empty( $extra ) ) {
+            $parents = [];
+            foreach ( $extra as $slug ) {
+                $parents[ $slug ] = (string) ( $live_parent_map[ $taxonomy ][ $slug ] ?? '' );
+            }
             $extra_rows[] = [
                 'taxonomy' => $taxonomy,
                 'slugs'    => $extra,
+                'parents'  => $parents,
             ];
         }
 
@@ -184,11 +215,8 @@ function ws_tax_audit_run() {
         'live_taxonomies' => count( $live_map ),
         'extra_rows'      => $extra_rows,
         'missing_rows'    => $missing_rows,
+        'parse_warnings'  => $parse_warnings,
         'live_labels'     => $live_labels,
-        'protected_class' => [
-            'all-sectors'   => in_array( 'all-sectors', $live_map['ws_protected_class'] ?? [], true ),
-            'all-employees' => in_array( 'all-employees', $live_map['ws_protected_class'] ?? [], true ),
-        ],
     ];
 }
 
@@ -265,6 +293,51 @@ function ws_tax_audit_get_live_label_map() {
     }
 
     ksort( $map );
+    return $map;
+}
+
+function ws_tax_audit_get_live_parent_map() {
+    $map = [];
+    $taxonomies = get_taxonomies( [], 'names' );
+
+    foreach ( (array) $taxonomies as $taxonomy ) {
+        if ( strpos( $taxonomy, 'ws_' ) !== 0 ) {
+            continue;
+        }
+        if ( $taxonomy === 'ws_glossary' ) {
+            continue;
+        }
+
+        $terms = get_terms( [
+            'taxonomy'   => $taxonomy,
+            'hide_empty' => false,
+            'number'     => 0,
+        ] );
+
+        if ( is_wp_error( $terms ) ) {
+            continue;
+        }
+
+        $by_id = [];
+        foreach ( (array) $terms as $term ) {
+            $by_id[ (int) $term->term_id ] = $term;
+        }
+
+        $map[ $taxonomy ] = [];
+        foreach ( (array) $terms as $term ) {
+            $slug = (string) ( $term->slug ?? '' );
+            if ( $slug === '' ) {
+                continue;
+            }
+            $parent_slug = '';
+            $parent_id = (int) ( $term->parent ?? 0 );
+            if ( $parent_id > 0 && isset( $by_id[ $parent_id ] ) ) {
+                $parent_slug = (string) ( $by_id[ $parent_id ]->slug ?? '' );
+            }
+            $map[ $taxonomy ][ $slug ] = $parent_slug;
+        }
+    }
+
     return $map;
 }
 
@@ -370,8 +443,22 @@ function ws_tax_audit_extract_seed_function_bodies( $source ) {
 }
 
 function ws_tax_audit_extract_seed_taxonomy( $body ) {
-    if ( preg_match( "/\\$taxonomy\\s*=\\s*'((?:ws_)[a-z0-9_]+)'/", $body, $m ) ) {
+    if ( preg_match( '/\$taxonomy\s*=\s*\'((?:ws_)[a-z0-9_]+)\'/', $body, $m ) ) {
         return (string) $m[1];
+    }
+
+    // Supports seeders that assign taxonomy via constant (e.g. WS_JURISDICTION_TAXONOMY).
+    if ( preg_match( '/\\$taxonomy\\s*=\\s*([A-Z_][A-Z0-9_]*)\\s*;/', $body, $m ) ) {
+        $constant_name = (string) $m[1];
+        if ( defined( $constant_name ) ) {
+            $resolved = (string) constant( $constant_name );
+            if ( strpos( $resolved, 'ws_' ) === 0 ) {
+                return $resolved;
+            }
+        }
+        if ( $constant_name === 'WS_JURISDICTION_TAXONOMY' ) {
+            return 'ws_jurisdiction';
+        }
     }
 
     if ( preg_match( "/ws_bulk_insert_hierarchical\\s*\\([^,]+,\\s*'((?:ws_)[a-z0-9_]+)'\\s*\\)/", $body, $m ) ) {
@@ -387,18 +474,54 @@ function ws_tax_audit_extract_seed_taxonomy( $body ) {
 
 function ws_tax_audit_extract_slugs_from_seed_body( $body ) {
     $slugs = [];
+    $skip_keys = [ 'name', 'children', 'slug', 'taxonomy', 'terms', 'parent' ];
 
-    if ( preg_match_all( "/'slug'\\s*=>\\s*'([a-z0-9-]+)'/", $body, $matches ) ) {
-        $slugs = array_merge( $slugs, $matches[1] );
+    // Flat seed arrays: $terms = [ 'slug' => 'Label', ... ].
+    if ( preg_match_all( '/\\$terms\\s*=\\s*\\[(.*?)\\];/s', $body, $blocks ) ) {
+        foreach ( (array) $blocks[1] as $block ) {
+            if ( preg_match_all( "/'([a-z0-9-]+)'\\s*=>/", (string) $block, $m ) ) {
+                foreach ( (array) $m[1] as $key ) {
+                    if ( in_array( $key, $skip_keys, true ) ) {
+                        continue;
+                    }
+                    $slugs[] = (string) $key;
+                }
+            }
+        }
     }
 
-    if ( preg_match_all( "/'([a-z0-9-]+)'\\s*=>\\s*'/", $body, $matches ) ) {
-        foreach ( (array) $matches[1] as $key ) {
-            if ( $key === 'name' || $key === 'children' ) {
+    // Hierarchical seed arrays: $hierarchy = [ parent => [ 'children' => [ child => label ] ] ].
+    if ( preg_match_all( '/\\$hierarchy\\s*=\\s*\\[(.*?)\\];/s', $body, $blocks ) ) {
+        foreach ( (array) $blocks[1] as $block ) {
+            if ( preg_match_all( "/'([a-z0-9-]+)'\\s*=>/", (string) $block, $m ) ) {
+                foreach ( (array) $m[1] as $key ) {
+                    if ( in_array( $key, $skip_keys, true ) ) {
+                        continue;
+                    }
+                    $slugs[] = (string) $key;
+                }
+            }
+        }
+    }
+
+    // Fallback broad key capture for parser resilience (flat seed functions).
+    if ( preg_match_all( "/'([a-z0-9-]+)'\\s*=>/", (string) $body, $all_keys ) ) {
+        foreach ( (array) $all_keys[1] as $key ) {
+            if ( in_array( $key, $skip_keys, true ) ) {
                 continue;
             }
-            $slugs[] = $key;
+            $slugs[] = (string) $key;
         }
+    }
+
+    // Explicit term_exists guards often include sentinels/special terms.
+    if ( preg_match_all( "/term_exists\\s*\\(\\s*'([a-z0-9-]+)'\\s*,\\s*'(?:ws_)[a-z0-9_]+'\\s*\\)/", $body, $matches ) ) {
+        $slugs = array_merge( $slugs, array_map( 'strval', (array) $matches[1] ) );
+    }
+
+    // Direct slug insertions: wp_insert_term(..., [ 'slug' => '...' ]).
+    if ( preg_match_all( "/'slug'\\s*=>\\s*'([a-z0-9-]+)'/", $body, $matches ) ) {
+        $slugs = array_merge( $slugs, array_map( 'strval', (array) $matches[1] ) );
     }
 
     $slugs = array_values( array_unique( array_map( 'strval', $slugs ) ) );
@@ -425,6 +548,7 @@ function ws_tax_audit_build_php_block( $results ) {
     foreach ( $extra_rows as $row ) {
         $taxonomy = (string) ( $row['taxonomy'] ?? '' );
         $slugs    = (array) ( $row['slugs'] ?? [] );
+        $parents  = (array) ( $row['parents'] ?? [] );
         if ( $taxonomy === '' || empty( $slugs ) ) {
             continue;
         }
@@ -433,7 +557,12 @@ function ws_tax_audit_build_php_block( $results ) {
         foreach ( $slugs as $slug ) {
             $slug = (string) $slug;
             $name = (string) ( $labels_map[ $taxonomy ][ $slug ] ?? $slug );
-            $php .= "        '" . ws_tax_audit_php_escape( $slug ) . "' => '" . ws_tax_audit_php_escape( $name ) . "',\n";
+            $line = "        '" . ws_tax_audit_php_escape( $slug ) . "' => '" . ws_tax_audit_php_escape( $name ) . "',";
+            $parent_slug = (string) ( $parents[ $slug ] ?? '' );
+            if ( $parent_slug !== '' ) {
+                $line .= ' // parent: ' . ws_tax_audit_php_escape( $parent_slug );
+            }
+            $php .= $line . "\n";
         }
         $php .= "    ],\n";
     }
@@ -480,14 +609,23 @@ function ws_tax_audit_write_php_log( $results ) {
         return '';
     }
 
-    $stamp    = gmdate( 'Ymd-His' );
-    $filename = 'taxonomy-audit-' . $stamp . '.php.txt';
+    // Immutable per-run log filename:
+    // include microseconds + random suffix to avoid any overwrite collisions.
+    $stamp = gmdate( 'Ymd-His' );
+    $micro = substr( str_replace( '0.', '', sprintf( '%.6F', microtime( true ) - floor( microtime( true ) ) ) ), 0, 6 );
+    $rand  = wp_generate_password( 4, false, false );
+    $filename = 'taxonomy-audit-' . $stamp . '-' . $micro . '-' . $rand . '.php.txt';
     $path     = trailingslashit( $dir ) . $filename;
     $latest   = trailingslashit( $dir ) . 'taxonomy-audit-latest.php.txt';
     $payload  = ws_tax_audit_build_php_block( $results );
 
-    @file_put_contents( $path, $payload );
-    @file_put_contents( $latest, $payload );
+    // Write the immutable run file once; never rewrite historical files.
+    if ( @file_put_contents( $path, $payload, LOCK_EX ) === false ) {
+        return '';
+    }
+
+    // Update rolling latest pointer copy for convenience.
+    @file_put_contents( $latest, $payload, LOCK_EX );
 
     return $path;
 }

@@ -15,7 +15,6 @@
 - `ws_aorg_phone` flat field → `ws_aorg_phones` ACF repeater, sub-fields: `ws_aorg_phone_type` (text, from `WS_SCHEMA_PHONE_TYPE`) and `ws_aorg_phone_number` (text)
 - `ws_aorg_email` flat field → `ws_aorg_emails` ACF repeater, sub-fields: `ws_aorg_email_type` (text, from `WS_SCHEMA_EMAIL_TYPE`) and `ws_aorg_email_address` (email)
 - Mailing address stays flat
-- `has_more_info` bool — do not add; replaced by plain English reviewed workflow
 
 ---
 

@@ -706,9 +706,9 @@ add_action( 'admin_init', function() {
         ws_seed_protected_class_taxonomy();
         update_option( 'ws_seeded_protected_class', '1.3.0' );
     }
-    if ( get_option( 'ws_seeded_adverse_action_types' ) !== '1.1.0' ) {
+    if ( get_option( 'ws_seeded_adverse_action_types' ) !== '1.2.0' ) {
         ws_seed_adverse_action_types_taxonomy();
-        update_option( 'ws_seeded_adverse_action_types', '1.1.0' );
+        update_option( 'ws_seeded_adverse_action_types', '1.2.0' );
     }
     if ( get_option( 'ws_seeded_languages_taxonomy' ) !== '1.0.0' ) {
         ws_seed_languages_taxonomy();
@@ -734,21 +734,21 @@ add_action( 'admin_init', function() {
         ws_seed_employer_defense_taxonomy();
         update_option( 'ws_seeded_employer_defense', '1.1.0' );
     }
-    if ( get_option( 'ws_seeded_aorg_type' ) !== '1.0.0' ) {
+    if ( get_option( 'ws_seeded_aorg_type' ) !== '1.1.0' ) {
         ws_seed_aorg_type_taxonomy();
-        update_option( 'ws_seeded_aorg_type', '1.0.0' );
+        update_option( 'ws_seeded_aorg_type', '1.1.0' );
     }
     if ( get_option( 'ws_seeded_employment_sector' ) !== '1.0.0' ) {
         ws_seed_employment_sector_taxonomy();
         update_option( 'ws_seeded_employment_sector', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_aorg_service' ) !== '1.0.0' ) {
+    if ( get_option( 'ws_seeded_aorg_service' ) !== '1.1.0' ) {
         ws_seed_aorg_service_taxonomy();
-        update_option( 'ws_seeded_aorg_service', '1.0.0' );
+        update_option( 'ws_seeded_aorg_service', '1.1.0' );
     }
-    if ( get_option( 'ws_seeded_aorg_cost_model' ) !== '1.0.0' ) {
+    if ( get_option( 'ws_seeded_aorg_cost_model' ) !== '1.1.0' ) {
         ws_seed_aorg_cost_model_taxonomy();
-        update_option( 'ws_seeded_aorg_cost_model', '1.0.0' );
+        update_option( 'ws_seeded_aorg_cost_model', '1.1.0' );
     }
     if ( get_option( 'ws_seeded_procedure_type' ) !== '1.0.0' ) {
         ws_seed_proc_type_taxonomy();
@@ -986,6 +986,7 @@ function ws_seed_adverse_action_types_taxonomy() {
         'schedule-change'           => 'Schedule Change',
         'pay-reduction'             => 'Pay / Benefits Reduction',
         'harassment'                => 'Harassment',
+        'workplace-isolation'       => 'Workplace Isolation / Ostracism',
         'blacklisting'              => 'Blacklisting',
         'security-clearance-action' => 'Security Clearance Action',
         'contract-non-renewal'      => 'Contract Non-Renewal',
@@ -1227,6 +1228,7 @@ function ws_seed_aorg_type_taxonomy() {
         'law-firm'         => 'Law Firm',
         'bar-program'      => 'Bar Association Program',
         'advocacy'         => 'Advocacy Organization',
+        'mixed'            => 'Mixed Organization Type',
         'oversight-office' => 'Government Oversight Office',
         'union'            => 'Labor Union',
     ];
@@ -1273,7 +1275,7 @@ function ws_seed_aorg_cost_model_taxonomy() {
         'sliding-scale'   => 'Sliding Scale Fee',
         'contingency'     => 'Contingency Fee',
         'fee-for-service' => 'Fee for Service',
-        'mixed'           => 'Mixed / Varies',
+        'unclear'         => 'Unclear',
     ];
     foreach ( $terms as $slug => $name ) {
         if ( ! term_exists( $slug, $taxonomy ) ) {
@@ -1300,6 +1302,9 @@ function ws_seed_aorg_service_taxonomy() {
         'financial'    => 'Financial Assistance',
         'advocacy'     => 'Policy Advocacy',
         'media'        => 'Media & Communications Support',
+        'mental-health' => 'Mental Health Support',
+        'peer-support' => 'Peer Support',
+        'secure-drop'  => 'SecureDrop Intake',
         'additional'   => 'Additional Services',
     ];
     foreach ( $terms as $slug => $name ) {
