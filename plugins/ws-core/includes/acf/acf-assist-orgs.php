@@ -28,10 +28,15 @@
  *
  * @package WhistleblowerShield
  * @since   1.0.0
- * @version 3.15.2
+ * @version 3.16.0
  *
  * VERSION
  * -------
+ * 3.16.0  ws_aorg_official_name (text) added to Identity tab immediately after
+ *         ws_aorg_internal_id. Stores the full official organization name as a
+ *         dedicated meta field. post_title mirrors this value at ingest time but
+ *         ws_aorg_official_name is the authoritative data-layer source, consistent
+ *         with how all other CPTs store their official name in a dedicated meta key.
  * 3.15.2  Contact & Intake secure-channel fields added:
  *         - ws_aorg_has_secure_channel (true/false)
  *         - ws_aorg_secure_contact_url (url)
@@ -90,7 +95,8 @@ function ws_register_acf_assist_org() {
             // Tab: Identity
             //
             // Core identifiers and classification for each organization.
-            // The post title serves as the public organization name.
+            // post_title mirrors ws_aorg_official_name at ingest time.
+            // ws_aorg_official_name is the authoritative data-layer source.
             // ────────────────────────────────────────────────────────────────
 
             [
@@ -108,6 +114,17 @@ function ws_register_acf_assist_org() {
                 'required'     => 1,
                 'placeholder'  => 'aclu-national',
             ],
+
+            [
+                'key'          => 'field_aorg_official_name',
+                'label'        => 'Official Organization Name',
+                'name'         => 'ws_aorg_official_name',
+                'type'         => 'text',
+                'instructions' => 'Full official name of the organization exactly as it appears on its homepage or governing documents. This is the authoritative data-layer field — post_title mirrors this value at ingest time.',
+                'required'     => 1,
+                'placeholder'  => 'Government Accountability Project',
+            ],
+
 
             [
                 'key'           => 'field_aorg_type',

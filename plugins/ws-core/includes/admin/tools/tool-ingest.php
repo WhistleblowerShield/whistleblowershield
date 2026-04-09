@@ -70,6 +70,23 @@
  *
  * VERSION
  * -------
+ * 3.16.0  Assist-org field map corrections and additions:
+ *         - organization_name now maps to both post_title (existing) and
+ *           ws_aorg_official_name (new dedicated meta field)
+ *         - assistance_types key renamed to assistance_type (single-value)
+ *         - coverage_exceptions key renamed to jurisdiction_exceptions
+ *           and remapped to ws_aorg_jurisdiction_exceptions (was incorrectly
+ *           mapped to ws_aorg_eligibility_notes)
+ *         - ws_aorg_official_name added to allowed keys and field map
+ *         - jurisdiction_exceptions added to allowed keys and field map
+ *         - assistance_type (singular) replaces assistance_types in allowed keys
+ *         - Slug abbreviation pass expanded: global→intl, coalition→coal,
+ *           institute/institution→inst, education/educational→edu,
+ *           employment→emp, employee/employees→emp, protection/s→prot,
+ *           advocacy→adv, alliance→all, committee→cmte, council→cncl,
+ *           bureau→bur, office→ofc, rights→rts, public→pub, policy→pol,
+ *           research→rsch, whistleblowing→wb; small words stripped:
+ *           and, the, for, of, in, at, to, a, an
  * 3.15.1  Added assist-org ingest support:
  *         - record_type detection and schema validation for assist-org batches
  *         - dedicated assist-org field map and processor for ws-assist-org CPT
@@ -718,10 +735,11 @@ function ws_ingest_allowed_record_keys( string $record_type ): array {
             'secure_contact_url',
             'secure_contact_tool',
             'nationwide_example',
+            'official_name',
             'disclosure_types',
             'languages_supported',
             'languages_additional',
-            'assistance_types',
+            'assistance_type',
             'employment_sectors',
             'cost_model',
             'services_provided',
@@ -734,7 +752,7 @@ function ws_ingest_allowed_record_keys( string $record_type ): array {
             'case_stage_details',
             'disclosure_targets',
             'disclosure_targets_details',
-            'coverage_exceptions',
+            'jurisdiction_exceptions',
             'whistleblower_scope',
             'whistleblower_note',
             '_review_notes',
@@ -1059,32 +1077,33 @@ function ws_ingest_interpretation_field_map_v2(): array {
 function ws_ingest_assist_org_field_map_v2(): array {
     return [
         // ── Core content ─────────────────────────────────────────────────
-        'common_name'               => [ 'ws_aorg_common_name',            'text'     ],
-        'general_description'       => [ 'ws_aorg_description',            'textarea' ],
-        'official_homepage_url'     => [ 'ws_aorg_website_url',            'url'      ],
-        'intake_or_contact_url'     => [ 'ws_aorg_intake_url',             'url'      ],
-        'phone'                     => [ 'ws_aorg_phone',                  'text'     ],
-        'contact_email'             => [ 'ws_aorg_email',                  'text'     ],
-        'mailing_address'           => [ 'ws_aorg_mailing_address',        'textarea' ],
-        'has_secure_channel'        => [ 'ws_aorg_has_secure_channel',     'bool'     ],
-        'secure_contact_url'        => [ 'ws_aorg_secure_contact_url',     'url'      ],
-        'secure_contact_tool'       => [ 'ws_aorg_secure_contact_tool',    'text'     ],
-        'languages_additional'      => [ 'ws_aorg_additional_languages',   'text'     ],
-        'verified_date_url'         => [ 'ws_aorg_last_reviewed',          'text'     ],
-        'whistleblower_scope'       => [ 'ws_aorg_whistleblower_scope',    'number'   ],
-        'whistleblower_note'        => [ 'ws_aorg_whistleblower_note',     'textarea' ],
-        'income_eligibility_required' => [ 'ws_aorg_income_limit',         'bool'     ],
-        'eligibility_notes'         => [ 'ws_aorg_income_limit_notes',     'textarea' ],
-        'anonymous_pre_consult_possible' => [ 'ws_aorg_accepts_anonymous', 'bool'     ],
-        'has_attorneys'             => [ 'ws_aorg_licensed_attorneys',     'bool'     ],
-        'coverage_exceptions'       => [ 'ws_aorg_eligibility_notes',      'textarea' ],
-        'disclosure_targets_details'=> [ 'ws_aorg_disclosure_targets_details', 'textarea' ],
+        'common_name'               => [ 'ws_aorg_common_name',                 'text'     ],
+        'official_name'             => [ 'ws_aorg_official_name',               'text'     ],
+        'general_description'       => [ 'ws_aorg_description',                 'textarea' ],
+        'official_homepage_url'     => [ 'ws_aorg_website_url',                 'url'      ],
+        'intake_or_contact_url'     => [ 'ws_aorg_intake_url',                  'url'      ],
+        'phone'                     => [ 'ws_aorg_phone',                       'text'     ],
+        'contact_email'             => [ 'ws_aorg_email',                       'text'     ],
+        'mailing_address'           => [ 'ws_aorg_mailing_address',             'textarea' ],
+        'has_secure_channel'        => [ 'ws_aorg_has_secure_channel',          'bool'     ],
+        'secure_contact_url'        => [ 'ws_aorg_secure_contact_url',          'url'      ],
+        'secure_contact_tool'       => [ 'ws_aorg_secure_contact_tool',         'text'     ],
+        'languages_additional'      => [ 'ws_aorg_additional_languages',        'text'     ],
+        'verified_date_url'         => [ 'ws_aorg_last_reviewed',               'text'     ],
+        'whistleblower_scope'       => [ 'ws_aorg_whistleblower_scope',         'number'   ],
+        'whistleblower_note'        => [ 'ws_aorg_whistleblower_note',          'textarea' ],
+        'income_eligibility_required' => [ 'ws_aorg_income_limit',              'bool'     ],
+        'eligibility_notes'         => [ 'ws_aorg_income_limit_notes',          'textarea' ],
+        'anonymous_pre_consult_possible' => [ 'ws_aorg_accepts_anonymous',      'bool'     ],
+        'has_attorneys'             => [ 'ws_aorg_licensed_attorneys',          'bool'     ],
+        'jurisdiction_exceptions'   => [ 'ws_aorg_jurisdiction_exceptions',     'textarea' ],
+        'disclosure_targets_details'=> [ 'ws_aorg_disclosure_targets_details',  'textarea' ],
 
         // ── Taxonomies ───────────────────────────────────────────────────
         'disclosure_types'          => [ 'ws_aorg_disclosure_type',        'tax', 'ws_disclosure_type'    ],
         'disclosure_targets'        => [ 'ws_aorg_disclosure_targets',     'tax', 'ws_disclosure_targets' ],
         'languages_supported'       => [ 'ws_languages',                   'tax', 'ws_languages'          ],
-        'assistance_types'          => [ 'ws_aorg_type',                   'tax', 'ws_aorg_type'          ],
+        'assistance_type'           => [ 'ws_aorg_type',                   'tax', 'ws_aorg_type'          ],
         'employment_sectors'        => [ 'ws_aorg_employment_sectors',     'tax', 'ws_employment_sector'  ],
         'cost_model'                => [ 'ws_aorg_cost_model',             'tax', 'ws_aorg_cost_model'    ],
         'services_provided'         => [ 'ws_aorg_services',               'tax', 'ws_aorg_service'       ],
@@ -1092,6 +1111,11 @@ function ws_ingest_assist_org_field_map_v2(): array {
         'case_stages'               => [ 'ws_ao_case_stage',               'tax', 'ws_case_stage'         ],
 
         // ── Advisory / omitted ───────────────────────────────────────────
+        // organization_name is intentionally omitted from the field map loop.
+        // It is written twice manually in ws_ingest_process_assist_org_record():
+        //   1. As post_title via wp_insert_post()
+        //   2. As ws_aorg_official_name via update_post_meta()
+        // The field map loop would only write it once.
         'organization_name'         => [ null, 'omit' ],
         'internal_id'               => [ null, 'omit' ],
         'source_url'                => [ null, 'omit' ],
@@ -1120,7 +1144,7 @@ function ws_ingest_build_assist_org_internal_id( array $record ): string {
     }
 
     $normalized = strtolower( $seed );
-    $normalized = str_replace( '&', ' and ', $normalized );
+    // & handled in stop-word strip above.
 
     // Swap jurisdiction display name to compact jurisdiction ID token.
     if ( $jx_slug !== '' && defined( 'WS_JURISDICTION_TAXONOMY' ) ) {
@@ -3443,6 +3467,13 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
     }
     update_post_meta( $post_id, 'ws_aorg_internal_id', sanitize_text_field( $internal_id ) );
     $result['log'][] = "{$org_name}: internal_id generated as '{$internal_id}'";
+
+    // Double-write organization_name to the dedicated meta field.
+    // post_title already holds this value from wp_insert_post() above;
+    // ws_aorg_official_name is the authoritative data-layer source.
+    if ( $org_name !== 'UNKNOWN' ) {
+        update_post_meta( $post_id, 'ws_aorg_official_name', sanitize_text_field( $org_name ) );
+    }
 
     $field_map        = ws_ingest_assist_org_field_map_v2();
     $tax_removals     = [];
