@@ -421,6 +421,23 @@ function ws_ingest_strip_prefixed_keys( $value ) {
     return $clean;
 }
 
+/**
+ * Applies record-level defaults derived from batch meta.
+ * Currently used for assist-org batches where jurisdiction_id may be omitted
+ * per-record and provided once at meta.jurisdiction_id.
+ */
+function ws_ingest_apply_record_defaults( array $record, array $meta, string $record_type ): array {
+    if ( $record_type === 'assist-org' ) {
+        $record_jx = trim( (string) ( $record['jurisdiction_id'] ?? '' ) );
+        $meta_jx   = trim( (string) ( $meta['jurisdiction_id'] ?? '' ) );
+        if ( $record_jx === '' && $meta_jx !== '' ) {
+            $record['jurisdiction_id'] = $meta_jx;
+        }
+    }
+
+    return $record;
+}
+
 
 // ── JSON validation ───────────────────────────────────────────────────────────
 
@@ -490,6 +507,7 @@ function ws_ingest_preflight( array $data ): array {
             continue;
         }
         $record = ws_ingest_strip_prefixed_keys( $record );
+        $record = ws_ingest_apply_record_defaults( $record, is_array( $meta ) ? $meta : [], $record_type );
 
         $jx = $record['jurisdiction_id'] ?? '';
         $sid = ws_ingest_get_record_identifier( (array) $record, $record_type );
@@ -3372,7 +3390,10 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
 
     $org_name = trim( (string) ( $record['organization_name'] ?? '' ) );
     $org_name = $org_name !== '' ? $org_name : 'UNKNOWN';
-    $jx_slug  = strtolower( (string) ( $record['jurisdiction_id'] ?? '' ) );
+    $jx_slug  = strtolower( trim( (string) ( $record['jurisdiction_id'] ?? '' ) ) );
+    if ( $jx_slug === '' ) {
+        $jx_slug = strtolower( trim( (string) ( $meta['jurisdiction_id'] ?? '' ) ) );
+    }
     $homepage = esc_url_raw( (string) ( $record['official_homepage_url'] ?? '' ) );
     $internal_id = ws_ingest_build_assist_org_internal_id( $record );
     $record_key  = $jx_slug !== '' ? strtolower( $jx_slug . '|assist-org|' . $internal_id ) : '';
@@ -3823,6 +3844,9 @@ function ws_ingest_process_batch_data( array $data, string $batch_filename ): ar
     $all_logs = [];
 
     foreach ( $records as $record ) {
+        if ( is_array( $record ) ) {
+            $record = ws_ingest_apply_record_defaults( $record, $meta, $record_type );
+        }
         if ( $record_type === 'common-law' ) {
             $record_result = ws_ingest_process_common_law_record( $record, $meta, $blacklist );
         } elseif ( $record_type === 'citation' ) {
