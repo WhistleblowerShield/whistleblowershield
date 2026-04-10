@@ -1,6 +1,0 @@
-{
-  "status": "MATCH_FOR_REGISTER_TAXONOMIES",
-  "scope": "All ws_* taxonomies except ws_glossary",
-  "generated_at_utc": "2026-04-07T03:12:40Z",
-  "note": "Previous mismatch was caused by filtering live taxonomies to public=false, which excluded ws_disclosure_type and ws_process_type (both public=true)."
-}
