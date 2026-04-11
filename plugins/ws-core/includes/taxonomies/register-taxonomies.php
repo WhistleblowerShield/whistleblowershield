@@ -162,7 +162,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_protected_class' ) ) {
         register_taxonomy(
             'ws_protected_class',
-            [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
+            [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-assist-org' ],
             [
                 'label'             => 'Protected Class',
                 'labels'            => [

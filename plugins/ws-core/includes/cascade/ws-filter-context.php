@@ -357,10 +357,11 @@ function ws_filter_score_engagement( array $org ): int {
  * @return void
  */
 function ws_filter_log_profile_view( int $org_id, array $context, array $click_meta = [] ): void {
-    $rank      = isset( $click_meta['rank'] ) ? (int) $click_meta['rank'] : 0;
-    $rel_score = isset( $click_meta['rel_score'] ) ? (int) $click_meta['rel_score'] : 0;
-    $eng_score = isset( $click_meta['eng_score'] ) ? (int) $click_meta['eng_score'] : 0;
-    $secure    = ! empty( $click_meta['secure'] ) ? 'yes' : 'no';
+    $rank          = isset( $click_meta['rank'] ) ? (int) $click_meta['rank'] : 0;
+    $rel_score     = isset( $click_meta['rel_score'] ) ? (int) $click_meta['rel_score'] : 0;
+    $eng_score     = isset( $click_meta['eng_score'] ) ? (int) $click_meta['eng_score'] : 0;
+    $results_total = isset( $click_meta['results_total'] ) ? (int) $click_meta['results_total'] : 0;
+    $secure        = ! empty( $click_meta['secure'] ) ? 'yes' : 'no';
 
     $log_dir = WP_CONTENT_DIR . '/logs/ws-filter';
     if ( ! is_dir( $log_dir ) && ! wp_mkdir_p( $log_dir ) ) {
@@ -388,7 +389,7 @@ function ws_filter_log_profile_view( int $org_id, array $context, array $click_m
     $target  = ws_filter_log_slug( $context['target'] ?? null );
     $filters = ! empty( $context['has_filters'] ) ? 'yes' : 'no';
 
-    $line = "[{$ts} UTC]  event:profile_view  org_id:{$org_id}  rank:{$rank}  rel:{$rel_score}  eng:{$eng_score}  secure_rendered:{$secure}  stage:{$stage}  concern:{$concern}({$tax})  sector:{$sector}  target:{$target}  filtered:{$filters}" . PHP_EOL;
+    $line = "[{$ts} UTC]  event:profile_view  org_id:{$org_id}  rank:{$rank}  results_total:{$results_total}  rel:{$rel_score}  eng:{$eng_score}  secure_badge_rendered:{$secure}  stage:{$stage}  concern:{$concern}({$tax})  sector:{$sector}  target:{$target}  filtered:{$filters}" . PHP_EOL;
 
     $write_ok = file_put_contents( $path, $line, FILE_APPEND | LOCK_EX );
     if ( false === $write_ok ) {

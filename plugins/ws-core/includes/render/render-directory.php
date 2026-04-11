@@ -30,10 +30,11 @@ add_action( 'wp', function() {
 
     $context = ws_resolve_filter_context( false );
     $click_meta = [
-        'rank'      => isset( $_GET['ws_rank'] ) ? (int) $_GET['ws_rank'] : 0,
-        'rel_score' => isset( $_GET['ws_rel_score'] ) ? (int) $_GET['ws_rel_score'] : 0,
-        'eng_score' => isset( $_GET['ws_eng_score'] ) ? (int) $_GET['ws_eng_score'] : 0,
-        'secure'    => ! empty( $_GET['ws_secure'] ) && $_GET['ws_secure'] === '1',
+        'rank'          => isset( $_GET['ws_rank'] ) ? (int) $_GET['ws_rank'] : 0,
+        'rel_score'     => isset( $_GET['ws_rel_score'] ) ? (int) $_GET['ws_rel_score'] : 0,
+        'eng_score'     => isset( $_GET['ws_eng_score'] ) ? (int) $_GET['ws_eng_score'] : 0,
+        'results_total' => isset( $_GET['ws_results_total'] ) ? (int) $_GET['ws_results_total'] : 0,
+        'secure'        => ! empty( $_GET['ws_secure_badge'] ) && $_GET['ws_secure_badge'] === '1',
     ];
 
     ws_filter_log_profile_view( (int) $org_id, $context, $click_meta );
@@ -82,6 +83,7 @@ function ws_render_directory_page( array $targeted, array $nationwide, array $co
             $nationwide = ws_filter_sort_orgs( $nationwide, $context, false );
 
             $targeted_count = count( $targeted );
+            $rendered_total = $targeted_count + count( $nationwide );
             ?>
 
             <?php // ── Targeted results ─────────────────────────────────────── ?>
@@ -90,7 +92,7 @@ function ws_render_directory_page( array $targeted, array $nationwide, array $co
                     <h2 class="ws-directory__section-heading">
                         Organizations in Your Area
                     </h2>
-                    <?php echo ws_render_directory_listing( $targeted ); // phpcs:ignore ?>
+                    <?php echo ws_render_directory_listing( $targeted, $rendered_total ); // phpcs:ignore ?>
                 </div>
             <?php endif; ?>
 
@@ -107,7 +109,7 @@ function ws_render_directory_page( array $targeted, array $nationwide, array $co
                             Nationwide Organizations
                         </h2>
                     <?php endif; ?>
-                    <?php echo ws_render_directory_listing( $nationwide ); // phpcs:ignore ?>
+                    <?php echo ws_render_directory_listing( $nationwide, $rendered_total ); // phpcs:ignore ?>
                 </div>
             <?php endif; ?>
 
@@ -532,15 +534,17 @@ function ws_filter_get_adverse_action_options(): array {
 /**
  * Renders a directory grid from normalized org rows.
  *
- * @param array<int,array<string,mixed>> $items Org rows from query layer.
+ * @param array<int,array<string,mixed>> $items         Org rows from query layer.
+ * @param int                            $results_total Total rendered results count across the page.
  * @return string HTML output.
  */
-function ws_render_directory_listing( $items ) {
+function ws_render_directory_listing( $items, int $results_total = 0 ) {
     ob_start();
+    $results_total = $results_total > 0 ? $results_total : count( $items );
     ?>
     <div class="ws-directory__grid" role="list">
         <?php foreach ( $items as $position => $org ) : ?>
-            <?php echo ws_render_directory_card( $org, (int) $position + 1 ); // phpcs:ignore ?>
+            <?php echo ws_render_directory_card( $org, (int) $position + 1, $results_total ); // phpcs:ignore ?>
         <?php endforeach; ?>
     </div>
     <?php
@@ -556,10 +560,11 @@ function ws_render_directory_listing( $items ) {
  * Renders a single assist-organization card.
  *
  * @param array<string,mixed> $org Normalized org row.
- * @param int                $position 1-based rank position in rendered list.
+ * @param int                $position      1-based rank position in rendered list.
+ * @param int                $results_total Total rendered results count across the page.
  * @return string HTML output.
  */
-function ws_render_directory_card( array $org, int $position = 0 ) {
+function ws_render_directory_card( array $org, int $position = 0, int $results_total = 0 ) {
 
     $cost_labels = [
         'free'            => 'Free',
@@ -752,7 +757,8 @@ function ws_render_directory_card( array $org, int $position = 0 ) {
                     'ws_rank'      => $position,
                     'ws_rel_score' => (int) ( $org['_rel_score'] ?? 0 ),
                     'ws_eng_score' => (int) ( $org['_eng_score'] ?? 0 ),
-                    'ws_secure'    => ! empty( $org['has_secure_channel'] ) ? '1' : '0',
+                    'ws_results_total' => max( 0, $results_total ),
+                    'ws_secure_badge'  => ! empty( $org['has_secure_channel'] ) ? '1' : '0',
                 ], $org['url'] ) ); ?>"
                    class="ws-aorg-card__more-link"
                    aria-label="More about <?php echo esc_attr( $org['title'] ); ?>">

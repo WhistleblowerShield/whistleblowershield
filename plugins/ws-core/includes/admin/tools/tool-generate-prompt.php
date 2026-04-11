@@ -784,7 +784,7 @@ function ws_prompt_taxonomy_tables( string $applies_to ): string {
         'jx-common-law'     => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_targets' ],
         'jx-citation'       => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_targets' ],
         'jx-interpretation' => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_targets' ],
-        'ws-assist-org'     => [ 'ws_disclosure_type', 'ws_disclosure_targets' ],
+        'ws-assist-org'     => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_targets' ],
     ];
 
     $selected_hierarchical = $hierarchical_by_record_type[ $record_type ] ?? [];
@@ -883,6 +883,7 @@ function ws_prompt_taxonomy_tables( string $applies_to ): string {
                 'ws_remedies'             => 'remedies_details',
                 'ws_employer_defense'     => 'employer_defense_details',
                 'ws_employee_standard'    => 'employee_standard_details',
+                'ws_protected_class'      => 'protected_class_details',
             ];
             $companion = $field_map[ $slug ] ?? "{$slug}_details";
             $terms['has-details'] = "Has Details (sentinel — use with {$companion})";
@@ -903,7 +904,7 @@ function ws_prompt_registered_object_types( string $taxonomy ): array {
         'ws_disclosure_type'   => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-agency', 'ws-ag-procedure', 'ws-assist-org' ],
         'ws_process_type'      => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-agency', 'ws-assist-org' ],
         'ws_remedies'          => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
-        'ws_protected_class'   => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
+        'ws_protected_class'   => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-assist-org' ],
         'ws_adverse_action_types' => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
         'ws_languages'         => [ 'ws-agency', 'ws-assist-org' ],
         'ws_case_stage'        => [ 'ws-assist-org' ],
@@ -1022,28 +1023,26 @@ you can make to the reliability of this platform.
 
 {
   "integrity": {
-    "with_errors":   [true | false],
-    "error_details": ["[SPECIFIC ERROR WITH DETAILS]"],
-    "error_count":   [INTEGER — must equal length of error_details]
-  }
+        "with_errors":   [true | false],
+        "error_details": ["[SPECIFIC ERROR WITH DETAILS]"],
+        "error_count":   [INTEGER — must equal length of error_details]
+    }
 }
 
 with_errors must be true if ANY of the following occurred:
-  - record_count is less than requested (fewer records returned than requested)
-  - A required record could not be researched with sufficient confidence
-  - Any schema rule was knowingly violated
-  - A citation was omitted because a URL could not be verified
-  - A SOL value was derived rather than explicit (limit_ambiguous: true)
-  - A parent slug was detected and removed during self-check
+    - record_count is less than requested (fewer records returned than requested)
+    - A required record could not be researched with sufficient confidence
+    - Any schema rule was knowingly violated
+    - A parent slug was detected and removed during self-check
 
 with_errors should not include items like:  
-  - Anything a human reviewer should know about this batch
-  - use record._review_notes for these — they are expected and do not indicate an error in the batch
+    - Anything a human reviewer should know about this batch
+    - use record._review_notes for these — they are expected and do not indicate an error in the batch
 
 Fail-safe policy:
-  - It is acceptable to fail one or more records instead of guessing.
-  - It is acceptable to fail the full batch if source quality is insufficient.
-  - In either case, set with_errors: true and explain exactly why.
+    - It is acceptable to fail one or more records instead of guessing.
+    - It is acceptable to fail the full batch if source quality is insufficient.
+    - In either case, set with_errors: true and explain exactly why.
 
 OMISSION RULE: If with_errors is false, omit error_details and error_count
 entirely. The ingest tool treats a missing key differently from an empty array.
@@ -1101,25 +1100,29 @@ Each candidate organization must include as much verified information as possibl
 
 
 Unless 'required' omit any record.key you cannot confidently find data for or becomes unnecessary.
-PERMISSIBLE TO OMIT:
-source_url
-common_name
-verified_url_date
-contact_url
-intake_url
-mailing_address
-disclosure_types
-languages_additional
-employment_sectors
-services_provided
-additional_services
-process_types
-eligibility_notes
-case_stage_details
-disclosure_targets_details
-jurisdiction_exceptions
-legitimacy_url
-
+    PERMISSIBLE TO OMIT:
+    source_url
+    common_name
+    verified_url_date
+    contact_url
+    intake_url
+    mailing_address
+    disclosure_types
+    protected_class
+    languages_additional
+    employment_sectors
+    services_provided
+    additional_services
+    process_types
+    eligibility_notes
+    case_stage_details
+    disclosure_targets_details
+    jurisdiction_exceptions
+    legitimacy_url
+    protected_class_details
+    secure_contact_url
+    secure_contact_tool
+    secure_contact_tool_other
 
 REQUIRED KEYS
 organization_name: [string]
@@ -1139,11 +1142,12 @@ case_stages: [array of ws_case_stage slugs]
 disclosure_targets: [array of ws_disclosure_targets child slugs]
 _review_notes: [string; if none use "researcher had no notes on current record"]
 
-The following record.keys are noted as acceptable to leave blank ("" or []), and are required even if blank:
-record.nationwide_example: ""
-record.disclosure_types: []
-record.phones: []
-record.emails: []
+    The following record.keys are noted as acceptable to leave blank ("" or []), and are required even if blank:
+    record.nationwide_example: ""
+    record.disclosure_types: []
+    record.protected_class: []
+    record.phones: []
+    record.emails: []
 
 
   - source_url                [if organization information was sourced from anywhere other than an official domain, provide complete URL to source page, omit if official domain homepage was used]
@@ -1158,6 +1162,8 @@ record.emails: []
   - has_secure_channel        [required - yes | no | unclear]
   - nationwide_example        [required - quoted sentence up to 3 from source page or mission statement that shows nationwide intent, acceptable to leave blank if not found]
   - disclosure_types          [Use Approved Taxonomy CHILD slugs, do not use PARENT slugs, from ws_disclosure_type, multiple may apply, omit if unavailable or ambiguous]
+  - protected_class           [Use Approved Taxonomy CHILD slugs, do not use PARENT slugs, from ws_protected_class, multiple may apply, use 'has-details'if slugs don't capture all details, omit if unavailable or ambiguous]
+  - protected_class_details   [required when protected_class includes 'has-details'; free text describing protected_class not captured by child slugs, omit otherwise]
   - languages_supported       [required - Use Approved Taxonomy slugs from ws_languages, list all you can find]
   - languages_additional      [If languages_supported includes 'additional' slug, list languages not covered in taxonomy, or in-place situational language systems, e.g. spanish speaking intake translators available, or hearing impaired access, omit if no additional languages]
   - assistance_type           [required - Use Approved Taxonomy slugs from ws_aorg_type table, best fit single slug only, use 'mixed' if ambiguous]
@@ -1246,6 +1252,8 @@ RECORD SCHEMA
   "nationwide_example": "",
 
   "disclosure_types": [],
+  "protected_class": [],
+  "protected_class_details": "",
   "languages_supported": [],
   "languages_additional": "",
   "assistance_type": "",
@@ -1297,7 +1305,7 @@ function ws_generate_assist_org_prompt( array $scope ): string {
     $out .= "Jurisdiction:       {$jx_name}\n";
     $out .= "Jurisdiction ID:    {$jx}\n";
     $out .= "Requested Records:  {$proposal_count}\n";
-    $out .= 'Meta nationwide_only: ' . ( $nationwide_only ? 'true' : 'false' ) . "\n";
+    $out .= 'meta.nationwide_only: ' . ( $nationwide_only ? 'true' : 'false' ) . "\n";
     if ( $focus_notes !== '' ) {
         $out .= "Focus notes:\n---\n{$focus_notes}\n---\n";
     }
@@ -1310,7 +1318,7 @@ function ws_generate_assist_org_prompt( array $scope ): string {
         $out .= "\nWhen \"meta.nationwide_only\" is false, include strong {$jx} fits and optional broader coverage.\n";
     }
 
-    $out .= ws_prompt_truncation_permission_assist_org();
+    $out .= ws_prompt_truncation_permission_assist_org( $proposal_count );
     $out .= ws_prompt_final_json_block();
 
     return $out;
@@ -1807,23 +1815,21 @@ on nonexistent precedent).
 BLOCK;
 }
 
-function ws_prompt_truncation_permission_assist_org(): string {
-        return <<<'BLOCK'
+function ws_prompt_truncation_permission_assist_org( int $requested_records = 0 ): string {
+    $header = $requested_records > 0
+        ? "Target up to {$requested_records} records, but return fewer when confidence is limited."
+        : 'As many as you can confidently verify (fewer is correct).';
 
-As many as you can confidently verify (fewer is correct).
-Attempt to find the requested number of records, but confidence is the hard
-constraint.
-
-Permission to fail and omit is explicit:
-    - omit uncertain fields instead of guessing
-    - omit uncertain records instead of padding the batch
-    - set with_errors: true and explain gaps in integrity.error_details
-
-Why this matters: fabricated or guessed assistance-organization details can
-send people in crisis to dead intake channels, incorrect eligibility/cost
-expectations, or insecure disclosure paths.
-
-BLOCK;
+    return "\n{$header}\n"
+        . "Attempt to find the requested number of records, but confidence is the hard\n"
+        . "constraint.\n\n"
+        . "Permission to fail and omit is explicit:\n"
+        . "  - omit uncertain fields instead of guessing\n"
+        . "  - omit uncertain records instead of padding the batch\n"
+        . "  - set with_errors: true and explain gaps in integrity.error_details\n\n"
+        . "Why this matters: fabricated or guessed assistance-organization details can\n"
+        . "send people in crisis to dead intake channels, incorrect eligibility/cost\n"
+        . "expectations, or insecure disclosure paths.\n\n";
 }
 
 function ws_prompt_assist_org_meta_schema(): string {

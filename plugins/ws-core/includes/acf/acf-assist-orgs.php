@@ -442,6 +442,35 @@ function ws_register_acf_assist_org() {
                 'allow_null'    => 1,
             ],
 
+            [
+                'key'           => 'field_aorg_protected_class',
+                'label'         => 'Protected Class Served',
+                'name'          => 'ws_aorg_protected_class',
+                'type'          => 'taxonomy',
+                'taxonomy'      => 'ws_protected_class',
+                'field_type'    => 'multi_select',
+                'instructions'  => 'Select all protected classes this organization serves. If "has-details" is selected, provide details below.',
+                'add_term'      => 0,
+                'save_terms'    => 1,
+                'load_terms'    => 1,
+                'return_format' => 'id',
+                'required'      => 0,
+            ],
+
+            [
+                'key'          => 'field_aorg_protected_class_details',
+                'label'        => 'Protected Class Details',
+                'name'         => 'ws_aorg_protected_class_details',
+                'type'         => 'textarea',
+                'instructions' => 'If "has-details" is selected above, provide details here.',
+                'rows'         => 3,
+                'conditional_logic' => [ [ [
+                    'field'    => 'field_aorg_protected_class',
+                    'operator' => '==',
+                    'value'    => 'has-details',
+                ] ] ],
+            ],
+
             // ────────────────────────────────────────────────────────────────
             // Tab: Contact & Intake
             //
