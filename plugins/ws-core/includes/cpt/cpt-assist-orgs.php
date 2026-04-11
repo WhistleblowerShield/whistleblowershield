@@ -103,6 +103,7 @@ function ws_register_cpt_assist_org() {
             'ws_aorg_cost_model',
             'ws_aorg_service',
             'ws_jurisdiction',
+            'ws_protected_class',
         ],
 
     ];
