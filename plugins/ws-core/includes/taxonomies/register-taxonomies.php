@@ -702,9 +702,9 @@ add_action( 'admin_init', function() {
         ws_seed_remedies_taxonomy();
         update_option( 'ws_seeded_remedies', '1.1.0' );
     }
-    if ( get_option( 'ws_seeded_protected_class' ) !== '1.3.0' ) {
+    if ( get_option( 'ws_seeded_protected_class' ) !== '1.3.1' ) {
         ws_seed_protected_class_taxonomy();
-        update_option( 'ws_seeded_protected_class', '1.3.0' );
+        update_option( 'ws_seeded_protected_class', '1.3.1' );
     }
     if ( get_option( 'ws_seeded_adverse_action_types' ) !== '1.2.0' ) {
         ws_seed_adverse_action_types_taxonomy();
