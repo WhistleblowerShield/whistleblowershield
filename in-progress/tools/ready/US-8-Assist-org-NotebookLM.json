@@ -47,7 +47,7 @@
       "employment_sectors": [
         "all-sectors"
       ],
-      "cost_model": [
+      "cost_models": [
         "unclear"
       ],
       "services_provided": [
@@ -108,7 +108,7 @@
         "state-local-employee",
         "private-sector"
       ],
-      "cost_model": [
+      "cost_models": [
         "unclear"
       ],
       "services_provided": [
@@ -173,7 +173,7 @@
       "employment_sectors": [
         "all-sectors"
       ],
-      "cost_model": [
+      "cost_models": [
         "unclear"
       ],
       "services_provided": [
@@ -226,7 +226,7 @@
         "federal-employee",
         "private-sector"
       ],
-      "cost_model": [
+      "cost_models": [
         "pro-bono"
       ],
       "services_provided": [
@@ -285,7 +285,7 @@
       "employment_sectors": [
         "all-sectors"
       ],
-      "cost_model": [
+      "cost_models": [
         "unclear"
       ],
       "services_provided": [
@@ -336,7 +336,7 @@
         "federal-employee",
         "state-local-employee"
       ],
-      "cost_model": [
+      "cost_models": [
         "pro-bono"
       ],
       "services_provided": [
@@ -390,7 +390,7 @@
         "federal-employee",
         "military-defense"
       ],
-      "cost_model": [
+      "cost_models": [
         "free"
       ],
       "services_provided": [
@@ -439,7 +439,7 @@
       "employment_sectors": [
         "all-sectors"
       ],
-      "cost_model": [
+      "cost_models": [
         "free"
       ],
       "services_provided": [

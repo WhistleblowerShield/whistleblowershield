@@ -51,7 +51,7 @@
       "employment_sectors": [
         "all-sectors"
       ],
-      "cost_model": [
+      "cost_models": [
         "free"
       ],
       "services_provided": [
@@ -99,7 +99,7 @@
       "employment_sectors": [
         "private-sector"
       ],
-      "cost_model": [
+      "cost_models": [
         "pro-bono"
       ],
       "services_provided": [
@@ -147,7 +147,7 @@
         "federal-employee",
         "military-defense"
       ],
-      "cost_model": [
+      "cost_models": [
         "pro-bono"
       ],
       "services_provided": [
@@ -194,7 +194,7 @@
       "employment_sectors": [
         "all-sectors"
       ],
-      "cost_model": [
+      "cost_models": [
         "pro-bono"
       ],
       "services_provided": [
@@ -243,7 +243,7 @@
       "employment_sectors": [
         "all-sectors"
       ],
-      "cost_model": [
+      "cost_models": [
         "pro-bono"
       ],
       "services_provided": [
@@ -290,7 +290,7 @@
       "employment_sectors": [
         "all-sectors"
       ],
-      "cost_model": [
+      "cost_models": [
         "pro-bono"
       ],
       "services_provided": [
@@ -333,7 +333,7 @@
         "spanish"
       ],
       "languages_additional": "Spanish-language TIME'S UP Legal Defense Fund materials were verified; broader attorney-language capacity appears to vary by network member.",
-      "cost_model": [
+      "cost_models": [
         "unclear"
       ],
       "services_provided": [
@@ -372,7 +372,7 @@
       "languages_supported": [
         "english"
       ],
-      "cost_model": [
+      "cost_models": [
         "free"
       ],
       "services_provided": [
@@ -406,7 +406,7 @@
         "english",
         "spanish"
       ],
-      "cost_model": [
+      "cost_models": [
         "free"
       ],
       "services_provided": [
@@ -442,7 +442,7 @@
         "spanish"
       ],
       "languages_additional": "Spanish-language helpline/help materials were verified in site content; broader language coverage was not confidently verified.",
-      "cost_model": [
+      "cost_models": [
         "free"
       ],
       "services_provided": [

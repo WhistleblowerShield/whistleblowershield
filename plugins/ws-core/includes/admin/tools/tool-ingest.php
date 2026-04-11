@@ -4054,16 +4054,47 @@ function ws_ingest_extract_batch_count_from_filename( string $filename ): int {
     return 0;
 }
 
+/**
+ * Resolves jurisdiction token for run-log filenames.
+ *
+ * Priority:
+ * 1) summary.jurisdiction
+ * 2) summary.jurisdiction_id
+ * 3) summary.jx_id
+ * 4) filename prefix (e.g., US-8-...)
+ */
+function ws_ingest_resolve_runlog_jx( array $summary, string $batch_filename = '' ): string {
+    $candidates = [
+        (string) ( $summary['jurisdiction'] ?? '' ),
+        (string) ( $summary['jurisdiction_id'] ?? '' ),
+        (string) ( $summary['jx_id'] ?? '' ),
+    ];
+
+    foreach ( $candidates as $candidate ) {
+        $candidate = strtoupper( trim( $candidate ) );
+        if ( preg_match( '/^[A-Z]{2}$/', $candidate ) ) {
+            return $candidate;
+        }
+    }
+
+    $base = basename( $batch_filename );
+    if ( preg_match( '/^([A-Za-z]{2})-\d+-/', $base, $m ) ) {
+        return strtoupper( $m[1] );
+    }
+
+    return 'XX';
+}
+
 function ws_ingest_write_run_log( array $result, string $batch_filename = '' ): bool {
     ws_ingest_bootstrap_log_dir();
 
     $summary = $result['summary'] ?? [];
-    $jx      = strtoupper( $summary['jurisdiction'] ?? 'XX' );
+    $jx      = ws_ingest_resolve_runlog_jx( $summary, $batch_filename );
     $batch_count = ws_ingest_extract_batch_count_from_filename( $batch_filename );
     $record_type = (string) ( $summary['record_type'] ?? 'unknown' );
     $ts      = gmdate( 'Ymd-His' );
 
-    $jx_part = strtolower( preg_replace( '/[^a-z0-9]+/', '', (string) $jx ) );
+    $jx_part = preg_replace( '/[^a-z0-9]+/', '', strtolower( (string) $jx ) );
     if ( $jx_part === '' ) {
         $jx_part = 'xx';
     }
@@ -4336,7 +4367,9 @@ function ws_ingest_process_batch_data( array $data, string $batch_filename ): ar
         'blacklist_size'  => count( $blacklist ),
         'source_name'     => $meta['source_name']      ?? '',
         'source_method'   => $meta['source_method']    ?? '',
-        'jurisdiction'    => $meta['jurisdiction_id']  ?? '',
+        'jurisdiction'    => $meta['jurisdiction_id']  ?? ( $meta['jx_id'] ?? '' ),
+        'jurisdiction_id' => $meta['jurisdiction_id']  ?? '',
+        'jx_id'           => $meta['jx_id']            ?? '',
         'batch_completed' => $meta['batch_completed']  ?? '',
         'record_type'     => $record_type,
     ];
