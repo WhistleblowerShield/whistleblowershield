@@ -3722,6 +3722,10 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
 
         if ( $type === 'omit' ) {
             $val = ws_ingest_get_value( $record, $json_path );
+            // organization_name/internal_id are handled explicitly elsewhere in this function.
+            if ( in_array( $json_path, [ 'organization_name', 'internal_id' ], true ) ) {
+                continue;
+            }
             if ( $val !== null && $val !== '' && $val !== [] ) {
                 $omitted_fields[ $json_path ] = $val;
             }
@@ -3733,6 +3737,12 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
 
         $value = ws_ingest_get_value( $record, $json_path );
         if ( $value === null ) {
+            continue;
+        }
+
+        // Tri-choice bools are handled in a dedicated enforcement pass below
+        // so warnings are emitted once and review state is consistent.
+        if ( $type === 'bool' && in_array( $json_path, [ 'has_secure_channel', 'anonymous_pre_consult_possible', 'has_attorneys', 'income_eligibility_required' ], true ) ) {
             continue;
         }
 
@@ -4190,6 +4200,7 @@ function ws_ingest_log_imported_batch( string $filename, array $summary, bool $h
     $path    = WS_INGEST_LOG_DIR . 'imported.log';
     $ts      = date( 'Y-m-d H:i:s' );
     $jx      = strtoupper( $summary['jurisdiction'] ?? 'XX' );
+    $record_type = strtolower( (string) ( $summary['record_type'] ?? '' ) );
     $created = (int) ( $summary['created']  ?? 0 );
     $skipped = (int) ( $summary['skipped']  ?? 0 );
     $failed  = (int) ( $summary['failed']   ?? 0 );
@@ -4197,7 +4208,13 @@ function ws_ingest_log_imported_batch( string $filename, array $summary, bool $h
     $agency_stubs   = (int) ( $summary['agency_stubs_created'] ?? 0 );
     $warnings = $has_warnings ? 'true' : 'false';
     $failures = $has_failures ? 'true' : 'false';
-    $line    = "[{$ts} UTC]  {$filename}  {$jx}  created:{$created}  skipped:{$skipped}  failed:{$failed}  citation_stubs:{$citation_stubs}  agency_stubs:{$agency_stubs}  has_warnings:{$warnings}  has_failures:{$failures}" . PHP_EOL;
+
+    $line = "[{$ts} UTC]  {$filename}  {$jx}  created:{$created}  skipped:{$skipped}  failed:{$failed}";
+    if ( $record_type !== 'assist-org' ) {
+        $line .= "  citation_stubs:{$citation_stubs}  agency_stubs:{$agency_stubs}";
+    }
+    $line .= "  has_warnings:{$warnings}  has_failures:{$failures}" . PHP_EOL;
+
     return file_put_contents( $path, $line, FILE_APPEND | LOCK_EX ) !== false;
 }
 

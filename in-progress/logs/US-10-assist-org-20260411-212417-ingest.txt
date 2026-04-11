@@ -1,0 +1,113 @@
+================================================
+WS INGEST RUN LOG
+================================================
+Run timestamp:    2026-04-11 21:24:17 UTC
+Jurisdiction:     US
+Source:           NotebookLM Reconciliation
+Source method:    ai_assisted
+Batch completed:  2026-04-08 17:33 UTC
+
+── SUMMARY ──────────────────────────────────────
+Created:          10
+Skipped (dupe):   0
+Failed:           0
+Citation stubs:   0
+Agency stubs:     0
+Proposed new:     0
+Proposed merged:  0
+Blacklist size:   9
+
+── RECORD DETAIL ────────────────────────────────
+✓ Empower Oversight Whistleblowers & Research [post #5092]
+    ⚠ Empower Oversight Whistleblowers & Research: has_secure_channel missing/empty; coerced to 'no' (0). Meat-bag review required.
+    · jurisdiction: assigned 'us'
+    · Empower Oversight Whistleblowers & Research: internal_id generated as 'empower-oversight-wb-rsch-us'
+    · omitted (no ACF field): organization_name = Empower Oversight Whistleblowers & Research
+    · omitted (no ACF field): homepage_url_status = verified
+    · Empower Oversight Whistleblowers & Research: created as post #5092 (draft, unverified)
+✓ AI Whistleblower Initiative [post #5094]
+    ⚠ AI Whistleblower Initiative: has_secure_channel missing/empty; coerced to 'no' (0). Meat-bag review required.
+    ⚠ AI Whistleblower Initiative [ws_employment_sector]: removed 'private-sector' (parent slug)
+    · jurisdiction: assigned 'us'
+    · AI Whistleblower Initiative: internal_id generated as 'ai-wb-init-us'
+    · omitted (no ACF field): organization_name = AI Whistleblower Initiative
+    · omitted (no ACF field): homepage_url_status = verified
+    · AI Whistleblower Initiative: created as post #5094 (draft, unverified)
+✓ Whistleblower and Source Protection Program [post #5096]
+    ⚠ Whistleblower and Source Protection Program: has_secure_channel missing/empty; coerced to 'no' (0). Meat-bag review required.
+    · jurisdiction: assigned 'us'
+    · Whistleblower and Source Protection Program: internal_id generated as 'wb-source-prot-prog-us'
+    · omitted (no ACF field): organization_name = Whistleblower and Source Protection Program
+    · omitted (no ACF field): homepage_url_status = verified
+    · Whistleblower and Source Protection Program: created as post #5096 (draft, unverified)
+✓ Psst [post #5098]
+    ⚠ Psst: has_secure_channel missing/empty; coerced to 'no' (0). Meat-bag review required.
+    · jurisdiction: assigned 'us'
+    · Psst: internal_id generated as 'psst-us'
+    · omitted (no ACF field): organization_name = Psst
+    · omitted (no ACF field): homepage_url_status = verified
+    · Psst: created as post #5098 (draft, unverified)
+✓ Protect Democracy [post #5100]
+    ⚠ Protect Democracy: anonymous_pre_consult_possible='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    ⚠ Protect Democracy: has_secure_channel missing/empty; coerced to 'no' (0). Meat-bag review required.
+    ⚠ Protect Democracy: anonymous_pre_consult_possible='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    · jurisdiction: assigned 'us'
+    · Protect Democracy: internal_id generated as 'protect-democracy-us'
+    · omitted (no ACF field): organization_name = Protect Democracy
+    · omitted (no ACF field): homepage_url_status = verified
+    · Protect Democracy: created as post #5100 (draft, unverified)
+✓ Reporters Committee for Freedom of the Press [post #5102]
+    ⚠ Reporters Committee for Freedom of the Press: has_secure_channel missing/empty; coerced to 'no' (0). Meat-bag review required.
+    · jurisdiction: assigned 'us'
+    · Reporters Committee for Freedom of the Press: internal_id generated as 'reporters-cmte-freedom-press-us'
+    · omitted (no ACF field): organization_name = Reporters Committee for Freedom of the Press
+    · omitted (no ACF field): homepage_url_status = verified
+    · Reporters Committee for Freedom of the Press: created as post #5102 (draft, unverified)
+✓ TIME'S UP Legal Defense Fund [post #5104]
+    ⚠ TIME'S UP Legal Defense Fund: income_eligibility_required='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    ⚠ TIME'S UP Legal Defense Fund: anonymous_pre_consult_possible='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    ⚠ TIME'S UP Legal Defense Fund: has_secure_channel missing/empty; coerced to 'no' (0). Meat-bag review required.
+    ⚠ TIME'S UP Legal Defense Fund: anonymous_pre_consult_possible='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    ⚠ TIME'S UP Legal Defense Fund: income_eligibility_required='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    · jurisdiction: assigned 'us'
+    · TIME'S UP Legal Defense Fund: internal_id generated as 'time-s-up-legal-defense-fund-us'
+    · omitted (no ACF field): organization_name = TIME'S UP Legal Defense Fund
+    · omitted (no ACF field): homepage_url_status = verified
+    · TIME'S UP Legal Defense Fund: created as post #5104 (draft, unverified)
+✓ A Better Balance [post #5106]
+    ⚠ A Better Balance: income_eligibility_required='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    ⚠ A Better Balance: anonymous_pre_consult_possible='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    ⚠ A Better Balance: has_secure_channel missing/empty; coerced to 'no' (0). Meat-bag review required.
+    ⚠ A Better Balance: anonymous_pre_consult_possible='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    ⚠ A Better Balance: income_eligibility_required='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    · jurisdiction: assigned 'us'
+    · A Better Balance: internal_id generated as 'better-balance-us'
+    · omitted (no ACF field): organization_name = A Better Balance
+    · omitted (no ACF field): homepage_url_status = verified
+    · A Better Balance: created as post #5106 (draft, unverified)
+✓ Legal Momentum [post #5108]
+    ⚠ Legal Momentum: income_eligibility_required='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    ⚠ Legal Momentum: anonymous_pre_consult_possible='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    ⚠ Legal Momentum: has_secure_channel missing/empty; coerced to 'no' (0). Meat-bag review required.
+    ⚠ Legal Momentum: anonymous_pre_consult_possible='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    ⚠ Legal Momentum: income_eligibility_required='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    · jurisdiction: assigned 'us'
+    · Legal Momentum: internal_id generated as 'legal-momentum-us'
+    · omitted (no ACF field): organization_name = Legal Momentum
+    · omitted (no ACF field): homepage_url_status = verified
+    · Legal Momentum: created as post #5108 (draft, unverified)
+✓ Center for WorkLife Law [post #5110]
+    ⚠ Center for WorkLife Law: income_eligibility_required='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    ⚠ Center for WorkLife Law: anonymous_pre_consult_possible='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    ⚠ Center for WorkLife Law: has_secure_channel missing/empty; coerced to 'no' (0). Meat-bag review required.
+    ⚠ Center for WorkLife Law: anonymous_pre_consult_possible='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    ⚠ Center for WorkLife Law: income_eligibility_required='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    · jurisdiction: assigned 'us'
+    · Center for WorkLife Law: internal_id generated as 'ctr-worklife-law-us'
+    · omitted (no ACF field): organization_name = Center for WorkLife Law
+    · omitted (no ACF field): homepage_url_status = verified
+    · Center for WorkLife Law: created as post #5110 (draft, unverified)
+
+================================================
+END OF LOG
+================================================

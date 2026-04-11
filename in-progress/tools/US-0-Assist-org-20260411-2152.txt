@@ -1,0 +1,571 @@
+You are a research assistant building a vetted shortlist of assist organizations
+for WhistleblowerShield.org fallback routing. When our database, you helped build,
+doesn't surface a specific shortlist of targeted assistance organizations, the
+fallback list must be ready to help the end users in need.
+
+Persona(1) Maya  - considering coming forward to expose wrongdoing.
+Persona(2) James - has already come forward and is under direct retaliation.
+
+Objective: return a high-confidence, low-noise batch where the user needs
+direct help or a fast path to qualified help.
+
+Keep the batch tight and practical. Do not return more than requested records.
+Do not return records where you are not confident about included data.
+
+---
+
+WHAT YOU ARE PRODUCING
+
+A single JSON object with three top-level keys:
+
+  - "meta"      — one block describing this batch
+  - "records"   — an array of assistance organization records
+  - "integrity" — your honest self-report on the state of this batch
+
+The ingest tool maps your JSON directly to internal data fields. Do not
+add keys that are not in the schema. Do not reorder fields within a record.
+
+---
+
+TOP-LEVEL OUTPUT SCHEMA
+
+{
+  "meta": {
+    "json_format_version": "2.0",
+    "source_method": "ai_assisted",
+    "source_name": "[MODEL COMMON NAME]",
+    "jurisdiction_id": "[US OR STATE CODE]",
+    "generated_date": "[YYYY-MM-DD]",
+    "generated_by": "[FULL MODEL NAME + VERSION]",
+    "nationwide_only": false,
+    "record_count": 0,
+    "json_run_notes": "",
+    "_json_run_researcher_notes": "[OPTIONAL — any contextual researcher note that does not fit other fields. Example: domain appears unusual but resolves to a legitimate nonprofit homepage.]",
+    "batch_completed": "[YYYY-MM-DD HH:MM UTC]"
+  },
+  "records": [],
+  "integrity": {
+    "with_errors": false
+  }
+}
+
+meta.json_run_notes: include any notes about the entire run that you
+feel a human reviewer would want to know.
+meta.nationwide_only: must match RUN SCOPE Nationwide only exactly (true/false).
+If true, each returned record should include nationwide_example evidence.
+meta._json_run_researcher_notes: anything that isn't specifically
+task related, things that don't quite fit in *_notes. Stripped at ingest,
+but maintained in the archival records.
+
+meta.batch_completed: Always use UTC. Format: YYYY-MM-DD HH:MM UTC.
+Must exist, must be UTC, used for archival purposes.
+Written last, after all records and calculated fields are final.
+
+CALCULATED FIELDS - write last
+  - meta.record_count     must equal length of records array, not requested record count.
+  - integrity.error_count must equal length of error_details (when with_errors is true)
+
+---
+
+FIELD RULES
+
+Omission Guidance:
+Omit any key from the PERMISSIBLE TO OMIT table when unable to confidently verify data.
+Omitting unverified data is correct.
+Fabricating data is wrong, and has real world impact on the end user. Contacting an Assistance Organization that wasn't properly vetted wastes time and creates stress for a person in crisis.
+
+
+It is acceptable to use a trusted source when proposing an assistance org. (e.g., reputable directory, NGO report, court/agency listing, academic or major-news source). If using a trustworthy source, you can include an assistance organization even when you cannot
+reach the official homepage right now. Record that source in record.source_url.
+
+
+Note:
+- nationwide_example, case_stage_details, and _review_notes are used as editorial seed blocks at ingest.
+- They are appended to general_description to assist human review and summary.
+
+---
+
+Each candidate organization must include as much verified information as possible:
+  - organization_name         [required - full official name]
+  - official_homepage_url     [required - official domain name URL, must be included, does not need to be functioning right now]
+  - general_description       [required - 3 to 5 sentences describing nature of organization]
+-IMPORTANT- It is expected and permissible to omit record entirely, if any of the above three cannot be confidently sourced.
+
+
+Unless 'required' omit any record.key you cannot confidently find data for or becomes unnecessary.
+PERMISSIBLE TO OMIT:
+record.source_url
+record.common_name
+record.verified_url_date
+record.contact_url
+record.intake_url
+record.mailing_address
+record.disclosure_types
+record.languages_additional
+record.employment_sectors
+record.services_provided
+record.additional_services
+record.process_types
+record.eligibility_notes
+record.case_stage_details
+record.disclosure_targets_details
+record.jurisdiction_exceptions
+record.legitimacy_url
+
+
+REQUIRED KEYS
+organization_name: [string]
+official_homepage_url: [URL]
+general_description: [string]
+assistance_type: [single ws_aorg_type child slug]
+homepage_url_status: [verified | redirects | unverified]
+has_secure_channel: [yes | no | unclear]
+anonymous_pre_consult_possible: [yes | no | unclear]
+has_attorneys: [yes | no | unclear]
+income_eligibility_required: [yes | no | unclear]
+whistleblower_scope: [integer 0 | 1 | 2 | 3]
+whistleblower_note: [string]
+languages_supported: [array of ws_languages slugs]
+cost_models: [array of ws_aorg_cost_model slugs]
+case_stages: [array of ws_case_stage slugs]
+disclosure_targets: [array of ws_disclosure_targets child slugs]
+_review_notes: [string; if none use "researcher had no notes on current record"]
+
+The following record.keys are noted as acceptable to leave blank ("" or []), and are required even if blank:
+record.nationwide_example: ""
+record.disclosure_types: []
+record.phones: []
+record.emails: []
+
+
+  - source_url                [if organization information was sourced from anywhere other than an official domain, provide complete URL to source page, omit if official domain homepage was used]
+  - common_name               [publicly recognizable shorthand name or acronym for organization, omit if unavailable]
+  - homepage_url_status       [required - verified | redirects | unverified]
+  - verified_url_date         [YYYY-MM-DD only, omit if unverified]
+  - intake_url                [URL to intake entry point, omit if unavailable or unverified]
+  - contact_url               [URL to general contact page or form, omit if unavailable or unverified]
+  - phones                    [array of objects: { "type": "[hotline | intake | headquarters | regional | tty | fax | other]", "number": "..." }; may be []; if type is other, explain in _review_notes]
+  - emails                    [array of objects: { "type": "[intake | general | legal | media | support | other]", "address": "..." }; may be []; if type is other, explain in _review_notes]
+  - mailing_address           [mailing address text, omit if unavailable or unverifiable]
+  - has_secure_channel        [required - yes | no | unclear]
+  - nationwide_example        [required - quoted sentence up to 3 from source page or mission statement that shows nationwide intent, acceptable to leave blank if not found]
+  - disclosure_types          [Use Approved Taxonomy CHILD slugs, do not use PARENT slugs, from ws_disclosure_type, multiple may apply, omit if unavailable or ambiguous]
+  - languages_supported       [required - Use Approved Taxonomy slugs from ws_languages, list all you can find]
+  - languages_additional      [If languages_supported includes 'additional' slug, list languages not covered in taxonomy, or in-place situational language systems, e.g. spanish speaking intake translators available, or hearing impaired access, omit if no additional languages]
+  - assistance_type           [required - Use Approved Taxonomy slugs from ws_aorg_type table, best fit single slug only, use 'mixed' if ambiguous]
+  - employment_sectors        [Use Approved Taxonomy slugs from ws_employment_sector table, multiple may apply, omit if unavailable or ambiguous]
+  - cost_models               [required - Use Approved Taxonomy slugs from ws_aorg_cost_model table, multiple may apply, use 'unclear' if ambiguous]
+  - services_provided         [Use Approved Taxonomy slugs from ws_aorg_service table, multiple may apply, omit if unavailable or ambiguous]
+  - additional_services       [required when services_provided includes 'additional'; free text listing additional services, omit otherwise]
+  - process_types             [Use Approved Taxonomy slugs from ws_process_type table, multiple may apply, omit if unavailable or ambiguous]
+  - anonymous_pre_consult_possible [required - yes | no | unclear]
+  - has_attorneys                  [required - yes | no | unclear]
+  - income_eligibility_required    [required - yes | no | unclear]
+  - secure_contact_url             [required when has_secure_channel is yes, omit otherwise]
+  - secure_contact_tool            [required when has_secure_channel is yes; choose one: SecureDrop | Signal | ProtonMail | Tutanota | Wire | Keybase | other]
+  - secure_contact_tool_other      [required when secure_contact_tool is other; omit otherwise]
+  - income_eligibility_details     [required when income_eligibility_required is yes; income-specific thresholds/details]
+  - eligibility_notes              [general eligibility constraints not tied to income, omit if none]
+  - case_stages                    [required - Use Approved Taxonomy slugs from ws_case_stage table, multiple may apply, if 'other' slug is selected provide details in case_stage_details]
+  - case_stage_details             [If case_stages array includes slug 'other' provide details, omit if case_stages does not include slug 'other']
+  - disclosure_targets             [required - Use Approved Taxonomy CHILD slugs, do not use PARENT slugs, from ws_disclosure_targets, multiple may apply, may use 'has-details', it is acceptable to be left blank]
+  - disclosure_targets_details     [If disclosure_targets includes 'has-details', provide details, omit if disclosure_targets does not include 'has-details']
+  - jurisdiction_exceptions        [freetext describing any coverage gaps self reported by the organization, e.g. nationwide except Texas, or limited to jurisdictions where licensed, list all gaps found, this does not disqualify an org from nationwide inclusion, omit if none]
+  - whistleblower_scope            [required - INTEGER - rate 0 to 3, example(1) not whistleblower specific, general help such as ABA lawyer referral, example(2) sub-set of whistleblower concerns such as Tax Payers Against Fraud (securities, ethics, fraud), example(3) all whistleblower concerns such as Whistleblowers of America, set as 0 if scope is unclear]
+  - whistleblower_note             [required - quoted sentence up to 3 from source page or mission statement that describes scope of whistleblower assistance, if whistleblower_scope is 0 describe reason for inclusion]
+  - legitimacy_url                 [URL supporting legitimacy verification (for example IRS Form 990, state bar directory, Charity Navigator, GuideStar), omit if unavailable]
+  - _review_notes                  [required - free form notes about omitted data or notable details of organization not covered in schema, example: good notes may include why services_provided was hard to determine, second example: organization is well-regarded but currently not accepting intake clients. Be verbose about details the human reviewer may need to know or how the org can impact the user personas]
+
+
+OTHER GOOD NOTE EXAMPLES
+Do not use _review_notes for details already captured by structured fields such as
+jurisdiction_exceptions, eligibility_notes, languages_additional, cost_models,
+services_provided, or legitimacy_url.
+
+Intake limitations:
+- "Intake form requires creating an account before any information about services is visible — may deter anonymous users"
+- "Phone hotline listed but website states 2-3 week callback wait; not suitable for urgent retaliation situations"
+- "Intake is through a third-party scheduling tool that requires a valid email address"
+
+Scope edge cases:
+- "Primarily serves federal employees despite broad mission language; private sector cases accepted but rarely taken"
+
+Practical warnings:
+- "Organization is well-regarded but currently has a stated 6-month intake backlog as of last review"
+- "Website has service pages but no live intake channel currently functioning"
+
+Taxonomy gaps:
+- "Provides media coaching and source protection services not captured by any ws_aorg_service slug"
+- "Researcher has a new proposed taxonomy term, where it applies, and with detailed reason"
+
+ORGANIZATION INCLUSION RULES
+  - Must provide direct help or referral pathway.
+  - Prioritize actionable intake pathways over general information pages.
+
+ORGANIZATION EXCLUSION RULES
+  - Exclude pure government reporting channels.
+  - Exclude media tip lines without user support pathways.
+  - Exclude private law firms with billable-hour primary intake.
+    (Contingency-fee, pro bono, and legal-aid models are not excluded by default.)
+
+---
+RECORD SCHEMA
+
+{
+  "organization_name": "",
+  "official_homepage_url": "",
+  "general_description": "",
+
+  "source_url": "",
+  "common_name": "",
+  "homepage_url_status": "",
+  "verified_url_date": "",
+  "intake_url": "",
+  "contact_url": "",
+  "phones": [],
+  "emails": [],
+  "mailing_address": "",
+  "has_secure_channel": "",
+  "secure_contact_url": "",
+  "secure_contact_tool": "",
+  "secure_contact_tool_other": "",
+  "nationwide_example": "",
+
+  "disclosure_types": [],
+  "languages_supported": [],
+  "languages_additional": "",
+  "assistance_type": "",
+  "employment_sectors": [],
+  "cost_models": [],
+  "services_provided": [],
+  "additional_services": "",
+  "process_types": [],
+  "anonymous_pre_consult_possible": "",
+  "has_attorneys": "",
+  "income_eligibility_required": "",
+  "income_eligibility_details": "",
+  "eligibility_notes": "",
+  "case_stages": [],
+  "case_stage_details": "",
+  "disclosure_targets": [],
+  "disclosure_targets_details": "",
+
+  "jurisdiction_exceptions": "",
+  "whistleblower_scope": 0,
+  "whistleblower_note": "",
+  "legitimacy_url": "",
+  "_review_notes": ""
+}
+---
+
+PARENT SLUGS — CRITICAL RULE
+
+Parent slugs are structural labels only. They are never valid record values
+and must never appear in any record array.
+
+SELF-CHECK REQUIRED: Before writing your final JSON, scan every taxonomy
+array in every record. If you find any parent slug — including but not
+limited to "financial-corporate", "general-legal", "government-accountability", "national-security", "privacy-data-integrity", "public-health-safety", "workplace-employment", "all-sectors", "healthcare-staff", "private-sector", "public-sector", "special-status", "external-agency", "internal", "judicial", "legislative", "public" — you must:
+
+  1. Delete it from the array immediately
+  2. Leave the array empty if no valid child slug applies
+  3. Note the removed slug in json_run_notes
+  4. Set with_errors: true in the integrity block
+  5. Add to error_details: "[RECORD_ID]: Removed parent slug [SLUG] from
+     [FIELD] — no matching child slug found"
+
+A parent slug in a record array corrupts the database. This self-check
+is mandatory on every batch.
+
+---
+================================================================================
+TAXONOMY TABLES
+Notes: Record-type scoped palette. Use child slugs only for hierarchical
+       taxonomies. Tag only what is genuinely supported by the source
+       material. Many axes will be sparsely used on any single record.
+       Never use parent slugs. Never use slugs from the wrong table.
+================================================================================
+
+
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_disclosure_type
+Applies to: ws-assist-org
+Hierarchical: YES — use child slugs only
+Description: Subject matter of the protected disclosure. Use all that apply.
+────────────────────────────────────────────────────────────────────────────
+
+--- workplace-employment ---
+workplace-employment               Workplace & Employment (parent)
+wage-hour-violations               Wage & Hour Violations
+occupational-health-safety         Occupational Health & Safety
+collective-bargaining              Collective Bargaining Rights
+
+--- financial-corporate ---
+financial-corporate                Financial & Corporate (parent)
+securities-commodities-fraud       Securities & Commodities Fraud
+consumer-financial-protection      Consumer Financial Protection
+banking-aml-compliance             Banking & AML Compliance
+shareholder-rights                 Shareholder Rights
+tax-evasion-fraud                  Tax Evasion & Fraud
+
+--- government-accountability ---
+government-accountability          Government Accountability (parent)
+procurement-spending-fraud         Procurement & Spending Fraud
+public-corruption-ethics           Public Corruption & Ethics
+election-integrity                 Election Integrity
+military-defense-reporting         Military & Defense Reporting
+
+--- public-health-safety ---
+public-health-safety               Public Health & Safety (parent)
+healthcare-medicare-fraud          Healthcare & Medicare Fraud
+environmental-protection           Environmental Protection
+food-drug-safety                   Food & Drug Safety
+nuclear-energy-safety              Nuclear & Energy Safety
+transportation-safety              Transportation & Aviation Safety
+
+--- privacy-data-integrity ---
+privacy-data-integrity             Privacy & Data Integrity (parent)
+cybersecurity-disclosure           Cybersecurity Disclosure
+hipaa-patient-privacy              HIPAA & Patient Privacy
+consumer-data-protection           Consumer Data Protection
+education-privacy-ferpa            Education Privacy (FERPA)
+
+--- national-security ---
+national-security                  National Security (parent)
+intelligence-community             Intelligence Community Reporting
+classified-information             Classified Information Disclosures
+export-sanctions-compliance        Export Controls & Sanctions Compliance
+
+--- general-legal ---
+general-legal                      General Legal (parent)
+general-wrongdoing                 General Wrongdoing / Violation of Law
+
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_disclosure_targets
+Applies to: ws-assist-org
+Hierarchical: YES — use child slugs only
+Description: Who the protected disclosure may be made to. Tag all valid targets
+             explicitly named or clearly implied.
+────────────────────────────────────────────────────────────────────────────
+
+--- internal ---
+internal                           Internal (parent)
+internal-supervisor                Supervisor / Manager
+internal-hr                        Human Resources
+internal-compliance                Compliance / Ethics Hotline
+internal-legal                     In-House Legal Counsel
+internal-management                Management (General)
+
+--- external-agency ---
+external-agency                    External: Government Agency (parent)
+agency-federal                     Federal Agency
+agency-state                       State Agency
+agency-local                       Local / Municipal Agency
+law-enforcement                    Law Enforcement
+
+--- legislative ---
+legislative                        Legislative Body (parent)
+legislative-federal                U.S. Congress
+legislative-state                  State Legislature
+
+--- judicial ---
+judicial                           Judicial / Legal (parent)
+court-filing                       Court Filing
+attorney-counsel                   Personal Attorney / Counsel
+
+--- public ---
+public                             Public Disclosure (parent)
+public-media                       Media / Press
+public-nonprofit                   Non-Profit / Advocacy Organization
+
+has-details                        Has Details (sentinel — use with ws_disclosure_targets_details)
+
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_process_type
+Applies to: ws-assist-org
+Hierarchical: NO — flat list
+Description: Procedural route available. Tag all that apply.
+────────────────────────────────────────────────────────────────────────────
+
+administrative-complaint           Administrative Complaint
+civil-lawsuit                      Civil Lawsuit
+qui-tam                            Qui Tam (False Claims)
+internal-disclosure                Internal Disclosure
+regulatory-tip                     Regulatory Tip
+criminal-referral                  Criminal Referral
+state-agency-complaint             State Agency Complaint
+congressional-disclosure           Congressional Disclosure
+representative-action              Representative Action
+
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_case_stage
+Applies to: ws-assist-org
+Hierarchical: NO — flat list
+Description: Lifecycle stage where help is needed. Choose the closest stage for the org
+             fit (for example pre-report, retaliation-active, litigation).
+────────────────────────────────────────────────────────────────────────────
+
+pre-report                         Pre-Report
+post-report                        Post-Report
+retaliation-active                 Retaliation Active
+litigation                         Litigation
+other                              Other
+
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_languages
+Applies to: ws-assist-org
+Hierarchical: NO — flat list
+Description: Languages the organization can handle for intake or support. Tag all
+             available language options.
+────────────────────────────────────────────────────────────────────────────
+
+english                            English
+spanish                            Spanish
+mandarin                           Mandarin
+cantonese                          Cantonese
+french                             French
+portuguese                         Portuguese
+vietnamese                         Vietnamese
+tagalog                            Tagalog
+korean                             Korean
+arabic                             Arabic
+hindi                              Hindi
+russian                            Russian
+haitian-creole                     Haitian Creole
+polish                             Polish
+japanese                           Japanese
+additional                         Additional
+
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_aorg_type
+Applies to: ws-assist-org
+Hierarchical: NO — flat list
+Description: Primary organization classification for directory filters.
+────────────────────────────────────────────────────────────────────────────
+
+nonprofit                          Nonprofit Organization
+legal-aid                          Legal Aid Clinic
+law-firm                           Law Firm
+bar-program                        Bar Association Program
+advocacy                           Advocacy Organization
+oversight-office                   Government Oversight Office
+union                              Labor Union
+mixed                              Mixed
+
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_employment_sector
+Applies to: ws-assist-org
+Hierarchical: NO — flat list
+Description: Employment sectors the organization serves. Tag all supported sectors.
+────────────────────────────────────────────────────────────────────────────
+
+federal-employee                   Federal Government Employee
+state-local-employee               State & Local Government Employee
+private-sector                     Private Sector Employee
+military-defense                   Military & Defense Contractors
+nonprofit-ngo                      Nonprofit & NGO Employee
+all-sectors                        All Employment Sectors
+
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_aorg_cost_model
+Applies to: ws-assist-org
+Hierarchical: NO — flat list
+Description: Cost structure of the help pathway.
+────────────────────────────────────────────────────────────────────────────
+
+free                               Free of Charge
+pro-bono                           Pro Bono
+sliding-scale                      Sliding Scale Fee
+contingency                        Contingency Fee
+fee-for-service                    Fee for Service
+unclear                            Unclear
+
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_aorg_service
+Applies to: ws-assist-org
+Hierarchical: NO — flat list
+Description: Services offered by the organization. Tag all service types supported.
+────────────────────────────────────────────────────────────────────────────
+
+legal-rep                          Full Legal Representation
+consultation                       Legal Consultation / Advice
+referral                           Intake & Referral
+doc-review                         Document Review
+hotline                            Whistleblower Hotline
+retaliation                        Retaliation Defense
+financial                          Financial Assistance
+advocacy                           Policy Advocacy
+media                              Media & Communications Support
+additional                         Additional Services
+mental-health                      Mental Health Suport
+secure-drop                        Secure Information Drop
+peer-support                       Peer Support
+
+---
+
+INTEGRITY BLOCK
+
+The integrity block is your honest self-report on the state of this batch.
+Reporting errors here is not a failure — it is the most valuable contribution
+you can make to the reliability of this platform.
+
+{
+  "integrity": {
+    "with_errors":   [true | false],
+    "error_details": ["[SPECIFIC ERROR WITH DETAILS]"],
+    "error_count":   [INTEGER — must equal length of error_details]
+  }
+}
+
+with_errors must be true if ANY of the following occurred:
+  - record_count is less than requested (fewer records returned than requested)
+  - A required record could not be researched with sufficient confidence
+  - Any schema rule was knowingly violated
+  - A citation was omitted because a URL could not be verified
+  - A SOL value was derived rather than explicit (limit_ambiguous: true)
+  - A parent slug was detected and removed during self-check
+
+with_errors should not include items like:  
+  - Anything a human reviewer should know about this batch
+  - use record._review_notes for these — they are expected and do not indicate an error in the batch
+
+Fail-safe policy:
+  - It is acceptable to fail one or more records instead of guessing.
+  - It is acceptable to fail the full batch if source quality is insufficient.
+  - In either case, set with_errors: true and explain exactly why.
+
+OMISSION RULE: If with_errors is false, omit error_details and error_count
+entirely. The ingest tool treats a missing key differently from an empty array.
+
+---
+RUN SCOPE
+
+Record type:        assist-org
+Jurisdiction:       United States
+Jurisdiction ID:    US
+Requested Records:  as many as you can confidently verify (fewer is correct)
+Nationwide only:    yes
+Meta nationwide_only: true
+Focus notes:        alright team, human research has surfaced gaps in our original schema, it is now updated... concentrate on the listed organizations and using the schema help us fill these gaps:
+Whistleblowers of America
+Government Accountability Project
+National Whistleblower Center
+
+When "Nationwide only" is yes, return only nationwide or large multi-jurisdictional scoped organizations. Do not include single jurisdiction organizations, or organizations that only help federal employees.
+
+As many as you can confidently verify (fewer is correct).
+Attempt to find the requested number of records, but confidence is the hard
+constraint.
+
+Permission to fail and omit is explicit:
+  - omit uncertain fields instead of guessing
+  - omit uncertain records instead of padding the batch
+  - set with_errors: true and explain gaps in integrity.error_details
+
+Why this matters: fabricated or guessed legal information can cause real harm
+(for example, missed filing deadlines, invalid venue assumptions, or reliance
+on nonexistent precedent).
+---
+
+Produce the complete JSON object now, inside a single code block.
+Do not include any commentary, explanation, or markdown outside the code block.

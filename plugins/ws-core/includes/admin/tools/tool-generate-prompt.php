@@ -1088,8 +1088,8 @@ reach the official homepage right now. Record that source in record.source_url.
 
 
 Note:
-- nationwide_example, case_stage_details, and _review_notes are used as editorial seed blocks at ingest.
-- They are appended to general_description to assist human review and summary.
+- nationwide_example, case_stage_details, jurisdiction_exceptions, and _review_notes are used as editorial seed blocks at ingest.
+- They are appended to general_description to assist human review and summary when present.
 
 ---
 
@@ -1280,6 +1280,7 @@ function ws_generate_assist_org_prompt( array $scope ): string {
     $proposal_count  = max( 0, (int) ( $scope['proposal_count'] ?? 0 ) );
     $nationwide_only = ! empty( $scope['nationwide_only'] );
     $focus_notes     = sanitize_textarea_field( (string) ( $scope['assist_org_focus_notes'] ?? '' ) );
+    $focus_notes     = trim( preg_replace( '/\R+/', "\n", $focus_notes ) );
     $excludes        = sanitize_textarea_field( (string) ( $scope['exclusion_list'] ?? '' ) );
 
     $out  = ws_prompt_assist_org_research_block();
@@ -1295,26 +1296,21 @@ function ws_generate_assist_org_prompt( array $scope ): string {
     $out .= "Record type:        assist-org\n";
     $out .= "Jurisdiction:       {$jx_name}\n";
     $out .= "Jurisdiction ID:    {$jx}\n";
-    if ( $proposal_count > 0 ) {
-        $out .= "Requested Records:  {$proposal_count}\n";
-    } else {
-        $out .= "Requested Records:  as many as you can confidently verify (fewer is correct)\n";
-    }
-    $out .= 'Nationwide only:    ' . ( $nationwide_only ? 'yes' : 'no' ) . "\n";
+    $out .= "Requested Records:  {$proposal_count}\n";
     $out .= 'Meta nationwide_only: ' . ( $nationwide_only ? 'true' : 'false' ) . "\n";
     if ( $focus_notes !== '' ) {
-        $out .= "Focus notes:        {$focus_notes}\n";
+        $out .= "Focus notes:\n---\n{$focus_notes}\n---\n";
     }
     $out .= ws_prompt_render_exclusion_list( $excludes, 'Do not return organizations already known in this list:' );
 
     if ( $nationwide_only ) {
-        $out .= "\nWhen \"Nationwide only\" is yes, return only nationwide or large multi-jurisdictional scoped organizations. ";
+        $out .= "\nWhen \"meta.nationwide_only\" is true, return only nationwide or large multi-jurisdictional scoped organizations. ";
         $out .= "Do not include single jurisdiction organizations, or organizations that only help federal employees.\n";
     } else {
-        $out .= "\nWhen \"Nationwide only\" is no, include strong {$jx} fits and optional broader coverage.\n";
+        $out .= "\nWhen \"meta.nationwide_only\" is false, include strong {$jx} fits and optional broader coverage.\n";
     }
 
-    $out .= ws_prompt_truncation_permission();
+    $out .= ws_prompt_truncation_permission_assist_org();
     $out .= ws_prompt_final_json_block();
 
     return $out;
@@ -1807,6 +1803,25 @@ Permission to fail and omit is explicit:
 Why this matters: fabricated or guessed legal information can cause real harm
 (for example, missed filing deadlines, invalid venue assumptions, or reliance
 on nonexistent precedent).
+
+BLOCK;
+}
+
+function ws_prompt_truncation_permission_assist_org(): string {
+        return <<<'BLOCK'
+
+As many as you can confidently verify (fewer is correct).
+Attempt to find the requested number of records, but confidence is the hard
+constraint.
+
+Permission to fail and omit is explicit:
+    - omit uncertain fields instead of guessing
+    - omit uncertain records instead of padding the batch
+    - set with_errors: true and explain gaps in integrity.error_details
+
+Why this matters: fabricated or guessed assistance-organization details can
+send people in crisis to dead intake channels, incorrect eligibility/cost
+expectations, or insecure disclosure paths.
 
 BLOCK;
 }

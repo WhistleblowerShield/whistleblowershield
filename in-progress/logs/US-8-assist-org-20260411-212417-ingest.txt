@@ -1,0 +1,48 @@
+================================================
+WS INGEST RUN LOG
+================================================
+Run timestamp:    2026-04-11 21:24:17 UTC
+Jurisdiction:     US
+Source:           NotebookLM Reconciliation
+Source method:    ai_assisted
+Batch completed:  2026-04-07 16:40 UTC
+
+── SUMMARY ──────────────────────────────────────
+Created:          1
+Skipped (dupe):   7
+Failed:           0
+Citation stubs:   0
+Agency stubs:     0
+Proposed new:     0
+Proposed merged:  0
+Blacklist size:   9
+
+── RECORD DETAIL ────────────────────────────────
+✗ Whistleblowers of America
+    ⚠ Whistleblowers of America: duplicate detected (post #5080) — skipped.
+✗ Government Accountability Project
+    ⚠ Government Accountability Project: duplicate detected (post #5075) — skipped.
+✗ National Whistleblower Center
+    ⚠ National Whistleblower Center: duplicate detected (post #5076) — skipped.
+✗ Whistleblower Aid
+    ⚠ Whistleblower Aid: duplicate detected (post #5077) — skipped.
+✓ The Anti-Fraud Coalition [post #5090]
+    ⚠ The Anti-Fraud Coalition: anonymous_pre_consult_possible='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    ⚠ The Anti-Fraud Coalition: has_secure_channel missing/empty; coerced to 'no' (0). Meat-bag review required.
+    ⚠ The Anti-Fraud Coalition: anonymous_pre_consult_possible='unclear' coerced to 0 (no) for ingest; meat-bag review required.
+    ⚠ The Anti-Fraud Coalition: income_eligibility_required missing/empty; coerced to 'no' (0). Meat-bag review required.
+    · jurisdiction: assigned 'us'
+    · The Anti-Fraud Coalition: internal_id generated as 'anti-fraud-coal-us'
+    · omitted (no ACF field): organization_name = The Anti-Fraud Coalition
+    · omitted (no ACF field): homepage_url_status = verified
+    · The Anti-Fraud Coalition: created as post #5090 (draft, unverified)
+✗ Public Employees for Environmental Responsibility
+    ⚠ Public Employees for Environmental Responsibility: duplicate detected (post #5088) — skipped.
+✗ Project On Government Oversight
+    ⚠ Project On Government Oversight: duplicate detected (post #5078) — skipped.
+✗ The Signals Network
+    ⚠ The Signals Network: duplicate detected (post #5089) — skipped.
+
+================================================
+END OF LOG
+================================================
