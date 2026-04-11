@@ -833,8 +833,8 @@ function ws_prompt_taxonomy_tables( string $applies_to ): string {
             'description' => "Burden-of-proof standard the employee must meet. Tag all that explicitly\n             apply. Omit entirely if no standard is named — do not infer.",
         ],
         'ws_case_stage' => [
-            'label'       => 'Case Stage',
-            'description' => "Lifecycle stage where help is needed. Choose the closest stage for the org\n             fit (for example pre-report, retaliation-active, litigation).",
+            'label'       => 'Case Stages',
+            'description' => "Lifecycle stage where help is needed. Tag all that explicitly\n             apply (for example pre-report, retaliation-active, litigation).",
         ],
         'ws_languages' => [
             'label'       => 'Languages',
@@ -845,15 +845,15 @@ function ws_prompt_taxonomy_tables( string $applies_to ): string {
             'description' => "Primary organization classification for directory filters.",
         ],
         'ws_employment_sector' => [
-            'label'       => 'Employment Sector',
+            'label'       => 'Employment Sectors',
             'description' => "Employment sectors the organization serves. Tag all supported sectors.",
         ],
         'ws_aorg_cost_model' => [
-            'label'       => 'Assist-Org Cost Model',
-            'description' => "Cost structure of the help pathway.",
+            'label'       => 'Assist-Org Cost Models',
+            'description' => "Available cost models for the organization. Tag all that explicitly apply.",
         ],
         'ws_aorg_service' => [
-            'label'       => 'Assist-Org Service',
+            'label'       => 'Assist-Org Services',
             'description' => "Services offered by the organization. Tag all service types supported.",
         ],
     ];
@@ -1102,23 +1102,23 @@ Each candidate organization must include as much verified information as possibl
 
 Unless 'required' omit any record.key you cannot confidently find data for or becomes unnecessary.
 PERMISSIBLE TO OMIT:
-record.source_url
-record.common_name
-record.verified_url_date
-record.contact_url
-record.intake_url
-record.mailing_address
-record.disclosure_types
-record.languages_additional
-record.employment_sectors
-record.services_provided
-record.additional_services
-record.process_types
-record.eligibility_notes
-record.case_stage_details
-record.disclosure_targets_details
-record.jurisdiction_exceptions
-record.legitimacy_url
+source_url
+common_name
+verified_url_date
+contact_url
+intake_url
+mailing_address
+disclosure_types
+languages_additional
+employment_sectors
+services_provided
+additional_services
+process_types
+eligibility_notes
+case_stage_details
+disclosure_targets_details
+jurisdiction_exceptions
+legitimacy_url
 
 
 REQUIRED KEYS
