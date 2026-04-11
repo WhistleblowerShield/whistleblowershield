@@ -318,6 +318,17 @@
     color: #1f3b5d;
 }
 
+.ws-btn--contact {
+    background: #ebf4ff;
+    color: #1e3a8a;
+    border-color: #1e3a8a;
+}
+
+.ws-btn--contact:hover {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
 .ws-btn--secure {
     background: #f0fdfa;
     color: #0f766e;

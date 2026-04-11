@@ -4,7 +4,7 @@
  *
  * @package WhistleblowerShield
  * @since   3.0.0
- * @version 3.16.1
+ * @version 3.16.3
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -43,8 +43,9 @@ $_ws_assist_org_matrix = [
         'mailing_address' => 'Government Accountability Project, 1100 G Street NW, Suite 500, Washington, DC 20005',
         'income_limit' => 0,
         'income_limit_notes' => '',
+        'eligibility_notes' => '',
         'aorg_type' => 'nonprofit',
-        'cost_model' => 'pro-bono',
+        'cost_models' => [ 'pro-bono' ],
         'is_nationwide' => 1,
         'is_limited_scope' => 0,
         'community_scope' => '',
@@ -111,8 +112,9 @@ $_ws_assist_org_matrix = [
         'mailing_address' => 'National Whistleblower Center, 1140 Connecticut Ave NW, Suite 900, Washington, DC 20036',
         'income_limit' => 0,
         'income_limit_notes' => '',
+        'eligibility_notes' => '',
         'aorg_type' => 'nonprofit',
-        'cost_model' => 'unclear',
+        'cost_models' => [ 'unclear' ],
         'is_nationwide' => 1,
         'is_limited_scope' => 0,
         'community_scope' => '',
@@ -166,8 +168,9 @@ $_ws_assist_org_matrix = [
         'mailing_address' => 'Whistleblower Aid, 2001 S Street NW, Washington, DC 20009',
         'income_limit' => 0,
         'income_limit_notes' => '',
+        'eligibility_notes' => '',
         'aorg_type' => 'legal-aid',
-        'cost_model' => 'pro-bono',
+        'cost_models' => [ 'pro-bono' ],
         'is_nationwide' => 1,
         'is_limited_scope' => 0,
         'community_scope' => '',
@@ -234,8 +237,9 @@ $_ws_assist_org_matrix = [
         'mailing_address' => 'Project On Government Oversight, 1100 G Street NW, Suite 500, Washington, DC 20005',
         'income_limit' => 0,
         'income_limit_notes' => '',
+        'eligibility_notes' => '',
         'aorg_type' => 'advocacy',
-        'cost_model' => 'free',
+        'cost_models' => [ 'free' ],
         'is_nationwide' => 1,
         'is_limited_scope' => 0,
         'community_scope' => '',
@@ -284,8 +288,9 @@ $_ws_assist_org_matrix = [
         'mailing_address' => 'Taxpayers Against Fraud Education Fund, 1140 Connecticut Ave NW, Suite 900, Washington, DC 20036',
         'income_limit' => 0,
         'income_limit_notes' => '',
+        'eligibility_notes' => '',
         'aorg_type' => 'advocacy',
-        'cost_model' => 'unclear',
+        'cost_models' => [ 'unclear' ],
         'is_nationwide' => 1,
         'is_limited_scope' => 0,
         'community_scope' => '',
@@ -344,8 +349,9 @@ $_ws_assist_org_matrix = [
         'mailing_address' => 'Whistleblowers of America, 11130 Lillian Highway, Pensacola, FL 32506',
         'income_limit' => 0,
         'income_limit_notes' => '',
+        'eligibility_notes' => '',
         'aorg_type' => 'advocacy',
-        'cost_model' => 'unclear',
+        'cost_models' => [ 'unclear' ],
         'is_nationwide' => 1,
         'is_limited_scope' => 0,
         'community_scope' => '',
@@ -399,8 +405,9 @@ $_ws_assist_org_matrix = [
         'mailing_address' => 'Whistleblowing International Network (WIN) c/o SCVO, Edward House, 199 Sauchiehall Street, Glasgow, G2 3EX',
         'income_limit' => 0,
         'income_limit_notes' => '',
+        'eligibility_notes' => '',
         'aorg_type' => 'advocacy',
-        'cost_model' => 'free',
+        'cost_models' => [ 'free' ],
         'is_nationwide' => 1,
         'is_limited_scope' => 0,
         'community_scope' => '',
@@ -458,8 +465,9 @@ $_ws_assist_org_matrix = [
         'mailing_address' => 'National Office: National Employment Law Project, PO Box 1779, New York, NY 10008',
         'income_limit' => 0,
         'income_limit_notes' => '',
+        'eligibility_notes' => '',
         'aorg_type' => 'advocacy',
-        'cost_model' => 'free',
+        'cost_models' => [ 'free' ],
         'is_nationwide' => 1,
         'is_limited_scope' => 0,
         'community_scope' => '',
@@ -514,8 +522,9 @@ $_ws_assist_org_matrix = [
         'mailing_address' => '1800 Sutter Street, Suite 210, Concord, CA 94520',
         'income_limit' => 0,
         'income_limit_notes' => '',
+        'eligibility_notes' => '',
         'aorg_type' => 'bar-program',
-        'cost_model' => 'fee-for-service',
+        'cost_models' => [ 'fee-for-service' ],
         'is_nationwide' => 1,
         'is_limited_scope' => 0,
         'community_scope' => '',
@@ -567,8 +576,9 @@ $_ws_assist_org_matrix = [
         'mailing_address' => 'Legal Services Corporation, 3333 K Street NW, Washington, DC 20007',
         'income_limit' => 1,
         'income_limit_notes' => 'LSC-funded grantees are legally required to serve clients at or below 125% of Federal Poverty Guidelines per 45 CFR Part 1611; updated annually by HHS',
+        'eligibility_notes' => '',
         'aorg_type' => 'legal-aid',
-        'cost_model' => 'free',
+        'cost_models' => [ 'free' ],
         'is_nationwide' => 1,
         'is_limited_scope' => 0,
         'community_scope' => '',
@@ -621,8 +631,9 @@ $_ws_assist_org_matrix = [
         'mailing_address' => 'National Legal Aid and Defender Association, 1140 Connecticut Ave NW, Suite 900, Washington, DC 20036',
         'income_limit' => 0,
         'income_limit_notes' => '',
+        'eligibility_notes' => '',
         'aorg_type' => 'advocacy',
-        'cost_model' => 'free',
+        'cost_models' => [ 'free' ],
         'is_nationwide' => 1,
         'is_limited_scope' => 0,
         'community_scope' => '',
@@ -680,8 +691,9 @@ $_ws_assist_org_matrix = [
         'mailing_address' => 'National Whistleblower Center, 2001 S Street NW, Washington, DC 20009',
         'income_limit' => 0,
         'income_limit_notes' => '',
+        'eligibility_notes' => '',
         'aorg_type' => 'bar-program',
-        'cost_model' => 'fee-for-service',
+        'cost_models' => [ 'fee-for-service' ],
         'is_nationwide' => 1,
         'is_limited_scope' => 0,
         'community_scope' => '',
@@ -739,8 +751,9 @@ $_ws_assist_org_matrix = [
         'mailing_address' => 'American Bar Association, 321 N Clark St, Chicago, IL 60654',
         'income_limit' => 1,
         'income_limit_notes' => 'Routes to LSC-funded and pro bono programs that apply income thresholds (typically ≤125-200% FPG); the referral tool itself does not screen income but downstream resources do',
+        'eligibility_notes' => '',
         'aorg_type' => 'bar-program',
-        'cost_model' => 'fee-for-service',
+        'cost_models' => [ 'fee-for-service' ],
         'is_nationwide' => 1,
         'is_limited_scope' => 0,
         'community_scope' => '',
@@ -798,8 +811,9 @@ $_ws_assist_org_matrix = [
         'mailing_address' => 'PEER, 962 Wayne Ave, Suite 610, Silver Spring, MD 20910',
         'income_limit' => 0,
         'income_limit_notes' => '',
+        'eligibility_notes' => '',
         'aorg_type' => 'nonprofit',
-        'cost_model' => 'pro-bono',
+        'cost_models' => [ 'pro-bono' ],
         'is_nationwide' => 1,
         'is_limited_scope' => 0,
         'community_scope' => '',
@@ -853,8 +867,9 @@ $_ws_assist_org_matrix = [
         'mailing_address' => 'The Signals Network, 416 Florida Ave NW #26152, Washington, DC 20001',
         'income_limit' => 0,
         'income_limit_notes' => '',
+        'eligibility_notes' => '',
         'aorg_type' => 'nonprofit',
-        'cost_model' => 'free',
+        'cost_models' => [ 'free' ],
         'is_nationwide' => 1,
         'is_limited_scope' => 0,
         'community_scope' => '',
@@ -890,6 +905,113 @@ $_ws_assist_org_matrix = [
 // Seeder: ws_seed_assist_org_matrix
 // ════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Builds a normalized assist-org internal ID using the ingest ruleset.
+ *
+ * This keeps matrix-seeded IDs consistent with ingest-generated IDs.
+ *
+ * @param array  $org     Matrix org row.
+ * @param string $jx_slug Jurisdiction slug suffix (typically 'us').
+ * @return string
+ */
+function ws_matrix_build_assist_org_internal_id( array $org, string $jx_slug = '' ): string {
+    $org_name = trim( (string) ( $org['title'] ?? '' ) );
+    $homepage = trim( (string) ( $org['ws_aorg_website_url'] ?? '' ) );
+    $jx_slug  = strtolower( trim( (string) $jx_slug ) );
+
+    $host = strtolower( (string) wp_parse_url( $homepage, PHP_URL_HOST ) );
+    if ( str_starts_with( $host, 'www.' ) ) {
+        $host = substr( $host, 4 );
+    }
+
+    $seed = $org_name !== '' ? $org_name : $host;
+    if ( $seed === '' ) {
+        $seed = 'assist org';
+    }
+
+    $normalized = strtolower( $seed );
+    $normalized = str_replace( '&', ' ', $normalized );
+
+    if ( $jx_slug !== '' && defined( 'WS_JURISDICTION_TAXONOMY' ) ) {
+        $jx_term = get_term_by( 'slug', $jx_slug, WS_JURISDICTION_TAXONOMY );
+        if ( $jx_term && ! is_wp_error( $jx_term ) ) {
+            $jx_name = strtolower( trim( (string) $jx_term->name ) );
+            if ( $jx_name !== '' ) {
+                $jx_name_rx = preg_quote( $jx_name, '/' );
+                $normalized = preg_replace( '/\b' . $jx_name_rx . '\b/u', ' ' . $jx_slug . ' ', $normalized );
+            }
+        }
+    }
+
+    $normalized = preg_replace( '/\b(?:and|the|for|of|in|at|to|a|an)\b/u', ' ', $normalized );
+
+    // IMPORTANT: Keep this ruleset in sync with
+    // ws_ingest_build_assist_org_internal_id() in tool-ingest.php.
+    // If these diverge, seeded/internal IDs will drift over time.
+    $abbrev_rules = [
+        '/\bwhistle[\s\-]*blow(?:er|ers|ing)\b/u' => 'wb',
+        '/\bglobal\b/u'                              => 'intl',
+        '/\binternational\b/u'                       => 'intl',
+        '/\bnationals?\b/u'                          => 'nat',
+        '/\borganizations?\b/u'                      => 'org',
+        '/\borganisations?\b/u'                      => 'org',
+        '/\bassociations?\b/u'                       => 'assoc',
+        '/\bcoalitions?\b/u'                         => 'coal',
+        '/\balliances?\b/u'                          => 'all',
+        '/\bcommittees?\b/u'                         => 'cmte',
+        '/\bcouncils?\b/u'                           => 'cncl',
+        '/\binstitutions?\b/u'                       => 'inst',
+        '/\binstitutes?\b/u'                         => 'inst',
+        '/\bbureaus?\b/u'                            => 'bur',
+        '/\boffices?\b/u'                            => 'ofc',
+        '/\bemployees?\b/u'                          => 'emp',
+        '/\bemployment\b/u'                          => 'emp',
+        '/\bprotections?\b/u'                        => 'prot',
+        '/\badvocacy\b/u'                            => 'adv',
+        '/\brights\b/u'                              => 'rts',
+        '/\bpublic\b/u'                              => 'pub',
+        '/\bpolicy\b/u'                              => 'pol',
+        '/\beducational\b/u'                         => 'edu',
+        '/\beducation\b/u'                           => 'edu',
+        '/\bresearch\b/u'                            => 'rsch',
+        '/\battorneys?\b/u'                          => 'att',
+        '/\breferrals?\b/u'                          => 'ref',
+        '/\bfederal\b/u'                             => 'fed',
+        '/\bgovernmental\b/u'                        => 'gov',
+        '/\bgovernments?\b/u'                        => 'gov',
+        '/\bdepartments?\b/u'                        => 'dept',
+        '/\bcommissions?\b/u'                        => 'comm',
+        '/\bcorporations?\b/u'                       => 'corp',
+        '/\bfoundations?\b/u'                        => 'fdn',
+        '/\bcenters?\b/u'                            => 'ctr',
+        '/\bcentres?\b/u'                            => 'ctr',
+        '/\bservices?\b/u'                           => 'svc',
+        '/\bnetworks?\b/u'                           => 'net',
+        '/\bprograms?\b/u'                           => 'prog',
+        '/\bprojects?\b/u'                           => 'proj',
+        '/\binitiatives?\b/u'                        => 'init',
+        '/\bresources?\b/u'                          => 'res',
+    ];
+
+    foreach ( $abbrev_rules as $pattern => $replacement ) {
+        $normalized = preg_replace( $pattern, ' ' . $replacement . ' ', $normalized );
+    }
+
+    $normalized = preg_replace( '/[^a-z0-9]+/u', '-', $normalized );
+    $normalized = trim( (string) $normalized, '-' );
+    $normalized = preg_replace( '/-+/', '-', (string) $normalized );
+
+    if ( $normalized === '' ) {
+        $normalized = $host !== '' ? sanitize_title( $host ) : 'assist-org';
+    }
+
+    if ( $jx_slug !== '' && ! preg_match( '/(^|-)' . preg_quote( $jx_slug, '/' ) . '($|-)/', $normalized ) ) {
+        $normalized .= '-' . $jx_slug;
+    }
+
+    return $normalized;
+}
+
 function ws_seed_assist_org_matrix() {
 
     global $_ws_assist_org_matrix;
@@ -906,6 +1028,11 @@ function ws_seed_assist_org_matrix() {
     }
 
     foreach ( $_ws_assist_org_matrix as $org ) {
+
+        $internal_id = ws_matrix_build_assist_org_internal_id( $org, 'us' );
+        if ( $internal_id === '' ) {
+            $internal_id = (string) ( $org['internal_id'] ?? '' );
+        }
 
         $existing = get_page_by_path( $org['slug'], OBJECT, 'ws-assist-org' );
         // Matrix no longer requires duplicated description + post_content
@@ -943,7 +1070,7 @@ function ws_seed_assist_org_matrix() {
         // Boolean fields (0/1) and array fields always write — 0 is meaningful.
 
         $meta = [
-            'ws_aorg_internal_id'         => $org['internal_id']          ?? '',
+            'ws_aorg_internal_id'         => $internal_id,
             'ws_aorg_official_name'       => $org['title']                ?? '',
             'ws_aorg_common_name'         => $org['common_name']          ?? '',
             'ws_aorg_description'         => $org['description']          ?? '',
@@ -956,6 +1083,7 @@ function ws_seed_assist_org_matrix() {
             'ws_aorg_mailing_address'     => $org['mailing_address']       ?? '',
             'ws_aorg_income_limit'        => $org['income_limit']          ?? '',
             'ws_aorg_income_limit_notes'  => $org['income_limit_notes']    ?? '',
+            'ws_aorg_eligibility_notes'   => $org['eligibility_notes']     ?? '',
             'ws_aorg_serves_nationwide'   => $org['is_nationwide']        ?? 0,
             'ws_aorg_limited_scope'       => $org['is_limited_scope']     ?? 0,
             'ws_aorg_community_scope'     => $org['community_scope']      ?? '',
@@ -974,8 +1102,7 @@ function ws_seed_assist_org_matrix() {
             }
         }
 
-        // Contact repeaters (v3.16.1): consume matrix arrays directly.
-        // Legacy flat keys are still accepted as fallback.
+        // Contact repeaters: consume canonical matrix arrays directly.
         $phone_rows = [];
         if ( ! empty( $org['phones'] ) && is_array( $org['phones'] ) ) {
             foreach ( $org['phones'] as $row ) {
@@ -993,14 +1120,6 @@ function ws_seed_assist_org_matrix() {
                 $phone_rows[] = [
                     'ws_aorg_phone_type'   => $type,
                     'ws_aorg_phone_number' => $number,
-                ];
-            }
-        } else {
-            $legacy_phone = trim( (string) ( $org['ws_aorg_phone'] ?? '' ) );
-            if ( $legacy_phone !== '' ) {
-                $phone_rows[] = [
-                    'ws_aorg_phone_type'   => 'other',
-                    'ws_aorg_phone_number' => $legacy_phone,
                 ];
             }
         }
@@ -1024,14 +1143,6 @@ function ws_seed_assist_org_matrix() {
                     'ws_aorg_email_address' => $address,
                 ];
             }
-        } else {
-            $legacy_email = sanitize_email( (string) ( $org['ws_aorg_email'] ?? '' ) );
-            if ( $legacy_email !== '' ) {
-                $email_rows[] = [
-                    'ws_aorg_email_type'    => 'other',
-                    'ws_aorg_email_address' => $legacy_email,
-                ];
-            }
         }
 
         if ( function_exists( 'update_field' ) ) {
@@ -1049,9 +1160,9 @@ function ws_seed_assist_org_matrix() {
             ws_matrix_assign_terms( $post_id, [ $org['aorg_type'] ], 'ws_aorg_type' );
         }
 
-        // Cost model (single slug — must match ws_aorg_cost_model seeder).
-        if ( ! empty( $org['cost_model'] ) ) {
-            ws_matrix_assign_terms( $post_id, [ $org['cost_model'] ], 'ws_aorg_cost_model' );
+        // Cost models (array of slugs — must match ws_aorg_cost_model seeder).
+        if ( ! empty( $org['cost_models'] ) && is_array( $org['cost_models'] ) ) {
+            ws_matrix_assign_terms( $post_id, $org['cost_models'], 'ws_aorg_cost_model' );
         }
 
         // Disclosure types (array of slugs — must match ws_disclosure_type seeder).
@@ -1094,9 +1205,9 @@ function ws_seed_assist_org_matrix() {
 // ── Gate ──────────────────────────────────────────────────────────────────────
 
 add_action( 'admin_init', function() {
-    if ( get_option( 'ws_seeded_assist_org_matrix' ) !== '1.2.0' ) {
+    if ( get_option( 'ws_seeded_assist_org_matrix' ) !== '1.2.2' ) {
         ws_seed_assist_org_matrix();
-        update_option( 'ws_seeded_assist_org_matrix', '1.2.0' );
+        update_option( 'ws_seeded_assist_org_matrix', '1.2.2' );
     }
 } );
 

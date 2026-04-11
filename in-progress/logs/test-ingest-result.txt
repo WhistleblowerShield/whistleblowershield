@@ -1,0 +1,89 @@
+
+==========================================
+BATCH: US-8-Assist-org-NotebookLM.json
+==========================================
+meta.record_type      : assist-org
+meta.jurisdiction_id  : US
+records count         : 8
+
+--- SUMMARY ---
+  created: 0
+  skipped: 8
+  failed: 0
+  citation_stubs_created: 0
+  agency_stubs_created: 0
+  proposed_new: 0
+  proposed_merged: 0
+  blacklist_size: 9
+  source_name: NotebookLM Reconciliation
+  source_method: ai_assisted
+  jurisdiction: US
+  batch_completed: 2026-04-07 16:40 UTC
+  record_type: assist-org
+
+--- RECORDS ---
+  [?] [1 warn] (record 0)
+    WARN: Whistleblowers of America: duplicate detected (post #3590) ΓÇö skipped.
+  [?] [1 warn] (record 1)
+    WARN: Government Accountability Project: duplicate detected (post #3592) ΓÇö skipped.
+  [?] [1 warn] (record 2)
+    WARN: National Whistleblower Center: duplicate detected (post #3594) ΓÇö skipped.
+  [?] [1 warn] (record 3)
+    WARN: Whistleblower Aid: duplicate detected (post #3596) ΓÇö skipped.
+  [?] [1 warn] (record 4)
+    WARN: The Anti-Fraud Coalition: duplicate detected (post #3598) ΓÇö skipped.
+  [?] [1 warn] (record 5)
+    WARN: Public Employees for Environmental Responsibility: duplicate detected (post #3600) ΓÇö skipped.
+  [?] [1 warn] (record 6)
+    WARN: Project On Government Oversight: duplicate detected (post #73) ΓÇö skipped.
+  [?] [1 warn] (record 7)
+    WARN: The Signals Network: duplicate detected (post #3602) ΓÇö skipped.
+
+
+==========================================
+BATCH: US-10-Assist-org-NotebookLM.json
+==========================================
+meta.record_type      : assist-org
+meta.jurisdiction_id  : US
+records count         : 10
+
+--- SUMMARY ---
+  created: 0
+  skipped: 10
+  failed: 0
+  citation_stubs_created: 0
+  agency_stubs_created: 0
+  proposed_new: 0
+  proposed_merged: 0
+  blacklist_size: 9
+  source_name: NotebookLM Reconciliation
+  source_method: ai_assisted
+  jurisdiction: US
+  batch_completed: 2026-04-08 17:33 UTC
+  record_type: assist-org
+
+--- RECORDS ---
+  [?] [1 warn] (record 0)
+    WARN: Empower Oversight Whistleblowers & Research: duplicate detected (post #3604) ΓÇö skipped.
+  [?] [1 warn] (record 1)
+    WARN: AI Whistleblower Initiative: duplicate detected (post #3606) ΓÇö skipped.
+  [?] [1 warn] (record 2)
+    WARN: Whistleblower and Source Protection Program: duplicate detected (post #3608) ΓÇö skipped.
+  [?] [1 warn] (record 3)
+    WARN: Psst: duplicate detected (post #3610) ΓÇö skipped.
+  [?] [1 warn] (record 4)
+    WARN: Protect Democracy: duplicate detected (post #3612) ΓÇö skipped.
+  [?] [1 warn] (record 5)
+    WARN: Reporters Committee for Freedom of the Press: duplicate detected (post #3614) ΓÇö skipped.
+  [?] [1 warn] (record 6)
+    WARN: TIME'S UP Legal Defense Fund: duplicate detected (post #3616) ΓÇö skipped.
+  [?] [1 warn] (record 7)
+    WARN: A Better Balance: duplicate detected (post #3618) ΓÇö skipped.
+  [?] [1 warn] (record 8)
+    WARN: Legal Momentum: duplicate detected (post #3620) ΓÇö skipped.
+  [?] [1 warn] (record 9)
+    WARN: Center for WorkLife Law: duplicate detected (post #3622) ΓÇö skipped.
+
+==========================================
+Ingest test complete.
+==========================================

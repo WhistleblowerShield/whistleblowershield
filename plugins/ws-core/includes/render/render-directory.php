@@ -7,10 +7,37 @@
  *
  * @package WhistleblowerShield
  * @since   3.6.0
- * @version 3.15.0
+ * @version 3.15.1
  */
 
 defined( 'ABSPATH' ) || exit;
+
+add_action( 'wp', function() {
+    if ( ! is_singular( 'ws-assist-org' ) ) {
+        return;
+    }
+    if ( empty( $_GET['ws_from_dir'] ) ) {
+        return;
+    }
+    if ( ! function_exists( 'ws_resolve_filter_context' ) || ! function_exists( 'ws_filter_log_profile_view' ) ) {
+        return;
+    }
+
+    $org_id = get_queried_object_id();
+    if ( ! $org_id ) {
+        return;
+    }
+
+    $context = ws_resolve_filter_context( false );
+    $click_meta = [
+        'rank'      => isset( $_GET['ws_rank'] ) ? (int) $_GET['ws_rank'] : 0,
+        'rel_score' => isset( $_GET['ws_rel_score'] ) ? (int) $_GET['ws_rel_score'] : 0,
+        'eng_score' => isset( $_GET['ws_eng_score'] ) ? (int) $_GET['ws_eng_score'] : 0,
+        'secure'    => ! empty( $_GET['ws_secure'] ) && $_GET['ws_secure'] === '1',
+    ];
+
+    ws_filter_log_profile_view( (int) $org_id, $context, $click_meta );
+} );
 
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -327,9 +354,15 @@ function ws_filter_sort_orgs( array $orgs, array $context, bool $targeted ): arr
     // Score each org
     $scored = [];
     foreach ( $orgs as $org ) {
+        $rel_score = ws_filter_score_org( $org, $context, $targeted );
+        $eng_score = ws_filter_score_engagement( $org );
+
+        $org['_rel_score'] = $rel_score;
+        $org['_eng_score'] = $eng_score;
+
         $scored[] = [
             'org'   => $org,
-            'score' => ws_filter_score_org( $org, $context, $targeted ),
+            'score' => $rel_score + $eng_score,
         ];
     }
 
@@ -506,8 +539,8 @@ function ws_render_directory_listing( $items ) {
     ob_start();
     ?>
     <div class="ws-directory__grid" role="list">
-        <?php foreach ( $items as $org ) : ?>
-            <?php echo ws_render_directory_card( $org ); // phpcs:ignore ?>
+        <?php foreach ( $items as $position => $org ) : ?>
+            <?php echo ws_render_directory_card( $org, (int) $position + 1 ); // phpcs:ignore ?>
         <?php endforeach; ?>
     </div>
     <?php
@@ -523,9 +556,10 @@ function ws_render_directory_listing( $items ) {
  * Renders a single assist-organization card.
  *
  * @param array<string,mixed> $org Normalized org row.
+ * @param int                $position 1-based rank position in rendered list.
  * @return string HTML output.
  */
-function ws_render_directory_card( $org ) {
+function ws_render_directory_card( array $org, int $position = 0 ) {
 
     $cost_labels = [
         'free'            => 'Free',
@@ -540,10 +574,14 @@ function ws_render_directory_card( $org ) {
     $type_slug = ( $org['type'] instanceof WP_Term ) ? $org['type']->slug : '';
 
     $cost_slug  = is_array( $org['cost_model'] ) ? ( $org['cost_model'][0] ?? '' ) : '';
-    $cost_label = $cost_labels[ $cost_slug ] ?? '';
+    $cost_label = ( $cost_slug === 'unclear' ) ? '' : ( $cost_labels[ $cost_slug ] ?? '' );
     $has_secure_channel = ! empty( $org['has_secure_channel'] );
     $secure_contact_url = trim( (string) ( $org['secure_contact_url'] ?? '' ) );
     $secure_contact_tool = trim( (string) ( $org['secure_contact_tool'] ?? '' ) );
+    $secure_contact_tool_other = trim( (string) ( $org['secure_contact_tool_other'] ?? '' ) );
+    $secure_contact_tool_label = ( $secure_contact_tool === 'other' && $secure_contact_tool_other !== '' )
+        ? $secure_contact_tool_other
+        : $secure_contact_tool;
     $phones = is_array( $org['phones'] ?? null ) ? $org['phones'] : [];
     $emails = is_array( $org['emails'] ?? null ) ? $org['emails'] : [];
 
@@ -678,23 +716,23 @@ function ws_render_directory_card( $org ) {
                     <span class="screen-reader-text">(opens in new tab)</span>
                 </a>
             <?php endif; ?>
+            <?php if ( ! empty( $org['contact_url'] ) ) : ?>
+                <a href="<?php echo esc_url( $org['contact_url'] ); ?>"
+                   class="ws-btn ws-btn--contact ws-btn--sm"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Open contact page for <?php echo esc_attr( $org['title'] ); ?> (opens in new tab)">
+                    Contact
+                    <span class="screen-reader-text">(opens in new tab)</span>
+                </a>
+            <?php endif; ?>
             <?php if ( ! empty( $org['intake_url'] ) ) : ?>
                 <a href="<?php echo esc_url( $org['intake_url'] ); ?>"
                    class="ws-btn ws-btn--primary ws-btn--sm"
                    target="_blank"
                    rel="noopener noreferrer"
-                   aria-label="Get started with <?php echo esc_attr( $org['title'] ); ?> (opens in new tab)">
-                    Get Started
-                    <span class="screen-reader-text">(opens in new tab)</span>
-                </a>
-            <?php endif; ?>
-            <?php if ( ! empty( $org['contact_url'] ) ) : ?>
-                <a href="<?php echo esc_url( $org['contact_url'] ); ?>"
-                   class="ws-btn ws-btn--secondary ws-btn--sm"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Open contact page for <?php echo esc_attr( $org['title'] ); ?> (opens in new tab)">
-                    Contact
+                   aria-label="Start intake with <?php echo esc_attr( $org['title'] ); ?> (opens in new tab)">
+                    Start Intake
                     <span class="screen-reader-text">(opens in new tab)</span>
                 </a>
             <?php endif; ?>
@@ -703,13 +741,19 @@ function ws_render_directory_card( $org ) {
                    class="ws-btn ws-btn--secure ws-btn--sm"
                    target="_blank"
                    rel="noopener noreferrer"
-                   aria-label="Open secure contact for <?php echo esc_attr( $org['title'] ); ?><?php echo $secure_contact_tool !== '' ? ' via ' . esc_attr( $secure_contact_tool ) : ''; ?> (opens in new tab)">
-                    [Secure Contact]
+                   aria-label="Open secure contact for <?php echo esc_attr( $org['title'] ); ?><?php echo $secure_contact_tool_label !== '' ? ' via ' . esc_attr( $secure_contact_tool_label ) : ''; ?> (opens in new tab)">
+                    Secure Contact
                     <span class="screen-reader-text">(opens in new tab)</span>
                 </a>
             <?php endif; ?>
             <?php if ( ! empty( $org['has_extended_profile'] ) && ! empty( $org['url'] ) ) : ?>
-                <a href="<?php echo esc_url( $org['url'] ); ?>"
+                <a href="<?php echo esc_url( add_query_arg( [
+                    'ws_from_dir'  => '1',
+                    'ws_rank'      => $position,
+                    'ws_rel_score' => (int) ( $org['_rel_score'] ?? 0 ),
+                    'ws_eng_score' => (int) ( $org['_eng_score'] ?? 0 ),
+                    'ws_secure'    => ! empty( $org['has_secure_channel'] ) ? '1' : '0',
+                ], $org['url'] ) ); ?>"
                    class="ws-aorg-card__more-link"
                    aria-label="More about <?php echo esc_attr( $org['title'] ); ?>">
                     More about this organization

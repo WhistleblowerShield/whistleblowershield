@@ -33,10 +33,11 @@
  *
  * @package    WhistleblowerShield
  * @since      3.15.0
- * @version    3.15.0
+ * @version    3.15.1
  *
  * VERSION LOG
  * -----------
+ * 3.15.1  Added engagement scoring helper and profile-view logging helper.
  * 3.15.0  Initial release. GET param resolution, concern taxonomy routing,
  *         validation, logging, and scoring helper.
  */
@@ -65,9 +66,10 @@ add_filter( 'query_vars', function( $vars ) {
  * All downstream renderers and query builders consume this array.
  * Never read $_GET directly outside this function.
  *
+ * @param bool $log_request Whether to write a directory-request log entry.
  * @return array Normalized filter context. See file header for shape.
  */
-function ws_resolve_filter_context(): array {
+function ws_resolve_filter_context( bool $log_request = true ): array {
     // ── 1. Sanitize raw input ─────────────────────────────────────────────
     // Use get_query_var() first (registered params on pretty permalink pages),
     // fall back to $_GET for non-pretty permalink setups or direct access.
@@ -113,7 +115,9 @@ function ws_resolve_filter_context(): array {
     ];
 
     // ── 7. Log the request ───────────────────────────────────────────────
-    ws_filter_log_request( $context );
+    if ( $log_request ) {
+        ws_filter_log_request( $context );
+    }
 
     return $context;
 }
@@ -293,6 +297,113 @@ function ws_filter_score_org( array $org, array $context, bool $targeted = false
 
 
 // ════════════════════════════════════════════════════════════════════════════
+// ws_filter_score_engagement()
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Derives an engagement score from contact-path quality signals.
+ *
+ * Engagement scoring is additive — it appends to the relevance score and
+ * never replaces or alters it. Weights/cap are defined in ws-filter-config.php.
+ *
+ * @param array $org Normalized org row from ws_q_build_assist_org_row().
+ * @return int Engagement score, capped at WS_FILTER_ENGAGEMENT_SCORE_CAP.
+ */
+function ws_filter_score_engagement( array $org ): int {
+    $weights = ws_filter_engagement_weights();
+    $score   = 0;
+
+    $phones      = is_array( $org['phones'] ?? null ) ? $org['phones'] : [];
+    $emails      = is_array( $org['emails'] ?? null ) ? $org['emails'] : [];
+    $phone_types = array_column( $phones, 'type' );
+    $email_types = array_column( $emails, 'type' );
+
+    if ( in_array( 'hotline', $phone_types, true ) ) {
+        $score += (int) ( $weights['has_hotline'] ?? 0 );
+    }
+    if ( in_array( 'intake', $phone_types, true ) ) {
+        $score += (int) ( $weights['has_intake_phone'] ?? 0 );
+    }
+    if ( in_array( 'tty', $phone_types, true ) ) {
+        $score += (int) ( $weights['has_tty'] ?? 0 );
+    }
+    if ( in_array( 'intake', $email_types, true ) ) {
+        $score += (int) ( $weights['has_intake_email'] ?? 0 );
+    }
+    if ( ! empty( $org['intake_url'] ) ) {
+        $score += (int) ( $weights['has_intake_url'] ?? 0 );
+    }
+
+    $cap = defined( 'WS_FILTER_ENGAGEMENT_SCORE_CAP' )
+        ? (int) WS_FILTER_ENGAGEMENT_SCORE_CAP
+        : 4;
+
+    return min( $score, $cap );
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// ws_filter_log_profile_view()
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Logs a profile-view event when a user navigates from directory to org page.
+ *
+ * No user identity is logged.
+ *
+ * @param int   $org_id      Post ID of the ws-assist-org being viewed.
+ * @param array $context     Normalized filter context from ws_resolve_filter_context().
+ * @param array $click_meta  Extra context from directory click query args.
+ * @return void
+ */
+function ws_filter_log_profile_view( int $org_id, array $context, array $click_meta = [] ): void {
+    $rank      = isset( $click_meta['rank'] ) ? (int) $click_meta['rank'] : 0;
+    $rel_score = isset( $click_meta['rel_score'] ) ? (int) $click_meta['rel_score'] : 0;
+    $eng_score = isset( $click_meta['eng_score'] ) ? (int) $click_meta['eng_score'] : 0;
+    $secure    = ! empty( $click_meta['secure'] ) ? 'yes' : 'no';
+
+    $log_dir = WP_CONTENT_DIR . '/logs/ws-filter';
+    if ( ! is_dir( $log_dir ) && ! wp_mkdir_p( $log_dir ) ) {
+        if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+            error_log( '[ws-core] ws_filter_log_profile_view(): failed to create log directory: ' . $log_dir );
+        }
+        return;
+    }
+    if ( is_dir( $log_dir ) && ! file_exists( $log_dir . '/.htaccess' ) ) {
+        $htaccess_written = file_put_contents( $log_dir . '/.htaccess', "Deny from all\n", LOCK_EX );
+        if ( false === $htaccess_written && defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+            error_log( '[ws-core] ws_filter_log_profile_view(): failed to write .htaccess in ' . $log_dir );
+        }
+    }
+
+    $path = defined( 'WS_FILTER_PROFILE_LOG' )
+        ? WS_FILTER_PROFILE_LOG
+        : $log_dir . '/profile-views.log';
+
+    $ts      = gmdate( 'Y-m-d H:i:s' );
+    $stage   = ws_filter_log_slug( $context['stage'] ?? null );
+    $concern = ws_filter_log_slug( $context['concern'] ?? null );
+    $tax     = ws_filter_log_slug( str_replace( 'ws_', '', (string) ( $context['concern_tax'] ?? '' ) ) );
+    $sector  = ws_filter_log_slug( $context['sector'] ?? null );
+    $target  = ws_filter_log_slug( $context['target'] ?? null );
+    $filters = ! empty( $context['has_filters'] ) ? 'yes' : 'no';
+
+    $line = "[{$ts} UTC]  event:profile_view  org_id:{$org_id}  rank:{$rank}  rel:{$rel_score}  eng:{$eng_score}  secure_rendered:{$secure}  stage:{$stage}  concern:{$concern}({$tax})  sector:{$sector}  target:{$target}  filtered:{$filters}" . PHP_EOL;
+
+    $write_ok = file_put_contents( $path, $line, FILE_APPEND | LOCK_EX );
+    if ( false === $write_ok ) {
+        if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+            error_log( '[ws-core] ws_filter_log_profile_view(): failed to append log line to ' . $path );
+        }
+        return;
+    }
+
+    $max = defined( 'WS_FILTER_LOG_MAX_LINES' ) ? (int) WS_FILTER_LOG_MAX_LINES : 5000;
+    ws_filter_prune_log( $path, $max );
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
 // ws_filter_log_request()
 // ════════════════════════════════════════════════════════════════════════════
 
@@ -329,12 +440,12 @@ function ws_filter_log_request( array $context ): void {
 
     $path    = $log_dir . '/directory-requests.log';
     $ts      = gmdate( 'Y-m-d H:i:s' );
-    $stage   = $context['stage']   ?? '-';
-    $concern = $context['concern'] ?? '-';
+    $stage   = ws_filter_log_slug( $context['stage'] ?? null );
+    $concern = ws_filter_log_slug( $context['concern'] ?? null );
     $concern_tax = $context['concern_tax'] ?? null;
-    $tax     = $concern_tax ? str_replace( 'ws_', '', $concern_tax ) : '-';
-    $sector  = $context['sector']  ?? '-';
-    $target  = $context['target']  ?? '-';
+    $tax     = ws_filter_log_slug( $concern_tax ? str_replace( 'ws_', '', $concern_tax ) : '-' );
+    $sector  = ws_filter_log_slug( $context['sector'] ?? null );
+    $target  = ws_filter_log_slug( $context['target'] ?? null );
     $filters = $context['has_filters'] ? 'yes' : 'no';
 
     $line = "[{$ts} UTC]  stage:{$stage}  concern:{$concern}({$tax})  sector:{$sector}  target:{$target}  filtered:{$filters}" . PHP_EOL;
@@ -358,6 +469,22 @@ function ws_filter_log_request( array $context ): void {
         $max = defined( 'WS_FILTER_LOG_MAX_LINES' ) ? (int) WS_FILTER_LOG_MAX_LINES : 5000;
         ws_filter_prune_log( $path, $max );
     }
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// ws_filter_log_slug()
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Normalizes a value into a safe single-token log value.
+ *
+ * @param mixed $value Value to normalize.
+ * @return string Lowercase token or '-'.
+ */
+function ws_filter_log_slug( $value ): string {
+    $token = sanitize_key( (string) ( $value ?? '' ) );
+    return $token !== '' ? $token : '-';
 }
 
 

@@ -1077,92 +1077,133 @@ function ws_prompt_assist_org_field_rules_block(): string {
 
 FIELD RULES
 
-Omit when unable to confidently verify data.
-Omitting uncertain data is correct.
-Fabricating data is wrong.
+Omission Guidance:
+Omit any key from the PERMISSIBLE TO OMIT table when unable to confidently verify data.
+Omitting unverified data is correct.
+Fabricating data is wrong, and has real world impact on the end user. Contacting an Assistance Organization that wasn't properly vetted wastes time and creates stress for a person in crisis.
 
-If using a trustworthy source, you can include an assistance organization even when you cannot
+
+It is acceptable to use a trusted source when proposing an assistance org. (e.g., reputable directory, NGO report, court/agency listing, academic or major-news source). If using a trustworthy source, you can include an assistance organization even when you cannot
 reach the official homepage right now. Record that source in record.source_url.
 
----
-
-PERMISSIBLE OMIT (key names only)
-source_url
-common_name
-verified_date_url
-intake_url
-contact_url
-phones
-emails
-mailing_address
-secure_contact_url
-secure_contact_tool
-disclosure_types
-languages_additional
-employment_sectors
-cost_model
-services_provided
-process_types
-case_stage_details
-disclosure_targets_details
-jurisdiction_exceptions
-eligibility_notes
-nationwide_example
 
 Note:
 - nationwide_example, case_stage_details, and _review_notes are used as editorial seed blocks at ingest.
-- They are appended into post_content and duplicated into ws_plain_english_wysiwyg.
+- They are appended to general_description to assist human review and summary.
 
-REQUIRED
-organization_name: full official name
-official_homepage_url: official domain URL
-general_description: 3 to 5 sentences
-assistance_type: one child slug from ws_aorg_type (use mixed when needed)
-homepage_url_status: verified | redirects | unverified
-has_secure_channel: true | false
-anonymous_pre_consult_possible: yes | no | unclear
-has_attorneys: yes | no | unclear
-income_eligibility_required: yes | no | unclear
-whistleblower_scope: integer 0 to 3
-whistleblower_note: quote or reason for inclusion
-languages_supported: at least one slug
-case_stages: array, use other when uncertain
-disclosure_targets: array, use child slugs only (do not use parent slugs)
-_review_notes: required; if none use "researcher had no notes on current record"
+---
 
-INLINE DEFINITIONS
-- intake_url: direct intake/start path
-- contact_url: general contact page path (separate from intake)
-- verified_date_url: date only in YYYY-MM-DD format (do not include time or UTC suffix)
-- phones: array of {"type","number"} rows
-  type must be one of: hotline, intake, headquarters, regional, tty, fax, other
-- emails: array of {"type","address"} rows
-  type must be one of: intake, general, legal, media, support, other
-  media-type addresses are profile-only; card render suppresses media
-- services_provided: include secure-drop when present. has_secure_drop is derived, not an input field.
-- disclosure_types and disclosure_targets: use child slugs only; do not use parent slugs
-- eligibility_notes: required only when income_eligibility_required is yes
-- jurisdiction_exceptions: free-text coverage gaps, omit if none
+Each candidate organization must include as much verified information as possible:
+  - organization_name         [required - full official name]
+  - official_homepage_url     [required - official domain name URL, must be included, does not need to be functioning right now]
+  - general_description       [required - 3 to 5 sentences describing nature of organization]
+-IMPORTANT- It is expected and permissible to omit record entirely, if any of the above three cannot be confidently sourced.
+
+
+Unless 'required' omit any record.key you cannot confidently find data for or becomes unnecessary.
+PERMISSIBLE TO OMIT:
+record.source_url
+record.common_name
+record.verified_url_date
+record.contact_url
+record.intake_url
+record.mailing_address
+record.disclosure_types
+record.languages_additional
+record.employment_sectors
+record.services_provided
+record.additional_services
+record.process_types
+record.eligibility_notes
+record.case_stage_details
+record.disclosure_targets_details
+record.jurisdiction_exceptions
+record.legitimacy_url
+
+
+REQUIRED KEYS
+organization_name: [string]
+official_homepage_url: [URL]
+general_description: [string]
+assistance_type: [single ws_aorg_type child slug]
+homepage_url_status: [verified | redirects | unverified]
+has_secure_channel: [yes | no | unclear]
+anonymous_pre_consult_possible: [yes | no | unclear]
+has_attorneys: [yes | no | unclear]
+income_eligibility_required: [yes | no | unclear]
+whistleblower_scope: [integer 0 | 1 | 2 | 3]
+whistleblower_note: [string]
+languages_supported: [array of ws_languages slugs]
+cost_models: [array of ws_aorg_cost_model slugs]
+case_stages: [array of ws_case_stage slugs]
+disclosure_targets: [array of ws_disclosure_targets child slugs]
+_review_notes: [string; if none use "researcher had no notes on current record"]
+
+The following record.keys are noted as acceptable to leave blank ("" or []), and are required even if blank:
+record.nationwide_example: ""
+record.disclosure_types: []
+record.phones: []
+record.emails: []
+
+
+  - source_url                [if organization information was sourced from anywhere other than an official domain, provide complete URL to source page, omit if official domain homepage was used]
+  - common_name               [publicly recognizable shorthand name or acronym for organization, omit if unavailable]
+  - homepage_url_status       [required - verified | redirects | unverified]
+  - verified_url_date         [YYYY-MM-DD only, omit if unverified]
+  - intake_url                [URL to intake entry point, omit if unavailable or unverified]
+  - contact_url               [URL to general contact page or form, omit if unavailable or unverified]
+  - phones                    [array of objects: { "type": "[hotline | intake | headquarters | regional | tty | fax | other]", "number": "..." }; may be []; if type is other, explain in _review_notes]
+  - emails                    [array of objects: { "type": "[intake | general | legal | media | support | other]", "address": "..." }; may be []; if type is other, explain in _review_notes]
+  - mailing_address           [mailing address text, omit if unavailable or unverifiable]
+  - has_secure_channel        [required - yes | no | unclear]
+  - nationwide_example        [required - quoted sentence up to 3 from source page or mission statement that shows nationwide intent, acceptable to leave blank if not found]
+  - disclosure_types          [Use Approved Taxonomy CHILD slugs, do not use PARENT slugs, from ws_disclosure_type, multiple may apply, omit if unavailable or ambiguous]
+  - languages_supported       [required - Use Approved Taxonomy slugs from ws_languages, list all you can find]
+  - languages_additional      [If languages_supported includes 'additional' slug, list languages not covered in taxonomy, or in-place situational language systems, e.g. spanish speaking intake translators available, or hearing impaired access, omit if no additional languages]
+  - assistance_type           [required - Use Approved Taxonomy slugs from ws_aorg_type table, best fit single slug only, use 'mixed' if ambiguous]
+  - employment_sectors        [Use Approved Taxonomy slugs from ws_employment_sector table, multiple may apply, omit if unavailable or ambiguous]
+  - cost_models               [required - Use Approved Taxonomy slugs from ws_aorg_cost_model table, multiple may apply, use 'unclear' if ambiguous]
+  - services_provided         [Use Approved Taxonomy slugs from ws_aorg_service table, multiple may apply, omit if unavailable or ambiguous]
+  - additional_services       [required when services_provided includes 'additional'; free text listing additional services, omit otherwise]
+  - process_types             [Use Approved Taxonomy slugs from ws_process_type table, multiple may apply, omit if unavailable or ambiguous]
+  - anonymous_pre_consult_possible [required - yes | no | unclear]
+  - has_attorneys                  [required - yes | no | unclear]
+  - income_eligibility_required    [required - yes | no | unclear]
+  - secure_contact_url             [required when has_secure_channel is yes, omit otherwise]
+  - secure_contact_tool            [required when has_secure_channel is yes; choose one: SecureDrop | Signal | ProtonMail | Tutanota | Wire | Keybase | other]
+  - secure_contact_tool_other      [required when secure_contact_tool is other; omit otherwise]
+  - income_eligibility_details     [required when income_eligibility_required is yes; income-specific thresholds/details]
+  - eligibility_notes              [general eligibility constraints not tied to income, omit if none]
+  - case_stages                    [required - Use Approved Taxonomy slugs from ws_case_stage table, multiple may apply, if 'other' slug is selected provide details in case_stage_details]
+  - case_stage_details             [If case_stages array includes slug 'other' provide details, omit if case_stages does not include slug 'other']
+  - disclosure_targets             [required - Use Approved Taxonomy CHILD slugs, do not use PARENT slugs, from ws_disclosure_targets, multiple may apply, may use 'has-details', it is acceptable to be left blank]
+  - disclosure_targets_details     [If disclosure_targets includes 'has-details', provide details, omit if disclosure_targets does not include 'has-details']
+  - jurisdiction_exceptions        [freetext describing any coverage gaps self reported by the organization, e.g. nationwide except Texas, or limited to jurisdictions where licensed, list all gaps found, this does not disqualify an org from nationwide inclusion, omit if none]
+  - whistleblower_scope            [required - INTEGER - rate 0 to 3, example(1) not whistleblower specific, general help such as ABA lawyer referral, example(2) sub-set of whistleblower concerns such as Tax Payers Against Fraud (securities, ethics, fraud), example(3) all whistleblower concerns such as Whistleblowers of America, set as 0 if scope is unclear]
+  - whistleblower_note             [required - quoted sentence up to 3 from source page or mission statement that describes scope of whistleblower assistance, if whistleblower_scope is 0 describe reason for inclusion]
+  - legitimacy_url                 [URL supporting legitimacy verification (for example IRS Form 990, state bar directory, Charity Navigator, GuideStar), omit if unavailable]
+  - _review_notes                  [required - free form notes about omitted data or notable details of organization not covered in schema, example: good notes may include why services_provided was hard to determine, second example: organization is well-regarded but currently not accepting intake clients. Be verbose about details the human reviewer may need to know or how the org can impact the user personas]
+
 
 OTHER GOOD NOTE EXAMPLES
+Do not use _review_notes for details already captured by structured fields such as
+jurisdiction_exceptions, eligibility_notes, languages_additional, cost_models,
+services_provided, or legitimacy_url.
+
 Intake limitations:
 - "Intake form requires creating an account before any information about services is visible — may deter anonymous users"
 - "Phone hotline listed but website states 2-3 week callback wait; not suitable for urgent retaliation situations"
 - "Intake is through a third-party scheduling tool that requires a valid email address"
 
 Scope edge cases:
-- "Homepage claims nationwide but FAQ states they only take cases in states where they have licensed attorneys — currently 23 states"
 - "Primarily serves federal employees despite broad mission language; private sector cases accepted but rarely taken"
-- "Focuses on high-value False Claims Act cases; unlikely to take smaller retaliation-only matters"
 
 Practical warnings:
 - "Organization is well-regarded but currently has a stated 6-month intake backlog as of last review"
-- "Free consultation offered but representation is contingency only with minimum case value threshold"
-- "Spanish-language support listed but only available through a partner referral, not direct intake"
+- "Website has service pages but no live intake channel currently functioning"
 
 Taxonomy gaps:
 - "Provides media coaching and source protection services not captured by any ws_aorg_service slug"
-- "Operates a secure document submission system for anonymous tips — closer to a secure drop than a hotline"
 - "Researcher has a new proposed taxonomy term, where it applies, and with detailed reason"
 
 ORGANIZATION INCLUSION RULES
@@ -1172,7 +1213,6 @@ ORGANIZATION INCLUSION RULES
 ORGANIZATION EXCLUSION RULES
   - Exclude pure government reporting channels.
   - Exclude media tip lines without user support pathways.
-  - Exclude entries with broken URLs or unclear user path.
   - Exclude private law firms with billable-hour primary intake.
     (Contingency-fee, pro bono, and legal-aid models are not excluded by default.)
 
@@ -1186,49 +1226,49 @@ function ws_prompt_assist_org_record_schema_block(): string {
 RECORD SCHEMA
 
 {
-  "organization_name": "[required - full official name]",
-  "official_homepage_url": "[required - official homepage URL]",
-  "general_description": "[required - 3 to 5 sentences]",
+  "organization_name": "",
+  "official_homepage_url": "",
+  "general_description": "",
 
-  "source_url": "[omit if official homepage used]",
-  "common_name": "[omit if unavailable]",
-  "homepage_url_status": "[required - verified | redirects | unverified]",
-  "verified_date_url": "[YYYY-MM-DD only - omit if unverified]",
-  "intake_url": "[omit if unavailable or unverified]",
-  "contact_url": "[omit if unavailable or unverified]",
-  "phones": [
-    { "type": "hotline", "number": "" }
-  ],
-  "emails": [
-    { "type": "intake", "address": "" }
-  ],
-  "mailing_address": "[omit if unavailable or unverifiable]",
-  "has_secure_channel": "[required - true | false]",
-  "secure_contact_url": "[required when has_secure_channel is true, omit otherwise]",
-  "secure_contact_tool": "[required when has_secure_channel is true, omit otherwise]",
-  "nationwide_example": "[required string - use \"\" if not found]",
+  "source_url": "",
+  "common_name": "",
+  "homepage_url_status": "",
+  "verified_url_date": "",
+  "intake_url": "",
+  "contact_url": "",
+  "phones": [],
+  "emails": [],
+  "mailing_address": "",
+  "has_secure_channel": "",
+  "secure_contact_url": "",
+  "secure_contact_tool": "",
+  "secure_contact_tool_other": "",
+  "nationwide_example": "",
 
   "disclosure_types": [],
   "languages_supported": [],
-  "languages_additional": "[omit if not needed]",
-  "assistance_type": "[required - single slug]",
+  "languages_additional": "",
+  "assistance_type": "",
   "employment_sectors": [],
-  "cost_model": [],
+  "cost_models": [],
   "services_provided": [],
+  "additional_services": "",
   "process_types": [],
-  "anonymous_pre_consult_possible": "[required - yes | no | unclear]",
-  "has_attorneys": "[required - yes | no | unclear]",
-  "income_eligibility_required": "[required - yes | no | unclear]",
-  "eligibility_notes": "[required when income_eligibility_required is yes]",
+  "anonymous_pre_consult_possible": "",
+  "has_attorneys": "",
+  "income_eligibility_required": "",
+  "income_eligibility_details": "",
+  "eligibility_notes": "",
   "case_stages": [],
-  "case_stage_details": "[omit unless case_stages includes other]",
+  "case_stage_details": "",
   "disclosure_targets": [],
-  "disclosure_targets_details": "[omit unless disclosure_targets includes has-details]",
+  "disclosure_targets_details": "",
 
-  "jurisdiction_exceptions": "[omit if none]",
-  "whistleblower_scope": "[required - 0 to 3]",
-  "whistleblower_note": "[required - quote or reason for inclusion]",
-  "_review_notes": "[required - use default note if none]"
+  "jurisdiction_exceptions": "",
+  "whistleblower_scope": 0,
+  "whistleblower_note": "",
+  "legitimacy_url": "",
+  "_review_notes": ""
 }
 
 BLOCK;
@@ -1261,6 +1301,7 @@ function ws_generate_assist_org_prompt( array $scope ): string {
         $out .= "Requested Records:  as many as you can confidently verify (fewer is correct)\n";
     }
     $out .= 'Nationwide only:    ' . ( $nationwide_only ? 'yes' : 'no' ) . "\n";
+    $out .= 'Meta nationwide_only: ' . ( $nationwide_only ? 'true' : 'false' ) . "\n";
     if ( $focus_notes !== '' ) {
         $out .= "Focus notes:        {$focus_notes}\n";
     }
@@ -1783,6 +1824,7 @@ TOP-LEVEL OUTPUT SCHEMA
     "jurisdiction_id": "[US OR STATE CODE]",
     "generated_date": "[YYYY-MM-DD]",
     "generated_by": "[FULL MODEL NAME + VERSION]",
+    "nationwide_only": false,
     "record_count": 0,
     "json_run_notes": "",
     "_json_run_researcher_notes": "[OPTIONAL — any contextual researcher note that does not fit other fields. Example: domain appears unusual but resolves to a legitimate nonprofit homepage.]",
@@ -1796,6 +1838,8 @@ TOP-LEVEL OUTPUT SCHEMA
 
 meta.json_run_notes: include any notes about the entire run that you
 feel a human reviewer would want to know.
+meta.nationwide_only: must match RUN SCOPE Nationwide only exactly (true/false).
+If true, each returned record should include nationwide_example evidence.
 meta._json_run_researcher_notes: anything that isn't specifically
 task related, things that don't quite fit in *_notes. Stripped at ingest,
 but maintained in the archival records.
@@ -2053,12 +2097,16 @@ function ws_handle_prompt_generation(): array {
         $scope_notes = $jx_type . '-level whistleblower laws and protections';
     }
 
+    $disable_exclusions = ! empty( $_POST['disable_exclusion_list'] );
     $auto_exclusions = ws_prompt_get_auto_exclusions( $record_type, $jx_id );
     $auto_exclusions_input = ws_prompt_resolve_auto_exclusions_text( $_POST, $auto_exclusions );
-    $exclusion_list  = ws_prompt_merge_exclusions(
-        (string) ( $_POST['exclusion_list_manual'] ?? ( $_POST['exclusion_list'] ?? '' ) ),
-        ws_prompt_split_lines( $auto_exclusions_input )
-    );
+    $exclusion_list = '';
+    if ( ! $disable_exclusions ) {
+        $exclusion_list  = ws_prompt_merge_exclusions(
+            (string) ( $_POST['exclusion_list_manual'] ?? ( $_POST['exclusion_list'] ?? '' ) ),
+            ws_prompt_split_lines( $auto_exclusions_input )
+        );
+    }
 
     $scope = [
         'jx_id'           => $jx_id,
@@ -2138,6 +2186,7 @@ function ws_render_prompt_generator_page() {
     $record_type = sanitize_text_field( $_POST['record_type'] ?? 'statute' );
     $proposal_count_value = max( 0, (int) ( $_POST['proposal_count'] ?? 0 ) );
     $assist_org_nationwide = ! empty( $_POST['assist_org_nationwide'] );
+    $disable_exclusions = ! empty( $_POST['disable_exclusion_list'] );
     $assist_org_focus_notes = sanitize_textarea_field( $_POST['assist_org_focus_notes'] ?? '' );
     $posted_jx   = strtoupper( sanitize_text_field( $_POST['jx_id'] ?? '' ) );
     $auto_exclusions = ( $posted_jx && $record_type ) ? ws_prompt_get_auto_exclusions( $record_type, $posted_jx ) : [];
@@ -2157,7 +2206,9 @@ function ws_render_prompt_generator_page() {
     $auto_exclusions_text = ws_prompt_resolve_auto_exclusions_text( $_POST, $auto_exclusions );
     $auto_count = count( ws_prompt_split_lines( $auto_exclusions_text ) );
     $manual_count = count( ws_prompt_split_lines( $manual_exclusions ) );
-    $merged_count = count( ws_prompt_split_lines( ws_prompt_merge_exclusions( $manual_exclusions, ws_prompt_split_lines( $auto_exclusions_text ) ) ) );
+    $merged_count = $disable_exclusions
+        ? 0
+        : count( ws_prompt_split_lines( ws_prompt_merge_exclusions( $manual_exclusions, ws_prompt_split_lines( $auto_exclusions_text ) ) ) );
     $auto_exclusion_key_label = 'canonical record identifier (when available)';
     if ( $record_type === 'statute' ) {
         $auto_exclusion_key_label = '_ws_jx_statute_id';
@@ -2317,6 +2368,17 @@ function ws_render_prompt_generator_page() {
                 </tr>
 
                 <tr>
+                    <th scope="row"><label for="disable_exclusion_list">Exclusions</label></th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="disable_exclusion_list" id="disable_exclusion_list" value="1" <?php checked( $disable_exclusions ); ?>>
+                            Disable exclusion list for this prompt generation.
+                        </label>
+                        <p class="description">When enabled, auto/manual exclusion lists are ignored and no exclusion block is added to the prompt.</p>
+                    </td>
+                </tr>
+
+                <tr>
                     <th scope="row"><label for="exclusion_list_auto">Auto Exclusions (Drafts)</label></th>
                     <td>
                         <input type="hidden" name="exclusion_list_auto_edited" id="exclusion_list_auto_edited" value="0">
@@ -2338,6 +2400,9 @@ function ws_render_prompt_generator_page() {
                                   placeholder="One ID or title per line"><?php echo esc_textarea( $manual_exclusions ); ?></textarea>
                         <p class="description">Add any extra IDs. Manual and auto exclusions are merged into the prompt.</p>
                         <p class="description"><strong>Merged exclusions:</strong> <?php echo (int) $merged_count; ?> unique (<?php echo (int) $auto_count; ?> auto + <?php echo (int) $manual_count; ?> manual before dedupe).</p>
+                        <?php if ( $disable_exclusions ): ?>
+                            <p class="description" style="color:#996800;"><strong>Exclusions are currently disabled for this run.</strong></p>
+                        <?php endif; ?>
                     </td>
                 </tr>
 
@@ -2430,6 +2495,30 @@ function ws_render_prompt_generator_page() {
         if (proposalInput) {
             proposalInput.required = (type === 'assist-org');
         }
+
+        wsPromptToggleExclusions();
+    }
+
+    function wsPromptToggleExclusions() {
+        var disable = document.getElementById('disable_exclusion_list');
+        var autoField = document.getElementById('exclusion_list_auto');
+        var manualField = document.getElementById('exclusion_list_manual');
+        var refreshButton = document.getElementById('ws_refresh_exclusions');
+
+        if (!disable) {
+            return;
+        }
+
+        var blocked = !!disable.checked;
+        if (autoField) {
+            autoField.disabled = blocked;
+        }
+        if (manualField) {
+            manualField.disabled = blocked;
+        }
+        if (refreshButton) {
+            refreshButton.disabled = blocked;
+        }
     }
 
     document.addEventListener('DOMContentLoaded', wsPromptToggleFields);
@@ -2451,12 +2540,17 @@ function ws_render_prompt_generator_page() {
 
         var autoTextarea = document.getElementById('exclusion_list_auto');
         var autoEdited = document.getElementById('exclusion_list_auto_edited');
+        var disableExclusions = document.getElementById('disable_exclusion_list');
         if (!autoTextarea || !autoEdited) {
             return;
         }
         autoTextarea.addEventListener('input', function() {
             autoEdited.value = '1';
         });
+        if (disableExclusions) {
+            disableExclusions.addEventListener('change', wsPromptToggleExclusions);
+        }
+        wsPromptToggleExclusions();
     });
     </script>
     <?php

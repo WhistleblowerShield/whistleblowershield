@@ -6,6 +6,7 @@
     "jurisdiction_id": "US",
     "generated_date": "2026-04-08",
     "generated_by": "NotebookLM Legal Fact-Checker",
+    "nationwide_only": true,
     "record_count": 10,
     "json_run_notes": "Merged viable records from Gemini and ChatGPT. Dropped Grok records entirely as both organizations were on the exclusion list.",
     "batch_completed": "2026-04-08 17:33 UTC",

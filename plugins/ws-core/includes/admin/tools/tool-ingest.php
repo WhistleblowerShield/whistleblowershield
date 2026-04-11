@@ -152,11 +152,67 @@ function ws_register_ingest_tool_page() {
 }
 
 
+// ── Admin notice flags (ingest tool page) ──────────────────────────────────
+
+/**
+ * Queues an admin notice for the ingest tool screen.
+ *
+ * @param string $message Notice text.
+ * @param string $type    Notice class suffix: error|warning|success|info.
+ * @return void
+ */
+function ws_ingest_queue_admin_notice( string $message, string $type = 'warning' ): void {
+    global $ws_ingest_admin_notices;
+
+    if ( ! isset( $ws_ingest_admin_notices ) || ! is_array( $ws_ingest_admin_notices ) ) {
+        $ws_ingest_admin_notices = [];
+    }
+
+    $allowed = [ 'error', 'warning', 'success', 'info' ];
+    if ( ! in_array( $type, $allowed, true ) ) {
+        $type = 'warning';
+    }
+
+    $ws_ingest_admin_notices[] = [
+        'message' => $message,
+        'type'    => $type,
+    ];
+}
+
+add_action( 'admin_notices', function() {
+    if ( ! is_admin() || ! current_user_can( 'manage_options' ) ) {
+        return;
+    }
+
+    $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+    if ( ! $screen || $screen->id !== 'tools_page_ws-ingest-tool' ) {
+        return;
+    }
+
+    global $ws_ingest_admin_notices;
+    if ( empty( $ws_ingest_admin_notices ) || ! is_array( $ws_ingest_admin_notices ) ) {
+        return;
+    }
+
+    foreach ( $ws_ingest_admin_notices as $notice ) {
+        $message = (string) ( $notice['message'] ?? '' );
+        $type    = (string) ( $notice['type'] ?? 'warning' );
+        if ( $message === '' ) {
+            continue;
+        }
+        echo '<div class="notice notice-' . esc_attr( $type ) . '"><p>' . esc_html( $message ) . '</p></div>';
+    }
+
+    $ws_ingest_admin_notices = [];
+} );
+
+
 // ── Log directory bootstrap ───────────────────────────────────────────────────
 
 function ws_ingest_bootstrap_log_dir(): void {
     if ( ! is_dir( WS_INGEST_LOG_DIR ) ) {
         if ( ! wp_mkdir_p( WS_INGEST_LOG_DIR ) ) {
+            ws_ingest_queue_admin_notice( 'WS Ingest Tool: failed to create log directory at ' . WS_INGEST_LOG_DIR . '. Please check filesystem permissions.', 'warning' );
             error_log( '[ws-core] ws_ingest_bootstrap_log_dir(): failed to create log dir ' . WS_INGEST_LOG_DIR );
             return;
         }
@@ -164,21 +220,27 @@ function ws_ingest_bootstrap_log_dir(): void {
     }
     if ( ! is_dir( WS_INGEST_RUN_LOG_DIR ) ) {
         if ( ! wp_mkdir_p( WS_INGEST_RUN_LOG_DIR ) ) {
-            error_log( '[ws-core] ws_ingest_bootstrap_log_dir(): failed to create run-log dir ' . WS_INGEST_RUN_LOG_DIR );
+            $msg = 'ws_ingest_bootstrap_log_dir(): failed to create run-log dir ' . WS_INGEST_RUN_LOG_DIR;
+            ws_ingest_queue_admin_notice( 'WS Ingest Tool: failed to create run-log directory. Check filesystem permissions.', 'warning' );
+            ws_ingest_log_preflight_failure( 'bootstrap', [ $msg ] );
             return;
         }
         file_put_contents( trailingslashit( WS_INGEST_RUN_LOG_DIR ) . '.htaccess', "Deny from all\n", LOCK_EX );
     }
     if ( ! is_dir( WS_INGEST_INBOX_DIR ) ) {
         if ( ! wp_mkdir_p( WS_INGEST_INBOX_DIR ) ) {
-            error_log( '[ws-core] ws_ingest_bootstrap_log_dir(): failed to create inbox dir ' . WS_INGEST_INBOX_DIR );
+            $msg = 'ws_ingest_bootstrap_log_dir(): failed to create inbox dir ' . WS_INGEST_INBOX_DIR;
+            ws_ingest_queue_admin_notice( 'WS Ingest Tool: failed to create ingest inbox directory. Check filesystem permissions.', 'warning' );
+            ws_ingest_log_preflight_failure( 'bootstrap', [ $msg ] );
             return;
         }
         file_put_contents( trailingslashit( WS_INGEST_INBOX_DIR ) . '.htaccess', "Deny from all\n", LOCK_EX );
     }
     if ( ! is_dir( WS_INGEST_ARCHIVE_DIR ) ) {
         if ( ! wp_mkdir_p( WS_INGEST_ARCHIVE_DIR ) ) {
-            error_log( '[ws-core] ws_ingest_bootstrap_log_dir(): failed to create archive dir ' . WS_INGEST_ARCHIVE_DIR );
+            $msg = 'ws_ingest_bootstrap_log_dir(): failed to create archive dir ' . WS_INGEST_ARCHIVE_DIR;
+            ws_ingest_queue_admin_notice( 'WS Ingest Tool: failed to create ingest archive directory. Check filesystem permissions.', 'warning' );
+            ws_ingest_log_preflight_failure( 'bootstrap', [ $msg ] );
             return;
         }
         file_put_contents( trailingslashit( WS_INGEST_ARCHIVE_DIR ) . '.htaccess', "Deny from all\n", LOCK_EX );
@@ -728,6 +790,7 @@ function ws_ingest_allowed_record_keys( string $record_type ): array {
             'has_secure_channel',
             'secure_contact_url',
             'secure_contact_tool',
+            'secure_contact_tool_other',
             'nationwide_example',
             'official_name',
             'disclosure_types',
@@ -735,12 +798,13 @@ function ws_ingest_allowed_record_keys( string $record_type ): array {
             'languages_additional',
             'assistance_type',
             'employment_sectors',
-            'cost_model',
+            'cost_models',
             'services_provided',
             'process_types',
             'anonymous_pre_consult_possible',
             'has_attorneys',
             'income_eligibility_required',
+            'income_eligibility_details',
             'eligibility_notes',
             'case_stages',
             'case_stage_details',
@@ -1086,15 +1150,18 @@ function ws_ingest_assist_org_field_map_v2(): array {
         'has_secure_channel'        => [ 'ws_aorg_has_secure_channel',          'bool'     ],
         'secure_contact_url'        => [ 'ws_aorg_secure_contact_url',          'url'      ],
         'secure_contact_tool'       => [ 'ws_aorg_secure_contact_tool',         'text'     ],
+        'secure_contact_tool_other' => [ 'ws_aorg_secure_contact_tool_other',   'text'     ],
         'languages_additional'      => [ 'ws_aorg_additional_languages',        'text'     ],
         'verified_date_url'         => [ 'ws_aorg_last_reviewed',               'text'     ],
         'whistleblower_scope'       => [ 'ws_aorg_whistleblower_scope',         'number'   ],
         'whistleblower_note'        => [ 'ws_aorg_whistleblower_note',          'textarea' ],
         'income_eligibility_required' => [ 'ws_aorg_income_limit',              'bool'     ],
-        'eligibility_notes'         => [ 'ws_aorg_income_limit_notes',          'textarea' ],
+        'income_eligibility_details' => [ 'ws_aorg_income_limit_notes',         'textarea' ],
+        'eligibility_notes'         => [ 'ws_aorg_eligibility_notes',           'textarea' ],
         'anonymous_pre_consult_possible' => [ 'ws_aorg_accepts_anonymous',      'bool'     ],
         'has_attorneys'             => [ 'ws_aorg_licensed_attorneys',          'bool'     ],
         'jurisdiction_exceptions'   => [ 'ws_aorg_jurisdiction_exceptions',     'textarea' ],
+        'case_stage_details'        => [ 'ws_aorg_case_stage_details',          'textarea' ],
         'disclosure_targets_details'=> [ 'ws_aorg_disclosure_targets_details',  'textarea' ],
 
         // ── Taxonomies ───────────────────────────────────────────────────
@@ -1103,7 +1170,7 @@ function ws_ingest_assist_org_field_map_v2(): array {
         'languages_supported'       => [ 'ws_languages',                   'tax', 'ws_languages'          ],
         'assistance_type'           => [ 'ws_aorg_type',                   'tax', 'ws_aorg_type'          ],
         'employment_sectors'        => [ 'ws_aorg_employment_sectors',     'tax', 'ws_employment_sector'  ],
-        'cost_model'                => [ 'ws_aorg_cost_model',             'tax', 'ws_aorg_cost_model'    ],
+        'cost_models'               => [ 'ws_aorg_cost_models',            'tax', 'ws_aorg_cost_model'    ],
         'services_provided'         => [ 'ws_aorg_services',               'tax', 'ws_aorg_service'       ],
         'process_types'             => [ 'ws_aorg_process_types',          'tax', 'ws_process_type'       ],
         'case_stages'               => [ 'ws_aorg_case_stages',            'tax', 'ws_case_stage'         ],
@@ -1119,7 +1186,6 @@ function ws_ingest_assist_org_field_map_v2(): array {
         'source_url'                => [ null, 'omit' ],
         'homepage_url_status'       => [ null, 'omit' ],
         'nationwide_example'        => [ null, 'seed' ],
-        'case_stage_details'        => [ null, 'seed' ],
         '_review_notes'             => [ null, 'seed' ],
         '_reconciled_notes'         => [ null, 'omit' ],
     ];
@@ -1209,6 +1275,7 @@ function ws_ingest_normalize_email_rows( $value ): array {
 function ws_ingest_build_assist_org_seed_append( array $record ): string {
     $nationwide_example = trim( (string) ws_ingest_get_value( $record, 'nationwide_example' ) );
     $case_stage_details = trim( (string) ws_ingest_get_value( $record, 'case_stage_details' ) );
+    $jurisdiction_exceptions = trim( (string) ws_ingest_get_value( $record, 'jurisdiction_exceptions' ) );
     $review_notes       = trim( (string) ws_ingest_get_value( $record, '_review_notes' ) );
 
     $blocks = [];
@@ -1217,6 +1284,9 @@ function ws_ingest_build_assist_org_seed_append( array $record ): string {
     }
     if ( $case_stage_details !== '' ) {
         $blocks[] = "Case stage notes: {$case_stage_details}";
+    }
+    if ( $jurisdiction_exceptions !== '' ) {
+        $blocks[] = "Jurisdiction exceptions: {$jurisdiction_exceptions}";
     }
     if ( $review_notes !== '' ) {
         $blocks[] = "Researcher notes: {$review_notes}";
@@ -1246,7 +1316,8 @@ function ws_ingest_build_assist_org_internal_id( array $record, string $jx_slug 
     }
 
     $normalized = strtolower( $seed );
-    // & handled in stop-word strip above.
+    // Strip ampersands directly (do not expand to "and").
+    $normalized = str_replace( '&', ' ', $normalized );
 
     // Swap jurisdiction display name to compact jurisdiction ID token.
     if ( $jx_slug !== '' && defined( 'WS_JURISDICTION_TAXONOMY' ) ) {
@@ -1260,31 +1331,56 @@ function ws_ingest_build_assist_org_internal_id( array $record, string $jx_slug 
         }
     }
 
+    // Strip small stop words before abbreviation pass.
+    $normalized = preg_replace( '/\b(?:and|the|for|of|in|at|to|a|an)\b/u', ' ', $normalized );
+
     // Human-readable abbreviation pass (no hard length cap).
+    // IMPORTANT: Keep this ruleset in sync with
+    // ws_matrix_build_assist_org_internal_id() in matrix-assist-orgs.php.
+    // If these diverge, seeded/internal IDs will drift over time.
     $abbrev_rules = [
-        '/\bwhistle[\s\-]*blowers?\b/u' => 'wb',
-        '/\borganization\b/u'           => 'org',
-        '/\borganisations?\b/u'         => 'org',
-        '/\bassociation\b/u'            => 'assoc',
-        '/\binternational\b/u'          => 'intl',
-        '/\bnational\b/u'               => 'nat',
-        '/\battorneys?\b/u'             => 'att',
-        '/\breferrals?\b/u'             => 'ref',
-        '/\bfederal\b/u'                => 'fed',
-        '/\bgovernmental\b/u'           => 'gov',
-        '/\bgovernment\b/u'             => 'gov',
-        '/\bdepartment\b/u'             => 'dept',
-        '/\bcommission\b/u'             => 'comm',
-        '/\bcorporation\b/u'            => 'corp',
-        '/\bfoundation\b/u'             => 'fdn',
-        '/\bcenter\b/u'                 => 'ctr',
-        '/\bcentre\b/u'                 => 'ctr',
-        '/\bservices?\b/u'              => 'svc',
-        '/\bnetwork\b/u'                => 'net',
-        '/\bprogram\b/u'                => 'prog',
-        '/\bproject\b/u'                => 'proj',
-        '/\binitiative\b/u'             => 'init',
-        '/\bresource(s)?\b/u'           => 'res',
+        '/\bwhistle[\s\-]*blow(?:er|ers|ing)\b/u' => 'wb',
+        '/\bglobal\b/u'                              => 'intl',
+        '/\binternational\b/u'                       => 'intl',
+        '/\bnationals?\b/u'                          => 'nat',
+        '/\borganizations?\b/u'                      => 'org',
+        '/\borganisations?\b/u'                      => 'org',
+        '/\bassociations?\b/u'                       => 'assoc',
+        '/\bcoalitions?\b/u'                         => 'coal',
+        '/\balliances?\b/u'                          => 'all',
+        '/\bcommittees?\b/u'                         => 'cmte',
+        '/\bcouncils?\b/u'                           => 'cncl',
+        '/\binstitutions?\b/u'                       => 'inst',
+        '/\binstitutes?\b/u'                         => 'inst',
+        '/\bbureaus?\b/u'                            => 'bur',
+        '/\boffices?\b/u'                            => 'ofc',
+        '/\bemployees?\b/u'                          => 'emp',
+        '/\bemployment\b/u'                          => 'emp',
+        '/\bprotections?\b/u'                        => 'prot',
+        '/\badvocacy\b/u'                            => 'adv',
+        '/\brights\b/u'                              => 'rts',
+        '/\bpublic\b/u'                              => 'pub',
+        '/\bpolicy\b/u'                              => 'pol',
+        '/\beducational\b/u'                         => 'edu',
+        '/\beducation\b/u'                           => 'edu',
+        '/\bresearch\b/u'                            => 'rsch',
+        '/\battorneys?\b/u'                          => 'att',
+        '/\breferrals?\b/u'                          => 'ref',
+        '/\bfederal\b/u'                             => 'fed',
+        '/\bgovernmental\b/u'                        => 'gov',
+        '/\bgovernments?\b/u'                        => 'gov',
+        '/\bdepartments?\b/u'                        => 'dept',
+        '/\bcommissions?\b/u'                        => 'comm',
+        '/\bcorporations?\b/u'                       => 'corp',
+        '/\bfoundations?\b/u'                        => 'fdn',
+        '/\bcenters?\b/u'                            => 'ctr',
+        '/\bcentres?\b/u'                            => 'ctr',
+        '/\bservices?\b/u'                           => 'svc',
+        '/\bnetworks?\b/u'                           => 'net',
+        '/\bprograms?\b/u'                           => 'prog',
+        '/\bprojects?\b/u'                           => 'proj',
+        '/\binitiatives?\b/u'                        => 'init',
+        '/\bresources?\b/u'                          => 'res',
     ];
     foreach ( $abbrev_rules as $pattern => $replacement ) {
         $normalized = preg_replace( $pattern, ' ' . $replacement . ' ', $normalized );
@@ -3599,10 +3695,25 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
         update_post_meta( $post_id, 'ws_aorg_official_name', sanitize_text_field( $org_name ) );
     }
 
+    // Fail-safe normalization: case_stage_details implies ws_case_stage "other".
+    // Reconciler should enforce this upstream, but ingest appends `other`
+    // defensively so the details field remains visible in ACF.
+    $case_stage_details_raw = trim( (string) ws_ingest_get_value( $record, 'case_stage_details' ) );
+    if ( $case_stage_details_raw !== '' ) {
+        $case_stages_raw = ws_ingest_get_value( $record, 'case_stages' );
+        $case_stages = is_array( $case_stages_raw ) ? array_map( 'strval', $case_stages_raw ) : [];
+        if ( ! in_array( 'other', $case_stages, true ) ) {
+            $case_stages[] = 'other';
+            $record['case_stages'] = array_values( array_unique( $case_stages ) );
+            $needs_review = true;
+            $result['warnings'][] = "{$org_name}: case_stage_details provided but case_stages did not include 'other'; appended 'other' during ingest fail-safe.";
+        }
+    }
+
     $field_map        = ws_ingest_assist_org_field_map_v2();
     $tax_removals     = [];
     $omitted_fields   = [];
-    $single_tax_types = [ 'ws_aorg_type', 'ws_aorg_cost_model' ];
+    $single_tax_types = [ 'ws_aorg_type' ];
 
     foreach ( $field_map as $json_path => $field_def ) {
         $meta_key = $field_def[0];
@@ -3805,23 +3916,75 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
     $has_secure_channel = (int) ( $tri_values['has_secure_channel'] ?? 0 );
     $secure_url  = trim( (string) ws_ingest_get_value( $record, 'secure_contact_url' ) );
     $secure_tool = trim( (string) ws_ingest_get_value( $record, 'secure_contact_tool' ) );
+    $secure_tool_other = trim( (string) ws_ingest_get_value( $record, 'secure_contact_tool_other' ) );
+    $allowed_secure_tools = defined( 'WS_SCHEMA_SECURE_TOOL' ) && is_array( WS_SCHEMA_SECURE_TOOL )
+        ? WS_SCHEMA_SECURE_TOOL
+        : [ 'SecureDrop', 'Signal', 'ProtonMail', 'Tutanota', 'Wire', 'Keybase', 'other' ];
+
     if ( $has_secure_channel === 1 ) {
         if ( $secure_url === '' ) {
             $result['warnings'][] = "{$org_name}: has_secure_channel is true but secure_contact_url is missing (non-blocking; human review required).";
         }
         if ( $secure_tool === '' ) {
             $result['warnings'][] = "{$org_name}: has_secure_channel is true but secure_contact_tool is missing (non-blocking; human review required).";
+        } elseif ( ! in_array( $secure_tool, $allowed_secure_tools, true ) ) {
+            $result['warnings'][] = "{$org_name}: secure_contact_tool '{$secure_tool}' is not an allowed canonical value.";
+        }
+
+        if ( $secure_tool === 'other' && $secure_tool_other === '' ) {
+            $result['warnings'][] = "{$org_name}: secure_contact_tool is 'other' but secure_contact_tool_other is missing.";
+        }
+
+        if ( $secure_tool !== 'other' && $secure_tool_other !== '' ) {
+            $result['warnings'][] = "{$org_name}: secure_contact_tool_other provided but secure_contact_tool is not 'other'.";
         }
     } else {
-        if ( $secure_url !== '' || $secure_tool !== '' ) {
-            $result['warnings'][] = "{$org_name}: secure_contact_url/secure_contact_tool provided while has_secure_channel is false.";
+        if ( $secure_url !== '' || $secure_tool !== '' || $secure_tool_other !== '' ) {
+            $result['warnings'][] = "{$org_name}: secure_contact_url/secure_contact_tool/secure_contact_tool_other provided while has_secure_channel is false.";
         }
     }
 
     $income_required = (int) ( $tri_values['income_eligibility_required'] ?? 0 );
-    $eligibility_notes = trim( (string) ws_ingest_get_value( $record, 'eligibility_notes' ) );
-    if ( $income_required === 1 && $eligibility_notes === '' ) {
-        $result['warnings'][] = "{$org_name}: income_eligibility_required is yes but eligibility_notes is missing.";
+    $income_eligibility_details = trim( (string) ws_ingest_get_value( $record, 'income_eligibility_details' ) );
+    if ( $income_required === 1 && $income_eligibility_details === '' ) {
+        $result['warnings'][] = "{$org_name}: income_eligibility_required is yes but income_eligibility_details is missing.";
+    }
+
+    $case_stages_raw = ws_ingest_get_value( $record, 'case_stages' );
+    $case_stage_details = trim( (string) ws_ingest_get_value( $record, 'case_stage_details' ) );
+    $case_stages_has_other = false;
+    if ( is_array( $case_stages_raw ) ) {
+        $case_stages_has_other = in_array( 'other', array_map( 'strval', $case_stages_raw ), true );
+    }
+    if ( $case_stages_has_other && $case_stage_details === '' ) {
+        $needs_review = true;
+        $result['warnings'][] = "{$org_name}: case_stages includes 'other' but case_stage_details is missing.";
+    }
+    if ( ! $case_stages_has_other && $case_stage_details !== '' ) {
+        $needs_review = true;
+        $result['warnings'][] = "{$org_name}: case_stage_details provided but case_stages does not include 'other'.";
+    }
+
+    $jurisdiction_exceptions = trim( (string) ws_ingest_get_value( $record, 'jurisdiction_exceptions' ) );
+    if ( $jurisdiction_exceptions !== '' ) {
+        $needs_review = true;
+        $result['warnings'][] = "{$org_name}: jurisdiction_exceptions present; manual jurisdiction scope review required.";
+    }
+
+    $meta_nationwide_only = false;
+    $meta_nationwide_raw = $meta['nationwide_only'] ?? null;
+    if ( is_bool( $meta_nationwide_raw ) ) {
+        $meta_nationwide_only = $meta_nationwide_raw;
+    } elseif ( is_numeric( $meta_nationwide_raw ) ) {
+        $meta_nationwide_only = ( (int) $meta_nationwide_raw ) === 1;
+    } elseif ( is_string( $meta_nationwide_raw ) ) {
+        $meta_nationwide_only = in_array( strtolower( trim( $meta_nationwide_raw ) ), [ '1', 'true', 'yes', 'y' ], true );
+    }
+
+    $nationwide_example = trim( (string) ws_ingest_get_value( $record, 'nationwide_example' ) );
+    if ( $meta_nationwide_only && $nationwide_example === '' ) {
+        $needs_review = true;
+        $result['warnings'][] = "{$org_name}: nationwide_only run but nationwide_example is empty (researcher error; human review required).";
     }
 
     $scope_value = (int) get_post_meta( $post_id, 'ws_aorg_whistleblower_scope', true );
@@ -3830,8 +3993,9 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
         $result['warnings'][] = "{$org_name}: whistleblower_scope is 0 but whistleblower_note is empty.";
     }
 
-    // Current ingest model: US jurisdiction defaults to nationwide.
-    $is_nationwide = ( $jx_slug === 'us' ) ? 1 : 0;
+    // Canonical ingest rule: nationwide scope is asserted only when
+    // nationwide_example contains evidence text.
+    $is_nationwide = ( $nationwide_example !== '' ) ? 1 : 0;
     update_post_meta( $post_id, 'ws_aorg_serves_nationwide', $is_nationwide );
     if ( $is_nationwide === 1 ) {
         update_post_meta( $post_id, 'ws_aorg_limited_scope', 0 );
@@ -4142,6 +4306,22 @@ function ws_ingest_process_batch_data( array $data, string $batch_filename ): ar
 
         $citation_stubs_created += (int) ( $record_result['citation_stub_created'] ?? 0 );
         $agency_stubs_created   += (int) ( $record_result['agency_stub_created'] ?? 0 );
+    }
+
+    $nationwide_example_miss_count = 0;
+    foreach ( $all_logs as $rec_log ) {
+        $warnings = (array) ( $rec_log['warnings'] ?? [] );
+        foreach ( $warnings as $warning_line ) {
+            if ( str_contains( (string) $warning_line, 'nationwide_only run but nationwide_example is empty' ) ) {
+                $nationwide_example_miss_count++;
+                break;
+            }
+        }
+    }
+    if ( $nationwide_example_miss_count > 0 ) {
+        $msg = "Nationwide-only run quality check: {$nationwide_example_miss_count} record(s) were missing nationwide_example evidence.";
+        $result['runtime_warnings'][] = $msg;
+        ws_ingest_queue_admin_notice( $msg, 'warning' );
     }
 
     $result['records'] = $all_logs;

@@ -177,6 +177,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 1. UNIVERSAL LAYER (Necessary for Permalinks & API)
 ---------------------------------------------------------
 */
+		// First-party bridge to vendored Sentry SDK.
+		// Privacy/ownership boundary: this include is project code; vendor internals are not.
 		$file = 'sentry_init.php';
 		$path = WS_CORE_PATH . "includes/sentry_init.php";
 		if ( file_exists( $path ) ) {

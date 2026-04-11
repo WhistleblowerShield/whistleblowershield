@@ -24,7 +24,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.15.0
- * @version    3.15.0
+ * @version    3.15.1
  *
  * @uses       Included by ws-core.php at core_init() — loaded before any
  *             renderer, query builder, or shortcode that needs the constants
@@ -33,6 +33,7 @@
  *
  * VERSION LOG
  * -----------
+ * 3.15.1  Added engagement-score config and profile-view log constant.
  * 3.15.0  Initial release. Directory filter cascade config.
  *         GET params, allowed values, scoring weights, ordering rules,
  *         fallback copy variants, JX threshold defaults.
@@ -48,6 +49,9 @@ define( 'WS_FILTER_PARAM_STAGE',   'ws_stage'   ); // ws_case_stage
 define( 'WS_FILTER_PARAM_CONCERN', 'ws_concern' ); // ws_disclosure_type or ws_adverse_action_types
 define( 'WS_FILTER_PARAM_SECTOR',  'ws_sector'  ); // ws_employment_sector
 define( 'WS_FILTER_PARAM_TARGET',  'ws_target'  ); // ws_disclosure_targets (optional)
+
+// Profile view telemetry log (directory -> single org profile).
+define( 'WS_FILTER_PROFILE_LOG', WP_CONTENT_DIR . '/logs/ws-filter/profile-views.log' );
 
 // ── Allowed Values Per Param ──────────────────────────────────────────────────
 // Maps param values to taxonomy slugs. An absent param = "not sure" = no filter
@@ -186,6 +190,28 @@ function ws_filter_score_weights(): array {
 
     return $weights;
 }
+
+// Engagement scoring appends to relevance scoring and is capped so it cannot
+// overturn strong relevance mismatches.
+function ws_filter_engagement_weights(): array {
+    static $weights = null;
+    if ( $weights !== null ) {
+        return $weights;
+    }
+
+    $weights = [
+        'has_hotline'      => 2,
+        'has_intake_url'   => 1,
+        'has_intake_email' => 1,
+        'has_intake_phone' => 1,
+        'has_tty'          => 1,
+    ];
+
+    return $weights;
+}
+
+// Hard cap for engagement scoring.
+define( 'WS_FILTER_ENGAGEMENT_SCORE_CAP', 4 );
 
 // Stages where has_attorneys_bonus applies.
 // pre-report intentionally excluded: that stage signals Maya (early/uncertain),

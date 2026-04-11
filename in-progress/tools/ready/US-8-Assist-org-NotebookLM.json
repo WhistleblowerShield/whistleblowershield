@@ -6,6 +6,7 @@
     "jurisdiction_id": "US",
     "generated_date": "2026-04-07",
     "generated_by": "NotebookLM Legal Fact-Checker",
+    "nationwide_only": true,
     "record_count": 8,
     "json_run_notes": "Batch merged from Grok, ChatGPT, and Gemini. Law firms removed per addendum.",
     "batch_completed": "2026-04-07 16:40 UTC",

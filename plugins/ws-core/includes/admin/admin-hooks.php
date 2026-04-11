@@ -88,10 +88,11 @@
  * 3.9.0   Rule 3b: plain_reviewed resets on substantial content change.
  * 3.10.0  ws-ag-procedure added to $ws_stamp_cpts and ws_source_verify_post_types().
  * 3.10.1  Header documentation refresh for current cross-CPT responsibilities.
+ * 3.10.2  Shared phone format validator added for assist-org and agency ACF fields.
  *
  * @package WhistleblowerShield
  * @since   2.1.0
- * @version 3.10.1
+ * @version 3.10.2
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -217,6 +218,57 @@ function ws_acf_lock_for_non_editors( $field ) {
         $field['disabled'] = 1;
     }
     return $field;
+}
+
+
+// ── Shared phone validation (assist-org + agency) ───────────────────────────
+//
+// Canonical phone values are still stored in text fields, but this validator
+// prevents malformed data from being saved.
+
+add_filter( 'acf/validate_value/key=field_aorg_phone_number', 'ws_acf_validate_phone_number', 10, 4 );
+add_filter( 'acf/validate_value/key=field_agency_phone',      'ws_acf_validate_phone_number', 10, 4 );
+
+/**
+ * Validates phone numbers entered in ACF phone fields.
+ *
+ * Rules:
+ * - Empty values pass (required-ness is enforced by ACF field config).
+ * - Accepts +, digits, spaces, parentheses, dots, dashes.
+ * - Optional extension suffix accepted: x123, ext 123, extension 123.
+ * - Main number must contain 7-15 digits (excluding extension).
+ *
+ * @param  bool|string $valid      Current validation state.
+ * @param  mixed       $value      Submitted field value.
+ * @param  array       $field      ACF field object.
+ * @param  string      $input_name ACF input name.
+ * @return bool|string
+ */
+function ws_acf_validate_phone_number( $valid, $value, $field, $input_name ) {
+    if ( $valid !== true ) {
+        return $valid;
+    }
+
+    $phone = trim( (string) $value );
+    if ( $phone === '' ) {
+        return true;
+    }
+
+    $phone = preg_replace( '/\s+/', ' ', $phone );
+
+    $pattern = '/^\+?[0-9][0-9\s\-\.\(\)]*(?:\s*(?:x|ext\.?|extension)\s*\d{1,6})?$/i';
+    if ( ! preg_match( $pattern, $phone ) ) {
+        return 'Enter a valid phone number (digits with optional +, spaces, (), dashes, dots, and optional extension).';
+    }
+
+    $main_number = preg_split( '/\s*(?:x|ext\.?|extension)\s*/i', $phone )[0] ?? '';
+    $digit_count = strlen( preg_replace( '/\D/', '', $main_number ) );
+
+    if ( $digit_count < 7 || $digit_count > 15 ) {
+        return 'Phone number must contain 7 to 15 digits (excluding extension).';
+    }
+
+    return true;
 }
 
 

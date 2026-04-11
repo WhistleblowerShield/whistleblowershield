@@ -14,7 +14,7 @@
  *   ws_jurisdiction                — taxonomy field (save_terms: 1)
  *   ws_languages                   — taxonomy field; additional_languages text triggers
  *                                    'additional' term auto-assign via admin-hooks.php
- *   ws_aorg_cost_model             — taxonomy radio (save_terms: 1) — Phase 2 filter axis
+ *   ws_aorg_cost_models            — taxonomy multi-select (save_terms: 1) — Phase 2 filter axis
  *   ws_employment_sector           — taxonomy (save_terms: 1) — Phase 2 filter axis
  *   ws_case_stage                  — taxonomy (save_terms: 1) — Phase 2 filter axis
  *
@@ -28,10 +28,25 @@
  *
  * @package WhistleblowerShield
  * @since   1.0.0
- * @version 3.16.2
+ * @version 3.16.6
  *
  * VERSION
  * -------
+ * 3.16.6  Added ws_aorg_case_stage_details textarea field.
+ *         Conditional display: appears when ws_aorg_case_stages includes
+ *         the ws_case_stage term slug `other`.
+ * 3.16.5  Secure contact tool canonicalization:
+ *         - ws_aorg_secure_contact_tool now uses WS_SCHEMA_SECURE_TOOL select
+ *         - ws_aorg_secure_contact_tool_other added (conditional when tool = other)
+ * 3.16.4  Eligibility & cost schema correction:
+ *         - ws_aorg_cost_models remains plural and now uses taxonomy checkbox
+ *           (multi-select) to support multiple cost structures per organization
+ *         - ws_aorg_income_limit_notes retained for income-specific criteria
+ *         - ws_aorg_eligibility_notes retained for non-income eligibility constraints
+ * 3.16.3  Meta naming rule alignment pass (ACF schema only):
+ *         - Multi-value jurisdiction field name pluralized:
+ *           WS_JURISDICTION_TAXONOMY (ws_jurisdiction) -> ws_jurisdictions
+ *         - URL field naming in this group already compliant (_url suffix only on URL fields)
  * 3.16.2  Naming normalization:
  *         - ws_ao_case_stage fully replaced by ws_aorg_case_stages
  *         - ws_aorg_disclosure_type fully replaced by ws_aorg_disclosure_types
@@ -71,7 +86,7 @@
  *         ws_aorg_case_stages (legacy key: ws_ao_case_stage) added to Scope of Service tab.
  * 3.9.0   ws_case_stage taxonomy field added.
  * 3.7.0   ws_employment_sector converted from ACF checkbox to taxonomy field.
- *         ws_aorg_cost_model converted from select to taxonomy radio.
+ *         ws_aorg_cost_models converted from select to taxonomy multi-select.
  * 3.0.0   ws_jx_code join retired; ws_jurisdiction taxonomy used throughout.
  * 1.0.0   Initial release.
  */
@@ -85,6 +100,10 @@ function ws_register_acf_assist_org() {
     if ( ! function_exists( 'acf_add_local_field_group' ) ) {
         return;
     }
+
+    $phone_type_choices = array_combine( WS_SCHEMA_PHONE_TYPE, WS_SCHEMA_PHONE_TYPE );
+    $email_type_choices = array_combine( WS_SCHEMA_EMAIL_TYPE, WS_SCHEMA_EMAIL_TYPE );
+    $secure_tool_choices = array_combine( WS_SCHEMA_SECURE_TOOL, WS_SCHEMA_SECURE_TOOL );
 
     acf_add_local_field_group( [
 
@@ -267,7 +286,7 @@ function ws_register_acf_assist_org() {
             [
                 'key'           => 'field_aorg_jurisdiction',
                 'label'         => 'Jurisdictions Served',
-                'name'          => WS_JURISDICTION_TAXONOMY,
+                'name'          => 'ws_jurisdictions',
                 'type'          => 'taxonomy',
                 'taxonomy'      => WS_JURISDICTION_TAXONOMY,
                 'field_type'    => 'checkbox',
@@ -353,6 +372,16 @@ function ws_register_acf_assist_org() {
                 'save_terms'    => 1,
                 'load_terms'    => 1,
                 'return_format' => 'id',
+            ],
+
+            [
+                'key'          => 'field_aorg_case_stage_details',
+                'label'        => 'Case Stage Details',
+                'name'         => 'ws_aorg_case_stage_details',
+                'type'         => 'textarea',
+                'rows'         => 3,
+                'instructions' => 'Provide details when Case Stage includes "other".',
+                // conditional_logic set dynamically — see ws_aorg_details_conditional()
             ],
 
             [
@@ -457,7 +486,7 @@ function ws_register_acf_assist_org() {
                 'label'             => 'Phone Numbers',
                 'name'              => 'ws_aorg_phones',
                 'type'              => 'repeater',
-                'instructions'      => 'Public phone lines. Use type values: hotline, intake, headquarters, regional, tty, fax, other.',
+                'instructions'      => 'Public phone lines. Type values come from WS_SCHEMA_PHONE_TYPE.',
                 'required'          => 0,
                 'layout'            => 'table',
                 'button_label'      => 'Add Phone',
@@ -466,10 +495,12 @@ function ws_register_acf_assist_org() {
                         'key'          => 'field_aorg_phone_type',
                         'label'        => 'Type',
                         'name'         => 'ws_aorg_phone_type',
-                        'type'         => 'text',
-                        'instructions' => 'hotline | intake | headquarters | regional | tty | fax | other',
+                        'type'         => 'select',
+                        'instructions' => 'Select a canonical value from WS_SCHEMA_PHONE_TYPE.',
                         'required'     => 1,
-                        'placeholder'  => 'hotline',
+                        'choices'      => $phone_type_choices,
+                        'allow_null'   => 0,
+                        'ui'           => 0,
                         'wrapper'      => [ 'width' => '30' ],
                     ],
                     [
@@ -490,7 +521,7 @@ function ws_register_acf_assist_org() {
                 'label'             => 'Email Addresses',
                 'name'              => 'ws_aorg_emails',
                 'type'              => 'repeater',
-                'instructions'      => 'Public email channels. Use type values: intake, general, legal, media, support, other.',
+                'instructions'      => 'Public email channels. Type values come from WS_SCHEMA_EMAIL_TYPE.',
                 'required'          => 0,
                 'layout'            => 'table',
                 'button_label'      => 'Add Email',
@@ -499,10 +530,12 @@ function ws_register_acf_assist_org() {
                         'key'          => 'field_aorg_email_type',
                         'label'        => 'Type',
                         'name'         => 'ws_aorg_email_type',
-                        'type'         => 'text',
-                        'instructions' => 'intake | general | legal | media | support | other',
+                        'type'         => 'select',
+                        'instructions' => 'Select a canonical value from WS_SCHEMA_EMAIL_TYPE.',
                         'required'     => 1,
-                        'placeholder'  => 'intake',
+                        'choices'      => $email_type_choices,
+                        'allow_null'   => 0,
+                        'ui'           => 0,
                         'wrapper'      => [ 'width' => '30' ],
                     ],
                     [
@@ -555,14 +588,37 @@ function ws_register_acf_assist_org() {
                 'key'          => 'field_aorg_secure_contact_tool',
                 'label'        => 'Secure Contact Tool',
                 'name'         => 'ws_aorg_secure_contact_tool',
-                'type'         => 'text',
-                'instructions' => 'Name of secure contact method. Example: "Signal", "SecureDrop", "ProtonMail".',
-                'placeholder'  => 'Signal',
+                'type'         => 'select',
+                'instructions' => 'Select a canonical value from WS_SCHEMA_SECURE_TOOL.',
+                'choices'      => $secure_tool_choices,
+                'allow_null'   => 1,
+                'ui'           => 0,
                 'conditional_logic' => [ [ [
                     'field'    => 'field_aorg_has_secure_channel',
                     'operator' => '==',
                     'value'    => '1',
                 ] ] ],
+            ],
+
+            [
+                'key'          => 'field_aorg_secure_contact_tool_other',
+                'label'        => 'Secure Contact Tool (Other)',
+                'name'         => 'ws_aorg_secure_contact_tool_other',
+                'type'         => 'text',
+                'instructions' => 'Required detail when Secure Contact Tool is set to "other".',
+                'placeholder'  => 'Name the secure contact tool',
+                'conditional_logic' => [ [
+                    [
+                        'field'    => 'field_aorg_has_secure_channel',
+                        'operator' => '==',
+                        'value'    => '1',
+                    ],
+                    [
+                        'field'    => 'field_aorg_secure_contact_tool',
+                        'operator' => '==',
+                        'value'    => 'other',
+                    ],
+                ] ],
             ],
 
             [
@@ -603,14 +659,14 @@ function ws_register_acf_assist_org() {
             ],
 
             [
-                'key'           => 'field_aorg_cost_model',
+                'key'           => 'field_aorg_cost_models',
                 'label'         => 'Cost Structure',
-                'name'          => 'ws_aorg_cost_model',
+                'name'          => 'ws_aorg_cost_models',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_aorg_cost_model',
-                'instructions'  => 'Select the primary cost model for whistleblower services at this organization.',
+                'instructions'  => 'Select all cost models that apply to whistleblower services at this organization.',
                 'required'      => 1,
-                'field_type'    => 'radio',
+                'field_type'    => 'checkbox',
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,
@@ -822,26 +878,28 @@ function ws_register_acf_assist_org() {
 // ws_jurisdiction is now a taxonomy field — ACF loads terms natively.
 
 
-// ── Conditional logic: has-details sentinel ───────────────────────────────────
+// ── Conditional logic: taxonomy term-gated details fields ─────────────────────
 //
-// When the 'has-details' term is selected in ws_aorg_disclosure_targets,
-// the companion _details textarea becomes visible.
+// - disclosure_targets_details appears when ws_disclosure_targets has term
+//   slug 'has-details'.
+// - case_stage_details appears when ws_case_stage has term slug 'other'.
 
 add_filter( 'acf/load_field', 'ws_aorg_details_conditional' );
 
 function ws_aorg_details_conditional( $field ) {
 
     static $map = [
-        'field_aorg_disclosure_targets_details' => [ 'ws_disclosure_targets', 'field_aorg_disclosure_targets' ],
+        'field_aorg_disclosure_targets_details' => [ 'ws_disclosure_targets', 'field_aorg_disclosure_targets', 'has-details' ],
+        'field_aorg_case_stage_details'         => [ 'ws_case_stage',        'field_aorg_case_stages',        'other' ],
     ];
 
     if ( ! isset( $map[ $field['key'] ] ) ) {
         return $field;
     }
 
-    [ $taxonomy, $trigger_key ] = $map[ $field['key'] ];
+    [ $taxonomy, $trigger_key, $trigger_slug ] = $map[ $field['key'] ];
 
-    $term = get_term_by( 'slug', 'has-details', $taxonomy );
+    $term = get_term_by( 'slug', $trigger_slug, $taxonomy );
     if ( ! $term || is_wp_error( $term ) ) {
         return $field;
     }
