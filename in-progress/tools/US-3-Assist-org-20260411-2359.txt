@@ -116,6 +116,7 @@ Unless 'required' omit any record.key you cannot confidently find data for or be
     secure_contact_url
     secure_contact_tool
     secure_contact_tool_other
+	income_eligibility_details
 
 REQUIRED KEYS
 organization_name: [string]
@@ -598,6 +599,7 @@ alright team, human research has surfaced gaps in our original schema, it is now
 Whistleblowers of America
 Government Accountability Project
 National Whistleblower Center
+treat each as a distinct organization; do not conflate mission statements or contact channels across records
 ---
 
 When "meta.nationwide_only" is true, return only nationwide or large multi-jurisdictional scoped organizations. Do not include single jurisdiction organizations, or organizations that only help federal employees.

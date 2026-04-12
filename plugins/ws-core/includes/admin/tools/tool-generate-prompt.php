@@ -1093,7 +1093,7 @@ Note:
 ---
 
 Each candidate organization must include as much verified information as possible:
-  - organization_name         [required - full official name]
+  - official_name             [required - full official name]
   - official_homepage_url     [required - official domain name URL, must be included, does not need to be functioning right now]
   - general_description       [required - 3 to 5 sentences describing nature of organization]
 -IMPORTANT- It is expected and permissible to omit record entirely, if any of the above three cannot be confidently sourced.
@@ -1123,12 +1123,9 @@ Unless 'required' omit any record.key you cannot confidently find data for or be
     secure_contact_url
     secure_contact_tool
     secure_contact_tool_other
+    income_eligibility_details
 
 REQUIRED KEYS
-organization_name: [string]
-official_homepage_url: [URL]
-general_description: [string]
-assistance_type: [single ws_aorg_type child slug]
 homepage_url_status: [verified | redirects | unverified]
 has_secure_channel: [yes | no | unclear]
 anonymous_pre_consult_possible: [yes | no | unclear]
@@ -1142,12 +1139,68 @@ case_stages: [array of ws_case_stage slugs]
 disclosure_targets: [array of ws_disclosure_targets child slugs]
 _review_notes: [string; if none use "researcher had no notes on current record"]
 
-    The following record.keys are noted as acceptable to leave blank ("" or []), and are required even if blank:
-    record.nationwide_example: ""
-    record.disclosure_types: []
-    record.protected_class: []
-    record.phones: []
-    record.emails: []
+
+INLINE DEFINITIONS (grouped by schema section)
+
+identity:
+    official_name: [string]
+    official_homepage_url: [URL]
+    general_description: [string]
+    common_name: [string]
+    homepage_url_status: [verified | redirects | unverified]
+    verified_url_date: [YYYY-MM-DD only, omit if unverified]
+
+scope_of_service:
+    nationwide_example: [string]
+    disclosure_types: [array of ws_disclosure_type slugs]
+    protected_class: [array of ws_protected_class slugs]
+    protected_class_details: [string]
+    languages_supported: [array of ws_languages slugs]
+    languages_additional: [string]
+    assistance_type: [single ws_aorg_type child slug]
+    employment_sectors: [array of ws_employment_sector slugs]
+    cost_models: [array of ws_aorg_cost_model slugs]
+    services_provided: [array of ws_aorg_service slugs]
+    additional_services: [string]
+    process_types: [array of ws_process_type slugs]
+    case_stages: [array of ws_case_stage slugs]
+    case_stage_details: [string]
+    disclosure_targets: [array of ws_disclosure_targets child slugs]
+    disclosure_targets_details: [string]
+    jurisdiction_exceptions: [string]
+    whistleblower_scope: [integer 0 | 1 | 2 | 3]
+    whistleblower_note: [string]
+
+contact:
+    intake_url: [URL]
+    contact_url: [URL]
+    phones: [array of objects: {type, number}]
+    emails: [array of objects: {type, address}]
+    mailing_address: [string]
+
+eligibility:
+    income_eligibility_required: [yes | no | unclear]
+    income_eligibility_details: [string]
+    eligibility_notes: [string]
+
+security:
+    has_secure_channel: [yes | no | unclear]
+    secure_contact_url: [URL]
+    secure_contact_tool: [string]
+    secure_contact_tool_other: [string]
+    anonymous_pre_consult_possible: [yes | no | unclear]
+    has_attorneys: [yes | no | unclear]
+
+review:
+    legitimacy_url: [URL]
+    _review_notes: [string; if none use "researcher had no notes on current record"]
+
+The following record keys are noted as acceptable to leave blank ("" or []), and are required even if blank (grouped by section):
+    scope_of_service.nationwide_example: ""
+    scope_of_service.disclosure_types: []
+    scope_of_service.protected_class: []
+    contact.phones: []
+    contact.emails: []
 
 
   - source_url                [if organization information was sourced from anywhere other than an official domain, provide complete URL to source page, omit if official domain homepage was used]
@@ -1228,55 +1281,63 @@ BLOCK;
 }
 
 function ws_prompt_assist_org_record_schema_block(): string {
-    return <<<'BLOCK'
+        return <<<'BLOCK'
 RECORD SCHEMA
 
 {
-  "organization_name": "",
-  "official_homepage_url": "",
-  "general_description": "",
-
-  "source_url": "",
-  "common_name": "",
-  "homepage_url_status": "",
-  "verified_url_date": "",
-  "intake_url": "",
-  "contact_url": "",
-  "phones": [],
-  "emails": [],
-  "mailing_address": "",
-  "has_secure_channel": "",
-  "secure_contact_url": "",
-  "secure_contact_tool": "",
-  "secure_contact_tool_other": "",
-  "nationwide_example": "",
-
-  "disclosure_types": [],
-  "protected_class": [],
-  "protected_class_details": "",
-  "languages_supported": [],
-  "languages_additional": "",
-  "assistance_type": "",
-  "employment_sectors": [],
-  "cost_models": [],
-  "services_provided": [],
-  "additional_services": "",
-  "process_types": [],
-  "anonymous_pre_consult_possible": "",
-  "has_attorneys": "",
-  "income_eligibility_required": "",
-  "income_eligibility_details": "",
-  "eligibility_notes": "",
-  "case_stages": [],
-  "case_stage_details": "",
-  "disclosure_targets": [],
-  "disclosure_targets_details": "",
-
-  "jurisdiction_exceptions": "",
-  "whistleblower_scope": 0,
-  "whistleblower_note": "",
-  "legitimacy_url": "",
-  "_review_notes": ""
+    "identity": {
+        "official_name": "",
+        "official_homepage_url": "",
+        "common_name": "",
+        "homepage_url_status": "",
+        "verified_url_date": ""
+    },
+    "scope_of_service": {
+        "general_description": "",
+        "nationwide_example": "",
+        "disclosure_types": [],
+        "protected_class": [],
+        "protected_class_details": "",
+        "languages_supported": [],
+        "languages_additional": "",
+        "assistance_type": "",
+        "employment_sectors": [],
+        "cost_models": [],
+        "services_provided": [],
+        "additional_services": "",
+        "process_types": [],
+        "case_stages": [],
+        "case_stage_details": "",
+        "disclosure_targets": [],
+        "disclosure_targets_details": "",
+        "jurisdiction_exceptions": "",
+        "whistleblower_scope": 0,
+        "whistleblower_note": ""
+    },
+    "contact": {
+        "intake_url": "",
+        "contact_url": "",
+        "phones": [],
+        "emails": [],
+        "mailing_address": ""
+    },
+    "eligibility": {
+        "income_eligibility_required": "",
+        "income_eligibility_details": "",
+        "eligibility_notes": ""
+    },
+    "security": {
+        "has_secure_channel": "",
+        "secure_contact_url": "",
+        "secure_contact_tool": "",
+        "secure_contact_tool_other": "",
+        "anonymous_pre_consult_possible": "",
+        "has_attorneys": ""
+    },
+    "review": {
+        "legitimacy_url": "",
+        "_review_notes": ""
+    }
 }
 
 BLOCK;

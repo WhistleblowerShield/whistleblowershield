@@ -443,9 +443,9 @@ function ws_register_acf_assist_org() {
             ],
 
             [
-                'key'           => 'field_aorg_protected_class',
-                'label'         => 'Protected Class Served',
-                'name'          => 'ws_aorg_protected_class',
+                'key'           => 'field_aorg_protected_classes',
+                'label'         => 'Protected Classes Served',
+                'name'          => 'ws_aorg_protected_classes',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_protected_class',
                 'field_type'    => 'multi_select',
@@ -465,7 +465,7 @@ function ws_register_acf_assist_org() {
                 'instructions' => 'If "has-details" is selected above, provide details here.',
                 'rows'         => 3,
                 'conditional_logic' => [ [ [
-                    'field'    => 'field_aorg_protected_class',
+                    'field'    => 'field_aorg_protected_classes',
                     'operator' => '==',
                     'value'    => 'has-details',
                 ] ] ],
