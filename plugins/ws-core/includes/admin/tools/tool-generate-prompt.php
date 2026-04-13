@@ -1191,8 +1191,9 @@ scope_of_service:
                               Omit when the org is clearly not nationwide, and note the absence in _review_notes.
   disclosure_types            ws_disclosure_type slugs; [] when none can be confirmed.
   protected_classes           ws_protected_class slugs; use has-details slug when coverage
-                              exists but no slug fits cleanly, or coverage is unclear.
-  protected_class_details     free text when protected_class includes has-details slug; omit otherwise.
+                              exists but no slug fits cleanly, or coverage is ambiguous.
+  protected_class_details     free text when protected_classes includes has-details slug; describe the
+                              org's claim of coverage or note ambiguity of coverage.
   languages_supported         ws_languages slugs; list all languages the org claims to support.
                               Do not assume "english" if the site appears to be in another language.
                               Leave languages_supported as [] when language support is ambiguous
