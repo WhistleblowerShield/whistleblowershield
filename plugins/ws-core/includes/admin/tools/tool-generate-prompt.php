@@ -1092,6 +1092,7 @@ Four tiers govern every field in the schema:
 
   essential           — omit the entire record if missing; no fallback exists
   expected            — always include; use the stated fallback when data is unavailable
+  ternary             — yes when present; no when not present; unclear when uncertain
   expected-if-found   — include when present even if empty; omit only when genuinely not found
   conditional         — required when its parent condition is met; omit otherwise
   optional            — omit entirely when uncertain or unavailable
@@ -1105,8 +1106,8 @@ ESSENTIAL — omit the record if any of these cannot be confidently sourced:
 EXPECTED — always include; use the fallback when data is unavailable. Fallback values here are
 not “real” data; they are not considered failures, they are explicit signals for human
 review and must be paired with *_details where applicable. Use these fallbacks instead
-of long explanations in _review_notes so that _review_notes stays focused on a few key
-clarifications, not a full narrative:
+of descriptions in _review_notes so that _review_notes can stay focused on the key
+clarifications you make during your research:
 
   Field                                       Fallback
   ─────────────────────────────────────────   ────────────────────────────────────────────────
@@ -1118,13 +1119,21 @@ clarifications, not a full narrative:
   scope_of_service.protected_class            ["has-details"]  → populate protected_class_details
   scope_of_service.whistleblower_scope        0  (scope unclear)
   scope_of_service.whistleblower_note         state reason for inclusion
+  review._review_notes                        "researcher had no notes on current record"
+
+TERNARY — use yes when the source confirms the presence of this feature, no when the source
+confirms its absence, and unclear when the source is ambiguous. unclear is not a failure — 
+it is a signal for human review and should be used whenever the source material does not
+confidently confirm or deny the presence of the feature.
+
   security.has_secure_channel                 unclear
   security.anonymous_pre_consult_possible     unclear
   security.has_attorneys                      unclear
   eligibility.income_eligibility_required     unclear
-  review._review_notes                        "researcher had no notes on current record"
 
-EXPECTED-IF-FOUND — include even when blank; omit only when genuinely not found:
+EXPECTED-IF-FOUND — include even when blank; omit only when genuinely not found and note the
+absence in _review_notes. This is important for capturing “I looked for this and it's not there”
+signals that are critical for human reviewers:
 
   scope_of_service.nationwide_example         "" when no qualifying quote is found
   scope_of_service.disclosure_types           [] when none can be confirmed
@@ -1132,8 +1141,8 @@ EXPECTED-IF-FOUND — include even when blank; omit only when genuinely not foun
 
 CONDITIONAL — required when the parent condition is met; omit otherwise. In most cases these
 fields are the structured breadcrumbs for human reviewers: use them to capture “what I found
-doesn't fit the schema” and keep _review_notes lean and focused on a few key clarifications
-rather than long narratives:
+doesn't fit the schema”; keep _review_notes for any key clarifications you want to make during
+your research:
 
   Field                                       Condition
   ─────────────────────────────────────────   ────────────────────────────────────────────────
@@ -1179,11 +1188,12 @@ identity:
 scope_of_service:
   nationwide_example          verbatim quote (up to 3 sentences) from the org's own site or
                               mission statement showing nationwide scope; use "" if none is found.
+                              Omit when the org is clearly not nationwide, and note the absence in _review_notes.
   disclosure_types            ws_disclosure_type slugs; [] when none can be confirmed.
   protected_classes           ws_protected_class slugs; use has-details slug when coverage
                               exists but no slug fits cleanly, or coverage is unclear.
   protected_class_details     free text when protected_class includes has-details slug; omit otherwise.
-  languages_supported         ws_languages slugs; list all language the org claims to support.
+  languages_supported         ws_languages slugs; list all languages the org claims to support.
                               Do not assume "english" if the site appears to be in another language.
                               Leave languages_supported as [] when language support is ambiguous
                               and note the ambiguity in _review_notes.
@@ -1193,25 +1203,26 @@ scope_of_service:
   assistance_type             single ws_aorg_type slug; use mixed slug when no single slug
                               fits cleanly.
   employment_sectors          ws_employment_sector slugs; omit when coverage is unclear.
-  cost_models                 ws_aorg_cost_model slugs; include all described models.
+  cost_models                 ws_aorg_cost_model slugs; include all described cost models.
                               Use unclear slug when other slugs do not fit described cost model cleanly,
-                              or no cost model is described at all.
+                              or no cost model is not described at all.
   services_provided           ws_aorg_service slugs. Include secure-drop when the org runs a dedicated
                               anonymous evidence drop (e.g. SecureDrop). Include additional slug when a
-							  services described doesn't fit existing slugs cleanly. Omit services_provided
+							  service described doesn't fit existing slugs cleanly. Omit services_provided
 							  entirely when the site is unclear about what services it provides and strongly
-							  note this in _review_notes.
-  additional_services         free text when services_provided includes additional slug; omit otherwise.
+							  note the absence in _review_notes.
+  additional_services         free text when services_provided includes additional slug; describe services
+                              that did not match existing slugs; omit otherwise.
   process_types               ws_process_type slugs; omit when unclear
-  case_stages                 ws_case_stage slugs; use other slug when coverage exists that slugs don't fit
-                              cleanly, or coverage is entirely unclear.
-  case_stage_details          free text when case_stages includes other slug; describe the org's stage
-                              coverage or note the lack of coverage.
+  case_stages                 ws_case_stage slugs; use other slug when coverage is described that slugs don't
+                              fit cleanly, or coverage is entirely unclear.
+  case_stage_details          free text when case_stages includes other slug; describe the org's claim of
+                              coverage or note the absence of coverage.
   disclosure_targets          ws_disclosure_targets slugs; use has-details slug when
                               disclosure target coverage exists but no slug fits cleanly, or
 							  coverage is entirely unclear.
-  disclosure_targets_details  free text describe disclosure targets or note lack of coverage when
-                              disclosure_targets includes has-details slug.
+  disclosure_targets_details  free text when disclosure_targets includes has-details slug; describe the
+                              org's claim of coverage or note the absence of coverage.
   jurisdiction_exceptions     free text listing self-reported coverage gaps
                               (e.g. "nationwide except Texas"); omit if none are stated.
   whistleblower_scope         integer 0-3:
