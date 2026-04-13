@@ -1145,7 +1145,7 @@ A wrong field sends someone in crisis to the wrong place.
 
 FIELD REQUIREMENTS
 
-Five tiers govern every field in the schema:
+Six tiers govern every field in the schema:
 
   essential           — omit the entire record if missing; no fallback exists
   expected            — always include; use the stated fallback when data is unavailable
@@ -1213,7 +1213,7 @@ your research:
   security.secure_contact_tool_other          secure_contact_tool is other
 
 OPTIONAL — omit entirely when uncertain or unavailable. It is not required, but use _review_notes
-if something was found that didn't comply with instructions, but you think may still be helpful:
+if something was found that didn't fit the schema cleanly, but you think may still be helpful:
 
   identity.common_name
   identity.verified_url_date
@@ -1263,7 +1263,7 @@ scope_of_service:
   employment_sectors          ws_employment_sector slugs; omit when coverage is unclear.
   cost_models                 ws_aorg_cost_model slugs; include all described cost models.
                               Use unclear slug when other slugs do not fit described cost model cleanly,
-                              or no cost model is not described at all.
+                              or cost model is not described at all.
   services_provided           ws_aorg_service slugs. Include secure-drop when the org runs a dedicated
                               anonymous evidence drop (e.g. SecureDrop). Include additional slug when a
 							  service described doesn't fit existing slugs cleanly. Omit services_provided
