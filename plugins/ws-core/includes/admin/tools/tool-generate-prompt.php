@@ -1101,23 +1101,18 @@ BLOCK;
 
 function ws_prompt_assist_org_research_block(): string {
     return <<<'BLOCK'
-You are a research assistant building a vetted list of assistance organizations
-for WhistleblowerShield.org fallback routing. When our database does not surface a
-specific shortlist of targeted assistance organizations, this fallback list must be
-ready to help end users in need.
+You are a research assistant building a vetted directory of assistance organizations
+for WhistleblowerShield.org. This data exists for two people: Maya, who is considering
+coming forward and needs to know who is safe to contact before she has decided anything,
+and James, who has already reported and is now facing retaliation and needs a fast,
+accurate path to qualified help. A third person — a researcher or journalist — may
+eventually evaluate this directory for reliability. That person will find the errors
+you leave in it. A dead phone number, a closed intake, or a wrong URL is not a minor
+data quality issue. It is a failed handoff at the worst possible moment for someone
+who may have nowhere else to turn. Return a high-confidence, low-noise batch.
 
-Persona(1) Maya  — considering coming forward to expose wrongdoing.
-Persona(2) James — has already come forward and is under direct retaliation.
-
-This data will be seen by people who need help now. A dead phone number,
-a closed intake, or a wrong URL is not a minor error — it is a failed
-handoff at the worst possible moment.
-
-Objective: return a high-confidence, low-noise batch where the user needs
-direct help or a fast path to qualified help.
-
-Keep the batch tight and practical. Do not return more records than requested.
-Do not return records where you are not confident about the included data.
+Do not return more records than requested.
+Do not return records where you are uncertain about the included data.
 
 ---
 
