@@ -11,8 +11,6 @@
 - Treat `plugins/ws-core/vendor/` as vendored third-party code (localized Sentry stack), not first-party project code.
 - Do not treat Composer metadata in `plugins/ws-core/composer.json` and `plugins/ws-core/composer.lock` as the source of truth for project architecture or contribution workflow.
 - First-party Sentry integration points are limited to `plugins/ws-core/includes/sentry_init.php`, Sentry bootstrap lines in `plugins/ws-core/ws-core.php` (`ws_core_init()`), and the `sentry_init` load/invocation path in `plugins/ws-core/includes/loader.php`.
-- Prefer changes in first-party integration code over edits inside vendored libraries unless explicitly requested.
-- At first-party/vendor integration boundaries (especially loader/bootstrap includes), add brief inline comments that clarify ownership and privacy intent.
 
 ## Build And Test
 - Primary codebase is the WordPress plugin in `plugins/ws-core/`.

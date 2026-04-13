@@ -1503,7 +1503,7 @@ These tables are your source of truth for taxonomy values.
 Use the slugs listed in the tables. Do not invent slugs.
 If a concept does not fit any listed slug cleanly:
   — leave the field empty or use has-details where permitted
-  — describe the gap in record._review_notes
+  — describe the gap in review._review_notes
 
 Field → taxonomy mapping:
   scope_of_service.disclosure_types        ws_disclosure_type        (multi-select)

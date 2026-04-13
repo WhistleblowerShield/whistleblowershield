@@ -693,9 +693,9 @@ function ws_register_acf_assist_org() {
                 'name'          => 'ws_aorg_cost_models',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_aorg_cost_model',
-                'instructions'  => 'Select all cost models that apply to whistleblower services at this organization.',
+                'instructions'  => 'Select one or more cost models that apply to whistleblower services at this organization. Stored as a plural array-style field key (ws_aorg_cost_models).',
                 'required'      => 1,
-                'field_type'    => 'checkbox',
+                'field_type'    => 'checkbox', // Multi-select taxonomy input (array of selected term IDs).
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,
