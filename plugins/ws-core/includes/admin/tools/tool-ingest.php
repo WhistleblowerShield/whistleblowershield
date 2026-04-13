@@ -666,11 +666,15 @@ function ws_ingest_get_record_identifier( array $record, string $record_type ): 
         return (string) ( $record['interpretation_id'] ?? 'UNKNOWN' );
     }
     if ( $record_type === 'assist-org' ) {
-        $internal_id = trim( (string) ( $record['internal_id'] ?? '' ) );
+        if ( ! function_exists( 'ws_ingest_flatten_assist_org_record' ) ) {
+            require_once __DIR__ . '/ws-ingest-flatten-helper.php';
+        }
+        $flat = ws_ingest_flatten_assist_org_record( $record );
+        $internal_id = trim( (string) ( $flat['internal_id'] ?? '' ) );
         if ( $internal_id !== '' ) {
             return $internal_id;
         }
-        $org_name = trim( (string) ( $record['official_name'] ?? '' ) );
+        $org_name = trim( (string) ( $flat['official_name'] ?? '' ) );
         if ( $org_name !== '' ) {
             return $org_name;
         }
@@ -772,50 +776,14 @@ function ws_ingest_allowed_record_keys( string $record_type ): array {
     }
 
     if ( $record_type === 'assist-org' ) {
-        return [
-            'jurisdiction_id',
-            'internal_id',
-            'official_name',
-            'official_homepage_url',
-            'general_description',
-            'source_url',
-            'common_name',
-            'homepage_url_status',
-            'verified_url_date',
-            'intake_url',
-            'contact_url',
-            'legitimacy_url',
-            'phones',
-            'emails',
-            'mailing_address',
-            'has_secure_channel',
-            'secure_contact_url',
-            'secure_contact_tool',
-            'secure_contact_tool_other',
-            'nationwide_example',
-            'disclosure_types',
-            'languages_supported',
-            'languages_additional',
-            'assistance_type',
-            'employment_sectors',
-            'cost_models',
-            'services_provided',
-            'process_types',
-            'anonymous_pre_consult_possible',
-            'has_attorneys',
-            'income_eligibility_required',
-            'income_eligibility_details',
-            'eligibility_notes',
-            'case_stages',
-            'case_stage_details',
-            'disclosure_targets',
-            'disclosure_targets_details',
-            'jurisdiction_exceptions',
-            'whistleblower_scope',
-            'whistleblower_note',
-            '_review_notes',
-            '_reconciled_notes',
-        ];
+        if ( ! function_exists( 'ws_ingest_flatten_assist_org_record' ) ) {
+            require_once __DIR__ . '/ws-ingest-flatten-helper.php';
+        }
+        // Accept both top-level and group-nested keys for validation.
+        $flat = ws_ingest_flatten_assist_org_record( array() ); // get all possible keys from field map
+        // Use the field map keys as canonical allowed keys
+        $field_map = ws_ingest_assist_org_field_map_v2();
+        return array_keys( $field_map );
     }
 
     // assist-org
@@ -841,12 +809,36 @@ function ws_ingest_validate_record_shape( array $record, string $record_type, in
         $id_key = 'official_name';
     }
 
+    // --- FLATTEN HELPER (from codex-ingest-propmt.md) ---
+    /**
+     * Flattens a nested assist-org record into a single working array.
+     * The assist-org JSON schema groups fields under six top-level keys:
+     * identity, scope_of_service, contact, eligibility, security, review.
+     * The field map loop and validators work against flat keys, so this
+     * helper merges all groups into one array before processing.
+     * Later groups win on key collision — review._review_notes will not
+     * collide with anything, but the merge order is documented here for
+     * future reference.
+     * @param  array $record Raw assist-org record from JSON batch.
+     * @return array         Flat key-value array ready for field map loop.
+     */
+    function ws_ingest_flatten_assist_org_record( array $record ): array {
+        return array_merge(
+            (array) ( $record['identity']         ?? [] ),
+            (array) ( $record['scope_of_service'] ?? [] ),
+            (array) ( $record['contact']          ?? [] ),
+            (array) ( $record['eligibility']      ?? [] ),
+            (array) ( $record['security']         ?? [] ),
+            (array) ( $record['review']           ?? [] )
+        );
+    }
+
     $sid = ws_ingest_get_record_identifier( $record, $record_type );
 
     $allowed_keys = ws_ingest_allowed_record_keys( $record_type );
-    foreach ( array_keys( $record ) as $key ) {
+    foreach ( array_keys( $flat_record ) as $key ) {
         if ( ! in_array( (string) $key, $allowed_keys, true ) ) {
-            $errors[] = "$sid: unknown top-level key '{$key}' in record[$index].";
+            $errors[] = "$sid: unknown key '{$key}' in record[$index].";
         }
     }
 
@@ -3607,7 +3599,11 @@ function ws_ingest_process_batch_data( array $data, string $batch_filename ): ar
         } elseif ( $record_type === 'interpretation' ) {
             $record_result = ws_ingest_process_interpretation_record( $record, $meta, $blacklist );
         } elseif ( $record_type === 'assist-org' ) {
-            $record_result = ws_ingest_process_assist_org_record( $record, $meta, $blacklist );
+            if ( ! function_exists( 'ws_ingest_flatten_assist_org_record' ) ) {
+                require_once __DIR__ . '/ws-ingest-flatten-helper.php';
+            }
+            $flat_record = ws_ingest_flatten_assist_org_record( $record );
+            $record_result = ws_ingest_process_assist_org_record( $flat_record, $meta, $blacklist );
         } else {
             $record_result = ws_ingest_process_statute_record( $record, $meta, $blacklist );
         }

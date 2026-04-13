@@ -1,0 +1,268 @@
+{
+  "meta": {
+    "json_format_version": "2.0",
+    "source_method": "ai_assisted",
+    "source_name": "Gemini",
+    "jurisdiction_id": "US",
+    "generated_date": "2026-04-11",
+    "generated_by": "Gemini 2.0 Pro Experimental",
+    "nationwide_only": true,
+    "record_count": 3,
+    "json_run_notes": "Focused on the three specific organizations requested in the run scope. Verified unique contact details and mission focuses for each. Applied the new ws_aorg_service taxonomy terms (peer-support, mental-health) as applicable. Zero parent slugs detected in record arrays. Verified nationwide evidence for all records.",
+    "batch_completed": "2026-04-11 20:55 UTC"
+  },
+  "records": [
+    {
+      "identity": {
+        "official_name": "Whistleblowers of America",
+        "official_homepage_url": "https://www.whistleblowersofamerica.org",
+        "general_description": "A nonprofit organization that provides evidence-based peer support to whistleblowers suffering from retaliation and traumatic stress. Their primary mission is to match mentors with mentees to help whistleblowers cope with the psychological impact of their disclosures. They offer strategic planning assistance and educate clinicians and attorneys on the 'toxic tactics' of retaliation.",
+        "common_name": "WoA",
+        "homepage_url_status": "verified",
+        "verified_url_date": "2026-04-11"
+      },
+      "scope_of_service": {
+        "nationwide_example": "Whistleblowers of America assists whistleblowers nationally who have suffered retaliation after having identified harm to individuals or the public.",
+        "disclosure_types": [
+          "retaliation-protection",
+          "wrongful-termination",
+          "general-wrongdoing"
+        ],
+        "languages_supported": [
+          "english"
+        ],
+        "languages_additional": "TTY Relay 711 available for hearing-impaired callers",
+        "assistance_type": "nonprofit",
+        "employment_sectors": [
+          "federal-employee",
+          "state-local-employee",
+          "nonprofit-ngo",
+          "military-defense"
+        ],
+        "cost_models": [
+          "free"
+        ],
+        "services_provided": [
+          "peer-support",
+          "mental-health",
+          "consultation",
+          "advocacy",
+          "referral"
+        ],
+        "process_types": [
+          "internal-disclosure"
+        ],
+        "case_stages": [
+          "pre-report",
+          "retaliation-active"
+        ],
+        "disclosure_targets": [
+          "internal-management",
+          "public-media",
+          "attorney-counsel"
+        ],
+        "whistleblower_scope": 3,
+        "whistleblower_note": "Our primary mission is to provide evidence-based peer support that matches mentors and mentees who follow a WoA whistleblower strategic plan designed to reduce the stress on the whistleblower and assist in problem-solving and decision-making."
+      },
+      "contact": {
+        "intake_url": "https://www.whistleblowersofamerica.org/peer-support",
+        "contact_url": "https://www.whistleblowersofamerica.org/contact-us",
+        "phones": [
+          {
+            "type": "headquarters",
+            "number": "(202) 643-1956"
+          }
+        ],
+        "mailing_address": "11130 Lillian Highway, Pensacola, FL 32506"
+      },
+      "eligibility": {
+        "income_eligibility_required": "no"
+      },
+      "security": {
+        "has_secure_channel": "no",
+        "anonymous_pre_consult_possible": "unclear",
+        "has_attorneys": "no"
+      },
+      "review": {
+        "legitimacy_url": "https://www.washlaw.org/workers-rights-manual/d-c-employment-law-referrals/",
+        "_review_notes": "Organization focuses heavily on the psychosocial recovery and peer mentorship rather than legal representation. They do not maintain a SecureDrop or Signal channel for intake."
+      }
+    },
+    {
+      "identity": {
+        "official_name": "Government Accountability Project",
+        "official_homepage_url": "https://whistleblower.org",
+        "general_description": "Founded in 1977, Government Accountability Project is a leading non-partisan whistleblower protection and advocacy organization. They specialize in litigating cases of high-impact wrongdoing and protecting truth-tellers in sectors such as food safety, national security, and public health. GAP works to promote corporate and government accountability by defending those who expose abuses of power.",
+        "common_name": "GAP",
+        "homepage_url_status": "verified",
+        "verified_url_date": "2026-04-11"
+      },
+      "scope_of_service": {
+        "nationwide_example": "Government Accountability Project is the nation’s leading whistleblower protection and advocacy organization.",
+        "disclosure_types": [
+          "public-corruption-ethics",
+          "food-drug-safety",
+          "environmental-protection",
+          "national-security",
+          "general-wrongdoing"
+        ],
+        "languages_supported": [
+          "english"
+        ],
+        "assistance_type": "nonprofit",
+        "employment_sectors": [
+          "federal-employee",
+          "state-local-employee",
+          "nonprofit-ngo",
+          "military-defense"
+        ],
+        "cost_models": [
+          "mixed"
+        ],
+        "services_provided": [
+          "legal-rep",
+          "consultation",
+          "advocacy",
+          "hotline",
+          "media"
+        ],
+        "process_types": [
+          "civil-lawsuit",
+          "administrative-complaint",
+          "congressional-disclosure",
+          "internal-disclosure"
+        ],
+        "case_stages": [
+          "pre-report",
+          "retaliation-active",
+          "litigation"
+        ],
+        "disclosure_targets": [
+          "internal-management",
+          "agency-federal",
+          "legislative-federal",
+          "public-media",
+          "attorney-counsel"
+        ],
+        "whistleblower_scope": 3,
+        "whistleblower_note": "A non-partisan public-interest group, GAP litigates whistleblower cases, helps expose wrongdoing to the public, and actively promotes government and corporate accountability."
+      },
+      "contact": {
+        "intake_url": "https://whistleblower.org/intake/",
+        "contact_url": "https://whistleblower.org/contact/",
+        "phones": [
+          {
+            "type": "hotline",
+            "number": "(202) 457-0034"
+          }
+        ],
+        "emails": [
+          {
+            "type": "general",
+            "address": "info@whistleblower.org"
+          }
+        ],
+        "mailing_address": "1612 K St. NW, Suite 1100, Washington, D.C. 20006"
+      },
+      "eligibility": {
+        "income_eligibility_required": "no"
+      },
+      "security": {
+        "has_secure_channel": "unclear",
+        "anonymous_pre_consult_possible": "yes",
+        "has_attorneys": "yes"
+      },
+      "review": {
+        "legitimacy_url": "https://www.washlaw.org/workers-rights-manual/d-c-employment-law-referrals/",
+        "_review_notes": "Very high capacity organization. Intake coordinator listed for phone contact. While they recommend secure tools for sources, their primary intake is through an HTTPS web form."
+      }
+    },
+    {
+      "identity": {
+        "official_name": "National Whistleblower Center",
+        "official_homepage_url": "https://www.whistleblowers.org",
+        "general_description": "A non-partisan nonprofit organization dedicated to protecting and rewarding whistleblowers through advocacy and legal education. NWC connects truth-tellers with specialized legal counsel via its Attorney Referral Program, focusing on high-stakes cases like False Claims Act, securities, and tax fraud. They have spent over 35 years advocating for stronger whistleblower protection laws.",
+        "common_name": "NWC",
+        "homepage_url_status": "verified",
+        "verified_url_date": "2026-04-11"
+      },
+      "scope_of_service": {
+        "nationwide_example": "National Whistleblower Center (NWC) is a non-profit organization... assisting whistleblowers globally in exposing corruption and protecting their rights.",
+        "disclosure_types": [
+          "securities-commodities-fraud",
+          "tax-evasion-fraud",
+          "healthcare-medicare-fraud",
+          "procurement-spending-fraud",
+          "environmental-protection",
+          "public-corruption-ethics"
+        ],
+        "languages_supported": [
+          "english"
+        ],
+        "assistance_type": "nonprofit",
+        "employment_sectors": [
+          "federal-employee",
+          "state-local-employee",
+          "nonprofit-ngo",
+          "military-defense"
+        ],
+        "cost_models": [
+          "free"
+        ],
+        "services_provided": [
+          "referral",
+          "advocacy",
+          "consultation"
+        ],
+        "process_types": [
+          "qui-tam",
+          "regulatory-tip",
+          "civil-lawsuit"
+        ],
+        "case_stages": [
+          "pre-report",
+          "litigation"
+        ],
+        "disclosure_targets": [
+          "agency-federal",
+          "agency-state",
+          "attorney-counsel"
+        ],
+        "whistleblower_scope": 3,
+        "whistleblower_note": "A nonprofit educational and advocacy organization... help whistleblowers obtain representation through its Attorney Referral Program."
+      },
+      "contact": {
+        "intake_url": "https://www.whistleblowers.org/find-a-whisteblower-attorney/",
+        "contact_url": "https://www.whistleblowers.org/contact-us/",
+        "phones": [
+          {
+            "type": "headquarters",
+            "number": "(202) 342-1903"
+          }
+        ],
+        "emails": [
+          {
+            "type": "general",
+            "address": "contact@whistleblowers.org"
+          }
+        ],
+        "mailing_address": "P.O. Box 25074, Washington, DC 20027"
+      },
+      "eligibility": {
+        "income_eligibility_required": "no"
+      },
+      "security": {
+        "has_secure_channel": "no",
+        "anonymous_pre_consult_possible": "yes",
+        "has_attorneys": "yes"
+      },
+      "review": {
+        "legitimacy_url": "https://ecologycenter.org/directory/directory-entries/national-whistleblower-center-nwc/",
+        "_review_notes": "The primary focus is the Attorney Referral Program (ARP), which is free to whistleblowers. They emphasize cybersecurity best practices on their site, recommending Signal and Tor, though intake is through an HTTPS form."
+      }
+    }
+  ],
+  "integrity": {
+    "with_errors": false
+  }
+}
