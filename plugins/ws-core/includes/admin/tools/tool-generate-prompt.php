@@ -1088,7 +1088,7 @@ organization that was not properly vetted wastes time and creates stress for a p
 
 FIELD REQUIREMENTS
 
-Four tiers govern every field in the schema:
+Five tiers govern every field in the schema:
 
   essential           — omit the entire record if missing; no fallback exists
   expected            — always include; use the stated fallback when data is unavailable
