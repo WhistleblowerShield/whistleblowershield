@@ -1466,7 +1466,8 @@ function ws_generate_assist_org_prompt( array $scope ): string {
     $out .= ws_prompt_assist_org_field_rules_block();
     $out .= ws_prompt_assist_org_record_schema_block();
     //$out .= ws_prompt_parent_slug_block(); // Parent slug blocking language has been reworked and moved directly to taxonomy tables
-    $out .= ws_prompt_taxonomy_tables( 'ws-assist-org' );
+    //$out .= ws_prompt_taxonomy_tables( 'ws-assist-org' );// Static Tables in use for the moment
+    $out .= ws_prompt_assist_org_taxonomy_tables_static_block();
     $out .= ws_prompt_integrity_block();
     $out .= ws_prompt_assist_org_final_write_contract_block();
 
@@ -1495,206 +1496,252 @@ function ws_generate_assist_org_prompt( array $scope ): string {
 }
 
 
-// ── Record schemas ────────────────────────────────────────────────────────
+// ── Assist Organization Taxonomy Tables [Static] ────────────────────────────────────────────────────────
 
-function ws_prompt_statute_schema(): string {
-    return <<<'ENDSCHEMA'
+function ws_prompt_assist_org_taxonomy_tables_static_block(): string {
+    return <<<'BLOCK'
 
-RECORD SCHEMA
+================================================================================
+TAXONOMY TABLES
 
-{
-  "jurisdiction_id":  "[TWO-LETTER CODE]",
-  "statute_id":       "[JURISDICTION_ID-SECTION e.g. CA-1102.5]",
-  "official_name":    "[FULL OFFICIAL STATUTE NAME]",
-  "common_name":      "[PLAIN LANGUAGE COMMON NAME — omit if none exists]",
+These tables are your source of truth for taxonomy values.
+Use the slugs listed in the tables. Do not invent slugs.
+If a concept does not fit any listed slug cleanly:
+  — leave the field empty or use has-details where permitted
+  — describe the gap in record._review_notes
 
-  "legal_basis": {
-    "statute_citation":           "[FORMAL CITATION e.g. Cal. Lab. Code § 1102.5]",
-    "disclosure_types":           [],
-    "protected_class":            [],
-    "protected_class_details":    "[FREE TEXT — omit unless protected_class uses has-details]",
-    "disclosure_targets":         [],
-    "disclosure_targets_details": "[FREE TEXT — omit unless disclosure_targets uses has-details]",
-    "adverse_action_scope":       "[FREE TEXT — scope of covered adverse actions]"
-  },
+Field → taxonomy mapping:
+  scope_of_service.disclosure_types        ws_disclosure_type        (multi-select)
+  scope_of_service.protected_classes       ws_protected_class        (multi-select)
+  scope_of_service.disclosure_targets      ws_disclosure_targets     (multi-select)
+  scope_of_service.process_types           ws_process_type           (multi-select)
+  scope_of_service.case_stages             ws_case_stage             (multi-select)
+  scope_of_service.languages_supported     ws_languages              (multi-select)
+  scope_of_service.assistance_type         ws_aorg_type              (single value)
+  scope_of_service.employment_sectors      ws_employment_sector      (multi-select)
+  scope_of_service.cost_models             ws_aorg_cost_model        (multi-select)
+  scope_of_service.services_provided       ws_aorg_service           (multi-select)
 
-  "statute_of_limitations": {
-    "limit_ambiguous":     false,
-    "limit_value":         0,
-    "limit_unit":          "[days | months | years]",
-    "limit_details":       "[omit if limit_ambiguous is false]",
-    "trigger":             "[omit if unknown]",
-    "exhaustion_required": false,
-    "exhaustion_details":  "[omit if exhaustion_required is false]",
-    "tolling_notes":       "[omit if none identified]"
-  },
+SELF-CHECK: Before writing your final JSON, verify that every slug in every
+taxonomy array appears verbatim in the tables below. If it does not appear
+here, it is not a valid value — leave the array empty or use has-details.
+If empty, describe why in _review_notes.
+================================================================================
 
-  "enforcement": {
-    "primary_agency": "[omit if unknown]",
-    "process_type":   [],
-    "adverse_action": [],
-    "adverse_action_details": "[FREE TEXT — omit unless adverse_action uses has-details]",
-    "remedies":       [],
-    "remedies_details": "[FREE TEXT — omit unless remedies uses has-details]",
-    "fee_shifting":   "[omit if empty]"
-  },
 
-  "burden_of_proof": {
-    "employee_standard":         [],
-    "employee_standard_details": "[FREE TEXT — omit unless employee_standard uses has-details]",
-    "employer_defense":          [],
-    "employer_defense_details":  "[FREE TEXT — omit unless employer_defense uses has-details]",
-    "rebuttable_presumption":    "[omit if none identified]",
-    "burden_of_proof_details":   "[omit if none]",
-    "burden_of_proof_flag":      "[omit unless a meaningful burden shift is identified]"
-  },
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_disclosure_type
+Description: Subject matter of the protected disclosure. Tag all that apply.
+             If no slug fits cleanly, leave the array empty [].
+────────────────────────────────────────────────────────────────────────────
 
-  "reward": {
-    "available":      false,
-    "reward_details": "[omit if available is false]"
-  },
+wage-hour-violations               Wage & Hour Violations
+occupational-health-safety         Occupational Health & Safety
+collective-bargaining              Collective Bargaining Rights
+securities-commodities-fraud       Securities & Commodities Fraud
+consumer-financial-protection      Consumer Financial Protection
+banking-aml-compliance             Banking & AML Compliance
+shareholder-rights                 Shareholder Rights
+tax-evasion-fraud                  Tax Evasion & Fraud
+procurement-spending-fraud         Procurement & Spending Fraud
+public-corruption-ethics           Public Corruption & Ethics
+election-integrity                 Election Integrity
+military-defense-reporting         Military & Defense Reporting
+healthcare-medicare-fraud          Healthcare & Medicare Fraud
+environmental-protection           Environmental Protection
+food-drug-safety                   Food & Drug Safety
+nuclear-energy-safety              Nuclear & Energy Safety
+transportation-safety              Transportation & Aviation Safety
+cybersecurity-disclosure           Cybersecurity Disclosure
+hipaa-patient-privacy              HIPAA & Patient Privacy
+consumer-data-protection           Consumer Data Protection
+education-privacy-ferpa            Education Privacy (FERPA)
+intelligence-community             Intelligence Community Reporting
+classified-information             Classified Information Disclosures
+export-sanctions-compliance        Export Controls & Sanctions Compliance
+general-wrongdoing                 General Wrongdoing / Violation of Law
 
-  "links": {
-    "statute_url": "[omit if no approved source identified]",
-    "is_official": false,
-    "url_source":  "[domain name — omit if is_official is true or no URL]",
-    "is_pdf":      "[omit if false]"
-  },
 
-  "citations": {
-    "attached_citations": [],
-    "citation_count":     0
-  },
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_protected_class
+Description: Worker or employment classification the org explicitly serves.
+             Tag all that apply. List all classifications described in source
+			 material. Do not infer coverage. Use has-details slug when coverage
+			 exists but no slug fits cleanly, or coverage is ambiguous.
+────────────────────────────────────────────────────────────────────────────
 
-  "_review_notes":      ""
-}
+federal-employee                   Federal Employee
+state-employee                     State Agency Employee
+local-gov-staff                    Local / Municipal Employee
+k12-education-staff                K-12 / Higher Ed Staff
+military-personnel                 Military Personnel
+corporate-staff                    Corporate / Private Employee
+contractor-gig                     Independent Contractor / Gig
+non-profit-staff                   Non-Profit Employee
+agricultural-worker                Agricultural Worker
+clinical-staff                     Clinical (Nurse / Physician)
+medical-student                    Medical Student / Intern / Resident
+job-applicant                      Job Applicant
+former-employee                    Former Employee
+perceived-whistleblower            Perceived Whistleblower
+all-employees                      All Employees
+has-details                        Has Details (use with protected_class_details)
+
+
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_disclosure_targets
+Description: Who the protected disclosure may be made to. Tag all that apply.
+             List targets described in source material. Use has-details slug
+			 when coverage exists but no slug fits cleanly, or coverage
+			 is ambiguous.
+────────────────────────────────────────────────────────────────────────────
+
+internal-supervisor                Supervisor / Manager
+internal-hr                        Human Resources
+internal-compliance                Compliance / Ethics Hotline
+internal-legal                     In-House Legal Counsel
+internal-management                Management (General)
+agency-federal                     Federal Agency
+agency-state                       State Agency
+agency-local                       Local / Municipal Agency
+law-enforcement                    Law Enforcement
+legislative-federal                U.S. Congress
+legislative-state                  State Legislature
+court-filing                       Court Filing
+attorney-counsel                   Personal Attorney / Counsel
+public-media                       Media / Press
+public-nonprofit                   Non-Profit / Advocacy Organization
+has-details                        Has Details (use with disclosure_targets_details)
+
+
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_process_type
+Description: Procedural route the org can help navigate. Tag all that apply.
+             If no slug fits cleanly, leave the array empty [].
+────────────────────────────────────────────────────────────────────────────
+
+administrative-complaint           Administrative Complaint
+civil-lawsuit                      Civil Lawsuit
+qui-tam                            Qui Tam (False Claims)
+internal-disclosure                Internal Disclosure
+regulatory-tip                     Regulatory Tip
+criminal-referral                  Criminal Referral
+state-agency-complaint             State Agency Complaint
+congressional-disclosure           Congressional Disclosure
+representative-action              Representative Action
+
+
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_case_stage
+Description: Legal stage where the org provides help. Tag all that apply.
+             Use other slug when stage coverage exists but no slug fits
+			 cleanly, or coverage is ambiguous.
+────────────────────────────────────────────────────────────────────────────
+
+pre-report                         Pre-Report (considering coming forward)
+post-report                        Post-Report (disclosure made, no retaliation yet)
+retaliation-active                 Retaliation Active
+litigation                         Litigation
+other                              Other (explain in case_stage_details)
+
+
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_languages
+Description: Languages the org serves for intake or direct support.
+             Tag all that apply. List languages confirmed by source material.
+			 Use additional slug when the org serves languages not in this list.
+────────────────────────────────────────────────────────────────────────────
+
+english                            English
+spanish                            Spanish
+mandarin                           Mandarin
+cantonese                          Cantonese
+french                             French
+portuguese                         Portuguese
+vietnamese                         Vietnamese
+tagalog                            Tagalog
+korean                             Korean
+arabic                             Arabic
+hindi                              Hindi
+russian                            Russian
+haitian-creole                     Haitian Creole
+polish                             Polish
+japanese                           Japanese
+additional                         Additional (list in languages_additional)
+
+
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_aorg_type
+Description: Primary classification of the organization. Choose the single
+             best fit. Use mixed slug when no single slug cleanly applies.
+────────────────────────────────────────────────────────────────────────────
+
+nonprofit                          Nonprofit Organization
+legal-aid                          Legal Aid Clinic
+law-firm                           Law Firm
+bar-program                        Bar Association Program
+advocacy                           Advocacy Organization
+oversight-office                   Government Oversight Office
+union                              Labor Union
+mixed                              Mixed / Does Not Fit a Single Category
+
+
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_employment_sector
+Description: Employment sectors the org serves. Tag all confirmed.
+             Use all-sectors slug only when the org explicitly states it
+			 serves all employment types without restriction.
+────────────────────────────────────────────────────────────────────────────
+
+federal-employee                   Federal Government Employee
+state-local-employee               State & Local Government Employee
+private-sector                     Private Sector Employee
+military-defense                   Military & Defense Contractors
+nonprofit-ngo                      Nonprofit & NGO Employee
+all-sectors                        All Employment Sectors
+
+
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_aorg_cost_model
+Description: Cost structure of the org's help pathways. Tag all that apply.
+             Use unclear slug when cost model is not described or existing
+			 slugs do not fit cleanly to org's described model.
+────────────────────────────────────────────────────────────────────────────
+
+free                               Free of Charge
+pro-bono                           Pro Bono
+sliding-scale                      Sliding Scale Fee
+contingency                        Contingency Fee
+fee-for-service                    Fee for Service
+unclear                            Cannot Confirm Cost Structure
+
+
+────────────────────────────────────────────────────────────────────────────
+TAXONOMY: ws_aorg_service
+Description: Services the org offers. Tag all that apply.
+             Use additional slug when services exist which no slug fits
+			 cleanly. Include secure-drop when the org runs a dedicated
+             anonymous evidence drop such as SecureDrop or others.
+────────────────────────────────────────────────────────────────────────────
+
+legal-rep                          Full Legal Representation
+consultation                       Legal Consultation / Advice
+referral                           Intake & Referral
+doc-review                         Document Review
+hotline                            Whistleblower Hotline
+retaliation                        Retaliation Defense
+financial                          Financial Assistance
+advocacy                           Policy Advocacy
+media                              Media & Communications Support
+mental-health                      Mental Health Support
+peer-support                       Peer Support
+secure-drop                        Secure Anonymous Evidence Drop
+additional                         Additional Services (list in additional_services)
+
 
 ---
 
-SCHEMA NOTES
-
-statute_id: Use [JURISDICTION_ID-SECTION] only. Use the chapter entry-point
-section, not mid-chapter provisions. Do not include code prefixes (LAB, GOV).
-Do not invent cluster IDs.
-
-limit_ambiguous: Set to true whenever the SOL is derived from a general civil
-procedure statute, secondary source, or case law — regardless of confidence.
-A zero limit_value with limit_ambiguous false implies the deadline is
-verifiably zero; use this only when literally correct.
-
-remedies: If a statute refers to "actual damages" map to compensatory-damages
-and note in _review_notes. If "special damages" map to consequential-damages
-and note in _review_notes.
-
-CALCULATED FIELDS — compute last, after all records are finalized:
-  meta.record_count         — must equal length of records array
-  meta.proposed_count       — must equal length of new_terms_proposed
-  citations.citation_count  — must equal length of attached_citations
-  integrity.error_count     — must equal length of error_details
-
-ENDSCHEMA;
-}
-
-function ws_prompt_common_law_schema(): string {
-    return <<<'ENDSCHEMA'
-
-RECORD SCHEMA
-
-{
-  "jurisdiction_id": "[TWO-LETTER CODE]",
-  "doctrine_id":     "[JX]-CL-[SHORT-SLUG e.g. WY-CL-PUBLIC-POLICY]",
-  "doctrine_name":   "[FORMAL DOCTRINE NAME]",
-  "common_name":     "[SHORTHAND NAME — omit if none widely used]",
-
-  "legal_basis": {
-    "doctrine_basis":             "[legal principle, leading cases, how protection works]",
-    "recognition_status":         "[current judicial status, well-established vs contested]",
-    "public_policy_sources":      ["[constitution | statute | administrative-rule | case-law | federal-law | other]"],
-    "other_sources":              "[omit unless 'other' is in public_policy_sources]",
-    "disclosure_types":           [],
-    "protected_class":            [],
-    "protected_class_details":    "[FREE TEXT — omit unless protected_class uses has-details]",
-    "disclosure_targets":         [],
-    "disclosure_targets_details": "[FREE TEXT — omit unless disclosure_targets uses has-details]",
-    "adverse_action_scope":       "[FREE TEXT — scope of covered adverse actions]"
-  },
-
-  "statute_of_limitations": {
-    "limit_ambiguous":     true,
-    "limit_value":         0,
-    "limit_unit":          "[days | months | years]",
-    "limit_details":       "[required — identify the analogous statute the period is borrowed from]",
-    "trigger":             "[omit if unknown]",
-    "exhaustion_required": false,
-    "exhaustion_details":  "[omit if exhaustion_required is false]",
-    "tolling_notes":       "[omit if none identified]"
-  },
-
-  "enforcement": {
-    "primary_agency": "[omit if unknown]",
-    "process_type":   [],
-    "adverse_action": [],
-    "adverse_action_details": "[FREE TEXT — omit unless adverse_action uses has-details]",
-    "remedies":       [],
-    "remedies_details": "[FREE TEXT — omit unless remedies uses has-details]",
-    "fee_shifting":   "[omit if empty]"
-  },
-
-  "burden_of_proof": {
-    "statutory_preclusion":         false,
-    "statutory_preclusion_details": "[omit if statutory_preclusion is false]",
-    "employee_standard":            [],
-    "employee_standard_details":    "[FREE TEXT — omit unless employee_standard uses has-details]",
-    "employer_defense":             [],
-    "employer_defense_details":     "[FREE TEXT — omit unless employer_defense uses has-details]",
-    "rebuttable_presumption":       "[omit if none identified]",
-    "burden_of_proof_details":      "[omit if none]",
-    "burden_of_proof_flag":         "[omit unless a meaningful burden shift is identified]"
-  },
-
-  "reward": {
-    "available":      false,
-    "reward_details": "[omit if available is false]"
-  },
-
-  "links": {
-    "precedent_url": "[omit if no approved source identified]",
-    "is_official":   false,
-    "url_source":    "[domain name — omit if is_official is true or no URL]",
-    "is_pdf":      "[omit if false]"
-  },
-
-  "citations": {
-    "attached_citations": [],
-    "citation_count":     0
-  },
-
-  "_review_notes":     ""
-}
-
----
-
-SCHEMA NOTES
-
-doctrine_id: Format [JX]-CL-[SHORT-SLUG] in kebab-case, max 4-5 words after
-CL. Used in prompt exclusion lists to prevent duplicate records.
-
-limit_ambiguous: Almost always true for common law — SOL is borrowed from the
-nearest analogous statute. Document the source statute in limit_details.
-If limit_details cannot be identified, set with_errors true and explain in
-integrity.error_details. Do not silently omit limit_details for common law.
-
-statutory_preclusion: Set to true when this jurisdiction's courts hold that
-the common law claim is unavailable when a statutory remedy for the same
-conduct exists. Document the controlling cases in statutory_preclusion_details.
-
-CALCULATED FIELDS — compute last:
-  meta.record_count        — must equal length of records array
-  meta.proposed_count      — must equal length of new_terms_proposed
-  citations.citation_count — must equal length of attached_citations
-  integrity.error_count    — must equal length of error_details
-
-ENDSCHEMA;
+BLOCK;
 }
 
 function ws_prompt_citation_schema(): string {
