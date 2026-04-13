@@ -1013,7 +1013,6 @@ BLOCK;
 
 function ws_prompt_integrity_block(): string {
     return <<<'BLOCK'
----
 
 INTEGRITY BLOCK
 
@@ -1023,29 +1022,77 @@ you can make to the reliability of this platform.
 
 {
   "integrity": {
-        "with_errors":   [true | false],
-        "error_details": ["[SPECIFIC ERROR WITH DETAILS]"],
-        "error_count":   [INTEGER — must equal length of error_details]
-    }
+    "with_errors":   [true | false],
+    "error_details": ["[SPECIFIC ERROR WITH DETAILS]"],
+    "error_count":   [INTEGER — must equal length of error_details]
+  }
 }
 
 with_errors must be true if ANY of the following occurred:
-    - record_count is less than requested (fewer records returned than requested)
-    - A required record could not be researched with sufficient confidence
-    - Any schema rule was knowingly violated
-    - A parent slug was detected and removed during self-check
+  — fewer records returned than requested
+  — a required record could not be researched with sufficient confidence
+  — any schema rule was knowingly violated
+  — a slug was used that does not appear in the taxonomy tables
 
-with_errors should not include items like:  
-    - Anything a human reviewer should know about this batch
-    - use record._review_notes for these — they are expected and do not indicate an error in the batch
+with_errors is not for:
+  — observations a human reviewer should know about the batch; use _review_notes
+  — fields omitted because data was unavailable; omission is the correct action
 
 Fail-safe policy:
-    - It is acceptable to fail one or more records instead of guessing.
-    - It is acceptable to fail the full batch if source quality is insufficient.
-    - In either case, set with_errors: true and explain exactly why.
+  — it is acceptable to fail one or more records instead of guessing
+  — it is acceptable to fail the full batch if source quality is insufficient
+  — in either case, set with_errors: true and explain exactly what and why
 
-OMISSION RULE: If with_errors is false, omit error_details and error_count
+OMISSION RULE: when with_errors is false, omit error_details and error_count
 entirely. The ingest tool treats a missing key differently from an empty array.
+
+---
+
+
+BLOCK;
+}
+
+function ws_prompt_assist_org_final_write_contract_block(): string {
+    return <<<'BLOCK'
+
+FINAL WRITE CONTRACT
+
+Before you write the JSON, confirm the following:
+
+1. Every record uses only the keys and nesting shown in RECORD SCHEMA.
+   No extra keys. No reordered keys.
+
+2. Every slug in every taxonomy array appears verbatim in the table for
+   that specific field. A slug that is valid in one taxonomy is not valid
+   in another — verify each field against its own table, not the tables
+   generally.
+
+3. Field requirements are respected:
+   essential           — record is omitted if any essential field is missing.
+   expected            — field is present with a non-empty value or its stated fallback.
+   ternary             — field is present with yes, no, or unclear.
+   expected-if-found   — field is present even when empty ("" or []).
+   conditional         — field is present when its parent condition is met; omitted otherwise.
+   optional            — field is omitted when data is uncertain or unavailable.
+
+4. Do not invent slugs. When a concept does not fit any listed slug:
+   — leave the field empty or use has-details where permitted
+   — describe the gap in _review_notes
+
+5. A standard HTTPS web form is not a secure channel.
+   has_secure_channel is yes only when a dedicated encrypted tool is confirmed:
+   SecureDrop, Signal, ProtonMail, Tutanota, Wire, Keybase.
+
+6. For every org-owned URL — official_homepage_url, intake_url, contact_url,
+   and secure_contact_url — verify the organization's name appears at that
+   URL before including it. Do not cite these from memory alone.
+   legitimacy_url points to a third-party verification source by design
+   (GuideStar, Charity Navigator, congressional directory) — verify the
+   org is named on that page, not that it is the org's own domain.
+
+7. If any rule was broken:
+   — set integrity.with_errors: true
+   — explain exactly what and why in integrity.error_details
 
 ---
 
@@ -1054,25 +1101,32 @@ BLOCK;
 
 function ws_prompt_assist_org_research_block(): string {
     return <<<'BLOCK'
-You are a research assistant building a vetted shortlist of assist organizations
-for WhistleblowerShield.org fallback routing. When our database, you helped build,
-doesn't surface a specific shortlist of targeted assistance organizations, the
-fallback list must be ready to help the end users in need.
+You are a research assistant building a vetted list of assistance organizations
+for WhistleblowerShield.org fallback routing. When our database does not surface a
+specific shortlist of targeted assistance organizations, this fallback list must be
+ready to help end users in need.
 
-Persona(1) Maya  - considering coming forward to expose wrongdoing.
-Persona(2) James - has already come forward and is under direct retaliation.
+Persona(1) Maya  — considering coming forward to expose wrongdoing.
+Persona(2) James — has already come forward and is under direct retaliation.
+
+This data will be seen by people who need help now. A dead phone number,
+a closed intake, or a wrong URL is not a minor error — it is a failed
+handoff at the worst possible moment.
 
 Objective: return a high-confidence, low-noise batch where the user needs
 direct help or a fast path to qualified help.
 
-Keep the batch tight and practical. Do not return more than requested records.
-Do not return records where you are not confident about included data.
+Keep the batch tight and practical. Do not return more records than requested.
+Do not return records where you are not confident about the included data.
+
+---
 
 BLOCK;
 }
 
 function ws_prompt_assist_org_field_rules_block(): string {
     return <<<'BLOCK'
+
 FIELD RULES
 
 ---
@@ -1081,8 +1135,11 @@ OMISSION POLICY
 
 Omit any optional field when empty or uncertain.
 Omitting unverified data is correct.
-Fabricating data is wrong, and has real-world impact on the end user. Contacting an assistance
-organization that was not properly vetted wastes time and creates stress for a person in crisis.
+Fabricating data is wrong, and has real-world impact on the end user.
+Contacting an assistance organization that was not properly vetted
+wastes time and creates stress for a person in crisis.
+When in doubt, omit. A missing field can be researched later.
+A wrong field sends someone in crisis to the wrong place.
 
 ---
 
@@ -1116,7 +1173,7 @@ clarifications you make during your research:
   scope_of_service.cost_models                ["unclear"]
   scope_of_service.case_stages                ["other"]        → populate case_stage_details
   scope_of_service.disclosure_targets         ["has-details"]  → populate disclosure_targets_details
-  scope_of_service.protected_class            ["has-details"]  → populate protected_class_details
+  scope_of_service.protected_classes          ["has-details"]  → populate protected_class_details
   scope_of_service.whistleblower_scope        0  (scope unclear)
   scope_of_service.whistleblower_note         state reason for inclusion
   review._review_notes                        "researcher had no notes on current record"
@@ -1146,7 +1203,7 @@ your research:
 
   Field                                       Condition
   ─────────────────────────────────────────   ────────────────────────────────────────────────
-  scope_of_service.protected_class_details    protected_class includes has-details
+  scope_of_service.protected_class_details    protected_classes includes has-details
   scope_of_service.additional_services        services_provided includes additional
   scope_of_service.case_stage_details         case_stages includes other
   scope_of_service.disclosure_targets_details disclosure_targets includes has-details
@@ -1213,7 +1270,7 @@ scope_of_service:
 							  entirely when the site is unclear about what services it provides and strongly
 							  note the absence in _review_notes.
   additional_services         free text when services_provided includes additional slug; describe services
-                              that did not match existing slugs; omit otherwise.
+                              provide by org that existing slugs don't fit cleanly; omit otherwise.
   process_types               ws_process_type slugs; omit when unclear
   case_stages                 ws_case_stage slugs; use other slug when coverage is described that slugs don't
                               fit cleanly, or coverage is entirely unclear.
@@ -1295,7 +1352,7 @@ review:
                                  to no"
                               — "org appears to offer help but does not clearly describe
                                  its services; services_provided left empty intentionally"
-                              — "phone type marked other: ilisted as 'after-hours crisis line
+                              — "phone type marked other: listed as 'after-hours crisis line
 							     for existing clients only'; included for human review"
                               — "email type marked other: listed as 'whistleblower secure
                                  tips inbox' without clear fit to slugs; included for
@@ -1326,12 +1383,12 @@ ORGANIZATION EXCLUSION RULES
 
 ---
 
-
 BLOCK;
 }
 
 function ws_prompt_assist_org_record_schema_block(): string {
         return <<<'BLOCK'
+
 RECORD SCHEMA
 
 {
@@ -1411,6 +1468,7 @@ function ws_generate_assist_org_prompt( array $scope ): string {
     //$out .= ws_prompt_parent_slug_block(); // Parent slug blocking language has been reworked and moved directly to taxonomy tables
     $out .= ws_prompt_taxonomy_tables( 'ws-assist-org' );
     $out .= ws_prompt_integrity_block();
+    $out .= ws_prompt_assist_org_final_write_contract_block();
 
     $out .= "RUN SCOPE\n\n";
     $out .= "Record type:        assist-org\n";
@@ -1827,6 +1885,7 @@ add keys that are not in the schema. Do not reorder fields within a record.
 
 ---
 
+
 BLOCK;
 }
 
@@ -1933,21 +1992,17 @@ function ws_prompt_truncation_permission_assist_org( int $requested_records = 0 
         : 'As many as you can confidently verify (fewer is correct).';
 
     return "\n{$header}\n"
-        . "Attempt to find the requested number of records, but confidence is the hard\n"
-        . "constraint.\n\n"
+        . "Confidence is the hard constraint.\n\n"
         . "Permission to fail and omit is explicit:\n"
         . "  - omit uncertain fields instead of guessing\n"
         . "  - omit uncertain records instead of padding the batch\n"
-        . "  - set with_errors: true and explain gaps in integrity.error_details\n\n"
-        . "Why this matters: fabricated or guessed assistance-organization details can\n"
-        . "send people in crisis to dead intake channels, incorrect eligibility/cost\n"
-        . "expectations, or insecure disclosure paths.\n\n";
+        . "  - set with_errors: true and explain gaps in integrity.error_details\n\n";
 }
 
 function ws_prompt_assist_org_meta_schema(): string {
     return <<<'ENDSCHEMA'
 
-TOP-LEVEL OUTPUT SCHEMA
+META SCHEMA
 
 {
   "meta": {
@@ -1960,30 +2015,24 @@ TOP-LEVEL OUTPUT SCHEMA
     "nationwide_only": false,
     "record_count": 0,
     "json_run_notes": "",
-    "_json_run_researcher_notes": "[OPTIONAL — any contextual researcher note that does not fit other fields. Example: domain appears unusual but resolves to a legitimate nonprofit homepage.]",
+    "_json_run_researcher_notes": "",
     "batch_completed": "[YYYY-MM-DD HH:MM UTC]"
-  },
-  "records": [],
-  "integrity": {
-    "with_errors": false
   }
 }
 
-meta.json_run_notes: include any notes about the entire run that you
-feel a human reviewer would want to know.
-meta.nationwide_only: must match RUN SCOPE Nationwide only exactly (true/false).
-If true, each returned record should include nationwide_example evidence.
-meta._json_run_researcher_notes: anything that isn't specifically
-task related, things that don't quite fit in *_notes. Stripped at ingest,
-but maintained in the archival records.
+meta.json_run_notes           include any notes about the entire run that a human
+                              reviewer would want to know.
+meta.nationwide_only          must match meta.nationwide_only in RUN SCOPE exactly (true/false).
+                              When true, each record should include nationwide_example evidence.
+meta._json_run_researcher_notes  anything not specific to a record or the run — Anything expressed here is
+                              maintained in the archival record. Opinions and notes about the prompt itself
+                              are welcome. This is your space for candid commentary.
+meta.batch_completed          always UTC; format: YYYY-MM-DD HH:MM UTC; written last,
+                              after all records and calculated fields are final.
 
-meta.batch_completed: Always use UTC. Format: YYYY-MM-DD HH:MM UTC.
-Must exist, must be UTC, used for archival purposes.
-Written last, after all records and calculated fields are final.
-
-CALCULATED FIELDS - write last
-  - meta.record_count     must equal length of records array, not requested record count.
-  - integrity.error_count must equal length of error_details (when with_errors is true)
+CALCULATED FIELDS — write last:
+  meta.record_count           must equal the length of the records array.
+  integrity.error_count       must equal the length of error_details when with_errors is true.
 
 ---
 
