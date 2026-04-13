@@ -1048,13 +1048,11 @@ entirely. The ingest tool treats a missing key differently from an empty array.
 
 ---
 
-
 BLOCK;
 }
 
 function ws_prompt_assist_org_final_write_contract_block(): string {
     return <<<'BLOCK'
-
 FINAL WRITE CONTRACT
 
 Before you write the JSON, confirm the following:
@@ -1442,6 +1440,7 @@ RECORD SCHEMA
     }
 }
 
+---
 
 BLOCK;
 }
@@ -1466,14 +1465,14 @@ function ws_generate_assist_org_prompt( array $scope ): string {
     $out .= ws_prompt_integrity_block();
     $out .= ws_prompt_assist_org_final_write_contract_block();
 
-    $out .= "RUN SCOPE\n\n";
+    $out .= "\nRUN SCOPE\n\n";
     $out .= "Record type:        assist-org\n";
     $out .= "Jurisdiction:       {$jx_name}\n";
     $out .= "Jurisdiction ID:    {$jx}\n";
     $out .= "Requested Records:  {$proposal_count}\n";
-    $out .= 'meta.nationwide_only: ' . ( $nationwide_only ? 'true' : 'false' ) . "\n";
+    $out .= 'meta.nationwide_only: ' . ( $nationwide_only ? 'true' : 'false' ) . "\n\n";
     if ( $focus_notes !== '' ) {
-        $out .= "Focus notes:\n---\n{$focus_notes}\n---\n";
+        $out .= "---\nFocus notes:\n{$focus_notes}\n---\n";
     }
     $out .= ws_prompt_render_exclusion_list( $excludes, 'Do not return organizations already known in this list:' );
 
@@ -1495,6 +1494,8 @@ function ws_generate_assist_org_prompt( array $scope ): string {
 
 function ws_prompt_assist_org_taxonomy_tables_static_block(): string {
     return <<<'BLOCK'
+
+---
 
 ================================================================================
 TAXONOMY TABLES
@@ -1734,6 +1735,8 @@ secure-drop                        Secure Anonymous Evidence Drop
 additional                         Additional Services (list in additional_services)
 
 
+────────────────────────────────────────────────────────────────────────────
+
 ---
 
 BLOCK;
@@ -1911,8 +1914,6 @@ function ws_prompt_case_taxonomy_discipline_block( string $label ): string {
 
 function ws_prompt_what_you_are_producing( string $records_label ): string {
     return <<<BLOCK
-
----
 
 WHAT YOU ARE PRODUCING
 
