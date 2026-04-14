@@ -49,7 +49,8 @@
  * -----------------------
  * - verification_status is always set to 'unverified' on ingest
  * - needs_review is always set to false on ingest
- * - _review_notes and _reconciled_notes are autostripped (never written)
+ * - _review_notes is preserved for seed append handling
+ * - _reconciled_notes is preserved for assist-org seed append handling
  * - Proposed terms are logged, not inserted into the taxonomy
  * - Proposed terms in records are removed before writing
  * - source_chain is written to hidden key _ws_auto_source_chain
@@ -84,8 +85,6 @@
  *           secure_contact_tool_other, income_eligibility_details added
  *         - Allowed keys updated to match new schema fields
  * 3.16.0  Assist-org field map corrections and additions:
- *         - organization_name now maps to both post_title (existing) and
- *           ws_aorg_official_name (new dedicated meta field)
  *         - assistance_types key renamed to assistance_type (single-value)
  *         - coverage_exceptions key renamed to jurisdiction_exceptions
  *           and remapped to ws_aorg_jurisdiction_exceptions (was incorrectly
@@ -443,7 +442,7 @@ function ws_ingest_strip_prefixed_keys( $value ) {
 
     $clean = [];
     foreach ( $value as $k => $v ) {
-        if ( is_string( $k ) && strpos( $k, '_' ) === 0 && $k !== '_review_notes' ) {
+        if ( is_string( $k ) && strpos( $k, '_' ) === 0 && ! in_array( $k, [ '_review_notes', '_reconciled_notes' ], true ) ) {
             continue;
         }
         $clean[ $k ] = ws_ingest_strip_prefixed_keys( $v );
@@ -762,6 +761,174 @@ function ws_ingest_flatten_assist_org_record( array $record ): array {
         (array) ( $record['security'] ?? [] ),
         (array) ( $record['review'] ?? [] )
     );
+}
+
+/**
+ * Applies assist-org trigger/companion backstops to flattened records.
+ *
+ * Contract:
+ * - If companion is present and trigger is missing, add/set trigger.
+ * - If trigger is present and companion is missing, remove/reset trigger.
+ * - If trigger is present and companion exists but is empty, remove companion
+ *   and remove/reset trigger.
+ * - For taxonomy trigger arrays, remove/add only the sentinel slug and keep
+ *   all non-sentinel slugs untouched.
+ *
+ * @param  array $flat
+ * @param  array $warnings
+ * @return array
+ */
+function ws_ingest_assist_org_apply_companion_backstops( array $flat, array &$warnings ): array {
+    $sid = trim( (string) ( $flat['official_name'] ?? '' ) );
+    if ( $sid === '' ) {
+        $sid = trim( (string) ( $flat['internal_id'] ?? '' ) );
+    }
+    if ( $sid === '' ) {
+        $sid = 'assist-org';
+    }
+
+    $is_nonempty_text = static function( $value ): bool {
+        return is_string( $value ) ? trim( $value ) !== '' : ! empty( $value );
+    };
+
+    $sanitize_slug_array = static function( $value ): array {
+        if ( ! is_array( $value ) ) {
+            return [];
+        }
+        $out = [];
+        foreach ( $value as $item ) {
+            $slug = sanitize_key( (string) $item );
+            if ( $slug !== '' ) {
+                $out[] = $slug;
+            }
+        }
+        return array_values( array_unique( $out ) );
+    };
+
+    $ensure_sentinel = static function( array &$row, string $details_key, string $trigger_key, string $sentinel, string $label ) use ( &$warnings, $sid, $is_nonempty_text, $sanitize_slug_array ): void {
+        $details_exists = array_key_exists( $details_key, $row );
+        $details_text   = trim( (string) ( $row[ $details_key ] ?? '' ) );
+        $details_present = $details_text !== '';
+
+        if ( $details_exists && ! $details_present ) {
+            unset( $row[ $details_key ] );
+            $warnings[] = "{$sid}: removed empty {$details_key}.";
+        }
+
+        $slugs = $sanitize_slug_array( $row[ $trigger_key ] ?? [] );
+        $has_sentinel = in_array( $sentinel, $slugs, true );
+
+        if ( $details_present && ! $has_sentinel ) {
+            $slugs[] = $sentinel;
+            $slugs = array_values( array_unique( $slugs ) );
+            $row[ $trigger_key ] = $slugs;
+            $warnings[] = "{$sid}: added {$sentinel} to {$trigger_key} because {$details_key} is populated ({$label}).";
+            return;
+        }
+
+        if ( ! $details_present && $has_sentinel ) {
+            $slugs = array_values( array_filter( $slugs, static fn( $slug ) => $slug !== $sentinel ) );
+            $row[ $trigger_key ] = $slugs;
+            $warnings[] = "{$sid}: removed {$sentinel} from {$trigger_key} because {$details_key} is missing/empty ({$label}).";
+        }
+    };
+
+    $tri_to_yes = static function( $value ): bool {
+        if ( is_bool( $value ) ) {
+            return $value;
+        }
+        $v = strtolower( trim( (string) $value ) );
+        return in_array( $v, [ '1', 'true', 'yes', 'y', 'on' ], true );
+    };
+
+    // Sentinel taxonomy/detail pairs.
+    $ensure_sentinel( $flat, 'protected_class_details', 'protected_classes', 'has-details', 'protected class details sentinel' );
+    $ensure_sentinel( $flat, 'disclosure_targets_details', 'disclosure_targets', 'has-details', 'disclosure targets details sentinel' );
+    $ensure_sentinel( $flat, 'case_stage_details', 'case_stages', 'other', 'case stage details sentinel' );
+    $ensure_sentinel( $flat, 'additional_services', 'services_provided', 'additional', 'additional services sentinel' );
+    $ensure_sentinel( $flat, 'languages_additional', 'languages_supported', 'additional', 'additional languages sentinel' );
+
+    // Income detail <-> trigger.
+    $income_details_exists = array_key_exists( 'income_eligibility_details', $flat );
+    $income_details = trim( (string) ( $flat['income_eligibility_details'] ?? '' ) );
+    $income_present = $income_details !== '';
+    $income_yes = $tri_to_yes( $flat['income_eligibility_required'] ?? '' );
+
+    if ( $income_details_exists && ! $income_present ) {
+        unset( $flat['income_eligibility_details'] );
+        $warnings[] = "{$sid}: removed empty income_eligibility_details.";
+    }
+    if ( $income_present && ! $income_yes ) {
+        $flat['income_eligibility_required'] = 'yes';
+        $warnings[] = "{$sid}: set income_eligibility_required to yes because income_eligibility_details is populated.";
+        $income_yes = true;
+    }
+    if ( $income_yes && ! $income_present ) {
+        $flat['income_eligibility_required'] = 'no';
+        unset( $flat['income_eligibility_details'] );
+        $warnings[] = "{$sid}: set income_eligibility_required to no because income_eligibility_details is missing/empty.";
+    }
+
+    // Secure channel trigger/companions.
+    $secure_yes = $tri_to_yes( $flat['has_secure_channel'] ?? '' );
+    $secure_url_exists = array_key_exists( 'secure_contact_url', $flat );
+    $secure_tool_exists = array_key_exists( 'secure_contact_tool', $flat );
+    $secure_tool_other_exists = array_key_exists( 'secure_contact_tool_other', $flat );
+    $secure_url = trim( (string) ( $flat['secure_contact_url'] ?? '' ) );
+    $secure_tool = trim( (string) ( $flat['secure_contact_tool'] ?? '' ) );
+    $secure_tool_other = trim( (string) ( $flat['secure_contact_tool_other'] ?? '' ) );
+
+    if ( $secure_url_exists && $secure_url === '' ) {
+        unset( $flat['secure_contact_url'] );
+        $warnings[] = "{$sid}: removed empty secure_contact_url.";
+    }
+    if ( $secure_tool_exists && $secure_tool === '' ) {
+        unset( $flat['secure_contact_tool'] );
+        $warnings[] = "{$sid}: removed empty secure_contact_tool.";
+    }
+    if ( $secure_tool_other_exists && $secure_tool_other === '' ) {
+        unset( $flat['secure_contact_tool_other'] );
+        $warnings[] = "{$sid}: removed empty secure_contact_tool_other.";
+    }
+
+    $secure_url_present = $is_nonempty_text( $flat['secure_contact_url'] ?? '' );
+    $secure_tool_present = $is_nonempty_text( $flat['secure_contact_tool'] ?? '' );
+    $secure_tool_other_present = $is_nonempty_text( $flat['secure_contact_tool_other'] ?? '' );
+    $secure_tool_lc = strtolower( trim( (string) ( $flat['secure_contact_tool'] ?? '' ) ) );
+
+    if ( $secure_tool_other_present ) {
+        if ( $secure_tool_lc !== 'other' ) {
+            $flat['secure_contact_tool'] = 'other';
+            $secure_tool_lc = 'other';
+            $secure_tool_present = true;
+            $warnings[] = "{$sid}: set secure_contact_tool to other because secure_contact_tool_other is populated.";
+        }
+        if ( ! $secure_yes ) {
+            $flat['has_secure_channel'] = 'yes';
+            $secure_yes = true;
+            $warnings[] = "{$sid}: set has_secure_channel to yes because secure_contact_tool_other is populated.";
+        }
+    }
+
+    if ( $secure_tool_lc === 'other' && ! $secure_tool_other_present ) {
+        unset( $flat['secure_contact_tool'] );
+        $secure_tool_present = false;
+        $warnings[] = "{$sid}: removed secure_contact_tool=other because secure_contact_tool_other is missing/empty.";
+    }
+
+    if ( ( $secure_url_present || $secure_tool_present ) && ! $secure_yes ) {
+        $flat['has_secure_channel'] = 'yes';
+        $secure_yes = true;
+        $warnings[] = "{$sid}: set has_secure_channel to yes because secure contact companion fields are populated.";
+    }
+
+    if ( $secure_yes && ( ! $secure_url_present || ! $secure_tool_present ) ) {
+        $flat['has_secure_channel'] = 'no';
+        unset( $flat['secure_contact_url'], $flat['secure_contact_tool'], $flat['secure_contact_tool_other'] );
+        $warnings[] = "{$sid}: set has_secure_channel to no and removed secure companion fields because required secure_contact_url/secure_contact_tool are missing/empty.";
+    }
+
+    return $flat;
 }
 
 /**
@@ -1126,19 +1293,13 @@ function ws_ingest_assist_org_field_map_v2(): array {
         'case_stages'               => [ 'ws_aorg_case_stages',            'tax', 'ws_case_stage'         ],
 
         // ── Advisory / omitted ───────────────────────────────────────────
-        // organization_name is intentionally omitted from the field map loop.
-        // It is written twice manually in ws_ingest_process_assist_org_record():
-        //   1. As post_title via wp_insert_post()
-        //   2. As ws_aorg_official_name via update_post_meta()
-        // The field map loop would only write it once.
-        'organization_name'         => [ null, 'omit' ],
         'internal_id'               => [ null, 'omit' ],
         'homepage_url_status'       => [ null, 'omit' ],
         'nationwide_example'        => [ null, 'seed' ],
         'case_stage_details'        => [ 'ws_aorg_case_stage_details',          'textarea' ],
         'jurisdiction_exceptions'   => [ null, 'seed' ],
         '_review_notes'             => [ null, 'seed' ],
-        '_reconciled_notes'         => [ null, 'omit' ],
+        '_reconciled_notes'         => [ null, 'seed' ],
     ];
 }
 
@@ -1228,6 +1389,7 @@ function ws_ingest_build_assist_org_seed_append( array $record ): string {
     $case_stage_details = trim( (string) ws_ingest_get_value( $record, 'case_stage_details' ) );
     $jurisdiction_exceptions = trim( (string) ws_ingest_get_value( $record, 'jurisdiction_exceptions' ) );
     $review_notes       = trim( (string) ws_ingest_get_value( $record, '_review_notes' ) );
+    $reconciled_notes   = trim( (string) ws_ingest_get_value( $record, '_reconciled_notes' ) );
 
     $blocks = [];
     if ( $nationwide_example !== '' ) {
@@ -1241,6 +1403,9 @@ function ws_ingest_build_assist_org_seed_append( array $record ): string {
     }
     if ( $review_notes !== '' ) {
         $blocks[] = "Researcher notes: {$review_notes}";
+    }
+    if ( $reconciled_notes !== '' ) {
+        $blocks[] = "Reconciled notes: {$reconciled_notes}";
     }
 
     if ( empty( $blocks ) ) {
@@ -3564,6 +3729,7 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
     // contact, eligibility, security, and review for consistency with other
     // record types. The field map loop expects flat keys.
     $flat = ws_ingest_flatten_assist_org_record( $record );
+    $flat = ws_ingest_assist_org_apply_companion_backstops( $flat, $result['warnings'] );
 
     $needs_review = false;
 
@@ -3638,8 +3804,7 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
         $taxonomy = $field_def[2] ?? null;
 
         if ( $type === 'omit' ) {
-            $omit_source = ( $json_path === '_reconciled_notes' ) ? $record : $flat;
-            $val = ws_ingest_get_value( $omit_source, $json_path );
+            $val = ws_ingest_get_value( $flat, $json_path );
             if ( $val !== null && $val !== '' && $val !== [] ) {
                 $omitted_fields[ $json_path ] = $val;
             }

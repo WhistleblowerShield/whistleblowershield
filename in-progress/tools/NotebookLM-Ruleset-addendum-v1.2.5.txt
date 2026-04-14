@@ -188,7 +188,8 @@ Use it for:
 - global policies applied across records,
 - environment constraints (for example web search unavailable),
 - cross-record normalization patterns,
-- batch-level reviewer context.
+- batch-level reviewer context,
+- responses to input prompt queries.
 
 Omit when no batch-level note is needed.
 
@@ -316,13 +317,14 @@ If absent, add to error_details:
 - income_eligibility_required    — flag as: "[ORG NAME]: income_eligibility_required missing; human review required."
 - has_secure_channel             — flag as: "[ORG NAME]: has_secure_channel missing; human review required."
 
-VERIFIED_DATE_URL POLICY
-Every record with an official_homepage_url or intake_or_contact_url must
-have a corresponding verified_date_url populated.
-If verified_date_url is absent on a record with a URL:
-- Flag in error_details: "[ORG NAME]: verified_date_url missing; URL is unverified."
+VERIFIED_URL_DATE POLICY
+Every record with an "homepage_url_status": "verified"
+should have a corresponding verified_url_date populated.
+If verified_url_date is absent on a record:
+- Correct homepage_url_status to unverified
+- Flag in error_details: "[ORG NAME]: verified_url_date missing; URL set to unverified."
 - Do not remove the URL — preserve it and flag for human verification.
-If verified_date_url exists but is more than 90 days old relative to
+If verified_url_date exists but is more than 90 days old relative to
 batch_completed, note staleness in _reconciled_notes but do not flag
 as an error — staleness is advisory, not a schema violation.
 
