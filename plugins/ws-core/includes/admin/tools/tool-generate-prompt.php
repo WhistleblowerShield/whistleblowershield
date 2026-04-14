@@ -1495,6 +1495,7 @@ function ws_generate_assist_org_prompt( array $scope ): string {
 
 function ws_prompt_assist_org_taxonomy_tables_static_block(): string {
     return <<<'BLOCK'
+    
 ================================================================================
 TAXONOMY TABLES
 
