@@ -1,0 +1,232 @@
+Yes — and this is a **strong upgrade**. It’s noticeably tighter, safer, and more aligned with real-world use. I’ll keep this focused and practical.
+
+---
+
+## What’s Working Very Well
+
+### 1. The **risk framing** is doing real work
+
+The Maya/James framing + “failed handoff” language meaningfully changes behavior. It pushes toward:
+
+* omission over guessing
+* verification over recall
+* lower record count but higher reliability
+
+That showed up in execution — especially in:
+
+* conservative use of `has_secure_channel`
+* restrained taxonomy mapping
+* fewer “creative” assumptions
+
+👉 Keep this. It’s one of the most effective parts of the prompt.
+
+---
+
+### 2. Field tier system is now **operational, not theoretical**
+
+The six-tier model (essential / expected / ternary / expected-if-found / conditional / optional) is now:
+
+* enforceable
+* internally consistent
+* actually guiding decisions
+
+Especially strong improvements:
+
+* `expected-if-found` for **languages_supported** → prevents silent guessing
+* explicit fallbacks for **expected fields** → reduces schema drift
+* clear instruction to **omit instead of explain in notes**
+
+👉 This is now production-grade logic.
+
+---
+
+### 3. Secure channel rule is finally **unambiguous**
+
+This line matters a lot:
+
+> “A standard HTTPS web form does not qualify.”
+
+It eliminated a very common failure mode.
+
+You also reinforced it in three places:
+
+* field definition
+* rules section
+* final write contract
+
+👉 Result: correct “no” across all 3 orgs, which is the right call.
+
+---
+
+### 4. “Do not pad the batch” is working as intended
+
+The permission to:
+
+* return fewer records
+* fail the batch
+* omit uncertain fields
+
+…is clearly internalized.
+
+Even though all 3 records were returned, the tone of execution was:
+
+> “earn inclusion, don’t assume inclusion”
+
+That’s exactly what you want.
+
+---
+
+## Where the Prompt Still Has Friction
+
+### 1. **Nationwide requirement vs. evidence requirement tension**
+
+This is the biggest structural issue.
+
+You require:
+
+* `meta.nationwide_only: true`
+* AND a **verbatim nationwide_example quote**
+
+But many legitimate orgs:
+
+* are clearly nationwide in practice
+* do NOT explicitly say “nationwide”
+
+This creates awkward outputs like:
+
+> using a *broad statement* as a proxy for nationwide evidence
+
+👉 Recommendation:
+Allow one of these to qualify:
+
+* explicit “nationwide” language
+* OR clear multi-jurisdictional scope evidence (federal + private + multiple sectors)
+
+You could clarify:
+
+> “nationwide_example may include indirect evidence of multi-jurisdictional scope when explicit ‘nationwide’ language is not present.”
+
+---
+
+### 2. **protected_classes + has-details is still slightly overloaded**
+
+Right now it’s doing two jobs:
+
+* “coverage exists but doesn’t map cleanly”
+* “coverage is unclear”
+
+That can blur meaning.
+
+Example from this run:
+
+* GAP used both explicit slugs **and** `has-details`
+
+That’s valid — but cognitively messy.
+
+👉 Recommendation (light-touch):
+Clarify intent:
+
+* use `has-details` when:
+
+  * coverage is **broader than taxonomy**, OR
+  * **taxonomy gap exists**
+
+* do **not** use it for “unclear coverage”
+
+---
+
+### 3. expected-if-found (languages) still has one ambiguity
+
+This line:
+
+> “operating language cannot be determined: use [] and note in _review_notes”
+
+vs.
+
+> “site clearly in English → use english slug”
+
+This works — but borderline cases exist:
+
+* minimal-content sites
+* intake forms only
+* PDFs vs site language
+
+👉 Recommendation:
+Add a micro-rule:
+
+> “If the primary navigation or intake interface is in English, treat as English.”
+
+That removes hesitation.
+
+---
+
+### 4. Intake vs Contact URL distinction could still cause drift
+
+You define it correctly, but in practice:
+
+* many orgs use the same page for both
+* some use multi-step flows
+
+You handled it correctly (GAP same URL for both), but this is a known weak point.
+
+👉 Optional improvement:
+Add one clarifier:
+
+> “If a single page serves both general contact and intake, it is acceptable to use the same URL for both fields.”
+
+---
+
+### 5. Minor: “services_provided omission” rule is powerful but risky
+
+This instruction is important:
+
+> omit entirely when unclear and strongly note it
+
+But it can lead to:
+
+* under-reporting for legit orgs with vague sites
+
+👉 Suggestion:
+No change needed — just flagging:
+This is a **high-impact rule** that trades completeness for safety (which is correct for your use case).
+
+---
+
+## Subtle Win You May Not Have Intended
+
+The separation of:
+
+* structured fields (strict, low-noise)
+* `_review_notes` (human-facing nuance)
+
+…is working *extremely* well.
+
+The notes in this run are:
+
+* concise
+* explanatory
+* decision-justifying
+
+That’s exactly what a downstream auditor needs.
+
+---
+
+## Bottom Line
+
+This version of the prompt is:
+
+* **Safer** (less hallucination risk)
+* **Stricter** (schema compliance improved)
+* **More honest** (uncertainty is surfaced, not hidden)
+* **Closer to production-ready ingestion quality**
+
+### If I had to prioritize fixes:
+
+1. Clarify **nationwide evidence rule** (highest impact)
+2. Tighten **has-details usage intent**
+3. Add small clarifier for **languages_supported**
+4. Optional: clarify **intake/contact overlap**
+
+---
+
+If you want, I can run a **stress test batch** (edge-case orgs that usually break prompts like this) to see where it still fails under pressure.

@@ -1,0 +1,43 @@
+"the prompt will need revisions, the intent is not to suppress languages_supported, but I see now the rules conflict... how does this sound: When the site is clearly in English and makes no multilingual claim, use the english slug. Use [] only when the site's operating language cannot be determined... =and= do you have any other insights?"
+
+Your proposed revision sounds **solid and practical** — it resolves the current conflict cleanly without opening the door to over-inference.
+
+### Recommended Wording (Slightly Polished)
+> **languages_supported**:  
+> Use the `english` slug when the site is clearly presented in English and makes **no explicit multilingual claims or services**.  
+> Use `[]` (empty array) **only** when the site's primary operating language cannot be confidently determined from the visible content (e.g., ambiguous design, heavy use of images/icons, or conflicting indicators).  
+> Do not assume support for other languages without explicit claims on the site.
+
+This keeps the field useful (defaulting to English for the vast majority of U.S.-based whistleblower orgs) while preserving the spirit of “do not infer.” The Google Translate widget (as seen on NWC) should **not** trigger anything beyond `english` — it’s a generic browser tool, not dedicated organizational support.
+
+### Other Insights & Suggestions for Prompt Revisions
+Here are targeted improvements that would strengthen the schema without major rewrites:
+
+1. **Explicit Guidance on Google Translate / Browser Tools**  
+   Add a short sentence:  
+   “A Google Translate widget or similar browser-based tool does **not** count as organizational language support.”
+
+2. **languages_additional Field Trigger**  
+   Clarify that the `additional` slug in `languages_supported` (and the free-text `languages_additional` field) should only be used when the org **explicitly claims** support for languages outside the taxonomy list (e.g., “We provide interpretation in Amharic, Swahili, and Navajo”).  
+   This prevents people from dumping every possible language into the free-text field.
+
+3. **Slightly Broaden the “Ambiguous” Rule**  
+   Current tension comes from the old “leave [] when ambiguous” rule clashing with common-sense English defaults. Your version fixes it. You could also add:  
+   “If the site content is visibly in English (navigation, forms, main text) with no other language options offered, default to `english` even if no positive statement like ‘We serve English speakers’ exists.”
+
+4. **Related Field: Eligibility / Accessibility Notes**  
+   Consider allowing a short optional note in `eligibility.eligibility_notes` or a new `accessibility_notes` for things like “TTY relay mentioned” or “Google Translate available” when they appear but don’t rise to full language support. This captures real-world usability signals without polluting the taxonomy.
+
+5. **Review Notes Reminder**  
+   Add to the `_review_notes` examples:  
+   “Site is English-only with Google Translate widget; languages_supported set to [english] per updated rule; no dedicated multilingual intake confirmed.”
+
+6. **Minor Taxonomy Note**  
+   The `ws_languages` list already has `english` as the first entry — that’s good. No need to change the slugs.
+
+### Overall Assessment
+Your change is a net improvement: it reduces unnecessary empty arrays (which currently make most U.S. records look language-ambiguous when they’re not) while still protecting against over-claiming.
+
+If you want, I can draft the full revised paragraph for the **languages_supported** section (including the new rule + Google Translate clarification) so you can drop it directly into the prompt.
+
+Would you like that draft, or any other specific section revised (e.g., secure_channel definition, which also has some edge-case tension)?

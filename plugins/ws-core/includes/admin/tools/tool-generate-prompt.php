@@ -1245,13 +1245,14 @@ scope_of_service:
                               exists but no slug fits cleanly, or no coverage is described clearly.
   protected_class_details     free text when protected_classes includes has-details slug; describe the
                               org's claim of coverage or note the missing description of coverage.
-  languages_supported         ws_languages slugs; list all languages the org claims to support.
-                              When the site is clearly in English and makes no multilingual claim,
-                              use the english slug. Use [] only when the site's operating language
-                              cannot be determined and note the use of [] in _review_notes.
-  languages_additional        free text listing languages not in taxonomy (e.g. TTY relay,
-                              interpreter services); omit when additional slug is not included
-							  in languages_supported array.                              
+  languages_supported         ws_languages slugs. List all languages the org claims to support.
+                                - Site is clearly in English (nav, forms, main text): use english slug.
+                                - Org explicitly claims non-taxonomy languages: add additional slug.
+                                - Operating language cannot be determined: use [] and note in _review_notes.
+                                - Google Translate or browser tools do not count as language support.
+  languages_additional        free text listing languages not in taxonomy (e.g., “site claims to provide
+                              interpretations for Amharic, Swahili, and Navajo”); omit when additional slug
+                              is not included in languages_supported array.                              
   assistance_type             single ws_aorg_type slug; use mixed slug when no single slug
                               fits cleanly.
   employment_sectors          ws_employment_sector slugs; omit when coverage is unclear.
@@ -1366,8 +1367,10 @@ review:
 ---
 
 ORGANIZATION INCLUSION RULES
-  Must provide direct help or a fast referral pathway.
-  Prioritize orgs with actionable intake paths over informational pages.
+  Must provide direct help or a fast referral pathway. Help includes legal
+  assistance, peer support, mental health support, or advocacy services.
+  Org must have a dedicated intake path — a form, hotline, or
+  service-specific contact — not an informational page alone.
 
 ORGANIZATION EXCLUSION RULES
   Exclude pure government reporting channels.
