@@ -1,0 +1,90 @@
+"thank you... very good work... is there something in the prompt that led you to believe that languages_supported should be empty?"
+
+Short answer: yes — the prompt *explicitly* pushes toward leaving `languages_supported` empty unless the site **clearly and affirmatively states supported languages**.
+
+Here’s exactly what drove that decision:
+
+---
+
+### 1) The **EXPECTED-IF-FOUND rule for languages_supported**
+
+From the prompt:
+
+> *“languages_supported … [] when language support is ambiguous”* 
+
+That line is decisive. It doesn’t allow inference. If the site doesn’t *explicitly* list languages, the correct value is `[]`.
+
+---
+
+### 2) The **“Do not assume English” instruction**
+
+Also in the field definition:
+
+> *“Do not assume 'english' if the site appears to be in another language.”* 
+
+This is subtle but important:
+It removes the common fallback of defaulting to English just because the site is in English.
+
+Combined with rule #1, it creates a strict standard:
+
+* No explicit statement → **no languages recorded**
+* Even obvious cases → still **[] unless confirmed**
+
+---
+
+### 3) The **OMISSION POLICY bias toward under-reporting**
+
+The prompt reinforces this globally:
+
+> *“Omitting unverified data is correct. Fabricating data is wrong.”* 
+
+Languages are easy to assume but often not formally supported in intake.
+So the safer interpretation is:
+
+* If intake language support isn’t explicitly documented → treat as **ambiguous**
+
+---
+
+### 4) Why it applied to these orgs specifically
+
+For both:
+
+* Government Accountability Project
+* National Whistleblower Center
+
+Their sites:
+
+* are in English
+* do **not clearly state** multilingual intake support
+* do **not list interpreter services or language options**
+
+So under the schema:
+→ That is **ambiguity**, not confirmation
+→ Therefore: `languages_supported: []`
+
+---
+
+### Bottom line
+
+Nothing in the prompt *encourages emptiness by default* — but the combination of:
+
+* “[] when ambiguous”
+* “do not assume English”
+* strict anti-inference rules
+
+**effectively makes empty the correct default unless the org explicitly declares language support.**
+
+---
+
+If you want, I can show how this field behaves differently for orgs that *do* explicitly list Spanish or multilingual intake — that contrast is actually pretty instructive.
+
+
+
+
+"no, we are good for the moment... the prompt is malformed... you are absolutely correct..."
+
+Got it — that makes sense. The behavior you saw is exactly what that combination of rules produces, so your diagnosis lines up.
+
+If/when you revise it, the pressure point is pretty clear: the interaction between **“[] when ambiguous”** and **“do not assume English”** effectively turns this into a *confirmation-only field*. That’s not inherently wrong, but it’s stricter than most of the rest of the schema and can create systematic sparsity.
+
+Whenever you’re ready to iterate on it, I can help you tighten that section without weakening the anti-fabrication safeguards.

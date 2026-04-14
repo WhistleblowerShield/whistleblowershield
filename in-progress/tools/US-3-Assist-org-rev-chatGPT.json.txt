@@ -1,0 +1,190 @@
+{
+  "meta": {
+    "json_format_version": "2.0",
+    "source_method": "ai_assisted",
+    "source_name": "GPT-5.4 Thinking",
+    "jurisdiction_id": "US",
+    "generated_date": "2026-04-13",
+    "generated_by": "OpenAI GPT-5.4 Thinking",
+    "nationwide_only": true,
+    "record_count": 2,
+    "json_run_notes": "Returned 2 high-confidence nationwide records. Whistleblowers of America was researched but omitted under the revised schema because I could not verify a sufficiently explicit nationwide-scope quote from the organization itself and did not have high confidence that its current direct-help pathway fit the requested fast-referral standard as cleanly as the other two organizations.",
+    "_json_run_researcher_notes": "The revised schema usefully sharpens the distinction between secure encrypted contact tools and ordinary HTTPS forms. That change materially affected scoring here, especially for organizations that describe a form as 'secure' without offering one of the approved encrypted channels.",
+    "batch_completed": "2026-04-14 01:13 UTC"
+  },
+  "records": [
+    {
+      "identity": {
+        "official_name": "Government Accountability Project",
+        "official_homepage_url": "https://whistleblower.org/",
+        "general_description": "Government Accountability Project is a nonprofit whistleblower protection and advocacy organization that works across government and corporate accountability issues. Its site states that it protects whistleblowers, advances occupational free speech, and educates the public while also litigating cases and pursuing legislative reforms. It offers an intake pathway for people seeking legal representation, advocacy support, or advice. Its issue areas span federal, state, and local government accountability, corporate and financial accountability, public health, national security, immigration, food integrity, and international whistleblower rights.",
+        "homepage_url_status": "verified",
+        "verified_url_date": "2026-04-13"
+      },
+      "scope_of_service": {
+        "nationwide_example": "We educate the public about the importance of whistleblowing and lead campaigns to enact whistleblower protection laws both domestically and internationally.",
+        "disclosure_types": [
+          "occupational-health-safety",
+          "election-integrity",
+          "environmental-protection",
+          "food-drug-safety",
+          "intelligence-community",
+          "general-wrongdoing"
+        ],
+        "protected_classes": [
+          "federal-employee",
+          "state-employee",
+          "local-gov-staff",
+          "corporate-staff",
+          "military-personnel",
+          "has-details"
+        ],
+        "protected_class_details": "The site expressly references federal, state, and local government whistleblowers, corporate and financial accountability work, and military/intelligence whistleblowing. It also describes international and inter-governmental whistleblower work that does not map cleanly to the listed slugs.",
+        "languages_supported": [],
+        "assistance_type": "nonprofit",
+        "employment_sectors": [
+          "federal-employee",
+          "state-local-employee",
+          "private-sector",
+          "military-defense"
+        ],
+        "cost_models": [
+          "pro-bono",
+          "unclear"
+        ],
+        "services_provided": [
+          "legal-rep",
+          "consultation",
+          "referral",
+          "retaliation",
+          "advocacy"
+        ],
+        "process_types": [
+          "administrative-complaint",
+          "civil-lawsuit",
+          "internal-disclosure",
+          "congressional-disclosure"
+        ],
+        "case_stages": [
+          "pre-report",
+          "post-report",
+          "retaliation-active",
+          "litigation"
+        ],
+        "disclosure_targets": [
+          "has-details"
+        ],
+        "disclosure_targets_details": "GAP materials describe support for protected disclosures and retaliation matters across internal, agency, congressional, litigation, and public-accountability pathways, but the homepage-level intake materials do not cleanly enumerate a definitive target list for all programs.",
+        "whistleblower_scope": 3,
+        "whistleblower_note": "We promote corporate and government accountability by protecting whistleblowers, advancing occupational free speech, and empowering citizen activists."
+      },
+      "contact": {
+        "intake_url": "https://crm.whistleblower.org/form/online-intake-application",
+        "contact_url": "https://whistleblower.org/contact-us/",
+        "phones": [
+          {
+            "type": "headquarters",
+            "number": "(202) 457-0034"
+          }
+        ],
+        "emails": [
+          {
+            "type": "general",
+            "address": "info@whistleblower.org"
+          },
+          {
+            "type": "media",
+            "address": "press@whistleblower.org"
+          }
+        ],
+        "mailing_address": "1612 K St. NW, Suite #808, Washington, DC 20006"
+      },
+      "eligibility": {
+        "income_eligibility_required": "unclear"
+      },
+      "security": {
+        "has_secure_channel": "no",
+        "anonymous_pre_consult_possible": "unclear",
+        "has_attorneys": "yes"
+      },
+      "review": {
+        "legitimacy_url": "https://www.charitynavigator.org/ein/521343924",
+        "_review_notes": "The organization uses language such as 'secure intake portal,' but I did not confirm any dedicated encrypted tool from the allowed schema list, so has_secure_channel was set to no. Intake form asks for full contact information and does not clearly advertise anonymous or pseudonymous intake. Cost model is described in one org document as 'pro and low bono'; low bono does not map cleanly to the taxonomy, so unclear was retained alongside pro-bono."
+      }
+    },
+    {
+      "identity": {
+        "official_name": "National Whistleblower Center",
+        "official_homepage_url": "https://www.whistleblowers.org/",
+        "general_description": "National Whistleblower Center is a nonprofit focused on protecting and rewarding whistleblowers through legal-assistance pathways, policy advocacy, and public education. Its site emphasizes helping whistleblowers understand their rights before they report and connecting them to attorneys through a referral program. The organization also advocates for stronger whistleblower protections and publishes educational resources on U.S. and international whistleblower law. Its contact and legal-assistance pages provide a direct intake route for people seeking help.",
+        "common_name": "NWC",
+        "homepage_url_status": "verified",
+        "verified_url_date": "2026-04-13"
+      },
+      "scope_of_service": {
+        "nationwide_example": "The National Whistleblower Center (NWC) is the leading nonprofit dedicated to protecting and rewarding whistleblowers around the world. We assist whistleblowers in finding legal aid, advocate for stronger whistleblower protection laws, and educate the public about whistleblowers’ critical role in protecting democracy and the rule of law.",
+        "disclosure_types": [
+          "securities-commodities-fraud",
+          "procurement-spending-fraud",
+          "general-wrongdoing"
+        ],
+        "protected_classes": [
+          "federal-employee",
+          "corporate-staff",
+          "has-details"
+        ],
+        "protected_class_details": "NWC states that its attorney referral program accepts intakes from government and private sector whistleblowers and specifically references cases under the Whistleblower Protection Act, Sarbanes-Oxley, and Dodd-Frank. The pages reviewed do not cleanly break down all covered government-worker categories such as state, local, contractor, or former employee.",
+        "languages_supported": [],
+        "assistance_type": "nonprofit",
+        "cost_models": [
+          "free"
+        ],
+        "services_provided": [
+          "referral",
+          "advocacy"
+        ],
+        "case_stages": [
+          "pre-report",
+          "retaliation-active",
+          "litigation"
+        ],
+        "disclosure_targets": [
+          "has-details"
+        ],
+        "disclosure_targets_details": "NWC's legal-assistance materials focus on connecting whistleblowers with counsel and mention retaliation claims, discrimination, qui tam matters, and lawsuits under multiple federal statutes, but they do not provide a clean universal list of disclosure targets that maps neatly to the taxonomy.",
+        "whistleblower_scope": 3,
+        "whistleblower_note": "The National Whistleblower Center (NWC) is the leading nonprofit dedicated to protecting and rewarding whistleblowers around the world."
+      },
+      "contact": {
+        "intake_url": "https://www.report-fraud-now.info/",
+        "contact_url": "https://www.whistleblowers.org/contact-us/",
+        "emails": [
+          {
+            "type": "general",
+            "address": "info@whistleblowers.org"
+          }
+        ],
+        "mailing_address": "1800 M Street, NW #33888, Washington, District of Columbia 20033"
+      },
+      "eligibility": {
+        "income_eligibility_required": "unclear"
+      },
+      "security": {
+        "has_secure_channel": "no",
+        "anonymous_pre_consult_possible": "yes",
+        "has_attorneys": "yes"
+      },
+      "review": {
+        "legitimacy_url": "https://www.charitynavigator.org/ein/521770068",
+        "_review_notes": "The site repeatedly calls the intake form 'secure' and says submissions are reviewed by an attorney and treated as privileged, but the schema only permits yes for specific dedicated encrypted tools, none of which I confirmed, so has_secure_channel was set to no. The contact form explicitly says a user may use a pseudonym, so anonymous_pre_consult_possible was set to yes. NWC's pages also note that the attorney referral program is operated through a related fund and that NWC itself does not provide legal advice through the intake process."
+      }
+    }
+  ],
+  "integrity": {
+    "with_errors": true,
+    "error_details": [
+      "Returned 2 records instead of the requested 3. Whistleblowers of America was omitted because I could not confidently verify an organization-owned nationwide-scope quote satisfying the nationwide_only requirement, and I did not have high-confidence evidence that its current direct-help pathway fit the requested fast referral standard cleanly enough under the revised schema."
+    ],
+    "error_count": 1
+  }
+}
