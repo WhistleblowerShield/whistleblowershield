@@ -13,8 +13,6 @@ Do not return records where you are uncertain about the included data.
 
 ---
 
----
-
 WHAT YOU ARE PRODUCING
 
 A single JSON object with three top-level keys:
@@ -377,6 +375,9 @@ RECORD SCHEMA
     }
 }
 
+---
+
+---
 
 ================================================================================
 TAXONOMY TABLES
@@ -616,6 +617,8 @@ secure-drop                        Secure Anonymous Evidence Drop
 additional                         Additional Services (list in additional_services)
 
 
+────────────────────────────────────────────────────────────────────────────
+
 ---
 
 INTEGRITY BLOCK
@@ -651,8 +654,6 @@ OMISSION RULE: when with_errors is false, omit error_details and error_count
 entirely. The ingest tool treats a missing key differently from an empty array.
 
 ---
-
-
 FINAL WRITE CONTRACT
 
 Before you write the JSON, confirm the following:
@@ -693,6 +694,7 @@ Before you write the JSON, confirm the following:
    — explain exactly what and why in integrity.error_details
 
 ---
+
 RUN SCOPE
 
 Record type:        assist-org
@@ -700,8 +702,9 @@ Jurisdiction:       United States
 Jurisdiction ID:    US
 Requested Records:  3
 meta.nationwide_only: true
-Focus notes:
+
 ---
+Focus notes:
 alright team, human research has surfaced gaps in our original schema, it is now updated... concentrate on the listed organizations and using the updated schema help us fill these gaps:
 Whistleblowers of America
 Government Accountability Project

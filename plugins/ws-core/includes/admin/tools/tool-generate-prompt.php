@@ -1053,6 +1053,7 @@ BLOCK;
 
 function ws_prompt_assist_org_final_write_contract_block(): string {
     return <<<'BLOCK'
+
 FINAL WRITE CONTRACT
 
 Before you write the JSON, confirm the following:
@@ -1477,8 +1478,8 @@ function ws_generate_assist_org_prompt( array $scope ): string {
     $out .= ws_prompt_render_exclusion_list( $excludes, 'Do not return organizations already known in this list:' );
 
     if ( $nationwide_only ) {
-        $out .= "\nWhen \"meta.nationwide_only\" is true, return only nationwide or large multi-jurisdictional scoped organizations. ";
-        $out .= "Do not include single jurisdiction organizations, or organizations that only help federal employees.\n";
+        $out .= "\nWhen \"meta.nationwide_only\" is true, return nationwide or large multi-jurisdictional scoped organizations.\n";
+        $out .= "Organizations that serve federal employees among a broader set of workers qualify.\nDo not include single jurisdiction organizations.\n";
     } else {
         $out .= "\nWhen \"meta.nationwide_only\" is false, include strong {$jx} fits and optional broader coverage.\n";
     }
@@ -1494,9 +1495,6 @@ function ws_generate_assist_org_prompt( array $scope ): string {
 
 function ws_prompt_assist_org_taxonomy_tables_static_block(): string {
     return <<<'BLOCK'
-
----
-
 ================================================================================
 TAXONOMY TABLES
 
@@ -2044,7 +2042,6 @@ function ws_prompt_truncation_permission_assist_org( int $requested_records = 0 
 
 function ws_prompt_assist_org_meta_schema(): string {
     return <<<'ENDSCHEMA'
-
 META SCHEMA
 
 {
