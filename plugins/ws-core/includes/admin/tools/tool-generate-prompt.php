@@ -1173,9 +1173,9 @@ clarifications you make during your research:
   review._review_notes                        "researcher had no notes on current record"
 
 TERNARY — use yes when the source confirms the presence of this feature, no when the source
-confirms its absence, and unclear when the source is ambiguous. unclear is not a failure — 
-it is a signal for human review and should be used whenever the source material does not
-confidently confirm or deny the presence of the feature.
+confirms its absence, and unclear when the source doesn't reference the feature. unclear is
+not a failure — it is a signal for human review and should be used whenever the source material
+does not confidently confirm or deny the presence of the feature.
 
   security.has_secure_channel                 unclear
   security.anonymous_pre_consult_possible     unclear
@@ -1188,7 +1188,7 @@ signals that are critical for human reviewers:
 
   scope_of_service.nationwide_example         "" when no qualifying quote is found
   scope_of_service.disclosure_types           [] when none can be confirmed
-  scope_of_service.languages_supported        [] when language support is ambiguous
+  scope_of_service.languages_supported        [] when site's operating language cannot be determined.
 
 CONDITIONAL — required when the parent condition is met; omit otherwise. In most cases these
 fields are the structured breadcrumbs for human reviewers: use them to capture “what I found
@@ -1242,13 +1242,13 @@ scope_of_service:
                               Omit when the org is clearly not nationwide, and note the absence in _review_notes.
   disclosure_types            ws_disclosure_type slugs; [] when none can be confirmed.
   protected_classes           ws_protected_class slugs; use has-details slug when coverage
-                              exists but no slug fits cleanly, or coverage is ambiguous.
+                              exists but no slug fits cleanly, or no coverage is described clearly.
   protected_class_details     free text when protected_classes includes has-details slug; describe the
-                              org's claim of coverage or note ambiguity of coverage.
+                              org's claim of coverage or note the missing description of coverage.
   languages_supported         ws_languages slugs; list all languages the org claims to support.
-                              Do not assume "english" if the site appears to be in another language.
-                              Leave languages_supported as [] when language support is ambiguous
-                              and note the ambiguity in _review_notes.
+                              When the site is clearly in English and makes no multilingual claim,
+                              use the english slug. Use [] only when the site's operating language
+                              cannot be determined and note the use of [] in _review_notes.
   languages_additional        free text listing languages not in taxonomy (e.g. TTY relay,
                               interpreter services); omit when additional slug is not included
 							  in languages_supported array.                              
@@ -1256,8 +1256,8 @@ scope_of_service:
                               fits cleanly.
   employment_sectors          ws_employment_sector slugs; omit when coverage is unclear.
   cost_models                 ws_aorg_cost_model slugs; include all described cost models.
-                              Use unclear slug when other slugs do not fit described cost model cleanly,
-                              or cost model is not described at all.
+                              Use unclear slug when other slugs do not fit a described cost model cleanly,
+                              or a no cost model is described clearly.
   services_provided           ws_aorg_service slugs. Include secure-drop when the org runs a dedicated
                               anonymous evidence drop (e.g. SecureDrop). Include additional slug when a
 							  service described doesn't fit existing slugs cleanly. Omit services_provided
@@ -1351,13 +1351,13 @@ review:
                               — "email type marked other: listed as 'whistleblower secure
                                  tips inbox' without clear fit to slugs; included for
                                  human review"
-                              — "site language/support ambiguous; languages_supported
+                              — "site language/support undetermined; languages_supported
                                  left empty intentionally"
 
                               You may use _review_notes to briefly explain:
                               — why you left a taxonomy array empty even though the org seems
                                  important (e.g. "org clearly serves federal workers but
-                                 employment_sectors mapping is ambiguous")
+                                 employment_sectors mapping is indeterminate")
                               — why existing slugs do not fully capture the real-world pattern
                                  you found
 
@@ -1495,7 +1495,7 @@ function ws_generate_assist_org_prompt( array $scope ): string {
 
 function ws_prompt_assist_org_taxonomy_tables_static_block(): string {
     return <<<'BLOCK'
-    
+
 ================================================================================
 TAXONOMY TABLES
 
@@ -1562,7 +1562,7 @@ TAXONOMY: ws_protected_class
 Description: Worker or employment classification the org explicitly serves.
              Tag all that apply. List all classifications described in source
 			 material. Do not infer coverage. Use has-details slug when coverage
-			 exists but no slug fits cleanly, or coverage is ambiguous.
+			 exists but no slug fits cleanly, or no coverage is described clearly.
 ────────────────────────────────────────────────────────────────────────────
 
 federal-employee                   Federal Employee
@@ -1587,8 +1587,8 @@ has-details                        Has Details (use with protected_class_details
 TAXONOMY: ws_disclosure_targets
 Description: Who the protected disclosure may be made to. Tag all that apply.
              List targets described in source material. Use has-details slug
-			 when coverage exists but no slug fits cleanly, or coverage
-			 is ambiguous.
+			 when coverage exists but no slug fits cleanly, or no coverage
+			 is described clearly.
 ────────────────────────────────────────────────────────────────────────────
 
 internal-supervisor                Supervisor / Manager
@@ -1630,7 +1630,7 @@ representative-action              Representative Action
 TAXONOMY: ws_case_stage
 Description: Legal stage where the org provides help. Tag all that apply.
              Use other slug when stage coverage exists but no slug fits
-			 cleanly, or coverage is ambiguous.
+			 cleanly, or no coverage is described clearly.
 ────────────────────────────────────────────────────────────────────────────
 
 pre-report                         Pre-Report (considering coming forward)
@@ -1699,8 +1699,8 @@ all-sectors                        All Employment Sectors
 ────────────────────────────────────────────────────────────────────────────
 TAXONOMY: ws_aorg_cost_model
 Description: Cost structure of the org's help pathways. Tag all that apply.
-             Use unclear slug when cost model is not described or existing
-			 slugs do not fit cleanly to org's described model.
+             Use unclear slug when existing slugs do not fit cleanly to a
+             model described by the org, or no model is described clearly.
 ────────────────────────────────────────────────────────────────────────────
 
 free                               Free of Charge

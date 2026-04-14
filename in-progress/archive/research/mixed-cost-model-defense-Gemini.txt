@@ -1,0 +1,27 @@
+"thank you, that was well reasoned... one last note... in cost_models i have revised the term 'mixed' which was doing work when cost_model was singular, to 'unclear' now that cost_models is multi-select... 'mixed' when returned in the old schema surfaced that many orgs have multiple models... as such I need you to multi-select "all that apply"... and when no model is found or if a model is described and doesn't fit the slugs cleanly to use 'unclear', this triggers a deeper human review than just confirming each cost model reported... is the current prompt not doing its job on this particular surface?"
+
+
+The latest prompt architecture is largely doing its job, but there is a slight "drift" in the instructions that could prevent the **unclear** sentinel from triggering the human review as consistently as you intend.
+
+Here is the technical breakdown of the current state of that field:
+
+### 1. Structural Success
+The prompt has successfully transitioned from a singular `cost_model` to the plural, multi-select `cost_models` array.
+* **Taxonomy Update**: The `ws_aorg_cost_model` table correctly lists **unclear** and has removed **mixed**.
+* **Multi-Select Instruction**: The required key section explicitly mandates an `[array of ws_aorg_cost_model slugs]`.
+* **Persistence of 'Mixed'**: As per your intent, **mixed** remains correctly available in the separate `ws_aorg_type` table for organizational classification, but it no longer appears in the cost structure.
+
+### 2. The "Sentinel" Instruction Gap
+While the framework is correct, the specific instruction in the **INLINE DEFINITIONS** is currently worded as: `use 'unclear' if ambiguous`. 
+* **The Issue**: "Ambiguous" is a narrower term than your desired criteria of "not found" or "does not fit cleanly." An AI model might find a cost model it *thinks* is clear but doesn't actually match your slugs, and it may not categorize that as "ambiguous."
+* **The Risk**: Without the explicit "doesn't fit cleanly" instruction, the model may "hallucinate" a best-fit slug (like choosing **fee-for-service** for a complex membership model) rather than providing the **unclear** sentinel you need to trigger a human review.
+
+### 3. Recommended Technical Adjustment
+To ensure the prompt does the specific job of flagging these for review, you should update the definition for that field to match your new logic:
+
+> **cost_models**: `[required - Use Approved Taxonomy slugs from ws_aorg_cost_model table; select all that apply. Use 'unclear' if no model is found or if the reported model does not fit the provided slugs cleanly.]`
+
+### 4. Verification in Practice
+In the most recent successful run for the **National Whistleblower Center**, the model correctly identified a **free** cost model for the Attorney Referral Program. However, because that specific record was "clear," the sentinel wasn't tested. Tightening that one instruction will ensure that for more complex or undocumented organizations, the system defaults to your manual review queue rather than making an executive (and potentially wrong) decision.
+
+ refers to the latest assistance organization prompt and the resulting verified records.
