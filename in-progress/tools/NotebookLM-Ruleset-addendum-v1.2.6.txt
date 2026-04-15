@@ -1,4 +1,4 @@
-WhistleblowerShield.org NotebookLM Ruleset - Addendum v1.2.5
+WhistleblowerShield.org NotebookLM Ruleset - Addendum v1.2.6
 
 PURPOSE
 This addendum carries edge-case and operational policy for NotebookLM
@@ -8,9 +8,11 @@ AUTHORITY MODEL
 - Core embed remains baseline authority.
 - Addendum rules refine implementation details.
 - Addendum may override core only when explicitly marked as OVERRIDE.
+- Reconcilation output should conform to the researcher prompt when
+  not in conflict with ruleset.
 
 OVERRIDE FORMAT
-Use this exact header for any future override:
+When an override is necessary it should appear as:
 [OVERRIDE <id>] Replaces core section: <name>
 
 If a rule is not marked as OVERRIDE, treat it as supplemental only.
@@ -24,15 +26,18 @@ If URL is already present and domain is approved, carry it forward unless:
 - domain is actually unapproved,
 - URL pattern is clearly malformed,
 - source context indicates fabrication.
-Do not drop existing approved-source URLs solely because web search is unavailable.
+Do not drop existing approved-source URLs solely because web research
+is unavailable. When web research is unavailable in source materials clearly
+make note of its absence in _reconciled_run_notes.
 
 2) New URLs proposed during reconciliation
-Must be verified against a live page on an approved domain before inclusion.
+Must be verified against a web research of an approved domain before inclusion.
 Do not claim internal-memory verification.
 If unverifiable, omit the field.
-Do not substitute homepage, root, or parent path as fallback.
+Do not substitute homepage, root, or parent path as fallback when necessary
+data is expected to be on a deeper page.
 
-3) When web search is unavailable
+3) When web research is unavailable in source materials:
 - Keep existing approved-source URLs unchanged.
 - Omit newly proposed URLs.
 - Log this constraint in _reconciled_run_notes.
@@ -146,24 +151,69 @@ be removed, then logged.
 
 ---
 
-PROPOSED TERM DISCIPLINE
-Invalid or unregistered slugs must not remain in record arrays.
-If a concept requires new vocabulary:
-1) remove invalid slug from record array,
-2) add structured proposal in new_terms_proposed,
-3) keep proposal only in proposal list, never in record arrays.
+PROPOSING NEW TAXONOMY TERMS
+When you encounter a concept that does not fit any slug in the known taxonomy,
+propose it. Proposals are expected and valued at every stage of this pipeline.
+Do not propose new taxonomy tables. Use _reconciled_run_notes to recommend them.
 
-If a slug appears in both record array and new_terms_proposed,
+Each proposal must follow this shape:
+RECORD_ID can be STATUTE_ID, COMMON-LAW_ID, CITATION_ID, or INTERPRETATION_ID.
+Use either COMMON_NAME or OFFICIAL_NAME for ASSIST-ORG RECORD_ID.
+Prefer COMMON_NAME when it exists.
+
+  {
+    "taxonomy":   "[REGISTERED TAXONOMY TABLE SLUG]",
+    "term_id":    "[YOUR PROPOSED SLUG IN kebab-case]",
+    "term_label": "[HUMAN-READABLE LABEL]",
+    "notes":      "[WHY THIS TERM IS NEEDED AND WHY EXISTING TERMS DO NOT COVER IT]",
+    "seen_in":    ["[RECORD_ID]", "[SECOND_RECORD_ID]"],
+    "count":      [INTEGER — must equal length of seen_in]
+  }
+
+Example of a correct proposal:
+
+  Several California statutes protect employees from retaliation based on
+  a family member's protected whistleblowing activity. No slug in
+  ws_protected_class covers this class of protection. The concept is likely
+  to appear in statutes across multiple jurisdictions. A correct proposal:
+
+  {
+    "taxonomy":   "ws_protected_class",
+    "term_id":    "family-member-of-whistleblower",
+    "term_label": "Family Member of Whistleblower",
+    "notes":      "Covers employees retaliated against because a family
+                  member engaged in protected activity. Distinct from
+                  direct whistleblower protection — the protected person
+                  did not themselves disclose. No existing slug covers
+                  this. Appears in Cal. Lab. Code §§ 1102.5 and 6310;
+                  likely present in other jurisdictions.",
+    "seen_in":    ["CA-1102.5", "CA-6310"],
+    "count":      2
+  }
+
+If the same gap appears in multiple records, consolidate into one entry with
+all RECORD_IDs in seen_in.
+
+If no new terms are needed, new_terms_proposed must be an empty array [].
+
+PROPOSED TERM DISCIPLINE
+Invalid or unregistered terms must not remain in record arrays.
+If a concept can justify a new taxonomy:
+1) remove invalid term from record array if present,
+2) add structured proposal in new_terms_proposed,
+3) keep proposal term only in proposal list, never in record arrays.
+
+If a term appears in both record array and new_terms_proposed,
 remove it from the record array.
 
 ---
 
 BROAD TERM RESOLUTION
 Before proposing a broad term:
-1) review existing child slugs,
-2) use existing child combinations when they remain accurate and specific,
-3) propose broader term only when existing combinations misrepresent coverage,
-4) document the comparison reasoning in _reconciled_notes.
+1) review existing terms,
+2) use existing term combinations when they can accurately represent coverage,
+3) propose broader term only when existing term combinations would misrepresent coverage,
+4) document the reasoning and comparison in _reconciled_notes.
 
 ---
 
@@ -172,6 +222,8 @@ _reconciled_notes is per-record audit detail.
 Use it when any record-level reconciliation action occurs.
 
 Minimum expected content when present:
+- any corrected schema violation
+- any corrected data value
 - source choice rationale for conflicts,
 - factual field changes and reasons,
 - removal reasons for citations/links,
@@ -184,11 +236,12 @@ Omit only when no reconciliation action occurred for that record.
 
 _RECONCILED_RUN_NOTES STANDARD
 _reconciled_run_notes is batch-level audit detail in meta.
+
 Use it for:
 - global policies applied across records,
-- environment constraints (for example web search unavailable),
+- web research not done in advance of reconciliation,
 - cross-record normalization patterns,
-- batch-level reviewer context,
+- batch-level reconciler context,
 - responses to input prompt queries.
 
 Omit when no batch-level note is needed.
@@ -199,7 +252,7 @@ SOURCE CHAIN STANDARD
 source_chain is meta-level provenance.
 Populate from available inputs and include NotebookLM as final step.
 
-Recommended role vocabulary:
+Role vocabulary:
 - primary-research
 - source-material
 - reformat
@@ -210,38 +263,45 @@ Entry format:
 
 ---
 
-RULE EVOLUTION PERMISSION (EDGE CASES)
-
-You are authorized to propose new rules when you encounter an edge case not fully governed by current rules.
+RULE EVOLUTION PERMISSION (EDGE CASES | INCONSISTENIES | CONTRADICTIONS | GAPS)
+You are authorized to propose new rules when you encounter an edge case not fully
+governed by current rules, when rules are inconsistent or contradicatory, or when
+gaps in rules allow for unintended data inclusion.
 
 Scope:
+Per-record proposals:  use when the proposal would positvely affect record’s interpretation or validation.
+Batch-level proposals: use when the proposal would help avoid unintended recurring patterns across records.
 
-Per-record proposals: use when the gap affects one record’s interpretation or validation.
-Batch-level proposals: use when the gap reflects a recurring pattern across records.
+NEW SCHEMA KEY EVOLUTION PERMISSION
+You are authorized to propose new schema keys when you encounter data not captured by
+or misrepesnted in current schema.
+
 Hard constraints:
-
-Do not invent new output schema keys.
-Do not change current behavior silently.
+Do not add new output schema keys, propose them.
+Do not change current behavior without updated rules.
 Resolve the current run using existing rules and highest-authority precedence.
-Treat your proposal as advisory unless explicitly adopted by a human.
+Treat your proposal as advisory unless explicitly adopted in rulesets or schema.
+
 Where to place proposals:
+Record-level: append under _reconciled_notes in a section titled Proposed [Rule|Key].
+Batch-level:  append under _reconciled_run_notes in a section titled Proposed [Rule|Key].
 
-Record-level: append under _reconciled_notes in a section titled Proposed Rule.
-Batch-level: append under _reconciled_run_notes in a section titled Proposed Rule.
 Required proposal format (exact fields):
-
-Trigger: what factual pattern caused the gap
-Conflict: which existing rules were insufficient or in tension
-Proposed Rule Text: one concise normative rule
-Impact: what this would change in future runs
-Risk if not adopted: concrete failure mode
+Trigger: what factual pattern has been identified.
+Conflict: which existing rules/keys were insufficient or in tension.
+Proposed Rule/Key Text: one concise normative rule or schema key per proposal.
+Impact: what this would change in future runs.
+Risk if not adopted: concrete failure mode.
 Scope: record-level, batch-level, or both
 Priority: high, medium, low
-Decision rule:
-If multiple possible proposals exist, provide the narrowest rule that resolves the gap without broadening model discretion.
+
+Decision guidance:
+If multiple possible proposals exist for the same indentified pattern, provide the
+narrowest proposal that resolves the issue.
+Prioritize proposals that don't require increased researcher or reconciler judgement.
 
 Loophole Guard:
-If a gap is found, do not exploit it for permissive output; produce the safest compliant output and emit a Proposed Rule entry.
+If a gap is found, do not exploit it for permissive output; produce the safest compliant output and emit a Proposed Rule/Key entry.
 
 ---
 
@@ -265,7 +325,7 @@ that human review should confirm they meet the assist-org definition.
 
 MULTI-SOURCE MERGE FOR SAME ORGANIZATION
 When two or more source batches contain records for the same organization
-(matched by official_homepage_url or organization_name, case-insensitive):
+(matched by official_homepage_url or official_name, case-insensitive):
 1) Merge into one record — never output duplicate org records.
 2) For each field, apply the ground truth hierarchy:
    - Verified URL source content beats researcher inference.
@@ -274,27 +334,29 @@ When two or more source batches contain records for the same organization
 3) whistleblower_scope: use the highest justified score. If models disagree,
    use the score supported by the most specific whistleblower_note quote.
    Log the disagreement and resolution in _reconciled_notes.
-4) case_stages, employment_sectors, services_provided, cost_model:
-   take the union of all source values, then remove any that are
-   unsupported by verified content. Log additions in _reconciled_notes.
+4) For taxonomy arrays:
+   take the union of all researched values, then remove any that are
+   unsupported by verifiable content. Log inclusions/exclusions in _reconciled_notes.
 5) whistleblower_note: keep the most specific direct quote from the org's
    own website. If multiple good quotes exist, keep the one most relevant
    to whistleblower scope. Do not merge multiple quotes into one string.
+   Add omitted quotes to _reconciled_notes and label source (e.g. [Grok], [ChatGPT])
 6) _review_notes: merge all researcher notes into one chronological entry,
    prefixed by model name. Example: "[Grok] Strong post-retaliation focus.
    [ChatGPT] Confirmed intake form available."
 
-EMPLOYMENT SECTOR GRANULARITY (NO COLLAPSE)
+TAXONOMY GRANULARITY (COLLAPSE RULES)
+Applies equally to protected_classes (all-employees) and employment_sectors (all-sectors)
+Example:
 For ws-assist-org.employment_sectors:
-1) Keep specific verified sector slugs when present.
-2) Do not replace specific sectors with all-sectors as a simplification step.
-3) Use all-sectors only when source evidence explicitly supports broad
+1) Keep specific verified sector slugs when all-sectors is not justified.
+2) Use all-sectors only when source evidence explicitly supports broad
    all-sector eligibility/coverage.
-4) If evidence supports both broad and specific sectors, keep the specific
-   slugs and include all-sectors only when explicitly justified by source text.
-5) If a source value is uncertain, omit that sector slug rather than broadening.
-6) When conflict resolution changes sector granularity, log rationale in
-   _reconciled_notes.
+3) If evidence supports all-sectors, replace all specific sectors with all-sectors.
+4) If a source value is uncertain, omit that sector slug rather than broadening.
+5) When conflict resolution changes sector granularity, log rationale in
+   _reconciled_notes. If all-sectors replaced specific sectors, include list of
+   specific sectors replaced.
 
 VALID EMPTY FIELDS (DO NOT FLAG AS ERRORS)
 The following fields are legitimately empty in assist-org records.
@@ -302,28 +364,29 @@ Do not add to error_details for these, but do preserve them in the
 record as empty — do not omit them. The ingest tool handles flagging;
 NotebookLM's job is to leave them present so the ingest tool can see them.
 - nationwide_example: "" is valid — keep as "" in the record.
-- disclosure_targets: [] is valid — keep as [] in the record.
+- protected_classes:  [] is valid — keep as [] in the record.
+- disclosure_types:   [] is valid — keep as [] in the record.
 - whistleblower_scope: 0 is valid — org is included for completeness
   but does not directly serve whistleblowers; preserve and do not flag.
 
 If these keys are missing entirely from a source record, add them
 with their empty value so the ingest tool has a consistent target.
 
-REQUIRED FIELDS (FLAG IF MISSING)
+REQUIRED FIELDS (ADD KEY; SET TO 'no'; AND FLAG IF MISSING)
 The following fields are required on every assist-org record.
-If absent, add to error_details:
-- has_attorneys                  — flag as: "[ORG NAME]: has_attorneys missing; human review required."
-- anonymous_pre_consult_possible — flag as: "[ORG NAME]: anonymous_pre_consult_possible missing; human review required."
-- income_eligibility_required    — flag as: "[ORG NAME]: income_eligibility_required missing; human review required."
-- has_secure_channel             — flag as: "[ORG NAME]: has_secure_channel missing; human review required."
+If absent, add key and set to 'no' and flag in error_details:
+- has_attorneys                  — flag as: "[ORG NAME]: has_attorneys was missing; added and set to no; human review required."
+- anonymous_pre_consult_possible — flag as: "[ORG NAME]: anonymous_pre_consult_possible was missing; added and set to no; human review required."
+- income_eligibility_required    — flag as: "[ORG NAME]: income_eligibility_required was missing; added and set to no; human review required."
+- has_secure_channel             — flag as: "[ORG NAME]: has_secure_channel was missing; added and set to no; human review required."
 
 VERIFIED_URL_DATE POLICY
 Every record with an "homepage_url_status": "verified"
 should have a corresponding verified_url_date populated.
 If verified_url_date is absent on a record:
 - Correct homepage_url_status to unverified
-- Flag in error_details: "[ORG NAME]: verified_url_date missing; URL set to unverified."
-- Do not remove the URL — preserve it and flag for human verification.
+- Flag in error_details: "[ORG NAME]: verified_url_date missing; URL set to unverified; human review required."
+- Do not remove the URL — preserve it.
 If verified_url_date exists but is more than 90 days old relative to
 batch_completed, note staleness in _reconciled_notes but do not flag
 as an error — staleness is advisory, not a schema violation.

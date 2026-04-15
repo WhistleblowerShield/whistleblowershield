@@ -18,11 +18,11 @@ defined( 'ABSPATH' ) || exit;
  *   ws_jx_statute_official_name      Official name (text, required)
  *   ws_jx_statute_citation           Official statute citation (text, optional)
  *   ws_jx_statute_common_name        Common/informal name (text, optional)
- *   ws_jx_statute_disclosure_type    Disclosure Categories taxonomy (multi_select)
- *   ws_jx_statute_protected_class    Protected Class taxonomy (multi_select)
+ *   ws_jx_statute_disclosure_types    Disclosure Categories taxonomy (multi_select)
+ *   ws_jx_statute_protected_classes    Protected Class taxonomy (multi_select)
  *   ws_jx_statute_protected_class_details Protected Class Detail (textarea, conditional on has-details term)
  *   ws_jx_statute_disclosure_targets Disclosure Targets taxonomy (multi_select)
- *   ws_jx_statute_disclosure_targets_details Disclosure Targets Detail (textarea, conditional on has-details term)
+ *   ws_jx_statute_disclosure_target_details Disclosure Targets Detail (textarea, conditional on has-details term)
  *   ws_jx_statute_adverse_action_scope Free-text scope of covered adverse actions
  *   ws_attach_flag                   Editorial curation flag (true_false). Marks this
  *                                    record as one of the ~3–5 highlighted statutes shown
@@ -45,10 +45,10 @@ defined( 'ABSPATH' ) || exit;
  *   ws_jx_statute_exhaustion_details Exhaustion Procedure & Deadline (textarea, conditional)
  *
  * Enforcement tab:
- *   ws_jx_statute_process_type       Process Types taxonomy (checkbox)
- *   ws_jx_statute_adverse_action     Adverse Action Types taxonomy (checkbox)
+ *   ws_jx_statute_process_types       Process Types taxonomy (checkbox)
+ *   ws_jx_statute_adverse_actions     Adverse Action Types taxonomy (checkbox)
  *   ws_jx_statute_adverse_action_details Adverse Action Detail (textarea, conditional on has-details term)
- *   ws_jx_statute_fee_shifting       Fee Shifting taxonomy (checkbox)
+ *   ws_jx_statute_fee_shiftings       Fee Shifting taxonomy (checkbox)
  *   ws_jx_statute_remedies           Available Remedies taxonomy (checkbox)
  *   ws_jx_statute_remedies_details   Remedies Detail (textarea, conditional on has-details term)
  *   ws_jx_statute_local_agencies     Local Agencies (post_object)
@@ -56,9 +56,9 @@ defined( 'ABSPATH' ) || exit;
  *   ws_jx_statute_enforcement_channel Enforcement Channel Notes (textarea)
  *
  * Burden of Proof tab:
- *   ws_jx_statute_employee_standard  Employee Standard taxonomy (checkbox)
+ *   ws_jx_statute_employee_standards  Employee Standard taxonomy (checkbox)
  *   ws_jx_statute_employee_standard_details Employee Standard Detail (textarea, conditional on has-details term)
- *   ws_jx_statute_employer_defense   Employer Defense taxonomy (checkbox)
+ *   ws_jx_statute_employer_defenses   Employer Defense taxonomy (checkbox)
  *   ws_jx_statute_employer_defense_details Employer Defense Details (textarea, conditional on has-details term)
  *   ws_jx_statute_rebuttable_has_presumption Rebuttable presumption exists (true_false)
  *   ws_jx_statute_rebuttable_presumption Rebuttable Presumption Details (textarea, conditional)
@@ -193,7 +193,7 @@ function ws_register_acf_jx_statutes() {
             [
                 'key'           => 'field_jx_statute_disclosure_type',
                 'label'         => 'Disclosure Categories',
-                'name'          => 'ws_jx_statute_disclosure_type',
+                'name'          => 'ws_jx_statute_disclosure_types',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_disclosure_type',
                 'field_type'    => 'multi_select',
@@ -207,7 +207,7 @@ function ws_register_acf_jx_statutes() {
             [
                 'key'           => 'field_jx_statute_protected_class',
                 'label'         => 'Protected Class',
-                'name'          => 'ws_jx_statute_protected_class',
+                'name'          => 'ws_jx_statute_protected_classes',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_protected_class',
                 'field_type'    => 'multi_select',
@@ -233,7 +233,7 @@ function ws_register_acf_jx_statutes() {
                 'label'         => 'Disclosure Targets',
                 'name'          => 'ws_jx_statute_disclosure_targets',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_disclosure_targets',
+                'taxonomy'      => 'ws_disclosure_target',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Who must the disclosure be made to for protection to apply under this statute?',
                 'add_term'      => 0,
@@ -243,9 +243,9 @@ function ws_register_acf_jx_statutes() {
             ],
 
             [
-                'key'          => 'field_jx_statute_disclosure_targets_details',
+                'key'          => 'field_jx_statute_disclosure_target_details',
                 'label'        => 'Disclosure Targets Details',
-                'name'         => 'ws_jx_statute_disclosure_targets_details',
+                'name'         => 'ws_jx_statute_disclosure_target_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
                 'instructions' => 'Describe any conditions, ordering requirements, or statutory language that affects which reporting channels qualify for protection.',
@@ -438,7 +438,7 @@ function ws_register_acf_jx_statutes() {
             [
                 'key'           => 'field_jx_statute_process_type',
                 'label'         => 'Process Types',
-                'name'          => 'ws_jx_statute_process_type',
+                'name'          => 'ws_jx_statute_process_types',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_process_type',
                 'field_type'    => 'checkbox',
@@ -452,7 +452,7 @@ function ws_register_acf_jx_statutes() {
             [
                 'key'           => 'field_jx_statute_adverse_action',
                 'label'         => 'Adverse Action Types',
-                'name'          => 'ws_jx_statute_adverse_action',
+                'name'          => 'ws_jx_statute_adverse_actions',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_adverse_action_types',
                 'field_type'    => 'checkbox',
@@ -476,7 +476,7 @@ function ws_register_acf_jx_statutes() {
             [
                 'key'           => 'field_jx_statute_fee_shifting',
                 'label'         => 'Fee Shifting',
-                'name'          => 'ws_jx_statute_fee_shifting',
+                'name'          => 'ws_jx_statute_fee_shiftings',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_fee_shifting',
                 'field_type'    => 'checkbox',
@@ -560,7 +560,7 @@ function ws_register_acf_jx_statutes() {
             [
                 'key'           => 'field_jx_statute_employee_standard',
                 'label'         => 'Employee Standard',
-                'name'          => 'ws_jx_statute_employee_standard',
+                'name'          => 'ws_jx_statute_employee_standards',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_employee_standard',
                 'field_type'    => 'checkbox',
@@ -584,7 +584,7 @@ function ws_register_acf_jx_statutes() {
             [
                 'key'           => 'field_jx_statute_employer_defense',
                 'label'         => 'Employer Defense',
-                'name'          => 'ws_jx_statute_employer_defense',
+                'name'          => 'ws_jx_statute_employer_defenses',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_employer_defense',
                 'field_type'    => 'checkbox',
@@ -723,7 +723,7 @@ function ws_register_acf_jx_statutes() {
 
             [
                 'key'           => 'field_jx_statute_is_pdf',
-                'label'         => 'PDF Link',
+                'label'         => 'Link is PDF?',
                 'name'          => 'ws_jx_statute_is_pdf',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable if the statute URL links directly to a PDF document.',
@@ -808,7 +808,7 @@ function ws_jx_statute_details_conditional( $field ) {
     // Map: details field key => [ taxonomy slug, trigger field key ]
     static $map = [
         'field_jx_statute_protected_class_details'    => [ 'ws_protected_class',     'field_jx_statute_protected_class' ],
-        'field_jx_statute_disclosure_targets_details' => [ 'ws_disclosure_targets',   'field_jx_statute_disclosure_targets' ],
+        'field_jx_statute_disclosure_target_details' => [ 'ws_disclosure_target',   'field_jx_statute_disclosure_targets' ],
         'field_jx_statute_adverse_action_details'     => [ 'ws_adverse_action_types', 'field_jx_statute_adverse_action' ],
         'field_jx_statute_remedies_details'           => [ 'ws_remedies',             'field_jx_statute_remedies' ],
         'field_jx_statute_employee_standard_details'  => [ 'ws_employee_standard',    'field_jx_statute_employee_standard' ],

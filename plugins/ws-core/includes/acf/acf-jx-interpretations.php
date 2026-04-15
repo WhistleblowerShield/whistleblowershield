@@ -31,20 +31,20 @@
  *   ws_jx_interp_last_reviewed Text — last verified date (Y-m-d).
  *
  * Classification tab:
- *   ws_jx_interp_disclosure_type   Taxonomy — ws_disclosure_type terms.
- *   ws_jx_interp_protected_class   Taxonomy — ws_protected_class terms.
- *   ws_jx_interp_disclosure_targets Taxonomy — ws_disclosure_targets terms.
- *   ws_jx_interp_adverse_action    Taxonomy — ws_adverse_action_types terms.
- *   ws_jx_interp_process_type      Taxonomy — ws_process_type terms (moved from Summary).
+ *   ws_jx_interp_disclosure_types   Taxonomy — ws_disclosure_type terms.
+ *   ws_jx_interp_protected_classes   Taxonomy — ws_protected_class terms.
+ *   ws_jx_interp_disclosure_targets Taxonomy — ws_disclosure_target terms.
+ *   ws_jx_interp_adverse_actions    Taxonomy — ws_adverse_action_types terms.
+ *   ws_jx_interp_process_types      Taxonomy — ws_process_type terms (moved from Summary).
  *   ws_jx_interp_remedies          Taxonomy — ws_remedies terms.
- *   ws_jx_interp_fee_shifting      Taxonomy — ws_fee_shifting terms.
- *   ws_jx_interp_employer_defense  Taxonomy — ws_employer_defense terms.
- *   ws_jx_interp_employee_standard Taxonomy — ws_employee_standard terms.
+ *   ws_jx_interp_fee_shiftings      Taxonomy — ws_fee_shifting terms.
+ *   ws_jx_interp_employer_defenses  Taxonomy — ws_employer_defense terms.
+ *   ws_jx_interp_employee_standards Taxonomy — ws_employee_standard terms.
  *
  * Relationships tab:
  *   ws_jx_interp_statute_id    Post object — parent jx-statute (single, optional).
  *   ws_jx_interp_common_law_id Post object — parent jx-common-law (single, optional).
- *   ws_jx_interp_affected_jx   Taxonomy — ws_jurisdiction terms. Auto-computed on
+ *   ws_jx_interp_affected_jurisdictions   Taxonomy — ws_jurisdiction terms. Auto-computed on
  *                               save from the court's ws_jx_codes in the court matrix.
  *                               Empty = SCOTUS (all jx). 'other' court = skip.
  *                               save_terms: 0 — prevents taxonomy query pollution.
@@ -66,7 +66,7 @@
  *        conditional field added for 'other' court sentinel.
  *        Field summary corrected to match current meta key names.
  * 3.12.0 Classification tab added: ws_disclosure_type, ws_protected_class,
- *        ws_disclosure_targets, ws_adverse_action_types, ws_process_type
+ *        ws_disclosure_target, ws_adverse_action_types, ws_process_type
  *        (moved from Summary tab), ws_remedies, ws_fee_shifting,
  *        ws_employer_defense, ws_employee_standard — mirrors jx-statute palette
  *        including has-details sentinel pattern and companion _details fields.
@@ -236,7 +236,7 @@ function ws_register_acf_jx_interpretations() {
             [
                 'key'           => 'field_jx_interp_attach_flag',
                 'label'         => 'Attach to Jurisdiction Page',
-                'name'          => 'ws_attach_flag',
+                'name'          => 'ws_jx_interp_attach_flag',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable to include this interpretation in the rendered section on the jurisdiction page. Disable to store for reference only.',
                 'ui'            => 1,
@@ -248,7 +248,7 @@ function ws_register_acf_jx_interpretations() {
             [
                 'key'               => 'field_jx_interp_display_order',
                 'label'             => 'Display Order',
-                'name'              => 'ws_display_order',
+                'name'              => 'ws_jx_interp_display_order',
                 'type'              => 'number',
                 'instructions'      => 'Set the order in which this interpretation appears on the jurisdiction page. Lower numbers appear first.',
                 'min'               => 1,
@@ -279,7 +279,7 @@ function ws_register_acf_jx_interpretations() {
             [
                 'key'           => 'field_jx_interp_disclosure_type',
                 'label'         => 'Disclosure Category',
-                'name'          => 'ws_jx_interp_disclosure_type',
+                'name'          => 'ws_jx_interp_disclosure_types',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_disclosure_type',
                 'field_type'    => 'checkbox',
@@ -293,7 +293,7 @@ function ws_register_acf_jx_interpretations() {
             [
                 'key'           => 'field_jx_interp_protected_class',
                 'label'         => 'Protected Class',
-                'name'          => 'ws_jx_interp_protected_class',
+                'name'          => 'ws_jx_interp_protected_classes',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_protected_class',
                 'field_type'    => 'checkbox',
@@ -319,7 +319,7 @@ function ws_register_acf_jx_interpretations() {
                 'label'         => 'Disclosure Targets',
                 'name'          => 'ws_jx_interp_disclosure_targets',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_disclosure_targets',
+                'taxonomy'      => 'ws_disclosure_target',
                 'field_type'    => 'checkbox',
                 'instructions'  => 'Reporting target addressed or clarified by this interpretation. Tag only where the interpretation explicitly discusses or turns on the reporting channel.',
                 'add_term'      => 0,
@@ -329,9 +329,9 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'          => 'field_jx_interp_disclosure_targets_details',
+                'key'          => 'field_jx_interp_disclosure_target_details',
                 'label'        => 'Disclosure Targets Details',
-                'name'         => 'ws_jx_interp_disclosure_targets_details',
+                'name'         => 'ws_jx_interp_disclosure_target_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
                 'instructions' => 'Describe nuance in the reporting channel as addressed by this interpretation.',
@@ -341,7 +341,7 @@ function ws_register_acf_jx_interpretations() {
             [
                 'key'           => 'field_jx_interp_adverse_action',
                 'label'         => 'Adverse Action Types',
-                'name'          => 'ws_jx_interp_adverse_action',
+                'name'          => 'ws_jx_interp_adverse_actions',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_adverse_action_types',
                 'field_type'    => 'checkbox',
@@ -365,7 +365,7 @@ function ws_register_acf_jx_interpretations() {
             [
                 'key'           => 'field_jx_interp_process_type',
                 'label'         => 'Process Type',
-                'name'          => 'ws_jx_interp_process_type',
+                'name'          => 'ws_jx_interp_process_types',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_process_type',
                 'field_type'    => 'checkbox',
@@ -403,7 +403,7 @@ function ws_register_acf_jx_interpretations() {
             [
                 'key'           => 'field_jx_interp_fee_shifting',
                 'label'         => 'Fee Shifting',
-                'name'          => 'ws_jx_interp_fee_shifting',
+                'name'          => 'ws_jx_interp_fee_shiftings',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_fee_shifting',
                 'field_type'    => 'checkbox',
@@ -417,7 +417,7 @@ function ws_register_acf_jx_interpretations() {
             [
                 'key'           => 'field_jx_interp_employer_defense',
                 'label'         => 'Employer Defense',
-                'name'          => 'ws_jx_interp_employer_defense',
+                'name'          => 'ws_jx_interp_employer_defenses',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_employer_defense',
                 'field_type'    => 'checkbox',
@@ -441,7 +441,7 @@ function ws_register_acf_jx_interpretations() {
             [
                 'key'           => 'field_jx_interp_employee_standard',
                 'label'         => 'Employee Standard',
-                'name'          => 'ws_jx_interp_employee_standard',
+                'name'          => 'ws_jx_interp_employee_standards',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_employee_standard',
                 'field_type'    => 'checkbox',
@@ -504,9 +504,9 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'           => 'field_jx_interp_affected_jx',
+                'key'           => 'field_jx_interp_affected_jurisdictions',
                 'label'         => 'Affected Jurisdictions',
-                'name'          => 'ws_jx_interp_affected_jx',
+                'name'          => 'ws_jx_interp_affected_jurisdictions',
                 'type'          => 'taxonomy',
                 'taxonomy'      => WS_JURISDICTION_TAXONOMY,
                 'field_type'    => 'multi_select',
@@ -554,7 +554,7 @@ function ws_register_acf_jx_interpretations() {
             [
                 'key'           => 'field_jx_interp_ref_materials',
                 'label'         => 'Reference Materials',
-                'name'          => 'ws_ref_materials',
+                'name'          => 'ws_jx_interp_ref_materials',
                 'type'          => 'relationship',
                 'post_type'     => [ 'ws-reference' ],
                 'filters'       => [ 'search' ],
@@ -580,12 +580,12 @@ add_filter( 'acf/load_field', 'ws_jx_interp_details_conditional' );
 function ws_jx_interp_details_conditional( $field ) {
 
     static $map = [
-        'field_jx_interp_protected_class_details'    => [ 'ws_protected_class',     'field_jx_interp_protected_class' ],
-        'field_jx_interp_disclosure_targets_details' => [ 'ws_disclosure_targets',   'field_jx_interp_disclosure_targets' ],
-        'field_jx_interp_adverse_action_details'     => [ 'ws_adverse_action_types', 'field_jx_interp_adverse_action' ],
+        'field_jx_interp_protected_class_details'    => [ 'ws_protected_class',      'field_jx_interp_protected_classes' ],
+        'field_jx_interp_disclosure_target_details'  => [ 'ws_disclosure_target',    'field_jx_interp_disclosure_targets' ],
+        'field_jx_interp_adverse_action_details'     => [ 'ws_adverse_action_types', 'field_jx_interp_adverse_actions' ],
         'field_jx_interp_remedies_details'           => [ 'ws_remedies',             'field_jx_interp_remedies' ],
-        'field_jx_interp_employee_standard_details'  => [ 'ws_employee_standard',    'field_jx_interp_employee_standard' ],
-        'field_jx_interp_employer_defense_details'   => [ 'ws_employer_defense',     'field_jx_interp_employer_defense' ],
+        'field_jx_interp_employee_standard_details'  => [ 'ws_employee_standard',    'field_jx_interp_employee_standards' ],
+        'field_jx_interp_employer_defense_details'   => [ 'ws_employer_defense',     'field_jx_interp_employer_defenses' ],
     ];
 
     if ( ! isset( $map[ $field['key'] ] ) ) {
@@ -739,7 +739,7 @@ function ws_interp_prefill_common_law_id( $value, $post_id, $field ) {
 }
 
 
-// ── Auto-populate ws_jx_interp_affected_jx from court matrix on every save ────
+// ── Auto-populate ws_jx_interp_affected_jurisdictions from court matrix on every save ────
 //
 // Runs at priority 20 (after ACF saves its fields at 10). Reads the court key
 // saved to ws_jx_interp_court, looks it up via ws_court_lookup() (checks both
@@ -776,7 +776,7 @@ function ws_interp_auto_populate_affected_jx( $post_id ) {
 
     // SCOTUS: null = all jurisdictions. Store empty to signal bind-all.
     if ( $jx_codes === null ) {
-        update_post_meta( $post_id, 'ws_jx_interp_affected_jx', [] );
+        update_post_meta( $post_id, 'ws_jx_interp_affected_jurisdictions', [] );
         return;
     }
 
@@ -789,5 +789,5 @@ function ws_interp_auto_populate_affected_jx( $post_id ) {
         }
     }
 
-    update_post_meta( $post_id, 'ws_jx_interp_affected_jx', $term_ids );
+    update_post_meta( $post_id, 'ws_jx_interp_affected_jurisdictions', $term_ids );
 }

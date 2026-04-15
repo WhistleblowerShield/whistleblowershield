@@ -29,8 +29,8 @@
  * participates in the same query and render layers via parallel
  * functions. It differs in two ways:
  *   1. The anchor is a judicial doctrine, not a statute section.
- *      Two WYSIWYG fields — ws_cl_doctrine_basis and
- *      ws_cl_recognition_status — replace the citation/URL model.
+ *      Two WYSIWYG fields — ws_jx_comlaw_doctrine_basis and
+ *      ws_jx_comlaw_recognition_status — replace the citation/URL model.
  *   2. SOL is almost always derived (limit_ambiguous true by design)
  *      because common law claims borrow limitations periods from the
  *      nearest analogous statute.
@@ -94,7 +94,7 @@ function ws_register_cpt_common_law() {
             'ws_remedies',
             'ws_protected_class',
             'ws_adverse_action_types',
-            'ws_disclosure_targets',
+            'ws_disclosure_target',
             'ws_fee_shifting',
             'ws_employer_defense',
             'ws_employee_standard',

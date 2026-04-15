@@ -12,7 +12,7 @@
  * ----------------------
  * When a new procedure is created from the agency navigation box, the URL
  * carries ?agency_id={post_id}. The acf/load_value hook below pre-fills
- * ws_proc_agency_id on auto-draft posts, matching the pattern used by
+ * ws_ag_procedure_agency_id on auto-draft posts, matching the pattern used by
  * ws_interp_prefill_statute_id() in acf-jx-interpretations.php.
  *
  * STAMP FIELDS
@@ -24,7 +24,7 @@
  *
  * PLAIN ENGLISH
  * -------------
- * Procedures use ws_proc_walkthrough (registered in this file) as their
+ * Procedures use ws_ag_procedure_walkthrough (registered in this file) as their
  * plain-English content. The central acf-plain-english-fields.php group is
  * NOT applied to this CPT — the walkthrough IS the plain-English layer.
  *
@@ -38,9 +38,9 @@
  * VERSION
  * -------
  * 3.9.0  Initial registration. Phase 1 of ws-ag-procedure feature build.
- * 3.10.0 ws_proc_type select field replaced with ws_procedure_type taxonomy
+ * 3.10.0 ws_ag_procedure_type select field replaced with ws_ag_procedure_type taxonomy
  *        field (radio UI, save_terms: 1, load_terms: 1). Field name changed
- *        from ws_proc_type to ws_procedure_type to match taxonomy slug.
+ *        from ws_ag_procedure_type to ws_ag_procedure_type to match taxonomy slug.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -78,7 +78,7 @@ function ws_register_acf_ag_procedures() {
             // ── Tab: Procedure Identity ───────────────────────────────────
 
             [
-                'key'   => 'field_proc_identity_tab',
+                'key'   => 'filed_ag_procedure_identity_tab',
                 'label' => 'Procedure Identity',
                 'type'  => 'tab',
             ],
@@ -87,12 +87,12 @@ function ws_register_acf_ag_procedures() {
             //
             // Links this procedure to its owning agency. Pre-filled from
             // the ?agency_id= URL parameter when created via the agency
-            // navigation box — see ws_proc_prefill_agency_id() below.
+            // navigation box — see ws_ag_procedure_prefill_agency_id() below.
 
             [
-                'key'           => 'field_proc_agency_id',
+                'key'           => 'filed_ag_procedure_agency_id',
                 'label'         => 'Parent Agency',
-                'name'          => 'ws_proc_agency_id',
+                'name'          => 'ws_ag_procedure_agency_id',
                 'type'          => 'post_object',
                 'instructions'  => 'The agency this procedure belongs to.',
                 'required'      => 1,
@@ -103,11 +103,11 @@ function ws_register_acf_ag_procedures() {
                 'ui'            => 1,
             ],
             [
-                'key'           => 'field_proc_type',
+                'key'           => 'field_ag_procedure_type',
                 'label'         => 'Procedure Type',
-                'name'          => 'ws_procedure_type',
+                'name'          => 'ws_ag_procedure_type',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_procedure_type',
+                'taxonomy'      => 'ws_ag_procedure_type',
                 'field_type'    => 'radio',
                 'instructions'  => 'Disclosure = reporting wrongdoing. Retaliation = filing a complaint after adverse action. Both = single procedure covers both.',
                 'required'      => 1,
@@ -126,7 +126,7 @@ function ws_register_acf_ag_procedures() {
             // reflects current taxonomy state in the admin UI.
 
             [
-                'key'           => 'field_proc_jurisdiction',
+                'key'           => 'field_ag_procedure_jurisdictions',
                 'label'         => 'Jurisdiction(s)',
                 'name'          => WS_JURISDICTION_TAXONOMY,
                 'type'          => 'taxonomy',
@@ -140,9 +140,9 @@ function ws_register_acf_ag_procedures() {
                 'allow_null'    => 1,
             ],
             [
-                'key'           => 'field_proc_disclosure_types',
+                'key'           => 'field_ag_procedure_disclosure_types',
                 'label'         => 'Disclosure Types Covered',
-                'name'          => 'ws_proc_disclosure_types',
+                'name'          => 'ws_ag_procedure_disclosure_types',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_disclosure_type',
                 'field_type'    => 'multi_select',
@@ -158,7 +158,7 @@ function ws_register_acf_ag_procedures() {
             //
             // Authoritative list of jx-statute posts this procedure operates
             // under. The relationship picker is auto-scoped via
-            // ws_proc_scope_statute_picker() (below) — it pre-filters to
+            // ws_ag_procedure_scope_statute_picker() (below) — it pre-filters to
             // statutes matching this procedure's jurisdiction and disclosure
             // types so the editor sees a relevant subset. Manual taxonomy
             // filter UI (jurisdiction + disclosure type) is also available
@@ -166,14 +166,14 @@ function ws_register_acf_ag_procedures() {
             //
             // Statute links are validated on save by admin-procedure-watch.php:
             // a hard mismatch (zero disclosure-type intersection) demotes the
-            // procedure to draft and sets ws_proc_stat_flagged. The Admin
+            // procedure to draft and sets ws_ag_procedure_stat_flagged. The Admin
             // Review tab's override field allows admins to publish despite a
             // known mismatch when the link is intentionally unconventional.
 
             [
-                'key'          => 'field_proc_statute_ids',
+                'key'          => 'field_ag_procedure_statute_ids',
                 'label'        => 'Related Statutes',
-                'name'         => 'ws_proc_statute_ids',
+                'name'         => 'ws_ag_procedure_statute_ids',
                 'type'         => 'relationship',
                 'instructions' => 'Statutes this procedure specifically operates under. The picker is pre-filtered by this procedure\'s jurisdiction and disclosure types. Use the taxonomy dropdowns to refine further if needed.',
                 'post_type'    => [ 'jx-statute' ],
@@ -194,14 +194,14 @@ function ws_register_acf_ag_procedures() {
             // ── Tab: Filing Details ───────────────────────────────────────
 
             [
-                'key'   => 'field_proc_filing_tab',
+                'key'   => 'filed_ag_procedure_filing_tab',
                 'label' => 'Filing Details',
                 'type'  => 'tab',
             ],
             [
-                'key'          => 'field_proc_entry_point',
+                'key'          => 'field_ag_procedure_entry_point',
                 'label'        => 'Entry Point',
-                'name'         => 'ws_proc_entry_point',
+                'name'         => 'ws_ag_procedure_entry_point',
                 'type'         => 'select',
                 'instructions' => 'How the whistleblower initiates this procedure.',
                 'choices'      => [
@@ -216,23 +216,23 @@ function ws_register_acf_ag_procedures() {
                 'return_format' => 'value',
             ],
             [
-                'key'          => 'field_proc_intake_url',
+                'key'          => 'field_ag_procedure_intake_url',
                 'label'        => 'Intake / Form URL',
-                'name'         => 'ws_proc_intake_url',
+                'name'         => 'ws_ag_procedure_intake_url',
                 'type'         => 'url',
                 'instructions' => 'Direct link to the intake form or portal specific to this procedure. Overrides the parent agency\'s general reporting URL for this procedure.',
             ],
             [
-                'key'          => 'field_proc_phone',
+                'key'          => 'field_ag_procedure_phone',
                 'label'        => 'Direct Phone Number',
-                'name'         => 'ws_proc_phone',
+                'name'         => 'ws_ag_procedure_phone',
                 'type'         => 'text',
                 'instructions' => 'Specific hotline or office number for this procedure, if different from the parent agency\'s main hotline.',
             ],
             [
-                'key'           => 'field_proc_identity_policy',
+                'key'           => 'field_ag_procedure_identity_policy',
                 'label'         => 'Identity Policy',
-                'name'          => 'ws_proc_identity_policy',
+                'name'          => 'ws_ag_procedure_identity_policy',
                 'type'          => 'select',
                 'instructions'  => 'Anonymous = agency never learns your identity. Confidential = agency knows but will not disclose. Identified = your identity is required to proceed.',
                 'required'      => 1,
@@ -248,9 +248,9 @@ function ws_register_acf_ag_procedures() {
                 'return_format' => 'value',
             ],
             [
-                'key'           => 'field_proc_intake_only',
+                'key'           => 'field_ag_procedure_intake_only',
                 'label'         => 'Intake Only — Does Not Investigate',
-                'name'          => 'ws_proc_intake_only',
+                'name'          => 'ws_ag_procedure_intake_only',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable if this agency only receives and refers — it does not investigate or adjudicate complaints filed under this procedure. Displayed prominently to prevent users from filing here expecting enforcement action.',
                 'ui'            => 1,
@@ -259,9 +259,9 @@ function ws_register_acf_ag_procedures() {
                 'default_value' => 0,
             ],
             [
-                'key'           => 'field_proc_deadline_days',
+                'key'           => 'field_ag_procedure_deadline_days',
                 'label'         => 'Filing Deadline (Days)',
-                'name'          => 'ws_proc_deadline_days',
+                'name'          => 'ws_ag_procedure_deadline_days',
                 'type'          => 'number',
                 'instructions'  => 'Statutory filing deadline in calendar days. Enter 0 if no deadline applies or deadline is unknown.',
                 'default_value' => 0,
@@ -272,12 +272,12 @@ function ws_register_acf_ag_procedures() {
             // ── Deadline Clock Start ──────────────────────────────────────
             //
             // Only relevant when a deadline is set. Conditional on
-            // field_proc_deadline_days being greater than 0.
+            // filed_ag_procedure_deadline_days being greater than 0.
 
             [
-                'key'          => 'field_proc_deadline_clock_start',
+                'key'          => 'field_ag_procedure_deadline_clock_start',
                 'label'        => 'Deadline Clock Start',
-                'name'         => 'ws_proc_deadline_clock_start',
+                'name'         => 'ws_ag_procedure_deadline_clock_start',
                 'type'         => 'select',
                 'instructions' => 'The event that starts the filing deadline clock.',
                 'choices'      => [
@@ -290,15 +290,15 @@ function ws_register_acf_ag_procedures() {
                 'ui'            => 1,
                 'return_format' => 'value',
                 'conditional_logic' => [ [ [
-                    'field'    => 'field_proc_deadline_days',
+                    'field'    => 'field_ag_procedure_deadline_days',
                     'operator' => '>',
                     'value'    => '0',
                 ] ] ],
             ],
             [
-                'key'           => 'field_proc_prerequisites',
+                'key'           => 'field_ag_has_procedure_prerequisites',
                 'label'         => 'Prerequisites Required Before Filing',
-                'name'          => 'ws_proc_prerequisites',
+                'name'          => 'ws_ag_has_procedure_prerequisites',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable if the filer must exhaust internal remedies or satisfy other conditions before using this procedure.',
                 'ui'            => 1,
@@ -307,14 +307,14 @@ function ws_register_acf_ag_procedures() {
                 'default_value' => 0,
             ],
             [
-                'key'          => 'field_proc_prerequisites_note',
+                'key'          => 'field_ag_procedure_prerequisites_details',
                 'label'        => 'Prerequisites — Details',
-                'name'         => 'ws_proc_prerequisites_note',
+                'name'         => 'ws_ag_procedure_prerequisites_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
                 'instructions' => 'Briefly describe what prerequisites must be satisfied before filing.',
                 'conditional_logic' => [ [ [
-                    'field'    => 'field_proc_prerequisites',
+                    'field'    => 'field_ag_procedure_prerequisites',
                     'operator' => '==',
                     'value'    => '1',
                 ] ] ],
@@ -323,14 +323,14 @@ function ws_register_acf_ag_procedures() {
             // ── Tab: Plain English ────────────────────────────────────────
 
             [
-                'key'   => 'field_proc_plain_english_tab',
+                'key'   => 'field_ag_procedure_plain_english_tab',
                 'label' => 'Plain English',
                 'type'  => 'tab',
             ],
             [
-                'key'          => 'field_proc_walkthrough',
+                'key'          => 'field_ag_procedure_walkthrough_wysiwyg',
                 'label'        => 'Step-by-Step Walkthrough',
-                'name'         => 'ws_proc_walkthrough',
+                'name'         => 'ws_ag_procedure_walkthrough_wysiwyg',
                 'type'         => 'wysiwyg',
                 'instructions' => 'Plain-language guidance for a whistleblower using this procedure. Cover: what to prepare, how to submit, what happens after filing, and realistic timeline expectations. This is the core "what do I do next?" answer.',
                 'tabs'         => 'all',
@@ -338,9 +338,9 @@ function ws_register_acf_ag_procedures() {
                 'media_upload' => 0,
             ],
             [
-                'key'          => 'field_proc_exclusivity_note',
-                'label'        => 'Mutual Exclusivity Note',
-                'name'         => 'ws_proc_exclusivity_note',
+                'key'          => 'field_ag_procedure_exclusivity_details',
+                'label'        => 'Mutual Exclusivity Details',
+                'name'         => 'ws_ag_procedure_exclusivity_details',
                 'type'         => 'textarea',
                 'rows'         => 4,
                 'instructions' => 'Describe any remedies or procedures the filer may waive or foreclose by using this procedure. Critical for user safety — leave blank only if there are no known exclusivity implications.',
@@ -349,14 +349,14 @@ function ws_register_acf_ag_procedures() {
             // ── Tab: Last Verified ────────────────────────────────────────
 
             [
-                'key'   => 'field_proc_review_tab',
+                'key'   => 'field_ag_procedure_review_tab',
                 'label' => 'Last Verified',
                 'type'  => 'tab',
             ],
             [
-                'key'            => 'field_proc_last_reviewed',
+                'key'            => 'field_ag_procedure_last_reviewed',
                 'label'          => 'Last Verified Date',
-                'name'           => 'ws_proc_last_reviewed',
+                'name'           => 'ws_ag_procedure_last_reviewed',
                 'type'           => 'date_picker',
                 'instructions'   => 'Update each time this procedure record is meaningfully verified against the source agency.',
                 'display_format' => 'F j, Y',
@@ -372,26 +372,26 @@ function ws_register_acf_ag_procedures() {
             //
             // When admin-procedure-watch.php detects a disclosure-type
             // mismatch between a linked statute and this procedure, it:
-            //   1. Sets ws_proc_stat_flagged = 1 in post meta.
+            //   1. Sets ws_ag_procedure_stat_flagged = 1 in post meta.
             //   2. Forces post_status back to 'draft'.
-            //   3. Records mismatch detail in ws_proc_stat_flag_detail.
+            //   3. Records mismatch detail in ws_ag_procedure_stat_flag_detail.
             //
             // The admin reviews the notice on this screen and either:
             //   A. Fixes the underlying data (resolves mismatches) — the flag
             //      clears automatically on the next clean save.
-            //   B. Checks ws_proc_stat_override and saves — the flag is cleared
+            //   B. Checks ws_ag_procedure_stat_override and saves — the flag is cleared
             //      and the override is logged. The procedure can then be published
             //      normally. The override resets to 0 after each save.
 
             [
-                'key'   => 'field_proc_admin_review_tab',
+                'key'   => 'field_ag_procedure_admin_review_tab',
                 'label' => 'Admin Review',
                 'type'  => 'tab',
             ],
             [
-                'key'           => 'field_proc_stat_override',
+                'key'           => 'field_ag_procedure_statute_override',
                 'label'         => 'Statute Link Override',
-                'name'          => 'ws_proc_stat_override',
+                'name'          => 'ws_ag_procedure_statute_override',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable to acknowledge statute link warnings and allow publishing despite mismatches. Use only when the link is intentionally unconventional. Resets automatically after each save. Overrides are logged for audit.',
                 'ui'            => 1,
@@ -409,7 +409,7 @@ function ws_register_acf_ag_procedures() {
 
 // ── Auto-scope the statute relationship picker ────────────────────────────────
 //
-// Before the field_proc_statute_ids relationship picker renders its results,
+// Before the filed_ag_procedure_statute_ids relationship picker renders its results,
 // this hook narrows the query to statutes that share the procedure's own
 // jurisdiction AND disclosure type scope. The editor sees only relevant
 // statutes without needing to manually apply filters first.
@@ -422,19 +422,19 @@ function ws_register_acf_ag_procedures() {
 // so $post_id is the procedure post ID with its current saved taxonomy state.
 
 add_filter(
-    'acf/fields/relationship/query/key=field_proc_statute_ids',
-    'ws_proc_scope_statute_picker',
+    'acf/fields/relationship/query/key=field_ag_procedure_statute_ids',
+    'ws_ag_procedure_scope_statute_picker',
     10, 3
 );
 
-function ws_proc_scope_statute_picker( $args, $field, $post_id ) {
+function ws_ag_procedure_scope_statute_picker( $args, $field, $post_id ) {
 
     // Skip auto-draft — taxonomy terms not saved yet, nothing to scope by.
     if ( ! $post_id || 'auto-draft' === get_post_status( $post_id ) ) {
         return $args;
     }
 
-    $jx_terms   = wp_get_post_terms( $post_id, WS_JURISDICTION_TAXONOMY, [ 'fields' => 'ids' ] );
+    $jx_terms   = wp_get_post_terms( $post_id, WS_JURISDICTION_TAXONOMY,  [ 'fields' => 'ids' ] );
     $disc_types = wp_get_object_terms( $post_id, 'ws_disclosure_type',    [ 'fields' => 'ids' ] );
 
     $tax_query  = [ 'relation' => 'AND' ];
@@ -466,16 +466,16 @@ function ws_proc_scope_statute_picker( $args, $field, $post_id ) {
 }
 
 
-// ── Pre-populate ws_proc_agency_id from ?agency_id= URL parameter ─────────────
+// ── Pre-populate ws_ag_procedure_agency_id from ?agency_id= URL parameter ─────────────
 //
 // When "Add Procedure" is clicked from the agency navigation box, the URL
 // carries ?agency_id={post_id}. On auto-draft posts, this hook returns the
 // agency ID as the field value so ACF renders the parent agency pre-selected.
 // Mirrors ws_interp_prefill_statute_id() in acf-jx-interpretations.php.
 
-add_filter( 'acf/load_value/key=field_proc_agency_id', 'ws_proc_prefill_agency_id', 5, 3 );
+add_filter( 'acf/load_value/key=field_ag_procedure_agency_id', 'ws_ag_procedure_prefill_agency_id', 5, 3 );
 
-function ws_proc_prefill_agency_id( $value, $post_id, $field ) {
+function ws_ag_procedure_prefill_agency_id( $value, $post_id, $field ) {
     if ( get_post_status( $post_id ) !== 'auto-draft' ) {
         return $value;
     }

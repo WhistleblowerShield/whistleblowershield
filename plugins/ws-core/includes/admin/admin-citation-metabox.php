@@ -159,7 +159,7 @@ function ws_render_citation_metabox( $post ) {
                 <?php foreach ( $citations as $cite_id ) :
                     // Direct meta reads — admin metabox display only; query layer is for front-end shortcode rendering.
                     $official_name = get_post_meta( $cite_id, 'ws_jx_citation_official_name', true );
-                    $type_raw      = get_post_meta( $cite_id, 'ws_jx_citation_type', true );
+                    $type_raw      = get_post_meta( $cite_id, 'ws_jx_citation_types', true );
                     $type_keys     = is_array( $type_raw ) ? $type_raw : ( $type_raw ? [ $type_raw ] : [] );
                     $attached      = get_post_meta( $cite_id, 'ws_attach_flag', true );
                     $type_label_parts = [];

@@ -27,7 +27,7 @@
  * RECORD TYPES SUPPORTED
  * ----------------------
  * - statute       Full taxonomy palette, SOL/exhaustion/BOP rules
- * - common-law    Doctrine-anchored, ws_cl_* fields, statutory preclusion
+ * - common-law    Doctrine-anchored, ws_jx_comlaw_* fields, statutory preclusion
  * - citation      Case law enrichment, court shorthand, sparse taxonomy
  * - interpretation Court ruling on statute, court matrix context
  *
@@ -52,7 +52,7 @@
  * 3.15.4  assist-org prompt integration and corrections:
  *         - replaced preliminary JSON array output with full meta/records/integrity schema
  *         - integrated hand-edited prompt language (personas, per-field rules, note examples)
- *         - added ws_disclosure_type and ws_disclosure_targets to assist-org hierarchical tables
+ *         - added ws_disclosure_type and ws_disclosure_target to assist-org hierarchical tables
  *         - corrected _ws_aorg_internal_id meta key (missing leading underscore)
  *         - version diary order corrected to descending
  * 3.15.3  Omission/integrity language hardened across prompt types:
@@ -176,7 +176,7 @@ function ws_prompt_extract_record_identifier( string $record_type, int $post_id 
     }
 
     if ( $record_type === 'common-law' ) {
-        $doctrine_id = trim( (string) get_post_meta( $post_id, '_ws_cl_doctrine_id', true ) );
+        $doctrine_id = trim( (string) get_post_meta( $post_id, '_ws_jx_comlaw_doctrine_id', true ) );
         if ( $doctrine_id !== '' ) {
             return $doctrine_id;
         }
@@ -535,7 +535,7 @@ function ws_prompt_render_flat_table( string $slug, string $label, string $appli
 
 function ws_prompt_get_parent_slugs(): array {
     $parents = [];
-    foreach ( [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_targets' ] as $taxonomy ) {
+    foreach ( [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_target' ] as $taxonomy ) {
         $top_level = get_terms( [
             'taxonomy'   => $taxonomy,
             'hide_empty' => false,
@@ -592,8 +592,13 @@ deriving it from a general civil procedure statute or secondary source,
 set limit_ambiguous to true regardless of your confidence in the derived
 value.
 
-Any record with limit_ambiguous: true requires a corresponding entry in
-error_details in the integrity block. This is mandatory.
+limit_ambiguous: true is expected behavior, not an error. Do not include
+it in error_details. Note derivation method in _review_notes. When the
+source is unusual or weak be clear about the uncertainty.
+For example:
+  "Derived from state civil procedure code, not the whistleblower statute"
+  "Inferred from analogous federal statute and secondary sources; no clear
+  state-level guidance"
 
 ---
 
@@ -772,7 +777,7 @@ function ws_prompt_taxonomy_tables( string $applies_to ): string {
             'description' => "Employment or worker classification protected. Tag all explicitly covered.\n             Do not infer coverage.",
             'sentinel'    => true,
         ],
-        'ws_disclosure_targets' => [
+        'ws_disclosure_target' => [
             'label'       => 'Disclosure Targets',
             'description' => "Who the protected disclosure may be made to. Tag all valid targets\n             explicitly named or clearly implied.",
             'sentinel'    => true,
@@ -780,11 +785,11 @@ function ws_prompt_taxonomy_tables( string $applies_to ): string {
     ];
 
     $hierarchical_by_record_type = [
-        'jx-statute'        => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_targets' ],
-        'jx-common-law'     => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_targets' ],
-        'jx-citation'       => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_targets' ],
-        'jx-interpretation' => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_targets' ],
-        'ws-assist-org'     => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_targets' ],
+        'jx-statute'        => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_target' ],
+        'jx-common-law'     => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_target' ],
+        'jx-citation'       => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_target' ],
+        'jx-interpretation' => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_target' ],
+        'ws-assist-org'     => [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_target' ],
     ];
 
     $selected_hierarchical = $hierarchical_by_record_type[ $record_type ] ?? [];
@@ -908,7 +913,7 @@ function ws_prompt_registered_object_types( string $taxonomy ): array {
         'ws_adverse_action_types' => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
         'ws_languages'         => [ 'ws-agency', 'ws-assist-org' ],
         'ws_case_stage'        => [ 'ws-assist-org' ],
-        'ws_disclosure_targets'=> [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-assist-org' ],
+        'ws_disclosure_target'=> [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-assist-org' ],
         'ws_fee_shifting'      => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
         'ws_employer_defense'  => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
         'ws_aorg_type'         => [ 'ws-assist-org' ],
@@ -1271,7 +1276,7 @@ scope_of_service:
                               fit cleanly, or coverage is entirely unclear.
   case_stage_details          free text when case_stages includes other slug; describe the org's claim of
                               coverage or note the absence of coverage.
-  disclosure_targets          ws_disclosure_targets slugs; use has-details slug when
+  disclosure_targets          ws_disclosure_target slugs; use has-details slug when
                               disclosure target coverage exists but no slug fits cleanly, or
 							  coverage is entirely unclear.
   disclosure_targets_details  free text when disclosure_targets includes has-details slug; describe the
@@ -1511,7 +1516,7 @@ If a concept does not fit any listed slug cleanly:
 Field → taxonomy mapping:
   scope_of_service.disclosure_types        ws_disclosure_type        (multi-select)
   scope_of_service.protected_classes       ws_protected_class        (multi-select)
-  scope_of_service.disclosure_targets      ws_disclosure_targets     (multi-select)
+  scope_of_service.disclosure_targets      ws_disclosure_target     (multi-select)
   scope_of_service.process_types           ws_process_type           (multi-select)
   scope_of_service.case_stages             ws_case_stage             (multi-select)
   scope_of_service.languages_supported     ws_languages              (multi-select)
@@ -1587,7 +1592,7 @@ has-details                        Has Details (use with protected_class_details
 
 
 ────────────────────────────────────────────────────────────────────────────
-TAXONOMY: ws_disclosure_targets
+TAXONOMY: ws_disclosure_target
 Description: Who the protected disclosure may be made to. Tag all that apply.
              List targets described in source material. Use has-details slug
 			 when coverage exists but no slug fits cleanly, or no coverage
@@ -1963,7 +1968,7 @@ the array empty — do not invent a slug and insert it into the record.
 
   legal_basis.disclosure_types     → ws_disclosure_type
   legal_basis.protected_class      → ws_protected_class      → can use has-details
-  legal_basis.disclosure_targets   → ws_disclosure_targets   → can use has-details
+  legal_basis.disclosure_targets   → ws_disclosure_target   → can use has-details
   enforcement.process_type         → ws_process_type
   enforcement.adverse_action       → ws_adverse_action_types → can use has-details
   enforcement.remedies             → ws_remedies             → can use has-details
@@ -2439,7 +2444,7 @@ function ws_render_prompt_generator_page() {
     if ( $record_type === 'statute' ) {
         $auto_exclusion_key_label = '_ws_jx_statute_id';
     } elseif ( $record_type === 'common-law' ) {
-        $auto_exclusion_key_label = '_ws_cl_doctrine_id';
+        $auto_exclusion_key_label = '_ws_jx_comlaw_doctrine_id';
     } elseif ( $record_type === 'citation' ) {
         $auto_exclusion_key_label = '_ws_jx_citation_id (fallback: case title)';
     } elseif ( $record_type === 'interpretation' ) {

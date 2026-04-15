@@ -123,7 +123,7 @@ function ws_register_acf_agencies() {
             // reflects current taxonomy state in the admin UI.
 
             [
-                'key'           => 'field_agency_jurisdiction',
+                'key'           => 'field_agency_jurisdictions',
                 'label'         => 'Jurisdiction(s)',
                 'name'          => WS_JURISDICTION_TAXONOMY,
                 'type'          => 'taxonomy',
@@ -137,9 +137,9 @@ function ws_register_acf_agencies() {
                 'allow_null'    => 1,
             ],
             [
-                'key'           => 'field_agency_disclosure_type',
+                'key'           => 'field_agency_disclosure_types',
                 'label'         => 'Disclosure Categories',
-                'name'          => 'ws_agency_disclosure_type',
+                'name'          => 'ws_agency_disclosure_types',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_disclosure_type',
                 'field_type'    => 'multi_select',
@@ -152,10 +152,10 @@ function ws_register_acf_agencies() {
 
             [
                 'key'           => 'field_agency_disclosure_targets',
-                'label'         => 'Reporting Target Classification',
+                'label'         => 'Reporting Target Classifications',
                 'name'          => 'ws_agency_disclosure_targets',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_disclosure_targets',
+                'taxonomy'      => 'ws_disclosure_target',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'What kind of reporting body is this agency? Use the most accurate single term in most cases; multi-tag only where genuinely dual.',
                 'add_term'      => 0,
@@ -174,9 +174,9 @@ function ws_register_acf_agencies() {
             // agencies that accept anonymous administrative complaints").
 
             [
-                'key'           => 'field_agency_process_type',
+                'key'           => 'field_agency_process_types',
                 'label'         => 'Process Types Handled',
-                'name'          => 'ws_process_type',
+                'name'          => 'ws_process_types',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_process_type',
                 'instructions'  => 'Select all process types this agency handles. Refer to the relevant statute(s) as the authoritative source.',
@@ -215,9 +215,9 @@ function ws_register_acf_agencies() {
                 'type'  => 'text',
             ],
             [
-                'key'          => 'field_agency_confidentiality_notes',
-                'label'        => 'Confidentiality & Privacy Notes',
-                'name'         => 'ws_agency_confidentiality_notes',
+                'key'          => 'field_agency_confidentiality_details',
+                'label'        => 'Confidentiality & Privacy Details',
+                'name'         => 'ws_agency_confidentiality_details',
                 'type'         => 'textarea',
                 'rows'         => 4,
                 'instructions' => 'Briefly describe how this agency handles identity protection.',
@@ -234,9 +234,9 @@ function ws_register_acf_agencies() {
                 'default_value' => 0,
             ],
             [
-                'key'           => 'field_agency_reward_program',
+                'key'           => 'field_agency_has_reward_program',
                 'label'         => 'Reward/Bounty Program Available?',
-                'name'          => 'ws_agency_reward_program',
+                'name'          => 'ws_agency_has_reward_program',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable if this agency offers financial rewards or bounties to whistleblowers.',
                 'ui'            => 1,
@@ -244,17 +244,29 @@ function ws_register_acf_agencies() {
                 'ui_off_text'   => 'No',
                 'default_value' => 0,
             ],
-
+                    [
+                        'key'          => 'field_agency_reward_program_details',
+                        'label'        => 'Reward/Bounty Program Details',
+                        'name'         => 'ws_agency_reward_program_details',
+                        'type'         => 'textarea',
+                        'rows'         => 3,
+                        'instructions' => 'Briefly describe what the rewards or bounty program entails.',
+                        'conditional_logic' => [ [ [
+                            'field'    => 'field_agency_has_reward_program',
+                            'operator' => '==',
+                            'value'    => '1',
+                        ] ] ],
+                    ],
             // ── Languages ─────────────────────────────────────────────
 
             [
                 'key'           => 'field_agency_languages',
-                'label'         => 'Languages Served',
-                'name'          => 'ws_languages',
+                'label'         => 'Languages Supported',
+                'name'          => 'ws_agency_languages',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_languages',
-                'field_type'    => 'checkbox',
-                'instructions'  => 'Select languages this agency can serve. Check "Additional" if other languages are available — then specify them below.',
+                'field_type'    => 'multi_select',
+                'instructions'  => 'Select languages this agency can support. Check "Additional" if other languages are available — then specify them below.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,

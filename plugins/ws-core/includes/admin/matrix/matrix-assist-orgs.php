@@ -1172,7 +1172,7 @@ function ws_seed_assist_org_matrix() {
 
         // Optional disclosure targets (array of slugs).
         if ( ! empty( $org['disclosure_targets'] ) ) {
-            ws_matrix_assign_terms( $post_id, $org['disclosure_targets'], 'ws_disclosure_targets' );
+            ws_matrix_assign_terms( $post_id, $org['disclosure_targets'], 'ws_disclosure_target' );
         }
 
         // Case stages (array of slugs).

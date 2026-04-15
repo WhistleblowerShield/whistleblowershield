@@ -29,9 +29,9 @@ until the Wyoming data build and jurisdiction page layout work begins.
 **Implementation notes (for when the stub is filled):**
 - Group local and federal doctrine records via `is_fed` flag, same
   pattern as the statute renderer.
-- Render `ws_cl_doctrine_basis` and `ws_cl_recognition_status` as
+- Render `ws_jx_comlaw_doctrine_basis` and `ws_jx_comlaw_recognition_status` as
   WYSIWYG output — use `wp_kses_post()`, not `esc_html()`.
-- Surface `ws_cl_statutory_preclusion` as a prominent notice when
+- Surface `ws_jx_comlaw_statutory_preclusion` as a prominent notice when
   true — critical user-facing signal that a statutory remedy may
   block the common law claim.
 - SOL is almost always ambiguous for common law — render `limit_details`

@@ -10,10 +10,10 @@
  * -------
  * 2.1.0   Initial: ws_disclosure_type.
  * 2.3.1   ws_process_type added.
- * 2.4.0   ws_coverage_scope, ws_retaliation_forms, ws_languages, ws_case_stage added.
+ * 2.4.0   ws_coverage_scope, ws_retaliation_forms, ws_language, ws_case_stage added.
  * 3.0.0   ws_jurisdiction registered; all gates migrated to Unified Option-Gate Method.
- * 3.1.0   Taxonomy rename pass: ws_protected_class, ws_adverse_action_types, ws_remedies,
- *         ws_disclosure_targets, ws_fee_shifting. ws_bulk_insert_hierarchical() added.
+ * 3.1.0   Taxonomy rename pass: ws_protected_class, ws_adverse_action_type, ws_remedy,
+ *         ws_disclosure_target, ws_fee_shifting. ws_bulk_insert_hierarchical() added.
  * 3.2.0   ws_employer_defense added (jx-statute).
  * 3.3.0   ws_aorg_type added (ws-assist-org).
  * 3.6.0   National Security parent + 3 children added to ws_disclosure_type.
@@ -21,21 +21,21 @@
  * 3.8.1   ws_seed_disclosure_taxonomy() refactored to ws_bulk_insert_hierarchical().
  * 3.9.0   ws-ag-procedure added to ws_jurisdiction and ws_disclosure_type object_types.
  * 3.10.0  ws_procedure_type added (ws-ag-procedure). Replaces ws_proc_type ACF select.
- * 3.11.0  has-details sentinel term added to ws_adverse_action_types, ws_remedies,
- *         ws_disclosure_targets, ws_protected_class, ws_employer_defense. Signals
+ * 3.11.0  has-details sentinel term added to ws_adverse_action_type, ws_remedy,
+ *         ws_disclosure_target, ws_protected_class, ws_employer_defense. Signals
  *         that a companion ACF freetext field holds detail beyond available slugs.
  *         Gate versions bumped to 1.1.0 for affected seeders.
  * 3.12.0  ws_employee_standard added
  * 3.14.1  all-sectors added to ws_protected_class as parent; all-employees added as child.
- *          internal-management added to ws_disclosure_targets under internal parent.
+ *          internal-management added to ws_disclosure_target under internal parent.
  *          general-legal parent + general-wrongdoing child added to ws_disclosure_type.
  * 3.14.2  retaliation-protection and wrongful-termination removed from ws_disclosure_type
  *          (workplace-employment children). These are adverse action types, not disclosure
  *          types. Disclosure gate bumped to 1.2.0. (jx-statute). Flat taxonomy replacing freetext
  *         employee_standard field. Seven terms including has-details sentinel.
  * 3.13.0  jx-common-law added to object_types for all shared doctrinal taxonomies:
- *         ws_disclosure_type, ws_protected_class, ws_disclosure_targets,
- *         ws_adverse_action_types, ws_process_type, ws_remedies, ws_fee_shifting,
+ *         ws_disclosure_type, ws_protected_class, ws_disclosure_target,
+ *         ws_adverse_action_type, ws_process_type, ws_remedy, ws_fee_shifting,
  *         ws_employer_defense, ws_employee_standard, ws_jurisdiction.
  *         jx-citation and jx-interpretation also added to taxonomies where missing.
  * 3.14.2  ws_disclosure_type and ws_process_type set to non-public.
@@ -123,26 +123,26 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 3. Remedies ───────────────────────────────────────────────────────
+    // ── 3. remedy ───────────────────────────────────────────────────────
     //
-    // Renamed from ws_remedy_type → ws_remedies (3.1.0).
+    // Renamed from ws_remedy_type → ws_remedy (3.1.0).
 
-    if ( ! taxonomy_exists( 'ws_remedies' ) ) {
+    if ( ! taxonomy_exists( 'ws_remedy' ) ) {
         register_taxonomy(
-            'ws_remedies',
+            'ws_remedy',
             [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
             [
-                'label'             => 'Remedies',
+                'label'             => 'remedy',
                 'labels'            => [
-                    'name'              => 'Remedies',
+                    'name'              => 'remedy',
                     'singular_name'     => 'Remedy',
-                    'search_items'      => 'Search Remedies',
-                    'all_items'         => 'All Remedies',
+                    'search_items'      => 'Search remedy',
+                    'all_items'         => 'All remedy',
                     'edit_item'         => 'Edit Remedy',
                     'update_item'       => 'Update Remedy',
                     'add_new_item'      => 'Add New Remedy',
                     'new_item_name'     => 'New Remedy Name',
-                    'menu_name'         => 'Remedies',
+                    'menu_name'         => 'remedy',
                 ],
                 'public'            => false,
                 'hierarchical'      => false,
@@ -190,12 +190,12 @@ function ws_register_taxonomies() {
 
     // ── 5. Adverse Action Types ───────────────────────────────────────────
     //
-    // Renamed from ws_retaliation_forms → ws_adverse_action_types (3.1.0).
+    // Renamed from ws_retaliation_forms → ws_adverse_action_type (3.1.0).
     // Aligns with JSON field name adverse_action; cleaner legal terminology.
 
-    if ( ! taxonomy_exists( 'ws_adverse_action_types' ) ) {
+    if ( ! taxonomy_exists( 'ws_adverse_action_type' ) ) {
         register_taxonomy(
-            'ws_adverse_action_types',
+            'ws_adverse_action_type',
             [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
             [
                 'label'             => 'Adverse Action Types',
@@ -224,9 +224,9 @@ function ws_register_taxonomies() {
     //
     // Bug #2 fix: 'assist-org' corrected to 'ws-assist-org'.
 
-    if ( ! taxonomy_exists( 'ws_languages' ) ) {
+    if ( ! taxonomy_exists( 'ws_language' ) ) {
         register_taxonomy(
-            'ws_languages',
+            'ws_language',
             [ 'ws-agency', 'ws-assist-org' ],
             [
                 'label'             => 'Languages',
@@ -319,9 +319,9 @@ function ws_register_taxonomies() {
     // protection to apply. Hierarchical — grouped by reporting channel type.
     // Applied to jx-statute and ws-assist-org.
 
-    if ( ! taxonomy_exists( 'ws_disclosure_targets' ) ) {
+    if ( ! taxonomy_exists( 'ws_disclosure_target' ) ) {
         register_taxonomy(
-            'ws_disclosure_targets',
+            'ws_disclosure_target',
             [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-assist-org' ],
             [
                 'label'             => 'Disclosure Targets',
@@ -521,7 +521,7 @@ function ws_register_taxonomies() {
     // Replaces ws_aorg_services ACF checkbox field — enables tax_query
     // filtering for Phase 2 filter panel.
     // 'additional' sentinel term auto-assigned when ws_aorg_additional_services
-    // companion field is non-empty (mirrors ws_languages pattern).
+    // companion field is non-empty (mirrors ws_language pattern).
 
     if ( ! taxonomy_exists( 'ws_aorg_service' ) ) {
         register_taxonomy(
@@ -691,28 +691,28 @@ function ws_bulk_insert_hierarchical( array $hierarchy, string $taxonomy ) {
 add_action( 'admin_init', function() {
 
     if ( get_option( 'ws_seeded_disclosure_type' ) !== '1.2.0' ) {
-        ws_seed_disclosure_taxonomy();
+        ws_seed_disclosure_type_taxonomy();
         update_option( 'ws_seeded_disclosure_type', '1.2.0' );
     }
     if ( get_option( 'ws_seeded_process_type' ) !== '1.0.0' ) {
         ws_seed_process_taxonomy();
         update_option( 'ws_seeded_process_type', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_remedies' ) !== '1.1.0' ) {
-        ws_seed_remedies_taxonomy();
-        update_option( 'ws_seeded_remedies', '1.1.0' );
+    if ( get_option( 'ws_seeded_remedy' ) !== '1.1.0' ) {
+        ws_seed_remedy_taxonomy();
+        update_option( 'ws_seeded_remedy', '1.1.0' );
     }
     if ( get_option( 'ws_seeded_protected_class' ) !== '1.3.1' ) {
         ws_seed_protected_class_taxonomy();
         update_option( 'ws_seeded_protected_class', '1.3.1' );
     }
-    if ( get_option( 'ws_seeded_adverse_action_types' ) !== '1.2.0' ) {
-        ws_seed_adverse_action_types_taxonomy();
-        update_option( 'ws_seeded_adverse_action_types', '1.2.0' );
+    if ( get_option( 'ws_seeded_adverse_action_type' ) !== '1.2.0' ) {
+        ws_seed_adverse_action_type_taxonomy();
+        update_option( 'ws_seeded_adverse_action_type', '1.2.0' );
     }
-    if ( get_option( 'ws_seeded_languages_taxonomy' ) !== '1.0.0' ) {
-        ws_seed_languages_taxonomy();
-        update_option( 'ws_seeded_languages_taxonomy', '1.0.0' );
+    if ( get_option( 'ws_seeded_language_taxonomy' ) !== '1.0.0' ) {
+        ws_seed_language_taxonomy();
+        update_option( 'ws_seeded_language_taxonomy', '1.0.0' );
     }
     if ( get_option( 'ws_seeded_case_stage' ) !== '1.0.0' ) {
         ws_seed_case_stage_taxonomy();
@@ -722,9 +722,9 @@ add_action( 'admin_init', function() {
         ws_seed_jurisdiction_taxonomy();
         update_option( 'ws_seeded_jurisdiction', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_disclosure_targets' ) !== '1.2.0' ) {
-        ws_seed_disclosure_targets_taxonomy();
-        update_option( 'ws_seeded_disclosure_targets', '1.2.0' );
+    if ( get_option( 'ws_seeded_disclosure_target' ) !== '1.2.0' ) {
+        ws_seed_disclosure_target_taxonomy();
+        update_option( 'ws_seeded_disclosure_target', '1.2.0' );
     }
     if ( get_option( 'ws_seeded_fee_shifting' ) !== '1.0.0' ) {
         ws_seed_fee_shifting_taxonomy();
@@ -751,7 +751,7 @@ add_action( 'admin_init', function() {
         update_option( 'ws_seeded_aorg_cost_model', '1.1.0' );
     }
     if ( get_option( 'ws_seeded_procedure_type' ) !== '1.0.0' ) {
-        ws_seed_proc_type_taxonomy();
+        ws_seed_procedure_type_taxonomy();
         update_option( 'ws_seeded_procedure_type', '1.0.0' );
     }
     if ( get_option( 'ws_seeded_employee_standard' ) !== '1.0.0' ) {
@@ -769,7 +769,7 @@ add_action( 'admin_init', function() {
 /**
  * Seeds ws_disclosure_type with its hierarchical structure.
  */
-function ws_seed_disclosure_taxonomy() {
+function ws_seed_disclosure_type_taxonomy() {
     $hierarchy = [
         'workplace-employment' => [
             'name'     => 'Workplace & Employment',
@@ -838,7 +838,7 @@ function ws_seed_disclosure_taxonomy() {
 /**
  * Seeds ws_process_type with its flat term list.
  */
-function ws_seed_process_taxonomy() {
+function ws_seed_process_type_taxonomy() {
     $taxonomy = 'ws_process_type';
     $terms    = [
         'administrative-complaint' => 'Administrative Complaint',
@@ -859,12 +859,12 @@ function ws_seed_process_taxonomy() {
 }
 
 /**
- * Seeds ws_remedies with its flat term list.
+ * Seeds ws_remedy with its flat term list.
  * Replaces ws_seed_remedy_taxonomy() for ws_remedy_type (deprecated).
  * 3.11.0: has-details sentinel added.
  */
-function ws_seed_remedies_taxonomy() {
-    $taxonomy = 'ws_remedies';
+function ws_seed_remedy_taxonomy() {
+    $taxonomy = 'ws_remedy';
     $terms    = [
         'reinstatement'                   => 'Reinstatement',
         'back-pay'                        => 'Back Pay',
@@ -970,12 +970,12 @@ function ws_seed_protected_class_taxonomy() {
 }
 
 /**
- * Seeds ws_adverse_action_types with its flat term list.
+ * Seeds ws_adverse_action_type with its flat term list.
  * Replaces ws_seed_retaliation_forms_taxonomy() for ws_retaliation_forms (deprecated).
  * 3.11.0: has-details sentinel added.
  */
-function ws_seed_adverse_action_types_taxonomy() {
-    $taxonomy = 'ws_adverse_action_types';
+function ws_seed_adverse_action_type_taxonomy() {
+    $taxonomy = 'ws_adverse_action_type';
     $terms    = [
         'termination'               => 'Termination',
         'constructive-discharge'    => 'Constructive Discharge',
@@ -1002,12 +1002,12 @@ function ws_seed_adverse_action_types_taxonomy() {
 }
 
 /**
- * Seeds ws_languages terms.
+ * Seeds ws_language terms.
  * 'additional' is a functional flag — auto-assigned when ws_agency_additional_languages
  * or ws_ao_additional_languages text fields contain a value.
  */
-function ws_seed_languages_taxonomy() {
-    $taxonomy = 'ws_languages';
+function ws_seed_language_taxonomy() {
+    $taxonomy = 'ws_language';
     $terms    = [
         'english'        => 'English',
         'spanish'        => 'Spanish',
@@ -1137,11 +1137,11 @@ function ws_seed_jurisdiction_taxonomy() {
 }
 
 /**
- * Seeds ws_disclosure_targets with its hierarchical recipient structure.
+ * Seeds ws_disclosure_target with its hierarchical recipient structure.
  * New in 3.1.0. Describes who received the disclosure for protection to apply.
  * 3.11.0: has-details sentinel added as flat top-level term.
  */
-function ws_seed_disclosure_targets_taxonomy() {
+function ws_seed_disclosure_target_taxonomy() {
     $hierarchy = [
         'internal' => [
             'name'     => 'Internal',
@@ -1184,12 +1184,12 @@ function ws_seed_disclosure_targets_taxonomy() {
             ],
         ],
     ];
-    ws_bulk_insert_hierarchical( $hierarchy, 'ws_disclosure_targets' );
+    ws_bulk_insert_hierarchical( $hierarchy, 'ws_disclosure_target' );
 
     // Sentinel term — flat, top-level. Signals a companion freetext field
     // holds disclosure target detail beyond available slugs.
-    if ( ! term_exists( 'has-details', 'ws_disclosure_targets' ) ) {
-        wp_insert_term( 'Has Details', 'ws_disclosure_targets', [ 'slug' => 'has-details' ] );
+    if ( ! term_exists( 'has-details', 'ws_disclosure_target' ) ) {
+        wp_insert_term( 'Has Details', 'ws_disclosure_target', [ 'slug' => 'has-details' ] );
     }
 }
 
@@ -1347,7 +1347,7 @@ function ws_seed_employer_defense_taxonomy() {
  *   retaliation — procedure for filing a complaint after adverse action
  *   both        — single procedure that covers both disclosure and retaliation
  */
-function ws_seed_proc_type_taxonomy() {
+function ws_seed_procedure_type_taxonomy() {
     $taxonomy = 'ws_procedure_type';
     $terms    = [
         'disclosure'  => 'Disclosure',

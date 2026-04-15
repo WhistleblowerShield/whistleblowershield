@@ -12,9 +12,9 @@
  *
  * Common law records differ from statute records in two key ways:
  *   1. The anchor is a judicial doctrine, not a statute section.
- *      ws_cl_doctrine_basis and ws_cl_recognition_status are the
+ *      ws_jx_comlaw_doctrine_basis and ws_jx_comlaw_recognition_status are the
  *      primary content fields — both WYSIWYG.
- *   2. The statutory preclusion flag (ws_cl_statutory_preclusion)
+ *   2. The statutory preclusion flag (ws_jx_comlaw_statutory_preclusion)
  *      must be surfaced clearly when true — users need to know
  *      that a statutory remedy may block this claim.
  *
@@ -43,9 +43,9 @@
  * Implementation notes for when this stub is filled:
  *   - Group local and federal doctrine records (is_fed flag) as the
  *     statute renderer does via ws_render_section_two_group().
- *   - Render ws_cl_doctrine_basis and ws_cl_recognition_status as
+ *   - Render ws_jx_comlaw_doctrine_basis and ws_jx_comlaw_recognition_status as
  *     WYSIWYG output (use wp_kses_post() not esc_html()).
- *   - Surface ws_cl_statutory_preclusion as a prominent notice when
+ *   - Surface ws_jx_comlaw_statutory_preclusion as a prominent notice when
  *     true — this is a critical user-facing signal that a statutory
  *     remedy may block the common law claim.
  *   - SOL for common law is almost always ambiguous (borrowed period) —

@@ -71,7 +71,7 @@ Flat taxonomies use `wp_insert_term()` directly with a
 ## has-details Sentinel Pattern
 
 Six taxonomies include a `has-details` sentinel term:
-`ws_protected_class`, `ws_disclosure_targets`, `ws_adverse_action_types`,
+`ws_protected_class`, `ws_disclosure_target`, `ws_adverse_action_types`,
 `ws_remedies`, `ws_employer_defense`, `ws_employee_standard`.
 
 When an editor selects `has-details` in a taxonomy multi-select field,
@@ -110,7 +110,7 @@ Attach to `jx-statute`, `jx-citation`, `jx-interpretation`, `jx-common-law`:
 |---|---|---|---|
 | `ws_disclosure_type` | hierarchical | No | 6 parents, 26 children |
 | `ws_protected_class` | hierarchical | Yes | 4 parents, 12 children |
-| `ws_disclosure_targets` | hierarchical | Yes | 5 parents, 13 children |
+| `ws_disclosure_target` | hierarchical | Yes | 5 parents, 13 children |
 | `ws_adverse_action_types` | flat | Yes | 14 terms |
 | `ws_process_type` | flat | No | 9 terms |
 | `ws_remedies` | flat | Yes | 20 terms |

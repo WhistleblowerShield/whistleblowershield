@@ -99,7 +99,7 @@ function ws_q_build_assist_org_row( $oid ) {
     $tax_jx                = ws_q_taxonomy_payload( $oid, WS_JURISDICTION_TAXONOMY );
     $tax_aorg_type         = ws_q_taxonomy_payload( $oid, 'ws_aorg_type' );
     $tax_disclosure_type   = ws_q_taxonomy_payload( $oid, 'ws_disclosure_type' );
-    $tax_disclosure_target = ws_q_taxonomy_payload( $oid, 'ws_disclosure_targets' );
+    $tax_disclosure_target = ws_q_taxonomy_payload( $oid, 'ws_disclosure_target' );
     $tax_protected_class   = ws_q_taxonomy_payload( $oid, 'ws_protected_class' );
     $tax_case_stage        = ws_q_taxonomy_payload( $oid, 'ws_case_stage' );
     $tax_process_type      = ws_q_taxonomy_payload( $oid, 'ws_process_type' );
@@ -139,7 +139,7 @@ function ws_q_build_assist_org_row( $oid ) {
         'disclosure_type'      => $tax_disclosure_type['slugs'], // legacy alias
         'disclosure_targets'   => $tax_disclosure_target['slugs'],
         'disclosure_target_labels' => $tax_disclosure_target['names'],
-        'disclosure_targets_details' => (string) get_post_meta( $oid, 'ws_aorg_disclosure_targets_details', true ),
+        'disclosure_targets_details' => (string) get_post_meta( $oid, 'ws_aorg_disclosure_target_details', true ),
         'protected_class'      => $tax_protected_class['slugs'],
         'protected_class_labels' => $tax_protected_class['names'],
         'protected_class_details' => (string) get_post_meta( $oid, 'ws_aorg_protected_class_details', true ),
@@ -210,7 +210,7 @@ function ws_q_build_assist_org_row( $oid ) {
             'community_scope'              => (string) get_post_meta( $oid, 'ws_aorg_community_scope', true ),
             'whistleblower_scope'          => (int) get_post_meta( $oid, 'ws_aorg_whistleblower_scope', true ),
             'whistleblower_note'           => (string) get_post_meta( $oid, 'ws_aorg_whistleblower_note', true ),
-            'disclosure_targets_details'   => (string) get_post_meta( $oid, 'ws_aorg_disclosure_targets_details', true ),
+            'disclosure_targets_details'   => (string) get_post_meta( $oid, 'ws_aorg_disclosure_target_details', true ),
             'additional_services'          => (string) get_post_meta( $oid, 'ws_aorg_additional_services', true ),
             'internal_contact_name'        => (string) get_post_meta( $oid, 'ws_aorg_internal_contact_name', true ),
             'internal_contact_role'        => (string) get_post_meta( $oid, 'ws_aorg_internal_contact_role', true ),

@@ -101,13 +101,13 @@ function ws_register_acf_assist_org() {
         return;
     }
 
-    $phone_type_choices = array_combine( WS_SCHEMA_PHONE_TYPE, WS_SCHEMA_PHONE_TYPE );
-    $email_type_choices = array_combine( WS_SCHEMA_EMAIL_TYPE, WS_SCHEMA_EMAIL_TYPE );
+    $phone_type_choices  = array_combine( WS_SCHEMA_PHONE_TYPE, WS_SCHEMA_PHONE_TYPE );
+    $email_type_choices  = array_combine( WS_SCHEMA_EMAIL_TYPE, WS_SCHEMA_EMAIL_TYPE );
     $secure_tool_choices = array_combine( WS_SCHEMA_SECURE_TOOL, WS_SCHEMA_SECURE_TOOL );
 
     acf_add_local_field_group( [
 
-        'key'                   => 'group_assist_org_metadata',
+        'key'                   => 'group_aorg_metadata',
         'title'                 => 'Assistance Organization Details',
         'menu_order'            => 0,
         'position'              => 'normal',
@@ -165,7 +165,7 @@ function ws_register_acf_assist_org() {
                 'name'          => 'ws_aorg_type',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_aorg_type',
-                'instructions'  => 'Select the category that best describes this organization.',
+                'instructions'  => 'Select the category that best describes this organization. Use "Mixed Organization Type" when an organization genuinely fits multiple categories and cannot be reasonably classified under a single type.',
                 'required'      => 1,
                 'field_type'    => 'radio',
                 'add_term'      => 0,
@@ -238,7 +238,7 @@ function ws_register_acf_assist_org() {
 
             [
                 'key'          => 'field_aorg_whistleblower_scope',
-                'label'        => 'Whistleblower Focus Score',
+                'label'        => 'Whistleblower Focus Scope',
                 'name'         => 'ws_aorg_whistleblower_scope',
                 'type'         => 'number',
                 'instructions' => 'How dedicated is this organization to whistleblower assistance specifically? 0 = not applicable (org does not serve whistleblowers — ingest will reject; requires justification in note field); 1 = tangential (general legal aid that can assist); 2 = significant focus (one program among several); 3 = primary mission (whistleblowers are the core constituency). Used as a base score multiplier in directory sorting. A score of 0 must be explained in the Scope Justification field below — it exists only to flag LLM-sourced records that slipped through topic screening.',
@@ -252,9 +252,9 @@ function ws_register_acf_assist_org() {
             ],
 
             [
-                'key'          => 'field_aorg_whistleblower_note',
-                'label'        => 'Scope Justification',
-                'name'         => 'ws_aorg_whistleblower_note',
+                'key'          => 'field_aorg_whistleblower_scope_details',
+                'label'        => 'Scope Justification — Details',
+                'name'         => 'ws_aorg_whistleblower_scope_details',
                 'type'         => 'textarea',
                 'instructions' => 'Supporting quote or editorial note that justifies the scope score above. Paste a direct quote from the organization\'s own website. Required when score is 0 — explain why the record exists and what should happen to it. Used for editorial review, not surfaced publicly.',
                 'required'     => 0,
@@ -267,9 +267,9 @@ function ws_register_acf_assist_org() {
             ],
 
             [
-                'key'           => 'field_aorg_limited_scope',
+                'key'           => 'field_aorg_has_limited_scope',
                 'label'         => 'Community / Local Scope',
-                'name'          => 'ws_aorg_limited_scope',
+                'name'          => 'ws_aorg_has_limited_scope',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable when coverage is limited to specific cities/regions within a jurisdiction (for example, San Francisco or Los Angeles County).',
                 'ui'            => 1,
@@ -284,12 +284,12 @@ function ws_register_acf_assist_org() {
             ],
 
             [
-                'key'           => 'field_aorg_jurisdiction',
+                'key'           => 'field_aorg_jurisdictions',
                 'label'         => 'Jurisdictions Served',
-                'name'          => 'ws_jurisdictions',
+                'name'          => 'ws_aorg_jurisdictions',
                 'type'          => 'taxonomy',
                 'taxonomy'      => WS_JURISDICTION_TAXONOMY,
-                'field_type'    => 'checkbox',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'Select every jurisdiction where this organization can provide assistance. If nationwide, enable the toggle above and leave this blank.',
                 'required'      => 0,
                 'add_term'      => 0,
@@ -307,14 +307,13 @@ function ws_register_acf_assist_org() {
                 'instructions' => 'Optional local-service footprint for community-driven organizations. Examples: "San Francisco", "Los Angeles County", "Inland Empire", "Bay Area".',
                 'required'     => 0,
                 'rows'         => 2,
-                'conditional_logic' => [ [
-                    [
+                'conditional_logic' => [ [ [
                     'field'    => 'field_aorg_serves_nationwide',
                     'operator' => '==',
                     'value'    => '0',
-                    ],
+                ], ], ],
                     [
-                        'field'    => 'field_aorg_limited_scope',
+                        'field'    => 'field_aorg_has_limited_scope',
                         'operator' => '==',
                         'value'    => '1',
                     ],
@@ -341,7 +340,7 @@ function ws_register_acf_assist_org() {
                 'label'         => 'Disclosure Targets Supported',
                 'name'          => 'ws_aorg_disclosure_targets',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_disclosure_targets',
+                'taxonomy'      => 'ws_disclosure_target',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Reporting channels this organization can help a whistleblower navigate or prepare for. Tag all that the org explicitly supports.',
                 'add_term'      => 0,
@@ -351,9 +350,9 @@ function ws_register_acf_assist_org() {
             ],
 
             [
-                'key'          => 'field_aorg_disclosure_targets_details',
+                'key'          => 'field_aorg_disclosure_target_details',
                 'label'        => 'Disclosure Targets Details',
-                'name'         => 'ws_aorg_disclosure_targets_details',
+                'name'         => 'ws_aorg_disclosure_target_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
                 'instructions' => 'Describe any conditions, channel-specific expertise, or nuance in the reporting targets this organization supports.',
@@ -407,7 +406,7 @@ function ws_register_acf_assist_org() {
                 'taxonomy'      => 'ws_aorg_service',
                 'instructions'  => 'Select all services this organization provides to whistleblowers.',
                 'required'      => 1,
-                'field_type'    => 'checkbox',
+                'field_type'    => 'multi_select',
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,
@@ -432,7 +431,7 @@ function ws_register_acf_assist_org() {
                 'name'          => 'ws_aorg_employment_sectors',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_employment_sector',
-                'field_type'    => 'checkbox',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'Select the employment sectors this organization serves. Leave blank if all sectors are accepted.',
                 'required'      => 0,
                 'add_term'      => 0,
@@ -704,9 +703,9 @@ function ws_register_acf_assist_org() {
             ],
 
             [
-                'key'           => 'field_aorg_income_limit',
+                'key'           => 'field_aorg_has_income_limit',
                 'label'         => 'Income Eligibility Required?',
-                'name'          => 'ws_aorg_income_limit',
+                'name'          => 'ws_aorg_has_income_limit',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable if this organization requires clients to meet income or financial eligibility criteria.',
                 'ui'            => 1,
@@ -716,14 +715,14 @@ function ws_register_acf_assist_org() {
             ],
 
             [
-                'key'          => 'field_aorg_income_limit_notes',
+                'key'          => 'field_aorg_income_limit_details',
                 'label'        => 'Income Eligibility Details',
-                'name'         => 'ws_aorg_income_limit_notes',
+                'name'         => 'ws_aorg_income_limit_details',
                 'type'         => 'textarea',
                 'instructions' => 'Describe the income thresholds or financial eligibility criteria — e.g., "Income must be below 200% of the federal poverty level."',
                 'rows'         => 3,
                 'conditional_logic' => [ [ [
-                    'field'    => 'field_aorg_income_limit',
+                    'field'    => 'field_aorg_has_income_limit',
                     'operator' => '==',
                     'value'    => '1',
                 ] ] ],
@@ -909,7 +908,7 @@ function ws_register_acf_assist_org() {
 
 // ── Conditional logic: taxonomy term-gated details fields ─────────────────────
 //
-// - disclosure_targets_details appears when ws_disclosure_targets has term
+// - disclosure_targets_details appears when ws_disclosure_target has term
 //   slug 'has-details'.
 // - case_stage_details appears when ws_case_stage has term slug 'other'.
 
@@ -918,7 +917,7 @@ add_filter( 'acf/load_field', 'ws_aorg_details_conditional' );
 function ws_aorg_details_conditional( $field ) {
 
     static $map = [
-        'field_aorg_disclosure_targets_details' => [ 'ws_disclosure_targets', 'field_aorg_disclosure_targets', 'has-details' ],
+        'field_aorg_disclosure_target_details'  => [ 'ws_disclosure_target', 'field_aorg_disclosure_targets', 'has-details' ],
         'field_aorg_case_stage_details'         => [ 'ws_case_stage',        'field_aorg_case_stages',        'other' ],
     ];
 

@@ -84,7 +84,7 @@ function ws_register_cpt_statutes() {
             'ws_remedies',
             'ws_protected_class',
             'ws_adverse_action_types',
-            'ws_disclosure_targets',
+            'ws_disclosure_target',
             'ws_fee_shifting',
             'ws_employer_defense',
             WS_JURISDICTION_TAXONOMY,

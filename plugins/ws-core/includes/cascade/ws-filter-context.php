@@ -25,7 +25,7 @@
  *   'concern'        => string|null   // validated concern slug or null
  *   'concern_tax'    => string|null   // 'ws_disclosure_type' | 'ws_adverse_action_types' | null
  *   'sector'         => string|null   // validated ws_employment_sector slug or null
- *   'target'         => string|null   // validated ws_disclosure_targets slug or null
+ *   'target'         => string|null   // validated ws_disclosure_target slug or null
  *   'has_filters'    => bool          // true if any axis has a value
  *   'is_research'    => bool          // true if stage = research (neutral browse)
  *   'raw'            => array         // original sanitized GET values before validation
@@ -273,7 +273,7 @@ function ws_filter_score_org( array $org, array $context, bool $targeted = false
 
     // Disclosure target match (optional axis)
     if ( $context['target'] !== null ) {
-        $org_targets = wp_get_object_terms( $org['id'], 'ws_disclosure_targets', [ 'fields' => 'slugs' ] );
+        $org_targets = wp_get_object_terms( $org['id'], 'ws_disclosure_target', [ 'fields' => 'slugs' ] );
         if ( ! is_wp_error( $org_targets ) && in_array( $context['target'], (array) $org_targets, true ) ) {
             $score += (int) ( $w['target_match'] ?? 3 );
         }

@@ -113,13 +113,13 @@ function ws_register_acf_legal_update() {
 			// Taxonomy multi-select — one update may affect many
 			// jurisdictions. Scoped via ws_jurisdiction taxonomy terms.
 			[
-				'key'           => 'field_update_jurisdiction',
-				'label'         => 'Affected Jurisdiction',
-				'name'          => 'ws_legal_update_jurisdiction',
+				'key'           => 'field_legal_update_jurisdictions',
+				'label'         => 'Affected Jurisdiction(s)',
+				'name'          => 'ws_legal_update_jurisdictions',
 				'type'          => 'taxonomy',
 				'instructions'  => 'Select the jurisdiction affected by this legal update.',
 				'taxonomy'      => WS_JURISDICTION_TAXONOMY,
-				'field_type'    => 'select',
+				'field_type'    => 'multi_select',
 				'return_format' => 'id',
 				'save_terms'    => 1,
 				'load_terms'    => 1,
@@ -129,7 +129,7 @@ function ws_register_acf_legal_update() {
             // ── Multi-Jurisdiction Flag ───────────────────────────────────
 
             [
-                'key'           => 'field_update_multi_jurisdiction',
+                'key'           => 'field_legal_update_multi_jurisdiction',
                 'label'         => 'Multi-Jurisdiction',
                 'name'          => 'ws_legal_update_multi_jurisdiction',
                 'type'          => 'true_false',
@@ -157,7 +157,7 @@ function ws_register_acf_legal_update() {
             // ── Update Date ───────────────────────────────────────────────
 
             [
-                'key'            => 'field_update_date',
+                'key'            => 'field_legal_update_date',
                 'label'          => 'Update Date',
                 'name'           => 'ws_legal_update_date',
                 'type'           => 'date_picker',
@@ -170,7 +170,7 @@ function ws_register_acf_legal_update() {
             // ── Primary Source ────────────────────────────────────────────
 
             [
-                'key'          => 'field_update_source_url',
+                'key'          => 'field_legal_update_source_url',
                 'label'        => 'Primary Source URL',
                 'name'         => 'ws_legal_update_source_url',
                 'type'         => 'url',
@@ -180,7 +180,7 @@ function ws_register_acf_legal_update() {
             // ── Update Type ───────────────────────────────────────────────
 
             [
-                'key'          => 'field_update_type',
+                'key'          => 'field_legal_update_type',
                 'label'        => 'Update Type',
                 'name'         => 'ws_legal_update_type',
                 'type'         => 'select',
@@ -215,7 +215,7 @@ function ws_register_acf_legal_update() {
             // ── Summary ───────────────────────────────────────────────────
 
             [
-                'key'          => 'field_legal_update_summary',
+                'key'          => 'field_legal_update_summary_wysiwyg',
                 'label'        => 'Summary',
                 'name'         => 'ws_legal_update_summary_wysiwyg',
                 'type'         => 'wysiwyg',

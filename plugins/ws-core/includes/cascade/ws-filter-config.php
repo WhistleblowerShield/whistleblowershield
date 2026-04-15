@@ -48,7 +48,7 @@ defined( 'ABSPATH' ) || exit;
 define( 'WS_FILTER_PARAM_STAGE',   'ws_stage'   ); // ws_case_stage
 define( 'WS_FILTER_PARAM_CONCERN', 'ws_concern' ); // ws_disclosure_type or ws_adverse_action_types
 define( 'WS_FILTER_PARAM_SECTOR',  'ws_sector'  ); // ws_employment_sector
-define( 'WS_FILTER_PARAM_TARGET',  'ws_target'  ); // ws_disclosure_targets (optional)
+define( 'WS_FILTER_PARAM_TARGET',  'ws_target'  ); // ws_disclosure_target (optional)
 
 // Profile view telemetry log (directory -> single org profile).
 define( 'WS_FILTER_PROFILE_LOG', WP_CONTENT_DIR . '/logs/ws-filter/profile-views.log' );
@@ -178,7 +178,7 @@ function ws_filter_score_weights(): array {
     'disclosure_type_match' =>  8,   // ws_disclosure_type or ws_adverse_action_types
     'case_stage_match'      =>  8,   // ws_case_stage
     'sector_match'          =>  5,   // ws_employment_sector
-    'target_match'          =>  3,   // ws_disclosure_targets (optional axis)
+    'target_match'          =>  3,   // ws_disclosure_target (optional axis)
 
     // Contextual bonus: has_attorneys when stage signals legal need
     // Applies when ws_stage is retaliation-active, litigation, or pre-report

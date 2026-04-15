@@ -202,7 +202,7 @@ function ws_render_citation_column( $column, $post_id ) {
                    : '<span class="dashicons dashicons-minus" style="color:#999;"></span>';
     } elseif ( $column === 'ws_type' ) {
         // Direct meta read — admin list table display only.
-        $type_raw = get_post_meta( $post_id, 'ws_jx_citation_type', true );
+        $type_raw = get_post_meta( $post_id, 'ws_jx_citation_types', true );
         $types    = is_array( $type_raw ) ? $type_raw : ( $type_raw ? [ $type_raw ] : [] );
         echo ! empty( $types ) ? esc_html( implode( ', ', array_map( 'strval', $types ) ) ) : '<span style="color:#999;">—</span>';
     }

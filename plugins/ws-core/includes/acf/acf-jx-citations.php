@@ -19,7 +19,7 @@
  * 3.4.0   Stamp fields centralized to acf-stamp-fields.php.
  * 3.8.0   Field keys corrected to match naming convention.
  *         ws_ref_materials relationship field added (Reference Materials tab).
- * 3.12.0  Classification tab added: ws_protected_class, ws_disclosure_targets,
+ * 3.12.0  Classification tab added: ws_protected_class, ws_disclosure_target,
  *         ws_adverse_action_types, ws_process_type, ws_remedies, ws_fee_shifting,
  *         ws_employer_defense, ws_employee_standard — mirrors jx-statute palette
  *         including has-details sentinel pattern and companion _details fields.
@@ -27,7 +27,7 @@
  *         for editorial drafting and ingest starter hints.
  * 3.12.2  Added ws_jx_citation_common_law_ids relationship field for
  *         doctrine-linked citations (separate from statute linkage).
- * 3.12.3  ws_jx_citation_type changed from single select to multi-select
+ * 3.12.3  ws_jx_citation_types changed from single select to multi-select
  *         to support citations that cover multiple source categories.
  * 3.12.4  Header and field-summary documentation sync.
  */
@@ -66,14 +66,14 @@ function ws_register_acf_jx_citations() {
             // ── Tab: Content ──────────────────────────────────────────────
 
             [
-                'key'   => 'field_jx_cite_content_tab',
+                'key'   => 'field_jx_citation_content_tab',
                 'label' => 'Content',
                 'type'  => 'tab',
             ],
             [
-                'key'          => 'field_jx_citation_type',
-                'label'        => 'Citation Type',
-                'name'         => 'ws_jx_citation_type',
+                'key'          => 'field_jx_citation_types',
+                'label'        => 'Citation Types',
+                'name'         => 'ws_jx_citation_types',
                 'type'         => 'select',
                 'required'     => 1,
                 'instructions' => 'Select one or more source categories this citation references.',
@@ -90,12 +90,12 @@ function ws_register_acf_jx_citations() {
                 'ui'            => 1,
             ],
 			[
-				'key'           => 'field_jx_citation_disclosure_type',
-				'label'         => 'Disclosure Category',
-				'name'          => 'ws_jx_citation_disclosure_type',
+				'key'           => 'field_jx_citation_disclosure_types',
+				'label'         => 'Disclosure Categories',
+				'name'          => 'ws_jx_citation_disclosure_types',
 				'type'          => 'taxonomy',
 				'taxonomy'      => 'ws_disclosure_type',
-				'field_type'    => 'checkbox', // Use checkboxes for multiple categories
+				'field_type'    => 'multi_select', // Use multi-select for multiple categories
 				'add_term'      => 0,
 				'save_terms'    => 1,
 				'load_terms'    => 1,
@@ -128,9 +128,9 @@ function ws_register_acf_jx_citations() {
             ],
 
             [
-                'key'          => 'field_jx_citation_summary',
+                'key'          => 'field_jx_citation_summary_wysiwyg',
                 'label'        => 'Citation Summary',
-                'name'         => 'ws_jx_citation_summary',
+                'name'         => 'ws_jx_citation_summary_wysiwyg',
                 'type'         => 'wysiwyg',
                 'instructions' => 'Short editorial summary of why this citation matters. This can start from ingest hints and be refined by a human editor.',
                 'tabs'         => 'visual',
@@ -141,7 +141,7 @@ function ws_register_acf_jx_citations() {
 
             [
                 'key'           => 'field_jx_citation_is_pdf',
-                'label'         => 'PDF Link',
+                'label'         => 'Is Link to PDF?',
                 'name'          => 'ws_jx_citation_is_pdf',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable if the source URL links directly to a PDF document. Appends "(PDF)" to the rendered link.',
@@ -153,7 +153,7 @@ function ws_register_acf_jx_citations() {
             [
                 'key'           => 'field_jx_citation_attach_flag',
                 'label'         => 'Attach to Jurisdiction Page',
-                'name'          => 'ws_attach_flag',
+                'name'          => 'ws_jx_citation_attach_flag',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable to include this citation in the rendered case law section on the jurisdiction page. Disable to store for reference only.',
                 'ui'            => 1,
@@ -164,7 +164,7 @@ function ws_register_acf_jx_citations() {
             [
                 'key'               => 'field_jx_citation_display_order',
                 'label'             => 'Display Order',
-                'name'              => 'ws_display_order',
+                'name'              => 'ws_jx_citation_display_order',
                 'type'              => 'number',
                 'instructions'      => 'Set the order in which this citation appears in the footnote list. Lower numbers appear first.',
                 'min'               => 1,
@@ -192,7 +192,7 @@ function ws_register_acf_jx_citations() {
             [
                 'key'           => 'field_jx_citation_protected_class',
                 'label'         => 'Protected Class',
-                'name'          => 'ws_jx_citation_protected_class',
+                'name'          => 'ws_jx_citation_protected_classes',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_protected_class',
                 'field_type'    => 'checkbox',
@@ -218,7 +218,7 @@ function ws_register_acf_jx_citations() {
                 'label'         => 'Disclosure Targets',
                 'name'          => 'ws_jx_citation_disclosure_targets',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_disclosure_targets',
+                'taxonomy'      => 'ws_disclosure_target',
                 'field_type'    => 'checkbox',
                 'instructions'  => 'Reporting target at issue in this citation. Tag only where the cited source explicitly discusses or turns on the reporting channel.',
                 'add_term'      => 0,
@@ -228,9 +228,9 @@ function ws_register_acf_jx_citations() {
             ],
 
             [
-                'key'          => 'field_jx_citation_disclosure_targets_details',
+                'key'          => 'field_jx_citation_disclosure_target_details',
                 'label'        => 'Disclosure Targets Details',
-                'name'         => 'ws_jx_citation_disclosure_targets_details',
+                'name'         => 'ws_jx_citation_disclosure_target_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
                 'instructions' => 'Describe nuance in the reporting channel as addressed by this citation.',
@@ -238,12 +238,12 @@ function ws_register_acf_jx_citations() {
             ],
 
             [
-                'key'           => 'field_jx_citation_adverse_action',
+                'key'           => 'field_jx_citation_adverse_actions',
                 'label'         => 'Adverse Action Types',
-                'name'          => 'ws_jx_citation_adverse_action',
+                'name'          => 'ws_jx_citation_adverse_actions',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_adverse_action_types',
-                'field_type'    => 'checkbox',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'Retaliatory action at issue in this citation. Tag only where the cited source explicitly addresses the type of adverse action taken or alleged.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
@@ -281,7 +281,7 @@ function ws_register_acf_jx_citations() {
                 'name'          => 'ws_jx_citation_remedies',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_remedies',
-                'field_type'    => 'checkbox',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'Remedies discussed, awarded, or denied in this citation. Tag only where the cited source explicitly addresses remedy.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
@@ -300,12 +300,12 @@ function ws_register_acf_jx_citations() {
             ],
 
             [
-                'key'           => 'field_jx_citation_fee_shifting',
-                'label'         => 'Fee Shifting',
-                'name'          => 'ws_jx_citation_fee_shifting',
+                'key'           => 'field_jx_citation_fee_shiftings',
+                'label'         => 'Fee Shiftings',
+                'name'          => 'ws_jx_citation_fee_shiftings',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_fee_shifting',
-                'field_type'    => 'checkbox',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'Fee-shifting outcome or discussion in this citation. Tag only where the cited source explicitly addresses fees. Single value.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
@@ -314,12 +314,12 @@ function ws_register_acf_jx_citations() {
             ],
 
             [
-                'key'           => 'field_jx_citation_employer_defense',
-                'label'         => 'Employer Defense',
-                'name'          => 'ws_jx_citation_employer_defense',
+                'key'           => 'field_jx_citation_employer_defenses',
+                'label'         => 'Employer Defenses',
+                'name'          => 'ws_jx_citation_employer_defenses',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_employer_defense',
-                'field_type'    => 'checkbox',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'Employer defense raised, accepted, or rejected in this citation. Tag only where the cited source explicitly addresses a defense posture.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
@@ -338,12 +338,12 @@ function ws_register_acf_jx_citations() {
             ],
 
             [
-                'key'           => 'field_jx_citation_employee_standard',
-                'label'         => 'Employee Standard',
-                'name'          => 'ws_jx_citation_employee_standard',
+                'key'           => 'field_jx_citation_employee_standards',
+                'label'         => 'Employee Standards',
+                'name'          => 'ws_jx_citation_employee_standards',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_employee_standard',
-                'field_type'    => 'checkbox',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'Burden-of-proof standard at issue or clarified by this citation. Tag only where the cited source explicitly addresses or turns on the employee burden standard.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
@@ -470,12 +470,12 @@ add_filter( 'acf/load_field', 'ws_jx_citation_details_conditional' );
 function ws_jx_citation_details_conditional( $field ) {
 
     static $map = [
-        'field_jx_citation_protected_class_details'    => [ 'ws_protected_class',     'field_jx_citation_protected_class' ],
-        'field_jx_citation_disclosure_targets_details' => [ 'ws_disclosure_targets',   'field_jx_citation_disclosure_targets' ],
-        'field_jx_citation_adverse_action_details'     => [ 'ws_adverse_action_types', 'field_jx_citation_adverse_action' ],
+        'field_jx_citation_protected_class_details'    => [ 'ws_protected_class',      'field_jx_citation_protected_classes' ],
+        'field_jx_citation_disclosure_target_details'  => [ 'ws_disclosure_target',    'field_jx_citation_disclosure_targets' ],
+        'field_jx_citation_adverse_action_details'     => [ 'ws_adverse_action_types', 'field_jx_citation_adverse_actions' ],
         'field_jx_citation_remedies_details'           => [ 'ws_remedies',             'field_jx_citation_remedies' ],
-        'field_jx_citation_employee_standard_details'  => [ 'ws_employee_standard',    'field_jx_citation_employee_standard' ],
-        'field_jx_citation_employer_defense_details'   => [ 'ws_employer_defense',     'field_jx_citation_employer_defense' ],
+        'field_jx_citation_employee_standard_details'  => [ 'ws_employee_standard',    'field_jx_citation_employee_standards' ],
+        'field_jx_citation_employer_defense_details'   => [ 'ws_employer_defense',     'field_jx_citation_employer_defenses' ],
     ];
 
     if ( ! isset( $map[ $field['key'] ] ) ) {

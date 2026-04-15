@@ -134,7 +134,7 @@ $ws_state_court_matrix = [
     //
     // Selecting this entry reveals ws_jx_interp_court_name (free text field).
     // ws_jx_codes = '__manual__' signals the save hook to skip auto-population
-    // of ws_jx_interp_affected_jx — the editor must set scope manually.
+    // of ws_jx_interp_affected_jurisdictions — the editor must set scope manually.
     // level = 99 ensures this entry sorts last in the select list.
     //
     // Defined in both matrices so 'other' is available regardless of whether

@@ -1,0 +1,90 @@
+ACF key/name audit (depth-aware)
+Rule: key == field_ + name without ws_
+Scope: _tab keys excluded; name constants skipped
+Generated: 2026-04-14
+Total mismatches: 59
+Total skipped (name constants): 2
+
+## C:\Users\dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-ag-procedures.php
+- key line 106: field_proc_type | name line 108: ws_procedure_type | expected: field_procedure_type
+
+## C:\Users\dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-agencies.php
+- key line 177: field_agency_process_type | name line 179: ws_process_type | expected: field_process_type
+- key line 226: field_agency_anonymous_allowed | name line 228: ws_agency_accepts_anonymous | expected: field_agency_accepts_anonymous
+- key line 251: field_agency_languages | name line 253: ws_languages | expected: field_languages
+
+## C:\Users\dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-assist-orgs.php
+- key line 287: field_aorg_jurisdiction | name line 289: ws_jurisdictions | expected: field_jurisdictions
+- key line 654: field_aorg_languages | name line 656: ws_languages | expected: field_languages
+
+## C:\Users\dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-jurisdictions.php
+- key line 98: field_jurisdiction_tax | name line 100: ws_jurisdiction_term_id | expected: field_jurisdiction_term_id
+- key line 329: field_jx_last_edited_author | name line 331: ws_auto_last_edited_author | expected: field_auto_last_edited_author
+- key line 339: field_jx_last_edited | name line 341: ws_auto_last_edited | expected: field_auto_last_edited
+
+## C:\Users\dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-jx-citations.php
+- key line 74: field_jx_citation_type | name line 76: ws_jx_citation_types | expected: field_jx_citation_types
+- key line 93: field_jx_citation_disclosure_type | name line 95: ws_jx_citation_disclosure_types | expected: field_jx_citation_disclosure_types
+- key line 154: field_jx_citation_attach_flag | name line 156: ws_attach_flag | expected: field_attach_flag
+- key line 165: field_jx_citation_display_order | name line 167: ws_display_order | expected: field_display_order
+- key line 193: field_jx_citation_protected_class | name line 195: ws_jx_citation_protected_classes | expected: field_jx_citation_protected_classes
+- key line 241: field_jx_citation_adverse_action | name line 243: ws_jx_citation_adverse_actions | expected: field_jx_citation_adverse_actions
+- key line 265: field_jx_citation_process_type | name line 267: ws_jx_citation_process_types | expected: field_jx_citation_process_types
+- key line 303: field_jx_citation_fee_shifting | name line 305: ws_jx_citation_fee_shiftings | expected: field_jx_citation_fee_shiftings
+- key line 317: field_jx_citation_employer_defense | name line 319: ws_jx_citation_employer_defenses | expected: field_jx_citation_employer_defenses
+- key line 341: field_jx_citation_employee_standard | name line 343: ws_jx_citation_employee_standards | expected: field_jx_citation_employee_standards
+- key line 439: field_jx_citation_ref_materials | name line 441: ws_ref_materials | expected: field_ref_materials
+
+## C:\Users\dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-jx-common-law.php
+- key line 230: field_jx_comlaw_disclosure_type | name line 232: ws_jx_comlaw_disclosure_types | expected: field_jx_comlaw_disclosure_types
+- key line 244: field_jx_comlaw_protected_class | name line 246: ws_jx_comlaw_protected_classes | expected: field_jx_comlaw_protected_classes
+- key line 302: field_jx_comlaw_attach_flag | name line 304: ws_attach_flag | expected: field_attach_flag
+- key line 314: field_jx_comlaw_display_order | name line 316: ws_display_order | expected: field_display_order
+- key line 475: field_jx_comlaw_process_type | name line 477: ws_jx_comlaw_process_types | expected: field_jx_comlaw_process_types
+- key line 489: field_jx_comlaw_adverse_action | name line 491: ws_jx_comlaw_adverse_actions | expected: field_jx_comlaw_adverse_actions
+- key line 513: field_jx_comlaw_fee_shifting | name line 515: ws_jx_comlaw_fee_shiftings | expected: field_jx_comlaw_fee_shiftings
+- key line 600: field_jx_comlaw_employee_standard | name line 602: ws_jx_comlaw_employee_standards | expected: field_jx_comlaw_employee_standards
+- key line 624: field_jx_comlaw_employer_defense | name line 626: ws_jx_comlaw_employer_defenses | expected: field_jx_comlaw_employer_defenses
+- key line 790: field_jx_comlaw_ref_materials | name line 792: ws_ref_materials | expected: field_ref_materials
+
+## C:\Users\dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-jx-interpretations.php
+- key line 237: field_jx_interp_attach_flag | name line 239: ws_attach_flag | expected: field_attach_flag
+- key line 249: field_jx_interp_display_order | name line 251: ws_display_order | expected: field_display_order
+- key line 280: field_jx_interp_disclosure_type | name line 282: ws_jx_interp_disclosure_types | expected: field_jx_interp_disclosure_types
+- key line 294: field_jx_interp_protected_class | name line 296: ws_jx_interp_protected_classes | expected: field_jx_interp_protected_classes
+- key line 342: field_jx_interp_adverse_action | name line 344: ws_jx_interp_adverse_actions | expected: field_jx_interp_adverse_actions
+- key line 366: field_jx_interp_process_type | name line 368: ws_jx_interp_process_types | expected: field_jx_interp_process_types
+- key line 404: field_jx_interp_fee_shifting | name line 406: ws_jx_interp_fee_shiftings | expected: field_jx_interp_fee_shiftings
+- key line 418: field_jx_interp_employer_defense | name line 420: ws_jx_interp_employer_defenses | expected: field_jx_interp_employer_defenses
+- key line 442: field_jx_interp_employee_standard | name line 444: ws_jx_interp_employee_standards | expected: field_jx_interp_employee_standards
+- key line 507: field_jx_interp_affected_jx | name line 509: ws_jx_interp_affected_jurisdictions | expected: field_jx_interp_affected_jurisdictions
+- key line 555: field_jx_interp_ref_materials | name line 557: ws_ref_materials | expected: field_ref_materials
+
+## C:\Users\dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-jx-statutes.php
+- key line 194: field_jx_statute_disclosure_type | name line 196: ws_jx_statute_disclosure_types | expected: field_jx_statute_disclosure_types
+- key line 208: field_jx_statute_protected_class | name line 210: ws_jx_statute_protected_classes | expected: field_jx_statute_protected_classes
+- key line 266: field_jx_statute_attach_flag | name line 268: ws_attach_flag | expected: field_attach_flag
+- key line 278: field_jx_statute_display_order | name line 280: ws_display_order | expected: field_display_order
+- key line 439: field_jx_statute_process_type | name line 441: ws_jx_statute_process_types | expected: field_jx_statute_process_types
+- key line 453: field_jx_statute_adverse_action | name line 455: ws_jx_statute_adverse_actions | expected: field_jx_statute_adverse_actions
+- key line 477: field_jx_statute_fee_shifting | name line 479: ws_jx_statute_fee_shiftings | expected: field_jx_statute_fee_shiftings
+- key line 561: field_jx_statute_employee_standard | name line 563: ws_jx_statute_employee_standards | expected: field_jx_statute_employee_standards
+- key line 585: field_jx_statute_employer_defense | name line 587: ws_jx_statute_employer_defenses | expected: field_jx_statute_employer_defenses
+- key line 769: field_jx_statute_ref_materials | name line 771: ws_ref_materials | expected: field_ref_materials
+
+## C:\Users\dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-jx-summaries.php
+- key line 65: field_jurisdiction_summary | name line 67: ws_jurisdiction_summary_wysiwyg | expected: field_jurisdiction_summary_wysiwyg
+- key line 142: field_jx_sum_plain_reviewed | name line 144: ws_plain_english_reviewed | expected: field_plain_english_reviewed
+
+## C:\Users\dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-legal-updates.php
+- key line 116: field_update_jurisdiction | name line 118: ws_legal_update_jurisdiction | expected: field_legal_update_jurisdiction
+- key line 132: field_update_multi_jurisdiction | name line 134: ws_legal_update_multi_jurisdiction | expected: field_legal_update_multi_jurisdiction
+- key line 160: field_update_date | name line 162: ws_legal_update_date | expected: field_legal_update_date
+- key line 173: field_update_source_url | name line 175: ws_legal_update_source_url | expected: field_legal_update_source_url
+- key line 183: field_update_type | name line 185: ws_legal_update_type | expected: field_legal_update_type
+- key line 218: field_legal_update_summary | name line 220: ws_legal_update_summary_wysiwyg | expected: field_legal_update_summary_wysiwyg
+
+## Skipped (Name Constants)
+- C:\Users\dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-ag-procedures.php:129 key=field_proc_jurisdiction name_constant=WS_JURISDICTION_TAXONOMY
+- C:\Users\dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-agencies.php:126 key=field_agency_jurisdiction name_constant=WS_JURISDICTION_TAXONOMY
+

@@ -264,8 +264,8 @@ function ws_seed_fed_statutes_matrix() {
         // ws_adverse_action_types
         ws_matrix_assign_terms( $post_id, $statute['adverse_actions'] ?? [], 'ws_adverse_action_types' );
 
-        // ws_disclosure_targets
-        ws_matrix_assign_terms( $post_id, $statute['disclosure_targets'] ?? [], 'ws_disclosure_targets' );
+        // ws_disclosure_target
+        ws_matrix_assign_terms( $post_id, $statute['disclosure_targets'] ?? [], 'ws_disclosure_target' );
 
         // ws_fee_shifting (single value — wrap in array for shared helper)
         if ( ! empty( $statute['fee_shifting'] ) ) {

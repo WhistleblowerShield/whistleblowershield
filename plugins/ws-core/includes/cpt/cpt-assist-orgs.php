@@ -95,7 +95,7 @@ function ws_register_cpt_assist_org() {
         'taxonomies' => [
             'ws_disclosure_type',
             'ws_process_type',
-            'ws_disclosure_targets',
+            'ws_disclosure_target',
             'ws_case_stage',
             'ws_languages',
             'ws_aorg_type',
