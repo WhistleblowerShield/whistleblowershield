@@ -307,11 +307,12 @@ function ws_register_acf_assist_org() {
                 'instructions' => 'Optional local-service footprint for community-driven organizations. Examples: "San Francisco", "Los Angeles County", "Inland Empire", "Bay Area".',
                 'required'     => 0,
                 'rows'         => 2,
-                'conditional_logic' => [ [ [
-                    'field'    => 'field_aorg_serves_nationwide',
-                    'operator' => '==',
-                    'value'    => '0',
-                ], ], ],
+                'conditional_logic' => [ [
+                    [
+                        'field'    => 'field_aorg_serves_nationwide',
+                        'operator' => '==',
+                        'value'    => '0',
+                    ],
                     [
                         'field'    => 'field_aorg_has_limited_scope',
                         'operator' => '==',
@@ -446,7 +447,7 @@ function ws_register_acf_assist_org() {
                 'label'         => 'Protected Classes Served',
                 'name'          => 'ws_aorg_protected_classes',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_protected_class',
+                'taxonomy'      => 'ws_aorg_protected_classes',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Select all protected classes this organization serves. If "has-details" is selected, provide details below.',
                 'add_term'      => 0,
@@ -463,11 +464,6 @@ function ws_register_acf_assist_org() {
                 'type'         => 'textarea',
                 'instructions' => 'If "has-details" is selected above, provide details here.',
                 'rows'         => 3,
-                'conditional_logic' => [ [ [
-                    'field'    => 'field_aorg_protected_classes',
-                    'operator' => '==',
-                    'value'    => 'has-details',
-                ] ] ],
             ],
 
             // ────────────────────────────────────────────────────────────────
@@ -479,7 +475,7 @@ function ws_register_acf_assist_org() {
             // ────────────────────────────────────────────────────────────────
 
             [
-                'key'   => 'field_aorg_contact_tab',
+                'key'   => 'field_aorg_contact_intake_tab',
                 'label' => 'Contact & Intake',
                 'type'  => 'tab',
             ],
@@ -498,7 +494,7 @@ function ws_register_acf_assist_org() {
                 'label'        => 'Intake URL',
                 'name'         => 'ws_aorg_intake_url',
                 'type'         => 'url',
-                'instructions' => 'Direct link to intake or case-submission workflow.',
+                'instructions' => 'Direct link to intake or case-submission workflow. Find-A-Lawyer or similar pages qualify if no dedicated intake form exists.',
             ],
 
             [
@@ -514,7 +510,7 @@ function ws_register_acf_assist_org() {
                 'label'             => 'Phone Numbers',
                 'name'              => 'ws_aorg_phones',
                 'type'              => 'repeater',
-                'instructions'      => 'Public phone lines. Type values come from WS_SCHEMA_PHONE_TYPE.',
+                'instructions'      => 'Public phone lines. Type values come from WS_SCHEMA_PHONE_TYPE at includes/admin/tools/ws-schema-constants.php.',
                 'required'          => 0,
                 'layout'            => 'table',
                 'button_label'      => 'Add Phone',
@@ -524,7 +520,7 @@ function ws_register_acf_assist_org() {
                         'label'        => 'Type',
                         'name'         => 'ws_aorg_phone_type',
                         'type'         => 'select',
-                        'instructions' => 'Select a canonical value from WS_SCHEMA_PHONE_TYPE.',
+                        'instructions' => 'Select a canonical value: hotline | intake | headquarters | regional | tty | fax | other.',
                         'required'     => 1,
                         'choices'      => $phone_type_choices,
                         'allow_null'   => 0,
@@ -549,7 +545,7 @@ function ws_register_acf_assist_org() {
                 'label'             => 'Email Addresses',
                 'name'              => 'ws_aorg_emails',
                 'type'              => 'repeater',
-                'instructions'      => 'Public email channels. Type values come from WS_SCHEMA_EMAIL_TYPE.',
+                'instructions'      => 'Public email channels. Type values come from WS_SCHEMA_EMAIL_TYPE at includes/admin/tools/ws-schema-constants.php.',
                 'required'          => 0,
                 'layout'            => 'table',
                 'button_label'      => 'Add Email',
@@ -559,7 +555,7 @@ function ws_register_acf_assist_org() {
                         'label'        => 'Type',
                         'name'         => 'ws_aorg_email_type',
                         'type'         => 'select',
-                        'instructions' => 'Select a canonical value from WS_SCHEMA_EMAIL_TYPE.',
+                        'instructions' => 'Select a canonical value: intake | general | legal | media | support | other.',
                         'required'     => 1,
                         'choices'      => $email_type_choices,
                         'allow_null'   => 0,
@@ -571,7 +567,7 @@ function ws_register_acf_assist_org() {
                         'label'        => 'Email',
                         'name'         => 'ws_aorg_email_address',
                         'type'         => 'email',
-                        'instructions' => 'Public mailbox address.',
+                        'instructions' => 'Public email address.',
                         'required'     => 1,
                         'wrapper'      => [ 'width' => '70' ],
                     ],
@@ -604,7 +600,7 @@ function ws_register_acf_assist_org() {
                 'label'        => 'Secure Contact URL',
                 'name'         => 'ws_aorg_secure_contact_url',
                 'type'         => 'url',
-                'instructions' => 'Direct URL to the secure contact method page.',
+                'instructions' => 'Direct URL to the secure contact method, tool or instruction page.',
                 'conditional_logic' => [ [ [
                     'field'    => 'field_aorg_has_secure_channel',
                     'operator' => '==',
@@ -617,7 +613,7 @@ function ws_register_acf_assist_org() {
                 'label'        => 'Secure Contact Tool',
                 'name'         => 'ws_aorg_secure_contact_tool',
                 'type'         => 'select',
-                'instructions' => 'Select a canonical value from WS_SCHEMA_SECURE_TOOL.',
+                'instructions' => 'Select a canonical value from SecureDrop | Signal | ProtonMail | Tutanota | Wire | Keybase | other',
                 'choices'      => $secure_tool_choices,
                 'allow_null'   => 1,
                 'ui'           => 0,
@@ -651,12 +647,12 @@ function ws_register_acf_assist_org() {
 
             [
                 'key'           => 'field_aorg_languages',
-                'label'         => 'Languages Served',
-                'name'          => 'ws_languages',
+                'label'         => 'Languages Supported',
+                'name'          => 'ws_aorg_languages',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_languages',
-                'field_type'    => 'checkbox',
-                'instructions'  => 'Select languages this organization can serve. Check "Additional" if other languages are available — then specify them below.',
+                'taxonomy'      => 'ws_language',
+                'field_type'    => 'multi_select',
+                'instructions'  => 'Select languages this organization can support. Check "Additional" if other languages are available — then specify them below.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,
@@ -681,7 +677,7 @@ function ws_register_acf_assist_org() {
             // ────────────────────────────────────────────────────────────────
 
             [
-                'key'   => 'field_aorg_eligibility_tab',
+                'key'   => 'field_aorg_eligibility_cost_tab',
                 'label' => 'Eligibility & Cost',
                 'type'  => 'tab',
             ],
@@ -692,9 +688,9 @@ function ws_register_acf_assist_org() {
                 'name'          => 'ws_aorg_cost_models',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_aorg_cost_model',
-                'instructions'  => 'Select one or more cost models that apply to whistleblower services at this organization. Stored as a plural array-style field key (ws_aorg_cost_models).',
+                'instructions'  => 'Select one or more cost models that apply to whistleblower services at this organization.',
                 'required'      => 1,
-                'field_type'    => 'checkbox', // Multi-select taxonomy input (array of selected term IDs).
+                'field_type'    => 'multi_select',
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,
@@ -741,9 +737,9 @@ function ws_register_acf_assist_org() {
             ],
 
             [
-                'key'          => 'field_aorg_eligibility_notes',
+                'key'          => 'field_aorg_eligibility_details',
                 'label'        => 'Additional Eligibility Requirements',
-                'name'         => 'ws_aorg_eligibility_notes',
+                'name'         => 'ws_aorg_eligibility_details',
                 'type'         => 'textarea',
                 'instructions' => 'Describe any eligibility requirements not covered above — e.g., case type restrictions, geographic limits, employer size thresholds, or union membership requirements.',
                 'rows'         => 4,
@@ -776,10 +772,10 @@ function ws_register_acf_assist_org() {
 
             [
                 'key'          => 'field_aorg_accreditation',
-                'label'        => 'Accreditations & Certifications',
+                'label'        => 'Accreditation & Certifications',
                 'name'         => 'ws_aorg_accreditation',
                 'type'         => 'text',
-                'instructions' => 'Any relevant professional accreditations or certifications — e.g., "ABA-accredited", "NQAP member", "DOJ-recognized".',
+                'instructions' => 'Any relevant professional accreditation or certifications — e.g., "ABA-accredited", "NQAP member", "DOJ-recognized".',
             ],
 
             [
@@ -819,15 +815,15 @@ function ws_register_acf_assist_org() {
             ],
 
             // ────────────────────────────────────────────────────────────────
-            // Tab: Internal Relationship
+            // Tab: Internal Contact & Relationship Notes
             //
             // Private operator metadata for relationship building and
             // outreach continuity. Not surfaced in public output.
             // ────────────────────────────────────────────────────────────────
 
             [
-                'key'   => 'field_aorg_internal_rel_tab',
-                'label' => 'Internal Relationship',
+                'key'   => 'field_aorg_internal_contact_tab',
+                'label' => 'Internal Contact & Relationship Notes',
                 'type'  => 'tab',
             ],
 
@@ -910,6 +906,8 @@ function ws_register_acf_assist_org() {
 //
 // - disclosure_targets_details appears when ws_disclosure_target has term
 //   slug 'has-details'.
+// - protected_class_details appears when ws_protected_classes has term
+//   slug 'has-details'.
 // - case_stage_details appears when ws_case_stage has term slug 'other'.
 
 add_filter( 'acf/load_field', 'ws_aorg_details_conditional' );
@@ -918,6 +916,7 @@ function ws_aorg_details_conditional( $field ) {
 
     static $map = [
         'field_aorg_disclosure_target_details'  => [ 'ws_disclosure_target', 'field_aorg_disclosure_targets', 'has-details' ],
+        'field_aorg_protected_class_details'    => [ 'ws_protected_classes', 'field_aorg_protected_classes',  'has-details' ],
         'field_aorg_case_stage_details'         => [ 'ws_case_stage',        'field_aorg_case_stages',        'other' ],
     ];
 

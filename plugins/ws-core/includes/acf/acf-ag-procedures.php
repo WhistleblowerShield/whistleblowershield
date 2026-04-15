@@ -314,7 +314,7 @@ function ws_register_acf_ag_procedures() {
                 'rows'         => 3,
                 'instructions' => 'Briefly describe what prerequisites must be satisfied before filing.',
                 'conditional_logic' => [ [ [
-                    'field'    => 'field_ag_procedure_prerequisites',
+                    'field'    => 'field_ag_has_procedure_prerequisites',
                     'operator' => '==',
                     'value'    => '1',
                 ] ] ],

@@ -284,7 +284,7 @@ function ws_register_taxonomies() {
     //
     // Replaces ws_jx_code post meta as the jurisdiction join mechanism.
     // Private taxonomy — terms are canonical USPS-code slugs (e.g. 'us', 'ca', 'tx').
-    // Terms are seeded in jurisdiction-matrix.php via ws_seeded_jurisdiction_taxonomy gate.
+    // Terms are seeded by matrix-jurisdiction.php via ws_seeded_jurisdiction_taxonomy gate.
 
     if ( ! taxonomy_exists( WS_JURISDICTION_TAXONOMY ) ) {
         register_taxonomy(
@@ -695,7 +695,7 @@ add_action( 'admin_init', function() {
         update_option( 'ws_seeded_disclosure_type', '1.2.0' );
     }
     if ( get_option( 'ws_seeded_process_type' ) !== '1.0.0' ) {
-        ws_seed_process_taxonomy();
+        ws_seed_process_type_taxonomy();
         update_option( 'ws_seeded_process_type', '1.0.0' );
     }
     if ( get_option( 'ws_seeded_remedy' ) !== '1.1.0' ) {
@@ -937,6 +937,12 @@ function ws_seed_protected_class_taxonomy() {
                 'perceived-whistleblower' => 'Perceived Whistleblower',
             ],
         ],
+        'all-sectors' => [
+            'name'     => 'All Sectors',
+            'children' => [
+                'all-employees'        => 'All Employees',
+            ],
+        ],
     ];
     ws_bulk_insert_hierarchical( $hierarchy, 'ws_protected_class' );
 
@@ -946,27 +952,6 @@ function ws_seed_protected_class_taxonomy() {
         wp_insert_term( 'Has Details', 'ws_protected_class', [ 'slug' => 'has-details' ] );
     }
 
-    // all-sectors parent + all-employees child — v3.14.1.
-    // Covers statutes that explicitly protect all employees regardless
-    // of sector. Structured as parent+child so the taxonomy table renders
-    // correctly and research models use the child slug all-employees.
-    if ( ! term_exists( 'all-sectors', 'ws_protected_class' ) ) {
-        $parent = wp_insert_term( 'All Sectors', 'ws_protected_class', [ 'slug' => 'all-sectors' ] );
-        if ( ! is_wp_error( $parent ) ) {
-            wp_insert_term( 'All Employees', 'ws_protected_class', [
-                'slug'   => 'all-employees',
-                'parent' => $parent['term_id'],
-            ] );
-        }
-    } elseif ( ! term_exists( 'all-employees', 'ws_protected_class' ) ) {
-        $parent_term = get_term_by( 'slug', 'all-sectors', 'ws_protected_class' );
-        if ( $parent_term ) {
-            wp_insert_term( 'All Employees', 'ws_protected_class', [
-                'slug'   => 'all-employees',
-                'parent' => $parent_term->term_id,
-            ] );
-        }
-    }
 }
 
 /**

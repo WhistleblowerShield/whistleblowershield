@@ -612,10 +612,10 @@ function ws_get_jx_statute_data( $jx_term_id ) {
         return $rows;
     };
 
-    $results = $fetch( $term_id, false );
-
-    if ( $us_term_id && $term_id !== $us_term_id ) {
-        $results = array_merge( $results, $fetch( $us_term_id, true ) );
+    $results = [];
+    $terms_to_fetch = array_values( array_filter( array_unique( [ $term_id, $us_term_id ] ) ) );
+    foreach ( $terms_to_fetch as $tid ) {
+        $results = array_merge( $results, $fetch( $tid, $tid === $us_term_id && $term_id !== $us_term_id ) );
     }
 
     return $results;
@@ -647,22 +647,15 @@ function ws_get_jx_term_id( $post_id ) {
 // Returns the ws_jurisdiction taxonomy term ID for the 'us' term.
 // Result is cached in a static variable — one DB read per request.
 //
-// Reads the ws_us_term_id option written during taxonomy seeding.
-// Falls back to a get_term_by() lookup if the option is not yet set
-// (pre-seed or test environments).
+// Always resolved by literal slug/code ('us') to avoid relying on seeded
+// option state.
 //
-// Used by data functions to determine whether federal append logic applies.
+// Used by data functions to mark federal rows consistently.
 // ════════════════════════════════════════════════════════════════════════════
 
 function ws_get_us_term_id() {
     static $us_term_id = null;
     if ( $us_term_id !== null ) {
-        return $us_term_id;
-    }
-
-    $stored = (int) get_option( 'ws_us_term_id', 0 );
-    if ( $stored ) {
-        $us_term_id = $stored;
         return $us_term_id;
     }
 
@@ -772,10 +765,10 @@ function ws_get_jx_citation_data( $jx_term_id ) {
         return $rows;
     };
 
-    $results = $fetch( $term_id, false );
-
-    if ( $us_term_id && $term_id !== $us_term_id ) {
-        $results = array_merge( $results, $fetch( $us_term_id, true ) );
+    $results = [];
+    $terms_to_fetch = array_values( array_filter( array_unique( [ $term_id, $us_term_id ] ) ) );
+    foreach ( $terms_to_fetch as $tid ) {
+        $results = array_merge( $results, $fetch( $tid, $tid === $us_term_id && $term_id !== $us_term_id ) );
     }
 
     return $results;
@@ -884,10 +877,10 @@ function ws_get_jx_interpretation_data( $jx_term_id ) {
         return $rows;
     };
 
-    $results = $fetch( $term_id, false );
-
-    if ( $us_term_id && $term_id !== $us_term_id ) {
-        $results = array_merge( $results, $fetch( $us_term_id, true ) );
+    $results = [];
+    $terms_to_fetch = array_values( array_filter( array_unique( [ $term_id, $us_term_id ] ) ) );
+    foreach ( $terms_to_fetch as $tid ) {
+        $results = array_merge( $results, $fetch( $tid, $tid === $us_term_id && $term_id !== $us_term_id ) );
     }
 
     return $results;
@@ -1263,10 +1256,10 @@ function ws_get_jx_common_law_data( $jx_term_id ) {
         return $rows;
     };
 
-    $results = $fetch( $term_id, false );
-
-    if ( $us_term_id && $term_id !== $us_term_id ) {
-        $results = array_merge( $results, $fetch( $us_term_id, true ) );
+    $results = [];
+    $terms_to_fetch = array_values( array_filter( array_unique( [ $term_id, $us_term_id ] ) ) );
+    foreach ( $terms_to_fetch as $tid ) {
+        $results = array_merge( $results, $fetch( $tid, $tid === $us_term_id && $term_id !== $us_term_id ) );
     }
 
     return $results;

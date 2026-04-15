@@ -111,6 +111,7 @@ define( 'WS_SCHEMA_URL_STATUS', [
     'verified',    // Researcher confirmed URL resolves and content matches
     'redirects',   // URL resolves but redirects — destination should be noted
     'unverified',  // URL not confirmed; record may still be included with caveat
+    'dead',        // URL no longer resolves at all
 ] );
 
 
@@ -170,6 +171,9 @@ define( 'WS_SCHEMA_RECORD_TYPE', [
     'citation',
     'interpretation',
     'assist-org',
+    'agency',
+    'procedure',
+    'reference',
 ] );
 
 

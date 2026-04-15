@@ -49,8 +49,8 @@ defined( 'ABSPATH' ) || exit;
  *   ws_jx_statute_adverse_actions     Adverse Action Types taxonomy (checkbox)
  *   ws_jx_statute_adverse_action_details Adverse Action Detail (textarea, conditional on has-details term)
  *   ws_jx_statute_fee_shiftings       Fee Shifting taxonomy (checkbox)
- *   ws_jx_statute_remedies           Available Remedies taxonomy (checkbox)
- *   ws_jx_statute_remedies_details   Remedies Detail (textarea, conditional on has-details term)
+ *   ws_jx_statute_remedy           Available remedy taxonomy (checkbox)
+ *   ws_jx_statute_remedy_details   remedy Detail (textarea, conditional on has-details term)
  *   ws_jx_statute_local_agencies     Local Agencies (post_object)
  *   ws_jx_statute_federal_agencies   Federal Agencies (post_object)
  *   ws_jx_statute_enforcement_channel Enforcement Channel Notes (textarea)
@@ -89,8 +89,8 @@ defined( 'ABSPATH' ) || exit;
  *        - Added attach_flag toggle and order number field.
  *        - Updated docblock to match Phase 3 conventions.
  * 3.1.1  Pass 2 ACF audit fixes:
- *        - Changed ws_jx_statute_remedies taxonomy from ws_remedy_type (deprecated)
- *          to ws_remedies.
+ *        - Changed ws_jx_statute_remedy taxonomy from ws_remedy_type (deprecated)
+ *          to ws_remedy.
  *        - Renamed tab key tab_jx_statute_plain_language_tab → field_jx_statute_plain_language_tab
  *          for convention consistency.
  *        - Removed resolved @todo scaffold comments.
@@ -107,7 +107,7 @@ defined( 'ABSPATH' ) || exit;
  *          exhaustion_required → has_exhaustion (label retained: "Exhaustion Required?").
  *        - tolling_notes retired; replaced by tolling_has_details / tolling_details.
  *        - New tab: Enforcement — process_type, adverse_action, fee_shifting,
- *          remedies, and agency linkage fields.
+ *          remedy, and agency linkage fields.
  *        - New tab: Burden of Proof — bop_standard, employer_defense (new
  *          ws_employer_defense taxonomy stub), rebuttable_has_details /
  *          rebuttable_details, bop_has_details / bop_details.
@@ -121,7 +121,7 @@ defined( 'ABSPATH' ) || exit;
  *          deferred to a follow-up pass.
  * 3.12.0 ws_employee_standard taxonomy replaces ws_jx_statute_bop_standard select.
  *        has-details sentinel pattern added to six taxonomies: protected_class,
- *        disclosure_targets, adverse_action_types, remedies, employer_defense,
+ *        disclosure_targets, adverse_action_types, remedy, employer_defense,
  *        employee_standard — each gains a _has_details toggle and conditional
  *        _details textarea. employer_defense_details made conditional.
  * 3.12.1 Header and field-summary documentation sync.
@@ -488,11 +488,11 @@ function ws_register_acf_jx_statutes() {
             ],
 
             [
-                'key'           => 'field_jx_statute_remedies',
-                'label'         => 'Available Remedies',
-                'name'          => 'ws_jx_statute_remedies',
+                'key'           => 'field_jx_statute_remedy',
+                'label'         => 'Available remedy',
+                'name'          => 'ws_jx_statute_remedy',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_remedies',
+                'taxonomy'      => 'ws_remedy',
                 'field_type'    => 'checkbox',
                 'instructions'  => 'What can a whistleblower recover under this specific law?',
                 'add_term'      => 0,
@@ -502,12 +502,12 @@ function ws_register_acf_jx_statutes() {
             ],
 
             [
-                'key'          => 'field_jx_statute_remedies_details',
-                'label'        => 'Remedies Details',
-                'name'         => 'ws_jx_statute_remedies_details',
+                'key'          => 'field_jx_statute_remedy_details',
+                'label'        => 'remedy Details',
+                'name'         => 'ws_jx_statute_remedy_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
-                'instructions' => 'Describe caps, eligibility conditions, aggregation rules, or other nuance affecting available remedies.',
+                'instructions' => 'Describe caps, eligibility conditions, aggregation rules, or other nuance affecting available remedy.',
                 // conditional_logic set dynamically — see ws_jx_statute_details_conditional()
             ],
 
@@ -682,7 +682,7 @@ function ws_register_acf_jx_statutes() {
                 'label'         => 'Reward Available',
                 'name'          => 'ws_jx_statute_reward_available',
                 'type'          => 'true_false',
-                'instructions'  => 'Enable if this statute provides a monetary reward or bounty to the whistleblower (distinct from compensatory remedies).',
+                'instructions'  => 'Enable if this statute provides a monetary reward or bounty to the whistleblower (distinct from compensatory remedy).',
                 'ui'            => 1,
                 'ui_on_text'    => 'Yes',
                 'ui_off_text'   => 'No',
@@ -768,7 +768,7 @@ function ws_register_acf_jx_statutes() {
             [
                 'key'           => 'field_jx_statute_ref_materials',
                 'label'         => 'Reference Materials',
-                'name'          => 'ws_ref_materials',
+                'name'          => 'ws_jx_statute_ref_materials',
                 'type'          => 'relationship',
                 'post_type'     => [ 'ws-reference' ],
                 'filters'       => [ 'search' ],
@@ -807,12 +807,12 @@ function ws_jx_statute_details_conditional( $field ) {
 
     // Map: details field key => [ taxonomy slug, trigger field key ]
     static $map = [
-        'field_jx_statute_protected_class_details'    => [ 'ws_protected_class',     'field_jx_statute_protected_class' ],
-        'field_jx_statute_disclosure_target_details' => [ 'ws_disclosure_target',   'field_jx_statute_disclosure_targets' ],
-        'field_jx_statute_adverse_action_details'     => [ 'ws_adverse_action_types', 'field_jx_statute_adverse_action' ],
-        'field_jx_statute_remedies_details'           => [ 'ws_remedies',             'field_jx_statute_remedies' ],
-        'field_jx_statute_employee_standard_details'  => [ 'ws_employee_standard',    'field_jx_statute_employee_standard' ],
-        'field_jx_statute_employer_defense_details'   => [ 'ws_employer_defense',     'field_jx_statute_employer_defense' ],
+        'field_jx_statute_protected_class_details'    => [ 'ws_protected_class',      'field_jx_statute_protected_classes' ],
+        'field_jx_statute_disclosure_target_details'  => [ 'ws_disclosure_target',    'field_jx_statute_disclosure_targets' ],
+        'field_jx_statute_adverse_action_details'     => [ 'ws_adverse_action_type',  'field_jx_statute_adverse_action_types' ],
+        'field_jx_statute_remedy_details'             => [ 'ws_remedy',               'field_jx_statute_remedies' ],
+        'field_jx_statute_employee_standard_details'  => [ 'ws_employee_standard',    'field_jx_statute_employee_standards' ],
+        'field_jx_statute_employer_defense_details'   => [ 'ws_employer_defense',     'field_jx_statute_employer_defenses' ],
     ];
 
     if ( ! isset( $map[ $field['key'] ] ) ) {

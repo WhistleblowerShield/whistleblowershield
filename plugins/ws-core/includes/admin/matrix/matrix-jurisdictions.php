@@ -4,7 +4,7 @@
  *
  * @package WhistleblowerShield
  * @since   1.0.0
- * @version 3.10.0
+ * @version 3.10.1
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -942,11 +942,9 @@ $_ws_jx_matrix = [
 //
 // Seeder order:
 //   1. Seed ws_jurisdiction taxonomy terms (slugs = lowercase USPS codes).
-//   2. Write ws_us_term_id option for the US term (used by query layer).
-//   3. Create/update jurisdiction CPT posts.
-//   4. Assign taxonomy term to each post via wp_set_object_terms().
-//   5. Write ws_jx_term_id post meta on each post.
-//   6. Write ws_matrix_source = 'jurisdiction-matrix' on each post.
+//   2. Create/update jurisdiction CPT posts.
+//   3. Assign taxonomy term to each post via wp_set_object_terms().
+//   4. Write ws_matrix_source = 'matrix-jurisdiction' on each post.
 //
 // Gate: ws_seeded_jurisdiction_matrix / 1.0.0 (Unified Option-Gate Method).
 // ════════════════════════════════════════════════════════════════════════════
@@ -977,13 +975,6 @@ function ws_seed_jurisdiction_matrix() {
 
         $term_map[ $slug ] = $term_id;
 
-        // Write the US term ID option used by ws_get_us_term_id() in the query layer.
-        // Direct get_post_meta() call is intentional here. ws_us_term_id is a site
-        // option storing a taxonomy term ID — not jurisdiction content — and is not
-        // routed through the query layer.
-        if ( $slug === 'us' ) {
-            update_option( 'ws_us_term_id', $term_id );
-        }
     }
 
     // ── Step 2: Create/update jurisdiction posts ──────────────────────────
@@ -1042,28 +1033,21 @@ function ws_seed_jurisdiction_matrix() {
             }
         }
 
-        // Assign ws_jurisdiction taxonomy term and write ws_jx_term_id meta.
+        // Assign ws_jurisdiction taxonomy term.
         //
         // wp_set_object_terms() writes the actual taxonomy relationship to
         // wp_term_relationships. This is what makes tax_query, wp_get_post_terms(),
-        // and the ACF load_terms behavior work. It is not redundant with ws_jx_code
-        // (a display string) or ws_jx_term_id (below).
-        //
-        // ws_jx_term_id is a deliberate convenience cache — it stores the term_id
-        // directly on the post so seeders and admin tooling can retrieve it via
-        // get_post_meta() without an additional get_term_by() or wp_get_post_terms()
-        // call at runtime. The data is derivable from the taxonomy relationship but
-        // the direct lookup is faster and simpler in contexts where only the ID is needed.
+        // and the ACF load_terms behavior work.
+
         if ( $term_id ) {
             wp_set_object_terms( $post_id, $term_id, WS_JURISDICTION_TAXONOMY );
-            update_post_meta( $post_id, 'ws_jx_term_id', $term_id );
         }
 
         // Mark as seeded.
         // Direct get_post_meta() call is intentional here. ws_matrix_source is an
         // administrative flag written by the seeder and consumed exclusively by admin
         // tooling. It is not jurisdiction content and does not belong in the query layer.
-        update_post_meta( $post_id, 'ws_matrix_source', 'jurisdiction-matrix' );
+        update_post_meta( $post_id, 'ws_matrix_source', 'matrix-jurisdiction' );
     }
 }
 
