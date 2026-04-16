@@ -24,23 +24,17 @@
  *
  * PLAIN ENGLISH
  * -------------
- * Procedures use ws_ag_procedure_walkthrough (registered in this file) as their
- * plain-English content. The central acf-plain-english-fields.php group is
- * NOT applied to this CPT — the walkthrough IS the plain-English layer.
+ * Procedures use ws_ag_procedure_walkthrough_wysiwyg (registered in this file)
+ * as their plain-English content. The central acf-plain-english-fields.php group
+ * is NOT applied to this CPT — the walkthrough IS the plain-English layer.
  *
  * @package    WhistleblowerShield
  * @since      3.9.0
- * @version 3.10.0
+ * @version    3.10.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
- * VERSION
- * -------
- * 3.9.0  Initial registration. Phase 1 of ws-ag-procedure feature build.
- * 3.10.0 ws_ag_procedure_type select field replaced with ws_ag_procedure_type taxonomy
- *        field (radio UI, save_terms: 1, load_terms: 1). Field name changed
- *        from ws_ag_procedure_type to ws_ag_procedure_type to match taxonomy slug.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -107,7 +101,7 @@ function ws_register_acf_ag_procedures() {
                 'label'         => 'Procedure Type',
                 'name'          => 'ws_ag_procedure_type',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_ag_procedure_type',
+                'taxonomy'      => 'ws_procedure_type',
                 'field_type'    => 'radio',
                 'instructions'  => 'Disclosure = reporting wrongdoing. Retaliation = filing a complaint after adverse action. Both = single procedure covers both.',
                 'required'      => 1,

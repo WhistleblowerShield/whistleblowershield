@@ -6,11 +6,11 @@
  *
  * FIELD GROUPS
  * ------------
- * group_ws_agencies  →  Agency Details & Reporting Protocols
+ * group_agency_metadata  →  Agency Details & Reporting Protocols
  *
  * JURISDICTION FIELD
  * ------------------
- * Scoped via the ws_jurisdiction taxonomy (field_ws_agency_jurisdiction).
+ * Scoped via the ws_jurisdiction taxonomy (field_agency_jurisdictions).
  * ACF saves/loads terms natively — no dynamic choice filter needed.
  * Replaces the retired ws_jx_code meta select (Phase 3.2 / 12.1).
  *
@@ -18,31 +18,13 @@
  * ----
  * Registered on acf/init, consistent with all other ACF files in ws-core.
  *
- * VERSION
- * -------
- * 2.3.1  Wrapped in add_action('acf/init',...) for hook consistency.
- *        Renamed field key field_ws_jx_code → field_ws_agencies_jx_codes
- *        to eliminate conflict with acf-jurisdiction.php.
- *        Jurisdiction choices now populated dynamically via acf/load_field
- *        instead of a hardcoded static list.
- *        Added ws_process_type taxonomy field (Process Types Handled).
- *        ws-agency added to ws_disclosure_cat object types in
- *        register-taxonomies.php so save_terms functions correctly.
- * 3.0.0  Phase 8: ws_jx_code multi-select replaced by ws_jurisdiction taxonomy
- *        field. Dynamic choice filter removed. Plain Language tab added (9.2).
- * 3.4.0  Stamp field centralization:
- *        - Removed Authorship & Review tab and all stamp fields — now registered
- *          centrally in acf-stamp-fields.php (group_stamp_metadata, menu_order 90).
- *        - Removed Plain Language tab and all plain English fields — now registered
- *          centrally in acf-plain-english-fields.php (menu_order 85).
- *        - ws_agency_last_reviewed retained as a content-owned field.
- * 3.12.0 ws_agency_disclosure_targets field added to Agency Identity tab.
- *        Mirrors taxonomy-agencies.txt flat disclosure_targets palette.
- * 3.12.1 Header and field-group documentation sync.
  *
- * @package WhistleblowerShield
- * @since   2.3.1
- * @version 3.12.1
+ * @package    WhistleblowerShield
+ * @since      2.3.1
+ * @version    3.12.2
+ * @author     Whistleblower Shield
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -176,7 +158,7 @@ function ws_register_acf_agencies() {
             [
                 'key'           => 'field_agency_process_types',
                 'label'         => 'Process Types Handled',
-                'name'          => 'ws_process_types',
+                'name'          => 'ws_agency_process_types',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_process_type',
                 'instructions'  => 'Select all process types this agency handles. Refer to the relevant statute(s) as the authoritative source.',
@@ -264,7 +246,7 @@ function ws_register_acf_agencies() {
                 'label'         => 'Languages Supported',
                 'name'          => 'ws_agency_languages',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_languages',
+                'taxonomy'      => 'ws_language',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Select languages this agency can support. Check "Additional" if other languages are available — then specify them below.',
                 'add_term'      => 0,

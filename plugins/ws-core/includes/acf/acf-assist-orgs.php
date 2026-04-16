@@ -11,12 +11,12 @@
  * Key fields:
  *   ws_aorg_serves_nationwide      — true = surfaces in nationwide directory query
  *   ws_aorg_whistleblower_scope    — integer 1-3; drives base score in ws_filter_score_org()
- *   ws_jurisdiction                — taxonomy field (save_terms: 1)
- *   ws_languages                   — taxonomy field; additional_languages text triggers
- *                                    'additional' term auto-assign via admin-hooks.php
- *   ws_aorg_cost_models            — taxonomy multi-select (save_terms: 1) — Phase 2 filter axis
- *   ws_employment_sector           — taxonomy (save_terms: 1) — Phase 2 filter axis
- *   ws_case_stage                  — taxonomy (save_terms: 1) — Phase 2 filter axis
+ *   ws_aorg_jurisdictions          — taxonomy field; multi-select (save_terms: 1)
+ *   ws_aorg_languages              — taxonomy field; multi-select (save_terms: 1) additional_languages
+ *                                    text triggers 'additional' term auto-assign via admin-hooks.php
+ *   ws_aorg_cost_models            — taxonomy field; multi-select (save_terms: 1) — Phase 2 filter axis
+ *   ws_aorg_employment_sectors     — taxonomy field; multi-select (save_terms: 1) — Phase 2 filter axis
+ *   ws_aorg_case_stages            — taxonomy field; multi-select (save_terms: 1) — Phase 2 filter axis
  *
  * META KEY NOTE
  * -------------
@@ -26,69 +26,13 @@
  * to ws_aorg_internal_id. The leading underscore in prompt JSON schema output
  * is a naming convention only; ingest strips it during mapping.
  *
- * @package WhistleblowerShield
- * @since   1.0.0
- * @version 3.16.6
+ * @package    WhistleblowerShield
+ * @since      1.0.0
+ * @version    3.17.0
+ * @author     Whistleblower Shield
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
  *
- * VERSION
- * -------
- * 3.16.6  Added ws_aorg_case_stage_details textarea field.
- *         Conditional display: appears when ws_aorg_case_stages includes
- *         the ws_case_stage term slug `other`.
- * 3.16.5  Secure contact tool canonicalization:
- *         - ws_aorg_secure_contact_tool now uses WS_SCHEMA_SECURE_TOOL select
- *         - ws_aorg_secure_contact_tool_other added (conditional when tool = other)
- * 3.16.4  Eligibility & cost schema correction:
- *         - ws_aorg_cost_models remains plural and now uses taxonomy checkbox
- *           (multi-select) to support multiple cost structures per organization
- *         - ws_aorg_income_limit_notes retained for income-specific criteria
- *         - ws_aorg_eligibility_notes retained for non-income eligibility constraints
- * 3.16.3  Meta naming rule alignment pass (ACF schema only):
- *         - Multi-value jurisdiction field name pluralized:
- *           WS_JURISDICTION_TAXONOMY (ws_jurisdiction) -> ws_jurisdictions
- *         - URL field naming in this group already compliant (_url suffix only on URL fields)
- * 3.16.2  Naming normalization:
- *         - ws_ao_case_stage fully replaced by ws_aorg_case_stages
- *         - ws_aorg_disclosure_type fully replaced by ws_aorg_disclosure_types
- *         - ws_aorg_process_types retained as multi-select taxonomy field
- * 3.16.1  Process Types field added to Scope of Service tab:
- *         - ws_process_type taxonomy (checkbox, save_terms/load_terms)
- *         Query layer now returns process_types in assist-org payloads.
- * 3.16.0  ws_aorg_official_name (text) added to Identity tab immediately after
- *         ws_aorg_internal_id. Stores the full official organization name as a
- *         dedicated meta field. post_title mirrors this value at ingest time but
- *         ws_aorg_official_name is the authoritative data-layer source, consistent
- *         with how all other CPTs store their official name in a dedicated meta key.
- * 3.15.2  Contact & Intake secure-channel fields added:
- *         - ws_aorg_has_secure_channel (true/false)
- *         - ws_aorg_secure_contact_url (url)
- *         - ws_aorg_secure_contact_tool (text; e.g., Signal, SecureDrop)
- * 3.16.0  Contact model refactor:
- *         - ws_aorg_intake_url and ws_aorg_contact_url are separate fields
- *           (intake and contact are distinct concepts in render logic)
- *         - ws_aorg_phone replaced by ws_aorg_phones repeater:
- *             ws_aorg_phone_type, ws_aorg_phone_number
- *         - ws_aorg_email replaced by ws_aorg_emails repeater:
- *             ws_aorg_email_type, ws_aorg_email_address
- * 3.15.1  ws_aorg_whistleblower_scope (number 1-3) added to Scope of Service tab.
- *         ws_aorg_whistleblower_note (textarea) added — editorial justification for scope.
- *         ws_aorg_common_name (text) added to Identity tab.
- * 3.12.4  Removed explicit ws_aorg_federal_only field.
- *         Federal-only status is derived from scope rules:
- *         serves_nationwide = 0 and jurisdiction = ['us'].
- * 3.12.3  Scope controls expanded:
- *         - ws_aorg_serves_nationwide explicitly treated as 57-jurisdiction flag.
- *         - ws_aorg_limited_scope flag added; ws_aorg_community_scope now
- *           appears only for limited, non-nationwide orgs.
- * 3.12.2  ws_aorg_community_scope field added to Scope of Service tab.
- * 3.12.1  Internal Relationship tab added for non-public org contact fields.
- * 3.12.0  ws_aorg_disclosure_targets field added to Scope of Service tab.
- *         ws_aorg_case_stages (legacy key: ws_ao_case_stage) added to Scope of Service tab.
- * 3.9.0   ws_case_stage taxonomy field added.
- * 3.7.0   ws_employment_sector converted from ACF checkbox to taxonomy field.
- *         ws_aorg_cost_models converted from select to taxonomy multi-select.
- * 3.0.0   ws_jx_code join retired; ws_jurisdiction taxonomy used throughout.
- * 1.0.0   Initial release.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -101,8 +45,8 @@ function ws_register_acf_assist_org() {
         return;
     }
 
-    $phone_type_choices  = array_combine( WS_SCHEMA_PHONE_TYPE, WS_SCHEMA_PHONE_TYPE );
-    $email_type_choices  = array_combine( WS_SCHEMA_EMAIL_TYPE, WS_SCHEMA_EMAIL_TYPE );
+    $phone_type_choices  = array_combine( WS_SCHEMA_PHONE_TYPE,  WS_SCHEMA_PHONE_TYPE );
+    $email_type_choices  = array_combine( WS_SCHEMA_EMAIL_TYPE,  WS_SCHEMA_EMAIL_TYPE );
     $secure_tool_choices = array_combine( WS_SCHEMA_SECURE_TOOL, WS_SCHEMA_SECURE_TOOL );
 
     acf_add_local_field_group( [
@@ -425,7 +369,8 @@ function ws_register_acf_assist_org() {
                 'rows'              => 3,
                 'conditional_logic' => 0,
             ],
-
+            // conditional_logic set dynamically — see ws_aorg_details_conditional()
+            
             [
                 'key'           => 'field_aorg_employment_sectors',
                 'label'         => 'Employment Sectors Served',
@@ -447,7 +392,7 @@ function ws_register_acf_assist_org() {
                 'label'         => 'Protected Classes Served',
                 'name'          => 'ws_aorg_protected_classes',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_aorg_protected_classes',
+                'taxonomy'      => 'ws_protected_class',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Select all protected classes this organization serves. If "has-details" is selected, provide details below.',
                 'add_term'      => 0,
@@ -464,8 +409,9 @@ function ws_register_acf_assist_org() {
                 'type'         => 'textarea',
                 'instructions' => 'If "has-details" is selected above, provide details here.',
                 'rows'         => 3,
-            ],
-
+            ], 
+            // conditional_logic set dynamically — see ws_aorg_details_conditional()
+            
             // ────────────────────────────────────────────────────────────────
             // Tab: Contact & Intake
             //
@@ -904,11 +850,12 @@ function ws_register_acf_assist_org() {
 
 // ── Conditional logic: taxonomy term-gated details fields ─────────────────────
 //
-// - disclosure_targets_details appears when ws_disclosure_target has term
+// - disclosure_target_details appears when ws_disclosure_targets has term
 //   slug 'has-details'.
 // - protected_class_details appears when ws_protected_classes has term
 //   slug 'has-details'.
-// - case_stage_details appears when ws_case_stage has term slug 'other'.
+// - case_stage_details appears when ws_case_stages has term slug 'other'.
+// - additional_services appears when ws_aorg_services has term slug 'additional'.
 
 add_filter( 'acf/load_field', 'ws_aorg_details_conditional' );
 
@@ -916,8 +863,9 @@ function ws_aorg_details_conditional( $field ) {
 
     static $map = [
         'field_aorg_disclosure_target_details'  => [ 'ws_disclosure_target', 'field_aorg_disclosure_targets', 'has-details' ],
-        'field_aorg_protected_class_details'    => [ 'ws_protected_classes', 'field_aorg_protected_classes',  'has-details' ],
-        'field_aorg_case_stage_details'         => [ 'ws_case_stage',        'field_aorg_case_stages',        'other' ],
+        'field_aorg_protected_class_details'    => [ 'ws_protected_class',   'field_aorg_protected_classes',  'has-details' ],
+        'field_aorg_case_stage_details'         => [ 'ws_case_stage',        'field_aorg_case_stages',        'other'       ],
+        'field_aorg_additional_services'        => [ 'ws_aorg_service',      'field_aorg_services',           'additional'  ],
     ];
 
     if ( ! isset( $map[ $field['key'] ] ) ) {

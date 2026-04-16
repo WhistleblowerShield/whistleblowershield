@@ -54,10 +54,6 @@
  * arg. The wp_insert_post hook below reads this arg and assigns the matching
  * ws_jurisdiction term immediately on post creation.
  *
- * ws_jx_term_id post meta: written on every jurisdiction save via the
- * save_post_jurisdiction hook in query-jurisdiction.php. Provides a direct
- * post->term_id mapping for seeder and query layer use.
- *
  *
  * STAMP META KEYS
  * ---------------
@@ -90,9 +86,12 @@
  * 3.10.1  Header documentation refresh for current cross-CPT responsibilities.
  * 3.10.2  Shared phone format validator added for assist-org and agency ACF fields.
  *
- * @package WhistleblowerShield
- * @since   2.1.0
- * @version 3.10.2
+ * @package    WhistleblowerShield
+ * @since      2.1.0
+ * @version    3.10.2
+ * @author     Whistleblower Shield
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -271,7 +270,7 @@ function ws_acf_validate_phone_number( $valid, $value, $field, $input_name ) {
     return true;
 }
 
-
+//@todo - get sane... fix this....
 // ── Auto-fill today: last_reviewed on existing posts when plain_english_reviewed is on ─
 //
 // Fills last_reviewed with today's date only when all three conditions hold:
@@ -715,10 +714,10 @@ function ws_acf_stamp_summarized_fields( $post_id ) {
 }
 
 
-// ── Auto-assign ws_languages "additional" term ────────────────────────────────
+// ── Auto-assign ws_language "additional" term ────────────────────────────────
 //
 // When ws_agency_additional_languages (ws-agency) or ws_aorg_additional_languages
-// (ws-assist-org) is non-empty, the "additional" ws_languages term is assigned
+// (ws-assist-org) is non-empty, the "additional" ws_language term is assigned
 // automatically so the taxonomy filter can surface these records.
 // When the field is cleared, the term is removed.
 //
@@ -727,7 +726,7 @@ function ws_acf_stamp_summarized_fields( $post_id ) {
 add_action( 'acf/save_post', 'ws_sync_additional_languages_term', 25 );
 
 /**
- * Syncs the ws_languages "additional" term based on the additional-languages
+ * Syncs the ws_language "additional" term based on the additional-languages
  * field value for ws-agency and ws-assist-org posts.
  *
  * @param  int|string $post_id  Post ID passed by acf/save_post.
@@ -744,7 +743,7 @@ function ws_sync_additional_languages_term( $post_id ) {
         return;
     }
 
-    $additional_term = get_term_by( 'slug', 'additional', 'ws_languages' );
+    $additional_term = get_term_by( 'slug', 'additional', 'ws_language' );
     if ( ! $additional_term || is_wp_error( $additional_term ) ) {
         return; // Taxonomy not yet seeded — bail silently.
     }
@@ -752,9 +751,15 @@ function ws_sync_additional_languages_term( $post_id ) {
     $value = trim( (string) get_post_meta( $post_id, $meta_key, true ) );
 
     if ( $value !== '' ) {
-        wp_set_object_terms( $post_id, $additional_term->term_id, 'ws_languages', true );
+        $result = wp_set_object_terms( $post_id, $additional_term->term_id, 'ws_language', true );
+        if ( is_wp_error( $result ) ) {
+            return;
+        }
     } else {
-        wp_remove_object_terms( $post_id, $additional_term->term_id, 'ws_languages' );
+        $result = wp_remove_object_terms( $post_id, $additional_term->term_id, 'ws_language' );
+        if ( is_wp_error( $result ) ) {
+            return;
+        }
     }
 }
 
