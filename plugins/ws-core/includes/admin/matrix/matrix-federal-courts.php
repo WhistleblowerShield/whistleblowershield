@@ -2,16 +2,20 @@
 /**
  * matrix-federal-courts.php — Global registry of U.S. federal courts for jx-interpretation fields.
  *
- * @package WhistleblowerShield
- * @since   3.8.0
- * @version 3.10.0
+ * @package    WhistleblowerShield
+ * @since      3.8.0
+ * @version    3.17.0
+ * @author     Whistleblower Shield
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
+ * 
  */
 
 defined( 'ABSPATH' ) || exit;
 
-global $ws_court_matrix;
+global $_ws_federal_court_matrix;
 
-$ws_court_matrix = [
+$ws_federal_court_matrix = [
 
     // ── 0. Other (edge case — court not in matrix) ────────────────────────
     //
@@ -303,9 +307,9 @@ $ws_court_matrix = [
 
 
 // ════════════════════════════════════════════════════════════════════════════
-// Gate: ws_seeded_court_matrix
+// Gate: ws_seeded_federal_court_matrix
 //
-// Courts are not a CPT. $ws_court_matrix is the single source of truth —
+// Courts are not a CPT. $_ws_federal_court_matrix is the single source of truth —
 // loaded into memory at runtime and consumed directly by:
 //   - acf-jx-interpretations.php  (ws_interp_court select field choices)
 //   - admin-interpretation-metabox.php  (court label resolution)
@@ -326,7 +330,7 @@ $ws_court_matrix = [
 // ════════════════════════════════════════════════════════════════════════════
 
 add_action( 'admin_init', function() {
-    if ( get_option( 'ws_seeded_court_matrix' ) !== '1.0.0' ) {
-        update_option( 'ws_seeded_court_matrix', '1.0.0' );
+    if ( get_option( 'ws_seeded_federal_court_matrix' ) !== '1.0.0' ) {
+        update_option( 'ws_seeded_federal_court_matrix', '1.0.0' );
     }
 } );

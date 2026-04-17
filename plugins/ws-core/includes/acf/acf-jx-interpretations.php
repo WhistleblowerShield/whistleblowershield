@@ -18,7 +18,7 @@
  *   ws_jx_interp_court                          Court (select, required)
  *   ws_jx_interp_court_name                     Court Name (text, conditional)
  *   ws_jx_interp_year                           Decision Year (number, required)
- *   ws_jx_interp_favorable                      Favorable to Whistleblower? (true_false, optional)
+ *   ws_jx_interp_is_favorable                   Favorable to Whistleblower? (true_false, optional)
  *   ws_jx_interp_official_name                  Official Name (text, required)
  *   ws_jx_interp_common_name                    Common Name (text, optional)
  *   ws_jx_interp_case_citation                  Citation (text, required)
@@ -49,8 +49,8 @@
  *
  * Relationships tab:
  *   ws_jx_interp_statute_id                     Parent Statute (post_object, optional)
- *   ws_jx_interp_common_law_id                  Parent Common Law Doctrine (post_object, optional)
- *   ws_jx_interp_affected_jurisdictions         Affected Jurisdictions (multi_select, optional)
+ *   ws_jx_interp_comlaw_id                      Parent Common Law Doctrine (post_object, optional)
+ *   ws_jx_interp_affected_jx                    Affected Jurisdictions (multi_select, optional)
  *   ws_jx_interp_last_reviewed                  Last Verified Date (text, optional)
  *
  * Reference Materials tab:
@@ -65,8 +65,8 @@
  *
  * IMPLEMENTATION NOTES
  * --------------------
- * Court choices are populated dynamically by ws_interp_load_court_choices().
- * ws_jx_interp_affected_jurisdictions is auto-computed on save from the court
+ * Court choices are populated dynamically by ws_jx_interp_load_court_choices().
+ * ws_jx_interp_affected_jx is auto-computed on save from the court
  * matrix mapping and uses save_terms: 0 to avoid taxonomy query pollution.
  *
  * @package    WhistleblowerShield
@@ -162,9 +162,9 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'           => 'field_jx_interp_favorable',
+                'key'           => 'field_jx_interp_is_favorable',
                 'label'         => 'Favorable to Whistleblower?',
-                'name'          => 'ws_jx_interp_favorable',
+                'name'          => 'ws_jx_interp_is_favorable',
                 'type'          => 'true_false',
                 'instructions'  => 'Does this ruling support the whistleblower\'s position?',
                 'ui'            => 1,
@@ -507,9 +507,9 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'           => 'field_jx_interp_common_law_id',
+                'key'           => 'field_jx_interp_comlaw_id',
                 'label'         => 'Parent Common Law Doctrine',
-                'name'          => 'ws_jx_interp_common_law_id',
+                'name'          => 'ws_jx_interp_comlaw_id',
                 'type'          => 'post_object',
                 'post_type'     => [ 'jx-common-law' ],
                 'instructions'  => 'Parent common-law doctrine this case interprets, when doctrine-linked.',
@@ -521,9 +521,9 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'           => 'field_jx_interp_affected_jurisdictions',
+                'key'           => 'field_jx_interp_affected_jx',
                 'label'         => 'Affected Jurisdictions',
-                'name'          => 'ws_jx_interp_affected_jurisdictions',
+                'name'          => 'ws_jx_interp_affected_jx',
                 'type'          => 'taxonomy',
                 'taxonomy'      => WS_JURISDICTION_TAXONOMY,
                 'field_type'    => 'multi_select',
@@ -603,12 +603,12 @@ add_filter( 'acf/load_field', 'ws_jx_interp_details_conditional' );
 function ws_jx_interp_details_conditional( $field ) {
 
     static $map = [
-        'field_jx_interp_protected_class_details'    => [ 'ws_protected_class',      'field_jx_interp_protected_classes' ],
-        'field_jx_interp_disclosure_target_details'  => [ 'ws_disclosure_target',    'field_jx_interp_disclosure_targets' ],
+        'field_jx_interp_protected_class_details'     => [ 'ws_protected_class',      'field_jx_interp_protected_classes' ],
+        'field_jx_interp_disclosure_target_details'   => [ 'ws_disclosure_target',    'field_jx_interp_disclosure_targets' ],
         'field_jx_interp_adverse_action_type_details' => [ 'ws_adverse_action_type',  'field_jx_interp_adverse_action_types' ],
-        'field_jx_interp_remedy_details'             => [ 'ws_remedy',               'field_jx_interp_remedies' ],
-        'field_jx_interp_employee_standard_details'  => [ 'ws_employee_standard',    'field_jx_interp_employee_standards' ],
-        'field_jx_interp_employer_defense_details'   => [ 'ws_employer_defense',     'field_jx_interp_employer_defenses' ],
+        'field_jx_interp_remedy_details'              => [ 'ws_remedy',               'field_jx_interp_remedies' ],
+        'field_jx_interp_employee_standard_details'   => [ 'ws_employee_standard',    'field_jx_interp_employee_standards' ],
+        'field_jx_interp_employer_defense_details'    => [ 'ws_employer_defense',     'field_jx_interp_employer_defenses' ],
     ];
 
     if ( ! isset( $map[ $field['key'] ] ) ) {
@@ -638,17 +638,18 @@ function ws_jx_interp_details_conditional( $field ) {
 //
 //   Federal statute (has 'us' ws_jurisdiction term):
 //     All federal courts (SCOTUS + circuits + districts) merged with all
-//     state courts. $ws_court_matrix and $ws_state_court_matrix are merged.
+//     state courts. $_ws_federal_court_matrix and $_ws_state_court_matrix
+//     are merged.
 //
 //   State statute (does not have 'us' term):
-//     State courts only ($ws_state_court_matrix). Federal courts do not
+//     State courts only ($_ws_state_court_matrix). Federal courts do not
 //     interpret state statutes.
 //
 //   Unknown (no parent resolved yet):
 //     Defaults to showing all courts (federal + state) as a safe fallback.
 //
 // Parent context is resolved from saved meta (existing records) or URL
-// parameters (new records): statute_id, then common_law_id.
+// parameters (new records): statute_id, then comlaw_id.
 //
 // The 'other' entry (level=99) sorts last and reveals the free-text
 // ws_jx_interp_court_name field for courts not in either matrix.
@@ -656,12 +657,12 @@ function ws_jx_interp_details_conditional( $field ) {
 // Sorted by level ascending so SCOTUS / state supreme courts appear before
 // appellate courts, which appear before district / trial courts.
 
-add_filter( 'acf/load_field/key=field_jx_interp_court', 'ws_interp_load_court_choices' );
+add_filter( 'acf/load_field/key=field_jx_interp_court', 'ws_jx_interp_load_court_choices' );
 
-function ws_interp_load_court_choices( $field ) {
-    global $ws_court_matrix, $ws_state_court_matrix, $post;
+function ws_jx_interp_load_court_choices( $field ) {
+    global $_ws_federal_court_matrix, $_ws_state_court_matrix, $post;
 
-    if ( empty( $ws_court_matrix ) ) {
+    if ( empty( $_ws_federal_court_matrix ) ) {
         return $field;
     }
 
@@ -669,22 +670,22 @@ function ws_interp_load_court_choices( $field ) {
     $parent_id = 0;
     if ( $post && get_post_type( $post->ID ) === 'jx-interpretation' && get_post_status( $post->ID ) !== 'auto-draft' ) {
         $statute_id = (int) get_post_meta( $post->ID, 'ws_jx_interp_statute_id', true );
-        $common_law_id = (int) get_post_meta( $post->ID, 'ws_jx_interp_common_law_id', true );
-        $parent_id = $statute_id > 0 ? $statute_id : $common_law_id;
+        $comlaw_id = (int) get_post_meta( $post->ID, 'ws_jx_interp_comlaw_id', true );
+        $parent_id = $statute_id > 0 ? $statute_id : $comlaw_id;
     }
     if ( ! $parent_id && isset( $_GET['statute_id'] ) ) {
         $parent_id = absint( $_GET['statute_id'] );
     }
-    if ( ! $parent_id && isset( $_GET['common_law_id'] ) ) {
-        $parent_id = absint( $_GET['common_law_id'] );
+    if ( ! $parent_id && isset( $_GET['comlaw_id'] ) ) {
+        $parent_id = absint( $_GET['comlaw_id'] );
     }
 
     // Determine parent scope. Unknown parent defaults to showing all courts.
     $is_federal = ! $parent_id || has_term( 'us', WS_JURISDICTION_TAXONOMY, $parent_id );
 
     $candidates = $is_federal
-        ? array_merge( $ws_court_matrix, $ws_state_court_matrix ?: [] )
-        : ( $ws_state_court_matrix ?: [] );
+        ? array_merge( $_ws_federal_court_matrix, $_ws_state_court_matrix ?: [] )
+        : ( $_ws_state_court_matrix ?: [] );
 
     uasort( $candidates, function( $a, $b ) {
         return $a['level'] <=> $b['level'];
@@ -736,43 +737,44 @@ function ws_interp_prefill_statute_id( $value, $post_id, $field ) {
     return $value;
 }
 
-// ── Pre-populate ws_jx_interp_common_law_id from ?common_law_id= URL param ──
+// ── Pre-populate ws_jx_interp_comlaw_id from ?comlaw_id= URL param ──
 //
 // Mirrors ws_interp_prefill_statute_id() above.
 // When a new interpretation is opened from the common-law interpretation metabox,
-// common_law_id is passed as a URL param. acf/load_value returns it as the
+// comlaw_id is passed as a URL param. acf/load_value returns it as the
 // field's live value so ACF renders the doctrine pre-selected.
 
-add_filter( 'acf/load_value/key=field_jx_interp_common_law_id', 'ws_interp_prefill_common_law_id', 5, 3 );
+add_filter( 'acf/load_value/key=field_jx_interp_comlaw_id', 'ws_interp_prefill_comlaw_id', 5, 3 );
 
-function ws_interp_prefill_common_law_id( $value, $post_id, $field ) {
+function ws_interp_prefill_comlaw_id( $value, $post_id, $field ) {
 
     // Only pre-fill on brand-new auto-draft posts.
     if ( get_post_status( $post_id ) !== 'auto-draft' ) {
         return $value;
     }
 
-    // Only act when the URL carries a valid common_law_id.
-    if ( ! isset( $_GET['common_law_id'] ) ) {
+    // Only act when the URL carries a valid comlaw_id.
+    if ( ! isset( $_GET['comlaw_id'] ) ) {
         return $value;
     }
 
-    $common_law_id = absint( $_GET['common_law_id'] );
+    $comlaw_id = absint( $_GET['comlaw_id'] );
 
-    if ( $common_law_id && get_post_type( $common_law_id ) === 'jx-common-law' ) {
-        return $common_law_id;
+    if ( $comlaw_id && get_post_type( $comlaw_id ) === 'jx-common-law' ) {
+        return $comlaw_id;
     }
 
     return $value;
 }
 
 
-// ── Auto-populate ws_jx_interp_affected_jurisdictions from court matrix on every save ────
+// ── Auto-populate ws_jx_interp_affected_jx ─────────────────────────────────
+// ── from court matrix on every save ────────────────────────────────────────
 //
 // Runs at priority 20 (after ACF saves its fields at 10). Reads the court key
 // saved to ws_jx_interp_court, looks it up via ws_court_lookup() (checks both
-// $ws_court_matrix and $ws_state_court_matrix), and resolves ws_jx_codes to
-// ws_jurisdiction taxonomy term IDs.
+// $_ws_federal_court_matrix and $_ws_state_court_matrix), and resolves
+// ws_jx_codes to ws_jurisdiction taxonomy term IDs.
 //
 // SCOTUS (ws_jx_codes = null): writes an empty array. The query/render layer
 // treats empty affected_jx + SCOTUS court as "all jurisdictions" — avoids
@@ -780,9 +782,9 @@ function ws_interp_prefill_common_law_id( $value, $post_id, $field ) {
 //
 // Recomputes on every save so the value stays in sync if the court is changed.
 
-add_action( 'acf/save_post', 'ws_interp_auto_populate_affected_jx', 20 );
+add_action( 'acf/save_post', 'ws_jx_interp_auto_populate_affected_jx', 20 );
 
-function ws_interp_auto_populate_affected_jx( $post_id ) {
+function ws_jx_interp_auto_populate_affected_jx( $post_id ) {
 
     if ( get_post_type( $post_id ) !== 'jx-interpretation' ) {
         return;
@@ -804,7 +806,7 @@ function ws_interp_auto_populate_affected_jx( $post_id ) {
 
     // SCOTUS: null = all jurisdictions. Store empty to signal bind-all.
     if ( $jx_codes === null ) {
-        update_post_meta( $post_id, 'ws_jx_interp_affected_jurisdictions', [] );
+        update_post_meta( $post_id, 'ws_jx_interp_affected_jx', [] );
         return;
     }
 
@@ -817,5 +819,5 @@ function ws_interp_auto_populate_affected_jx( $post_id ) {
         }
     }
 
-    update_post_meta( $post_id, 'ws_jx_interp_affected_jurisdictions', $term_ids );
+    update_post_meta( $post_id, 'ws_jx_interp_affected_jx', $term_ids );
 }

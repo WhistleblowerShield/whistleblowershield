@@ -11,8 +11,8 @@ first install. All seeders run once and are gated against re-running.
 |---|---|---|
 | `matrix-helpers.php` | Shared utilities — no data, loads first | — |
 | `matrix-jurisdictions.php` | 57 jurisdiction posts + taxonomy terms | `ws_seeded_jurisdiction_matrix` |
-| `matrix-federal-courts.php` | Federal court registry (`$ws_court_matrix`) | `ws_seeded_court_matrix` |
-| `matrix-state-courts.php` | State/territory court registry (`$ws_state_court_matrix`) | `ws_seeded_state_court_matrix` |
+| `matrix-federal-courts.php` | Federal court registry (`$_ws_fedral_court_matrix`) | `ws_seeded_federal_court_matrix` |
+| `matrix-state-courts.php` | State/territory court registry (`$_ws_state_court_matrix`) | `ws_seeded_state_court_matrix` |
 | `matrix-fed-statutes.php` | Major federal whistleblower statutes | `ws_seeded_fed_statutes_matrix` |
 | `matrix-agencies.php` | Nationwide federal agencies | `ws_seeded_agency_matrix` |
 | `matrix-assist-orgs.php` | Nationwide and federal-scope assist organizations | `ws_seeded_assist_org_matrix` |
@@ -62,7 +62,7 @@ if ( defined( 'WS_MATRIX_SEEDING_IN_PROGRESS' ) ) return;
 ## Matrix Divergence Pattern
 
 Every seeded record receives `ws_matrix_source` post meta set to
-the seeder's slug (e.g. `'agency-matrix'`). This is the divergence
+the seeder's slug (e.g. `'matrix-agencies'`). This is the divergence
 signal.
 
 When `admin-matrix-watch.php` detects a save on a record carrying
@@ -78,10 +78,10 @@ unresolved divergences. To dismiss a divergence: set
 
 ## Court Matrices (In-Memory Only)
 
-`$ws_court_matrix` and `$ws_state_court_matrix` are PHP globals
+`$_ws_federal_court_matrix` and `$_ws_state_court_matrix` are PHP globals
 defined in their respective files. They are never seeded to CPT
 posts — they exist in memory only. `ws_court_lookup( $key )` in
-`matrix-helpers.php` searches both globals and returns the entry
+`query-helpers.php` searches both globals and returns the entry
 or `null`.
 
 On the frontend both globals are empty — court matrices are

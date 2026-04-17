@@ -45,18 +45,18 @@ defined( 'ABSPATH' ) || exit;
 // ════════════════════════════════════════════════════════════════════════════
 // Detection + Demotion
 //
-// Runs after ACF writes all fields (priority 10). Reads the new statute IDs
+// Runs after ACF writes all fields (priority 10). Reads the new parent IDs
 // and disclosure types from post meta and checks for hard mismatches.
 // ════════════════════════════════════════════════════════════════════════════
 
-add_action( 'acf/save_post', 'ws_procedure_check_statute_links', 20 );
+add_action( 'acf/save_post', 'ws_procedure_check_parent_links', 20 );
 
 /**
  * Validates statute/common-law links on ws-ag-procedure save. Demotes to draft on mismatch.
  *
  * @param  int|string  $post_id  Post ID from acf/save_post.
  */
-function ws_procedure_check_statute_links( $post_id ) {
+function ws_procedure_check_parent_links( $post_id ) {
 
     $post_id = (int) $post_id;
 
@@ -70,33 +70,33 @@ function ws_procedure_check_statute_links( $post_id ) {
 
     // ── Admin override: honour, log, reset, skip check ────────────────────
     //
-    // ACF saved ws_ag_procedure_statute_override at priority 10. If it is 1 the admin
+    // ACF saved ws_ag_procedure_parent_override at priority 10. If it is 1 the admin
     // has explicitly acknowledged the mismatch. Clear the flag, write the
     // audit log, reset the override to 0, then return without checking.
 
-    $override = (bool) get_post_meta( $post_id, 'ws_ag_procedure_statute_override', true );
+    $override = (bool) get_post_meta( $post_id, 'ws_ag_procedure_parent_override', true );
 
     if ( $override && current_user_can( 'manage_options' ) ) {
 
         // Append to audit log before clearing the flag detail.
-        $existing_detail = get_post_meta( $post_id, 'ws_ag_procedure_statute_flag_detail', true );
+        $existing_detail = get_post_meta( $post_id, 'ws_ag_procedure_parent_flag_detail', true );
         $log_entry = [
             'user_id'                  => get_current_user_id(),
             'user_name'                => wp_get_current_user()->display_name,
             'timestamp'                => current_time( 'Y-m-d H:i:s' ),
             'mismatches_at_override'   => $existing_detail ? json_decode( $existing_detail, true ) : [],
         ];
-        $existing_log = get_post_meta( $post_id, 'ws_ag_procedure_statute_override_log', true );
+        $existing_log = get_post_meta( $post_id, 'ws_ag_procedure_parent_override_log', true );
         $log          = $existing_log ? json_decode( $existing_log, true ) : [];
         if ( ! is_array( $log ) ) $log = [];
         $log[] = $log_entry;
-        update_post_meta( $post_id, 'ws_ag_procedure_statute_override_log', wp_json_encode( $log ) );
+        update_post_meta( $post_id, 'ws_ag_procedure_parent_override_log', wp_json_encode( $log ) );
 
         // Clear flag and reset override.
-        delete_post_meta( $post_id, 'ws_ag_procedure_statute_flagged' );
-        delete_post_meta( $post_id, 'ws_ag_procedure_statute_flag_detail' );
-        delete_post_meta( $post_id, 'ws_ag_procedure_statute_broad_scope' );
-        update_post_meta( $post_id, 'ws_ag_procedure_statute_override', 0 );
+        delete_post_meta( $post_id, 'ws_ag_procedure_parent_flagged' );
+        delete_post_meta( $post_id, 'ws_ag_procedure_parent_flag_detail' );
+        delete_post_meta( $post_id, 'ws_ag_procedure_parent_broad_scope' );
+        update_post_meta( $post_id, 'ws_ag_procedure_parent_override', 0 );
 
         return;
     }
@@ -112,9 +112,9 @@ function ws_procedure_check_statute_links( $post_id ) {
 
     // No linked authorities — clear all flags and return clean.
     if ( empty( $statute_ids ) && empty( $common_law_ids ) ) {
-        delete_post_meta( $post_id, 'ws_ag_procedure_statute_flagged' );
-        delete_post_meta( $post_id, 'ws_ag_procedure_statute_flag_detail' );
-        delete_post_meta( $post_id, 'ws_ag_procedure_statute_broad_scope' );
+        delete_post_meta( $post_id, 'ws_ag_procedure_parent_flagged' );
+        delete_post_meta( $post_id, 'ws_ag_procedure_parent_flag_detail' );
+        delete_post_meta( $post_id, 'ws_ag_procedure_parent_broad_scope' );
         return;
     }
 
@@ -130,9 +130,9 @@ function ws_procedure_check_statute_links( $post_id ) {
     // under these conditions cannot be automatically verified.
 
     if ( empty( $proc_disc_types ) ) {
-        update_post_meta( $post_id, 'ws_ag_procedure_statute_broad_scope', 1 );
+        update_post_meta( $post_id, 'ws_ag_procedure_parent_broad_scope', 1 );
     } else {
-        delete_post_meta( $post_id, 'ws_ag_procedure_statute_broad_scope' );
+        delete_post_meta( $post_id, 'ws_ag_procedure_parent_broad_scope' );
     }
 
     // ── Hard mismatch check: disclosure-type intersection per linked record ─
@@ -163,8 +163,6 @@ function ws_procedure_check_statute_links( $post_id ) {
                     'parent_type'   => 'statute',
                     'parent_id'     => $statute_id,
                     'parent_title'  => get_the_title( $statute_id ),
-                    'statute_id'    => $statute_id, // Back-compat for existing readers.
-                    'statute_title' => get_the_title( $statute_id ), // Back-compat for existing readers.
                     'reason'        => 'disclosure_type_mismatch',
                 ];
             }
@@ -201,8 +199,8 @@ function ws_procedure_check_statute_links( $post_id ) {
 
     if ( ! empty( $mismatches ) ) {
 
-        update_post_meta( $post_id, 'ws_ag_procedure_statute_flagged',     1 );
-        update_post_meta( $post_id, 'ws_ag_procedure_statute_flag_detail', wp_json_encode( $mismatches ) );
+        update_post_meta( $post_id, 'ws_ag_procedure_parent_flagged',     1 );
+        update_post_meta( $post_id, 'ws_ag_procedure_parent_flag_detail', wp_json_encode( $mismatches ) );
 
         // Demote to draft if currently published.
         // Static flag prevents wp_update_post() from re-triggering this hook.
@@ -218,8 +216,8 @@ function ws_procedure_check_statute_links( $post_id ) {
     } else {
 
         // Clean save — clear any existing hard-mismatch flag.
-        delete_post_meta( $post_id, 'ws_ag_procedure_statute_flagged' );
-        delete_post_meta( $post_id, 'ws_ag_procedure_statute_flag_detail' );
+        delete_post_meta( $post_id, 'ws_ag_procedure_parent_flagged' );
+        delete_post_meta( $post_id, 'ws_ag_procedure_parent_flag_detail' );
 
     }
 }
@@ -264,7 +262,8 @@ function ws_procedure_gate_publish( $data, $postarr ) {
 
     // Direct meta read — wp_insert_post_data fires before the post is saved; reading the flag
     // state here to gate publish. Query layer is not appropriate in this filter context.
-    if ( ! get_post_meta( $post_id, 'ws_ag_procedure_statute_flagged', true ) ) {
+    $parent_flag = get_post_meta( $post_id, 'ws_ag_procedure_parent_flagged', true );
+   if ( ! $parent_flag ) {
         return $data; // Not flagged — allow publish.
     }
 
@@ -272,10 +271,9 @@ function ws_procedure_gate_publish( $data, $postarr ) {
     // $_POST['acf'] is only populated on full ACF form submits, not on
     // quick edit / bulk action / REST / programmatic saves — so non-admin
     // contexts naturally fail this check and are always gated.
-    $override_submitted = current_user_can( 'manage_options' )
-        && ! empty( $_POST['acf']['field_ag_procedure_statute_override'] );  // phpcs:ignore WordPress.Security.NonceVerification.Missing
-
-    if ( $override_submitted ) {
+    $is_admin = current_user_can( 'manage_options' );
+    if (( $is_admin ) &&  ! empty( $_POST['acf']['field_ag_procedure_parent_override'] )) {  // phpcs:ignore WordPress.Security.NonceVerification.Missing
+    
         return $data; // Admin override acknowledged — allow publish this once.
     }
 
@@ -292,17 +290,17 @@ function ws_procedure_gate_publish( $data, $postarr ) {
 // Displays on the procedure edit screen (post.php) when flag meta is set.
 // Scoped to ws-ag-procedure only — not a global admin notice.
 //
-// Hard mismatch: error-level notice listing each flagged statute with title.
-// Broad-scope advisory: warning-level notice (no demotion, informational).
-// Both may appear simultaneously.
+// Hard mismatch: error-level notice listing each flagged statute or common law
+// with title. Broad-scope advisory: warning-level notice (no demotion,
+// informational). Both may appear simultaneously.
 // ════════════════════════════════════════════════════════════════════════════
 
-add_action( 'admin_notices', 'ws_procedure_statute_admin_notice' );
+add_action( 'admin_notices', 'ws_procedure_conflict_admin_notice' );
 
 /**
  * Renders authority link validation notices on the procedure edit screen.
  */
-function ws_procedure_statute_admin_notice() {
+function ws_procedure_conflict_admin_notice() {
 
     $screen = get_current_screen();
     if ( ! $screen || 'post' !== $screen->base || 'ws-ag-procedure' !== $screen->post_type ) {
@@ -317,9 +315,9 @@ function ws_procedure_statute_admin_notice() {
     $post_id    = $post->ID;
     $is_admin   = current_user_can( 'manage_options' );
     // Direct meta reads — admin notice display only; query layer is for front-end shortcode rendering.
-    $flagged    = (bool) get_post_meta( $post_id, 'ws_ag_procedure_statute_flagged',    true );
-    $broad      = (bool) get_post_meta( $post_id, 'ws_ag_procedure_statute_broad_scope', true );
-    $detail_raw = get_post_meta( $post_id, 'ws_ag_procedure_statute_flag_detail',       true );
+    $flagged    = (bool) get_post_meta( $post_id, 'ws_ag_procedure_parent_flagged',    true );
+    $broad      = (bool) get_post_meta( $post_id, 'ws_ag_procedure_parent_broad_scope', true );
+    $detail_raw = get_post_meta( $post_id, 'ws_ag_procedure_parent_flag_detail',       true );
     $mismatches = $detail_raw ? json_decode( $detail_raw, true ) : [];
     if ( ! is_array( $mismatches ) ) $mismatches = [];
 

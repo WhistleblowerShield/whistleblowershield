@@ -168,7 +168,7 @@ function ws_build_agency_procedure_row( $pid ) {
 
     $agency_id     = (int) get_post_meta( $pid, 'ws_ag_procedure_agency_id', true );
     $agency_url    = $agency_id ? get_permalink( $agency_id ) : '';
-    $agency_name   = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_name', true ) : '';
+    $agency_name   = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_official_name', true ) : '';
     $agency_title  = $agency_id ? get_the_title( $agency_id ) : '';
 
     // Taxonomy fields use save_terms=1 in ACF — read via WP term functions,
@@ -194,6 +194,8 @@ function ws_build_agency_procedure_row( $pid ) {
         'agency_id'        => $agency_id,
         'agency_name'      => $agency_name !== '' ? $agency_name : $agency_title,
         'agency_url'       => $agency_url ? (string) $agency_url : '',
+        'agency_acronym'   => get_post_meta( $pid, 'ws_agency_acronym',           true ),
+        'agency_mission'   => get_post_meta( $pid, 'ws_agency_mission',           true ),
         'type'             => $proc_type,
         'jurisdiction'     => ( $jx_terms   && ! is_wp_error( $jx_terms   ) ) ? $jx_terms   : [],
         'jurisdiction_slugs' => $jx_slugs,
@@ -314,6 +316,8 @@ function ws_get_procedures_for_statute( $statute_id ) {
             'agency_id'     => $agency_id,
             'agency_name'   => $agency_name !== '' ? $agency_name : $agency_title,
             'agency_url'    => $agency_id ? (string) get_permalink( $agency_id ) : '',
+            'acronym'       => get_post_meta( $pid, 'ws_agency_acronym',           true ),
+            'mission'       => get_post_meta( $pid, 'ws_agency_mission',           true ),
             'statute_ids'   => ws_q_normalize_id_list( get_post_meta( $pid, 'ws_ag_procedure_statute_ids', true ) ),
             'common_law_ids'=> ws_q_normalize_id_list( get_post_meta( $pid, 'ws_ag_procedure_common_law_ids', true ) ),
             'deadline_days' => (int)  get_post_meta( $pid, 'ws_ag_procedure_deadline_days', true ),
@@ -373,8 +377,10 @@ function ws_get_agency_data( $jx_term_id ) {
             'url'                   => get_permalink( $aid ),
             'status'                => get_post_status( $aid ),
             'code'                  => get_post_meta( $aid, 'ws_agency_code', true ),
-            'name'                  => get_post_meta( $aid, 'ws_agency_name', true ),
+            'name'                  => get_post_meta( $aid, 'ws_agency_official_name', true ),
             'logo'                  => get_field( 'ws_agency_logo', $aid ),
+            'acronym'               => get_post_meta( $pid, 'ws_agency_acronym',           true ),
+            'mission'               => get_post_meta( $pid, 'ws_agency_mission',           true ),
             'disclosure_type'       => ws_q_normalize_id_list( get_field( 'ws_agency_disclosure_types', $aid ) ),
             'disclosure_targets'    => ws_q_normalize_id_list( get_field( 'ws_agency_disclosure_targets', $aid ) ),
             'process_type'          => ws_q_normalize_id_list( get_field( 'ws_agency_process_types', $aid ) ),

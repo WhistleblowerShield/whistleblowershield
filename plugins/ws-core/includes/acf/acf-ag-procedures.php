@@ -193,7 +193,7 @@ function ws_register_acf_ag_procedures() {
             //
             // Statute links are validated on save by admin-procedure-watch.php:
             // a hard mismatch (zero disclosure-type intersection) demotes the
-            // procedure to draft and sets ws_ag_procedure_stat_flagged. The Admin
+            // procedure to draft and sets ws_ag_procedure_statute_flagged. The Admin
             // Review tab's override field allows admins to publish despite a
             // known mismatch when the link is intentionally unconventional.
 
@@ -204,6 +204,43 @@ function ws_register_acf_ag_procedures() {
                 'type'         => 'relationship',
                 'instructions' => 'Statutes this procedure specifically operates under. The picker is pre-filtered by this procedure\'s jurisdiction and disclosure types. Use the taxonomy dropdowns to refine further if needed.',
                 'post_type'    => [ 'jx-statute' ],
+                // 'search' provides a text box; 'taxonomy' adds dropdown filters
+                // for ws_jurisdiction and ws_disclosure_type so editors can
+                // narrow the list before selecting. Auto-scoping (see hook below)
+                // applies the procedure\'s own taxonomy scope automatically.
+                'filters'      => [ 'search', 'taxonomy' ],
+                'taxonomy'     => [ WS_JURISDICTION_TAXONOMY, 'ws_disclosure_type' ],
+                'min'          => 0,
+                'max'          => 0,
+                'return_format'=> 'id',
+                'allow_null'   => 1,
+                'multiple'     => 1,
+                'elements'     => [],
+            ],
+
+            // ── Related Common Law ──────────────────────────────────────────
+            //
+            // Authoritative list of jx-common-law posts this procedure operates
+            // under. The relationship picker is auto-scoped via
+            // ws_ag_procedure_scope_comlaw_picker() (below) — it pre-filters to
+            // common law entries matching this procedure's jurisdiction and disclosure
+            // types so the editor sees a relevant subset. Manual taxonomy
+            // filter UI (jurisdiction + disclosure type) is also available
+            // in the picker for edge cases.
+            //
+            // Common Law links are validated on save by admin-procedure-watch.php:
+            // a hard mismatch (zero disclosure-type intersection) demotes the
+            // procedure to draft and sets ws_ag_procedure_parent_flagged. The Admin
+            // Review tab's override field allows admins to publish despite a
+            // known mismatch when the link is intentionally unconventional.
+
+            [
+                'key'          => 'field_ag_procedure_comlaw_ids',
+                'label'        => 'Related Common Law',
+                'name'         => 'ws_ag_procedure_comlaw_ids',
+                'type'         => 'relationship',
+                'instructions' => 'Common Law entries this procedure specifically operates under. The picker is pre-filtered by this procedure\'s jurisdiction and disclosure types. Use the taxonomy dropdowns to refine further if needed.',
+                'post_type'    => [ 'jx-common-law' ],
                 // 'search' provides a text box; 'taxonomy' adds dropdown filters
                 // for ws_jurisdiction and ws_disclosure_type so editors can
                 // narrow the list before selecting. Auto-scoping (see hook below)
@@ -416,11 +453,11 @@ function ws_register_acf_ag_procedures() {
                 'type'  => 'tab',
             ],
             [
-                'key'           => 'field_ag_procedure_statute_override',
-                'label'         => 'Statute Link Override',
-                'name'          => 'ws_ag_procedure_statute_override',
+                'key'           => 'field_ag_procedure_parent_override',
+                'label'         => 'Parent Record (Statute or Common Law) Link Override',
+                'name'          => 'ws_ag_procedure_parent_override',
                 'type'          => 'true_false',
-                'instructions'  => 'Enable to acknowledge statute link warnings and allow publishing despite mismatches. Use only when the link is intentionally unconventional. Resets automatically after each save. Overrides are logged for audit.',
+                'instructions'  => 'Enable to acknowledge parent link warnings and allow publishing despite mismatches. Use only when the link is intentionally unconventional. Resets automatically after each save. Overrides are logged for audit.',
                 'ui'            => 1,
                 'ui_on_text'    => 'Override',
                 'ui_off_text'   => 'No',
@@ -434,12 +471,13 @@ function ws_register_acf_ag_procedures() {
 } // end ws_register_acf_ag_procedures
 
 
-// ── Auto-scope the statute relationship picker ────────────────────────────────
+// ── Auto-scope the statute and common-law relationship picker ────────────────────────────────
 //
-// Before the filed_ag_procedure_statute_ids relationship picker renders its results,
-// this hook narrows the query to statutes that share the procedure's own
+// Before the field_ag_procedure_statute_ids and field_ag_procedure_comlaw_ids
+// relationship pickers render their results, this hook narrows the query to
+// statutes and common-law entries that share the procedure's own
 // jurisdiction AND disclosure type scope. The editor sees only relevant
-// statutes without needing to manually apply filters first.
+// statutes or common-law entries without needing to manually apply filters first.
 //
 // Falls back to the full list (plus the manual filter UI) when:
 //   — The procedure is a new auto-draft (no taxonomy terms saved yet).
@@ -450,11 +488,17 @@ function ws_register_acf_ag_procedures() {
 
 add_filter(
     'acf/fields/relationship/query/key=field_ag_procedure_statute_ids',
-    'ws_ag_procedure_scope_statute_picker',
+    'ws_ag_procedure_scope_parent_ids',
     10, 3
 );
 
-function ws_ag_procedure_scope_statute_picker( $args, $field, $post_id ) {
+add_filter(
+    'acf/fields/relationship/query/key=field_ag_procedure_comlaw_ids',
+    'ws_ag_procedure_scope_parent_ids',
+    10, 3
+);
+
+function ws_ag_procedure_scope_parent_ids( $args, $field, $post_id ) {
 
     // Skip auto-draft — taxonomy terms not saved yet, nothing to scope by.
     if ( ! $post_id || 'auto-draft' === get_post_status( $post_id ) ) {
@@ -491,7 +535,6 @@ function ws_ag_procedure_scope_statute_picker( $args, $field, $post_id ) {
 
     return $args;
 }
-
 
 // ── Pre-populate ws_ag_procedure_agency_id from ?agency_id= URL parameter ─────────────
 //

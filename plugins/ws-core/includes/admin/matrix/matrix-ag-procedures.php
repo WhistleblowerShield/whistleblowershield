@@ -40,7 +40,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.9.0
- * @version 3.10.0
+ * @version    3.17.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -62,8 +62,8 @@ defined( 'ABSPATH' ) || exit;
 // Procedure Data
 // ════════════════════════════════════════════════════════════════════════════
 
-global $_ws_procedure_matrix;
-$_ws_procedure_matrix = [
+global $_ws_ag_procedure_matrix;
+$_ws_ag_procedure_matrix = [
 
     // ── 1. SEC — Dodd-Frank Whistleblower Tip ─────────────────────────────
 

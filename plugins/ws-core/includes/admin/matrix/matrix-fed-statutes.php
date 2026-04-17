@@ -2,9 +2,13 @@
 /**
  * matrix-fed-statutes.php — Seeds major federal whistleblower protection statutes.
  *
- * @package WhistleblowerShield
- * @since   3.0.0
- * @version 3.10.0
+ * @package    WhistleblowerShield
+ * @since      3.0.0
+ * @version    3.17.0
+ * @author     Whistleblower Shield
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
+ * 
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -310,8 +314,8 @@ function ws_seed_fed_statutes_matrix() {
 // ── Gate ──────────────────────────────────────────────────────────────────────
 
 add_action( 'admin_init', function() {
-    if ( get_option( 'ws_seeded_fed_statutes_matrix' ) !== '1.0.1' ) {
+    if ( get_option( 'ws_seeded_fed_statutes_matrix' ) !== '1.0.0' ) {
         ws_seed_fed_statutes_matrix();
-        update_option( 'ws_seeded_fed_statutes_matrix', '1.0.1' );
+        update_option( 'ws_seeded_fed_statutes_matrix', '1.0.0' );
     }
 } );

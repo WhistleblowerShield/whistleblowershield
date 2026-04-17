@@ -29,13 +29,18 @@
  *
  * @package    WhistleblowerShield
  * @since      1.0.0
+ * @version    3.17.0
+ * @author     Whistleblower Shield
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
+ *
  */
 
 defined( 'ABSPATH' ) || exit;
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-define( 'WS_CORE_VERSION', '3.15.0' );
+define( 'WS_CORE_VERSION', '3.17.0' );
 define( 'WS_CORE_PATH',    plugin_dir_path( __FILE__ ) );
 define( 'WS_CORE_URL',     plugin_dir_url( __FILE__ ) );
 
@@ -156,7 +161,7 @@ function ws_core_init() {
 // ws-core-front.js          — jurisdiction index filter tabs; self-exits when
 //                             .ws-jx-filter-nav is absent
 
-add_action( 'wp_enqueue_scripts', 'ws_core_enqueue_assets' );
+add_action( 'wp_enqueue_scripts',    'ws_core_enqueue_assets' );
 add_action( 'admin_enqueue_scripts', 'ws_core_enqueue_admin_assets' );
 
 /**

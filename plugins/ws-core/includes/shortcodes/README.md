@@ -67,6 +67,7 @@ Returns `array<int,agency>`:
 
 - `id`, `title`, `url`, `status`
 - `code`, `name`, `logo`
+- `acronym`, `mission`,
 - `disclosure_type`, `disclosure_targets`, `process_type`, `jurisdictions`
 - `website_url`, `reporting_url`, `phone`
 - `confidentiality_notes`, `has_anonymous`
@@ -80,6 +81,7 @@ Returns one normalized agency procedure row (or `[]` if not found):
 
 - `id`, `title`, `url`
 - `agency_id`, `agency_name`, `agency_url`
+- `acronym`, `mission`,
 - `type`
 - `jurisdiction`, `jurisdiction_slugs`
 - `disclosure_types`, `disclosure_type_slugs`
@@ -100,6 +102,7 @@ Returns statute-linked procedure rows:
 - `id`, `title`, `url`
 - `type`
 - `agency_id`, `agency_name`, `agency_url`
+- `acronym`, `mission`,
 - `statute_ids`, `common_law_ids`
 - `deadline_days`, `intake_only`
 
@@ -167,7 +170,7 @@ Returns `array<int,update>`:
 Returns `array<int,reference>`:
 
 - `title`
-- `url`, `url_is_pdf`
+- `url`, `is_pdf`
 - `description`
 - `type`
 - `source_name`

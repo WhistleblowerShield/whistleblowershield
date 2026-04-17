@@ -14,9 +14,13 @@
  * Must load after query-jurisdiction.php because legal updates use
  * ws_get_jx_term_id() for jurisdiction scoping.
  *
- * @package WhistleblowerShield
- * @since   3.10.5
- * @version 3.10.5
+ * @package    WhistleblowerShield
+ * @since      3.10.5
+ * @version    3.17.0
+ * @author     Whistleblower Shield
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
+ *
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -145,13 +149,9 @@ function ws_get_ref_materials( $post_id ) {
         'jx-interpretation' => 'ws_jx_interp_ref_materials',
         'jx-common-law'     => 'ws_jx_comlaw_ref_materials',
     ];
-    $ref_field = $ref_field_by_type[ $post_type ] ?? 'ws_ref_materials';
+    $ref_field = $ref_field_by_type[ $post_type ] ?? '';
 
     $refs = get_field( $ref_field, $post_id );
-    if ( ! is_array( $refs ) || empty( $refs ) ) {
-        // Back-compat for legacy field naming.
-        $refs = get_field( 'ws_ref_materials', $post_id );
-    }
     if ( ! is_array( $refs ) || empty( $refs ) ) return [];
 
     $items = [];
@@ -174,7 +174,7 @@ function ws_get_ref_materials( $post_id ) {
         $items[] = [
             'title'       => sanitize_text_field( $title ),
             'url'         => esc_url_raw( get_post_meta( $rid, 'ws_ref_url', true ) ),
-            'url_is_pdf'  => (bool) get_post_meta( $rid, 'ws_ref_url_is_pdf', true ),
+            'is_pdf'      => (bool) get_post_meta( $rid, 'ws_ref_url_is_pdf', true ),
             'description' => sanitize_textarea_field( get_post_meta( $rid, 'ws_ref_description', true ) ),
             'type'        => sanitize_text_field( get_post_meta( $rid, 'ws_ref_type', true ) ),
             'source_name' => sanitize_text_field( get_post_meta( $rid, 'ws_ref_source_name', true ) ),

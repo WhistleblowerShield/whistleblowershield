@@ -2,9 +2,13 @@
 /**
  * matrix-assist-orgs.php — Seeds nationwide and federal-scope whistleblower support organizations.
  *
- * @package WhistleblowerShield
- * @since   3.0.0
- * @version 3.16.3
+ * @package    WhistleblowerShield
+ * @since      3.0.0
+ * @version    3.17.0
+ * @author     Whistleblower Shield
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
+ * 
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -1070,30 +1074,30 @@ function ws_seed_assist_org_matrix() {
         // Boolean fields (0/1) and array fields always write — 0 is meaningful.
 
         $meta = [
-            'ws_aorg_internal_id'         => $internal_id,
-            'ws_aorg_official_name'       => $org['title']                ?? '',
-            'ws_aorg_common_name'         => $org['common_name']          ?? '',
-            'ws_aorg_description'         => $org['description']          ?? '',
-            'ws_aorg_website_url'         => $org['ws_aorg_website_url']  ?? '',
-            'ws_aorg_intake_url'          => $org['ws_aorg_intake_url']   ?? '',
-            'ws_aorg_contact_url'         => $org['ws_aorg_contact_url']  ?? '',
-            'ws_aorg_has_secure_channel'  => $org['has_secure_channel']   ?? 0,
-            'ws_aorg_secure_contact_url'  => $org['secure_contact_url']   ?? '',
-            'ws_aorg_secure_contact_tool' => $org['secure_contact_tool']  ?? '',
-            'ws_aorg_mailing_address'     => $org['mailing_address']       ?? '',
-            'ws_aorg_income_limit'        => $org['income_limit']          ?? '',
-            'ws_aorg_income_limit_notes'  => $org['income_limit_notes']    ?? '',
-            'ws_aorg_eligibility_notes'   => $org['eligibility_notes']     ?? '',
-            'ws_aorg_serves_nationwide'   => $org['is_nationwide']        ?? 0,
-            'ws_aorg_limited_scope'       => $org['is_limited_scope']     ?? 0,
-            'ws_aorg_community_scope'     => $org['community_scope']      ?? '',
-            'ws_aorg_accepts_anonymous'   => $org['accepts_anon']         ?? 0,
-            'ws_aorg_licensed_attorneys'  => $org['has_attorneys']        ?? 0,
+            'ws_aorg_internal_id'          => $internal_id,
+            'ws_aorg_official_name'        => $org['title']                ?? '',
+            'ws_aorg_common_name'          => $org['common_name']          ?? '',
+            'ws_aorg_description'          => $org['description']          ?? '',
+            'ws_aorg_website_url'          => $org['ws_aorg_website_url']  ?? '',
+            'ws_aorg_intake_url'           => $org['ws_aorg_intake_url']   ?? '',
+            'ws_aorg_contact_url'          => $org['ws_aorg_contact_url']  ?? '',
+            'ws_aorg_has_secure_channel'   => $org['has_secure_channel']   ?? 0,
+            'ws_aorg_secure_contact_url'   => $org['secure_contact_url']   ?? '',
+            'ws_aorg_secure_contact_tool'  => $org['secure_contact_tool']  ?? '',
+            'ws_aorg_mailing_address'      => $org['mailing_address']      ?? '',
+            'ws_aorg_has_income_limit'     => $org['income_limit']         ?? '',
+            'ws_aorg_income_limit_details' => $org['income_limit_notes']   ?? '',
+            'ws_aorg_eligibility_details'  => $org['eligibility_notes']    ?? '',
+            'ws_aorg_serves_nationwide'    => $org['is_nationwide']        ?? 0,
+            'ws_aorg_has_limited_scope'    => $org['is_limited_scope']     ?? 0,
+            'ws_aorg_community_scope'      => $org['community_scope']      ?? '',
+            'ws_aorg_accepts_anonymous'    => $org['accepts_anon']         ?? 0,
+            'ws_aorg_licensed_attorneys'   => $org['has_attorneys']        ?? 0,
             // Whistleblower focus score (1-3) — drives base score in ws_filter_score_org().
             // Always write even if 0; 1 is the minimum meaningful value and 0 signals
             // the matrix entry is missing this field (ingest should warn).
-            'ws_aorg_whistleblower_scope' => $org['whistleblower_scope']  ?? 1,
-            'ws_aorg_whistleblower_note'  => $org['whistleblower_note']   ?? '',
+            'ws_aorg_whistleblower_scope'         => $org['whistleblower_scope']  ?? 1,
+            'ws_aorg_whistleblower_scope_details' => $org['whistleblower_note']   ?? '',
         ];
 
         foreach ( $meta as $key => $value ) {
@@ -1208,9 +1212,9 @@ function ws_seed_assist_org_matrix() {
 // ── Gate ──────────────────────────────────────────────────────────────────────
 
 add_action( 'admin_init', function() {
-    if ( get_option( 'ws_seeded_assist_org_matrix' ) !== '1.2.2' ) {
+    if ( get_option( 'ws_seeded_assist_org_matrix' ) !== '1.0.0' ) {
         ws_seed_assist_org_matrix();
-        update_option( 'ws_seeded_assist_org_matrix', '1.2.2' );
+        update_option( 'ws_seeded_assist_org_matrix', '1.0.0' );
     }
 } );
 

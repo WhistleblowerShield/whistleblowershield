@@ -2,9 +2,13 @@
 /**
  * matrix-jurisdictions.php — Canonical data and seeder for all 57 U.S. jurisdictions.
  *
- * @package WhistleblowerShield
- * @since   1.0.0
- * @version 3.10.1
+ * @package    WhistleblowerShield
+ * @since      1.0.0
+ * @version    3.17.0
+ * @author     Whistleblower Shield
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
+ * 
  */
 
 defined( 'ABSPATH' ) || exit;

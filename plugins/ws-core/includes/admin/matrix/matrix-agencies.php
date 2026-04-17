@@ -2,9 +2,13 @@
 /**
  * matrix-agencies.php — Seeds nationwide federal agencies relevant to whistleblower protection.
  *
- * @package WhistleblowerShield
- * @since   3.0.0
- * @version 3.10.0
+ * @package    WhistleblowerShield
+ * @since      3.0.0
+ * @version    3.17.0
+ * @author     Whistleblower Shield
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
+ * 
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -146,10 +150,10 @@ function ws_seed_agency_matrix() {
 
         // Write agency meta fields.
         $meta_fields = [
-            'ws_agency_name'    => $agency['ws_agency_name']    ?? '',
-            'ws_agency_acronym' => $agency['ws_agency_acronym'] ?? '',
-            'ws_agency_url'     => $agency['ws_agency_url']     ?? '',
-            'ws_agency_mission' => $agency['ws_agency_mission'] ?? '',
+            'ws_agency_official_name' => $agency['ws_agency_name']    ?? '',
+            'ws_agency_acronym'       => $agency['ws_agency_acronym'] ?? '',
+            'ws_agency_url'           => $agency['ws_agency_url']     ?? '',
+            'ws_agency_mission'       => $agency['ws_agency_mission'] ?? '',
         ];
 
         foreach ( $meta_fields as $key => $value ) {

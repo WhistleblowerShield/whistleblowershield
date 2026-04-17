@@ -2,16 +2,20 @@
 /**
  * matrix-state-courts.php — State and territory court registry for jx-interpretation fields.
  *
- * @package WhistleblowerShield
- * @since   3.8.0
- * @version 3.10.0
+ * @package    WhistleblowerShield
+ * @since      3.8.0
+ * @version    3.17.0
+ * @author     Whistleblower Shield
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
+ * 
  */
 
 defined( 'ABSPATH' ) || exit;
 
-global $ws_state_court_matrix;
+global $_ws_state_court_matrix;
 
-$ws_state_court_matrix = [
+$_ws_state_court_matrix = [
 
     // ── 1. State & Territory Supreme Courts ───────────────────────────────
     //

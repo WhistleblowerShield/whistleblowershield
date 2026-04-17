@@ -117,6 +117,14 @@ function ws_register_acf_agencies() {
                 'instructions' => 'Example: U.S. Office of Special Counsel',
             ],
             [
+                'key'          => 'field_agency_acronym',
+                'label'        => 'Agency Acronym',
+                'name'         => 'ws_agency_acronym',
+                'type'         => 'text',
+                'required'     => 1,
+                'instructions' => 'Example: OSC',
+            ],
+            [
                 'key'           => 'field_agency_logo',
                 'label'         => 'Agency Logo',
                 'name'          => 'ws_agency_logo',
@@ -129,7 +137,15 @@ function ws_register_acf_agencies() {
                 'max_size'      => '1',  // 1MB
                 'mime_types'    => 'png,svg,jpg,jpeg',
             ],
-
+            [
+                'key'          => 'field_agency_mission',
+                'label'        => 'Agency Mission',
+                'name'         => 'ws_agency_mission',
+                'type'         => 'textarea',
+                'required'     => 1,
+                'instructions' => 'A brief description of the agency\'s purpose and responsibilities.',
+            ],
+            
             // ── Jurisdiction(s) ───────────────────────────────────────────
             //
             // Agencies may have authority over multiple jurisdictions.

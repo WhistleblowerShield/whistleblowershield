@@ -845,7 +845,7 @@ function ws_get_jx_interpretation_data( $jx_term_id ) {
                                         ? ( get_post_meta( $iid, 'ws_jx_interp_court_name', true ) ?: 'Other' )
                                         : ( ( $crt = ws_court_lookup( $_ck ) ) ? $crt['short'] : $_ck ),
                 'year'          => (int) get_post_meta( $iid, 'ws_jx_interp_year',             true ),
-                'is_favorable'  => (bool) get_post_meta( $iid, 'ws_jx_interp_favorable', true ),
+                'is_favorable'  => (bool) get_post_meta( $iid, 'ws_jx_interp_is_favorable', true ),
                 'summary'       => get_post_meta( $iid, 'ws_jx_interp_summary_wysiwyg',          true ),
                 'disclosure_type' => ws_q_normalize_id_list( get_field( 'ws_jx_interp_disclosure_types', $iid ) ),
                 'protected_class' => ws_q_normalize_id_list( get_field( 'ws_jx_interp_protected_classes', $iid ) ),
@@ -863,8 +863,8 @@ function ws_get_jx_interpretation_data( $jx_term_id ) {
                 'employee_standard' => ws_q_normalize_id_list( get_field( 'ws_jx_interp_employee_standards', $iid ) ),
                 'employee_standard_details' => get_post_meta( $iid, 'ws_jx_interp_employee_standard_details', true ),
                 'parent_statute_id' => ws_q_first_id( get_post_meta( $iid, 'ws_jx_interp_statute_id', true ) ),
-                'parent_common_law_id' => ws_q_first_id( get_post_meta( $iid, 'ws_jx_interp_common_law_id', true ) ),
-                'affected_jx' => ws_q_normalize_id_list( get_field( 'ws_jx_interp_affected_jurisdictions', $iid ) ),
+                'parent_comlaw_id' => ws_q_first_id( get_post_meta( $iid, 'ws_jx_interp_comlaw_id', true ) ),
+                'affected_jx' => ws_q_normalize_id_list( get_field( 'ws_jx_interp_affected_jx', $iid ) ),
                 'attach_flag'   => (bool) get_post_meta( $iid, 'ws_jx_interp_has_attach_flag',         true ),
                 'last_reviewed' => get_post_meta( $iid, 'ws_jx_interp_last_reviewed',    true ),
                 'ref_materials' => ws_get_ref_materials( $iid ),
@@ -938,7 +938,7 @@ function ws_get_all_jurisdictions() {
 // A published jurisdiction post with no linked jx-summary is a stub —
 // it has no useful content for end users. Only jurisdictions with a
 // linked jx-summary are included in the index. Jurisdictions that have
-// not yet been summarised are silently excluded.
+// not yet been summarized are silently excluded.
 //
 // Return shape:
 //      [
@@ -992,11 +992,11 @@ function ws_get_jurisdiction_index_data() {
                     continue;
                 }
 
-                $type = get_field( 'ws_jurisdiction_class', $post->ID ) ?: 'state';
+                $type = get_post_meta( $post->ID, 'ws_jurisdiction_class', true ) ?: 'state';
                 $code = strtoupper( $jx_term->slug );
 
                 $index_items[] = [
-                    'name' => get_the_title( $post->ID ),
+                    'name' => get_term( $jx_term->term_id )->name ?? '',
                     'code' => $code,
                     'type' => $type,
                     'url'  => get_permalink( $post->ID ),

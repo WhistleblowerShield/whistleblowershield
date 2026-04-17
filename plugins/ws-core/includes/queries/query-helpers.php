@@ -29,7 +29,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.6.0
- * @version 3.10.0
+ * @version    3.10.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -126,15 +126,15 @@ function ws_jx_term_by_code( $code ) {
  *                                null if not found.
  */
 function ws_court_lookup( $court_key ) {
-    global $ws_court_matrix, $ws_state_court_matrix;
+    global $_ws_federal_court_matrix, $_ws_state_court_matrix;
     if ( ! $court_key ) {
         return null;
     }
     $court = null;
-    if ( ! empty( $ws_court_matrix[ $court_key ] ) ) {
-        $court = $ws_court_matrix[ $court_key ];
-    } elseif ( ! empty( $ws_state_court_matrix[ $court_key ] ) ) {
-        $court = $ws_state_court_matrix[ $court_key ];
+    if ( ! empty( $_ws_federal_court_matrix[ $court_key ] ) ) {
+        $court = $_ws_federal_court_matrix[ $court_key ];
+    } elseif ( ! empty( $_ws_state_court_matrix[ $court_key ] ) ) {
+        $court = $_ws_state_court_matrix[ $court_key ];
     }
     return $court;
 }
