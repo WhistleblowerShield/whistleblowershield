@@ -1,28 +1,48 @@
 <?php
 /**
- * acf-assist-orgs.php — ACF Pro fields for the ws-assist-org CPT.
+ * acf-assist-orgs.php
  *
- * Group key: group_assist_org_metadata
- * Stamp fields: group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
- * Source verify: group_source_verify_metadata (acf-source-verify.php)
+ * Registers ACF Pro fields for the `ws-assist-org` CPT.
  *
- * Tabs: Identity | Scope of Service | Contact | Eligibility & Cost | Credentials
+ * PURPOSE
+ * -------
+ * Provides structured metadata for whistleblower assistance organizations,
+ * including service scope, jurisdiction coverage, intake channels, and
+ * eligibility signals used by directory matching and ranking logic.
  *
- * Key fields:
- *   ws_aorg_serves_nationwide      — true = surfaces in nationwide directory query
- *   ws_aorg_whistleblower_scope    — integer 1-3; drives base score in ws_filter_score_org()
- *   ws_aorg_jurisdictions          — taxonomy field; multi-select (save_terms: 1)
- *   ws_aorg_languages              — taxonomy field; multi-select (save_terms: 1) additional_languages
- *                                    text triggers 'additional' term auto-assign via admin-hooks.php
- *   ws_aorg_cost_models            — taxonomy field; multi-select (save_terms: 1) — Phase 2 filter axis
- *   ws_aorg_employment_sectors     — taxonomy field; multi-select (save_terms: 1) — Phase 2 filter axis
- *   ws_aorg_case_stages            — taxonomy field; multi-select (save_terms: 1) — Phase 2 filter axis
+ * GROUP: group_assist_org_metadata
+ *
+ * FIELD SUMMARY
+ * -------------
+ * Identity tab:
+ *   ws_aorg_internal_id             Internal organization identifier (text, required)
+ *   ws_aorg_official_name           Organization name (text, required)
+ *   ws_aorg_type                    Organization type (taxonomy, required)
+ * Scope of Service tab:
+ *   ws_aorg_serves_nationwide       Nationwide service toggle (true_false, optional)
+ *   ws_aorg_jurisdictions           Covered jurisdictions (taxonomy, optional)
+ *   ws_aorg_languages               Supported languages (taxonomy, optional)
+ *   ws_aorg_case_stages             Supported case stages (taxonomy, optional)
+ * Contact tab:
+ *   ws_aorg_website_url             Organization website URL (url, optional)
+ *   ws_aorg_intake_methods          Intake method options (taxonomy, optional)
+ * Eligibility & Cost tab:
+ *   ws_aorg_cost_models             Cost model options (taxonomy, optional)
+ *   ws_aorg_whistleblower_scope     Whistleblower support scope score (number, optional)
+ * Credentials tab:
+ *   ws_aorg_credentials             Credentials and affiliations (repeater, optional)
+ *
+ * SHARED WORKFLOW GROUPS
+ * ----------------------
+ *   - group_plain_english_metadata (acf-plain-english-fields.php, menu_order 85)
+ *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
+ *   - group_source_verify_metadata (acf-source-verify.php)
  *
  * META KEY NOTE
  * -------------
  * ws_aorg_internal_id is stored WITHOUT a leading underscore. ACF uses the
  * _ws_aorg_internal_id key (underscore prefix) for its own internal field
- * reference — writing a value there clobbers ACF's mapping. Ingest must write
+ * reference -- writing a value there clobbers ACF's mapping. Ingest must write
  * to ws_aorg_internal_id. The leading underscore in prompt JSON schema output
  * is a naming convention only; ingest strips it during mapping.
  *

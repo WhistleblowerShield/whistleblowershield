@@ -1,12 +1,41 @@
 <?php
 /**
- * acf-jx-citations.php — ACF Pro fields for the jx-citation CPT.
+ * acf-jx-citations.php
  *
- * Group key: group_jx_citation_metadata
- * Stamp fields: group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
- * Plain English: group_plain_english_metadata (acf-plain-english-fields.php, menu_order 85)
- * Source verify: group_source_verify_metadata (acf-source-verify.php)
- * Major edit: group_major_edit_metadata (acf-major-edit.php, menu_order 99)
+ * Registers ACF Pro fields for the `jx-citation` CPT.
+ *
+ * PURPOSE
+ * -------
+ * Provides structured metadata for citation records used to support statutes,
+ * common-law doctrines, and interpretation summaries with linked source
+ * authority and structured classification tags.
+ *
+ * GROUP: group_jx_citation_metadata
+ *
+ * FIELD SUMMARY
+ * -------------
+ * Content tab:
+ *   ws_jx_citation_official_name            Citation full name (text, required)
+ *   ws_jx_citation_common_name              Citation short name (text, optional)
+ *   ws_jx_citation_url                      Source URL (url, optional)
+ *   ws_jx_citation_url_is_pdf               Source URL is PDF toggle (true_false, optional)
+ *   ws_jx_citation_summary_wysiwyg          Editorial citation summary (wysiwyg, optional)
+ * Classification tab:
+ *   ws_jx_citation_disclosure_types         Disclosure categories (taxonomy, optional)
+ *   ws_jx_citation_protected_classes        Protected classes (taxonomy, optional)
+ *   ws_jx_citation_adverse_action_types     Adverse action types (taxonomy, optional)
+ *   ws_jx_citation_remedies                 Remedies (taxonomy, optional)
+ * Relationships tab:
+ *   ws_jx_citation_statute_ids              Linked statute IDs (textarea, optional)
+ *   ws_jx_citation_common_law_ids           Linked common-law records (relationship, optional)
+ *   ws_jx_citation_ref_materials            Linked reference records (relationship, optional)
+ *
+ * SHARED WORKFLOW GROUPS
+ * ----------------------
+ *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
+ *   - group_plain_english_metadata (acf-plain-english-fields.php, menu_order 85)
+ *   - group_source_verify_metadata (acf-source-verify.php)
+ *   - group_major_edit_metadata (acf-major-edit.php, menu_order 99)
  *
  * @package WhistleblowerShield
  * @since   2.3.0

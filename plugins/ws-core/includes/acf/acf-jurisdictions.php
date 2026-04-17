@@ -2,37 +2,44 @@
 /**
  * acf-jurisdictions.php
  *
- * ACF Pro field group for the `jurisdiction` CPT.
- * Group key: group_jurisdiction_metadata
+ * Registers ACF Pro fields for the `jurisdiction` CPT.
  *
- * FIELDS
- * ------
+ * PURPOSE
+ * -------
+ * Provides structured metadata for jurisdiction records, including canonical
+ * taxonomy identity, government link targets, and flag assets rendered on
+ * jurisdiction pages and related navigation components.
+ *
+ * GROUP: group_jurisdiction_metadata
+ *
+ * FIELD SUMMARY
+ * -------------
  * Identity tab:
- *   ws_jurisdiction_term_id   Taxonomy field — links post to ws_jurisdiction term (save_terms: 1).
- *   ws_jx_code                Read-only display of the USPS code. Canonical code is the term slug.
- *   ws_jurisdiction_class     Select: state / federal / territory / district.
- *   ws_jurisdiction_name      Display name used in page headings.
+ *   ws_jurisdiction_term_id           Canonical jurisdiction term mapping (taxonomy, required)
+ *   ws_jx_code                        USPS code display value (message, optional)
+ *   ws_jurisdiction_class             Jurisdiction class (text, required)
+ *   ws_jurisdiction_name              Jurisdiction display name (text, required)
  *
  * Government Leadership URLs tab:
- *   ws_jx_gov_portal_url / _label      Main government portal.
- *   ws_jx_executive_url / _label       Governor / mayor / president URL and title.
- *   ws_jx_wb_authority_url / _label    Whistleblower authority office.
- *   ws_jx_legislature_url / _label     Legislature URL and name.
- *   Authority and legislature labels are auto-selected on first save from
- *   jurisdiction class and post slug; both are manually overridable.
+ *   ws_jx_gov_portal_url              Government portal URL (url, optional)
+ *   ws_jx_executive_url               Executive office URL (url, optional)
+ *   ws_jx_wb_authority_url            Whistleblower authority URL (url, optional)
+ *   ws_jx_legislature_url             Legislature URL (url, optional)
  *
  * Flag tab:
- *   ws_jx_flag_image          Image field (WordPress media library).
- *   ws_jx_flag_attribution    Wikimedia Commons attribution string.
- *   ws_jx_flag_source_url     Canonical Wikimedia SVG URL.
- *   ws_jx_flag_license        License identifier (e.g. "Public Domain").
+ *   ws_jx_flag_image                  Jurisdiction flag image (image, optional)
+ *   ws_jx_flag_source_url             Flag source URL (url, optional)
+ *   ws_jx_flag_license                Flag license string (text, optional)
  *
  * Record Management tab:
- *   _ws_auto_last_edited_gmt  Hidden GMT audit timestamp.
- *   ws_auto_last_edited_author  Last editor (admin-overridable for attribution).
- *   ws_auto_last_edited       Local date of last edit (Y-m-d).
- *   Create authorship fields are omitted — jurisdiction records are seeder-generated.
+ *   _ws_auto_last_edited_gmt          Hidden GMT audit stamp (hidden, optional)
+ *   ws_auto_last_edited_author        Last editor attribution (user, optional)
+ *   ws_auto_last_edited               Last edited local date (date_picker, optional)
  *
+ * AUTO-SELECTION NOTES
+ * --------------------
+ * Authority and legislature labels are auto-selected on first save from
+ * jurisdiction class and post slug; both are manually overridable.
  * Territory post slugs used by auto-selection logic:
  *   guam, puerto-rico, us-virgin-islands, american-samoa, northern-mariana-islands
  *

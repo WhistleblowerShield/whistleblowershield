@@ -4,15 +4,41 @@
  *
  * Registers ACF Pro fields for the `ws-agency` CPT.
  *
- * FIELD GROUPS
- * ------------
- * group_agency_metadata  →  Agency Details & Reporting Protocols
+ * PURPOSE
+ * -------
+ * Provides structured metadata for oversight agency records, including
+ * jurisdiction scope, intake channels, and reporting constraints used by
+ * directory/filter logic and downstream guidance workflows.
+ *
+ * GROUP: group_agency_metadata
+ *
+ * FIELD SUMMARY
+ * -------------
+ * Agency Identity tab:
+ *   ws_agency_code                    Internal agency code (text, required)
+ *   ws_agency_name                    Public agency name (text, required)
+ *   ws_agency_logo                    Agency logo asset (image, optional)
+ * Scope & Coverage tab:
+ *   ws_agency_jurisdictions           Covered jurisdictions (taxonomy, optional)
+ *   ws_agency_disclosure_types        Covered disclosure categories (taxonomy, optional)
+ *   ws_agency_disclosure_targets      Reporting target classifications (taxonomy, optional)
+ * Contact & Filing tab:
+ *   ws_agency_website_url             Agency website URL (url, optional)
+ *   ws_agency_intake_methods          Intake method options (taxonomy, optional)
+ *   ws_agency_has_attach_flag         Summary-page attach toggle (true_false, optional)
+ *   ws_agency_display_order           Summary-page render order (number, optional)
+ *
+ * SHARED WORKFLOW GROUPS
+ * ----------------------
+ *   - group_plain_english_metadata (acf-plain-english-fields.php, menu_order 85)
+ *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
+ *   - group_source_verify_metadata (acf-source-verify.php)
  *
  * JURISDICTION FIELD
  * ------------------
  * Scoped via the ws_jurisdiction taxonomy (field_agency_jurisdictions).
- * ACF saves/loads terms natively — no dynamic choice filter needed.
- * Replaces the retired ws_jx_code meta select (Phase 3.2 / 12.1).
+ * ACF saves/loads terms natively -- no dynamic choice filter needed.
+ * Replaces the retired ws_jx_code meta select.
  *
  * HOOK
  * ----

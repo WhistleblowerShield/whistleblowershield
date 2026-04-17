@@ -1,14 +1,39 @@
 <?php
 /**
- * acf-jx-summaries.php — ACF Pro fields for the jx-summary CPT.
+ * acf-jx-summaries.php
  *
- * Group key: group_jx_summary_metadata
- * Stamp fields: group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
- * Source verify: group_source_verify_metadata (acf-source-verify.php)
- * Major edit: group_major_edit_metadata (acf-major-edit.php, menu_order 99)
+ * Registers ACF Pro fields for the `jx-summary` CPT.
  *
- * Note: jx-summary IS the plain language document. Plain English fields
- * (group_plain_english_metadata) do NOT attach here — the summary carries
+ * PURPOSE
+ * -------
+ * Provides structured metadata for jurisdiction summary records, including
+ * primary narrative content, limitations, and internal review controls used
+ * in editorial and publication workflows.
+ *
+ * GROUP: group_jx_summary_metadata
+ *
+ * FIELD SUMMARY
+ * -------------
+ * Summary Content tab:
+ *   ws_jx_summary_wysiwyg                  Primary jurisdiction summary (wysiwyg, required)
+ *   ws_jx_summary_limitations              Limitations and ramifications rows (repeater, optional)
+ *   ws_jx_summary_sources                  Supporting citations and sources (textarea, optional)
+ *   ws_jx_summary_notes                    Internal editorial notes (textarea, optional)
+ * Summary Review tab:
+ *   ws_jx_summary_plain_english_reviewed   Plain English reviewed toggle (true_false, optional)
+ *   ws_jx_summary_editor_reviewed          Editor reviewed toggle (true_false, optional)
+ *   ws_jx_summary_reviewer_notes           Internal reviewer notes (textarea, optional)
+ *
+ * SHARED WORKFLOW GROUPS
+ * ----------------------
+ *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
+ *   - group_source_verify_metadata (acf-source-verify.php)
+ *   - group_major_edit_metadata (acf-major-edit.php, menu_order 99)
+ *
+ * NOTE
+ * ----
+ * jx-summary IS the plain language document. Plain English fields
+ * (group_plain_english_metadata) do NOT attach here -- the summary carries
  * its own plain_english_reviewed toggle in this group instead.
  *
  * @package    WhistleblowerShield

@@ -1,6 +1,4 @@
 <?php
-defined( 'ABSPATH' ) || exit;
-
 /**
  * acf-jx-common-law.php
  *
@@ -14,6 +12,8 @@ defined( 'ABSPATH' ) || exit;
  *      two WYSIWYG fields: Doctrine Basis and Recognition Status.
  *   2. The Links tab is replaced by a Cases tab for leading case
  *      references rather than statute URLs.
+ *
+ * GROUP: group_jx_comlaw_metadata
  *
  * FIELD SUMMARY
  * -------------
@@ -76,6 +76,11 @@ defined( 'ABSPATH' ) || exit;
  *   ws_jx_comlaw_citation_ids                 Related citations (post_object, multiple)
  *   ws_jx_comlaw_interpretation_ids           Related interpretations (post_object, multiple)
  *
+ * SHARED WORKFLOW GROUPS
+ * ----------------------
+ *   - group_plain_english_metadata (acf-plain-english-fields.php, menu_order 85)
+ *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
+ *
  * @package    WhistleblowerShield
  * @since      3.13.0
  * @version    3.17.0
@@ -84,6 +89,8 @@ defined( 'ABSPATH' ) || exit;
  * @copyright  Copyright (c) Whistleblower Shield
  *
  */
+
+defined( 'ABSPATH' ) || exit;
 
 add_action( 'acf/init', 'ws_register_acf_jx_common_law' );
 

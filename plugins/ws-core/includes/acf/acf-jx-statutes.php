@@ -12,6 +12,8 @@ defined( 'ABSPATH' ) || exit;
  * queries for deadlines, enforcement agencies, burden of proof standards,
  * and misconduct categories.
  *
+ * GROUP: group_jx_statute_metadata
+ *
  * FIELD SUMMARY
  * -------------
  * Legal Basis tab:
@@ -73,6 +75,13 @@ defined( 'ABSPATH' ) || exit;
  * Links tab:
  *   ws_jx_statute_url                Statute URL (url)
  *   ws_jx_statute_url_is_pdf     PDF link toggle (true_false)
+ *
+ * SHARED WORKFLOW GROUPS
+ * ----------------------
+ *   - group_plain_english_metadata (acf-plain-english-fields.php, menu_order 85)
+ *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
+ *   - group_source_verify_metadata (acf-source-verify.php)
+ *   - group_major_edit_metadata (acf-major-edit.php, menu_order 99)
  *
  * @package    WhistleblowerShield
  * @since      2.0.0

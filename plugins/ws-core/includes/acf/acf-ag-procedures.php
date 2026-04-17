@@ -4,9 +4,28 @@
  *
  * Registers ACF Pro fields for the `ws-ag-procedure` CPT.
  *
- * FIELD GROUPS
- * ------------
- * group_ag_procedure_metadata  →  Procedure Details
+ * PURPOSE
+ * -------
+ * Provides structured metadata for agency procedure records used to describe
+ * reporting and retaliation workflows, routing details, and submission methods.
+ * This group is procedure-specific and focused on procedure intake/use details.
+ *
+ * GROUP: group_ag_procedure_metadata
+ *
+ * FIELD SUMMARY
+ * -------------
+ * Procedure Identity tab:
+ *   ws_ag_procedure_agency_id            Parent agency record (post_object, required)
+ *   ws_ag_procedure_type                 Procedure category (taxonomy, required)
+ *   ws_ag_procedure_jurisdictions        Covered jurisdictions (taxonomy, optional)
+ *   ws_ag_procedure_disclosure_types     Covered disclosure categories (taxonomy, optional)
+ *   ws_ag_procedure_title                Procedure title (text, required)
+ * Procedure Steps tab:
+ *   ws_ag_procedure_steps                Step-by-step instructions (repeater, optional)
+ * Contact & Filing tab:
+ *   ws_ag_procedure_submission_methods   Submission channels (taxonomy, optional)
+ *   ws_ag_procedure_form_url             Filing form URL (url, optional)
+ *   ws_ag_procedure_walkthrough_wysiwyg  Plain-language walkthrough (wysiwyg, optional)
  *
  * PARENT AGENCY PRE-FILL
  * ----------------------
@@ -15,18 +34,17 @@
  * ws_ag_procedure_agency_id on auto-draft posts, matching the pattern used by
  * ws_interp_prefill_statute_id() in acf-jx-interpretations.php.
  *
- * STAMP FIELDS
- * ------------
- * ws_needs_review, ws_auto_source_method, and all other stamp fields are
- * registered centrally in acf-stamp-fields.php (group_stamp_metadata,
- * menu_order 90) and attach to ws-ag-procedure via that file's location rules.
- * Do not duplicate stamp fields here.
+ * SHARED WORKFLOW GROUPS
+ * ----------------------
+ *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
+ *   - group_source_verify_metadata (acf-source-verify.php)
+ *   - group_major_edit_metadata (acf-major-edit.php, menu_order 99)
  *
  * PLAIN ENGLISH
  * -------------
  * Procedures use ws_ag_procedure_walkthrough_wysiwyg (registered in this file)
  * as their plain-English content. The central acf-plain-english-fields.php group
- * is NOT applied to this CPT — the walkthrough IS the plain-English layer.
+ * is NOT applied to this CPT -- the walkthrough IS the plain-English layer.
  *
  * @package    WhistleblowerShield
  * @since      3.9.0

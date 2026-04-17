@@ -2,56 +2,59 @@
 /**
  * acf-jx-interpretations.php
  *
- * ACF Pro field group for the `jx-interpretation` CPT.
- * Group key: group_jx_interpretation_metadata
+ * Registers ACF Pro fields for the `jx-interpretation` CPT.
  *
- * Stamp fields: group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
- * Plain English: group_plain_english_metadata (acf-plain-english-fields.php, menu_order 85)
- * Source verify: group_source_verify_metadata (acf-source-verify.php)
- * Major edit: group_major_edit_metadata (acf-major-edit.php, menu_order 99)
+ * PURPOSE
+ * -------
+ * Provides structured metadata for interpretation records, including case
+ * identity, classification tags, parent-record linkage, and jurisdiction
+ * impact signals used by legal analysis and summary workflows.
  *
- * FIELDS
- * ------
+ * GROUP: group_jx_interpretation_metadata
+ *
+ * FIELD SUMMARY
+ * -------------
  * Case Identity tab:
- *   ws_jx_interp_court         Select — populated by ws_interp_load_court_choices().
- *                               Context-aware: federal statute = all courts merged;
- *                               state statute = state courts only.
- *   ws_jx_interp_court_name    Text — free-text court name (conditional on court = 'other').
- *   ws_jx_interp_year          Number — year of decision.
- *   ws_jx_interp_favorable     True/false — outcome favored whistleblower.
- *   ws_jx_interp_official_name Text — full case name (required).
- *   ws_jx_interp_common_name   Text — short/informal name (optional).
- *   ws_jx_interp_case_citation Text — reporter citation.
- *   ws_jx_interp_url           URL — link to court opinion.
- *   ws_jx_interp_url_is_pdf    True/false — URL links directly to PDF.
+ *   ws_jx_interp_official_name         Case full name (text, required)
+ *   ws_jx_interp_case_citation         Reporter citation (text, optional)
+ *   ws_jx_interp_court                 Court selector (select, required)
+ *   ws_jx_interp_year                  Decision year (number, required)
+ *   ws_jx_interp_url                   Opinion source URL (url, optional)
+ *   ws_jx_interp_url_is_pdf            Opinion URL is PDF toggle (true_false, optional)
  *
  * Summary tab:
- *   ws_jx_interp_summary_wysiwyg WYSIWYG — plain-language summary of the holding.
- *   ws_jx_interp_has_attach_flag True/false — surface on jurisdiction summary page.
- *   ws_jx_interp_display_order Number — render order among flagged items (conditional).
- *   ws_jx_interp_last_reviewed Text — last verified date (Y-m-d).
+ *   ws_jx_interp_summary_wysiwyg       Holding summary content (wysiwyg, optional)
+ *   ws_jx_interp_has_attach_flag       Summary-page attach toggle (true_false, optional)
+ *   ws_jx_interp_display_order         Summary-page render order (number, optional)
+ *   ws_jx_interp_last_reviewed         Last reviewed date value (text, optional)
  *
  * Classification tab:
- *   ws_jx_interp_disclosure_types   Taxonomy — ws_disclosure_type terms.
- *   ws_jx_interp_protected_classes   Taxonomy — ws_protected_class terms.
- *   ws_jx_interp_disclosure_targets Taxonomy — ws_disclosure_target terms.
- *   ws_jx_interp_adverse_action_types    Taxonomy — ws_adverse_action_type terms.
- *   ws_jx_interp_process_types      Taxonomy — ws_process_type terms (moved from Summary).
- *   ws_jx_interp_remedies          Taxonomy — ws_remedy terms.
- *   ws_jx_interp_fee_shiftings      Taxonomy — ws_fee_shifting terms.
- *   ws_jx_interp_employer_defenses  Taxonomy — ws_employer_defense terms.
- *   ws_jx_interp_employee_standards Taxonomy — ws_employee_standard terms.
+ *   ws_jx_interp_disclosure_types       Disclosure categories (taxonomy, optional)
+ *   ws_jx_interp_protected_classes      Protected classes (taxonomy, optional)
+ *   ws_jx_interp_disclosure_targets     Disclosure targets (taxonomy, optional)
+ *   ws_jx_interp_adverse_action_types   Adverse action types (taxonomy, optional)
+ *   ws_jx_interp_remedies               Remedies (taxonomy, optional)
  *
  * Relationships tab:
- *   ws_jx_interp_statute_id    Post object — parent jx-statute (single, optional).
- *   ws_jx_interp_common_law_id Post object — parent jx-common-law (single, optional).
- *   ws_jx_interp_affected_jurisdictions   Taxonomy — ws_jurisdiction terms. Auto-computed on
- *                               save from the court's ws_jx_codes in the court matrix.
- *                               Empty = SCOTUS (all jx). 'other' court = skip.
- *                               save_terms: 0 — prevents taxonomy query pollution.
+ *   ws_jx_interp_statute_id            Parent statute link (post_object, optional)
+ *   ws_jx_interp_common_law_id         Parent common-law link (post_object, optional)
+ *   ws_jx_interp_affected_jurisdictions Affected jurisdictions (taxonomy, optional)
  *
  * Reference Materials tab:
- *   ws_jx_interp_ref_materials  Relationship — links to ws-reference posts.
+ *   ws_jx_interp_ref_materials         Linked references (relationship, optional)
+ *
+ * SHARED WORKFLOW GROUPS
+ * ----------------------
+ *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
+ *   - group_plain_english_metadata (acf-plain-english-fields.php, menu_order 85)
+ *   - group_source_verify_metadata (acf-source-verify.php)
+ *   - group_major_edit_metadata (acf-major-edit.php, menu_order 99)
+ *
+ * IMPLEMENTATION NOTES
+ * --------------------
+ * Court choices are populated dynamically by ws_interp_load_court_choices().
+ * ws_jx_interp_affected_jurisdictions is auto-computed on save from the court
+ * matrix mapping and uses save_terms: 0 to avoid taxonomy query pollution.
  *
  * @package    WhistleblowerShield
  * @since      2.4.0

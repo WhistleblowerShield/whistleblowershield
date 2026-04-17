@@ -1,6 +1,6 @@
 <?php
 /**
- * acf-ws-legal-update.php
+ * acf-legal-updates.php
  *
  * Registers ACF Pro fields for the `ws-legal-update` CPT.
  *
@@ -10,19 +10,30 @@
  * the nature, source, date, and affected jurisdictions of each
  * significant development in whistleblower law.
  *
- * Legal Updates are linked to one or more Jurisdiction records
- * through the ws_update_jurisdictions taxonomy field. Jurisdiction
- * scoping uses the ws_jurisdiction taxonomy (save_terms=0 — terms
- * are selected for filtering purposes and not written to the taxonomy
- * table from this field).
+ * GROUP: group_legal_update_metadata
  *
- * FUTURE USE
- * ----------
- * These records are intended for:
+ * FIELD SUMMARY
+ * -------------
+ * Content tab:
+ *   ws_legal_update_jurisdictions          Affected jurisdictions (taxonomy, optional)
+ *   ws_legal_update_multi_jurisdiction     Multi-jurisdiction flag (true_false, optional)
+ *   ws_legal_update_hide_public            Public visibility toggle (true_false, optional)
+ *   ws_legal_update_date                   Effective/published update date (date_picker, optional)
+ *   ws_legal_update_source_url             Primary source URL (url, optional)
+ *   ws_legal_update_source_url_is_pdf      Primary source URL is PDF toggle (true_false, optional)
+ *   ws_legal_update_type                   Update classification (select, optional)
+ *   ws_legal_update_summary_wysiwyg        Update summary body (wysiwyg, required)
  *
- *      • internal legal tracking
- *      • journalist research
- *      • future public update feeds and timelines
+ * USE NOTES
+ * ---------
+ * Legal updates are linked to one or more jurisdiction records through
+ * ws_legal_update_jurisdictions (ws_jurisdiction taxonomy, save_terms: 1).
+ * These records support internal legal tracking, journalist research, and
+ * future public update feeds and timelines.
+ *
+ * SHARED WORKFLOW GROUPS
+ * ----------------------
+ *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
  *
  * @package    WhistleblowerShield
  * @since      1.0.0

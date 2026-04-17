@@ -1,6 +1,6 @@
 <?php
 /**
- * acf-ws-reference.php
+ * acf-references.php
  *
  * Registers ACF Pro fields for the `ws-reference` CPT.
  *
@@ -8,6 +8,8 @@
  * -------
  * Provides structured metadata for external reference materials attached
  * to individual statute, citation, or interpretation records.
+ *
+ * GROUP: group_reference_metadata
  *
  * FIELD SUMMARY
  * -------------
@@ -19,21 +21,12 @@
  *   ws_ref_type        Resource type (select)
  *   ws_ref_source_name Publishing organization or author name (text)
  *
- * Authorship & Review tab:
- *   Registered centrally in acf-stamp-fields.php (group_stamp_metadata,
- *   menu_order 90). Shared field keys used — unique keys retired in v3.4.0.
+ * SHARED WORKFLOW GROUPS
+ * ----------------------
+ *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
+ *   - group_source_verify_metadata (acf-source-verify.php)
  *
- * STAMP FIELDS
- * ------------
- * Written server-side by ws_acf_write_stamp_fields() in admin-hooks.php via
- * the $ws_stamp_cpts config map (entry: 'ws-reference').
- * Field names match the shared unprefixed stamp keys used across all ws-core CPTs.
- *
- * APPROVAL
- * --------
- * The Approval tab and ws_ref_approved field were retired in v3.4.0.
- * ws-reference does not warrant an approval gate — editors are trusted users
- * and the parent record's review workflow is the appropriate quality gate.
+
  *
  * PLAIN ENGLISH
  * -------------
