@@ -8,3 +8,13 @@
  * @since   1.0.0
  */
 
+    .ws-acf-open-url-btn {
+        margin-left: 8px;
+        vertical-align: middle;
+    }
+    
+    .ws-acf-open-url-btn.is-disabled {
+        pointer-events: none;
+        opacity: .55;
+        cursor: default;
+    }

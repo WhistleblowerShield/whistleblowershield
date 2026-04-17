@@ -176,8 +176,16 @@ function ws_core_enqueue_admin_assets() {
     wp_enqueue_style(
         'ws-core-admin',
         WS_CORE_URL . 'ws-core-admin.css',
-        [ 'acf-input' ],
+       [ 'acf-input' ],
         WS_CORE_VERSION
+    );
+
+    wp_enqueue_script(
+        'ws-core-admin',
+        WS_CORE_URL . 'ws-core-admin.js',
+        [],
+        WS_CORE_VERSION,
+        true
     );
 }
 
