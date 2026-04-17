@@ -94,7 +94,7 @@ function ws_register_source_verify_field_group() {
             // ════════════════════════════════════════════════════════════
 
             [
-                'key'           => 'field_source_method',
+                'key'           => 'field_auto_source_method',
                 'label'         => 'Source Method',
                 'name'          => 'ws_auto_source_method',
                 'type'          => 'text',
@@ -107,7 +107,7 @@ function ws_register_source_verify_field_group() {
             ],
 
             [
-                'key'           => 'field_source_name',
+                'key'           => 'field_auto_source_name',
                 'label'         => 'Source Name',
                 'name'          => 'ws_auto_source_name',
                 'type'          => 'text',
@@ -120,7 +120,7 @@ function ws_register_source_verify_field_group() {
             ],
 
             [
-                'key'           => 'field_verified_by',
+                'key'           => 'field_auto_verified_by',
                 'label'         => 'Verified By',
                 'name'          => 'ws_auto_verified_by',
                 'type'          => 'text',
@@ -133,7 +133,7 @@ function ws_register_source_verify_field_group() {
             ],
 
             [
-                'key'           => 'field_verified_date',
+                'key'           => 'field_auto_verified_date',
                 'label'         => 'Verified Date',
                 'name'          => 'ws_auto_verified_date',
                 'type'          => 'text',
@@ -179,7 +179,7 @@ function ws_register_source_verify_field_group() {
                 'conditional_logic' => [
                     [
                         [
-                            'field'    => 'field_source_name',
+                            'field'    => 'field_auto_source_name',
                             'operator' => '!=empty',
                         ],
                     ],

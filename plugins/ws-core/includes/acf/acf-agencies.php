@@ -107,7 +107,7 @@ function ws_register_acf_agencies() {
             [
                 'key'           => 'field_agency_jurisdictions',
                 'label'         => 'Jurisdiction(s)',
-                'name'          => WS_JURISDICTION_TAXONOMY,
+                'name'          => 'ws_agency_jurisdictions',
                 'type'          => 'taxonomy',
                 'taxonomy'      => WS_JURISDICTION_TAXONOMY,
                 'field_type'    => 'multi_select',
@@ -205,7 +205,7 @@ function ws_register_acf_agencies() {
                 'instructions' => 'Briefly describe how this agency handles identity protection.',
             ],
             [
-                'key'           => 'field_agency_anonymous_allowed',
+                'key'           => 'field_agency_accepts_anonymous',
                 'label'         => 'Anonymous Reporting Allowed?',
                 'name'          => 'ws_agency_accepts_anonymous',
                 'type'          => 'true_false',

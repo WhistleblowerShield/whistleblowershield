@@ -122,7 +122,7 @@ function ws_register_acf_ag_procedures() {
             [
                 'key'           => 'field_ag_procedure_jurisdictions',
                 'label'         => 'Jurisdiction(s)',
-                'name'          => WS_JURISDICTION_TAXONOMY,
+                'name'          => 'ws_ag_procedure_jurisdictions',
                 'type'          => 'taxonomy',
                 'taxonomy'      => WS_JURISDICTION_TAXONOMY,
                 'field_type'    => 'multi_select',
@@ -290,9 +290,9 @@ function ws_register_acf_ag_procedures() {
                 ] ] ],
             ],
             [
-                'key'           => 'field_ag_has_procedure_prerequisites',
+                'key'           => 'field_ag_procedure_has_prerequisites',
                 'label'         => 'Prerequisites Required Before Filing',
-                'name'          => 'ws_ag_has_procedure_prerequisites',
+                'name'          => 'ws_ag_procedure_has_prerequisites',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable if the filer must exhaust internal remedies or satisfy other conditions before using this procedure.',
                 'ui'            => 1,
@@ -308,7 +308,7 @@ function ws_register_acf_ag_procedures() {
                 'rows'         => 3,
                 'instructions' => 'Briefly describe what prerequisites must be satisfied before filing.',
                 'conditional_logic' => [ [ [
-                    'field'    => 'field_ag_has_procedure_prerequisites',
+                    'field'    => 'field_ag_procedure_has_prerequisites',
                     'operator' => '==',
                     'value'    => '1',
                 ] ] ],

@@ -91,7 +91,7 @@ function ws_register_acf_stamp_fields() {
             // ws_acf_autofill_current_editor() in admin-hooks.php.
 
             [
-                'key'           => 'field_last_edited_author',
+                'key'           => 'field_auto_last_edited_author',
                 'label'         => 'Last Edited By',
                 'name'          => 'ws_auto_last_edited_author',
                 'type'          => 'user',
@@ -107,7 +107,7 @@ function ws_register_acf_stamp_fields() {
             // Readonly and disabled for all users — never submitted via UI.
 
             [
-                'key'          => 'field_date_created',
+                'key'          => 'field_auto_date_created',
                 'label'        => 'Date Created',
                 'name'         => 'ws_auto_date_created',
                 'type'         => 'text',
@@ -123,7 +123,7 @@ function ws_register_acf_stamp_fields() {
             // Readonly and disabled for all users — never submitted via UI.
 
             [
-                'key'          => 'field_last_edited',
+                'key'          => 'field_auto_last_edited',
                 'label'        => 'Last Edited',
                 'name'         => 'ws_auto_last_edited',
                 'type'         => 'text',
@@ -141,7 +141,7 @@ function ws_register_acf_stamp_fields() {
             // user ID directly without unwrapping an array.
 
             [
-                'key'           => 'field_create_author',
+                'key'           => 'field_auto_create_author',
                 'label'         => 'Created By',
                 'name'          => 'ws_auto_create_author',
                 'type'          => 'user',

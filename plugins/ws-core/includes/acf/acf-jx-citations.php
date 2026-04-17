@@ -20,10 +20,10 @@
  * 3.8.0   Field keys corrected to match naming convention.
  *         ws_ref_materials relationship field added (Reference Materials tab).
  * 3.12.0  Classification tab added: ws_protected_class, ws_disclosure_target,
- *         ws_adverse_action_types, ws_process_type, ws_remedies, ws_fee_shifting,
+ *         ws_adverse_action_type, ws_process_type, ws_remedy, ws_fee_shifting,
  *         ws_employer_defense, ws_employee_standard — mirrors jx-statute palette
  *         including has-details sentinel pattern and companion _details fields.
- * 3.12.1  Added ws_jx_citation_summary as a compact WYSIWYG summary field
+ * 3.12.1  Added ws_jx_citation_summary_wysiwyg as a compact WYSIWYG summary field
  *         for editorial drafting and ingest starter hints.
  * 3.12.2  Added ws_jx_citation_common_law_ids relationship field for
  *         doctrine-linked citations (separate from statute linkage).
@@ -140,9 +140,9 @@ function ws_register_acf_jx_citations() {
             ],
 
             [
-                'key'           => 'field_jx_citation_is_pdf',
+                'key'           => 'field_jx_citation_url_is_pdf',
                 'label'         => 'Is Link to PDF?',
-                'name'          => 'ws_jx_citation_is_pdf',
+                'name'          => 'ws_jx_citation_url_is_pdf',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable if the source URL links directly to a PDF document. Appends "(PDF)" to the rendered link.',
                 'ui'            => 1,
@@ -151,9 +151,9 @@ function ws_register_acf_jx_citations() {
                 'default_value' => 0,
             ],
             [
-                'key'           => 'field_jx_citation_attach_flag',
+                'key'           => 'field_jx_citation_has_attach_flag',
                 'label'         => 'Attach to Jurisdiction Page',
-                'name'          => 'ws_jx_citation_attach_flag',
+                'name'          => 'ws_jx_citation_has_attach_flag',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable to include this citation in the rendered case law section on the jurisdiction page. Disable to store for reference only.',
                 'ui'            => 1,
@@ -170,7 +170,7 @@ function ws_register_acf_jx_citations() {
                 'min'               => 1,
                 'step'              => 1,
                 'conditional_logic' => [ [ [
-                    'field'    => 'field_jx_citation_attach_flag',
+                    'field'    => 'field_jx_citation_has_attach_flag',
                     'operator' => '==',
                     'value'    => '1',
                 ] ] ],
@@ -184,18 +184,18 @@ function ws_register_acf_jx_citations() {
             // supporting taxonomies — companion _details fields follow each.
 
             [
-                'key'   => 'field_jx_cite_classification_tab',
+                'key'   => 'field_jx_citation_classification_tab',
                 'label' => 'Classification',
                 'type'  => 'tab',
             ],
 
             [
-                'key'           => 'field_jx_citation_protected_class',
+                'key'           => 'field_jx_citation_protected_classes',
                 'label'         => 'Protected Class',
                 'name'          => 'ws_jx_citation_protected_classes',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_protected_class',
-                'field_type'    => 'checkbox',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'Worker classification at issue in this citation. Tag only where the cited source explicitly addresses or turns on protected class status.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
@@ -219,7 +219,7 @@ function ws_register_acf_jx_citations() {
                 'name'          => 'ws_jx_citation_disclosure_targets',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_disclosure_target',
-                'field_type'    => 'checkbox',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'Reporting target at issue in this citation. Tag only where the cited source explicitly discusses or turns on the reporting channel.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
@@ -238,11 +238,11 @@ function ws_register_acf_jx_citations() {
             ],
 
             [
-                'key'           => 'field_jx_citation_adverse_actions',
+                'key'           => 'field_jx_citation_adverse_action_types',
                 'label'         => 'Adverse Action Types',
-                'name'          => 'ws_jx_citation_adverse_actions',
+                'name'          => 'ws_jx_citation_adverse_action_types',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_adverse_action_types',
+                'taxonomy'      => 'ws_adverse_action_type',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Retaliatory action at issue in this citation. Tag only where the cited source explicitly addresses the type of adverse action taken or alleged.',
                 'add_term'      => 0,
@@ -252,9 +252,9 @@ function ws_register_acf_jx_citations() {
             ],
 
             [
-                'key'          => 'field_jx_citation_adverse_action_details',
+                'key'          => 'field_jx_citation_adverse_action_type_details',
                 'label'        => 'Adverse Action Details',
-                'name'         => 'ws_jx_citation_adverse_action_details',
+                'name'         => 'ws_jx_citation_adverse_action_type_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
                 'instructions' => 'Describe nuance in the adverse action coverage as addressed by this citation.',
@@ -262,12 +262,12 @@ function ws_register_acf_jx_citations() {
             ],
 
             [
-                'key'           => 'field_jx_citation_process_type',
+                'key'           => 'field_jx_citation_process_types',
                 'label'         => 'Process Type',
-                'name'          => 'ws_jx_citation_process_type',
+                'name'          => 'ws_jx_citation_process_types',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_process_type',
-                'field_type'    => 'checkbox',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'Procedural route at issue or discussed in this citation. Tag only where the cited source explicitly addresses procedure.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
@@ -280,7 +280,7 @@ function ws_register_acf_jx_citations() {
                 'label'         => 'Remedies',
                 'name'          => 'ws_jx_citation_remedies',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_remedies',
+                'taxonomy'      => 'ws_remedy',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Remedies discussed, awarded, or denied in this citation. Tag only where the cited source explicitly addresses remedy.',
                 'add_term'      => 0,
@@ -290,9 +290,9 @@ function ws_register_acf_jx_citations() {
             ],
 
             [
-                'key'          => 'field_jx_citation_remedies_details',
+                'key'          => 'field_jx_citation_remedy_details',
                 'label'        => 'Remedies Details',
-                'name'         => 'ws_jx_citation_remedies_details',
+                'name'         => 'ws_jx_citation_remedy_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
                 'instructions' => 'Describe nuance in remedy availability or scope as addressed by this citation.',
@@ -438,7 +438,7 @@ function ws_register_acf_jx_citations() {
             [
                 'key'           => 'field_jx_citation_ref_materials',
                 'label'         => 'Reference Materials',
-                'name'          => 'ws_ref_materials',
+                'name'          => 'ws_jx_citation_ref_materials',
                 'type'          => 'relationship',
                 'post_type'     => [ 'ws-reference' ],
                 'filters'       => [ 'search' ],
@@ -460,10 +460,16 @@ function ws_register_acf_jx_citations() {
 // and ws_acf_write_stamp_fields().
 
 
-// ── Conditional logic: has-details sentinel ───────────────────────────────────
+// ── Conditional logic: taxonomy sentinel-gated details fields ─────────────────
 //
-// Mirrors the pattern in acf-jx-statutes.php. When the 'has-details' term is
-// selected in a taxonomy field, the companion _details textarea becomes visible.
+// The following detail textareas are shown when the companion trigger field
+// includes sentinel slug 'has-details':
+// - ws_jx_citation_protected_classes
+// - ws_jx_citation_disclosure_targets
+// - ws_jx_citation_adverse_action_types
+// - ws_jx_citation_remedies
+// - ws_jx_citation_employee_standards
+// - ws_jx_citation_employer_defenses
 
 add_filter( 'acf/load_field', 'ws_jx_citation_details_conditional' );
 
@@ -472,8 +478,8 @@ function ws_jx_citation_details_conditional( $field ) {
     static $map = [
         'field_jx_citation_protected_class_details'    => [ 'ws_protected_class',      'field_jx_citation_protected_classes' ],
         'field_jx_citation_disclosure_target_details'  => [ 'ws_disclosure_target',    'field_jx_citation_disclosure_targets' ],
-        'field_jx_citation_adverse_action_details'     => [ 'ws_adverse_action_types', 'field_jx_citation_adverse_actions' ],
-        'field_jx_citation_remedies_details'           => [ 'ws_remedies',             'field_jx_citation_remedies' ],
+        'field_jx_citation_adverse_action_type_details'  => [ 'ws_adverse_action_type',  'field_jx_citation_adverse_action_types' ],
+        'field_jx_citation_remedy_details'             => [ 'ws_remedy',               'field_jx_citation_remedies' ],
         'field_jx_citation_employee_standard_details'  => [ 'ws_employee_standard',    'field_jx_citation_employee_standards' ],
         'field_jx_citation_employer_defense_details'   => [ 'ws_employer_defense',     'field_jx_citation_employer_defenses' ],
     ];
@@ -563,7 +569,7 @@ function ws_jx_cite_no_citations_notice() {
         'fields'         => 'ids',
         'meta_query'     => [
             [
-                'key'   => 'ws_attach_flag',
+                'key'   => 'ws_jx_citation_attach_flag',
                 'value' => '1',
             ],
         ],

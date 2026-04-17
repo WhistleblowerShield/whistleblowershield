@@ -14,6 +14,7 @@
  * Content tab:
  *   ws_ref_title       Title of the referenced resource (text)
  *   ws_ref_url         External link to the resource (url, required)
+ *   ws_ref_url_is_pdf  PDF link toggle (true_false)
  *   ws_ref_description Brief description of the resource and relevance (textarea)
  *   ws_ref_type        Resource type (select)
  *   ws_ref_source_name Publishing organization or author name (text)
@@ -42,7 +43,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.3.0
- * @version 3.10.0
+ * @version 3.10.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -59,12 +60,13 @@
  *          Unique field keys (field_ws_ref_last_edited_author, etc.) retired;
  *          ws-reference now uses shared field keys. $ws_stamp_cpts entry in
  *          admin-hooks.php updated from field_ws_ref_last_edited_author to
- *          field_last_edited_author.
+ *          field_auto_last_edited_author.
  *        - Removed Approval tab and ws_ref_approved field entirely.
  *          ws-reference does not warrant an approval gate — editors are
  *          trusted users and the parent record's review workflow is the
  *          appropriate quality gate. ws_ref_approved lock removed from
  *          admin-hooks.php field locking loop.
+ * 3.10.1 Added ws_ref_url_is_pdf toggle for direct PDF resource links.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -124,6 +126,18 @@ function ws_register_acf_ws_reference() {
                 'type'         => 'url',
                 'instructions' => 'Direct link to the external resource. Required. All outbound links open in a new tab.',
                 'required'     => 1,
+            ],
+
+            [
+                'key'           => 'field_ref_url_is_pdf',
+                'label'         => 'Link is PDF?',
+                'name'          => 'ws_ref_url_is_pdf',
+                'type'          => 'true_false',
+                'instructions'  => 'Enable if the resource URL links directly to a PDF document.',
+                'ui'            => 1,
+                'ui_on_text'    => 'PDF',
+                'ui_off_text'   => 'No',
+                'default_value' => 0,
             ],
 
             [

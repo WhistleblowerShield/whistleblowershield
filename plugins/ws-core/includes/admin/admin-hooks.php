@@ -550,16 +550,16 @@ add_action( 'admin_notices', function() {
 
 $ws_stamp_cpts = [
     'jurisdiction'      => [ 'author_acf_key' => 'field_jx_last_edited_author' ],
-    'jx-summary'        => [ 'author_acf_key' => 'field_last_edited_author' ],
-    'jx-citation'       => [ 'author_acf_key' => 'field_last_edited_author' ],
-    'jx-statute'        => [ 'author_acf_key' => 'field_last_edited_author' ],
-    'jx-interpretation' => [ 'author_acf_key' => 'field_last_edited_author' ],
-    'ws-agency'         => [ 'author_acf_key' => 'field_last_edited_author' ],
-    'ws-ag-procedure'   => [ 'author_acf_key' => 'field_last_edited_author' ],
-    'ws-legal-update'   => [ 'author_acf_key' => 'field_last_edited_author' ],
-    'ws-assist-org'     => [ 'author_acf_key' => 'field_last_edited_author' ],
+    'jx-summary'        => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
+    'jx-citation'       => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
+    'jx-statute'        => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
+    'jx-interpretation' => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
+    'ws-agency'         => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
+    'ws-ag-procedure'   => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
+    'ws-legal-update'   => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
+    'ws-assist-org'     => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
     // ws-reference uses shared field keys — unique key retired in v3.4.0.
-    'ws-reference'      => [ 'author_acf_key' => 'field_last_edited_author' ],
+    'ws-reference'      => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
 ];
 
 add_action( 'acf/save_post', 'ws_acf_write_stamp_fields', 20 );
@@ -908,7 +908,7 @@ add_filter( 'acf/prepare_field/key=field_jurisdiction_name', function( $field ) 
     $field['readonly'] = true;
     return $field;
 } );
-add_filter( 'acf/prepare_field/key=field_verified_by', function( $field ) {
+add_filter( 'acf/prepare_field/key=field_auto_verified_by', function( $field ) {
     $stored = get_post_meta( get_the_ID(), 'ws_auto_verified_by', true );
     $field['value'] = $stored ? ws_resolve_display_name( (int) $stored ) : '';
     return $field;
@@ -938,7 +938,7 @@ add_filter( 'acf/update_value/key=field_jurisdiction_class', function( $value, $
 
 // Lock create_author: once stamped by ws_acf_write_stamp_fields it must not
 // be overwritten by ACF submitting an empty value on subsequent saves.
-add_filter( 'acf/update_value/key=field_create_author', function( $value, $post_id ) {
+add_filter( 'acf/update_value/key=field_auto_create_author', function( $value, $post_id ) {
     $stored = get_post_meta( $post_id, 'ws_auto_create_author', true );
     return $stored !== '' ? $stored : $value;
 }, 10, 2 );

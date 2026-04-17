@@ -18,71 +18,63 @@ defined( 'ABSPATH' ) || exit;
  * FIELD SUMMARY
  * -------------
  * Legal Basis tab:
- *   ws_jx_comlaw_doctrine_name          Doctrine name (text, required)
- *   ws_jx_comlaw_doctrine_id            Unique doctrine identifier (text, required)
- *                                Format: [JX]-CL-[SHORT-SLUG] e.g. WY-CL-PUBLIC-POLICY
- *                                Used in prompt exclusion lists to prevent duplicates.
- *   ws_jx_comlaw_common_name            Common/informal name (text, optional)
- *   ws_jx_comlaw_precedent_url          Leading case URL (url, optional) — approved sources only
- *   ws_jx_comlaw_public_policy_sources  Sources accepted as establishing public policy (checkbox)
- *                                Options: constitution, statute, administrative-rule,
- *                                case-law, federal-law
- *   ws_jx_comlaw_doctrine_basis         WYSIWYG — legal principle the doctrine
- *                                rests on (required)
- *   ws_jx_comlaw_recognition_status     WYSIWYG — current status of the doctrine:
- *                                well-established, contested, limited,
- *                                or jurisdiction-specific (required)
- *   ws_jx_comlaw_disclosure_types        Disclosure Categories taxonomy
- *   ws_jx_comlaw_protected_classes        Protected Class taxonomy
- *   ws_jx_comlaw_protected_class_details Protected Class Detail (textarea, conditional)
- *   ws_jx_comlaw_disclosure_targets     Disclosure Targets taxonomy
- *   ws_jx_comlaw_disclosure_target_details Disclosure Targets Detail (textarea, conditional)
- *   ws_jx_comlaw_adverse_action_scope   Free-text scope of covered adverse actions
- *   ws_attach_flag               Editorial curation flag (true_false)
- *   ws_display_order             Render order among flagged items (conditional)
+ *   ws_jx_comlaw_doctrine_name                Doctrine name (text, required)
+ *   ws_jx_comlaw_doctrine_id                  Unique doctrine identifier (text, required)
+ *   ws_jx_comlaw_common_name                  Common/informal name (text, optional)
+ *   ws_jx_comlaw_precedent_url                Leading case URL (url, optional)
+ *   ws_jx_comlaw_precedent_url_is_pdf         PDF link toggle (true_false)
+ *   ws_jx_comlaw_public_policy_sources        Public policy source categories (checkbox)
+ *   ws_jx_comlaw_doctrine_basis_wysiwyg       Doctrine basis narrative (wysiwyg)
+ *   ws_jx_comlaw_recognition_status_wysiwyg   Recognition status narrative (wysiwyg)
+ *   ws_jx_comlaw_disclosure_types             Disclosure Categories taxonomy (multi_select)
+ *   ws_jx_comlaw_protected_classes            Protected Class taxonomy (multi_select)
+ *   ws_jx_comlaw_protected_class_details      Protected Class detail (textarea, conditional)
+ *   ws_jx_comlaw_disclosure_targets           Disclosure Targets taxonomy (multi_select)
+ *   ws_jx_comlaw_disclosure_target_details    Disclosure Targets detail (textarea, conditional)
+ *   ws_jx_comlaw_adverse_action_scope         Free-text scope of covered adverse actions
+ *   ws_jx_comlaw_has_attach_flag              Editorial curation flag (true_false)
+ *   ws_jx_comlaw_display_order                Render order among flagged items (number, conditional)
  *
  * Statute of Limitations tab:
- *   ws_jx_comlaw_sol_value              Filing Window Value (number)
- *   ws_jx_comlaw_sol_unit               Time Unit (select)
- *   ws_jx_comlaw_sol_trigger            Deadline Trigger (select)
- *   ws_jx_comlaw_limit_ambiguous        SOL has supplementary detail (true_false)
- *   ws_jx_comlaw_limit_details            SOL detail (textarea, conditional)
- *   ws_jx_comlaw_tolling_has_notes    Tolling provisions exist (true_false)
- *   ws_jx_comlaw_tolling_notes        Tolling & Extension Details (textarea, conditional)
- *   ws_jx_comlaw_exhaustion_required         Exhaustion Required? (true_false)
- *   ws_jx_comlaw_exhaustion_details     Exhaustion Procedure & Deadline (textarea, conditional)
+ *   ws_jx_comlaw_sol_value                    Filing Window Value (number)
+ *   ws_jx_comlaw_sol_unit                     Time Unit (select)
+ *   ws_jx_comlaw_sol_trigger                  Deadline Trigger (select)
+ *   ws_jx_comlaw_has_limit_ambiguous          SOL supplementary detail toggle (true_false)
+ *   ws_jx_comlaw_limit_details                SOL detail (textarea, conditional)
+ *   ws_jx_comlaw_has_tolling_details          Tolling provisions toggle (true_false)
+ *   ws_jx_comlaw_tolling_details              Tolling & extension details (textarea, conditional)
+ *   ws_jx_comlaw_has_exhaustion_required      Exhaustion required toggle (true_false)
+ *   ws_jx_comlaw_exhaustion_details           Exhaustion procedure & deadline (textarea, conditional)
  *
  * Enforcement tab:
- *   ws_jx_comlaw_process_types           Process Types taxonomy (checkbox)
- *   ws_jx_comlaw_adverse_actions         Adverse Action Types taxonomy (checkbox)
- *   ws_jx_comlaw_adverse_action_details Adverse Action Detail (textarea, conditional)
- *   ws_jx_comlaw_fee_shiftings           Fee Shifting taxonomy (checkbox)
- *   ws_jx_comlaw_remedies               Available Remedies taxonomy (checkbox)
- *   ws_jx_comlaw_remedies_details       Remedies Detail (textarea, conditional)
- *   ws_jx_comlaw_related_agencies       Primary Oversight Agencies (post_object)
+ *   ws_jx_comlaw_process_types                Process Types taxonomy (multi_select)
+ *   ws_jx_comlaw_adverse_action_types         Adverse Action Types taxonomy (multi_select)
+ *   ws_jx_comlaw_adverse_action_type_details  Adverse Action detail (textarea, conditional)
+ *   ws_jx_comlaw_fee_shiftings                Fee Shifting taxonomy (multi_select)
+ *   ws_jx_comlaw_remedies                     Available Remedies taxonomy (multi_select)
+ *   ws_jx_comlaw_remedy_details               Remedy detail (textarea, conditional)
+ *   ws_jx_comlaw_related_agencies             Primary oversight agencies (post_object)
  *
  * Burden of Proof tab:
- *   ws_jx_comlaw_statutory_preclusion       Statutory preclusion flag (true_false) — blocks
- *                                    common law claim when statutory remedy exists
- *   ws_jx_comlaw_statutory_preclusion_details Preclusion details (textarea, conditional)
- *   ws_jx_comlaw_employee_standards          Employee Standard taxonomy (checkbox)
- *   ws_jx_comlaw_employee_standard_details  Employee Standard Detail (textarea, conditional)
- *   ws_jx_comlaw_employer_defenses           Employer Defense taxonomy (checkbox)
- *   ws_jx_comlaw_employer_defense_details   Employer Defense Details (textarea, conditional)
- *   ws_jx_comlaw_rebuttable_has_presumption     Rebuttable presumption exists (true_false)
- *   ws_jx_comlaw_rebuttable_presumption         Rebuttable Presumption Details (textarea, conditional)
- *   ws_jx_comlaw_bop_has_details            BOP has supplementary detail (true_false)
- *   ws_jx_comlaw_burden_of_proof_details     BOP detail (textarea, conditional)
- *   ws_jx_comlaw_bop_flag                    BOP signal phrase (text, optional)
- *   ws_jx_comlaw_burden_of_proof_details                BOP detail (textarea, conditional)
+ *   ws_jx_comlaw_has_statutory_preclusion     Statutory preclusion toggle (true_false)
+ *   ws_jx_comlaw_statutory_preclusion_details Statutory preclusion detail (textarea, conditional)
+ *   ws_jx_comlaw_employee_standards           Employee Standard taxonomy (multi_select)
+ *   ws_jx_comlaw_employee_standard_details    Employee Standard detail (textarea, conditional)
+ *   ws_jx_comlaw_employer_defenses            Employer Defense taxonomy (multi_select)
+ *   ws_jx_comlaw_employer_defense_details     Employer Defense detail (textarea, conditional)
+ *   ws_jx_comlaw_has_rebuttable_presumption   Rebuttable presumption toggle (true_false)
+ *   ws_jx_comlaw_rebuttable_presumption_details Rebuttable presumption detail (textarea, conditional)
+ *   ws_jx_comlaw_has_bop_details              BOP supplementary detail toggle (true_false)
+ *   ws_jx_comlaw_bop_details                  BOP detail (textarea, conditional)
+ *   ws_jx_comlaw_bop_flag                     BOP signal phrase (text)
  *
  * Reward tab:
- *   ws_jx_comlaw_reward_available             Reward available (true_false)
- *   ws_jx_comlaw_reward_details         Reward Details (textarea, conditional)
+ *   ws_jx_comlaw_has_reward_available         Reward available toggle (true_false)
+ *   ws_jx_comlaw_reward_details               Reward details (textarea, conditional)
  *
  * Relationships tab:
- *   ws_jx_comlaw_citation_ids            Related Citations (post_object, multiple)
- *   ws_jx_comlaw_interpretation_ids      Related Interpretations (post_object, multiple)
+ *   ws_jx_comlaw_citation_ids                 Related citations (post_object, multiple)
+ *   ws_jx_comlaw_interpretation_ids           Related interpretations (post_object, multiple)
  *
  * @package    WhistleblowerShield
  * @since      3.13.0
@@ -130,7 +122,7 @@ function ws_register_acf_jx_common_law() {
             // ────────────────────────────────────────────────────────────────
 
             [
-                'key'   => 'field_jx_comlaw_legal_tab',
+                'key'   => 'field_jx_comlaw_legal_basis_tab',
                 'label' => 'Legal Basis',
                 'type'  => 'tab',
             ],
@@ -172,6 +164,18 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
+                'key'           => 'field_jx_comlaw_precedent_url_is_pdf',
+                'label'         => 'Link is PDF?',
+                'name'          => 'ws_jx_comlaw_precedent_url_is_pdf',
+                'type'          => 'true_false',
+                'instructions'  => 'Enable if the leading case URL links directly to a PDF document.',
+                'ui'            => 1,
+                'ui_on_text'    => 'PDF',
+                'ui_off_text'   => 'No',
+                'default_value' => 0,
+            ],
+
+            [
                 'key'          => 'field_jx_comlaw_public_policy_sources',
                 'label'        => 'Public Policy Sources',
                 'name'         => 'ws_jx_comlaw_public_policy_sources',
@@ -203,9 +207,9 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'          => 'field_jx_comlaw_doctrine_basis',
+                'key'          => 'field_jx_comlaw_doctrine_basis_wysiwyg',
                 'label'        => 'Doctrine Basis',
-                'name'         => 'ws_jx_comlaw_doctrine_basis',
+                'name'         => 'ws_jx_comlaw_doctrine_basis_wysiwyg',
                 'type'         => 'wysiwyg',
                 'tabs'         => 'all',
                 'toolbar'      => 'full',
@@ -215,9 +219,9 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'          => 'field_jx_comlaw_recognition_status',
+                'key'          => 'field_jx_comlaw_recognition_status_wysiwyg',
                 'label'        => 'Recognition Status',
-                'name'         => 'ws_jx_comlaw_recognition_status',
+                'name'         => 'ws_jx_comlaw_recognition_status_wysiwyg',
                 'type'         => 'wysiwyg',
                 'tabs'         => 'all',
                 'toolbar'      => 'full',
@@ -227,7 +231,7 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'           => 'field_jx_comlaw_disclosure_type',
+                'key'           => 'field_jx_comlaw_disclosure_types',
                 'label'         => 'Disclosure Categories',
                 'name'          => 'ws_jx_comlaw_disclosure_types',
                 'type'          => 'taxonomy',
@@ -241,7 +245,7 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'           => 'field_jx_comlaw_protected_class',
+                'key'           => 'field_jx_comlaw_protected_classes',
                 'label'         => 'Protected Class',
                 'name'          => 'ws_jx_comlaw_protected_classes',
                 'type'          => 'taxonomy',
@@ -299,9 +303,9 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'           => 'field_jx_comlaw_attach_flag',
+                'key'           => 'field_jx_comlaw_has_attach_flag',
                 'label'         => 'Attach to Jurisdiction Page',
-                'name'          => 'ws_attach_flag',
+                'name'          => 'ws_jx_comlaw_has_attach_flag',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable to include this record in the rendered common law section on the jurisdiction page.',
                 'ui'            => 1,
@@ -313,13 +317,13 @@ function ws_register_acf_jx_common_law() {
             [
                 'key'               => 'field_jx_comlaw_display_order',
                 'label'             => 'Display Order',
-                'name'              => 'ws_display_order',
+                'name'              => 'ws_jx_comlaw_display_order',
                 'type'              => 'number',
                 'instructions'      => 'Order among attached common law records on the jurisdiction page. Lower numbers appear first.',
                 'min'               => 1,
                 'step'              => 1,
                 'conditional_logic' => [ [ [
-                    'field'    => 'field_jx_comlaw_attach_flag',
+                    'field'    => 'field_jx_comlaw_has_attach_flag',
                     'operator' => '==',
                     'value'    => '1',
                 ] ] ],
@@ -330,8 +334,8 @@ function ws_register_acf_jx_common_law() {
             // ────────────────────────────────────────────────────────────────
 
             [
-                'key'   => 'field_jx_comlaw_deadlines_tab',
-                'label' => 'Statute of Limitations',
+                'key'   => 'field_jx_comlaw_sol_deadlines_tab',
+                'label' => 'Statute of Limitations & Deadlines',
                 'type'  => 'tab',
             ],
 
@@ -381,9 +385,9 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'           => 'field_jx_comlaw_limit_ambiguous',
+                'key'           => 'field_jx_comlaw_has_limit_ambiguous',
                 'label'         => 'SOL Has Supplementary Detail',
-                'name'          => 'ws_jx_comlaw_limit_ambiguous',
+                'name'          => 'ws_jx_comlaw_has_limit_ambiguous',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable to document the analogous statute the limitations period is borrowed from. Almost always required for common law claims.',
                 'ui'            => 1,
@@ -400,16 +404,16 @@ function ws_register_acf_jx_common_law() {
                 'rows'              => 3,
                 'instructions'      => 'Identify the analogous statute the limitations period is borrowed from and any judicial authority for that borrowing.',
                 'conditional_logic' => [ [ [
-                    'field'    => 'field_jx_comlaw_limit_ambiguous',
+                    'field'    => 'field_jx_comlaw_has_limit_ambiguous',
                     'operator' => '==',
                     'value'    => '1',
                 ] ] ],
             ],
 
             [
-                'key'           => 'field_jx_comlaw_tolling_has_notes',
+                'key'           => 'field_jx_comlaw_has_tolling_details',
                 'label'         => 'Tolling Provisions Exist',
-                'name'          => 'ws_jx_comlaw_tolling_has_notes',
+                'name'          => 'ws_jx_comlaw_has_tolling_details',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable if identified tolling or extension conditions apply to this doctrine.',
                 'ui'            => 1,
@@ -419,14 +423,14 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'               => 'field_jx_comlaw_tolling_notes',
+                'key'               => 'field_jx_comlaw_tolling_details',
                 'label'             => 'Tolling & Extension Details',
-                'name'              => 'ws_jx_comlaw_tolling_notes',
+                'name'              => 'ws_jx_comlaw_tolling_details',
                 'type'              => 'textarea',
                 'rows'              => 3,
                 'instructions'      => 'Describe specific conditions that pause or extend the limitations period.',
                 'conditional_logic' => [ [ [
-                    'field'    => 'field_jx_comlaw_tolling_has_notes',
+                    'field'    => 'field_jx_comlaw_has_tolling_details',
                     'operator' => '==',
                     'value'    => '1',
                 ] ] ],
@@ -472,12 +476,12 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'           => 'field_jx_comlaw_process_type',
+                'key'           => 'field_jx_comlaw_process_types',
                 'label'         => 'Process Types',
                 'name'          => 'ws_jx_comlaw_process_types',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_process_type',
-                'field_type'    => 'checkbox',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'Which procedural routes are available under this doctrine?',
                 'add_term'      => 0,
                 'save_terms'    => 1,
@@ -486,12 +490,12 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'           => 'field_jx_comlaw_adverse_action',
+                'key'           => 'field_jx_comlaw_adverse_action_types',
                 'label'         => 'Adverse Action Types',
-                'name'          => 'ws_jx_comlaw_adverse_actions',
+                'name'          => 'ws_jx_comlaw_adverse_action_types',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_adverse_action_types',
-                'field_type'    => 'checkbox',
+                'taxonomy'      => 'ws_adverse_action_type',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'Select the adverse actions covered by this doctrine.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
@@ -500,9 +504,9 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'          => 'field_jx_comlaw_adverse_action_details',
+                'key'          => 'field_jx_comlaw_adverse_action_type_details',
                 'label'        => 'Adverse Action Details',
-                'name'         => 'ws_jx_comlaw_adverse_action_details',
+                'name'         => 'ws_jx_comlaw_adverse_action_type_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
                 'instructions' => 'Describe any judicial language, broad catch-all provisions, or nuance that the taxonomy terms do not fully capture.',
@@ -510,12 +514,12 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'           => 'field_jx_comlaw_fee_shifting',
+                'key'           => 'field_jx_comlaw_fee_shiftings',
                 'label'         => 'Fee Shifting',
                 'name'          => 'ws_jx_comlaw_fee_shiftings',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_fee_shifting',
-                'field_type'    => 'checkbox',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'Select the fee shifting rule that applies under this doctrine.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
@@ -528,8 +532,8 @@ function ws_register_acf_jx_common_law() {
                 'label'         => 'Available Remedies',
                 'name'          => 'ws_jx_comlaw_remedies',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_remedies',
-                'field_type'    => 'checkbox',
+                'taxonomy'      => 'ws_remedy',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'What can a claimant recover under this doctrine?',
                 'add_term'      => 0,
                 'save_terms'    => 1,
@@ -538,9 +542,9 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'          => 'field_jx_comlaw_remedies_details',
+                'key'          => 'field_jx_comlaw_remedy_details',
                 'label'        => 'Remedies Details',
-                'name'         => 'ws_jx_comlaw_remedies_details',
+                'name'         => 'ws_jx_comlaw_remedy_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
                 'instructions' => 'Describe caps, eligibility conditions, or other nuance affecting available remedies under this doctrine.',
@@ -597,12 +601,12 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'           => 'field_jx_comlaw_employee_standard',
+                'key'           => 'field_jx_comlaw_employee_standards',
                 'label'         => 'Employee Standard',
                 'name'          => 'ws_jx_comlaw_employee_standards',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_employee_standard',
-                'field_type'    => 'checkbox',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'What standard must the claimant meet? Tag all that explicitly apply. Omit if no standard is named in the leading case — do not infer.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
@@ -621,12 +625,12 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'           => 'field_jx_comlaw_employer_defense',
+                'key'           => 'field_jx_comlaw_employer_defenses',
                 'label'         => 'Employer Defense',
                 'name'          => 'ws_jx_comlaw_employer_defenses',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_employer_defense',
-                'field_type'    => 'checkbox',
+                'field_type'    => 'multi_select',
                 'instructions'  => 'Select the defense standard(s) available to the employer under this doctrine.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
@@ -645,9 +649,9 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'           => 'field_jx_comlaw_rebuttable_has_presumption',
+                'key'           => 'field_jx_comlaw_has_rebuttable_presumption',
                 'label'         => 'Rebuttable Presumption Exists',
-                'name'          => 'ws_jx_comlaw_rebuttable_has_presumption',
+                'name'          => 'ws_jx_comlaw_has_rebuttable_presumption',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable if this doctrine creates a rebuttable presumption in favour of the claimant.',
                 'ui'            => 1,
@@ -664,16 +668,16 @@ function ws_register_acf_jx_common_law() {
                 'rows'              => 3,
                 'instructions'      => 'Describe the presumption and what the employer must do to rebut it.',
                 'conditional_logic' => [ [ [
-                    'field'    => 'field_jx_comlaw_rebuttable_has_presumption',
+                    'field'    => 'field_jx_comlaw_has_rebuttable_presumption',
                     'operator' => '==',
                     'value'    => '1',
                 ] ] ],
             ],
 
             [
-                'key'           => 'field_jx_comlaw_bop_has_details',
+                'key'           => 'field_jx_comlaw_has_bop_details',
                 'label'         => 'BOP Has Supplementary Detail',
-                'name'          => 'ws_jx_comlaw_bop_has_details',
+                'name'          => 'ws_jx_comlaw_has_bop_details',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable to add a note about a non-standard or notable burden of proof situation under this doctrine.',
                 'ui'            => 1,
@@ -690,7 +694,7 @@ function ws_register_acf_jx_common_law() {
                 'rows'              => 3,
                 'instructions'      => 'Describe the notable burden of proof situation under this doctrine.',
                 'conditional_logic' => [ [ [
-                    'field'    => 'field_jx_comlaw_bop_has_details',
+                    'field'    => 'field_jx_comlaw_has_bop_details',
                     'operator' => '==',
                     'value'    => '1',
                 ] ] ],
@@ -805,23 +809,28 @@ function ws_register_acf_jx_common_law() {
 } // end ws_register_acf_jx_common_law
 
 
-// ── Conditional logic: has-details sentinel ───────────────────────────────────
+// ── Conditional logic: taxonomy sentinel-gated details fields ─────────────────
 //
-// Mirrors the pattern in acf-jx-statutes.php. Dynamically injects
-// conditional_logic into each _details textarea when the 'has-details'
-// term is selected in its companion taxonomy field.
+// The following detail textareas are shown when the companion trigger field
+// includes sentinel slug 'has-details':
+// - ws_jx_comlaw_protected_classes
+// - ws_jx_comlaw_disclosure_targets
+// - ws_jx_comlaw_adverse_action_types
+// - ws_jx_comlaw_remedies
+// - ws_jx_comlaw_employee_standards
+// - ws_jx_comlaw_employer_defenses
 
 add_filter( 'acf/load_field', 'ws_jx_comlaw_details_conditional' );
 
 function ws_jx_comlaw_details_conditional( $field ) {
 
     static $map = [
-        'field_jx_comlaw_protected_class_details'    => [ 'ws_protected_class',      'field_jx_comlaw_protected_class' ],
+        'field_jx_comlaw_protected_class_details'    => [ 'ws_protected_class',      'field_jx_comlaw_protected_classes' ],
         'field_jx_comlaw_disclosure_target_details'  => [ 'ws_disclosure_target',    'field_jx_comlaw_disclosure_targets' ],
-        'field_jx_comlaw_adverse_action_details'     => [ 'ws_adverse_action_types', 'field_jx_comlaw_adverse_action' ],
-        'field_jx_comlaw_remedies_details'           => [ 'ws_remedies',             'field_jx_comlaw_remedies' ],
-        'field_jx_comlaw_employee_standard_details'  => [ 'ws_employee_standard',    'field_jx_comlaw_employee_standard' ],
-        'field_jx_comlaw_employer_defense_details'   => [ 'ws_employer_defense',     'field_jx_comlaw_employer_defense' ],
+        'field_jx_comlaw_adverse_action_type_details' => [ 'ws_adverse_action_type',  'field_jx_comlaw_adverse_action_types' ],
+        'field_jx_comlaw_remedy_details'             => [ 'ws_remedy',               'field_jx_comlaw_remedies' ],
+        'field_jx_comlaw_employee_standard_details'  => [ 'ws_employee_standard',    'field_jx_comlaw_employee_standards' ],
+        'field_jx_comlaw_employer_defense_details'   => [ 'ws_employer_defense',     'field_jx_comlaw_employer_defenses' ],
     ];
 
     if ( ! isset( $map[ $field['key'] ] ) ) {

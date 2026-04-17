@@ -22,7 +22,7 @@
  *   jurisdiction class and post slug; both are manually overridable.
  *
  * Flag tab:
- *   ws_jx_flag                Image field (WordPress media library).
+ *   ws_jx_flag_image          Image field (WordPress media library).
  *   ws_jx_flag_attribution    Wikimedia Commons attribution string.
  *   ws_jx_flag_source_url     Canonical Wikimedia SVG URL.
  *   ws_jx_flag_license        License identifier (e.g. "Public Domain").
@@ -95,7 +95,7 @@ function ws_register_acf_jurisdiction_fields() {
             ],
 
             [
-                'key'           => 'field_jurisdiction_tax',
+                'key'           => 'field_jurisdiction_term_id',
                 'label'         => 'Jurisdiction USPS Code',
                 'name'          => 'ws_jurisdiction_term_id',
                 'type'          => 'taxonomy',
@@ -150,7 +150,7 @@ function ws_register_acf_jurisdiction_fields() {
             // ────────────────────────────────────────────────────────────────
 
             [
-                'key'   => 'field_jx_gov_urls_tab',
+                'key'   => 'field_jx_government_urls_tab',
                 'label' => 'Government Leadership URLs',
                 'type'  => 'tab',
             ],
@@ -257,9 +257,9 @@ function ws_register_acf_jurisdiction_fields() {
             ],
 
             [
-                'key'           => 'field_jx_flag',
+                'key'           => 'field_jx_flag_image',
                 'label'         => 'Flag Image',
-                'name'          => 'ws_jx_flag',
+                'name'          => 'ws_jx_flag_image',
                 'type'          => 'image',
                 'instructions'  => 'Upload the official flag image. Source from Wikimedia Commons to ensure proper licensing.',
                 'return_format' => 'array',
@@ -311,13 +311,13 @@ function ws_register_acf_jurisdiction_fields() {
             // ────────────────────────────────────────────────────────────────
 
             [
-                'key'   => 'field_record_tab',
+                'key'   => 'field_record_management_tab',
                 'label' => 'Record Management',
                 'type'  => 'tab',
             ],
 
             [
-                'key'          => 'field_last_edited_gmt',
+                'key'          => 'field_auto_last_edited_gmt',
                 'label'        => 'Date Last Edited (GMT)',
                 'name'         => '_ws_auto_last_edited_gmt',
                 'type'         => 'text',
@@ -326,7 +326,7 @@ function ws_register_acf_jurisdiction_fields() {
                 'wrapper'      => [ 'class' => 'hidden' ],
             ],
 			[
-                'key'           => 'field_jx_last_edited_author',
+                'key'           => 'field_auto_last_edited_author',
                 'label'         => 'Last Editor',
                 'name'          => 'ws_auto_last_edited_author',
                 'type'          => 'user',
@@ -336,7 +336,7 @@ function ws_register_acf_jurisdiction_fields() {
             ],
 			
             [
-                'key'          => 'field_jx_last_edited',
+                'key'          => 'field_auto_last_edited',
                 'label'        => 'Date Last Edited',
                 'name'         => 'ws_auto_last_edited',
                 'type'         => 'text',

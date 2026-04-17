@@ -26,7 +26,7 @@
  *
  * @package    WhistleblowerShield
  * @since      1.0.0
- * @version 3.10.0
+ * @version 3.10.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -69,6 +69,7 @@
  *        - Update Type choices expanded: statute, citation, summary, interpretation,
  *          regulation, policy, internal, other. 'internal' label updated to
  *          'WhistleblowerShield.org Internal Adjustment' for admin clarity.
+ * 3.10.1 Added ws_legal_update_source_url_is_pdf toggle for direct PDF source links.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -117,7 +118,7 @@ function ws_register_acf_legal_update() {
 				'label'         => 'Affected Jurisdiction(s)',
 				'name'          => 'ws_legal_update_jurisdictions',
 				'type'          => 'taxonomy',
-				'instructions'  => 'Select the jurisdiction affected by this legal update.',
+				'instructions'  => 'Select the jurisdictions affected by this legal update.',
 				'taxonomy'      => WS_JURISDICTION_TAXONOMY,
 				'field_type'    => 'multi_select',
 				'return_format' => 'id',
@@ -175,6 +176,18 @@ function ws_register_acf_legal_update() {
                 'name'         => 'ws_legal_update_source_url',
                 'type'         => 'url',
                 'instructions' => 'Official source for the legal change — e.g., court decision, statute, regulation, or agency policy document.',
+            ],
+
+            [
+                'key'           => 'field_legal_update_source_url_is_pdf',
+                'label'         => 'Link is PDF?',
+                'name'          => 'ws_legal_update_source_url_is_pdf',
+                'type'          => 'true_false',
+                'instructions'  => 'Enable if the primary source URL links directly to a PDF document.',
+                'default_value' => 0,
+                'ui'            => 1,
+                'ui_on_text'    => 'PDF',
+                'ui_off_text'   => 'No',
             ],
 
             // ── Update Type ───────────────────────────────────────────────

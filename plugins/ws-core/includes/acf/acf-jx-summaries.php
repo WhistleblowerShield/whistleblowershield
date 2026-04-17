@@ -9,7 +9,7 @@
  *
  * Note: jx-summary IS the plain language document. Plain English fields
  * (group_plain_english_metadata) do NOT attach here — the summary carries
- * its own plain_reviewed toggle in this group instead.
+ * its own plain_english_reviewed toggle in this group instead.
  *
  * @package WhistleblowerShield
  * @since   2.1.0
@@ -57,14 +57,14 @@ function ws_register_acf_jx_summary() {
             // ── Tab: Content ──────────────────────────────────────────────
 
             [
-                'key'   => 'field_jx_sum_content_tab',
-                'label' => 'Content',
+                'key'   => 'field_jx_summary_content_tab',
+                'label' => 'Summary Content',
                 'type'  => 'tab',
             ],
             [
-                'key'          => 'field_jurisdiction_summary',
+                'key'          => 'field_jx_summary_wysiwyg',
                 'label'        => 'Jurisdiction Summary',
-                'name'         => 'ws_jurisdiction_summary_wysiwyg',
+                'name'         => 'ws_jx_summary_wysiwyg',
                 'type'         => 'wysiwyg',
                 'instructions' => '<strong>IMPORTANT:</strong> Use the editor toolbar for all formatting. Do NOT paste raw Markdown (**, ##, ---). Content must be clean HTML. This field is rendered directly on the jurisdiction page.',
                 'required'     => 1,
@@ -74,9 +74,9 @@ function ws_register_acf_jx_summary() {
                 'delay'        => 0,
             ],
             [
-                'key'          => 'field_jx_limitations',
+                'key'          => 'field_jx_summary_limitations',
                 'label'        => 'Limitations & Ramifications',
-                'name'         => 'ws_jx_limitations',
+                'name'         => 'ws_jx_summary_limitations',
                 'type'         => 'repeater',
                 'instructions' => 'Each row is one limitation. Label: short name shown in bold (e.g. "Media Reporting"). Description: plain-language explanation. Rendered automatically after the case law section via [ws_jx_limitations].',
                 'button_label' => 'Add Limitation',
@@ -85,18 +85,18 @@ function ws_register_acf_jx_summary() {
                 'max'          => 0,
                 'sub_fields'   => [
                     [
-                        'key'          => 'field_jx_limit_label',
+                        'key'          => 'field_jx_summary_limit_label',
                         'label'        => 'Label',
-                        'name'         => 'ws_jx_limit_label',
+                        'name'         => 'ws_jx_summary_limit_label',
                         'type'         => 'text',
                         'instructions' => 'Short bold heading (e.g. "Media Reporting", "Personal Grievances").',
                         'required'     => 1,
                         'wrapper'      => [ 'width' => '25' ],
                     ],
                     [
-                        'key'          => 'field_jx_limit_text',
+                        'key'          => 'field_jx_summary_limit_text',
                         'label'        => 'Description',
-                        'name'         => 'ws_jx_limit_text',
+                        'name'         => 'ws_jx_summary_limit_text',
                         'type'         => 'textarea',
                         'instructions' => 'Plain-language explanation. No HTML.',
                         'required'     => 1,
@@ -134,14 +134,14 @@ function ws_register_acf_jx_summary() {
             // and appear via that group's Authorship & Review tab (menu_order 90).
 
             [
-                'key'   => 'field_jx_sum_authorship_tab',
+                'key'   => 'field_jx_summary_review_tab',
                 'label' => 'Summary Review',
                 'type'  => 'tab',
             ],
             [
-                'key'           => 'field_jx_sum_plain_reviewed',
-                'label'         => 'Plain Language Reviewed',
-                'name'          => 'ws_plain_english_reviewed',
+                'key'           => 'field_jx_summary_plain_english_reviewed',
+                'label'         => 'Plain English Reviewed',
+                'name'          => 'ws_jx_summary_plain_english_reviewed',
                 'type'          => 'true_false',
                 'instructions'  => 'Check when a human has reviewed and approved this plain-language summary.',
                 'ui'            => 1,

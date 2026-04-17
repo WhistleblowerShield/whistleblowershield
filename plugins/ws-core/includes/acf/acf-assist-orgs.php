@@ -845,17 +845,19 @@ function ws_register_acf_assist_org() {
 
 
 // Dynamic choice filter removed (Phase 3.2 / 12.1).
-// ws_jurisdiction is now a taxonomy field — ACF loads terms natively.
+// ws_aorg_jurisdictions is now a taxonomy field — ACF loads terms natively.
 
 
 // ── Conditional logic: taxonomy term-gated details fields ─────────────────────
 //
-// - disclosure_target_details appears when ws_disclosure_targets has term
-//   slug 'has-details'.
-// - protected_class_details appears when ws_protected_classes has term
-//   slug 'has-details'.
-// - case_stage_details appears when ws_case_stages has term slug 'other'.
-// - additional_services appears when ws_aorg_services has term slug 'additional'.
+// - disclosure_target_details appears when ws_aorg_disclosure_targets includes
+//   term slug 'has-details'.
+// - protected_class_details appears when ws_aorg_protected_classes includes
+//   term slug 'has-details'.
+// - case_stage_details appears when ws_aorg_case_stages includes term slug
+//   'other'.
+// - additional_services appears when ws_aorg_services includes term slug
+//   'additional'.
 
 add_filter( 'acf/load_field', 'ws_aorg_details_conditional' );
 
