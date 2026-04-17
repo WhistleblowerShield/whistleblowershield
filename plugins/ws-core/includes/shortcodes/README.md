@@ -223,7 +223,7 @@ Returns `array<int,row>`:
 ### `ws_get_jx_common_law_data( $jx_term_id )`
 Returns `array<int,row>`:
 
-- `id`, `title`, `url`, `status`, `content`, `order`, `is_fed`
+- `id`, `title`, `url`, `status`, `content`, `order`
 - `doctrine_name`, `doctrine_id`, `common_name`
 - `precedent_url`, `precedent_url_is_pdf`
 - `public_policy_sources`, `other_sources`

@@ -162,7 +162,7 @@ function ws_shortcode_jx_statutes() {
         foreach ( $statutes as $statute ) {
             $content .= $build_statute_chunk( $statute );
         }
-        return ws_render_section( 'Relevant Statutes', $content );
+        return ws_render_section( 'Relevant Statutes', $content, 'ws-section--local' );
     }
 
     // Two-group render: split local vs federal.
@@ -210,7 +210,7 @@ function ws_shortcode_jx_common_law() {
     if ( empty( $comlaws ) ) return '';
 
     // Check whether any federal records exist.
-    //$has_fed = false;
+    $has_fed = false;
     //foreach ( $comlaws as $s ) {
     //    if ( $s['is_fed'] ) { $has_fed = true; break; }
     //}
@@ -222,7 +222,7 @@ function ws_shortcode_jx_common_law() {
         $html = apply_filters( 'the_content', $comlaw['content'] );
 
         $refs     = ws_get_ref_materials( $comlaw['id'] );
-        $ref_url  = ! empty( $refs ) ? ws_get_reference_page_url( $comlaw['id'], 'statutes' ) : '';
+        $ref_url  = ! empty( $refs ) ? ws_get_reference_page_url( $comlaw['id'], 'ws-section--local' ) : '';
 
         if ( $ref_url ) {
             $html .= '<div class="ws-ref-materials-link">'
@@ -249,7 +249,7 @@ function ws_shortcode_jx_common_law() {
     foreach ( $comlaws as $comlaw ) {
             $content .= $build_comlaw_chunk( $comlaw );
         }
-        return ws_render_section( 'Relevant Common Laws', $content );
+        return ws_render_section( 'Relevant Common Laws', $content, 'ws-section--local' );
     }
 
     // Two-group render: split local vs federal.
