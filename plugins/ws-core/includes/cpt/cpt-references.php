@@ -31,14 +31,11 @@
  *
  * @package    WhistleblowerShield
  * @since      3.3.0
- * @version 3.10.0
+ * @version   3.10.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
- * VERSION
- * -------
- * 3.3.0  Initial release.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -51,7 +48,8 @@ function ws_register_cpt_ws_reference() {
         'name'               => 'References',
         'singular_name'      => 'Reference',
         'menu_name'          => 'References',
-        'add_new'            => 'Add Reference',
+        'name_admin_bar'     => 'Reference',
+        'add_new'            => 'Add New',
         'add_new_item'       => 'Add New Reference',
         'new_item'           => 'New Reference',
         'edit_item'          => 'Edit Reference',

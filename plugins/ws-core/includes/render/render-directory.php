@@ -138,7 +138,7 @@ function ws_render_directory_page( array $targeted, array $nationwide, array $co
  *
  * Filter axes rendered (all optional — absence = "not sure" = broadest match):
  *   1. Situation stage (ws_case_stage)
- *   2. Concern (ws_disclosure_type or ws_adverse_action_types, routed by stage)
+ *   2. Concern (ws_disclosure_type or ws_adverse_action_type, routed by stage)
  *   3. Employment sector (ws_employment_sector)
  *   4. Disclosure target — optional, shown as "optional refinement"
  *
@@ -248,6 +248,7 @@ function ws_render_directory_taxonomy_guide( array $context ): string {
                         'private-sector'       => 'Private company',
                         'nonprofit-ngo'        => 'Nonprofit or NGO',
                         'military-defense'     => 'Military or defense',
+                        'all-sectors'          => 'Not sure or other sector',
                                     ];
                     foreach ( $sector_options as $slug => $label ) :
                         $checked = ( $context['sector'] === $slug ) ? 'checked' : '';
@@ -659,12 +660,12 @@ function ws_render_directory_card( array $org, int $position = 0, int $results_t
                         <?php echo esc_html( $cost_label ); ?>
                     </span>
                 <?php endif; ?>
-                <?php if ( ! empty( $org['licensed_attorneys'] ) ) : ?>
+                <?php if ( ! empty( $org['has_attorneys'] ) ) : ?>
                     <span class="ws-aorg-card__badge ws-aorg-card__badge--attorneys">
                         Licensed Attorneys
                     </span>
                 <?php endif; ?>
-                <?php if ( ! empty( $org['anonymous'] ) ) : ?>
+                <?php if ( ! empty( $org['has_anonymous'] ) ) : ?>
                     <span class="ws-aorg-card__badge ws-aorg-card__badge--anon">
                         Accepts Anonymous
                     </span>

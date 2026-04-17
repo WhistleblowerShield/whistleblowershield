@@ -112,7 +112,7 @@ $ws_state_court_matrix = [
     'mo-app'     => [ 'name' => 'Missouri Court of Appeals',                           'short' => 'Mo. Ct. App.',           'type' => 'state_appellate', 'ws_jx_codes' => [ 'mo' ], 'circuit' => null, 'level' => 2 ],
     'ne-app'     => [ 'name' => 'Nebraska Court of Appeals',                           'short' => 'Neb. Ct. App.',          'type' => 'state_appellate', 'ws_jx_codes' => [ 'ne' ], 'circuit' => null, 'level' => 2 ],
     'nv-app'     => [ 'name' => 'Nevada Court of Appeals',                             'short' => 'Nev. Ct. App.',          'type' => 'state_appellate', 'ws_jx_codes' => [ 'nv' ], 'circuit' => null, 'level' => 2 ],
-    'nj-app'     => [ 'name' => 'New Jersey Superior Court, Appellate Division',       'short' => 'N.J. Super. App. Div.',  'type' => 'state_appellate', 'ws_jx_codes' => [ 'nj' ], 'circuit' => null, 'level' => 2 ],
+    'nj-appdiv'  => [ 'name' => 'New Jersey Superior Court, Appellate Division',       'short' => 'N.J. Super. App. Div.',  'type' => 'state_appellate', 'ws_jx_codes' => [ 'nj' ], 'circuit' => null, 'level' => 2 ],
     'nm-app'     => [ 'name' => 'New Mexico Court of Appeals',                         'short' => 'N.M. Ct. App.',          'type' => 'state_appellate', 'ws_jx_codes' => [ 'nm' ], 'circuit' => null, 'level' => 2 ],
     'ny-appdiv'  => [ 'name' => 'New York Supreme Court, Appellate Division',          'short' => 'N.Y. App. Div.',         'type' => 'state_appellate', 'ws_jx_codes' => [ 'ny' ], 'circuit' => null, 'level' => 2 ],
     'nc-app'     => [ 'name' => 'North Carolina Court of Appeals',                     'short' => 'N.C. Ct. App.',          'type' => 'state_appellate', 'ws_jx_codes' => [ 'nc' ], 'circuit' => null, 'level' => 2 ],

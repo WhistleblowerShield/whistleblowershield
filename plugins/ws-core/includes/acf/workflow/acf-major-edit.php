@@ -77,8 +77,9 @@ function ws_register_acf_major_edit() {
 
 		// Applies to all supported content CPTs that feed the changelog.
 		'location' => [
-			[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-summary',        ] ],
+			[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-summary',         ] ],
 			[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-statute',         ] ],
+			[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-common-law',      ] ],
 			[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-citation',        ] ],
 			[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-interpretation',  ] ],
 			[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-ag-procedure',    ] ],
@@ -125,6 +126,7 @@ function ws_register_acf_major_edit() {
 				'choices'           => [
 					'auto'           => 'Auto (derive from source record)',
 					'statute'        => 'Statutory Change',
+					'common-law'     => 'Common Law Update',
 					'citation'       => 'Citation Update',
 					'summary'        => 'Summary Update',
 					'interpretation' => 'Interpretation Update',

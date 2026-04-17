@@ -434,8 +434,7 @@ function ws_register_acf_assist_org() {
                 'rows'              => 3,
                 'conditional_logic' => 0,
             ],
-            // conditional_logic set dynamically — see ws_aorg_details_conditional()
-            
+                       
             [
                 'key'           => 'field_aorg_employment_sectors',
                 'label'         => 'Employment Sectors Served',
@@ -921,8 +920,7 @@ function ws_register_acf_assist_org() {
 //   term slug 'has-details'.
 // - case_stage_details appears when ws_aorg_case_stages includes term slug
 //   'other'.
-// - additional_services appears when ws_aorg_services includes term slug
-//   'additional'.
+
 
 add_filter( 'acf/load_field', 'ws_aorg_details_conditional' );
 
@@ -932,7 +930,6 @@ function ws_aorg_details_conditional( $field ) {
         'field_aorg_disclosure_target_details'  => [ 'ws_disclosure_target', 'field_aorg_disclosure_targets', 'has-details' ],
         'field_aorg_protected_class_details'    => [ 'ws_protected_class',   'field_aorg_protected_classes',  'has-details' ],
         'field_aorg_case_stage_details'         => [ 'ws_case_stage',        'field_aorg_case_stages',        'other'       ],
-        'field_aorg_additional_services'        => [ 'ws_aorg_service',      'field_aorg_services',           'additional'  ],
     ];
 
     if ( ! isset( $map[ $field['key'] ] ) ) {

@@ -56,8 +56,9 @@ function ws_register_cpt_common_law() {
     $labels = [
         'name'               => 'Common Law Protections',
         'singular_name'      => 'Common Law Protection',
-        'menu_name'          => 'JX Common Law',
-        'add_new'            => 'Add Protection',
+        'menu_name'          => 'JX Common Laws',
+        'name_admin_bar'     => 'JX Common Law',
+        'add_new'            => 'Add New',
         'add_new_item'       => 'Add New Common Law Protection',
         'new_item'           => 'New Common Law Protection',
         'edit_item'          => 'Edit Common Law Protection',
@@ -91,9 +92,9 @@ function ws_register_cpt_common_law() {
         'taxonomies' => [
             'ws_disclosure_type',
             'ws_process_type',
-            'ws_remedies',
+            'ws_remedy',
             'ws_protected_class',
-            'ws_adverse_action_types',
+            'ws_adverse_action_type',
             'ws_disclosure_target',
             'ws_fee_shifting',
             'ws_employer_defense',

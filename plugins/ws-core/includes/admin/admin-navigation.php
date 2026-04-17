@@ -14,7 +14,7 @@
  *
  *      • Summary
  *      • Statutes
- *      • Resources
+ *      • Common Law
  *
  * This file improves workflow by providing direct edit links to
  * related datasets.
@@ -24,9 +24,9 @@
  * ------------
  *
  * jurisdiction (core record)
- *      ├── jx-summary      (one-to-one, scoped by ws_jurisdiction taxonomy)
- *      ├── jx-statute      (one-to-many, scoped by ws_jurisdiction taxonomy)
- *      └── jx-citation     (many-to-one, scoped by ws_jurisdiction taxonomy + attach_flag)
+ *      ├── jx-summary                  (one-to-one, scoped by ws_jurisdiction taxonomy)
+ *      ├── jx-statute or jx-common-law (one-to-many, scoped by ws_jurisdiction taxonomy)
+ *      └── jx-citation                 (many-to-one, scoped by ws_jurisdiction taxonomy + ws_jx_citation_has_attach_flag)
  *
  *
  * SHARED HELPER
@@ -34,7 +34,7 @@
  * ws_get_attached_citation_count( $post_id )
  *
  * Returns the number of published jx-citation records assigned the same
- * ws_jurisdiction term as the given jurisdiction post with attach_flag = 1.
+ * ws_jurisdiction term as the given jurisdiction post with ws_jx_citation_has_attach_flag = 1.
  * Defined here and shared by admin-columns.php and
  * jurisdiction-dashboard.php (both load after this file).
  *
@@ -58,7 +58,7 @@
  *        - Create Now and Add Citation URLs migrated from ws_jx_code query
  *          arg to ws_jx_term (taxonomy term slug).
  *        - ws_get_attached_citation_count() migrated from ws_jx_code meta
- *          query to ws_jurisdiction taxonomy query with attach_flag meta.
+ *          query to ws_jurisdiction taxonomy query with ws_jx_citation_has_attach_flag meta.
  * 3.1.0  Added Legal Updates, Agencies, and Assist-Orgs count rows.
  *        All three use taxonomy-scoped count queries with View All links.
  * 3.9.0  Added ws_add_agency_navigation_box() and ws_render_agency_navigation_box()
@@ -112,8 +112,9 @@ function ws_render_jx_navigation_box($post) {
     $term_id   = ( $term && ! is_wp_error( $term ) ) ? $term->term_id : 0;
 
     // Look up existing addendum posts via taxonomy (replaces get_field on relationship fields).
-    $summary_post  = null;
-    $statutes_post = null;
+    $summary_post    = null;
+    $statutes_post   = null;
+    $common_law_post = null;
 
     if ( $term_id ) {
         $summary_id = ws_find_related_jx_record_id( 'jx-summary', $term_id );
@@ -125,12 +126,18 @@ function ws_render_jx_navigation_box($post) {
         if ( $statute_id ) {
             $statutes_post = get_post( $statute_id );
         }
+
+        $common_law_id = ws_find_related_jx_record_id( 'jx-common-law', $term_id );
+        if ( $common_law_id ) {
+            $common_law_post = get_post( $common_law_id );
+        }
     }
 
     echo '<div class="ws-admin-nav-wrapper" style="line-height:1.6;">';
 
     ws_render_admin_link('Summary',  $summary_post,  'jx-summary', $post->ID);
     ws_render_admin_link('Statutes', $statutes_post, 'jx-statute', $post->ID);
+    ws_render_admin_link('Common Law', $common_law_post, 'jx-common-law', $post->ID);
 
     ws_render_citation_row( $post->ID );
     ws_render_cpt_count_row( $post->ID, $term_slug, 'ws-legal-update', 'Legal Updates' );
@@ -221,7 +228,7 @@ Shared Helper: Attached Citation Count
 ---------------------------------------------------------
 Returns the number of published jx-citation records that
 are scoped to this jurisdiction (ws_jurisdiction taxonomy)
-and have attach_flag set to true.
+and have ws_jx_citation_has_attach_flag set to true.
 
 Shared by:
     admin-columns.php          — jurisdiction list table column
@@ -246,7 +253,7 @@ function ws_get_attached_citation_count( $post_id ) {
         'fields'         => 'ids',
         'meta_query'     => [
             [
-                'key'     => 'ws_attach_flag',
+                'key'     => 'ws_jx_citation_has_attach_flag',
                 'value'   => '1',
                 'compare' => '=',
             ],
@@ -267,7 +274,7 @@ function ws_get_attached_citation_count( $post_id ) {
 Render: CPT Count Row
 ---------------------------------------------------------
 Generic count row for CPTs that are scoped by ws_jurisdiction
-taxonomy but don't use the attach_flag pattern (legal updates,
+taxonomy but don't use the attached-flag pattern (legal updates,
 agencies, assist-orgs). Shows a count badge and a View All link
 filtered by taxonomy term.
 
@@ -373,7 +380,7 @@ function ws_render_citation_row( $post_id ) {
 // procedures attached to this agency. Provides direct edit links and
 // an Add Procedure button that pre-fills the parent agency via ?agency_id=.
 //
-// The agency_id URL parameter is read by ws_proc_prefill_agency_id() in
+// The agency_id URL parameter is read by ws_ag_procedure_prefill_agency_id() in
 // acf-ag-procedures.php, which pre-selects the parent agency on auto-draft
 // posts — matching the pattern used for interpretations and statutes.
 // ════════════════════════════════════════════════════════════════════════════
@@ -393,14 +400,14 @@ function ws_add_agency_navigation_box() {
 
 function ws_render_agency_navigation_box( $post ) {
 
-    // Query procedures attached to this agency via ws_proc_agency_id meta.
+    // Query procedures attached to this agency via ws_ag_procedure_agency_id meta.
     $procedures = get_posts( [
         'post_type'      => 'ws-ag-procedure',
         'post_status'    => [ 'publish', 'draft', 'pending' ],
         'posts_per_page' => 50,
         'no_found_rows'  => true,
         'meta_query'     => [ [
-            'key'     => 'ws_proc_agency_id',
+            'key'     => 'ws_ag_procedure_agency_id',
             'value'   => $post->ID,
             'compare' => '=',
         ] ],
@@ -428,8 +435,9 @@ function ws_render_agency_navigation_box( $post ) {
     } else {
         echo '<ul style="margin:0 0 10px;padding-left:0;list-style:none;">';
         foreach ( $procedures as $proc ) {
-            $type     = get_post_meta( $proc->ID, 'ws_proc_type', true );
-            $type_lbl = $type_labels[ $type ] ?? '';
+            $type_terms = wp_get_object_terms( $proc->ID, 'ws_procedure_type', [ 'fields' => 'slugs' ] );
+            $type       = ( ! is_wp_error( $type_terms ) && ! empty( $type_terms ) ) ? (string) $type_terms[0] : '';
+            $type_lbl   = $type_labels[ $type ] ?? '';
             $status   = get_post_status( $proc->ID );
             $color    = ( $status === 'publish' ) ? '#46b450' : '#ffa500';
             echo '<li style="margin-bottom:6px;padding:6px;background:#f9f9f9;border:1px solid #e5e5e5;border-radius:3px;">';

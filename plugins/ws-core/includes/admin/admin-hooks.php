@@ -3,7 +3,7 @@
  * File: admin-hooks.php
  *
  * Purpose: Shared ACF admin hooks used across all jx-* CPTs and related
- * content types. Centralises cross-CPT behaviours that were previously
+ * content types. Centralizes cross-CPT behaviors that were previously
  * duplicated in every ACF registration file:
  *
  *   1. URL pre-population   — auto-assigns ws_jurisdiction taxonomy term and
@@ -13,7 +13,7 @@
  *   2. Field locking        — makes ws_auto_date_created, ws_auto_last_edited,
  *                             ws_auto_last_edited_author, ws_auto_create_author,
  *                             ws_auto_plain_english_by, ws_auto_plain_english_date,
- *                             and ws_auto_plain_english_reviewed_by readonly + disabled
+ *                             and ws_auto__auto_plain_english_reviewed_by readonly + disabled
  *                             for non-administrators or non-editors.
  *
  *   3. Auto-fill today      — fills last_reviewed with today's date when the
@@ -59,18 +59,19 @@
  * ---------------
  * All CPTs share identical canonical stamp meta key names. WordPress post meta
  * is scoped to post_id so there is no collision risk across CPTs. ACF field
- * keys follow the field_[meta_name] convention matching ws-jurisdiction.
+ * keys follow the field_[meta_name] (no ws_auto_ prefix) convention matching
+ * ws-jurisdiction.
  *
  *   ws_auto_date_created              — local date (Y-m-d), written once
  *   _ws_auto_date_created_gmt         — GMT date (Y-m-d), written once, private/hidden
  *   ws_auto_create_author             — WP user ID, written once
- *   ws_auto_last_edited               — local date (Y-m-d), written every save
+ *   ws_auto_last_edited_date          — local date (Y-m-d), written every save
  *   _ws_auto_last_edited_gmt          — GMT date (Y-m-d), written every save, private/hidden
  *   ws_auto_last_edited_author        — WP user ID, written every save (admin-overridable)
  *   ws_auto_plain_english_by          — WP user ID, written once on first plain English save
  *   ws_auto_plain_english_date        — local date (Y-m-d), written once on first plain English save
- *   ws_auto_plain_english_reviewed_by   — WP user ID, written once when plain_reviewed first enabled
- *   ws_auto_plain_english_reviewed_date — local date (Y-m-d), written once when plain_reviewed first enabled
+ *   ws_auto__auto_plain_english_reviewed_by   — WP user ID, written once when plain_reviewed first enabled
+ *   ws_auto__auto_plain_english_reviewed_date — local date (Y-m-d), written once when plain_reviewed first enabled
  *
  *
  * VERSION
@@ -108,7 +109,7 @@ add_action( 'wp_insert_post', function( $post_id, $post, $update ) {
     if ( $update ) return;
     if ( ! isset( $_GET['ws_jx_term'] ) ) return;
 
-    $addendum_types = [ 'jx-summary', 'jx-statute', 'jx-citation', 'jx-interpretation' ];
+    $addendum_types = [ 'jx-summary', 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation' ];
     if ( ! in_array( $post->post_type, $addendum_types, true ) ) return;
 
     $term_slug = sanitize_key( $_GET['ws_jx_term'] );
@@ -134,14 +135,14 @@ add_filter( 'default_title', function( $title ) {
 // Stamp fields are system-managed and must not be altered through the ACF UI.
 // Two lock tiers apply:
 //
-//   Admin-only fields  — ws_auto_date_created, ws_auto_last_edited,
+//   Admin-only fields  — ws_auto_date_created, ws_auto_last_edited_date,
 //                        ws_auto_last_edited_author, ws_auto_create_author,
 //                        ws_auto_plain_english_by, ws_auto_plain_english_date.
 //                        Locked for any role below administrator.
 //                        ws_auto_last_edited_author is admin-overridable for
 //                        attribution correction on minor edits.
 //
-//   Editor-only fields — last_reviewed, ws_auto_plain_english_reviewed_by.
+//   Editor-only fields — last_reviewed, ws_auto__auto_plain_english_reviewed_by.
 //                        Locked for any role below editor. plain_reviewed is not
 //                        listed here because it is a checkbox that the toggle-off
 //                        guard clears automatically; the field itself is hidden
@@ -153,7 +154,7 @@ add_filter( 'default_title', function( $title ) {
 // All CPTs share these field names (unprefixed), so a single filter registration
 // per name applies across every post type that carries the field.
 
-foreach ( [ 'ws_auto_date_created', 'ws_auto_last_edited', 'ws_auto_last_edited_author', 'ws_auto_create_author', 'ws_auto_plain_english_by', 'ws_auto_plain_english_date' ] as $_ws_f ) {
+foreach ( [ 'ws_auto_date_created', 'ws_auto_last_edited_date', 'ws_auto_last_edited_author', 'ws_auto_create_author', 'ws_auto_plain_english_by', 'ws_auto_plain_english_date' ] as $_ws_f ) {
     add_filter( "acf/load_field/name={$_ws_f}", 'ws_acf_lock_for_non_admins' );
 }
 unset( $_ws_f );
@@ -161,7 +162,7 @@ unset( $_ws_f );
 // Legal update visibility control is admin-only.
 add_filter( 'acf/load_field/name=ws_legal_update_hide_public', 'ws_acf_lock_for_non_admins' );
 
-foreach ( [ 'last_reviewed', 'ws_auto_plain_english_reviewed_by', 'ws_auto_plain_english_reviewed_date' ] as $_ws_f ) {
+foreach ( [ 'last_reviewed', 'ws_auto__auto_plain_english_reviewed_by', 'ws_auto__auto_plain_english_reviewed_date' ] as $_ws_f ) {
     add_filter( "acf/load_field/name={$_ws_f}", 'ws_acf_lock_for_non_editors' );
 }
 unset( $_ws_f );
@@ -271,12 +272,12 @@ function ws_acf_validate_phone_number( $valid, $value, $field, $input_name ) {
 }
 
 //@todo - get sane... fix this....
-// ── Auto-fill today: last_reviewed on existing posts when plain_english_reviewed is on ─
+// ── Auto-fill today: last_reviewed on existing posts when ws_auto_plain_english_reviewed is on ─
 //
 // Fills last_reviewed with today's date only when all three conditions hold:
 //   1. The stored value is empty (never reviewed or cleared by toggle-off).
 //   2. The post exists (post_id > 0 — excludes new-post / options context).
-//   3. plain_english_reviewed is already enabled on this post.
+//   3. ws_auto_plain_english_reviewed is already enabled on this post.
 //
 // This prevents last_reviewed from pre-filling on posts where plain English
 // content has not yet been reviewed, and never fires on brand-new posts.
@@ -284,7 +285,7 @@ function ws_acf_validate_phone_number( $valid, $value, $field, $input_name ) {
 add_filter( 'acf/load_value/name=last_reviewed', 'ws_acf_autofill_today', 10, 3 );
 
 /**
- * Returns today's date (Y-m-d) when last_reviewed is empty and plain_english_reviewed
+ * Returns today's date (Y-m-d) when last_reviewed is empty and ws_auto_plain_english_reviewed
  * is enabled on the post.
  *
  * @param  mixed  $value    Current field value.
@@ -295,7 +296,7 @@ add_filter( 'acf/load_value/name=last_reviewed', 'ws_acf_autofill_today', 10, 3 
 function ws_acf_autofill_today( $value, $post_id, $field ) {
     // Direct meta read — acf/load_value fires before ACF renders the field; get_post_meta()
     // is the correct way to read sibling field state in this filter context.
-    if ( empty( $value ) && $post_id > 0 && get_post_meta( $post_id, 'ws_plain_english_reviewed', true ) ) {
+    if ( empty( $value ) && $post_id > 0 && get_post_meta( $post_id, 'ws_auto_plain_english_reviewed', true ) ) {
         $value = current_time( 'Y-m-d' );
     }
     return $value;
@@ -339,18 +340,18 @@ function ws_acf_autofill_current_editor( $value, $post_id, $field ) {
 //             If submitted plain_english is empty, has_plain_english is forced
 //             to 0 and the ACF checkbox value is cleared so it resets visually.
 //
-//   Rule 2 — plain_english_reviewed requires editor rank or above. If the submitted
-//             value is 1 but the current user is below editor, plain_english_reviewed
-//             and plain_english_reviewed_by are wiped and an admin notice is queued.
+//   Rule 2 — ws_auto_plain_english_reviewed requires editor rank or above. If the submitted
+//             value is 1 but the current user is below editor, ws_auto_plain_english_reviewed
+//             and ws_auto_plain_english_reviewed_by are wiped and an admin notice is queued.
 //
-//   Rule 3 — plain_english_reviewed toggle-off cleanup. If has_plain_english transitions
-//             from 1 to 0, plain_english_reviewed and plain_english_reviewed_by are cleared.
+//   Rule 3 — ws_auto_plain_english_reviewed toggle-off cleanup. If has_plain_english transitions
+//             from 1 to 0, ws_auto_plain_english_reviewed and ws_auto_plain_english_reviewed_by are cleared.
 //             The plain_english string is preserved in case the admin re-enables.
 //             plain_english_by and plain_english_date are also cleared.
 //
 //   Rule 3b — Substantial content change resets review stamp. If has_plain_english
 //             remains on but the plain_english content has changed significantly
-//             (similar_text() similarity drops below 75%), plain_english_reviewed
+//             (similar_text() similarity drops below 75%), ws_auto_plain_english_reviewed
 //             and its associated stamps are cleared. Typos and minor edits do not
 //             trigger this — only rewrites that materially change the content.
 //             An admin notice is queued so the editor knows why the stamp cleared.
@@ -369,7 +370,7 @@ add_action( 'acf/save_post', 'ws_acf_plain_english_guards', 5 );
 function ws_acf_plain_english_guards( $post_id ) {
 
     $plain_english_cpts = [
-        'jx-statute', 'jx-citation', 'jx-interpretation', 'ws-agency', 'ws-assist-org',
+        'jx-summary', 'jx-statute', 'jx-common-law','jx-citation', 'jx-interpretation', 'ws-agency', 'ws-assist-org',
     ];
 
     $post_type = get_post_type( $post_id );
@@ -397,7 +398,7 @@ function ws_acf_plain_english_guards( $post_id ) {
             case 'ws_has_plain_english':
                 $submitted_has_plain = (int) $field_value;
                 break;
-            case 'ws_plain_english_reviewed':
+            case 'ws_auto_plain_english_reviewed':
                 $submitted_plain_reviewed = (int) $field_value;
                 break;
         }
@@ -422,7 +423,7 @@ function ws_acf_plain_english_guards( $post_id ) {
         foreach ( $_POST['acf'] as $field_key => $field_value ) {
             $field_obj = acf_get_field( $field_key );
             if ( ! $field_obj ) continue;
-            if ( in_array( $field_obj['name'], [ 'ws_plain_english_reviewed', 'ws_auto_plain_english_reviewed_by' ], true ) ) {
+            if ( in_array( $field_obj['name'], [ 'ws_auto_plain_english_reviewed', 'ws_auto_plain_english_reviewed_by' ], true ) ) {
                 $_POST['acf'][ $field_key ] = 0;
             }
         }
@@ -440,7 +441,7 @@ function ws_acf_plain_english_guards( $post_id ) {
         foreach ( $_POST['acf'] as $field_key => $field_value ) {
             $field_obj = acf_get_field( $field_key );
             if ( ! $field_obj ) continue;
-            if ( in_array( $field_obj['name'], [ 'ws_plain_english_reviewed', 'ws_auto_plain_english_reviewed_by' ], true ) ) {
+            if ( in_array( $field_obj['name'], [ 'ws_auto_plain_english_reviewed', 'ws_auto_plain_english_reviewed_by' ], true ) ) {
                 $_POST['acf'][ $field_key ] = 0;
             }
         }
@@ -456,16 +457,16 @@ function ws_acf_plain_english_guards( $post_id ) {
     //
     // Only runs when:
     //   - has_plain_english is still on (toggle-off is handled by Rule 3 above)
-    //   - plain_english_reviewed is currently 1 in stored meta (nothing to reset otherwise)
+    //   - ws_auto_plain_english_reviewed is currently 1 in stored meta (nothing to reset otherwise)
     //   - a previous plain_english value exists to compare against (new records are skipped)
     //
-    // Comparison strips HTML tags and normalises case before calling similar_text()
+    // Comparison strips HTML tags and normalizes case before calling similar_text()
     // so tag changes in the wysiwyg do not skew the score. Threshold: 75%.
 
     if ( $submitted_has_plain && $submitted_plain_english !== '' ) {
 
         // Direct meta reads — acf/save_post context; reading stored values to compare against submitted content.
-        $stored_plain_reviewed = (int) get_post_meta( $post_id, 'ws_plain_english_reviewed', true );
+        $stored_plain_reviewed = (int) get_post_meta( $post_id, 'ws_auto_plain_english_reviewed', true );
 
         if ( $stored_plain_reviewed ) {
 
@@ -482,7 +483,7 @@ function ws_acf_plain_english_guards( $post_id ) {
                     foreach ( $_POST['acf'] as $field_key => $field_value ) {
                         $field_obj = acf_get_field( $field_key );
                         if ( ! $field_obj ) continue;
-                        if ( in_array( $field_obj['name'], [ 'ws_plain_english_reviewed', 'ws_auto_plain_english_reviewed_by' ], true ) ) {
+                        if ( in_array( $field_obj['name'], [ 'ws_auto_plain_english_reviewed', 'ws_auto_plain_english_reviewed_by' ], true ) ) {
                             $_POST['acf'][ $field_key ] = 0;
                         }
                     }
@@ -509,7 +510,7 @@ add_action( 'admin_notices', function() {
     echo '<div class="notice notice-warning is-dismissible">'
         . '<p><strong>WhistleblowerShield:</strong> '
         . 'The Plain Reviewed flag requires Editor access or above. '
-        . 'The plain_english_reviewed and plain_english_reviewed_by fields were not saved.</p>'
+        . 'The ws_auto_plain_english_reviewed and ws_auto_plain_english_reviewed_by fields were not saved.</p>'
         . '</div>';
 } );
 
@@ -550,16 +551,16 @@ add_action( 'admin_notices', function() {
 
 $ws_stamp_cpts = [
     'jurisdiction'      => [ 'author_acf_key' => 'field_jx_last_edited_author' ],
-    'jx-summary'        => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
-    'jx-citation'       => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
-    'jx-statute'        => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
-    'jx-interpretation' => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
-    'ws-agency'         => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
-    'ws-ag-procedure'   => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
-    'ws-legal-update'   => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
-    'ws-assist-org'     => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
+    'jx-summary'        => [ 'author_acf_key' => 'field_last_edited_author' ],
+    'jx-citation'       => [ 'author_acf_key' => 'field_last_edited_author' ],
+    'jx-statute'        => [ 'author_acf_key' => 'field_last_edited_author' ],
+    'jx-interpretation' => [ 'author_acf_key' => 'field_last_edited_author' ],
+    'ws-agency'         => [ 'author_acf_key' => 'field_last_edited_author' ],
+    'ws-ag-procedure'   => [ 'author_acf_key' => 'field_last_edited_author' ],
+    'ws-legal-update'   => [ 'author_acf_key' => 'field_last_edited_author' ],
+    'ws-assist-org'     => [ 'author_acf_key' => 'field_last_edited_author' ],
     // ws-reference uses shared field keys — unique key retired in v3.4.0.
-    'ws-reference'      => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
+    'ws-reference'      => [ 'author_acf_key' => 'field_last_edited_author' ],
 ];
 
 add_action( 'acf/save_post', 'ws_acf_write_stamp_fields', 20 );
@@ -605,7 +606,7 @@ function ws_acf_write_stamp_fields( $post_id ) {
 
     // ── Last-edited stamps (every save) ───────────────────────────────────
 
-    update_post_meta( $post_id, 'ws_auto_last_edited',      $now_local );
+    update_post_meta( $post_id, 'ws_auto_last_edited_date',      $now_local );
     update_post_meta( $post_id, '_ws_auto_last_edited_gmt', $now_gmt );
 
     // ── Last-edited author ────────────────────────────────────────────────
@@ -622,10 +623,10 @@ function ws_acf_write_stamp_fields( $post_id ) {
 }
 
 
-// ── plain_english_reviewed_by one-time stamp ──────────────────────────────────
+// ── _auto_plain_english_reviewed_by one-time stamp ──────────────────────────────────
 //
-// Stamped once when plain_english_reviewed is first enabled on a supported CPT.
-// Cleared by ws_acf_plain_english_guards() (priority 5) when plain_english_reviewed
+// Stamped once when _auto_plain_english_reviewed is first enabled on a supported CPT.
+// Cleared by ws_acf_plain_english_guards() (priority 5) when _auto_plain_english_reviewed
 // is toggled off, allowing a fresh stamp on the next toggle-on.
 //
 // Applies to: jx-statute, jx-citation, jx-interpretation, ws-agency, ws-assist-org.
@@ -636,14 +637,14 @@ function ws_acf_write_stamp_fields( $post_id ) {
 add_action( 'acf/save_post', 'ws_acf_stamp_plain_reviewed_by', 25 );
 
 /**
- * Writes plain_english_reviewed_by once when plain_english_reviewed is first enabled.
+ * Writes _auto_plain_english_reviewed_by once when _auto_plain_english_reviewed is first enabled.
  *
  * @param  int|string $post_id  Post ID passed by acf/save_post.
  */
 function ws_acf_stamp_plain_reviewed_by( $post_id ) {
 
     $supported = [
-        'jx-statute', 'jx-citation', 'jx-interpretation', 'ws-agency', 'ws-assist-org',
+        'jx-summary', 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation', 'ws-agency', 'ws-assist-org',
     ];
 
     $post_type = get_post_type( $post_id );
@@ -651,7 +652,7 @@ function ws_acf_stamp_plain_reviewed_by( $post_id ) {
         return;
     }
 
-    if ( ! get_post_meta( $post_id, 'ws_plain_english_reviewed', true ) ) {
+    if ( ! get_post_meta( $post_id, 'ws_auto_plain_english_reviewed', true ) ) {
         return;
     }
 
@@ -693,7 +694,7 @@ add_action( 'acf/save_post', 'ws_acf_stamp_summarized_fields', 25 );
 function ws_acf_stamp_summarized_fields( $post_id ) {
 
     $supported = [
-        'jx-statute', 'jx-citation', 'jx-interpretation', 'ws-agency', 'ws-assist-org',
+        'jx-summary', 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation', 'ws-agency', 'ws-assist-org',
     ];
 
     $post_type = get_post_type( $post_id );
@@ -805,7 +806,7 @@ function ws_sync_additional_services_term( $post_id ) {
 /**
  * Apply display_order sort to the ws_jurisdiction taxonomy ACF select field.
  */
-add_filter( 'acf/fields/taxonomy/query/key=field_jurisdiction_tax', function( $args, $field, $post_id ) {
+add_filter( 'acf/fields/taxonomy/query/taxonomy=WS_JURISDICTION_TAXONOMY', function( $args, $field, $post_id ) {
     $args['meta_key'] = 'display_order';
     $args['orderby']  = 'meta_value_num';
     $args['order']    = 'ASC';
@@ -854,7 +855,7 @@ add_action( 'add_meta_boxes', function() {
 // Both IDs cover tag-style and hierarchical-style slugs — only one will exist,
 // but removing a nonexistent metabox is harmless.
 add_action( 'add_meta_boxes', function() {
-    remove_meta_box( 'tagsdiv-' . WS_JURISDICTION_TAXONOMY, 'jx-summary', 'side' );
+    remove_meta_box( 'tagsdiv-' . WS_JURISDICTION_TAXONOMY,  'jx-summary', 'side' );
     remove_meta_box( WS_JURISDICTION_TAXONOMY . 'div',       'jx-summary', 'side' );
 }, 99 );
 
@@ -908,7 +909,7 @@ add_filter( 'acf/prepare_field/key=field_jurisdiction_name', function( $field ) 
     $field['readonly'] = true;
     return $field;
 } );
-add_filter( 'acf/prepare_field/key=field_auto_verified_by', function( $field ) {
+add_filter( 'acf/prepare_field/key=field_verified_by', function( $field ) {
     $stored = get_post_meta( get_the_ID(), 'ws_auto_verified_by', true );
     $field['value'] = $stored ? ws_resolve_display_name( (int) $stored ) : '';
     return $field;
@@ -938,7 +939,7 @@ add_filter( 'acf/update_value/key=field_jurisdiction_class', function( $value, $
 
 // Lock create_author: once stamped by ws_acf_write_stamp_fields it must not
 // be overwritten by ACF submitting an empty value on subsequent saves.
-add_filter( 'acf/update_value/key=field_auto_create_author', function( $value, $post_id ) {
+add_filter( 'acf/update_value/key=field_create_author', function( $value, $post_id ) {
     $stored = get_post_meta( $post_id, 'ws_auto_create_author', true );
     return $stored !== '' ? $stored : $value;
 }, 10, 2 );
@@ -950,7 +951,7 @@ add_filter( 'acf/update_value/key=field_auto_create_author', function( $value, $
 // Workflow groups are intentionally excluded to keep workflow panels clean.
 
 add_filter( 'acf/prepare_field/type=url', 'ws_acf_prepare_url_open_button' );
-add_action( 'acf/input/admin_footer', 'ws_acf_render_url_button_script' );
+add_action( 'acf/input/admin_footer',     'ws_acf_render_url_button_script' );
 
 /**
  * Returns true when an ACF field belongs to a workflow group.
@@ -1121,7 +1122,7 @@ function ws_acf_render_url_button_script() {
 // ════════════════════════════════════════════════════════════════════════════
 // HELPER — CPT list for source/verify hooks
 //
-// Centralised so the list only needs updating in one place if CPTs are
+// Centralized so the list only needs updating in one place if CPTs are
 // added or removed. Must stay in sync with the location rules in
 // acf-source-verify.php.
 // ════════════════════════════════════════════════════════════════════════════
@@ -1129,6 +1130,7 @@ function ws_acf_render_url_button_script() {
 function ws_source_verify_post_types() {
     return [
         'jx-statute',
+        'jx-common-law',
         'jx-citation',
         'jx-interpretation',
         'ws-agency',
@@ -1241,8 +1243,8 @@ function ws_default_verification_status( $post_id ) {
 
     if ( $source === WS_SOURCE_HUMAN_CREATED ) {
         update_post_meta( $post_id, 'ws_verification_status', 'verified' );
-        update_post_meta( $post_id, 'ws_auto_verified_by',   get_current_user_id() );
-        update_post_meta( $post_id, 'ws_auto_verified_date', current_time( 'Y-m-d' ) );
+        update_post_meta( $post_id, 'ws_auto_verified_by',    get_current_user_id() );
+        update_post_meta( $post_id, 'ws_auto_verified_date',  current_time( 'Y-m-d' ) );
     } else {
         update_post_meta( $post_id, 'ws_verification_status', 'unverified' );
     }
@@ -1471,6 +1473,10 @@ function ws_set_source_name( $post_id, $name ) {
 //   ws_jx_statute_citation_ids  — PHP array of citation post IDs
 //   ws_jx_statute_interp_ids    — PHP array of interpretation post IDs
 //
+// And on the jx-common-law side:
+//   ws_jx_comlaw_citation_ids       — PHP array of citation post IDs
+//   ws_jx_comlaw_interp_ids         — PHP array of interpretation post IDs
+//
 // The index is always rebuilt from scratch — no append logic, no deduplication
 // risk, no stale entries. Admin metaboxes read the index via get_post_meta()
 // + post__in, replacing the fragile OR meta_query (plain-int vs. serialized)
@@ -1571,6 +1577,77 @@ function ws_rebuild_jx_statute_interp_index( $statute_id ) {
     update_post_meta( $statute_id, 'ws_jx_statute_interp_ids', array_map( 'intval', (array) $ids ) );
 }
 
+/**
+ * Rebuilds ws_jx_comlaw_citation_ids on a jx-common-law post.
+ *
+ * Queries all jx-citation records whose ws_jx_citation_common_law_ids field
+ * references $common_law_id (plain integer or serialized array) and writes
+ * the resulting ID array to the common-law post's meta.
+ *
+ * @param int $common_law_id  Post ID of the jx-common-law doctrine to rebuild.
+ */
+function ws_rebuild_jx_comlaw_citation_index( $common_law_id ) {
+    $common_law_id = (int) $common_law_id;
+    if ( ! $common_law_id || get_post_type( $common_law_id ) !== 'jx-common-law' ) {
+        return;
+    }
+
+    $ids = get_posts( [
+        'post_type'      => 'jx-citation',
+        'post_status'    => [ 'publish', 'draft', 'pending' ],
+        'posts_per_page' => -1,
+        'fields'         => 'ids',
+        'meta_query'     => [
+            'relation' => 'OR',
+            [
+                'key'     => 'ws_jx_citation_common_law_ids',
+                'value'   => $common_law_id,
+                'compare' => '=',
+                'type'    => 'NUMERIC',
+            ],
+            [
+                'key'     => 'ws_jx_citation_common_law_ids',
+                'value'   => serialize( $common_law_id ),
+                'compare' => 'LIKE',
+            ],
+        ],
+    ] );
+
+    update_post_meta( $common_law_id, 'ws_jx_comlaw_citation_ids', array_map( 'intval', (array) $ids ) );
+}
+
+/**
+ * Rebuilds ws_jx_comlaw_interp_ids on a jx-common-law post.
+ *
+ * Queries all jx-interpretation records whose ws_jx_interp_common_law_id
+ * equals $common_law_id and writes the resulting ID array to the doctrine's meta.
+ *
+ * @param int $common_law_id  Post ID of the jx-common-law doctrine to rebuild.
+ */
+function ws_rebuild_jx_comlaw_interp_index( $common_law_id ) {
+    $common_law_id = (int) $common_law_id;
+    if ( ! $common_law_id || get_post_type( $common_law_id ) !== 'jx-common-law' ) {
+        return;
+    }
+
+    $ids = get_posts( [
+        'post_type'      => 'jx-interpretation',
+        'post_status'    => [ 'publish', 'draft', 'pending' ],
+        'posts_per_page' => -1,
+        'fields'         => 'ids',
+        'meta_query'     => [
+            [
+                'key'     => 'ws_jx_interp_common_law_id',
+                'value'   => $common_law_id,
+                'compare' => '=',
+                'type'    => 'NUMERIC',
+            ],
+        ],
+    ] );
+
+    update_post_meta( $common_law_id, 'ws_jx_comlaw_interp_ids', array_map( 'intval', (array) $ids ) );
+}
+
 
 // ── Save stash helpers ────────────────────────────────────────────────────────
 //
@@ -1578,13 +1655,25 @@ function ws_rebuild_jx_statute_interp_index( $statute_id ) {
 // the priority-25 rebuild hook within the same acf/save_post call chain.
 // Separate functions for citations (array) and interpretations (scalar).
 
-function ws_citation_save_stash( $post_id, $ids = null ) {
+function ws_citation_statute_save_stash( $post_id, $ids = null ) {
     static $stash = [];
     if ( $ids !== null ) { $stash[ $post_id ] = $ids; }
     return $stash[ $post_id ] ?? [];
 }
 
-function ws_interp_save_stash( $post_id, $id = null ) {
+function ws_interp_statute_save_stash( $post_id, $id = null ) {
+    static $stash = [];
+    if ( $id !== null ) { $stash[ $post_id ] = $id; }
+    return $stash[ $post_id ] ?? 0;
+}
+
+function ws_citation_comlaw_save_stash( $post_id, $ids = null ) {
+    static $stash = [];
+    if ( $ids !== null ) { $stash[ $post_id ] = $ids; }
+    return $stash[ $post_id ] ?? [];
+}
+
+function ws_interp_comlaw_save_stash( $post_id, $id = null ) {
     static $stash = [];
     if ( $id !== null ) { $stash[ $post_id ] = $id; }
     return $stash[ $post_id ] ?? 0;
@@ -1597,13 +1686,25 @@ function ws_interp_save_stash( $post_id, $id = null ) {
 // before_delete_post captures statute IDs while meta is still intact;
 // deleted_post reads the stash after the post is gone and triggers rebuilds.
 
-function ws_citation_delete_stash( $post_id, $ids = null ) {
+function ws_citation_statute_delete_stash( $post_id, $ids = null ) {
     static $stash = [];
     if ( $ids !== null ) { $stash[ $post_id ] = $ids; }
     return $stash[ $post_id ] ?? [];
 }
 
-function ws_interp_delete_stash( $post_id, $id = null ) {
+function ws_interp_statute_delete_stash( $post_id, $id = null ) {
+    static $stash = [];
+    if ( $id !== null ) { $stash[ $post_id ] = $id; }
+    return $stash[ $post_id ] ?? 0;
+}
+
+function ws_citation_comlaw_delete_stash( $post_id, $ids = null ) {
+    static $stash = [];
+    if ( $ids !== null ) { $stash[ $post_id ] = $ids; }
+    return $stash[ $post_id ] ?? [];
+}
+
+function ws_interp_comlaw_delete_stash( $post_id, $id = null ) {
     static $stash = [];
     if ( $id !== null ) { $stash[ $post_id ] = $id; }
     return $stash[ $post_id ] ?? 0;
@@ -1615,19 +1716,30 @@ function ws_interp_delete_stash( $post_id, $id = null ) {
 // Priority 5: capture pre-save statute IDs before ACF writes at priority 10.
 add_action( 'acf/save_post', function( $post_id ) {
     if ( get_post_type( $post_id ) !== 'jx-citation' ) { return; }
-    $raw = get_post_meta( $post_id, 'ws_jx_citation_statute_ids', true );
-    $ids = is_array( $raw ) ? array_map( 'intval', $raw ) : ( $raw ? [ (int) $raw ] : [] );
-    ws_citation_save_stash( $post_id, $ids );
+    $raw_statute = get_post_meta( $post_id, 'ws_jx_citation_statute_ids', true );
+    $statute_ids = is_array( $raw_statute ) ? array_map( 'intval', $raw_statute ) : ( $raw_statute ? [ (int) $raw_statute ] : [] );
+    ws_citation_statute_save_stash( $post_id, $statute_ids );
+
+    $raw_comlaw = get_post_meta( $post_id, 'ws_jx_citation_common_law_ids', true );
+    $comlaw_ids = is_array( $raw_comlaw ) ? array_map( 'intval', $raw_comlaw ) : ( $raw_comlaw ? [ (int) $raw_comlaw ] : [] );
+    ws_citation_comlaw_save_stash( $post_id, $comlaw_ids );
 }, 5 );
 
-// Priority 25: union old + new statute IDs; rebuild each statute's citation index.
+// Priority 25: union old + new statute/common-law IDs; rebuild each reverse index.
 add_action( 'acf/save_post', function( $post_id ) {
     if ( get_post_type( $post_id ) !== 'jx-citation' ) { return; }
-    $raw_new = get_post_meta( $post_id, 'ws_jx_citation_statute_ids', true );
-    $new_ids = is_array( $raw_new ) ? array_map( 'intval', $raw_new ) : ( $raw_new ? [ (int) $raw_new ] : [] );
-    $all_ids = array_unique( array_merge( ws_citation_save_stash( $post_id ), $new_ids ) );
-    foreach ( array_filter( $all_ids ) as $sid ) {
+    $raw_new_statute = get_post_meta( $post_id, 'ws_jx_citation_statute_ids', true );
+    $new_statute_ids = is_array( $raw_new_statute ) ? array_map( 'intval', $raw_new_statute ) : ( $raw_new_statute ? [ (int) $raw_new_statute ] : [] );
+    $all_statute_ids = array_unique( array_merge( ws_citation_statute_save_stash( $post_id ), $new_statute_ids ) );
+    foreach ( array_filter( $all_statute_ids ) as $sid ) {
         ws_rebuild_jx_statute_citation_index( $sid );
+    }
+
+    $raw_new_comlaw = get_post_meta( $post_id, 'ws_jx_citation_common_law_ids', true );
+    $new_comlaw_ids = is_array( $raw_new_comlaw ) ? array_map( 'intval', $raw_new_comlaw ) : ( $raw_new_comlaw ? [ (int) $raw_new_comlaw ] : [] );
+    $all_comlaw_ids = array_unique( array_merge( ws_citation_comlaw_save_stash( $post_id ), $new_comlaw_ids ) );
+    foreach ( array_filter( $all_comlaw_ids ) as $cid ) {
+        ws_rebuild_jx_comlaw_citation_index( $cid );
     }
 }, 25 );
 
@@ -1637,16 +1749,23 @@ add_action( 'acf/save_post', function( $post_id ) {
 // Priority 5: capture pre-save statute ID.
 add_action( 'acf/save_post', function( $post_id ) {
     if ( get_post_type( $post_id ) !== 'jx-interpretation' ) { return; }
-    ws_interp_save_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_interp_statute_id', true ) );
+    ws_interp_statute_save_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_interp_statute_id', true ) );
+    ws_interp_comlaw_save_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_interp_common_law_id', true ) );
 }, 5 );
 
-// Priority 25: union old + new statute ID; rebuild each.
+// Priority 25: union old + new statute/common-law parent IDs; rebuild each.
 add_action( 'acf/save_post', function( $post_id ) {
     if ( get_post_type( $post_id ) !== 'jx-interpretation' ) { return; }
-    $new_id  = (int) get_post_meta( $post_id, 'ws_jx_interp_statute_id', true );
-    $all_ids = array_unique( array_filter( [ ws_interp_save_stash( $post_id ), $new_id ] ) );
-    foreach ( $all_ids as $sid ) {
+    $new_statute_id  = (int) get_post_meta( $post_id, 'ws_jx_interp_statute_id', true );
+    $all_statute_ids = array_unique( array_filter( [ ws_interp_statute_save_stash( $post_id ), $new_statute_id ] ) );
+    foreach ( $all_statute_ids as $sid ) {
         ws_rebuild_jx_statute_interp_index( $sid );
+    }
+
+    $new_comlaw_id  = (int) get_post_meta( $post_id, 'ws_jx_interp_common_law_id', true );
+    $all_comlaw_ids = array_unique( array_filter( [ ws_interp_comlaw_save_stash( $post_id ), $new_comlaw_id ] ) );
+    foreach ( $all_comlaw_ids as $cid ) {
+        ws_rebuild_jx_comlaw_interp_index( $cid );
     }
 }, 25 );
 
@@ -1657,11 +1776,16 @@ add_action( 'acf/save_post', function( $post_id ) {
 add_action( 'before_delete_post', function( $post_id ) {
     $type = get_post_type( $post_id );
     if ( $type === 'jx-citation' ) {
-        $raw = get_post_meta( $post_id, 'ws_jx_citation_statute_ids', true );
-        $ids = is_array( $raw ) ? array_map( 'intval', $raw ) : ( $raw ? [ (int) $raw ] : [] );
-        ws_citation_delete_stash( $post_id, $ids );
+        $raw_statute = get_post_meta( $post_id, 'ws_jx_citation_statute_ids', true );
+        $statute_ids = is_array( $raw_statute ) ? array_map( 'intval', $raw_statute ) : ( $raw_statute ? [ (int) $raw_statute ] : [] );
+        ws_citation_statute_delete_stash( $post_id, $statute_ids );
+
+        $raw_comlaw = get_post_meta( $post_id, 'ws_jx_citation_common_law_ids', true );
+        $comlaw_ids = is_array( $raw_comlaw ) ? array_map( 'intval', $raw_comlaw ) : ( $raw_comlaw ? [ (int) $raw_comlaw ] : [] );
+        ws_citation_comlaw_delete_stash( $post_id, $comlaw_ids );
     } elseif ( $type === 'jx-interpretation' ) {
-        ws_interp_delete_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_interp_statute_id', true ) );
+        ws_interp_statute_delete_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_interp_statute_id', true ) );
+        ws_interp_comlaw_delete_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_interp_common_law_id', true ) );
     }
 } );
 
@@ -1669,11 +1793,20 @@ add_action( 'before_delete_post', function( $post_id ) {
 // Fires for every deleted post; stash functions return empty/zero for non-
 // citation/interpretation posts, so unrelated deletions are no-ops.
 add_action( 'deleted_post', function( $post_id ) {
-    foreach ( array_filter( ws_citation_delete_stash( $post_id ) ) as $sid ) {
+    foreach ( array_filter( ws_citation_statute_delete_stash( $post_id ) ) as $sid ) {
         ws_rebuild_jx_statute_citation_index( $sid );
     }
-    $interp_sid = ws_interp_delete_stash( $post_id );
+    foreach ( array_filter( ws_citation_comlaw_delete_stash( $post_id ) ) as $cid ) {
+        ws_rebuild_jx_comlaw_citation_index( $cid );
+    }
+
+    $interp_sid = ws_interp_statute_delete_stash( $post_id );
     if ( $interp_sid ) {
         ws_rebuild_jx_statute_interp_index( $interp_sid );
+    }
+
+    $interp_cid = ws_interp_comlaw_delete_stash( $post_id );
+    if ( $interp_cid ) {
+        ws_rebuild_jx_comlaw_interp_index( $interp_cid );
     }
 } );

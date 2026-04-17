@@ -41,16 +41,11 @@
  *
  * @package    WhistleblowerShield
  * @since      1.0.0
- * @version 3.10.0
+ * @version    3.10.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
- * VERSION
- * -------
- * 1.0.0  Initial release.
- * 2.1.0  Refactored for ws-core architecture. CPT slug standardized
- *         to hyphenated convention: jx-summary.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -63,7 +58,8 @@ function ws_register_cpt_jx_summary() {
         'name'               => 'Jurisdiction Summaries',
         'singular_name'      => 'Jurisdiction Summary',
         'menu_name'          => 'JX Summaries',
-        'add_new'            => 'Add Summary',
+        'name_admin_bar'     => 'JX Summary',
+        'add_new'            => 'Add New',
         'add_new_item'       => 'Add New Jurisdiction Summary',
         'edit_item'          => 'Edit Jurisdiction Summary',
         'new_item'           => 'New Jurisdiction Summary',

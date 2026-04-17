@@ -40,7 +40,7 @@ add_shortcode( 'ws_jx_header', function( $atts ) {
     $render_data = [
         'jx_name'   => $jx_data['name'],
         'flag_data' => [
-            'url'        => $jx_data['flag']['url'],
+            'image'      => $jx_data['flag']['image_url'],
             'source_url' => $jx_data['flag']['source_url'],
             'attr_str'   => $jx_data['flag']['attribution'], 
             'license'    => $jx_data['flag']['license'],
@@ -78,7 +78,7 @@ add_shortcode( 'ws_jx_summary', function() {
     if ( ! $data || empty( $data['content'] ) ) return '';
 
     // wp_kses_post() is correct here — do not replace with apply_filters('the_content', ...).
-    // Summary content comes from an ACF WYSIWYG meta field (ws_jurisdiction_summary_wysiwyg),
+    // Summary content comes from an ACF WYSIWYG meta field (ws_jx_summary_wysiwyg),
     // not from post_content. The HTML is already fully formed by the ACF editor. Running
     // the_content filters would double-wrap paragraphs via wpautop, expand any shortcodes
     // embedded in the legal text, and trigger block rendering — none of which is appropriate
@@ -146,7 +146,7 @@ function ws_shortcode_jx_statutes() {
         }
 
         // Authoritative cross-reference: procedures that operate under this statute.
-        // Queries ws-ag-procedure posts linking to this statute via ws_proc_statute_ids.
+        // Queries ws-ag-procedure posts linking to this statute via ws_ag_procedure_statute_ids.
         // Returns '' when none exist — no section rendered for statutes with no procedures.
         $procs = ws_get_procedures_for_statute( $statute['id'] );
         if ( ! empty( $procs ) ) {
@@ -181,42 +181,32 @@ function ws_shortcode_jx_statutes() {
 }
 
 
-// ── [ws_jx_flag] ─────────────────────────────────────────────────────────────
+// ── [ws_jx_common_law] ─────────────────────────────────────────────────────────
+// Common law section is currently a placeholder, copied from the original
+// shortcode in the jx-statute template. Not yet implemented, pending further
+// research and design. The shortcode is registered here in anticipation of that
+// work, but currently returns an empty string.
+//
+// Fetches attached jx-common-law records via the query layer and renders them.
+// Unlike jx-statute, a single flat section is rendered. No federal append is needed
+// because common law is inherently jurisdiction-specific and no US-scoped records
+// are expected.
 
-add_shortcode( 'ws_jx_flag', function( $atts ) {
+add_shortcode( 'ws_jx_common_law', 'ws_shortcode_jx_common_law' );
+/**
+ * Renders jurisdiction common law section.
+ *
+ * @return string
+ */
+function ws_shortcode_jx_common_law() {
 
-    $atts = shortcode_atts( [ 'jx' => '' ], $atts );
+        return '';
+}
 
-    if ( $atts['jx'] ) {
-        $jx_data = ws_get_jurisdiction_data( $atts['jx'] );
-    } else {
-        global $post;
-        $jx_data = $post ? ws_get_jurisdiction_data( $post->ID ) : null;
-    }
-
-    if ( ! $jx_data ) return '';
-
-    // Map query layer 'flag' array to the keys ws_render_jx_flag() expects.
-    return ws_render_jx_flag( [
-        'url'        => $jx_data['flag']['url'],
-        'source_url' => $jx_data['flag']['source_url'],
-        'attr_str'   => $jx_data['flag']['attribution'],
-        'license'    => $jx_data['flag']['license'],
-    ] );
-
-} );
-
-
-// [ws_jx_review_status] removed in Phase 9.0.
-// This shortcode's sole purpose was rendering human + legal review badges.
-// Legal review badge system was removed entirely. Plain-language review
-// status is now rendered inline within [ws_jx_summary] via ws_render_jx_summary_footer().
-
-
-// ── [ws_jx_case_law] ─────────────────────────────────────────────────────────
+// ── [ws_jx_citation] ─────────────────────────────────────────────────────────
 //
 // Queries published jx-citation records for the current jurisdiction
-// where ws_jx_cite_attach is true, ordered by ws_jx_cite_position.
+// where ws_jx_citation_has_attach_flag is true, ordered by ws_jx_citation_display_order.
 // Renders the full ws-case-law section: footnote anchors in the body
 // and a footnote list with Unicode return links (&#x21a9;) at the foot.
 //
@@ -321,7 +311,7 @@ function ws_shortcode_jx_citation() {
 // ── [ws_jx_interpretation] ───────────────────────────────────────────────────
 //
 // Queries published jx-interpretation records for the current jurisdiction
-// where ws_attach_flag is true, ordered by ws_display_order ASC.
+// where ws_jx_interp_has_attach_flag is true, ordered by ws_jx_interp_display_order ASC.
 // Appends US-scoped records (federal court decisions) to state pages via
 // the same is_fed pattern used by statutes and citations.
 //
@@ -351,7 +341,7 @@ function ws_shortcode_jx_interpretation() {
 
 // ── [ws_jx_limitations] ──────────────────────────────────────────────────────
 //
-// Reads the ws_jx_limitations repeater from the linked jx-summary post
+// Reads the ws_jx_summary_limitations repeater from the linked jx-summary post
 // and renders the Limitations and Ramifications section.
 // Returns empty string silently if no rows are saved or no summary
 // is linked to the current jurisdiction.
@@ -378,5 +368,6 @@ function ws_shortcode_jx_limitations() {
 
 
 // Query return contracts are documented in:
+// - includes/shortcodes/README.md
 // - includes/queries/README.md
 // - documentation/development/ws-core-query-layer.md

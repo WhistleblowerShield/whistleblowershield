@@ -203,10 +203,10 @@ function ws_render_jx_header($data) {
  * @return string  HTML output, or empty string if no flag URL is set.
  */
 function ws_render_jx_flag($flag_data) {
-    if (empty($flag_data['url'])) return '';
+    if (empty($flag_data['image'])) return '';
     ob_start(); ?>
     <div class="ws-jx-flag-wrap">
-        <img src="<?php echo esc_url($flag_data['url']); ?>" class="ws-jx-flag-img">
+        <img src="<?php echo esc_url($flag_data['image']); ?>" class="ws-jx-flag-img">
         <div class="ws-jx-attribution">
             <a href="<?php echo esc_url($flag_data['source_url']); ?>"
                target="_blank"
@@ -451,8 +451,8 @@ function ws_render_jx_interpretations( $interps ) {
             esc_html( $interp['citation'] ),
         ] );
 
-        $favorable_class = $interp['favorable'] ? 'ws-interp-favorable' : 'ws-interp-unfavorable';
-        $favorable_label = $interp['favorable'] ? 'Favorable' : 'Unfavorable';
+        $favorable_class = $interp['is_favorable'] ? 'ws-interp-favorable' : 'ws-interp-unfavorable';
+        $favorable_label = $interp['is_favorable'] ? 'Favorable' : 'Unfavorable';
 
         $ref_btn = '';
         if ( ! empty( $interp['ref_materials'] ) ) {

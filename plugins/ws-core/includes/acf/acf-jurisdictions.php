@@ -15,7 +15,7 @@
  * FIELD SUMMARY
  * -------------
  * Identity tab:
- *   ws_jurisdiction_tax           Jurisdiction taxonomy (select, required)
+ *   ws_jurisdiction_jx            Jurisdiction taxonomy (select, required)
  *   ws_jurisdiction_class         Jurisdiction Class (text, required)
  *   ws_jurisdiction_name          Jurisdiction Name (text, required)
  *
@@ -102,9 +102,9 @@ function ws_register_acf_jurisdiction_fields() {
             ],
 
             [
-                'key'           => 'field_jurisdiction_tax',
+                'key'           => 'field_jurisdiction_jx',
                 'label'         => 'Jurisdiction USPS Code',
-                'name'          => 'ws_jurisdiction_tax',
+                'name'          => 'ws_jurisdiction_jx',
                 'type'          => 'taxonomy',
                 'taxonomy'      => WS_JURISDICTION_TAXONOMY,
                 'field_type'    => 'select',

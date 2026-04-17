@@ -154,69 +154,17 @@ function ws_shortcode_reference_page( $atts ) {
         $back_url .= '#ws-' . $section;
     }
 
-    $refs = $data['references'];
+    // UI copy stays in shortcode layer so content edits do not require render changes.
+    $ui_text = [
+        'redirect_notice' => 'If you arrived here looking for help with your situation, you are likely in the wrong place. Use the link above to return to <a href="'
+            . esc_url( $back_url ) . '">'
+            . esc_html( $data['parent_title'] )
+            . '</a>.',
+        'empty_notice'    => 'No external references are currently available for this record.',
+        'accuracy_notice' => 'External references are provided as additional sources of information. They have not been verified by WhistleblowerShield for accuracy or currency.',
+    ];
 
-    ob_start();
-    ?>
-    <div class="ws-reference-page">
-
-        <div class="ws-reference-page__back">
-            <a href="<?php echo esc_url( $back_url ); ?>"
-               class="ws-reference-page__back-link">
-                &larr; <?php echo esc_html( $data['parent_title'] ); ?>
-            </a>
-        </div>
-
-        <div class="ws-reference-page__notice ws-reference-page__notice--redirect">
-            <p>If you arrived here looking for help with your situation, you are likely
-            in the wrong place. Use the link above to return to
-            <a href="<?php echo esc_url( $back_url ); ?>"><?php echo esc_html( $data['parent_title'] ); ?></a>.</p>
-        </div>
-
-        <h2 class="ws-reference-page__heading">External References</h2>
-        <p class="ws-reference-page__subheading">
-            Additional resources related to:
-            <strong><?php echo esc_html( $data['parent_title'] ); ?></strong>
-        </p>
-
-        <?php if ( empty( $refs ) ) : ?>
-            <p class="ws-reference-page__empty">
-                No external references are currently available for this record.
-            </p>
-        <?php else : ?>
-            <ul class="ws-reference-page__list">
-                <?php foreach ( $refs as $ref ) : ?>
-                    <li class="ws-reference-page__item">
-                        <a href="<?php echo esc_url( $ref['url'] ); ?>"
-                           class="ws-reference-page__item-title"
-                           target="_blank"
-                           rel="noopener noreferrer">
-                            <?php echo esc_html( $ref['title'] ); ?>
-                        </a>
-                        <?php if ( ! empty( $ref['source_name'] ) || ! empty( $ref['type'] ) ) : ?>
-                            <span class="ws-reference-page__item-meta">
-                                <?php if ( ! empty( $ref['source_name'] ) ) : ?>
-                                    <?php echo esc_html( $ref['source_name'] ); ?>
-                                <?php endif; ?>
-                                <?php if ( ! empty( $ref['type'] ) ) : ?>
-                                    <span class="ws-reference-page__item-type"><?php echo esc_html( $ref['type'] ); ?></span>
-                                <?php endif; ?>
-                            </span>
-                        <?php endif; ?>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-
-            <div class="ws-reference-page__notice ws-reference-page__notice--accuracy">
-                <p>External references are provided as additional sources of information.
-                They have not been verified by WhistleblowerShield for accuracy or currency.</p>
-            </div>
-        <?php endif; ?>
-
-    </div>
-
-    <?php
-    return ob_get_clean();
+    return ws_render_reference_page( $data, $back_url, $ui_text );
 }
 
 
@@ -294,5 +242,6 @@ function ws_shortcode_assist_org_directory( $atts ) {
 
 
 // Query return contracts:
+// - includes/shortcodes/README.md
 // - includes/queries/README.md
 // - documentation/development/ws-core-query-layer.md

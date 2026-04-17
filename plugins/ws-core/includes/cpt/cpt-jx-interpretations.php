@@ -27,13 +27,14 @@ add_action( 'init', 'ws_register_cpt_jx_interpretation' );
 function ws_register_cpt_jx_interpretation() {
 
     $labels = [
-        'name'               => 'Statute Interpretations',
-        'singular_name'      => 'Statute Interpretation',
+        'name'               => 'Legal Interpretations',
+        'singular_name'      => 'Legal Interpretation',
         'menu_name'          => 'JX Interpretations',
-        'add_new'            => 'Add Interpretation',
-        'add_new_item'       => 'Add New Statute Interpretation',
-        'edit_item'          => 'Edit Statute Interpretation',
-        'new_item'           => 'New Statute Interpretation',
+        'name_admin_bar'     => 'JX Interpretation',
+        'add_new'            => 'Add New',
+        'add_new_item'       => 'Add New Legal Interpretation',
+        'edit_item'          => 'Edit Legal Interpretation',
+        'new_item'           => 'New Legal Interpretation',
         'view_item'          => 'View Interpretation',
         'search_items'       => 'Search Interpretations',
         'not_found'          => 'No interpretations found',
@@ -61,6 +62,18 @@ function ws_register_cpt_jx_interpretation() {
         // No post editor — all content managed via ACF fields.
 
         'supports'            => [ 'title', 'revisions' ],
+        'taxonomies' => [
+            'ws_disclosure_type',
+            'ws_process_type',
+            'ws_remedy',
+            'ws_protected_class',
+            'ws_adverse_action_type',
+            'ws_disclosure_target',
+            'ws_fee_shifting',
+            'ws_employer_defense',
+            'ws_employee_standard',
+            WS_JURISDICTION_TAXONOMY,
+        ],
 
         // ── REST ──────────────────────────────────────────────────────────
 

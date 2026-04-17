@@ -16,7 +16,7 @@
  * -------------
  * Agency Identity tab:
  *   ws_agency_code                       Agency Reference Code (text, required)
- *   ws_agency_name                       Full Agency Name (text, required)
+ *   ws_agency_official_name              Full Agency Official Name (text, required)
  *   ws_agency_logo                       Agency Logo (image, optional)
  *   ws_agency_jurisdictions              Jurisdiction(s) (multi_select, optional)
  *   ws_agency_disclosure_types           Disclosure Categories (multi_select, optional)
@@ -109,9 +109,9 @@ function ws_register_acf_agencies() {
                 'required'     => 1,
             ],
             [
-                'key'          => 'field_agency_name',
-                'label'        => 'Full Agency Name',
-                'name'         => 'ws_agency_name',
+                'key'          => 'field_agency_official_name',
+                'label'        => 'Full Agency Official Name',
+                'name'         => 'ws_agency_official_name',
                 'type'         => 'text',
                 'required'     => 1,
                 'instructions' => 'Example: U.S. Office of Special Counsel',

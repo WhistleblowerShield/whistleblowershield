@@ -58,8 +58,8 @@ function ws_register_cpt_agencies() {
 
         // -- Admin Menu ----------------------------------------------------
         
-        'menu_icon'           => 'dashicons-building', // Appropriate icon for government/offices
-        'menu_position'       => 40, // Placed immediately after Citations (27)
+        'menu_icon'           => 'dashicons-building',
+        'menu_position'       => 40,
 
         // -- Taxonomies ----------------------------------------------------
         

@@ -187,9 +187,9 @@ These are not the same thing and must never be conflated.
 |---|---|---|
 | Q1 | Situation | `ws_case_stage` |
 | Q2A | What you're concerned about | `ws_disclosure_type` |
-| Q2B | What happened to you | `ws_adverse_action_types` |
+| Q2B | What happened to you | `ws_adverse_action_type` |
 | Q3 | Kind of organization | `ws_employment_sector` |
-| Q4A | Internal vs. external reporting | `ws_disclosure_targets` (simplified) |
+| Q4A | Internal vs. external reporting | `ws_disclosure_target` (simplified) |
 | Q4B | What you reported | `ws_disclosure_type` |
 | Q5 | What's most helpful right now | Presentation priority hint — not a taxonomy filter |
 

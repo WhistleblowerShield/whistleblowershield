@@ -100,12 +100,12 @@ or filtering taxonomies.
 | `ws_jurisdiction` | Jurisdictions | — | — | All content CPTs |
 | `ws_disclosure_type` | Disclosure Categories | ✓ | ✓ | `jx-statute`, `jx-citation`, `ws-agency`, `ws-ag-procedure`, `ws-assist-org` |
 | `ws_process_type` | Process Types | — | ✓ | `jx-statute`, `ws-agency`, `ws-assist-org`, `jx-interpretation` |
-| `ws_remedies` | Remedies | — | — | `jx-statute` |
+| `ws_remedy` | Remedies | — | — | `jx-statute` |
 | `ws_protected_class` | Protected Classes | ✓ | — | `jx-statute` |
-| `ws_adverse_action_types` | Adverse Action Types | — | — | `jx-statute` |
-| `ws_languages` | Languages | — | — | `ws-agency`, `ws-assist-org` |
+| `ws_adverse_action_type` | Adverse Action Types | — | — | `jx-statute` |
+| `ws_language` | Languages | — | — | `ws-agency`, `ws-assist-org` |
 | `ws_case_stage` | Case Stages | — | — | `ws-assist-org` |
-| `ws_disclosure_targets` | Disclosure Targets | ✓ | — | `jx-statute`, `ws-assist-org` |
+| `ws_disclosure_target` | Disclosure Targets | ✓ | — | `jx-statute`, `ws-assist-org` |
 | `ws_fee_shifting` | Fee Shifting Rules | — | — | `jx-statute` |
 | `ws_employer_defense` | Employer Defense Standards | — | — | `jx-statute` |
 | `ws_aorg_type` | Organization Types | — | — | `ws-assist-org` |

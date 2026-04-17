@@ -34,7 +34,7 @@ function ws_register_cpt_assist_org() {
         'name'               => 'Assistance Organizations',
         'singular_name'      => 'Assistance Organization',
         'menu_name'          => 'Assist Orgs',
-        'name_admin_bar'     => 'Assistance Org',
+        'name_admin_bar'     => 'Assist Org',
         'add_new'            => 'Add New',
         'add_new_item'       => 'Add New Assistance Organization',
         'new_item'           => 'New Assistance Organization',
@@ -78,8 +78,7 @@ function ws_register_cpt_assist_org() {
         'capability_type' => 'post',
 
         // ── Admin Menu ────────────────────────────────────────────────────
-        // Citations 27 → Agencies 28 → Interpretations 29 → Assist Orgs 30
-
+  
         'menu_icon'     => 'dashicons-groups',
         'menu_position' => 39,
 
@@ -97,12 +96,12 @@ function ws_register_cpt_assist_org() {
             'ws_process_type',
             'ws_disclosure_target',
             'ws_case_stage',
-            'ws_languages',
+            'ws_language',
             'ws_aorg_type',
             'ws_employment_sector',
             'ws_aorg_cost_model',
             'ws_aorg_service',
-            'ws_jurisdiction',
+            WS_JURISDICTION_TAXONOMY,
             'ws_protected_class',
         ],
 

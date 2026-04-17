@@ -233,10 +233,10 @@ stamp, plain English, source verify, and major edit from shared groups.
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_jx_statute_process_type` | taxonomy | `ws_process_type` terms; `save_terms: 1` |
-| `ws_jx_statute_adverse_action` | taxonomy | `ws_adverse_action_types` terms; `save_terms: 1` |
-| `ws_jx_statute_fee_shifting` | taxonomy | `ws_fee_shifting` terms; `save_terms: 1` |
-| `ws_jx_statute_remedies` | taxonomy | `ws_remedies` terms; `save_terms: 1` |
+| `ws_jx_statute_process_types` | taxonomy | `ws_process_type` terms; `save_terms: 1` |
+| `ws_jx_statute_adverse_action_types` | taxonomy | `ws_adverse_action_type` terms; `save_terms: 1` |
+| `ws_jx_statute_fee_shiftings` | taxonomy | `ws_fee_shifting` terms; `save_terms: 1` |
+| `ws_jx_statute_remedies` | taxonomy | `ws_remedy` terms; `save_terms: 1` |
 | `ws_jx_statute_related_agencies` | post_object | Links to `ws-agency` posts that enforce this statute |
 
 **Tab: Burden of Proof**

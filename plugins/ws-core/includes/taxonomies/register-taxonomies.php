@@ -62,7 +62,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_disclosure_type' ) ) {
         register_taxonomy(
             'ws_disclosure_type',
-            [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-agency', 'ws-ag-procedure', 'ws-assist-org' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation', 'ws-agency', 'ws-ag-procedure', 'ws-assist-org' ],
             [
                 'label'             => 'Disclosure Categories',
                 'labels'            => [
@@ -76,7 +76,7 @@ function ws_register_taxonomies() {
                     'update_item'       => 'Update Category',
                     'add_new_item'      => 'Add New Category',
                     'new_item_name'     => 'New Disclosure Category Name',
-                    'menu_name'         => 'Disclosure Categories',
+                    'menu_name'         => 'Disclosures',
                 ],
                 'public'            => false,
                 'publicly_queryable'=> false,
@@ -96,7 +96,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_process_type' ) ) {
         register_taxonomy(
             'ws_process_type',
-            [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-agency', 'ws-assist-org' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation', 'ws-agency', 'ws-assist-org' ],
             [
                 'label'             => 'Process Types',
                 'labels'            => [
@@ -108,7 +108,7 @@ function ws_register_taxonomies() {
                     'update_item'       => 'Update Process Type',
                     'add_new_item'      => 'Add New Process Type',
                     'new_item_name'     => 'New Process Type Name',
-                    'menu_name'         => 'Process Types',
+                    'menu_name'         => 'Processes',
                 ],
                 'public'            => false,
                 'publicly_queryable'=> false,
@@ -130,25 +130,28 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_remedy' ) ) {
         register_taxonomy(
             'ws_remedy',
-            [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation' ],
             [
-                'label'             => 'remedy',
+                'label'             => 'Remedies',
                 'labels'            => [
-                    'name'              => 'remedy',
+                    'name'              => 'Remedies',
                     'singular_name'     => 'Remedy',
-                    'search_items'      => 'Search remedy',
-                    'all_items'         => 'All remedy',
+                    'search_items'      => 'Search Remedies',
+                    'all_items'         => 'All Remedies',
                     'edit_item'         => 'Edit Remedy',
                     'update_item'       => 'Update Remedy',
                     'add_new_item'      => 'Add New Remedy',
                     'new_item_name'     => 'New Remedy Name',
-                    'menu_name'         => 'remedy',
+                    'menu_name'         => 'Remedies',
                 ],
                 'public'            => false,
+                'publicly_queryable'=> false,
                 'hierarchical'      => false,
                 'show_ui'           => true,
                 'show_in_rest'      => true,
                 'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
                 'capabilities'      => ws_get_taxonomy_caps(),
             ]
         );
@@ -162,9 +165,9 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_protected_class' ) ) {
         register_taxonomy(
             'ws_protected_class',
-            [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-assist-org' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation', 'ws-assist-org' ],
             [
-                'label'             => 'Protected Class',
+                'label'             => 'Protected Classes',
                 'labels'            => [
                     'name'              => 'Protected Classes',
                     'singular_name'     => 'Protected Class',
@@ -178,12 +181,15 @@ function ws_register_taxonomies() {
                     'new_item_name'     => 'New Protected Class Name',
                     'menu_name'         => 'Protected Classes',
                 ],
-                'public'            => false,
-                'hierarchical'      => true,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'capabilities'      => ws_get_taxonomy_caps(),
+                    'public'            => false,
+                    'publicly_queryable'=> false,
+                    'hierarchical'      => true,
+                    'show_ui'           => true,
+                    'show_in_rest'      => true,
+                    'show_admin_column' => true,
+                    'rewrite'           => false,
+                    'query_var'         => false,
+                    'capabilities'      => ws_get_taxonomy_caps(),
             ]
         );
     }
@@ -196,7 +202,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_adverse_action_type' ) ) {
         register_taxonomy(
             'ws_adverse_action_type',
-            [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation' ],
             [
                 'label'             => 'Adverse Action Types',
                 'labels'            => [
@@ -208,21 +214,23 @@ function ws_register_taxonomies() {
                     'update_item'       => 'Update Adverse Action Type',
                     'add_new_item'      => 'Add New Adverse Action Type',
                     'new_item_name'     => 'New Adverse Action Type Name',
-                    'menu_name'         => 'Adverse Action Types',
+                    'menu_name'         => 'Adverse Actions',
                 ],
                 'public'            => false,
+                'publicly_queryable'=> false,
                 'hierarchical'      => false,
                 'show_ui'           => true,
                 'show_in_rest'      => true,
                 'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
                 'capabilities'      => ws_get_taxonomy_caps(),
             ]
         );
     }
 
     // ── 6. Languages ──────────────────────────────────────────────────────
-    //
-    // Bug #2 fix: 'assist-org' corrected to 'ws-assist-org'.
+
 
     if ( ! taxonomy_exists( 'ws_language' ) ) {
         register_taxonomy(
@@ -242,17 +250,20 @@ function ws_register_taxonomies() {
                     'menu_name'         => 'Languages',
                 ],
                 'public'            => false,
+                'publicly_queryable'=> false,
                 'hierarchical'      => false,
                 'show_ui'           => true,
                 'show_in_rest'      => true,
+                'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
                 'capabilities'      => ws_get_taxonomy_caps(),
             ]
         );
     }
 
     // ── 7. Case Stage ─────────────────────────────────────────────────────
-    //
-    // Bug #2 fix: 'assist-org' corrected to 'ws-assist-org'.
+
 
     if ( ! taxonomy_exists( 'ws_case_stage' ) ) {
         register_taxonomy(
@@ -272,9 +283,13 @@ function ws_register_taxonomies() {
                     'menu_name'         => 'Case Stages',
                 ],
                 'public'            => false,
+                'publicly_queryable'=> false,
                 'hierarchical'      => false,
                 'show_ui'           => true,
                 'show_in_rest'      => true,
+                'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
                 'capabilities'      => ws_get_taxonomy_caps(),
             ]
         );
@@ -304,10 +319,13 @@ function ws_register_taxonomies() {
                     'menu_name'         => 'Jurisdictions',
                 ],
                 'public'            => false,
+                'publicly_queryable'=> false,
                 'hierarchical'      => false,
                 'show_ui'           => true,
                 'show_in_rest'      => true,
                 'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
                 'capabilities'      => ws_get_taxonomy_caps(),
             ]
         );
@@ -317,12 +335,11 @@ function ws_register_taxonomies() {
     //
     // New in 3.1.0. Describes who the disclosure was made to in order for
     // protection to apply. Hierarchical — grouped by reporting channel type.
-    // Applied to jx-statute and ws-assist-org.
 
     if ( ! taxonomy_exists( 'ws_disclosure_target' ) ) {
         register_taxonomy(
             'ws_disclosure_target',
-            [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-assist-org' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation', 'ws-assist-org' ],
             [
                 'label'             => 'Disclosure Targets',
                 'labels'            => [
@@ -339,10 +356,13 @@ function ws_register_taxonomies() {
                     'menu_name'         => 'Disclosure Targets',
                 ],
                 'public'            => false,
+                'publicly_queryable'=> false,
                 'hierarchical'      => true,
                 'show_ui'           => true,
                 'show_in_rest'      => true,
                 'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
                 'capabilities'      => ws_get_taxonomy_caps(),
             ]
         );
@@ -351,12 +371,12 @@ function ws_register_taxonomies() {
     // ── 10. Fee Shifting ──────────────────────────────────────────────────
     //
     // New in 3.1.0. Flat taxonomy describing the fee shifting rule that
-    // applies to enforcement of a statute. Applied to jx-statute only.
+    // applies to enforcement of a law.
 
     if ( ! taxonomy_exists( 'ws_fee_shifting' ) ) {
         register_taxonomy(
             'ws_fee_shifting',
-            [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation' ],
             [
                 'label'             => 'Fee Shifting Rules',
                 'labels'            => [
@@ -368,13 +388,16 @@ function ws_register_taxonomies() {
                     'update_item'       => 'Update Fee Shifting Rule',
                     'add_new_item'      => 'Add New Fee Shifting Rule',
                     'new_item_name'     => 'New Fee Shifting Rule Name',
-                    'menu_name'         => 'Fee Shifting',
+                    'menu_name'         => 'Fee Shiftings',
                 ],
                 'public'            => false,
+                'publicly_queryable'=> false,
                 'hierarchical'      => false,
                 'show_ui'           => true,
                 'show_in_rest'      => true,
                 'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
                 'capabilities'      => ws_get_taxonomy_caps(),
             ]
         );
@@ -383,12 +406,12 @@ function ws_register_taxonomies() {
     // ── 11. Employer Defense ──────────────────────────────────────────────
     //
     // New in 3.2.0. Flat taxonomy describing the defense standard(s) available
-    // to the employer under a statute. Applied to jx-statute only.
+    // to the employer under a law.
 
     if ( ! taxonomy_exists( 'ws_employer_defense' ) ) {
         register_taxonomy(
             'ws_employer_defense',
-            [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation' ],
             [
                 'label'             => 'Employer Defense Standards',
                 'labels'            => [
@@ -400,13 +423,16 @@ function ws_register_taxonomies() {
                     'update_item'   => 'Update Employer Defense Standard',
                     'add_new_item'  => 'Add New Employer Defense Standard',
                     'new_item_name' => 'New Employer Defense Standard Name',
-                    'menu_name'     => 'Employer Defense',
+                    'menu_name'     => 'Employer Defenses',
                 ],
                 'public'            => false,
+                'publicly_queryable'=> false,
                 'hierarchical'      => false,
                 'show_ui'           => true,
                 'show_in_rest'      => true,
                 'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
                 'capabilities'      => ws_get_taxonomy_caps(),
             ]
         );
@@ -436,10 +462,13 @@ function ws_register_taxonomies() {
                     'menu_name'         => 'Org Types',
                 ],
                 'public'            => false,
+                'publicly_queryable'=> false,
                 'hierarchical'      => false,
                 'show_ui'           => true,
                 'show_in_rest'      => true,
                 'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
                 'capabilities'      => ws_get_taxonomy_caps(),
             ]
         );
@@ -470,10 +499,13 @@ function ws_register_taxonomies() {
                     'menu_name'         => 'Employment Sectors',
                 ],
                 'public'            => false,
+                'publicly_queryable'=> false,
                 'hierarchical'      => false,
                 'show_ui'           => true,
                 'show_in_rest'      => true,
                 'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
                 'capabilities'      => ws_get_taxonomy_caps(),
             ]
         );
@@ -492,7 +524,7 @@ function ws_register_taxonomies() {
             'ws_aorg_cost_model',
             [ 'ws-assist-org' ],
             [
-                'label'             => 'Cost Structure',
+                'label'             => 'Cost Structures',
                 'labels'            => [
                     'name'              => 'Cost Structures',
                     'singular_name'     => 'Cost Structure',
@@ -502,13 +534,16 @@ function ws_register_taxonomies() {
                     'update_item'       => 'Update Cost Structure',
                     'add_new_item'      => 'Add New Cost Structure',
                     'new_item_name'     => 'New Cost Structure Name',
-                    'menu_name'         => 'Cost Structure',
+                    'menu_name'         => 'Cost Models',
                 ],
                 'public'            => false,
+                'publicly_queryable'=> false,
                 'hierarchical'      => false,
                 'show_ui'           => true,
                 'show_in_rest'      => true,
                 'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
                 'capabilities'      => ws_get_taxonomy_caps(),
             ]
         );
@@ -528,23 +563,26 @@ function ws_register_taxonomies() {
             'ws_aorg_service',
             [ 'ws-assist-org' ],
             [
-                'label'             => 'Services Offered',
+                'label'             => 'Provided Services',
                 'labels'            => [
-                    'name'              => 'Services Offered',
-                    'singular_name'     => 'Service',
+                    'name'              => 'Provided Services',
+                    'singular_name'     => 'Provided Service',
                     'search_items'      => 'Search Services',
                     'all_items'         => 'All Services',
                     'edit_item'         => 'Edit Service',
                     'update_item'       => 'Update Service',
                     'add_new_item'      => 'Add New Service',
                     'new_item_name'     => 'New Service Name',
-                    'menu_name'         => 'Services Offered',
+                    'menu_name'         => 'Services',
                 ],
                 'public'            => false,
+                'publicly_queryable'=> false,
                 'hierarchical'      => false,
                 'show_ui'           => true,
                 'show_in_rest'      => true,
                 'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
                 'capabilities'      => ws_get_taxonomy_caps(),
             ]
         );
@@ -554,31 +592,34 @@ function ws_register_taxonomies() {
     //
     // New in 3.12.0. Flat taxonomy for the burden-of-proof standard an employee
     // must meet under a statute. Replaces the freetext employee_standard field.
-    // Applied to jx-statute only. Multiple values permitted per record.
+    // Multiple values permitted per record.
     // Terms seeded via ws_seed_employee_standard_taxonomy().
 
     if ( ! taxonomy_exists( 'ws_employee_standard' ) ) {
         register_taxonomy(
             'ws_employee_standard',
-            [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation' ],
             [
                 'label'             => 'Employee Burden Standards',
                 'labels'            => [
                     'name'              => 'Employee Burden Standards',
                     'singular_name'     => 'Employee Burden Standard',
-                    'search_items'      => 'Search Employee Burden Standards',
-                    'all_items'         => 'All Employee Burden Standards',
-                    'edit_item'         => 'Edit Employee Burden Standard',
-                    'update_item'       => 'Update Employee Burden Standard',
-                    'add_new_item'      => 'Add New Employee Burden Standard',
-                    'new_item_name'     => 'New Employee Burden Standard Name',
-                    'menu_name'         => 'Employee Burden Standards',
+                    'search_items'      => 'Search Employee Standards',
+                    'all_items'         => 'All Employee Standards',
+                    'edit_item'         => 'Edit Employee Standard',
+                    'update_item'       => 'Update Employee Standard',
+                    'add_new_item'      => 'Add New Employee Standard',
+                    'new_item_name'     => 'New Employee Standard Name',
+                    'menu_name'         => 'Employee Standards',
                 ],
                 'public'            => false,
+                'publicly_queryable'=> false,
                 'hierarchical'      => false,
                 'show_ui'           => true,
                 'show_in_rest'      => true,
                 'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
                 'capabilities'      => ws_get_taxonomy_caps(),
             ]
         );
@@ -608,13 +649,16 @@ function ws_register_taxonomies() {
                     'update_item'       => 'Update Procedure Type',
                     'add_new_item'      => 'Add New Procedure Type',
                     'new_item_name'     => 'New Procedure Type Name',
-                    'menu_name'         => 'Procedure Types',
+                    'menu_name'         => 'Procedures',
                 ],
                 'public'            => false,
+                'publicly_queryable'=> false,
                 'hierarchical'      => false,
                 'show_ui'           => true,
                 'show_in_rest'      => true,
                 'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
                 'capabilities'      => ws_get_taxonomy_caps(),
             ]
         );
@@ -690,25 +734,25 @@ function ws_bulk_insert_hierarchical( array $hierarchy, string $taxonomy ) {
 
 add_action( 'admin_init', function() {
 
-    if ( get_option( 'ws_seeded_disclosure_type' ) !== '1.2.0' ) {
+    if ( get_option( 'ws_seeded_disclosure_type' ) !== '1.0.0' ) {
         ws_seed_disclosure_type_taxonomy();
-        update_option( 'ws_seeded_disclosure_type', '1.2.0' );
+        update_option( 'ws_seeded_disclosure_type', '1.0.0' );
     }
     if ( get_option( 'ws_seeded_process_type' ) !== '1.0.0' ) {
         ws_seed_process_type_taxonomy();
         update_option( 'ws_seeded_process_type', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_remedy' ) !== '1.1.0' ) {
+    if ( get_option( 'ws_seeded_remedy' ) !== '1.0.0' ) {
         ws_seed_remedy_taxonomy();
-        update_option( 'ws_seeded_remedy', '1.1.0' );
+        update_option( 'ws_seeded_remedy', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_protected_class' ) !== '1.3.1' ) {
+    if ( get_option( 'ws_seeded_protected_class' ) !== '1.0.0' ) {
         ws_seed_protected_class_taxonomy();
-        update_option( 'ws_seeded_protected_class', '1.3.1' );
+        update_option( 'ws_seeded_protected_class', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_adverse_action_type' ) !== '1.2.0' ) {
+    if ( get_option( 'ws_seeded_adverse_action_type' ) !== '1.0.0' ) {
         ws_seed_adverse_action_type_taxonomy();
-        update_option( 'ws_seeded_adverse_action_type', '1.2.0' );
+        update_option( 'ws_seeded_adverse_action_type', '1.0.0' );
     }
     if ( get_option( 'ws_seeded_language_taxonomy' ) !== '1.0.0' ) {
         ws_seed_language_taxonomy();
@@ -722,33 +766,33 @@ add_action( 'admin_init', function() {
         ws_seed_jurisdiction_taxonomy();
         update_option( 'ws_seeded_jurisdiction', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_disclosure_target' ) !== '1.2.0' ) {
+    if ( get_option( 'ws_seeded_disclosure_target' ) !== '1.0.0' ) {
         ws_seed_disclosure_target_taxonomy();
-        update_option( 'ws_seeded_disclosure_target', '1.2.0' );
+        update_option( 'ws_seeded_disclosure_target', '1.0.0' );
     }
     if ( get_option( 'ws_seeded_fee_shifting' ) !== '1.0.0' ) {
         ws_seed_fee_shifting_taxonomy();
         update_option( 'ws_seeded_fee_shifting', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_employer_defense' ) !== '1.1.0' ) {
+    if ( get_option( 'ws_seeded_employer_defense' ) !== '1.0.0' ) {
         ws_seed_employer_defense_taxonomy();
-        update_option( 'ws_seeded_employer_defense', '1.1.0' );
+        update_option( 'ws_seeded_employer_defense', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_aorg_type' ) !== '1.1.0' ) {
+    if ( get_option( 'ws_seeded_aorg_type' ) !== '1.0.0' ) {
         ws_seed_aorg_type_taxonomy();
-        update_option( 'ws_seeded_aorg_type', '1.1.0' );
+        update_option( 'ws_seeded_aorg_type', '1.0.0' );
     }
     if ( get_option( 'ws_seeded_employment_sector' ) !== '1.0.0' ) {
         ws_seed_employment_sector_taxonomy();
         update_option( 'ws_seeded_employment_sector', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_aorg_service' ) !== '1.1.0' ) {
+    if ( get_option( 'ws_seeded_aorg_service' ) !== '1.0.0' ) {
         ws_seed_aorg_service_taxonomy();
-        update_option( 'ws_seeded_aorg_service', '1.1.0' );
+        update_option( 'ws_seeded_aorg_service', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_aorg_cost_model' ) !== '1.1.0' ) {
+    if ( get_option( 'ws_seeded_aorg_cost_model' ) !== '1.0.0' ) {
         ws_seed_aorg_cost_model_taxonomy();
-        update_option( 'ws_seeded_aorg_cost_model', '1.1.0' );
+        update_option( 'ws_seeded_aorg_cost_model', '1.0.0' );
     }
     if ( get_option( 'ws_seeded_procedure_type' ) !== '1.0.0' ) {
         ws_seed_procedure_type_taxonomy();
@@ -989,7 +1033,7 @@ function ws_seed_adverse_action_type_taxonomy() {
 /**
  * Seeds ws_language terms.
  * 'additional' is a functional flag — auto-assigned when ws_agency_additional_languages
- * or ws_ao_additional_languages text fields contain a value.
+ * or ws_aorg_additional_languages text fields contain a value.
  */
 function ws_seed_language_taxonomy() {
     $taxonomy = 'ws_language';
@@ -1213,9 +1257,9 @@ function ws_seed_aorg_type_taxonomy() {
         'law-firm'         => 'Law Firm',
         'bar-program'      => 'Bar Association Program',
         'advocacy'         => 'Advocacy Organization',
-        'mixed'            => 'Mixed Organization Type',
         'oversight-office' => 'Government Oversight Office',
         'union'            => 'Labor Union',
+        'mixed'            => 'Mixed Organization Type',
     ];
     foreach ( $terms as $slug => $name ) {
         if ( ! term_exists( $slug, $taxonomy ) ) {
@@ -1249,7 +1293,6 @@ function ws_seed_employment_sector_taxonomy() {
 
 /**
  * Seeds ws_aorg_cost_model with flat cost structure terms.
- *
  * New in 3.9.0. Replaces ws_aorg_cost_model ACF select field.
  */
 function ws_seed_aorg_cost_model_taxonomy() {
@@ -1271,26 +1314,25 @@ function ws_seed_aorg_cost_model_taxonomy() {
 
 /**
  * Seeds ws_aorg_service with flat service terms.
- *
  * New in 3.9.0. Replaces ws_aorg_services ACF checkbox.
  * 'additional' is the sentinel term for free-text overflow.
  */
 function ws_seed_aorg_service_taxonomy() {
     $taxonomy = 'ws_aorg_service';
     $terms    = [
-        'legal-rep'    => 'Full Legal Representation',
-        'consultation' => 'Legal Consultation / Advice',
-        'referral'     => 'Intake & Referral',
-        'doc-review'   => 'Document Review',
-        'hotline'      => 'Whistleblower Hotline',
-        'retaliation'  => 'Retaliation Defense',
-        'financial'    => 'Financial Assistance',
-        'advocacy'     => 'Policy Advocacy',
-        'media'        => 'Media & Communications Support',
+        'legal-rep'     => 'Full Legal Representation',
+        'consultation'  => 'Legal Consultation / Advice',
+        'referral'      => 'Intake & Referral',
+        'doc-review'    => 'Document Review',
+        'hotline'       => 'Whistleblower Hotline',
+        'retaliation'   => 'Retaliation Defense',
+        'financial'     => 'Financial Assistance',
+        'advocacy'      => 'Policy Advocacy',
+        'media'         => 'Media & Communications Support',
         'mental-health' => 'Mental Health Support',
-        'peer-support' => 'Peer Support',
-        'secure-drop'  => 'SecureDrop Intake',
-        'additional'   => 'Additional Services',
+        'peer-support'  => 'Peer Support',
+        'secure-drop'   => 'SecureDrop Intake',
+        'additional'    => 'Additional Services',
     ];
     foreach ( $terms as $slug => $name ) {
         if ( ! term_exists( $slug, $taxonomy ) ) {
@@ -1349,7 +1391,7 @@ function ws_seed_procedure_type_taxonomy() {
 /**
  * Seeds ws_employee_standard with its flat term list.
  *
- * New in 3.12.0. Replaces the freetext employee_standard field on jx-statute.
+ * New in 3.12.0. Replaces the freetext employee_standard fields in ACFs.
  * has-details sentinel signals a companion ACF freetext field holds a standard
  * not covered by the registered slugs.
  */

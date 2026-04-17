@@ -26,10 +26,12 @@
  *        and manual refresh button.
  * 3.11.0 Added unpublished parenthetical counts across dashboard CPT columns.
  *        Parenthetical stays hidden when unpublished count is zero.
+ * 3.12.0 Added Common Law dashboard column and cache tracking for jx-common-law.
+ *        Attach-flag count helper now supports per-CPT attach flag keys.
  *
  * @package WhistleblowerShield
  * @since   2.1.0
- * @version 3.11.0
+ * @version 3.12.0
  */
 
 if (!defined('ABSPATH')) {
@@ -102,6 +104,7 @@ function ws_render_jurisdiction_dashboard() {
             <th style="width:16%;">Jurisdiction</th>
             <th>Summary</th>
             <th>Statutes</th>
+            <th>Common Law</th>
             <th>Citations</th>
             <th>Interp.</th>
             <th>Updates</th>
@@ -124,10 +127,15 @@ function ws_render_jurisdiction_dashboard() {
         $summary_unpublished = ws_jx_dashboard_unpublished_count( $term_id, 'jx-summary' );
         echo ws_jx_dashboard_status_cell( $summary_status, $summary_unpublished );
 
-        // ── Statutes (count of editorially curated / attach_flag = 1) ─────
+        // ── Statutes (count of editorially curated / ws_jx_statute_has_attach_flag = 1) ─────
         $statute_count = ws_jx_dashboard_count( $term_id, 'jx-statute', true );
         $statute_unpublished = ws_jx_dashboard_unpublished_count( $term_id, 'jx-statute' );
         echo ws_jx_dashboard_count_cell( $statute_count, $statute_unpublished );
+
+        // ── Common Law (count of editorially curated / ws_jx_comlaw_has_attach_flag = 1) ────
+        $comlaw_count = ws_jx_dashboard_count( $term_id, 'jx-common-law', true, 'ws_jx_comlaw_has_attach_flag' );
+        $comlaw_unpublished = ws_jx_dashboard_unpublished_count( $term_id, 'jx-common-law' );
+        echo ws_jx_dashboard_count_cell( $comlaw_count, $comlaw_unpublished );
 
         // ── Citations (curated count via shared helper) ────────────────────
         $cite_count = ws_get_attached_citation_count( $jx->ID );
@@ -135,7 +143,7 @@ function ws_render_jurisdiction_dashboard() {
         echo ws_jx_dashboard_count_cell( $cite_count, $cite_unpublished );
 
         // ── Interpretations (count of editorially curated) ────────────────
-        $interp_count = ws_jx_dashboard_count( $term_id, 'jx-interpretation', true );
+        $interp_count = ws_jx_dashboard_count( $term_id, 'jx-interpretation', true, 'ws_jx_interp_has_attach_flag' );
         $interp_unpublished = ws_jx_dashboard_unpublished_count( $term_id, 'jx-interpretation' );
         echo ws_jx_dashboard_count_cell( $interp_count, $interp_unpublished );
 
@@ -171,7 +179,7 @@ function ws_render_jurisdiction_dashboard() {
 // ── Cache Invalidation ────────────────────────────────────────────────────────
 //
 // Clears the dashboard transient whenever any CPT tracked by the dashboard
-// is saved or deleted. Covers all eight CPT types shown in the matrix.
+// is saved or deleted. Covers all tracked CPT types shown in the matrix.
 
 add_action( 'save_post',          'ws_jx_dashboard_invalidate_cache' );
 add_action( 'before_delete_post', 'ws_jx_dashboard_invalidate_cache' );
@@ -187,7 +195,7 @@ function ws_jx_dashboard_invalidate_cache( $post_id ) {
     }
 
     static $tracked = [
-        'jurisdiction', 'jx-summary', 'jx-statute', 'jx-citation',
+        'jurisdiction', 'jx-summary', 'jx-statute', 'jx-common-law', 'jx-citation',
         'jx-interpretation', 'ws-legal-update', 'ws-agency', 'ws-assist-org',
     ];
     if ( in_array( get_post_type( $post_id ), $tracked, true ) ) {
@@ -220,14 +228,15 @@ function ws_jx_dashboard_one_status( $term_id, $post_type ) {
 
 /**
  * Returns the count of published records of $post_type for $term_id.
- * If $attach_only is true, also requires ws_attach_flag = 1.
+ * If $attach_only is true, also requires $attach_meta_key = 1.
  *
  * @param  int    $term_id     ws_jurisdiction term ID.
  * @param  string $post_type   CPT slug.
- * @param  bool   $attach_only Restrict to attach_flag = 1.
+ * @param  bool   $attach_only     Restrict to attach-flagged records only.
+ * @param  string $attach_meta_key Attach-flag meta key to enforce when $attach_only is true.
  * @return int
  */
-function ws_jx_dashboard_count( $term_id, $post_type, $attach_only = false ) {
+function ws_jx_dashboard_count( $term_id, $post_type, $attach_only = false, $attach_meta_key = 'ws_jx_statute_has_attach_flag' ) {
     if ( ! $term_id ) return 0;
     $args = [
         'post_type'      => $post_type,
@@ -238,7 +247,7 @@ function ws_jx_dashboard_count( $term_id, $post_type, $attach_only = false ) {
         'tax_query'      => [ [ 'taxonomy' => WS_JURISDICTION_TAXONOMY, 'field' => 'term_id', 'terms' => $term_id ] ],
     ];
     if ( $attach_only ) {
-        $args['meta_query'] = [ [ 'key' => 'ws_attach_flag', 'value' => '1', 'compare' => '=' ] ];
+        $args['meta_query'] = [ [ 'key' => $attach_meta_key, 'value' => '1', 'compare' => '=' ] ];
     }
     $q = new WP_Query( $args );
     return (int) $q->found_posts;

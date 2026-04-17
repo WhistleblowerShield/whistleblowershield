@@ -24,7 +24,7 @@ carry inline comments explaining why the query layer is not used.
 Load order is non-negotiable. Each file depends on the one before it.
 
 ```
-query-helpers.php       Pure utilities — no DB reads, no side effects
+query-helpers.php       Pure utilities — no DB reads, no dependencies
 query-shared.php        Sub-array builders — depend on helpers
 query-jurisdiction.php  Primary dataset API — depends on shared
 query-general.php       Cross-cutting datasets — depends on shared/jurisdiction
@@ -75,8 +75,8 @@ fields that are modeled as multi-value in ACF.
 | `WS_CACHE_ALL_JURISDICTIONS` | 12h | `save_post_jurisdiction`, `delete_post` |
 | `WS_CACHE_JX_INDEX` | 24h | `save_post_jurisdiction`, `delete_post` |
 | `WS_CACHE_LEGAL_UPDATES_SITEWIDE` | 1h | `save_post_ws-legal-update` |
-| `ws_agency_procs_{agency_id}` | 24h | procedure save/delete |
-| `ws_statute_procs_{statute_id}` | 24h | `acf/save_post` stash+diff, procedure delete |
+| `ws_agency_procedures_{agency_id}` | 24h | procedure save/delete |
+| `ws_statute_procedures_{statute_id}` | 24h | `acf/save_post` stash+diff, procedure delete |
 
 Sitewide legal updates cache stores up to 100 items. Requests ≤ 100
 served via `array_slice()`. Requests > 100 bypass the cache.
@@ -101,13 +101,15 @@ Per-jurisdiction calls are never cached.
 federal records when the requested jurisdiction is not Federal.
 Each appended record carries `is_fed: true`. The render layer uses
 this flag to split local and federal results into separate sections.
+Does not apply to `ws_get_jx_comlaw_data()`, common laws have no
+federal counterpart.
 
 ---
 
 ## The `attach_flag` Gate
 
 The query layer functions for statutes, citations, and interpretations
-only return records where `ws_attach_flag = true`. This is the
+only return records where `ws_[record]_has_attach_flag = true`. This is the
 curated summary view — editorially selected records for the
 jurisdiction page.
 

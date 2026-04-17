@@ -714,7 +714,6 @@ function ws_interp_load_court_choices( $field ) {
 // parameter is present, we return $value unchanged.
 
 add_filter( 'acf/load_value/key=field_jx_interp_statute_id', 'ws_interp_prefill_statute_id', 5, 3 );
-add_filter( 'acf/load_value/key=field_jx_interp_common_law_id', 'ws_interp_prefill_common_law_id', 5, 3 );
 
 function ws_interp_prefill_statute_id( $value, $post_id, $field ) {
 
@@ -737,9 +736,15 @@ function ws_interp_prefill_statute_id( $value, $post_id, $field ) {
     return $value;
 }
 
-/**
- * Pre-populate ws_jx_interp_common_law_id from ?common_law_id= URL parameter.
- */
+// ── Pre-populate ws_jx_interp_common_law_id from ?common_law_id= URL param ──
+//
+// Mirrors ws_interp_prefill_statute_id() above.
+// When a new interpretation is opened from the common-law interpretation metabox,
+// common_law_id is passed as a URL param. acf/load_value returns it as the
+// field's live value so ACF renders the doctrine pre-selected.
+
+add_filter( 'acf/load_value/key=field_jx_interp_common_law_id', 'ws_interp_prefill_common_law_id', 5, 3 );
+
 function ws_interp_prefill_common_law_id( $value, $post_id, $field ) {
 
     // Only pre-fill on brand-new auto-draft posts.

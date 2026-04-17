@@ -70,7 +70,7 @@ list of assist organizations with graceful fallback when matches are sparse.
 
 2. Concern/event axis:
 - Pre-disclosure branch maps to `ws_disclosure_type`
-- Post-retaliation branch maps to `ws_adverse_action_types` (+ optional `ws_disclosure_type`)
+- Post-retaliation branch maps to `ws_adverse_action_type` (+ optional `ws_disclosure_type`)
 
 3. Employment context (`ws_employment_sector`):
 - Federal / state-local / private / nonprofit / military-defense / not sure
@@ -130,11 +130,11 @@ list of assist organizations with graceful fallback when matches are sparse.
 1. `ws-assist-org` records have required core fields populated.
 2. Core taxonomy assignments are present:
 - `ws_case_stage`
-- `ws_disclosure_type` (or `ws_adverse_action_types` where applicable)
+- `ws_disclosure_type` (or `ws_adverse_action_type` where applicable)
 - `ws_employment_sector`
-- Optional: `ws_disclosure_targets`
+- Optional: `ws_disclosure_target`
 
-3. Sentinel/overflow handling is consistent (`additional`, `has-details` where used).
+3. Sentinel/overflow handling is consistent (`additional`, `other`, `has-details` where used).
 
 4. Taxonomy audit tool returns no structural mismatches for directory-relevant sets.
 

@@ -22,6 +22,7 @@
  *   ws_render_not_legal_advice_disclaimer()  "Not legal advice" notice box.
  *   ws_render_footer()              Site-wide footer block.
  *   ws_render_legal_updates()       Legal updates list.
+ *   ws_render_reference_page()      Reference materials page content.
  *   ws_render_jurisdiction_index()  Filterable jurisdiction index grid.
  *
  *
@@ -181,6 +182,91 @@ function ws_render_legal_updates( $items ) {
         </div>
         <?php endforeach; ?>
     </div>
+    <?php
+    return ob_get_clean();
+}
+
+
+/**
+ * Renders the reference materials page.
+ *
+ * Called by the [ws_reference_page] shortcode in shortcodes-general.php.
+ *
+ * @param array  $data {
+ *     @type string $parent_title Parent record title.
+ *     @type string $parent_url   Parent record permalink.
+ *     @type array  $references   Reference rows from ws_get_ref_materials().
+ * }
+ * @param string $back_url Back-link URL (optionally section-anchored).
+ * @param array  $ui_text {
+ *     @type string $redirect_notice Redirect helper text near the top of page.
+ *     @type string $empty_notice    Fallback when no references exist.
+ *     @type string $accuracy_notice Accuracy disclaimer shown when references exist.
+ * }
+ * @return string
+ */
+function ws_render_reference_page( $data, $back_url, $ui_text = [] ) {
+    $refs = $data['references'];
+    $redirect_notice = (string) ( $ui_text['redirect_notice'] ?? '' );
+    $empty_notice    = (string) ( $ui_text['empty_notice'] ?? '' );
+    $accuracy_notice = (string) ( $ui_text['accuracy_notice'] ?? '' );
+
+    ob_start();
+    ?>
+    <div class="ws-reference-page">
+
+        <div class="ws-reference-page__back">
+            <a href="<?php echo esc_url( $back_url ); ?>"
+               class="ws-reference-page__back-link">
+                &larr; <?php echo esc_html( $data['parent_title'] ); ?>
+            </a>
+        </div>
+
+        <div class="ws-reference-page__notice ws-reference-page__notice--redirect">
+            <p><?php echo wp_kses_post( $redirect_notice ); ?></p>
+        </div>
+
+        <h2 class="ws-reference-page__heading">External References</h2>
+        <p class="ws-reference-page__subheading">
+            Additional resources related to:
+            <strong><?php echo esc_html( $data['parent_title'] ); ?></strong>
+        </p>
+
+        <?php if ( empty( $refs ) ) : ?>
+            <p class="ws-reference-page__empty">
+                <?php echo esc_html( $empty_notice ); ?>
+            </p>
+        <?php else : ?>
+            <ul class="ws-reference-page__list">
+                <?php foreach ( $refs as $ref ) : ?>
+                    <li class="ws-reference-page__item">
+                        <a href="<?php echo esc_url( $ref['url'] ); ?>"
+                           class="ws-reference-page__item-title"
+                           target="_blank"
+                           rel="noopener noreferrer">
+                            <?php echo esc_html( $ref['title'] ); ?>
+                        </a>
+                        <?php if ( ! empty( $ref['source_name'] ) || ! empty( $ref['type'] ) ) : ?>
+                            <span class="ws-reference-page__item-meta">
+                                <?php if ( ! empty( $ref['source_name'] ) ) : ?>
+                                    <?php echo esc_html( $ref['source_name'] ); ?>
+                                <?php endif; ?>
+                                <?php if ( ! empty( $ref['type'] ) ) : ?>
+                                    <span class="ws-reference-page__item-type"><?php echo esc_html( $ref['type'] ); ?></span>
+                                <?php endif; ?>
+                            </span>
+                        <?php endif; ?>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+
+            <div class="ws-reference-page__notice ws-reference-page__notice--accuracy">
+                <p><?php echo esc_html( $accuracy_notice ); ?></p>
+            </div>
+        <?php endif; ?>
+
+    </div>
+
     <?php
     return ob_get_clean();
 }

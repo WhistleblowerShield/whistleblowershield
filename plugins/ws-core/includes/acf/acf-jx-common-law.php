@@ -75,7 +75,7 @@
  *
  * Relationships tab:
  *   ws_jx_comlaw_citation_ids                      Related Citations (post_object, optional)
- *   ws_jx_comlaw_interpretation_ids                Related Interpretations (post_object, optional)
+ *   ws_jx_comlaw_interp_ids                        Related Interpretations (post_object, optional)
  *
  * Reference Materials tab:
  *   ws_jx_comlaw_ref_materials                     Reference Materials (relationship, optional)
@@ -774,9 +774,9 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'           => 'field_jx_comlaw_interpretation_ids',
+                'key'           => 'field_jx_comlaw_interp_ids',
                 'label'         => 'Related Interpretations',
-                'name'          => 'ws_jx_comlaw_interpretation_ids',
+                'name'          => 'ws_jx_comlaw_interp_ids',
                 'type'          => 'post_object',
                 'post_type'     => [ 'jx-interpretation' ],
                 'instructions'  => 'Link interpretations that directly analyze this doctrine. Optional.',

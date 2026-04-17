@@ -97,16 +97,14 @@ function ws_get_legal_updates_data( $jx_id = 0, $count = 0 ) {
         $items[] = [
             'id'                 => $uid,
             'title'              => get_the_title( $uid ),
-            'update_date'        => get_post_meta( $uid, 'ws_legal_update_date',             true ),
             'effective_date'     => get_post_meta( $uid, 'ws_legal_update_effective_date',   true ),
             'post_date'          => get_post_field( 'post_date', $uid ),
             'type'               => get_post_meta( $uid, 'ws_legal_update_type',                      true ),
             'multi_jurisdiction' => (bool) get_post_meta( $uid, 'ws_legal_update_multi_jurisdiction', true ),
             'law_name'           => get_post_meta( $uid, 'ws_legal_update_law_name',         true ) ?: '',
             'source_url'         => get_post_meta( $uid, 'ws_legal_update_source_url',       true ) ?: '',
+            'source_url_is_pdf'  => (bool) get_post_meta( $uid, 'ws_legal_update_source_url_is_pdf', true ),
             'summary'            => wp_kses_post( get_post_meta( $uid, 'ws_legal_update_summary_wysiwyg', true ) ?: '' ),
-            'source_post_id'     => (int) get_post_meta( $uid, 'ws_legal_update_source_post_id',   true ),
-            'source_post_type'   => get_post_meta(       $uid, 'ws_legal_update_source_post_type', true ),
             'verify'             => ws_build_source_verify_array( $uid ),
             'record'             => ws_build_record_array( $uid ),
         ];
@@ -140,7 +138,20 @@ function ws_get_ref_materials( $post_id ) {
     $post_id = (int) $post_id;
     if ( ! $post_id ) return [];
 
-    $refs = get_field( 'ws_ref_materials', $post_id );
+    $post_type = get_post_type( $post_id );
+    $ref_field_by_type = [
+        'jx-statute'        => 'ws_jx_statute_ref_materials',
+        'jx-citation'       => 'ws_jx_citation_ref_materials',
+        'jx-interpretation' => 'ws_jx_interp_ref_materials',
+        'jx-common-law'     => 'ws_jx_comlaw_ref_materials',
+    ];
+    $ref_field = $ref_field_by_type[ $post_type ] ?? 'ws_ref_materials';
+
+    $refs = get_field( $ref_field, $post_id );
+    if ( ! is_array( $refs ) || empty( $refs ) ) {
+        // Back-compat for legacy field naming.
+        $refs = get_field( 'ws_ref_materials', $post_id );
+    }
     if ( ! is_array( $refs ) || empty( $refs ) ) return [];
 
     $items = [];
@@ -163,6 +174,7 @@ function ws_get_ref_materials( $post_id ) {
         $items[] = [
             'title'       => sanitize_text_field( $title ),
             'url'         => esc_url_raw( get_post_meta( $rid, 'ws_ref_url', true ) ),
+            'url_is_pdf'  => (bool) get_post_meta( $rid, 'ws_ref_url_is_pdf', true ),
             'description' => sanitize_textarea_field( get_post_meta( $rid, 'ws_ref_description', true ) ),
             'type'        => sanitize_text_field( get_post_meta( $rid, 'ws_ref_type', true ) ),
             'source_name' => sanitize_text_field( get_post_meta( $rid, 'ws_ref_source_name', true ) ),

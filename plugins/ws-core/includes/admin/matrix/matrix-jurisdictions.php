@@ -944,7 +944,7 @@ $_ws_jx_matrix = [
 //   1. Seed ws_jurisdiction taxonomy terms (slugs = lowercase USPS codes).
 //   2. Create/update jurisdiction CPT posts.
 //   3. Assign taxonomy term to each post via wp_set_object_terms().
-//   4. Write ws_matrix_source = 'matrix-jurisdiction' on each post.
+//   4. Write ws_matrix_source = 'matrix-jurisdictions' on each post.
 //
 // Gate: ws_seeded_jurisdiction_matrix / 1.0.0 (Unified Option-Gate Method).
 // ════════════════════════════════════════════════════════════════════════════
@@ -1047,7 +1047,7 @@ function ws_seed_jurisdiction_matrix() {
         // Direct get_post_meta() call is intentional here. ws_matrix_source is an
         // administrative flag written by the seeder and consumed exclusively by admin
         // tooling. It is not jurisdiction content and does not belong in the query layer.
-        update_post_meta( $post_id, 'ws_matrix_source', 'matrix-jurisdiction' );
+        update_post_meta( $post_id, 'ws_matrix_source', 'matrix-jurisdictions' );
     }
 }
 

@@ -57,7 +57,7 @@ function ws_register_cpt_ag_procedures() {
         // -- Admin Menu ----------------------------------------------------
 
         'menu_icon'           => 'dashicons-clipboard',
-        'menu_position'       => 41, // Placed immediately after ws-agency at 28.
+        'menu_position'       => 41,
 
         // -- Taxonomies ----------------------------------------------------
 

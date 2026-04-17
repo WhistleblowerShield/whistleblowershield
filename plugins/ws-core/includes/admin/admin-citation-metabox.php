@@ -64,6 +64,15 @@ function ws_register_citation_metabox() {
         'normal',
         'default'
     );
+
+    add_meta_box(
+        'ws_citations',
+        'Case Law & Citations',
+        'ws_render_citation_metabox',
+        'jx-common-law',
+        'normal',
+        'default'
+    );
 }
 
 
@@ -77,11 +86,15 @@ function ws_register_citation_metabox() {
 function ws_render_citation_metabox( $post ) {
 
     $is_draft = ( $post->post_status === 'auto-draft' );
+    $post_type = get_post_type( $post );
+    $is_statute = ( $post_type === 'jx-statute' );
 
     // ── Build "Add New Citation" URL ──────────────────────────────────────
     //
-    // statute_id         — read by acf/load_value in acf-jx-citations.php to
-    //                      pre-select ws_jx_citation_statute_ids.
+    // statute_id/common_law_id
+    //                    — read by acf/load_value in acf-jx-citations.php to
+    //                      pre-select ws_jx_citation_statute_ids or
+    //                      ws_jx_citation_common_law_ids.
     // tax_input[...][]   — WordPress core pre-assigns the ws_jurisdiction taxonomy
     //                      term(s) on the new post screen without any ACF hook.
     //                      All terms from the statute are forwarded; a statute
@@ -89,7 +102,8 @@ function ws_render_citation_metabox( $post ) {
     // post_title         — WordPress core pre-fills the title field.
 
     $terms   = wp_get_post_terms( $post->ID, WS_JURISDICTION_TAXONOMY );
-    $add_url = admin_url( 'post-new.php?post_type=jx-citation&statute_id=' . $post->ID );
+    $parent_param = $is_statute ? 'statute_id' : 'common_law_id';
+    $add_url = admin_url( 'post-new.php?post_type=jx-citation&' . $parent_param . '=' . $post->ID );
 
     if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
         foreach ( $terms as $term ) {
@@ -104,12 +118,40 @@ function ws_render_citation_metabox( $post ) {
 
     // ── Fetch linked citations ────────────────────────────────────────────
     //
-    // ws_jx_statute_citation_ids is the reverse index maintained by
-    // ws_rebuild_jx_statute_citation_index() in admin-hooks.php. Reading it
-    // here is a single get_post_meta() call; the post__in query that follows
-    // is a simple WHERE ID IN (...) with no meta JOIN.
-
-    $citation_ids = array_filter( array_map( 'intval', (array) get_post_meta( $post->ID, 'ws_jx_statute_citation_ids', true ) ) );
+    if ( $is_statute ) {
+        // ws_jx_statute_citation_ids is the reverse index maintained by
+        // ws_rebuild_jx_statute_citation_index() in admin-hooks.php. Reading it
+        // here is a single get_post_meta() call; the post__in query that follows
+        // is a simple WHERE ID IN (...) with no meta JOIN.
+        $citation_ids = array_filter( array_map( 'intval', (array) get_post_meta( $post->ID, 'ws_jx_statute_citation_ids', true ) ) );
+    } else {
+        // Common-law links can be stored from either side:
+        // - ws_jx_comlaw_citation_ids on jx-common-law
+        // - ws_jx_citation_common_law_ids on jx-citation
+        // Use the union so the metabox remains accurate even if one side lags.
+        $from_comlaw = array_filter( array_map( 'intval', (array) get_post_meta( $post->ID, 'ws_jx_comlaw_citation_ids', true ) ) );
+        $from_citation = get_posts( [
+            'post_type'      => 'jx-citation',
+            'post_status'    => 'any',
+            'posts_per_page' => -1,
+            'fields'         => 'ids',
+            'no_found_rows'  => true,
+            'meta_query'     => [
+                'relation' => 'OR',
+                [
+                    'key'     => 'ws_jx_citation_common_law_ids',
+                    'value'   => '"' . $post->ID . '"',
+                    'compare' => 'LIKE',
+                ],
+                [
+                    'key'     => 'ws_jx_citation_common_law_ids',
+                    'value'   => (string) $post->ID,
+                    'compare' => '=',
+                ],
+            ],
+        ] );
+        $citation_ids = array_values( array_unique( array_merge( $from_comlaw, array_map( 'intval', (array) $from_citation ) ) ) );
+    }
 
     $citations = empty( $citation_ids ) ? [] : get_posts( [
         'post_type'      => 'jx-citation',
@@ -144,7 +186,7 @@ function ws_render_citation_metabox( $post ) {
     </style>
 
     <?php if ( empty( $citations ) ) : ?>
-        <p class="ws-cite-empty">No citation records linked to this statute yet.</p>
+        <p class="ws-cite-empty">No citation records linked to this record yet.</p>
     <?php else : ?>
         <table class="ws-cite-table">
             <thead>
@@ -161,7 +203,7 @@ function ws_render_citation_metabox( $post ) {
                     $official_name = get_post_meta( $cite_id, 'ws_jx_citation_official_name', true );
                     $type_raw      = get_post_meta( $cite_id, 'ws_jx_citation_types', true );
                     $type_keys     = is_array( $type_raw ) ? $type_raw : ( $type_raw ? [ $type_raw ] : [] );
-                    $attached      = get_post_meta( $cite_id, 'ws_attach_flag', true );
+                    $attached      = get_post_meta( $cite_id, 'ws_jx_citation_has_attach_flag', true );
                     $type_label_parts = [];
                     foreach ( $type_keys as $type_key ) {
                         $type_label_parts[] = $type_labels[ $type_key ] ?? (string) $type_key;
@@ -190,10 +232,10 @@ function ws_render_citation_metabox( $post ) {
         <?php if ( $is_draft ) : ?>
             <a class="button ws-cite-add-btn"
                disabled
-               title="Save the statute first before adding citations.">
+               title="Save this record first before adding citations.">
                 + Add New Citation
             </a>
-            <span style="color:#666;font-size:12px;">Save this statute first to enable this button.</span>
+            <span style="color:#666;font-size:12px;">Save this record first to enable this button.</span>
         <?php else : ?>
             <a class="button button-primary ws-cite-add-btn"
                href="<?php echo esc_url( $add_url ); ?>"

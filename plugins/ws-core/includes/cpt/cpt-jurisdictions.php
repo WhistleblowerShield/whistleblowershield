@@ -27,9 +27,9 @@ function ws_register_cpt_jurisdiction() {
         'singular_name'      => 'Jurisdiction',
         'menu_name'          => 'Jurisdictions',
         'name_admin_bar'     => 'Jurisdiction',
-        'add_new'            => 'Add New',
-        'add_new_item'       => 'Add New Jurisdiction',
-        'new_item'           => 'New Jurisdiction',
+        //'add_new'            => 'Add New',
+        //'add_new_item'       => 'Add New Jurisdiction',
+        //'new_item'           => 'New Jurisdiction',
         'edit_item'          => 'Edit Jurisdiction',
         'view_item'          => 'View Jurisdiction',
         'all_items'          => 'All Jurisdictions',
@@ -49,7 +49,7 @@ function ws_register_cpt_jurisdiction() {
         'show_ui'             => true,
         'publicly_queryable'  => true,
         'exclude_from_search' => false,
-        'has_archive'         => false,
+        'has_archive'         => 'jurisdictions', // Creates whistleblowershield.org/jurisdictions/
 
         // ── Editor ────────────────────────────────────────────────────────
         // Title: jurisdiction name. Editor: optional notes — primary content
@@ -78,6 +78,8 @@ function ws_register_cpt_jurisdiction() {
             'slug'       => 'jurisdiction',
             'with_front' => false,
         ],
+
+        'taxonomies'          => [ WS_JURISDICTION_TAXONOMY ],
 
     ];
 

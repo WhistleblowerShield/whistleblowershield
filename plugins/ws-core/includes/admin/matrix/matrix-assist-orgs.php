@@ -1191,13 +1191,16 @@ function ws_seed_assist_org_matrix() {
         }
 
         // Language: English (all seeded national orgs operate in English).
-        ws_matrix_assign_terms( $post_id, [ 'english' ], 'ws_languages' );
+        $default_languages = [ 'english' ];
+        if ( ! empty( $default_languages ) ) {
+            ws_matrix_assign_terms( $post_id, $default_languages, 'ws_language' );
+        }
 
         // Jurisdiction: US.
         wp_set_object_terms( $post_id, $us_term_id, WS_JURISDICTION_TAXONOMY );
 
         // ── Seeder stamp ─────────────────────────────────────────────────────
-        update_post_meta( $post_id, 'ws_matrix_source', 'assist-org-matrix' );
+        update_post_meta( $post_id, 'ws_matrix_source', 'matrix-assist-orgs' );
     }
 }
 

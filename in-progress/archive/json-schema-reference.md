@@ -203,12 +203,12 @@ in the registered taxonomy for that field is invalid.
 | Field | Taxonomy |
 |---|---|
 | `disclosure_types` | `ws_disclosure_type` |
-| `protected_class` | `ws_protected_class` |
-| `disclosure_targets` | `ws_disclosure_targets` |
-| `process_type` | `ws_process_type` |
-| `adverse_action` | `ws_adverse_action_types` |
-| `remedies` | `ws_remedies` |
-| `fee_shifting` | `ws_fee_shifting` |
+| `protected_classes` | `ws_protected_class` |
+| `disclosure_targets` | `ws_disclosure_target` |
+| `process_types` | `ws_process_type` |
+| `adverse_action_types` | `ws_adverse_action_type` |
+| `remedies` | `ws_remedy` |
+| `fee_shiftings` | `ws_fee_shifting` |
 
 ---
 

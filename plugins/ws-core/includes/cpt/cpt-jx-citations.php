@@ -27,7 +27,8 @@ function ws_register_cpt_jx_citation() {
         'name'               => 'Jurisdiction Citations',
         'singular_name'      => 'Jurisdiction Citation',
         'menu_name'          => 'JX Citations',
-        'add_new'            => 'Add Citation',
+        'name_admin_bar'     => 'JX Citation',
+        'add_new'            => 'Add New',
         'add_new_item'       => 'Add New Jurisdiction Citation',
         'edit_item'          => 'Edit Jurisdiction Citation',
         'new_item'           => 'New Jurisdiction Citation',
@@ -58,6 +59,18 @@ function ws_register_cpt_jx_citation() {
         // No post editor — all content managed via ACF fields.
 
         'supports'            => [ 'title', 'revisions' ],
+        'taxonomies' => [
+            'ws_disclosure_type',
+            'ws_process_type',
+            'ws_remedy',
+            'ws_protected_class',
+            'ws_adverse_action_type',
+            'ws_disclosure_target',
+            'ws_fee_shifting',
+            'ws_employer_defense',
+            'ws_employee_standard',
+            WS_JURISDICTION_TAXONOMY,
+        ],
 
         // ── REST ──────────────────────────────────────────────────────────
 

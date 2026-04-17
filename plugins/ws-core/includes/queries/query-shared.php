@@ -108,7 +108,7 @@ function ws_build_plain_english_array( $post_id ) {
         'written_by'      => $plain_english_by_id,
         'written_by_name' => ws_resolve_display_name( $plain_english_by_id ),
         'written_date'    => get_post_meta( $post_id, 'ws_auto_plain_english_date',                    true ),
-        'is_reviewed'     => (bool) get_post_meta( $post_id, 'ws_plain_english_reviewed',              true ),
+        'is_reviewed'     => (bool) get_post_meta( $post_id, 'ws_auto_plain_english_reviewed',              true ),
         'reviewed_by'     => $plain_english_reviewed_by_id,
         'reviewed_by_name'=> ws_resolve_display_name( $plain_english_reviewed_by_id ),
         'reviewed_date'   => get_post_meta( $post_id, 'ws_auto_plain_english_reviewed_date',           true ),

@@ -4,8 +4,8 @@
  *
  * Group key: group_source_verify_metadata  (menu_order 95)
  *
- * Attaches to: jx-statute, jx-citation, jx-interpretation, ws-agency,
- *              ws-ag-procedure, ws-assist-org, jx-summary, ws-reference
+ * Attaches to: jx-statute, jx-common-law, jx-citation, jx-interpretation,
+ *              ws-agency, ws-ag-procedure, ws-assist-org, jx-summary, ws-reference
  *
  * Fields:
  *   ws_auto_source_method    Locked readonly. One of the WS_SOURCE_* constants.
@@ -64,6 +64,7 @@ function ws_register_source_verify_field_group() {
 
         'location' => [
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-statute'        ] ],
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-common-law'     ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-citation'       ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-interpretation' ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-agency'         ] ],
@@ -97,7 +98,7 @@ function ws_register_source_verify_field_group() {
             // ════════════════════════════════════════════════════════════
 
             [
-                'key'           => 'field_auto_source_method',
+                'key'           => 'field_source_method',
                 'label'         => 'Source Method',
                 'name'          => 'ws_auto_source_method',
                 'type'          => 'text',
@@ -110,7 +111,7 @@ function ws_register_source_verify_field_group() {
             ],
 
             [
-                'key'           => 'field_auto_source_name',
+                'key'           => 'field_source_name',
                 'label'         => 'Source Name',
                 'name'          => 'ws_auto_source_name',
                 'type'          => 'text',
@@ -123,7 +124,7 @@ function ws_register_source_verify_field_group() {
             ],
 
             [
-                'key'           => 'field_auto_verified_by',
+                'key'           => 'field_verified_by',
                 'label'         => 'Verified By',
                 'name'          => 'ws_auto_verified_by',
                 'type'          => 'text',
@@ -136,7 +137,7 @@ function ws_register_source_verify_field_group() {
             ],
 
             [
-                'key'           => 'field_auto_verified_date',
+                'key'           => 'field_verified_date',
                 'label'         => 'Verified Date',
                 'name'          => 'ws_auto_verified_date',
                 'type'          => 'text',
@@ -182,7 +183,7 @@ function ws_register_source_verify_field_group() {
                 'conditional_logic' => [
                     [
                         [
-                            'field'    => 'field_auto_source_name',
+                            'field'    => 'field_source_name',
                             'operator' => '!=empty',
                         ],
                     ],

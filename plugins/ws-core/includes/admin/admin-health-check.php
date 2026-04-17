@@ -72,15 +72,20 @@ function ws_health_check_admin_notice() {
 
     // ── 2. Core CPT registration ──────────────────────────────────────────
     //
-    // Checks the six content CPTs that the query and render layers depend on.
+    // Checks all registered content CPTs that ws-core depends on.
     // A missing CPT causes 404s on existing posts and breaks query results.
 
     $required_cpts = [
+        'jurisdiction',
+        'jx-summary',
         'jx-statute',
         'jx-citation',
+        'jx-common-law',
         'jx-interpretation',
-        'jurisdiction',
+        'ws-reference',
+        'ws-legal-update',
         'ws-agency',
+        'ws-ag-procedure',
         'ws-assist-org',
     ];
 

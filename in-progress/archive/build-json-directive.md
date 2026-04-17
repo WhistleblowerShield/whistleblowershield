@@ -1,4 +1,4 @@
-﻿# Build JSON Directive
+# Build JSON Directive
 
 **Project:** WhistleblowerShield Core (`ws-core`)
 **File:** `documentation/build-json-directive.md`
@@ -72,7 +72,7 @@ Each `prompt-templates/template-v{X}-{record_type}.md` file contains:
    {{TAXONOMY:ws_disclosure_type}}
    {{TAXONOMY:ws_protected_class}}
    {{TAXONOMY:ws_disclosure_targets}}
-   {{TAXONOMY:ws_adverse_action_types}}
+   {{TAXONOMY:ws_adverse_action_type}}
    {{TAXONOMY:ws_process_type}}
    {{TAXONOMY:ws_remedies}}
    {{TAXONOMY:ws_fee_shifting}}
@@ -228,8 +228,8 @@ for empty strings and `[]` for empty arrays on non-conditional fields.
   "enforcement": {
     "primary_agency": "[AGENCY NAME — omit if unknown]",
     "process_type":   ["[SLUG FROM ws_process_type]"],
-    "adverse_action": ["[SLUG FROM ws_adverse_action_types]"],
-    "remedies":       ["[SLUG FROM ws_remedies]"],
+    "adverse_action": ["[SLUG FROM ws_adverse_action_type]"],
+    "remedies":       ["[SLUG FROM ws_remedy]"],
     "fee_shifting":   ["[SLUG FROM ws_fee_shifting]"]
   },
 

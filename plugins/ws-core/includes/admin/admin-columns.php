@@ -29,7 +29,7 @@
  *        Duplicate manage_ws-agency_posts_columns / _custom_column hooks in
  *        that file removed — admin-columns.php is the single source for all
  *        CPT column definitions.
- * 3.10.0 ws-ag-procedure Type column: get_post_meta( 'ws_proc_type' ) replaced
+ * 3.10.0 ws-ag-procedure Type column: get_post_meta( 'ws_ag_procedure_type' ) replaced
  *        with wp_get_object_terms( 'ws_procedure_type' ). ws_procedure_type is
  *        now a taxonomy; direct taxonomy read is correct in admin list context.
  *
@@ -154,7 +154,49 @@ function ws_render_statute_column( $column, $post_id ) {
         }
     } elseif ( $column === 'ws_attach' ) {
         // Direct meta read — admin list table display only; query layer is for front-end shortcode rendering.
-        $flag = get_post_meta( $post_id, 'ws_attach_flag', true );
+        $flag = get_post_meta( $post_id, 'ws_jx_statute_has_attach_flag', true );
+        echo $flag ? '<span class="dashicons dashicons-yes" style="color:#46b450;"></span>'
+                   : '<span class="dashicons dashicons-minus" style="color:#999;"></span>';
+    } elseif ( $column === 'ws_disclosure' ) {
+        $terms = get_the_terms( $post_id, 'ws_disclosure_type' );
+        if ( $terms && ! is_wp_error( $terms ) ) {
+            echo esc_html( implode( ', ', wp_list_pluck( $terms, 'name' ) ) );
+        } else {
+            echo '<span style="color:#999;">—</span>';
+        }
+    }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// jx-common-law columns: Jurisdiction, Attach, Disclosure Type
+// ════════════════════════════════════════════════════════════════════════════
+
+add_filter( 'manage_jx-common-law_posts_columns', 'ws_add_common_law_columns' );
+function ws_add_common_law_columns( $columns ) {
+    $new = [];
+    foreach ( $columns as $key => $label ) {
+        $new[ $key ] = $label;
+        if ( $key === 'title' ) {
+            $new['ws_jx']         = 'Jurisdiction';
+            $new['ws_attach']     = 'Attached';
+            $new['ws_disclosure'] = 'Disclosure Type';
+        }
+    }
+    return $new;
+}
+
+add_action( 'manage_jx-common-law_posts_custom_column', 'ws_render_common_law_column', 10, 2 );
+function ws_render_common_law_column( $column, $post_id ) {
+    if ( $column === 'ws_jx' ) {
+        $terms = get_the_terms( $post_id, WS_JURISDICTION_TAXONOMY );
+        if ( $terms && ! is_wp_error( $terms ) ) {
+            echo esc_html( implode( ', ', wp_list_pluck( $terms, 'name' ) ) );
+        } else {
+            echo '<span style="color:#dc3232;">—</span>';
+        }
+    } elseif ( $column === 'ws_attach' ) {
+        // Direct meta read — admin list table display only; query layer is for front-end shortcode rendering.
+        $flag = get_post_meta( $post_id, 'ws_jx_comlaw_has_attach_flag', true );
         echo $flag ? '<span class="dashicons dashicons-yes" style="color:#46b450;"></span>'
                    : '<span class="dashicons dashicons-minus" style="color:#999;"></span>';
     } elseif ( $column === 'ws_disclosure' ) {
@@ -197,7 +239,7 @@ function ws_render_citation_column( $column, $post_id ) {
         }
     } elseif ( $column === 'ws_attach' ) {
         // Direct meta read — admin list table display only; query layer is for front-end shortcode rendering.
-        $flag = get_post_meta( $post_id, 'ws_attach_flag', true );
+        $flag = get_post_meta( $post_id, 'ws_jx_citation_has_attach_flag', true );
         echo $flag ? '<span class="dashicons dashicons-yes" style="color:#46b450;"></span>'
                    : '<span class="dashicons dashicons-minus" style="color:#999;"></span>';
     } elseif ( $column === 'ws_type' ) {
@@ -314,7 +356,7 @@ function ws_add_agency_columns( $columns ) {
             $new['ws_jx']           = 'Jurisdiction';
             $new['ws_agency_code']  = 'Agency Code';
             $new['ws_process_type'] = 'Process Types';
-            $new['ws_languages']    = 'Languages';
+            $new['ws_language']     = 'Languages';
         }
     }
     return $new;
@@ -339,8 +381,8 @@ function ws_render_agency_column( $column, $post_id ) {
         } else {
             echo '<span style="color:#999;">—</span>';
         }
-    } elseif ( $column === 'ws_languages' ) {
-        $terms = get_the_terms( $post_id, 'ws_languages' );
+    } elseif ( $column === 'ws_language' ) {
+        $terms = get_the_terms( $post_id, 'ws_language' );
         if ( $terms && ! is_wp_error( $terms ) ) {
             echo esc_html( implode( ', ', wp_list_pluck( $terms, 'name' ) ) );
         } else {
@@ -360,10 +402,10 @@ function ws_add_procedure_columns( $columns ) {
     foreach ( $columns as $key => $label ) {
         $new[ $key ] = $label;
         if ( $key === 'title' ) {
-            $new['ws_proc_agency']           = 'Agency';
-            $new['ws_proc_type']             = 'Type';
-            $new['ws_proc_disclosure_types'] = 'Disclosure Types';
-            $new['ws_proc_deadline']         = 'Deadline';
+            $new['proc_agency']              = 'Agency';
+            $new['proc_type']                = 'Type';
+            $new['proc_disclosure_types']    = 'Disclosure Types';
+            $new['proc_deadline']            = 'Deadline';
         }
     }
     return $new;
@@ -371,16 +413,16 @@ function ws_add_procedure_columns( $columns ) {
 
 add_action( 'manage_ws-ag-procedure_posts_custom_column', 'ws_render_procedure_column', 10, 2 );
 function ws_render_procedure_column( $column, $post_id ) {
-    if ( $column === 'ws_proc_agency' ) {
+    if ( $column === 'proc_agency' ) {
         // Direct meta read — admin list table display only.
-        $agency_id = (int) get_post_meta( $post_id, 'ws_proc_agency_id', true );
+        $agency_id = (int) get_post_meta( $post_id, 'ws_ag_procedure_agency_id', true );
         if ( $agency_id ) {
             $edit_url = get_edit_post_link( $agency_id );
             echo '<a href="' . esc_url( $edit_url ) . '">' . esc_html( get_the_title( $agency_id ) ) . '</a>';
         } else {
             echo '<span style="color:#dc3232;">—</span>';
         }
-    } elseif ( $column === 'ws_proc_type' ) {
+    } elseif ( $column === 'proc_type' ) {
         // ws_procedure_type is a taxonomy — read via wp_get_object_terms(),
         // not get_post_meta(). Direct taxonomy read is correct here: admin
         // list table context does not route through the query layer.
@@ -392,16 +434,16 @@ function ws_render_procedure_column( $column, $post_id ) {
             'both'        => 'Both',
         ];
         echo esc_html( $labels[ $slug ] ?? '—' );
-    } elseif ( $column === 'ws_proc_disclosure_types' ) {
+    } elseif ( $column === 'proc_disclosure_types' ) {
         $terms = get_the_terms( $post_id, 'ws_disclosure_type' );
         if ( $terms && ! is_wp_error( $terms ) ) {
             echo esc_html( implode( ', ', wp_list_pluck( $terms, 'name' ) ) );
         } else {
             echo '<span style="color:#999;">—</span>';
         }
-    } elseif ( $column === 'ws_proc_deadline' ) {
-        $days  = (int) get_post_meta( $post_id, 'ws_proc_deadline_days', true );
-        $start = get_post_meta( $post_id, 'ws_proc_deadline_clock_start', true );
+    } elseif ( $column === 'proc_deadline' ) {
+        $days  = (int) get_post_meta( $post_id, 'ws_ag_procedure_deadline_days', true );
+        $start = get_post_meta( $post_id, 'ws_ag_procedure_deadline_clock_start', true );
         if ( $days > 0 ) {
             $start_labels = [
                 'adverse_action' => 'adverse action',
@@ -430,7 +472,7 @@ function ws_add_assist_org_columns( $columns ) {
         if ( $key === 'title' ) {
             $new['ws_jx']         = 'Jurisdiction';
             $new['ws_case_stage'] = 'Case Stages';
-            $new['ws_languages']  = 'Languages';
+            $new['ws_language']   = 'Languages';
         }
     }
     return $new;
@@ -452,8 +494,8 @@ function ws_render_assist_org_column( $column, $post_id ) {
         } else {
             echo '<span style="color:#999;">—</span>';
         }
-    } elseif ( $column === 'ws_languages' ) {
-        $terms = get_the_terms( $post_id, 'ws_languages' );
+    } elseif ( $column === 'ws_language' ) {
+        $terms = get_the_terms( $post_id, 'ws_language' );
         if ( $terms && ! is_wp_error( $terms ) ) {
             echo esc_html( implode( ', ', wp_list_pluck( $terms, 'name' ) ) );
         } else {

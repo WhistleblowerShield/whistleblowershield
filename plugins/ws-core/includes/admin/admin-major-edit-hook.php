@@ -17,7 +17,7 @@ add_action( 'acf/save_post', 'ws_acf_log_major_edit', 20 );
  */
 function ws_acf_log_major_edit( $post_id ) {
 
-	$supported = [ 'jx-summary', 'jx-statute', 'jx-citation', 'jx-interpretation', 'ws-ag-procedure' ];
+	$supported = [ 'jx-summary', 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation', 'ws-ag-procedure' ];
 
 	$post_type = get_post_type( $post_id );
 	if ( ! in_array( $post_type, $supported, true ) ) {
@@ -90,7 +90,6 @@ function ws_acf_log_major_edit( $post_id ) {
 	// ── Write meta on the new update post ────────────────────────────────
 
 	update_post_meta( $update_id, 'ws_legal_update_summary_wysiwyg',  $description  );
-	update_post_meta( $update_id, 'ws_legal_update_effective_date',   $now_local    );
 	update_post_meta( $update_id, 'ws_legal_update_source_post_id',   $post_id      );
 	update_post_meta( $update_id, 'ws_legal_update_source_post_type', $post_type    );
 
@@ -107,7 +106,7 @@ function ws_acf_log_major_edit( $post_id ) {
 		? 'procedure'
 		: str_replace( 'jx-', '', $post_type );
 	$allowed_update_types = [
-		'statute', 'citation', 'summary', 'interpretation',
+		'statute', 'common-law','citation', 'summary', 'interpretation',
 		'regulation', 'policy', 'procedure', 'internal', 'other',
 	];
 	$update_type = in_array( $requested_type, $allowed_update_types, true )
@@ -122,6 +121,7 @@ function ws_acf_log_major_edit( $post_id ) {
 	$law_name = ( $post_type !== 'jx-summary' )
 		? (
 			get_post_meta( $post_id, 'ws_jx_statute_official_name', true )
+			?: get_post_meta( $post_id, 'ws_jx_comlaw_doctrine_name', true )
 			?: get_post_meta( $post_id, 'ws_jx_citation_official_name', true )
 			?: get_post_meta( $post_id, 'ws_jx_interp_official_name', true )
 		)

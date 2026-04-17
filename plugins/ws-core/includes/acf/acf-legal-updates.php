@@ -18,7 +18,6 @@
  *   ws_legal_update_jurisdictions         Affected Jurisdiction(s) (multi_select, optional)
  *   ws_legal_update_multi_jurisdiction    Multi-Jurisdiction (true_false, optional)
  *   ws_legal_update_hide_public           Hide from Public Change Log (true_false, optional)
- *   ws_legal_update_date                  Update Date (date_picker, optional)
  *   ws_legal_update_source_url            Primary Source URL (url, optional)
  *   ws_legal_update_source_url_is_pdf     Link is PDF? (true_false, optional)
  *   ws_legal_update_type                  Update Type (select, optional)
@@ -133,19 +132,6 @@ function ws_register_acf_legal_update() {
                 'ui_off_text'   => 'Visible',
             ],
 
-            // ── Update Date ───────────────────────────────────────────────
-
-            [
-                'key'            => 'field_legal_update_date',
-                'label'          => 'Update Date',
-                'name'           => 'ws_legal_update_date',
-                'type'           => 'date_picker',
-                'instructions'   => 'Date the legal change took effect or was officially published.',
-                'display_format' => 'F j, Y',
-                'return_format'  => 'Y-m-d',
-                'first_day'      => 1,
-            ],
-
             // ── Primary Source ────────────────────────────────────────────
 
             [
@@ -178,6 +164,7 @@ function ws_register_acf_legal_update() {
                 'instructions' => 'Select the category that best describes this legal development.',
                 'choices'      => [
                     'statute'        => 'Statutory Change',
+                    'common_law'     => 'Common Law Development',
                     'citation'       => 'Citation Update',
                     'summary'        => 'Summary Update',
                     'interpretation' => 'Interpretation Update',

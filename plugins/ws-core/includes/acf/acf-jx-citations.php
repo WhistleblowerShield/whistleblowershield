@@ -567,6 +567,35 @@ function ws_citation_prefill_statute_ids( $value, $post_id, $field ) {
     return $value;
 }
 
+// ── Pre-populate ws_jx_citation_common_law_ids from ?common_law_id= URL param ──
+//
+// Mirrors ws_citation_prefill_statute_ids() above.
+// When a new citation is opened from the common-law citation metabox,
+// common_law_id is passed as a URL param. acf/load_value returns it as the
+// field's live value so ACF renders the doctrine pre-selected.
+// Returns an array — ws_jx_citation_common_law_ids is a multiple post_object field.
+
+add_filter( 'acf/load_value/key=field_jx_citation_common_law_ids', 'ws_citation_prefill_common_law_ids', 5, 3 );
+
+function ws_citation_prefill_common_law_ids( $value, $post_id, $field ) {
+
+    if ( get_post_status( $post_id ) !== 'auto-draft' ) {
+        return $value;
+    }
+
+    if ( ! isset( $_GET['common_law_id'] ) ) {
+        return $value;
+    }
+
+    $common_law_id = absint( $_GET['common_law_id'] );
+
+    if ( $common_law_id && get_post_type( $common_law_id ) === 'jx-common-law' ) {
+        return [ $common_law_id ];
+    }
+
+    return $value;
+}
+
 
 // ── Admin notice: zero attached citations ─────────────────────────────────────
 //

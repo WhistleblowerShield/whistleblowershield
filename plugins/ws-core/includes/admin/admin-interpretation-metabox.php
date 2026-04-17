@@ -70,6 +70,15 @@ function ws_register_interpretation_metabox() {
         'normal',
         'default'
     );
+
+    add_meta_box(
+        'ws_interpretations',
+        'Court Interpretations',
+        'ws_render_interpretation_metabox',
+        'jx-common-law',
+        'normal',
+        'default'
+    );
 }
 
 
@@ -87,22 +96,27 @@ function ws_render_interpretation_metabox( $post ) {
     // ── Auto-draft guard ──────────────────────────────────────────────────
 
     $is_draft = ( $post->post_status === 'auto-draft' );
+    $post_type = get_post_type( $post );
+    $is_statute = ( $post_type === 'jx-statute' );
 
     // ── Build "Add New Interpretation" URL ────────────────────────────────
     //
-    // statute_id         — read by acf/load_value in acf-jx-interpretations.php
-    //                      to pre-select the ws_jx_interp_statute_id field.
+    // statute_id/common_law_id
+    //                    — read by acf/load_value in acf-jx-interpretations.php
+    //                      to pre-select ws_jx_interp_statute_id or
+    //                      ws_jx_interp_common_law_id.
     // tax_input[...][]   — WordPress core pre-assigns the ws_jurisdiction taxonomy
     //                      term on the new post screen without any ACF hook.
     //                      Uses the statute's own jurisdiction term so state-level
     //                      interpretations inherit the correct jurisdiction.
     // post_title         — WordPress core pre-fills the title field.
 
-    $statute_terms = get_the_terms( $post->ID, WS_JURISDICTION_TAXONOMY );
-    $statute_term  = ( $statute_terms && ! is_wp_error( $statute_terms ) ) ? $statute_terms[0] : null;
-    $add_url = admin_url( 'post-new.php?post_type=jx-interpretation&statute_id=' . $post->ID );
-    if ( $statute_term ) {
-        $add_url .= '&tax_input[' . WS_JURISDICTION_TAXONOMY . '][]=' . $statute_term->term_id;
+    $parent_terms = get_the_terms( $post->ID, WS_JURISDICTION_TAXONOMY );
+    $parent_term  = ( $parent_terms && ! is_wp_error( $parent_terms ) ) ? $parent_terms[0] : null;
+    $parent_param = $is_statute ? 'statute_id' : 'common_law_id';
+    $add_url = admin_url( 'post-new.php?post_type=jx-interpretation&' . $parent_param . '=' . $post->ID );
+    if ( $parent_term ) {
+        $add_url .= '&tax_input[' . WS_JURISDICTION_TAXONOMY . '][]=' . $parent_term->term_id;
     }
     $post_title = get_the_title( $post );
     if ( $post_title ) {
@@ -111,12 +125,33 @@ function ws_render_interpretation_metabox( $post ) {
 
     // ── Fetch linked interpretations ──────────────────────────────────────
     //
-    // ws_jx_statute_interp_ids is the reverse index maintained by
-    // ws_rebuild_jx_statute_interp_index() in admin-hooks.php. Reading it
-    // here is a single get_post_meta() call; the post__in query that follows
-    // is a simple WHERE ID IN (...) sorted by decision year, no meta JOIN.
-
-    $interp_ids = array_filter( array_map( 'intval', (array) get_post_meta( $post->ID, 'ws_jx_statute_interp_ids', true ) ) );
+    if ( $is_statute ) {
+        // ws_jx_statute_interp_ids is the reverse index maintained by
+        // ws_rebuild_jx_statute_interp_index() in admin-hooks.php. Reading it
+        // here is a single get_post_meta() call; the post__in query that follows
+        // is a simple WHERE ID IN (...) sorted by decision year, no meta JOIN.
+        $interp_ids = array_filter( array_map( 'intval', (array) get_post_meta( $post->ID, 'ws_jx_statute_interp_ids', true ) ) );
+    } else {
+        // Common-law links can be stored from either side:
+        // - ws_jx_comlaw_interpretation_ids on jx-common-law
+        // - ws_jx_interp_common_law_id on jx-interpretation
+        // Use the union so the metabox remains accurate even if one side lags.
+        $from_comlaw = array_filter( array_map( 'intval', (array) get_post_meta( $post->ID, 'ws_jx_comlaw_interpretation_ids', true ) ) );
+        $from_interp = get_posts( [
+            'post_type'      => 'jx-interpretation',
+            'post_status'    => 'any',
+            'posts_per_page' => -1,
+            'fields'         => 'ids',
+            'no_found_rows'  => true,
+            'meta_query'     => [ [
+                'key'     => 'ws_jx_interp_common_law_id',
+                'value'   => $post->ID,
+                'compare' => '=',
+                'type'    => 'NUMERIC',
+            ] ],
+        ] );
+        $interp_ids = array_values( array_unique( array_merge( $from_comlaw, array_map( 'intval', (array) $from_interp ) ) ) );
+    }
 
     $interpretations = empty( $interp_ids ) ? [] : get_posts( [
         'post_type'      => 'jx-interpretation',
@@ -145,7 +180,7 @@ function ws_render_interpretation_metabox( $post ) {
     </style>
 
     <?php if ( empty( $interpretations ) ) : ?>
-        <p class="ws-interp-empty">No court interpretation records linked to this statute yet.</p>
+        <p class="ws-interp-empty">No court interpretation records linked to this record yet.</p>
     <?php else : ?>
         <table class="ws-interp-table">
             <thead>
@@ -194,10 +229,10 @@ function ws_render_interpretation_metabox( $post ) {
         <?php if ( $is_draft ) : ?>
             <a class="button ws-interp-add-btn"
                disabled
-               title="Save the statute first before adding interpretations.">
+               title="Save this record first before adding interpretations.">
                 + Add New Interpretation
             </a>
-            <span style="color:#666;font-size:12px;">Save this statute first to enable this button.</span>
+            <span style="color:#666;font-size:12px;">Save this record first to enable this button.</span>
         <?php else : ?>
             <a class="button button-primary ws-interp-add-btn"
                href="<?php echo esc_url( $add_url ); ?>"

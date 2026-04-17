@@ -23,7 +23,7 @@
  * [
  *   'stage'          => string|null   // validated ws_case_stage slug or null
  *   'concern'        => string|null   // validated concern slug or null
- *   'concern_tax'    => string|null   // 'ws_disclosure_type' | 'ws_adverse_action_types' | null
+ *   'concern_tax'    => string|null   // 'ws_disclosure_type' | 'ws_adverse_action_type' | null
  *   'sector'         => string|null   // validated ws_employment_sector slug or null
  *   'target'         => string|null   // validated ws_disclosure_target slug or null
  *   'has_filters'    => bool          // true if any axis has a value
@@ -89,7 +89,7 @@ function ws_resolve_filter_context( bool $log_request = true ): array {
 
     // ── 3. Route concern to correct taxonomy ─────────────────────────────
     // Pre-report / research / null → ws_disclosure_type
-    // Retaliation-active / litigation → ws_adverse_action_types
+    // Retaliation-active / litigation → ws_adverse_action_type
     // Post-report → ws_disclosure_type (could be either; default to disclosure)
     $concern_tax = null;
     if ( $concern !== null ) {
@@ -161,7 +161,7 @@ function ws_filter_validate( string $value, string $param ): ?string {
 /**
  * Routes a concern slug to the correct taxonomy based on stage.
  *
- * ws_adverse_action_types slugs are only meaningful in retaliation/litigation
+ * ws_adverse_action_type slugs are only meaningful in retaliation/litigation
  * stages. All other stages use ws_disclosure_type.
  *
  * @param string      $concern Validated concern slug.
@@ -172,9 +172,9 @@ function ws_filter_resolve_concern_taxonomy( string $concern, ?string $stage ): 
     $adverse_action_stages = [ 'retaliation-active', 'litigation' ];
 
     if ( $stage !== null && in_array( $stage, $adverse_action_stages, true ) ) {
-        // Check if this concern slug belongs to ws_adverse_action_types
+        // Check if this concern slug belongs to ws_adverse_action_type
         if ( ws_filter_is_adverse_action_slug( $concern ) ) {
-            return 'ws_adverse_action_types';
+            return 'ws_adverse_action_type';
         }
     }
 
@@ -187,7 +187,7 @@ function ws_filter_resolve_concern_taxonomy( string $concern, ?string $stage ): 
 // ════════════════════════════════════════════════════════════════════════════
 
 /**
- * Returns true if the given slug belongs to ws_adverse_action_types.
+ * Returns true if the given slug belongs to ws_adverse_action_type.
  *
  * Used by the concern taxonomy router to distinguish disclosure type slugs
  * from adverse action type slugs in the shared concern param.

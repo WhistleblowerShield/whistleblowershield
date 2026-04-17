@@ -41,7 +41,7 @@
  *
  * @package    WhistleblowerShield
  * @since      1.0.0
- * @version 3.10.0
+ * @version   3.10.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -65,7 +65,8 @@ function ws_register_cpt_legal_update() {
         'name'               => 'Legal Updates',
         'singular_name'      => 'Legal Update',
         'menu_name'          => 'Legal Updates',
-        'add_new'            => 'Add Legal Update',
+        'name_admin_bar'     => 'Legal Update',
+        'add_new'            => 'Add New',
         'add_new_item'       => 'Add New Legal Update',
         'edit_item'          => 'Edit Legal Update',
         'new_item'           => 'New Legal Update',
@@ -128,7 +129,7 @@ function ws_register_cpt_legal_update() {
 // record must be removed from public render, use the "hide from public log"
 // flag in the Legal Update metadata.
 
-add_filter( 'pre_trash_post', 'ws_block_legal_update_trash', 10, 3 );
+add_filter( 'pre_trash_post',  'ws_block_legal_update_trash', 10, 3 );
 add_filter( 'pre_delete_post', 'ws_block_legal_update_delete', 10, 3 );
 
 /**

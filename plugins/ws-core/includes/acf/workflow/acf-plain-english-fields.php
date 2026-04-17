@@ -151,7 +151,7 @@ function ws_register_acf_plain_english_fields() {
             [
                 'key'           => 'field_plain_english_reviewed',
                 'label'         => 'Plain Language Reviewed',
-                'name'          => 'ws_plain_english_reviewed',
+                'name'          => 'ws_auto_plain_english_reviewed',
                 'type'          => 'true_false',
                 'instructions'  => 'Check when a human has reviewed and approved the plain-language content.',
                 'ui'            => 1,
@@ -167,7 +167,7 @@ function ws_register_acf_plain_english_fields() {
             // Locked for users below editor via ws_acf_lock_for_non_editors().
 
             [
-                'key'           => 'field_auto_plain_english_reviewed_by',
+                'key'           => 'field_plain_english_reviewed_by',
                 'label'         => 'Reviewed By',
                 'name'          => 'ws_auto_plain_english_reviewed_by',
                 'type'          => 'user',
@@ -185,7 +185,7 @@ function ws_register_acf_plain_english_fields() {
             // Locked for users below editor via ws_acf_lock_for_non_editors().
 
             [
-                'key'          => 'field_auto_plain_english_reviewed_date',
+                'key'          => 'field_plain_english_reviewed_date',
                 'label'        => 'Reviewed Date',
                 'name'         => 'ws_auto_plain_english_reviewed_date',
                 'type'         => 'text',
@@ -201,7 +201,7 @@ function ws_register_acf_plain_english_fields() {
             // Cleared on has_plain_english toggle-off.
 
             [
-                'key'           => 'field_auto_plain_english_by',
+                'key'           => 'field_plain_english_by',
                 'label'         => 'Summarized By',
                 'name'          => 'ws_auto_plain_english_by',
                 'type'          => 'user',
@@ -218,7 +218,7 @@ function ws_register_acf_plain_english_fields() {
             // plain_english_by. Cleared on has_plain_english toggle-off.
 
             [
-                'key'          => 'field_auto_plain_english_date',
+                'key'          => 'field_plain_english_date',
                 'label'        => 'Summarized Date',
                 'name'         => 'ws_auto_plain_english_date',
                 'type'         => 'text',
@@ -238,6 +238,6 @@ function ws_register_acf_plain_english_fields() {
 // fields are handled centrally in admin-hooks.php:
 //   ws_acf_plain_english_guards()       — acf/save_post priority 5
 //   ws_acf_stamp_plain_reviewed_by()    — acf/save_post priority 25
-//     writes: ws_auto_plain_english_reviewed_by, ws_auto_plain_english_reviewed_date
+//   writes: ws_auto_plain_english_reviewed_by, ws_auto_plain_english_reviewed_date
 //   ws_acf_stamp_summarized_fields()    — acf/save_post priority 25
 //   ws_acf_lock_for_non_editors()       — acf/load_field by field name

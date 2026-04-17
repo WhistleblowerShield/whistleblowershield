@@ -15,7 +15,7 @@
  * Fields (all auto-filled, read-only for non-administrators):
  *   ws_auto_last_edited_author  — user who last saved; admin-overridable
  *   ws_auto_date_created        — local Y-m-d; written once
- *   ws_auto_last_edited         — local Y-m-d; every save
+ *   ws_auto_last_edited_date    — local Y-m-d; every save
  *   ws_auto_create_author       — WP user ID; written once
  *
  * @package    WhistleblowerShield
@@ -29,7 +29,7 @@
  * -------
  * 3.4.0   Initial release. Centralizes stamp fields previously duplicated
  *         across individual CPT ACF files.
- * 3.5.0   Group key renamed: group_ws_stamp_fields → group_stamp_metadata.
+ * 3.5.0   Group key renamed: group_ws_stamp_fields → group_auto_stamp_metadata.
  * 3.6.0   Stamp meta keys prefixed with ws_auto_.
  * 3.9.0   ws-ag-procedure added to location rules.
  */
@@ -49,7 +49,7 @@ function ws_register_acf_stamp_fields() {
 
     acf_add_local_field_group( [
 
-        'key'                   => 'group_stamp_metadata',
+        'key'                   => 'group_auto_stamp_metadata',
         'title'                 => 'Authorship & Review',
         'menu_order'            => 90,
         'position'              => 'normal',
@@ -81,7 +81,7 @@ function ws_register_acf_stamp_fields() {
             // content tabs but before acf-major-edit.php (menu_order 99).
 
             [
-                'key'   => 'field_stamp_authorship_tab',
+                'key'   => 'field_auto_stamp_authorship_tab',
                 'label' => 'Authorship & Review',
                 'type'  => 'tab',
             ],
@@ -126,9 +126,9 @@ function ws_register_acf_stamp_fields() {
             // Readonly and disabled for all users — never submitted via UI.
 
             [
-                'key'          => 'field_auto_last_edited',
-                'label'        => 'Last Edited',
-                'name'         => 'ws_auto_last_edited',
+                'key'          => 'field_auto_last_edited_date',
+                'label'        => 'Last Edited Date',
+                'name'         => 'ws_auto_last_edited_date',
                 'type'         => 'text',
                 'instructions' => 'Stamped automatically on every save. Read only.',
                 'readonly'     => 1,

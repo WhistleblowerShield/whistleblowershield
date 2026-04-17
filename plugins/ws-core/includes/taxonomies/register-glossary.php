@@ -49,7 +49,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.2.0
- * @version 3.10.7
+ * @version    3.10.7
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -124,9 +124,10 @@ function ws_register_glossary_taxonomy() {
         return;
     }
     register_taxonomy( 'ws_glossary', null, [
-        'label'             => 'Glossary',
+
+        'label'             => 'Glossary Terms',
         'labels'            => [
-            'name'              => 'Glossary',
+            'name'              => 'Glossary Terms',
             'singular_name'     => 'Glossary Term',
             'menu_name'         => 'Glossary',
             'add_new_item'      => 'Add New Term',
@@ -167,7 +168,7 @@ add_action( 'admin_menu', 'ws_glossary_admin_menu' );
 function ws_glossary_admin_menu() {
     add_management_page(
         'WhistleblowerShield Glossary',
-        'WBS Glossary',
+        'WS Glossary',
         'manage_options',
         'edit-tags.php?taxonomy=ws_glossary'
     );
@@ -206,7 +207,7 @@ function ws_register_glossary_acf_fields() {
         'fields'   => [
             [
                 'key'          => 'field_glossary_aliases',
-                'label'        => 'Aliases',
+                'label'        => 'Term Aliases',
                 'name'         => 'ws_glossary_aliases',
                 'type'         => 'text',
                 'instructions' => 'Additional terms or phrases that should trigger this tooltip. '

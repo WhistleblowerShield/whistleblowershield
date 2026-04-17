@@ -161,14 +161,14 @@ function ws_seed_agency_matrix() {
         // Assign US jurisdiction term.
         wp_set_object_terms( $post_id, $us_term_id, WS_JURISDICTION_TAXONOMY );
 
-        // Assign ws_languages: English (all seeded federal agencies operate in English).
-        $english_term = get_term_by( 'slug', 'english', 'ws_languages' );
+        // Assign ws_language: English (all seeded federal agencies operate in English).
+        $english_term = get_term_by( 'slug', 'english', 'ws_language' );
         if ( $english_term && ! is_wp_error( $english_term ) ) {
-            wp_set_object_terms( $post_id, (int) $english_term->term_id, 'ws_languages' );
+            wp_set_object_terms( $post_id, (int) $english_term->term_id, 'ws_language' );
         }
 
         // Mark as seeded.
-        update_post_meta( $post_id, 'ws_matrix_source', 'agency-matrix' );
+        update_post_meta( $post_id, 'ws_matrix_source', 'matrix-agencies' );
     }
 }
 
