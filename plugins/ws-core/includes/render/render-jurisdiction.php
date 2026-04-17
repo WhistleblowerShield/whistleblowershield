@@ -168,6 +168,15 @@ function ws_render_jx_curated( $post, $jx_term_id ) {
         }
     }
 
+    // Common Laws — users see what protects them before seeing how courts
+    // have interpreted those protections.
+    if ( $jx_term_id ) {
+        if ( ws_is_published( ws_get_jx_common_law_data( $jx_term_id ) ) ) {
+            $output      .= '<div id="ws-common-laws">' . do_shortcode( '[ws_jx_common_law]' ) . '</div>';
+            $has_content  = true;
+        }
+    }
+
     // Citations — id="ws-citations" is the anchor target for the reference page back link.
     $citations = do_shortcode( '[ws_jx_citation]' );
     if ( $citations ) {

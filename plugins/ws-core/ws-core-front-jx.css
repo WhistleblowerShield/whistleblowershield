@@ -223,17 +223,17 @@
  * does not inherit unstyled block defaults.
  */
 
-#ws-interpretations {
+/*#ws-interpretations {
     /* Theme pass: padding, border, background to match citation block */
-}
+/*}
 
-#ws-interpretations .ws-interpretation-entry {
+/*#ws-interpretations .ws-interpretation-entry {
     /* Theme pass: individual interpretation card styles */
-}
+/*}
 
-/* ── Statute → Procedure Cross-reference Panel ──────────────────────────── */
+/* ── Record → Procedure Cross-reference Panel ──────────────────────────── */
 
-.ws-statute-procedures {
+.ws-record-procedures {
     margin-top: 0.7rem;
     border: 1px solid #e2e8f0;
     border-radius: 4px;
@@ -241,7 +241,7 @@
     padding: 0.65rem 0.75rem;
 }
 
-.ws-statute-procedures__heading {
+.ws-record-procedures__heading {
     margin: 0 0 0.5rem;
     font-size: 0.82rem;
     text-transform: uppercase;
@@ -249,22 +249,22 @@
     color: #334155;
 }
 
-.ws-statute-procedures__list {
+.ws-record-procedures__list {
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
-.ws-statute-procedures__item {
+.ws-record-procedures__item {
     margin: 0.35rem 0;
     line-height: 1.35;
 }
 
-.ws-statute-procedures__agency {
+.ws-record-procedures__agency {
     color: #475569;
 }
 
-.ws-statute-procedures__badge {
+.ws-record-procedures__badge {
     display: inline-block;
     font-size: 0.72rem;
     padding: 0.08rem 0.42rem;
@@ -274,21 +274,21 @@
     margin-left: 0.4rem;
 }
 
-.ws-statute-procedures__badge--disclosure,
-.ws-statute-procedures__badge--retaliation,
-.ws-statute-procedures__badge--both {
+.ws-record-procedures__badge--disclosure,
+.ws-record-procedures__badge--retaliation,
+.ws-record-procedures__badge--both {
     background: #eff6ff;
     border-color: #bfdbfe;
     color: #1e3a8a;
 }
 
-.ws-statute-procedures__badge--deadline {
+.ws-record-procedures__badge--deadline {
     background: #fff7ed;
     border-color: #fed7aa;
     color: #9a3412;
 }
 
-.ws-statute-procedures__badge--intake-only {
+.ws-record-procedures__badge--intake-only {
     background: #fef2f2;
     border-color: #fecaca;
     color: #991b1b;

@@ -202,7 +202,7 @@ function ws_build_agency_procedure_row( $pid ) {
         'disclosure_types' => ( $disc_types && ! is_wp_error( $disc_types ) ) ? $disc_types : [],
         'disclosure_type_slugs' => $disc_slugs,
         'statute_ids'      => ws_q_normalize_id_list( get_post_meta( $pid, 'ws_ag_procedure_statute_ids', true ) ),
-        'common_law_ids'   => ws_q_normalize_id_list( get_post_meta( $pid, 'ws_ag_procedure_common_law_ids', true ) ),
+        'comlaw_ids'       => ws_q_normalize_id_list( get_post_meta( $pid, 'ws_ag_procedure_comlaw_ids', true ) ),
         'entry_point'      => get_post_meta( $pid, 'ws_ag_procedure_entry_point',           true ),
         'intake_url'       => get_post_meta( $pid, 'ws_ag_procedure_intake_url',            true ),
         'phone'            => get_post_meta( $pid, 'ws_ag_procedure_phone',                 true ),
@@ -216,7 +216,7 @@ function ws_build_agency_procedure_row( $pid ) {
         // Sanitize with wp_kses_post() before output; never echo raw.
         'walkthrough'      => get_post_meta( $pid, 'ws_ag_procedure_walkthrough_wysiwyg',           true ),
         'exclusivity_note' => get_post_meta( $pid, 'ws_ag_procedure_exclusivity_details',      true ),
-        'stat_override'    => (bool) get_post_meta( $pid, 'ws_ag_procedure_statute_override',  true ),
+        'parent_override'  => (bool) get_post_meta( $pid, 'ws_ag_procedure_parent_override',  true ),
         'last_reviewed'    => get_post_meta( $pid, 'ws_ag_procedure_last_reviewed',         true ),
         // Standard authorship stamp sub-array (created_by, edited_by, dates).
         'record'           => ws_build_record_array( $pid ),
@@ -225,47 +225,50 @@ function ws_build_agency_procedure_row( $pid ) {
 
 
 // ════════════════════════════════════════════════════════════════════════════
-// ws_get_procedures_for_statute( $statute_id )
+// ws_get_procedures_for_record( $record_id )
 //
 // Returns all published ws-ag-procedure records that explicitly link to the
-// given jx-statute post. Used by the statute section renderer to surface
-// "Filing Procedures Under This Statute" on jurisdiction pages.
+// given jx-statute or jx-common-law post. Used by the statute (common law)
+// section renderer to surface "Filing Procedures Under This Statute"
+// (or Common Law) on jurisdiction pages.
 //
-// Relationship fields (ws_ag_procedure_statute_ids) are stored by ACF as a serialized
-// array of post IDs. Depending on save path these may be serialized as strings
-// (common ACF UI save) or integers (programmatic/meta writes). Query both
-// shapes to avoid false negatives:
+// Relationship fields (ws_ag_procedure_statute_ids) or (ws_ag_procedure_comlaw_ids) 
+// are stored by ACF as a serialized array of post IDs. Depending on save path
+// these may be serialized as strings (common ACF UI save) or integers
+// (programmatic/meta writes). Query both shapes to avoid false negatives:
 //   — string shape:  ...s:3:"123";...
 //   — integer shape: ...i:123;...
 //
 // Return shape per row:
-//   id            int     Procedure post ID.
-//   title         string  Procedure post title.
-//   url           string  Permalink.
-//   type          string  'disclosure' | 'retaliation' | 'both'
-//   agency_id     int     Parent agency post ID.
-//   agency_name   string  Parent agency official_name, fallback to post title.
-//   agency_url    string  Parent agency permalink (empty string if not found).
-//   deadline_days int     Statutory deadline in calendar days. 0 = none/unknown.
-//   intake_only   bool    True if agency receives and refers only.
+//   id             int     Procedure post ID.
+//   title          string  Procedure post title.
+//   url            string  Permalink.
+//   type           string  'disclosure' | 'retaliation' | 'both'
+//   agency_id      int     Parent agency post ID.
+//   agency_name    string  Parent agency official_name, fallback to post title.
+//   agency_url     string  Parent agency permalink (empty string if not found).
+//   agency_acronym string  Parent agency acronym (empty string if not found).
+//   agency_mission string  Parent agency mission statement (empty string if not found).
+//   deadline_days  int     Statutory deadline in calendar days. 0 = none/unknown.
+//   intake_only    bool    True if agency receives and refers only.
 //
-// Result cached per statute (ws_statute_procedures_{id}, 24h).
+// Result cached per record (ws_record_procedures_{id}, 24h).
 // Invalidated by the acf/save_post stash hooks below.
 //
-/**
- * Returns all published procedures linked to a statute.
+/* Returns all published procedures linked to a record.
  *
- * @param  int $statute_id Post ID of the jx-statute.
+ * @param  int $record_id Post ID of the jx-statute or jx-common-law.
  * @return array<int,array<string,mixed>> Flat procedure rows (empty when none).
+ * 
  */
-function ws_get_procedures_for_statute( $statute_id ) {
+function ws_get_procedures_for_record( $record_id ) {
 
-    $statute_id = (int) $statute_id;
-    if ( ! $statute_id ) {
+    $record_id = (int) $record_id;
+    if ( ! $record_id ) {
         return [];
     }
 
-    $cache_key = 'ws_statute_procedures_' . $statute_id;
+    $cache_key = 'ws_record_procedures_' . $record_id;
     $cached    = get_transient( $cache_key );
 
     if ( false !== $cached ) {
@@ -284,12 +287,22 @@ function ws_get_procedures_for_statute( $statute_id ) {
             'relation' => 'OR',
             [
                 'key'     => 'ws_ag_procedure_statute_ids',
-                'value'   => '"' . $statute_id . '"',
+                'value'   => '"' . $record_id . '"',
                 'compare' => 'LIKE',
             ],
             [
                 'key'     => 'ws_ag_procedure_statute_ids',
-                'value'   => ';i:' . $statute_id . ';',
+                'value'   => ';i:' . $record_id . ';',
+                'compare' => 'LIKE',
+            ],
+            [
+                'key'     => 'ws_ag_procedure_comlaw_ids',
+                'value'   => '"' . $record_id . '"',
+                'compare' => 'LIKE',
+            ],
+            [
+                'key'     => 'ws_ag_procedure_comlaw_ids',
+                'value'   => ';i:' . $record_id . ';',
                 'compare' => 'LIKE',
             ],
         ],
@@ -301,7 +314,9 @@ function ws_get_procedures_for_statute( $statute_id ) {
 
         $pid       = $post->ID;
         $agency_id    = (int) get_post_meta( $pid, 'ws_ag_procedure_agency_id', true );
-        $agency_name  = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_name', true ) : '';
+        $agency_name     = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_official_name', true ) : '';
+        $agency_acronym  = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_acronym', true ) : '';
+        $agency_mission  = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_mission', true ) : '';
         $agency_title = $agency_id ? get_the_title( $agency_id ) : '';
 
         // ws_procedure_type is single-value — take first slug, empty string if unset.
@@ -316,10 +331,8 @@ function ws_get_procedures_for_statute( $statute_id ) {
             'agency_id'     => $agency_id,
             'agency_name'   => $agency_name !== '' ? $agency_name : $agency_title,
             'agency_url'    => $agency_id ? (string) get_permalink( $agency_id ) : '',
-            'acronym'       => get_post_meta( $pid, 'ws_agency_acronym',           true ),
-            'mission'       => get_post_meta( $pid, 'ws_agency_mission',           true ),
             'statute_ids'   => ws_q_normalize_id_list( get_post_meta( $pid, 'ws_ag_procedure_statute_ids', true ) ),
-            'common_law_ids'=> ws_q_normalize_id_list( get_post_meta( $pid, 'ws_ag_procedure_common_law_ids', true ) ),
+            'comlaw_ids'    => ws_q_normalize_id_list( get_post_meta( $pid, 'ws_ag_procedure_comlaw_ids', true ) ),
             'deadline_days' => (int)  get_post_meta( $pid, 'ws_ag_procedure_deadline_days', true ),
             'intake_only'   => (bool) get_post_meta( $pid, 'ws_ag_procedure_intake_only',   true ),
         ];

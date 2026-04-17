@@ -85,7 +85,7 @@ Returns one normalized agency procedure row (or `[]` if not found):
 - `type`
 - `jurisdiction`, `jurisdiction_slugs`
 - `disclosure_types`, `disclosure_type_slugs`
-- `statute_ids`, `common_law_ids`
+- `statute_ids`, `comlaw_ids`
 - `entry_point`, `intake_url`, `phone`, `identity_policy`
 - `intake_only`, `deadline_days`, `clock_start`
 - `has_prereqs`, `prereq_note`
@@ -103,7 +103,7 @@ Returns statute-linked procedure rows:
 - `type`
 - `agency_id`, `agency_name`, `agency_url`
 - `acronym`, `mission`,
-- `statute_ids`, `common_law_ids`
+- `statute_ids`, `comlaw_ids`
 - `deadline_days`, `intake_only`
 
 ---
@@ -215,7 +215,7 @@ Returns `array<int,row>`:
 - `fee_shifting`
 - `employer_defense`, `employer_defense_details`
 - `employee_standard`, `employee_standard_details`
-- `statute_ids`, `common_law_ids`
+- `statute_ids`, `comlaw_ids`
 - `attach_flag`, `order`, `last_reviewed`
 - `ref_materials`
 - `plain` (payload), `verify` (payload), `record` (payload)
@@ -268,7 +268,7 @@ Returns `array<int,row>`:
 - `fee_shifting`
 - `employer_defense`, `employer_defense_details`
 - `employee_standard`, `employee_standard_details`
-- `parent_statute_id`, `parent_common_law_id`
+- `parent_statute_id`, `parent_comlaw_id`
 - `affected_jx`
 - `attach_flag`, `last_reviewed`
 - `ref_materials`

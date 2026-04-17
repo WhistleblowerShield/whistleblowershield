@@ -148,9 +148,9 @@ function ws_shortcode_jx_statutes() {
         // Authoritative cross-reference: procedures that operate under this statute.
         // Queries ws-ag-procedure posts linking to this statute via ws_ag_procedure_statute_ids.
         // Returns '' when none exist — no section rendered for statutes with no procedures.
-        $procs = ws_get_procedures_for_statute( $statute['id'] );
+        $procs = ws_get_procedures_for_record( $statute['id'] );
         if ( ! empty( $procs ) ) {
-            $html .= ws_render_statute_procedures( $procs );
+            $html .= ws_render_record_procedures( $procs, 'statute' );
         }
 
         return $html;
@@ -200,7 +200,71 @@ add_shortcode( 'ws_jx_common_law', 'ws_shortcode_jx_common_law' );
  */
 function ws_shortcode_jx_common_law() {
 
-        return '';
+    global $post;
+    if ( ! $post ) return '';
+
+    $term_id = ws_get_jx_term_id( $post->ID );
+    if ( ! $term_id ) return '';
+
+    $comlaws = ws_get_jx_common_law_data( $term_id );
+    if ( empty( $comlaws ) ) return '';
+
+    // Check whether any federal records exist.
+    //$has_fed = false;
+    //foreach ( $comlaws as $s ) {
+    //    if ( $s['is_fed'] ) { $has_fed = true; break; }
+    //}
+
+    // Helper: build HTML for one statute block including the optional
+    // "→ External References" button. The button is omitted when no
+    // approved ws-reference items are linked to this statute record.
+    $build_comlaw_chunk = function( $comlaw ) {
+        $html = apply_filters( 'the_content', $comlaw['content'] );
+
+        $refs     = ws_get_ref_materials( $comlaw['id'] );
+        $ref_url  = ! empty( $refs ) ? ws_get_reference_page_url( $comlaw['id'], 'statutes' ) : '';
+
+        if ( $ref_url ) {
+            $html .= '<div class="ws-ref-materials-link">'
+                   . '<a href="' . esc_url( $ref_url ) . '" class="ws-ref-materials-btn" target="_blank">'
+                   . '&rarr; External References'
+                   . '</a>'
+                   . '</div>';
+        }
+
+        // Authoritative cross-reference: procedures that operate under this statute.
+        // Queries ws-ag-procedure posts linking to this statute via ws_ag_procedure_statute_ids.
+        // Returns '' when none exist — no section rendered for statutes with no procedures.
+        $procs = ws_get_procedures_for_record( $comlaw['id'] );
+        if ( ! empty( $procs ) ) {
+            $html .= ws_render_record_procedures( $procs, 'comlaw' );
+        }
+
+        return $html;
+    };
+
+    if ( ! $has_fed ) {
+        // Single-group render: no federal append.
+        $content = '';
+    foreach ( $comlaws as $comlaw ) {
+            $content .= $build_comlaw_chunk( $comlaw );
+        }
+        return ws_render_section( 'Relevant Common Laws', $content );
+    }
+
+    // Two-group render: split local vs federal.
+    // $local_html = '';
+    // $fed_html   = '';
+    //foreach ( $comlaws as $comlaw ) {
+    //    $chunk = $build_comlaw_chunk( $comlaw );
+    //    //if ( $comlaw['is_fed'] ) {
+    //    //     $fed_html   .= $chunk;
+    //    //} else {
+    //        $local_html .= $chunk;
+    //    //}
+    //}
+
+    //return ws_render_section_two_group( 'Relevant Common Laws', $local_html, 'Federal Statutes', $fed_html );
 }
 
 // ── [ws_jx_citation] ─────────────────────────────────────────────────────────

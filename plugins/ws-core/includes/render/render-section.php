@@ -550,7 +550,7 @@ function ws_render_jx_limitations( $limitations ) {
 // jurisdiction page: "Filing Procedures Under This Statute". Called from
 // the $build_statute_chunk closure in shortcodes-jurisdiction.php.
 //
-// Deliberately compact — shows enough for the end-user to recognise the
+// Deliberately compact — shows enough for the end-user to recognize the
 // path forward and link to the full procedure card on the agency page.
 // Not a full procedure card render (that lives in render-agency.php).
 //
@@ -565,7 +565,7 @@ function ws_render_jx_limitations( $limitations ) {
 // @return string  HTML block, or '' when $procedures is empty.
 // ════════════════════════════════════════════════════════════════════════════
 
-function ws_render_statute_procedures( $procedures ) {
+function ws_render_record_procedures( $procedures, $record_type = 'statute' ) {
 
     if ( empty( $procedures ) ) {
         return '';
@@ -578,21 +578,29 @@ function ws_render_statute_procedures( $procedures ) {
         'both'        => 'Disclosure &amp; Retaliation',
     ];
 
+    if ( $record_type === 'statute' ) {
+        $heading = 'Filing Procedures Under This Statute';
+    } elseif ( $record_type === 'comlaw' ) {
+        $heading = 'Filing Procedures Under This Common Law Principle';
+    } else {
+        $heading = 'Filing Procedures';
+    }
+    
     ob_start();
     ?>
-    <div class="ws-statute-procedures">
-        <h6 class="ws-statute-procedures__heading">Filing Procedures Under This Statute</h6>
-        <ul class="ws-statute-procedures__list" role="list">
+    <div class="ws-record-procedures">
+        <h6 class="ws-record-procedures__heading"><?php echo esc_html( $heading ); ?></h6>
+        <ul class="ws-record-procedures__list" role="list">
             <?php foreach ( $procedures as $proc ) : ?>
-                <li class="ws-statute-procedures__item" role="listitem">
+                <li class="ws-record-procedures__item" role="listitem">
 
                     <a href="<?php echo esc_url( $proc['url'] ); ?>"
-                       class="ws-statute-procedures__proc-link">
+                       class="ws-record-procedures__proc-link">
                         <?php echo esc_html( $proc['title'] ); ?>
                     </a>
 
                     <?php if ( ! empty( $proc['agency_name'] ) && ! empty( $proc['agency_url'] ) ) : ?>
-                        <span class="ws-statute-procedures__agency">
+                        <span class="ws-record-procedures__agency">
                             — <a href="<?php echo esc_url( $proc['agency_url'] ); ?>">
                                 <?php echo esc_html( $proc['agency_name'] ); ?>
                               </a>
@@ -603,20 +611,20 @@ function ws_render_statute_procedures( $procedures ) {
                     $type_label = $type_labels[ $proc['type'] ?? '' ] ?? '';
                     if ( $type_label ) :
                     ?>
-                        <span class="ws-statute-procedures__badge ws-statute-procedures__badge--type
-                                     ws-statute-procedures__badge--<?php echo esc_attr( $proc['type'] ); ?>">
+                        <span class="ws-record-procedures__badge ws-record-procedures__badge--type
+                                     ws-record-procedures__badge--<?php echo esc_attr( $proc['type'] ); ?>">
                             <?php echo wp_kses( $type_label, [] ); ?>
                         </span>
                     <?php endif; ?>
 
                     <?php if ( ! empty( $proc['deadline_days'] ) ) : ?>
-                        <span class="ws-statute-procedures__badge ws-statute-procedures__badge--deadline">
+                        <span class="ws-record-procedures__badge ws-record-procedures__badge--deadline">
                             <?php echo absint( $proc['deadline_days'] ); ?>-day deadline
                         </span>
                     <?php endif; ?>
 
                     <?php if ( ! empty( $proc['intake_only'] ) ) : ?>
-                        <span class="ws-statute-procedures__badge ws-statute-procedures__badge--intake-only"
+                        <span class="ws-record-procedures__badge ws-record-procedures__badge--intake-only"
                               title="This agency receives and refers reports only — it does not investigate.">
                             Intake Only
                         </span>
