@@ -27,13 +27,6 @@
  *   ws_ag_procedure_form_url             Filing form URL (url, optional)
  *   ws_ag_procedure_walkthrough_wysiwyg  Plain-language walkthrough (wysiwyg, optional)
  *
- * PARENT AGENCY PRE-FILL
- * ----------------------
- * When a new procedure is created from the agency navigation box, the URL
- * carries ?agency_id={post_id}. The acf/load_value hook below pre-fills
- * ws_ag_procedure_agency_id on auto-draft posts, matching the pattern used by
- * ws_interp_prefill_statute_id() in acf-jx-interpretations.php.
- *
  * SHARED WORKFLOW GROUPS
  * ----------------------
  *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
@@ -45,6 +38,13 @@
  * Procedures use ws_ag_procedure_walkthrough_wysiwyg (registered in this file)
  * as their plain-English content. The central acf-plain-english-fields.php group
  * is NOT applied to this CPT -- the walkthrough IS the plain-English layer.
+ *
+ * PARENT AGENCY PRE-FILL
+ * ----------------------
+ * When a new procedure is created from the agency navigation box, the URL
+ * carries ?agency_id={post_id}. The acf/load_value hook below pre-fills
+ * ws_ag_procedure_agency_id on auto-draft posts, matching the pattern used by
+ * ws_interp_prefill_statute_id() in acf-jx-interpretations.php.
  *
  * @package    WhistleblowerShield
  * @since      3.9.0

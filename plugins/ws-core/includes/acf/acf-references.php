@@ -26,8 +26,6 @@
  *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
  *   - group_source_verify_metadata (acf-source-verify.php)
  *
-
- *
  * PLAIN ENGLISH
  * -------------
  * ws-reference does not participate in the has_plain_english / plain_reviewed

@@ -30,8 +30,8 @@
  *   - group_source_verify_metadata (acf-source-verify.php)
  *   - group_major_edit_metadata (acf-major-edit.php, menu_order 99)
  *
- * NOTE
- * ----
+ * PLAIN ENGLISH
+ * -------------
  * jx-summary IS the plain language document. Plain English fields
  * (group_plain_english_metadata) do NOT attach here -- the summary carries
  * its own plain_english_reviewed toggle in this group instead.

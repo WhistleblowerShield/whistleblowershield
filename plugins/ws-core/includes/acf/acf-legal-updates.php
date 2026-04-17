@@ -24,17 +24,21 @@
  *   ws_legal_update_type                   Update classification (select, optional)
  *   ws_legal_update_summary_wysiwyg        Update summary body (wysiwyg, required)
  *
+ * SHARED WORKFLOW GROUPS
+ * ----------------------
+ *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
+ *
+ * PLAIN ENGLISH
+ * -------------
+ * This record does not participate in a separate plain-English workflow.
+ *
  * USE NOTES
  * ---------
  * Legal updates are linked to one or more jurisdiction records through
  * ws_legal_update_jurisdictions (ws_jurisdiction taxonomy, save_terms: 1).
  * These records support internal legal tracking, journalist research, and
  * future public update feeds and timelines.
- *
- * SHARED WORKFLOW GROUPS
- * ----------------------
- *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
- *
+ * 
  * @package    WhistleblowerShield
  * @since      1.0.0
  * @version    3.17.0
