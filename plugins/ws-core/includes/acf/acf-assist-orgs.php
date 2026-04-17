@@ -51,7 +51,7 @@ function ws_register_acf_assist_org() {
 
     acf_add_local_field_group( [
 
-        'key'                   => 'group_aorg_metadata',
+        'key'                   => 'group_assist_org_metadata',
         'title'                 => 'Assistance Organization Details',
         'menu_order'            => 0,
         'position'              => 'normal',

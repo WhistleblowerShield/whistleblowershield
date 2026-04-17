@@ -38,15 +38,11 @@
  *
  * @package    WhistleblowerShield
  * @since      1.0.0
- * @version 3.10.0
- *
- * VERSION
- * -------
- * 1.0.0   Initial release.
- * 2.1.0   ws-core refactor: tabs, record management fields, auto-selection logic.
- * 3.0.0   ws_jx_code retired as join key; taxonomy term slug is now canonical.
- *         Related Content tab and ws_jx_related_* fields removed.
- * 3.9.0   Record Management tab trimmed; create authorship fields removed.
+ * @version    3.17.0
+ * @author     Whistleblower Shield
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
+ * 
  */
 
 defined( 'ABSPATH' ) || exit;

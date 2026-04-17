@@ -55,26 +55,11 @@
  *
  * @package    WhistleblowerShield
  * @since      2.4.0
- * @version 3.12.2
+ * @version    3.17.0
+ * @author     Whistleblower Shield
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
  *
- * VERSION
- * -------
- * 2.4.0  Initial release.
- * 3.0.0  Architecture refactor: ws_jx_code join retired; taxonomy-based scoping.
- *        Affected jurisdictions auto-populated from court matrix.
- * 3.4.0  Stamp fields centralized to acf-stamp-fields.php.
- * 3.8.0  Court matrix split (federal + state). ws_jx_interp_court_name
- *        conditional field added for 'other' court sentinel.
- *        Field summary corrected to match current meta key names.
- * 3.12.0 Classification tab added: ws_disclosure_type, ws_protected_class,
- *        ws_disclosure_target, ws_adverse_action_type, ws_process_type
- *        (moved from Summary tab), ws_remedy, ws_fee_shifting,
- *        ws_employer_defense, ws_employee_standard — mirrors jx-statute palette
- *        including has-details sentinel pattern and companion _details fields.
- * 3.12.1 Relationships expanded for dual parent linkage:
- *        ws_jx_interp_common_law_id added; court scope and URL prefill now
- *        resolve from statute_id and common_law_id parent context.
- * 3.12.2 Header and field-summary documentation sync.
  */
 
 defined( 'ABSPATH' ) || exit;

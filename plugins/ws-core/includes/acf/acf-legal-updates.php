@@ -26,50 +26,11 @@
  *
  * @package    WhistleblowerShield
  * @since      1.0.0
- * @version 3.10.1
+ * @version    3.17.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
- * VERSION
- * -------
- * 1.0.0  Initial release.
- * 2.1.0  Refactored for ws-core architecture. CPT slug corrected
- *         to ws-legal-update (hyphenated). File renamed from
- *         acf-legal-update.php to acf-ws-legal-update.php.
- *         Full header and inline comments added.
- * 3.1.1  Pass 2 ACF audit fix:
- *        - Added Content tab (field_legal_update_content_tab) before
- *          field_update_jurisdictions. All content fields now render
- *          inside a tab, consistent with all other CPT field groups.
- * 3.1.2  Pass 3 ACF audit — instructions fixes:
- *        - PURPOSE docblock: updated to remove reference to deleted
- *          admin-relationships.php; clarified ws_update_jurisdictions
- *          as a taxonomy field with save_terms=0.
- * 3.4.0  Stamp field centralization:
- *        - Removed Authorship & Review tab and all stamp fields — now
- *          registered centrally in acf-stamp-fields.php (menu_order 90).
- * 3.5.0  Legal update system overhaul:
- *        - Jurisdiction field: renamed ws_update_jurisdictions → ws_update_jurisdiction
- *          (singular); field_type changed from multi_select to select. One update
- *          maps to one jurisdiction — federal updates affect the federal term only;
- *          distribution to state records is handled separately.
- *        - save_terms changed 0 → 1: ACF now writes the selected jurisdiction term
- *          to wp_term_relationships on save, enabling tax_query in the query layer.
- *        - load_terms changed 0 → 1: jurisdiction field reloads from the taxonomy
- *          table on admin edit, staying in sync with save_terms.
- *        - add_term remains 0: no new jurisdiction terms may ever be created via
- *          this field.
- *        - Added Multi-Jurisdiction flag (ws_update_multi_jurisdiction, true_false):
- *          reserved for future use when an update affects more than one jurisdiction
- *          (e.g. a federal change with confirmed downstream state impact). No
- *          additional logic fires on this flag yet.
- *        - Source URL field renamed ws_update_source → ws_update_source_url to
- *          comply with project convention: all URL-valued meta keys end in _url.
- *        - Update Type choices expanded: statute, citation, summary, interpretation,
- *          regulation, policy, internal, other. 'internal' label updated to
- *          'WhistleblowerShield.org Internal Adjustment' for admin clarity.
- * 3.10.1 Added ws_legal_update_source_url_is_pdf toggle for direct PDF source links.
  */
 
 defined( 'ABSPATH' ) || exit;

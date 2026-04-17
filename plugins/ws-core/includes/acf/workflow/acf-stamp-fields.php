@@ -18,9 +18,12 @@
  *   ws_auto_last_edited         — local Y-m-d; every save
  *   ws_auto_create_author       — WP user ID; written once
  *
- * @package WhistleblowerShield
- * @since   3.4.0
- * @version 3.10.0
+ * @package    WhistleblowerShield
+ * @since      3.4.0
+ * @version    3.17.0
+ * @author     Whistleblower Shield
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
  *
  * VERSION
  * -------

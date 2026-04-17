@@ -11,16 +11,13 @@
  * (group_plain_english_metadata) do NOT attach here — the summary carries
  * its own plain_english_reviewed toggle in this group instead.
  *
- * @package WhistleblowerShield
- * @since   2.1.0
- * @version 3.10.0
+ * @package    WhistleblowerShield
+ * @since      2.1.0
+ * @version    3.17.0
+ * @author     Whistleblower Shield
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
  *
- * VERSION
- * -------
- * 2.1.0   Initial release.
- * 3.0.0   ws_jx_code back-reference and admin-relationships sync removed.
- * 3.4.0   Stamp fields centralized to acf-stamp-fields.php.
- * 3.10.0  Inline comments updated for consistency with current conventions.
  */
 
 defined( 'ABSPATH' ) || exit;

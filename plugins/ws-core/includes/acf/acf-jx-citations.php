@@ -10,26 +10,11 @@
  *
  * @package WhistleblowerShield
  * @since   2.3.0
- * @version 3.12.4
+ * @version 3.17.4
+ * @author     Whistleblower Shield
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
  *
- * VERSION
- * -------
- * 2.3.0   Initial release.
- * 3.0.0   ws_jx_code join retired; taxonomy scoping only.
- * 3.4.0   Stamp fields centralized to acf-stamp-fields.php.
- * 3.8.0   Field keys corrected to match naming convention.
- *         ws_ref_materials relationship field added (Reference Materials tab).
- * 3.12.0  Classification tab added: ws_protected_class, ws_disclosure_target,
- *         ws_adverse_action_type, ws_process_type, ws_remedy, ws_fee_shifting,
- *         ws_employer_defense, ws_employee_standard — mirrors jx-statute palette
- *         including has-details sentinel pattern and companion _details fields.
- * 3.12.1  Added ws_jx_citation_summary_wysiwyg as a compact WYSIWYG summary field
- *         for editorial drafting and ingest starter hints.
- * 3.12.2  Added ws_jx_citation_common_law_ids relationship field for
- *         doctrine-linked citations (separate from statute linkage).
- * 3.12.3  ws_jx_citation_types changed from single select to multi-select
- *         to support citations that cover multiple source categories.
- * 3.12.4  Header and field-summary documentation sync.
  */
 
 defined( 'ABSPATH' ) || exit;

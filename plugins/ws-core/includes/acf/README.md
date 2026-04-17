@@ -1,10 +1,7 @@
 # includes/acf/
 
-ACF Pro field group registration for all ws-core CPTs.
-
-Each file in this directory registers one field group for one CPT.
-Shared workflow field groups (stamp, plain English, source verify,
-major edit) live in `workflow/` — see `workflow/README.md`.
+ACF Pro field group registration for all `ws-core` CPTs.
+Each file in this directory registers one primary field group; shared workflow groups live in `workflow/`.
 
 ---
 
@@ -26,336 +23,37 @@ major edit) live in `workflow/` — see `workflow/README.md`.
 
 ---
 
-## v3.14.0 Field Rename Pass
+## v3.17.0 Dev Diary (Condensed)
 
-All field names in `acf-jx-statutes.php` and `acf-jx-common-law.php`
-were renamed to match the JSON ingest schema keys exactly. All downstream
-references in `query-jurisdiction.php` and `matrix-fed-statutes.php`
-were updated in the same pass.
+### Core ACF Groups
 
-| Old name | New name | Applies to |
-|---|---|---|
-| `*_sol_has_details` | `*_limit_ambiguous` | statute, common-law |
-| `*_sol_details` | `*_limit_details` | statute, common-law |
-| `*_tolling_has_details` | `*_tolling_has_notes` | statute, common-law |
-| `*_tolling_details` | `*_tolling_notes` | statute, common-law |
-| `*_has_exhaustion` | `*_exhaustion_required` | statute, common-law |
-| `*_rebuttable_has_details` | `*_rebuttable_has_presumption` | statute, common-law |
-| `*_rebuttable_details` | `*_rebuttable_presumption` | statute, common-law |
-| `*_bop_details` | `*_burden_of_proof_details` | statute, common-law |
-| `*_has_reward` | `*_reward_available` | statute, common-law |
-| `*_url_is_pdf` | `*_is_pdf` | statute only |
+- `acf-jurisdictions.php`: Jurisdiction remains a special-case metadata container with taxonomy-backed identity and slim record-management fields; it does not follow the legal-record `ws_jx_*` naming model used by statute/citation/common-law/interpretation content records.
+- `acf-jx-summaries.php`: Summary field/tab/key naming is normalized to the full `summary` token (no legacy `sum` abbreviations), and summary-specific plain-language review fields remain local to this group.
+- `acf-jx-statutes.php`: Legal-record naming is normalized (`name`, `key`, and conditional `field` coherence), taxonomy references use singular table names, and toggle/conditional semantics use consistent `_has_` placement.
+- `acf-jx-common-law.php`: Common-law now mirrors the same naming and conditional conventions as statutes, including normalized `_wysiwyg` naming where field type is WYSIWYG and aligned `details` trigger behavior.
+- `acf-jx-citations.php`: Citation fields were aligned to singular record tokening (`citation`), taxonomy-meta naming now reflects full taxonomy table stems, and `_details` companion fields follow current trigger/key conventions.
+- `acf-jx-interpretations.php`: Interpretation fields were normalized to current naming conventions, including URL PDF-toggle semantics (`*_url_is_pdf`) and WYSIWYG suffixing where applicable.
+- `acf-agencies.php`: Agency metadata was kept aligned with the global key/name conventions and taxonomy singular-table references while preserving agency-specific behavior and workflow attachments.
+- `acf-ag-procedures.php`: Procedure taxonomy usage preserves single-select behavior for `ws_procedure_type` while maintaining the same naming/conditional normalization standards applied across ACF groups.
+- `acf-assist-orgs.php`: Assist-org taxonomy detail hooks were updated to singular taxonomy tables, plural trigger fields, and correct sentinel slug behavior (`has-details`, plus special-case slugs where intended).
+- `acf-legal-updates.php`: Legal update source metadata includes URL PDF-toggle pairing and consistent key/name mapping with current field-type suffix conventions.
+- `acf-references.php`: Reference URL metadata now includes `is_pdf` follow-up behavior and follows the same normalized field key/name conventions used in the broader refactor.
 
-New field added: `ws_jx_statute_bop_flag` / `ws_jx_comlaw_bop_flag` — short
-signal phrase for non-standard burden shifts (text, 120 char max).
+### Shared Workflow Groups
 
----
-
-## acf-jx-statutes.php — Field Summary
-
-**Legal Basis tab:**
-
-| Meta Key | Type | Notes |
-|---|---|---|
-| `ws_jx_statute_official_name` | text | Required |
-| `ws_jx_statute_citation` | text | |
-| `ws_jx_statute_common_name` | text | |
-| `ws_jx_statute_disclosure_types` | taxonomy | `ws_disclosure_type` |
-| `ws_jx_statute_protected_classes` | taxonomy | `ws_protected_class` — has-details |
-| `ws_jx_statute_protected_class_details` | textarea | Conditional on has-details |
-| `ws_jx_statute_disclosure_targets` | taxonomy | `ws_disclosure_target` — has-details |
-| `ws_jx_statute_disclosure_target_details` | textarea | Conditional on has-details |
-| `ws_jx_statute_adverse_action_scope` | textarea | |
-| `ws_attach_flag` | true_false | Editorial curation flag |
-| `ws_display_order` | number | Conditional on attach_flag |
-
-**Statute of Limitations tab:**
-
-| Meta Key | Type | Notes |
-|---|---|---|
-| `ws_jx_statute_sol_value` | number | |
-| `ws_jx_statute_sol_unit` | select | days / months / years |
-| `ws_jx_statute_sol_trigger` | select | |
-| `ws_jx_statute_limit_ambiguous` | true_false | SOL derived, not explicit |
-| `ws_jx_statute_limit_details` | textarea | Conditional on limit_ambiguous |
-| `ws_jx_statute_tolling_has_notes` | true_false | Tolling provisions exist |
-| `ws_jx_statute_tolling_notes` | textarea | Conditional on tolling_has_notes |
-| `ws_jx_statute_exhaustion_required` | true_false | |
-| `ws_jx_statute_exhaustion_details` | textarea | Conditional on exhaustion_required |
-
-**Enforcement tab:**
-
-| Meta Key | Type | Notes |
-|---|---|---|
-| `ws_jx_statute_process_types` | taxonomy | `ws_process_type` |
-| `ws_jx_statute_adverse_actions` | taxonomy | `ws_adverse_action_types` — has-details |
-| `ws_jx_statute_adverse_action_details` | textarea | Conditional on has-details |
-| `ws_jx_statute_fee_shiftings` | taxonomy | `ws_fee_shifting` |
-| `ws_jx_statute_remedies` | taxonomy | `ws_remedies` — has-details |
-| `ws_jx_statute_remedies_details` | textarea | Conditional on has-details |
-| `ws_jx_statute_local_agencies` | post_object | `ws-agency` (local/regional) |
-| `ws_jx_statute_federal_agencies` | post_object | `ws-agency` (federal) |
-
-**Burden of Proof tab:**
-
-| Meta Key | Type | Notes |
-|---|---|---|
-| `ws_jx_statute_employee_standards` | taxonomy | `ws_employee_standard` — has-details |
-| `ws_jx_statute_employee_standard_details` | textarea | Conditional on has-details |
-| `ws_jx_statute_employer_defenses` | taxonomy | `ws_employer_defense` — has-details |
-| `ws_jx_statute_employer_defense_details` | textarea | Conditional on has-details |
-| `ws_jx_statute_rebuttable_has_presumption` | true_false | |
-| `ws_jx_statute_rebuttable_presumption` | textarea | Conditional on rebuttable_has_presumption |
-| `ws_jx_statute_bop_has_details` | true_false | Derived at ingest from presence of burden_of_proof_details |
-| `ws_jx_statute_burden_of_proof_details` | textarea | Conditional on bop_has_details |
-| `ws_jx_statute_bop_flag` | text | Short burden-shift signal phrase, 120 char max |
-
-**Reward tab:**
-
-| Meta Key | Type | Notes |
-|---|---|---|
-| `ws_jx_statute_reward_available` | true_false | |
-| `ws_jx_statute_reward_details` | textarea | Conditional on reward_available |
-
-**Links tab:**
-
-| Meta Key | Type | Notes |
-|---|---|---|
-| `ws_jx_statute_url` | url | |
-| `ws_jx_statute_is_pdf` | true_false | |
-| `ws_jx_statute_last_reviewed` | text | Date string |
+- `workflow/acf-stamp-fields.php`: Shared authorship/review stamp fields remain centralized and attached across supported CPTs with consistent `ws_auto_*` naming and stable group placement.
+- `workflow/acf-plain-english-fields.php`: Shared plain-language workflow stays centralized, including role/validation guard alignment and explicit assist-org inclusion behavior.
+- `workflow/acf-source-verify.php`: Source/verification workflow remains centralized with immutable source-method stamping rules and controlled verification transitions.
+- `workflow/acf-major-edit.php`: Major-edit workflow remains intentionally isolated and unchanged in behavior except for header/version normalization.
 
 ---
 
-## acf-jx-common-law.php — Field Summary
+## Naming/Schema Rules in Force
 
-Added v3.13.0. Mirrors `acf-jx-statutes.php` with `ws_jx_comlaw_` prefix
-and doctrine-specific adaptations in the Legal Basis tab.
-
-**Legal Basis tab (unique to common-law):**
-
-| Meta Key | Type | Notes |
-|---|---|---|
-| `ws_jx_comlaw_doctrine_id` | text | Required. Format: `[JX]-CL-[SHORT-SLUG]` |
-| `ws_jx_comlaw_doctrine_name` | text | |
-| `ws_jx_comlaw_common_name` | text | |
-| `ws_jx_comlaw_precedent_url` | url | Leading case on approved source |
-| `ws_jx_comlaw_public_policy_sources` | checkbox | constitution, statute, administrative-rule, case-law, federal-law, other |
-| `ws_jx_comlaw_other_sources` | text | Conditional on `other` in public_policy_sources |
-| `ws_jx_comlaw_doctrine_basis` | wysiwyg | Required. Primary explanatory content |
-| `ws_jx_comlaw_recognition_status` | wysiwyg | Required. Current judicial status |
-| `ws_jx_comlaw_statutory_preclusion` | true_false | Bars common law claim when statutory remedy exists |
-| `ws_jx_comlaw_statutory_preclusion_details` | textarea | Conditional on statutory_preclusion |
-| `ws_jx_comlaw_disclosure_types` | taxonomy | `ws_disclosure_type` |
-| `ws_jx_comlaw_protected_classes` | taxonomy | `ws_protected_class` — has-details |
-| `ws_jx_comlaw_protected_class_details` | textarea | Conditional on has-details |
-| `ws_jx_comlaw_disclosure_targets` | taxonomy | `ws_disclosure_target` — has-details |
-| `ws_jx_comlaw_disclosure_target_details` | textarea | Conditional on has-details |
-| `ws_jx_comlaw_adverse_action_scope` | textarea | |
-| `ws_attach_flag` | true_false | |
-| `ws_display_order` | number | |
-
-**SOL tab:** Same fields as statutes with `ws_jx_comlaw_` prefix:
-`ws_jx_comlaw_sol_value`, `ws_jx_comlaw_sol_unit`, `ws_jx_comlaw_sol_trigger`,
-`ws_jx_comlaw_limit_ambiguous`, `ws_jx_comlaw_limit_details`,
-`ws_jx_comlaw_tolling_has_notes`, `ws_jx_comlaw_tolling_notes`,
-`ws_jx_comlaw_exhaustion_required`, `ws_jx_comlaw_exhaustion_details`.
-SOL is almost always `limit_ambiguous: true` for common law.
-
-**Enforcement tab:** Same as statutes with `ws_jx_comlaw_` prefix:
-`ws_jx_comlaw_process_types`, `ws_jx_comlaw_adverse_actions`, `ws_jx_comlaw_adverse_action_details`,
-`ws_jx_comlaw_fee_shiftings`, `ws_jx_comlaw_remedies`, `ws_jx_comlaw_remedies_details`,
-`ws_jx_comlaw_related_agencies`.
-
-**Burden of Proof tab:** Same as statutes with `ws_jx_comlaw_` prefix:
-`ws_jx_comlaw_employee_standards`, `ws_jx_comlaw_employee_standard_details`,
-`ws_jx_comlaw_employer_defenses`, `ws_jx_comlaw_employer_defense_details`,
-`ws_jx_comlaw_rebuttable_has_presumption`, `ws_jx_comlaw_rebuttable_presumption`,
-`ws_jx_comlaw_bop_has_details`, `ws_jx_comlaw_burden_of_proof_details`,
-`ws_jx_comlaw_bop_flag`.
-
-**Reward tab:** `ws_jx_comlaw_reward_available`, `ws_jx_comlaw_reward_details`.
-
----
-
-## acf-jx-citations.php — Field Summary
-
-**Content tab:**
-
-| Meta Key | Type | Notes |
-|---|---|---|
-| `ws_jx_citation_types` | select | Multi-select (`case_law`, `statute`, `regulatory`, `secondary`) |
-| `ws_jx_citation_disclosure_types` | taxonomy | `ws_disclosure_type` |
-| `ws_jx_citation_official_name` | text | |
-| `ws_jx_citation_common_name` | text | |
-| `ws_jx_citation_url` | url | |
-| `ws_jx_citation_summary` | wysiwyg | Compact editorial summary field |
-| `ws_jx_citation_is_pdf` | true_false | |
-| `ws_attach_flag` | true_false | |
-| `ws_display_order` | number | |
-
-**Classification tab:**
-
-| Meta Key | Type | Notes |
-|---|---|---|
-| `ws_jx_citation_protected_classes` | taxonomy | `ws_protected_class` — has-details |
-| `ws_jx_citation_protected_class_details` | textarea | |
-| `ws_jx_citation_disclosure_targets` | taxonomy | `ws_disclosure_target` — has-details |
-| `ws_jx_citation_disclosure_target_details` | textarea | |
-| `ws_jx_citation_adverse_actions` | taxonomy | `ws_adverse_action_types` — has-details |
-| `ws_jx_citation_adverse_action_details` | textarea | |
-| `ws_jx_citation_process_types` | taxonomy | `ws_process_type` |
-| `ws_jx_citation_remedies` | taxonomy | `ws_remedies` — has-details |
-| `ws_jx_citation_remedies_details` | textarea | |
-| `ws_jx_citation_fee_shiftings` | taxonomy | `ws_fee_shifting` |
-| `ws_jx_citation_employer_defenses` | taxonomy | `ws_employer_defense` — has-details |
-| `ws_jx_citation_employer_defense_details` | textarea | |
-| `ws_jx_citation_employee_standards` | taxonomy | `ws_employee_standard` — has-details |
-| `ws_jx_citation_employee_standard_details` | textarea | |
-| `ws_jx_citation_statute_ids` | textarea | Pipe-delimited statute IDs this citation supports |
-| `ws_jx_citation_common_law_ids` | relationship | `jx-common-law` linkage |
-| `ws_ref_materials` | relationship | `ws-reference` |
-| `ws_jx_citation_last_reviewed` | text | |
-
----
-
-## acf-jx-interpretations.php — Field Summary
-
-| Meta Key | Type | Notes |
-|---|---|---|
-| `ws_jx_interp_official_name` | text | |
-| `ws_jx_interp_common_name` | text | |
-| `ws_jx_interp_case_citation` | text | |
-| `ws_jx_interp_court` | select | Court matrix shorthand |
-| `ws_jx_interp_court_name` | text | |
-| `ws_jx_interp_year` | number | |
-| `ws_jx_interp_favorable` | true_false | Only when ruling materially expands protection |
-| `ws_jx_interp_summary` | textarea | |
-| `ws_jx_interp_url` | url | |
-| `ws_jx_interp_statute_id` | post_object | Anchor statute (`jx-statute`) |
-| `ws_jx_interp_common_law_id` | post_object | Anchor doctrine (`jx-common-law`) |
-| `ws_jx_interp_affected_jurisdictions` | taxonomy | `ws_jurisdiction` — `save_terms: 0` |
-| `ws_jx_interp_disclosure_types` | taxonomy | `ws_disclosure_type` |
-| `ws_jx_interp_protected_classes` | taxonomy | `ws_protected_class` — has-details |
-| `ws_jx_interp_protected_class_details` | textarea | |
-| `ws_jx_interp_disclosure_targets` | taxonomy | `ws_disclosure_target` — has-details |
-| `ws_jx_interp_disclosure_target_details` | textarea | |
-| `ws_jx_interp_adverse_actions` | taxonomy | `ws_adverse_action_types` — has-details |
-| `ws_jx_interp_adverse_action_details` | textarea | |
-| `ws_jx_interp_process_types` | taxonomy | `ws_process_type` |
-| `ws_jx_interp_remedies` | taxonomy | `ws_remedies` — has-details |
-| `ws_jx_interp_remedies_details` | textarea | |
-| `ws_jx_interp_fee_shiftings` | taxonomy | `ws_fee_shifting` |
-| `ws_jx_interp_employer_defenses` | taxonomy | `ws_employer_defense` — has-details |
-| `ws_jx_interp_employer_defense_details` | textarea | |
-| `ws_jx_interp_employee_standards` | taxonomy | `ws_employee_standard` — has-details |
-| `ws_jx_interp_employee_standard_details` | textarea | |
-| `ws_attach_flag` | true_false | |
-| `ws_display_order` | number | |
-| `ws_ref_materials` | relationship | `ws-reference` |
-| `ws_jx_interp_last_reviewed` | text | |
-
-Note: `ws_jx_interp_affected_jurisdictions` uses `save_terms: 0` to prevent
-taxonomy query pollution — interpretations are scoped to the
-jurisdiction of the statute they interpret, not to the jurisdictions
-they may affect as precedent.
-
----
-
-## Field Key Convention
-
-Keys follow the pattern `field_` + meta name with `ws_` prefix stripped.
-
-```
-meta name:  ws_jx_statute_official_name
-field key:  field_jx_statute_official_name
-
-meta name:  ws_jx_comlaw_doctrine_id
-field key:  field_jx_comlaw_doctrine_id
-```
-
-Fields whose meta name appears in multiple CPTs prepend CPT context:
-
-```
-field_jx_statute_attach_flag
-field_jx_comlaw_attach_flag
-field_jx_citation_attach_flag
-```
-
-Group keys end with `_metadata`. Tab keys end with `_tab`.
-No `ws_` prefix on any ACF key — `field_` is sufficient namespacing.
-
----
-
-## `save_terms` Convention
-
-Every taxonomy ACF field that should write term assignments to the
-WordPress taxonomy table carries `save_terms: 1` and `load_terms: 1`.
-This is what makes `tax_query` filtering work in the query layer and
-allows matrix seeders to use `wp_set_object_terms()` without requiring
-an ACF save cycle.
-
-`ws_jx_interp_affected_jurisdictions` explicitly uses `save_terms: 0` to prevent
-taxonomy query pollution. See note in interpretations field summary above.
-
----
-
-## Toggle + Conditional Pattern
-
-Several CPTs use a consistent pattern:
-
-```
-[toggle field — true_false]
-    └── [detail field — visible only when toggle is on]
-```
-
-Keeps edit screens clean while preserving all detail fields.
-
----
-
-## has-details Sentinel Pattern
-
-Six taxonomies support a `has-details` sentinel term. When selected,
-a companion `_details` textarea becomes visible via dynamic conditional
-logic injected at field load time (not at registration — term IDs are
-runtime values).
-
-Valid taxonomies for has-details:
-- `ws_protected_class`
-- `ws_disclosure_target`
-- `ws_adverse_action_types`
-- `ws_remedies`
-- `ws_employer_defense`
-- `ws_employee_standard`
-
-`ws_disclosure_type` and `ws_process_type` do NOT support has-details.
-If has-details appears in either taxonomy on an ingest record it is an
-invalid slug and will be stripped by the ingest tool.
-
-This pattern is active on `jx-statute`, `jx-common-law`, `jx-citation`,
-and `jx-interpretation`.
-
----
-
-## `menu_order` Stacking
-
-```
-0–80   CPT-specific group
-85     Plain English (group_plain_english_metadata)
-90     Stamp fields (group_stamp_metadata)
-95     Source verify (group_source_verify_metadata)
-99     Major edit (group_major_edit_metadata)
-```
-
----
-
-## Shared Workflow Groups
-
-See `workflow/README.md` for the four shared groups.
-
-`acf-stamp-fields.php` attaches to: `jx-summary`, `jx-statute`,
-`jx-common-law`, `jx-citation`, `jx-interpretation`, `ws-agency`,
-`ws-ag-procedure`, `ws-assist-org`, `ws-legal-update`, `ws-reference`.
-
-`acf-plain-english-fields.php` attaches to: `jx-statute`,
-`jx-common-law`, `jx-citation`, `jx-interpretation`, `ws-agency`.
+- `name` uses `ws_[record]_[meta_distinct]`; legal records keep canonical record tokens (`jx_statute`, `jx_comlaw`, `jx_citation`, `jx_interp`, `jx_summary`).
+- `key` mirrors `name` with `ws_` replaced by `field_`.
+- Group keys mirror with `group_..._metadata`; tab keys end in `_tab`.
+- Taxonomy fields use singular taxonomy table names (for example `ws_adverse_action_type`, `ws_remedy`).
+- Taxonomy multi-select fields are pluralized in meta `name`; approved single-select exceptions are `ws_aorg_type` and `ws_procedure_type` (`field_type => radio`).
+- Toggle fields used for conditional reveal follow `_has_` placement before the distinct descriptor, and conditional `field` references are updated to the renamed toggle `key`.
+- Sentinel `has-details` logic is wired via `*_details_conditional` hooks for applicable taxonomy-backed detail textareas.

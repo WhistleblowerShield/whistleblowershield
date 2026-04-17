@@ -78,17 +78,11 @@ defined( 'ABSPATH' ) || exit;
  *
  * @package    WhistleblowerShield
  * @since      3.13.0
- * @version    3.13.0
+ * @version    3.17.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
- * VERSION
- * -------
- * 3.13.0  Initial release. Mirrors acf-jx-statutes.php with doctrine-
- *         anchored Legal Basis tab replacing statute citation/URL fields.
- *         ws_jx_comlaw_doctrine_id, ws_jx_comlaw_precedent_url, ws_jx_comlaw_public_policy_sources,
- *         and ws_jx_comlaw_statutory_preclusion added based on architectural analysis.
  */
 
 add_action( 'acf/init', 'ws_register_acf_jx_common_law' );

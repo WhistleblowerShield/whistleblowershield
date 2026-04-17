@@ -43,30 +43,11 @@
  *
  * @package    WhistleblowerShield
  * @since      3.3.0
- * @version 3.10.1
+ * @version    3.17.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
- * VERSION
- * -------
- * 3.3.0  Initial release.
- * 3.3.1  Pass 2 ACF audit fix:
- *        - Changed field_ws_ref_type return_format from 'label' to 'value'
- *          for consistency with all other select fields in the plugin.
- * 3.4.0  Stamp field centralization:
- *        - Removed Authorship & Review tab and all stamp fields — now
- *          registered centrally in acf-stamp-fields.php (menu_order 90).
- *          Unique field keys (field_ws_ref_last_edited_author, etc.) retired;
- *          ws-reference now uses shared field keys. $ws_stamp_cpts entry in
- *          admin-hooks.php updated from field_ws_ref_last_edited_author to
- *          field_auto_last_edited_author.
- *        - Removed Approval tab and ws_ref_approved field entirely.
- *          ws-reference does not warrant an approval gate — editors are
- *          trusted users and the parent record's review workflow is the
- *          appropriate quality gate. ws_ref_approved lock removed from
- *          admin-hooks.php field locking loop.
- * 3.10.1 Added ws_ref_url_is_pdf toggle for direct PDF resource links.
  */
 
 defined( 'ABSPATH' ) || exit;

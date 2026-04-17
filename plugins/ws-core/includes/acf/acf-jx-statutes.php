@@ -76,55 +76,11 @@ defined( 'ABSPATH' ) || exit;
  *
  * @package    WhistleblowerShield
  * @since      2.0.0
- * @version 3.12.1
+ * @version    3.17.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
- * VERSION
- * -------
- * 2.0.0  Initial release.
- * 3.0.0  Architecture refactor (Phase 3.4):
- *        - Removed ws_jx_code text field (retired; scope now via ws_jurisdiction taxonomy).
- *        - Added attach_flag toggle and order number field.
- *        - Updated docblock to match Phase 3 conventions.
- * 3.1.1  Pass 2 ACF audit fixes:
- *        - Changed ws_jx_statute_remedy taxonomy from ws_remedy_type (deprecated)
- *          to ws_remedy.
- *        - Renamed tab key tab_jx_statute_plain_language_tab → field_jx_statute_plain_language_tab
- *          for convention consistency.
- *        - Removed resolved @todo scaffold comments.
- * 3.4.0  Stamp field centralization:
- *        - Removed Authorship & Review tab and all stamp fields — now registered
- *          centrally in acf-stamp-fields.php (group_stamp_metadata, menu_order 90).
- *        - Removed Plain Language tab and all plain English fields — now registered
- *          centrally in acf-plain-english-fields.php (group_plain_english_metadata, menu_order 85).
- * 3.4.1  Added defined( 'ABSPATH' ) || exit; guard at top of file.
- * 3.4.2  Field keys corrected: trigger → limit_trigger, order → display_order,
- *        statute_ref → jx_statute_ref.
- * 3.5.0  Full ACF overhaul to align with AI-assisted ingest schema:
- *        - Meta key renames: limit_* → sol_*, burden_of_proof → bop_standard,
- *          exhaustion_required → has_exhaustion (label retained: "Exhaustion Required?").
- *        - tolling_notes retired; replaced by has_tolling_details / tolling_details.
- *        - New tab: Enforcement — process_type, adverse_action, fee_shifting,
- *          remedy, and agency linkage fields.
- *        - New tab: Burden of Proof — bop_standard, employer_defense (new
- *          ws_employer_defense taxonomy stub), rebuttable_has_details /
- *          rebuttable_details, bop_has_details / bop_details.
- *        - New tab: Reward — has_reward / reward_details.
- *        - New tab: Links — statute_url, url_is_pdf.
- *        - New Legal Basis fields: protected_class, disclosure_targets,
- *          adverse_action_scope.
- *        - SOL supplementary detail pattern: sol_has_details / sol_details.
- *        - ws_employer_defense taxonomy stub registered in register-taxonomies.php.
- *        - Downstream consumers (query layer, matrix seeder, admin hooks) are
- *          deferred to a follow-up pass.
- * 3.12.0 ws_employee_standard taxonomy replaces ws_jx_statute_bop_standard select.
- *        has-details sentinel pattern added to six taxonomies: protected_class,
- *        disclosure_targets, adverse_action_types, remedy, employer_defense,
- *        employee_standard — each gains a _has_details toggle and conditional
- *        _details textarea. employer_defense_details made conditional.
- * 3.12.1 Header and field-summary documentation sync.
  */
 
 add_action( 'acf/init', 'ws_register_acf_jx_statutes' );

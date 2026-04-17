@@ -27,9 +27,12 @@
  *   priority 6  — ws_stamp_source_name
  *   priority 20 — ws_stamp_verified_by_date, ws_enforce_source_verify_roles
  *
- * @package WhistleblowerShield
- * @since   1.0.0
- * @version 3.10.0
+ * @package    WhistleblowerShield
+ * @since      1.0.0
+ * @version    3.17.0
+ * @author     Whistleblower Shield
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
  *
  * VERSION
  * -------

@@ -21,10 +21,11 @@
  *
  * @package    WhistleblowerShield
  * @since      2.3.1
- * @version    3.12.2
+ * @version    3.17.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
+ * 
  */
 
 defined( 'ABSPATH' ) || exit;
