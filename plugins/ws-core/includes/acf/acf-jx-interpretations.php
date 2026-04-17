@@ -101,7 +101,7 @@ function ws_register_acf_jx_interpretations() {
             // ────────────────────────────────────────────────────────────────
 
             [
-                'key'   => 'field_interp_case_identity_tab',
+                'key'   => 'field_jx_interp_case_identity_tab',
                 'label' => 'Case Identity',
                 'type'  => 'tab',
             ],
@@ -219,7 +219,7 @@ function ws_register_acf_jx_interpretations() {
             // ────────────────────────────────────────────────────────────────
 
             [
-                'key'   => 'field_interp_summary_tab',
+                'key'   => 'field_jx_interp_summary_tab',
                 'label' => 'Summary',
                 'type'  => 'tab',
             ],
@@ -474,7 +474,7 @@ function ws_register_acf_jx_interpretations() {
             // ────────────────────────────────────────────────────────────────
 
             [
-                'key'   => 'field_interp_relationships_tab',
+                'key'   => 'field_jx_interp_relationships_tab',
                 'label' => 'Relationships',
                 'type'  => 'tab',
             ],

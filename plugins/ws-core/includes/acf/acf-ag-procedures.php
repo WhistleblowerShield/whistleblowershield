@@ -90,7 +90,7 @@ function ws_register_acf_ag_procedures() {
             // ── Tab: Procedure Identity ───────────────────────────────────
 
             [
-                'key'   => 'filed_ag_procedure_identity_tab',
+                'key'   => 'field_ag_procedure_identity_tab',
                 'label' => 'Procedure Identity',
                 'type'  => 'tab',
             ],
@@ -206,7 +206,7 @@ function ws_register_acf_ag_procedures() {
             // ── Tab: Filing Details ───────────────────────────────────────
 
             [
-                'key'   => 'filed_ag_procedure_filing_tab',
+                'key'   => 'field_ag_procedure_filing_details_tab',
                 'label' => 'Filing Details',
                 'type'  => 'tab',
             ],

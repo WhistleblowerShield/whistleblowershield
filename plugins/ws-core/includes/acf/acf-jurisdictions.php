@@ -98,9 +98,9 @@ function ws_register_acf_jurisdiction_fields() {
             ],
 
             [
-                'key'           => 'field_jurisdiction_term_id',
+                'key'           => 'field_jurisdiction_tax',
                 'label'         => 'Jurisdiction USPS Code',
-                'name'          => 'ws_jurisdiction_term_id',
+                'name'          => 'ws_jurisdiction_tax',
                 'type'          => 'taxonomy',
                 'taxonomy'      => WS_JURISDICTION_TAXONOMY,
                 'field_type'    => 'select',
@@ -314,7 +314,7 @@ function ws_register_acf_jurisdiction_fields() {
             // ────────────────────────────────────────────────────────────────
 
             [
-                'key'   => 'field_record_management_tab',
+                'key'   => 'field_jx_record_management_tab',
                 'label' => 'Record Management',
                 'type'  => 'tab',
             ],

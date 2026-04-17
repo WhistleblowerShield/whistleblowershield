@@ -13,68 +13,72 @@
  *   2. The Links tab is replaced by a Cases tab for leading case
  *      references rather than statute URLs.
  *
- * GROUP: group_jx_comlaw_metadata
+ * GROUP: group_jx_common_law_metadata
  *
  * FIELD SUMMARY
  * -------------
  * Legal Basis tab:
  *   ws_jx_comlaw_doctrine_name                Doctrine name (text, required)
  *   ws_jx_comlaw_doctrine_id                  Unique doctrine identifier (text, required)
- *   ws_jx_comlaw_common_name                  Common/informal name (text, optional)
+ *   ws_jx_comlaw_common_name                  Common name (text, optional)
  *   ws_jx_comlaw_precedent_url                Leading case URL (url, optional)
- *   ws_jx_comlaw_precedent_url_is_pdf         PDF link toggle (true_false)
- *   ws_jx_comlaw_public_policy_sources        Public policy source categories (checkbox)
- *   ws_jx_comlaw_doctrine_basis_wysiwyg       Doctrine basis narrative (wysiwyg)
- *   ws_jx_comlaw_recognition_status_wysiwyg   Recognition status narrative (wysiwyg)
- *   ws_jx_comlaw_disclosure_types             Disclosure Categories taxonomy (multi_select)
- *   ws_jx_comlaw_protected_classes            Protected Class taxonomy (multi_select)
- *   ws_jx_comlaw_protected_class_details      Protected Class detail (textarea, conditional)
- *   ws_jx_comlaw_disclosure_targets           Disclosure Targets taxonomy (multi_select)
- *   ws_jx_comlaw_disclosure_target_details    Disclosure Targets detail (textarea, conditional)
- *   ws_jx_comlaw_adverse_action_scope         Free-text scope of covered adverse actions
- *   ws_jx_comlaw_has_attach_flag              Editorial curation flag (true_false)
- *   ws_jx_comlaw_display_order                Render order among flagged items (number, conditional)
+ *   ws_jx_comlaw_precedent_url_is_pdf         Link is PDF? (true_false, optional)
+ *   ws_jx_comlaw_public_policy_sources        Public policy sources (checkbox, optional)
+ *   ws_jx_comlaw_other_sources                Other sources detail (text, conditional)
+ *   ws_jx_comlaw_doctrine_basis_wysiwyg       Doctrine Basis narrative (wysiwyg, required)
+ *   ws_jx_comlaw_recognition_status_wysiwyg   Recognition Status narrative (wysiwyg, required)
+ *   ws_jx_comlaw_disclosure_types             Disclosure Categories taxonomy (multi_select, optional)
+ *   ws_jx_comlaw_protected_classes            Protected Class taxonomy (multi_select, optional)
+ *   ws_jx_comlaw_protected_class_details      Protected Class Details (textarea, conditional)
+ *   ws_jx_comlaw_disclosure_targets           Disclosure Targets taxonomy (multi_select, optional)
+ *   ws_jx_comlaw_disclosure_target_details    Disclosure Targets Details (textarea, conditional)
+ *   ws_jx_comlaw_adverse_action_scope         Adverse Action Scope (textarea, optional)
+ *   ws_jx_comlaw_has_attach_flag              Attach to Jurisdiction Page (true_false)
+ *   ws_jx_comlaw_display_order                Display Order (number, conditional)
  *
- * Statute of Limitations tab:
+ * Statute of Limitations & Deadlines tab:
  *   ws_jx_comlaw_sol_value                    Filing Window Value (number)
  *   ws_jx_comlaw_sol_unit                     Time Unit (select)
  *   ws_jx_comlaw_sol_trigger                  Deadline Trigger (select)
- *   ws_jx_comlaw_has_limit_ambiguous          SOL supplementary detail toggle (true_false)
- *   ws_jx_comlaw_limit_details                SOL detail (textarea, conditional)
- *   ws_jx_comlaw_has_tolling_details          Tolling provisions toggle (true_false)
- *   ws_jx_comlaw_tolling_details              Tolling & extension details (textarea, conditional)
- *   ws_jx_comlaw_has_exhaustion_required      Exhaustion required toggle (true_false)
- *   ws_jx_comlaw_exhaustion_details           Exhaustion procedure & deadline (textarea, conditional)
+ *   ws_jx_comlaw_has_limit_ambiguous          SOL Has Supplementary Detail (true_false)
+ *   ws_jx_comlaw_limit_details                SOL Details (textarea, conditional)
+ *   ws_jx_comlaw_has_tolling_details          Tolling Provisions Exist (true_false)
+ *   ws_jx_comlaw_tolling_details              Tolling & Extension Details (textarea, conditional)
+ *   ws_jx_comlaw_has_exhaustion_required      Exhaustion Required? (true_false)
+ *   ws_jx_comlaw_exhaustion_details           Exhaustion Procedure & Deadline (textarea, conditional)
  *
  * Enforcement tab:
  *   ws_jx_comlaw_process_types                Process Types taxonomy (multi_select)
  *   ws_jx_comlaw_adverse_action_types         Adverse Action Types taxonomy (multi_select)
- *   ws_jx_comlaw_adverse_action_type_details  Adverse Action detail (textarea, conditional)
+ *   ws_jx_comlaw_adverse_action_type_details  Adverse Action Details (textarea, conditional)
  *   ws_jx_comlaw_fee_shiftings                Fee Shifting taxonomy (multi_select)
  *   ws_jx_comlaw_remedies                     Available Remedies taxonomy (multi_select)
- *   ws_jx_comlaw_remedy_details               Remedy detail (textarea, conditional)
- *   ws_jx_comlaw_related_agencies             Primary oversight agencies (post_object)
+ *   ws_jx_comlaw_remedy_details               Remedies Details (textarea, conditional)
+ *   ws_jx_comlaw_related_agencies             Primary Oversight Agencies (post_object, optional)
  *
  * Burden of Proof tab:
- *   ws_jx_comlaw_has_statutory_preclusion     Statutory preclusion toggle (true_false)
- *   ws_jx_comlaw_statutory_preclusion_details Statutory preclusion detail (textarea, conditional)
+ *   ws_jx_comlaw_has_statutory_preclusion     Statutory Preclusion (true_false)
+ *   ws_jx_comlaw_statutory_preclusion_details Statutory Preclusion Details (textarea, conditional)
  *   ws_jx_comlaw_employee_standards           Employee Standard taxonomy (multi_select)
- *   ws_jx_comlaw_employee_standard_details    Employee Standard detail (textarea, conditional)
+ *   ws_jx_comlaw_employee_standard_details    Employee Standard Details (textarea, conditional)
  *   ws_jx_comlaw_employer_defenses            Employer Defense taxonomy (multi_select)
- *   ws_jx_comlaw_employer_defense_details     Employer Defense detail (textarea, conditional)
- *   ws_jx_comlaw_has_rebuttable_presumption   Rebuttable presumption toggle (true_false)
- *   ws_jx_comlaw_rebuttable_presumption_details Rebuttable presumption detail (textarea, conditional)
- *   ws_jx_comlaw_has_bop_details              BOP supplementary detail toggle (true_false)
- *   ws_jx_comlaw_bop_details                  BOP detail (textarea, conditional)
- *   ws_jx_comlaw_bop_flag                     BOP signal phrase (text)
+ *   ws_jx_comlaw_employer_defense_details     Employer Defense Details (textarea, conditional)
+ *   ws_jx_comlaw_has_rebuttable_presumption   Rebuttable Presumption Exists (true_false)
+ *   ws_jx_comlaw_rebuttable_presumption_details Rebuttable Presumption Details (textarea, conditional)
+ *   ws_jx_comlaw_has_bop_details              BOP Has Supplementary Detail (true_false)
+ *   ws_jx_comlaw_bop_details                  BOP Details (textarea, conditional)
+ *   ws_jx_comlaw_bop_flag                     BOP Flag (text)
  *
  * Reward tab:
- *   ws_jx_comlaw_has_reward_available         Reward available toggle (true_false)
- *   ws_jx_comlaw_reward_details               Reward details (textarea, conditional)
+ *   ws_jx_comlaw_has_reward_available         Reward Available (true_false)
+ *   ws_jx_comlaw_reward_details               Reward Details (textarea, conditional)
  *
  * Relationships tab:
- *   ws_jx_comlaw_citation_ids                 Related citations (post_object, multiple)
- *   ws_jx_comlaw_interpretation_ids           Related interpretations (post_object, multiple)
+ *   ws_jx_comlaw_citation_ids                 Related Citations (post_object, multiple)
+ *   ws_jx_comlaw_interpretation_ids           Related Interpretations (post_object, multiple)
+ *
+ * Reference Materials tab:
+ *   ws_jx_comlaw_ref_materials                Reference Materials (relationship, multiple)
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------
@@ -101,7 +105,7 @@ function ws_register_acf_jx_common_law() {
     }
 
     acf_add_local_field_group( [
-        'key'                   => 'group_jx_comlaw_metadata',
+        'key'                   => 'group_jx_common_law_metadata',
         'title'                 => 'Common Law Protection Details',
         'menu_order'            => 0,
         'position'              => 'normal',
