@@ -15,14 +15,13 @@
  * FIELD SUMMARY
  * -------------
  * Summary Content tab:
- *   ws_jx_summary_wysiwyg                  Primary jurisdiction summary (wysiwyg, required)
- *   ws_jx_summary_limitations              Limitations and ramifications rows (repeater, optional)
- *   ws_jx_summary_sources                  Supporting citations and sources (textarea, optional)
- *   ws_jx_summary_notes                    Internal editorial notes (textarea, optional)
+ *   ws_jx_summary_wysiwyg                   Jurisdiction Summary (wysiwyg, required)
+ *   ws_jx_summary_limitations               Limitations & Ramifications [label|description] (repeater, optional)
+ *   ws_jx_summary_sources                   Sources & Citations (textarea, optional)
+ *   ws_jx_summary_notes                     Internal Notes (textarea, optional)
+ *
  * Summary Review tab:
- *   ws_jx_summary_plain_english_reviewed   Plain English reviewed toggle (true_false, optional)
- *   ws_jx_summary_editor_reviewed          Editor reviewed toggle (true_false, optional)
- *   ws_jx_summary_reviewer_notes           Internal reviewer notes (textarea, optional)
+ *   ws_jx_summary_plain_english_reviewed    Plain English Reviewed (true_false, optional)
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------

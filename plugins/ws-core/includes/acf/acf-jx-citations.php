@@ -15,20 +15,39 @@
  * FIELD SUMMARY
  * -------------
  * Content tab:
- *   ws_jx_citation_official_name            Citation full name (text, required)
- *   ws_jx_citation_common_name              Citation short name (text, optional)
- *   ws_jx_citation_url                      Source URL (url, optional)
- *   ws_jx_citation_url_is_pdf               Source URL is PDF toggle (true_false, optional)
- *   ws_jx_citation_summary_wysiwyg          Editorial citation summary (wysiwyg, optional)
+ *   ws_jx_citation_types                          Citation Types (select, required)
+ *   ws_jx_citation_disclosure_types               Disclosure Categories (multi_select, optional)
+ *   ws_jx_citation_official_name                  Official Name (text, required)
+ *   ws_jx_citation_common_name                    Common Name (text, optional)
+ *   ws_jx_citation_url                            Source URL (url, optional)
+ *   ws_jx_citation_summary_wysiwyg                Citation Summary (wysiwyg, optional)
+ *   ws_jx_citation_url_is_pdf                     Is Link to PDF? (true_false, optional)
+ *   ws_jx_citation_has_attach_flag                Attach to Jurisdiction Page (true_false, optional)
+ *   ws_jx_citation_display_order                  Display Order (number, conditional)
+ *
  * Classification tab:
- *   ws_jx_citation_disclosure_types         Disclosure categories (taxonomy, optional)
- *   ws_jx_citation_protected_classes        Protected classes (taxonomy, optional)
- *   ws_jx_citation_adverse_action_types     Adverse action types (taxonomy, optional)
- *   ws_jx_citation_remedies                 Remedies (taxonomy, optional)
+ *   ws_jx_citation_protected_classes              Protected Class (multi_select, optional)
+ *   ws_jx_citation_protected_class_details        Protected Class Details (textarea, optional)
+ *   ws_jx_citation_disclosure_targets             Disclosure Targets (multi_select, optional)
+ *   ws_jx_citation_disclosure_target_details      Disclosure Targets Details (textarea, optional)
+ *   ws_jx_citation_adverse_action_types           Adverse Action Types (multi_select, optional)
+ *   ws_jx_citation_adverse_action_type_details    Adverse Action Details (textarea, optional)
+ *   ws_jx_citation_process_types                  Process Type (multi_select, optional)
+ *   ws_jx_citation_remedies                       Remedies (multi_select, optional)
+ *   ws_jx_citation_remedy_details                 Remedies Details (textarea, optional)
+ *   ws_jx_citation_fee_shiftings                  Fee Shiftings (multi_select, optional)
+ *   ws_jx_citation_employer_defenses              Employer Defenses (multi_select, optional)
+ *   ws_jx_citation_employer_defense_details       Employer Defense Details (textarea, optional)
+ *   ws_jx_citation_employee_standards             Employee Standards (multi_select, optional)
+ *   ws_jx_citation_employee_standard_details      Employee Standard Details (textarea, optional)
+ *   ws_jx_citation_last_reviewed                  Last Reviewed (text, optional)
+ *
  * Relationships tab:
- *   ws_jx_citation_statute_ids              Linked statute IDs (textarea, optional)
- *   ws_jx_citation_common_law_ids           Linked common-law records (relationship, optional)
- *   ws_jx_citation_ref_materials            Linked reference records (relationship, optional)
+ *   ws_jx_citation_statute_ids                    Related Statutes (post_object, optional)
+ *   ws_jx_citation_common_law_ids                 Related Common Law Doctrines (post_object, optional)
+ *
+ * Reference Materials tab:
+ *   ws_jx_citation_ref_materials                  Reference Materials (relationship, optional)
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------

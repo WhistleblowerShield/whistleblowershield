@@ -15,18 +15,25 @@
  * FIELD SUMMARY
  * -------------
  * Agency Identity tab:
- *   ws_agency_code                    Internal agency code (text, required)
- *   ws_agency_name                    Public agency name (text, required)
- *   ws_agency_logo                    Agency logo asset (image, optional)
- * Scope & Coverage tab:
- *   ws_agency_jurisdictions           Covered jurisdictions (taxonomy, optional)
- *   ws_agency_disclosure_types        Covered disclosure categories (taxonomy, optional)
- *   ws_agency_disclosure_targets      Reporting target classifications (taxonomy, optional)
- * Contact & Filing tab:
- *   ws_agency_website_url             Agency website URL (url, optional)
- *   ws_agency_intake_methods          Intake method options (taxonomy, optional)
- *   ws_agency_has_attach_flag         Summary-page attach toggle (true_false, optional)
- *   ws_agency_display_order           Summary-page render order (number, optional)
+ *   ws_agency_code                       Agency Reference Code (text, required)
+ *   ws_agency_name                       Full Agency Name (text, required)
+ *   ws_agency_logo                       Agency Logo (image, optional)
+ *   ws_agency_jurisdictions              Jurisdiction(s) (multi_select, optional)
+ *   ws_agency_disclosure_types           Disclosure Categories (multi_select, optional)
+ *   ws_agency_disclosure_targets         Reporting Target Classifications (multi_select, optional)
+ *   ws_agency_process_types              Process Types Handled (multi_select, optional)
+ *
+ * Contact & Reporting tab:
+ *   ws_agency_url                        Official Website URL (url, optional)
+ *   ws_agency_reporting_url              Secure Reporting Portal (url, optional)
+ *   ws_agency_phone                      Whistleblower Hotline (text, optional)
+ *   ws_agency_confidentiality_details    Confidentiality & Privacy Details (textarea, optional)
+ *   ws_agency_accepts_anonymous          Anonymous Reporting Allowed? (true_false, optional)
+ *   ws_agency_has_reward_program         Reward/Bounty Program Available? (true_false, optional)
+ *   ws_agency_reward_program_details     Reward/Bounty Program Details (textarea, conditional)
+ *   ws_agency_languages                  Languages Supported (multi_select, optional)
+ *   ws_agency_additional_languages       Additional Languages (text, optional)
+ *   ws_agency_last_reviewed              Last Verified Date (date_picker, optional)
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------

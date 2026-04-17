@@ -14,12 +14,12 @@
  * FIELD SUMMARY
  * -------------
  * Content tab:
- *   ws_ref_title       Title of the referenced resource (text)
- *   ws_ref_url         External link to the resource (url, required)
- *   ws_ref_url_is_pdf  PDF link toggle (true_false)
- *   ws_ref_description Brief description of the resource and relevance (textarea)
- *   ws_ref_type        Resource type (select)
- *   ws_ref_source_name Publishing organization or author name (text)
+ *   ws_ref_title          Resource Title (text, optional)
+ *   ws_ref_url            Resource URL (url, required)
+ *   ws_ref_url_is_pdf     Link is PDF? (true_false, optional)
+ *   ws_ref_description    Description (textarea, optional)
+ *   ws_ref_type           Resource Type (select, optional)
+ *   ws_ref_source_name    Source / Author (text, optional)
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------

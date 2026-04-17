@@ -15,14 +15,16 @@
  * FIELD SUMMARY
  * -------------
  * Content tab:
- *   ws_legal_update_jurisdictions          Affected jurisdictions (taxonomy, optional)
- *   ws_legal_update_multi_jurisdiction     Multi-jurisdiction flag (true_false, optional)
- *   ws_legal_update_hide_public            Public visibility toggle (true_false, optional)
- *   ws_legal_update_date                   Effective/published update date (date_picker, optional)
- *   ws_legal_update_source_url             Primary source URL (url, optional)
- *   ws_legal_update_source_url_is_pdf      Primary source URL is PDF toggle (true_false, optional)
- *   ws_legal_update_type                   Update classification (select, optional)
- *   ws_legal_update_summary_wysiwyg        Update summary body (wysiwyg, required)
+ *   ws_legal_update_jurisdictions         Affected Jurisdiction(s) (multi_select, optional)
+ *   ws_legal_update_multi_jurisdiction    Multi-Jurisdiction (true_false, optional)
+ *   ws_legal_update_hide_public           Hide from Public Change Log (true_false, optional)
+ *   ws_legal_update_date                  Update Date (date_picker, optional)
+ *   ws_legal_update_source_url            Primary Source URL (url, optional)
+ *   ws_legal_update_source_url_is_pdf     Link is PDF? (true_false, optional)
+ *   ws_legal_update_type                  Update Type (select, optional)
+ *   ws_legal_update_law_name              Law / Statute Name (text, optional)
+ *   ws_legal_update_summary_wysiwyg       Summary (wysiwyg, optional)
+ *   ws_legal_update_effective_date        Effective Date (date_picker, optional)
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------

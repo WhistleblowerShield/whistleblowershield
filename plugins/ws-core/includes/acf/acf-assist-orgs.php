@@ -15,22 +15,67 @@
  * FIELD SUMMARY
  * -------------
  * Identity tab:
- *   ws_aorg_internal_id             Internal organization identifier (text, required)
- *   ws_aorg_official_name           Organization name (text, required)
- *   ws_aorg_type                    Organization type (taxonomy, required)
+ *   ws_aorg_internal_id                    Internal Reference Code (text, required)
+ *   ws_aorg_official_name                  Official Organization Name (text, required)
+ *   ws_aorg_type                           Organization Type (radio, required)
+ *   ws_aorg_description                    Organization Description (textarea, optional)
+ *   ws_aorg_common_name                    Common Name / Abbreviation (text, optional)
+ *   ws_aorg_logo                           Organization Logo (image, optional)
+ *
  * Scope of Service tab:
- *   ws_aorg_serves_nationwide       Nationwide service toggle (true_false, optional)
- *   ws_aorg_jurisdictions           Covered jurisdictions (taxonomy, optional)
- *   ws_aorg_languages               Supported languages (taxonomy, optional)
- *   ws_aorg_case_stages             Supported case stages (taxonomy, optional)
- * Contact tab:
- *   ws_aorg_website_url             Organization website URL (url, optional)
- *   ws_aorg_intake_methods          Intake method options (taxonomy, optional)
+ *   ws_aorg_serves_nationwide              Nationwide (All 57 Jurisdictions) (true_false, optional)
+ *   ws_aorg_whistleblower_scope            Whistleblower Focus Scope (number, required)
+ *   ws_aorg_whistleblower_scope_details    Scope Justification — Details (textarea, optional)
+ *   ws_aorg_has_limited_scope              Community / Local Scope (true_false, conditional)
+ *   ws_aorg_jurisdictions                  Jurisdictions Served (multi_select, optional)
+ *   ws_aorg_community_scope                Community Scope (textarea, conditional)
+ *   ws_aorg_disclosure_types               Misconduct Categories Handled (multi_select, required)
+ *   ws_aorg_disclosure_targets             Disclosure Targets Supported (multi_select, optional)
+ *   ws_aorg_disclosure_target_details      Disclosure Targets Details (textarea, optional)
+ *   ws_aorg_case_stages                    Case Stage (multi_select, optional)
+ *   ws_aorg_case_stage_details             Case Stage Details (textarea, optional)
+ *   ws_aorg_process_types                  Process Types (multi_select, optional)
+ *   ws_aorg_services                       Services Offered (multi_select, required)
+ *   ws_aorg_additional_services            Additional Services (textarea, optional)
+ *   ws_aorg_employment_sectors             Employment Sectors Served (multi_select, optional)
+ *   ws_aorg_protected_classes              Protected Classes Served (multi_select, optional)
+ *   ws_aorg_protected_class_details        Protected Class Details (textarea, optional)
+ *
+ * Contact & Intake tab:
+ *   ws_aorg_website_url                    Official Website (url, required)
+ *   ws_aorg_intake_url                     Intake URL (url, optional)
+ *   ws_aorg_contact_url                    Contact URL (url, optional)
+ *   ws_aorg_phones                         Phone Numbers [type|number] (repeater, optional)
+ *   ws_aorg_emails                         Email Addresses [type|email] (repeater, optional)
+ *   ws_aorg_mailing_address                Mailing Address (textarea, optional)
+ *   ws_aorg_has_secure_channel             Secure Contact Channel Available? (true_false, optional)
+ *   ws_aorg_secure_contact_url             Secure Contact URL (url, conditional)
+ *   ws_aorg_secure_contact_tool            Secure Contact Tool (select, conditional)
+ *   ws_aorg_secure_contact_tool_other      Secure Contact Tool (Other) (text, conditional)
+ *   ws_aorg_languages                      Languages Supported (multi_select, optional)
+ *   ws_aorg_additional_languages           Additional Languages (text, optional)
+ *
  * Eligibility & Cost tab:
- *   ws_aorg_cost_models             Cost model options (taxonomy, optional)
- *   ws_aorg_whistleblower_scope     Whistleblower support scope score (number, optional)
+ *   ws_aorg_cost_models                    Cost Structure (multi_select, required)
+ *   ws_aorg_has_income_limit               Income Eligibility Required? (true_false, optional)
+ *   ws_aorg_income_limit_details           Income Eligibility Details (textarea, conditional)
+ *   ws_aorg_accepts_anonymous              Can Assist Anonymous Clients? (true_false, optional)
+ *   ws_aorg_eligibility_details            Additional Eligibility Requirements (textarea, optional)
+ *
  * Credentials tab:
- *   ws_aorg_credentials             Credentials and affiliations (repeater, optional)
+ *   ws_aorg_licensed_attorneys             Licensed Attorneys on Staff? (true_false, optional)
+ *   ws_aorg_accreditation                  Accreditation & Certifications (text, optional)
+ *   ws_aorg_bar_states                     State Bar Memberships (text, optional)
+ *   ws_aorg_legitimacy_url                 Legitimacy / Transparency URL (url, optional)
+ *   ws_aorg_last_reviewed                  Last Verified Date (date_picker, optional)
+ *
+ * Internal Contact & Relationship Notes tab:
+ *   ws_aorg_internal_contact_name          Internal Contact Name (text, optional)
+ *   ws_aorg_internal_contact_role          Internal Contact Role/Title (text, optional)
+ *   ws_aorg_internal_contact_email         Internal Contact Email (email, optional)
+ *   ws_aorg_internal_contact_phone         Internal Contact Phone (text, optional)
+ *   ws_aorg_internal_last_contacted        Internal Last Contacted (date_picker, optional)
+ *   ws_aorg_internal_relationship_notes    Internal Relationship Notes (textarea, optional)
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------

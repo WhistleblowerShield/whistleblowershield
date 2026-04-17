@@ -17,64 +17,62 @@ defined( 'ABSPATH' ) || exit;
  * FIELD SUMMARY
  * -------------
  * Legal Basis tab:
- *   ws_jx_statute_official_name      Official name (text, required)
- *   ws_jx_statute_citation           Official statute citation (text, optional)
- *   ws_jx_statute_common_name        Common/informal name (text, optional)
- *   ws_jx_statute_disclosure_types    Disclosure Categories taxonomy (multi_select)
- *   ws_jx_statute_protected_classes    Protected Class taxonomy (multi_select)
- *   ws_jx_statute_protected_class_details Protected Class Detail (textarea, conditional on has-details term)
- *   ws_jx_statute_disclosure_targets Disclosure Targets taxonomy (multi_select)
- *   ws_jx_statute_disclosure_target_details Disclosure Targets Detail (textarea, conditional on has-details term)
- *   ws_jx_statute_adverse_action_scope Free-text scope of covered adverse actions
- *   ws_jx_statute_has_attach_flag    Editorial curation flag (true_false). Marks this
- *                                    record as one of the ~3–5 highlighted statutes shown
- *                                    on the jurisdiction summary page. NOT a visibility gate —
- *                                    unflagged statutes are accessible via taxonomy queries.
- *   ws_jx_statute_display_order      Render order among flagged items (number, conditional on attach_flag)
+ *   ws_jx_statute_official_name                  Official Name (text, required)
+ *   ws_jx_statute_citation                       Official Statute Citation (text, optional)
+ *   ws_jx_statute_common_name                    Common Name (text, optional)
+ *   ws_jx_statute_disclosure_types               Disclosure Categories (multi_select, optional)
+ *   ws_jx_statute_protected_classes              Protected Class (multi_select, optional)
+ *   ws_jx_statute_protected_class_details        Protected Class Details (textarea, optional)
+ *   ws_jx_statute_disclosure_targets             Disclosure Targets (multi_select, optional)
+ *   ws_jx_statute_disclosure_target_details      Disclosure Targets Details (textarea, optional)
+ *   ws_jx_statute_adverse_action_scope           Adverse Action Scope (textarea, optional)
+ *   ws_jx_statute_has_attach_flag                Attach to Jurisdiction Page (true_false, optional)
+ *   ws_jx_statute_display_order                  Display Order (number, conditional)
  *
- * Jurisdiction scope is provided by the ws_jurisdiction taxonomy — the
- * taxonomy term is assigned via the WordPress taxonomy UI, not via an ACF field.
- *
- * Statute of Limitations tab:
- *   ws_jx_statute_sol_value          Filing Window Value (number)
- *   ws_jx_statute_sol_unit           Time Unit (select)
- *   ws_jx_statute_sol_trigger        Deadline Trigger (select)
- *   ws_jx_statute_has_limit_ambiguous SOL has supplementary detail (true_false)
- *   ws_jx_statute_limit_details      SOL detail (textarea, conditional)
- *   ws_jx_statute_has_tolling_details Tolling provisions exist (true_false)
- *   ws_jx_statute_tolling_details    Tolling & Extension Details (textarea, conditional)
- *   ws_jx_statute_has_exhaustion_required Exhaustion Required? (true_false)
- *   ws_jx_statute_exhaustion_details Exhaustion Procedure & Deadline (textarea, conditional)
+ * Statute of Limitations & Deadlines tab:
+ *   ws_jx_statute_sol_value                      Filing Window Value (number, optional)
+ *   ws_jx_statute_sol_unit                       Time Unit (select, optional)
+ *   ws_jx_statute_sol_trigger                    Deadline Trigger (select, optional)
+ *   ws_jx_statute_has_limit_ambiguous            SOL Has Supplementary Detail (true_false, optional)
+ *   ws_jx_statute_limit_details                  SOL Details (textarea, conditional)
+ *   ws_jx_statute_has_tolling_details            Tolling Provisions Exist (true_false, optional)
+ *   ws_jx_statute_tolling_details                Tolling & Extension Details (textarea, conditional)
+ *   ws_jx_statute_has_exhaustion_required        Exhaustion Required? (true_false, optional)
+ *   ws_jx_statute_exhaustion_details             Exhaustion Procedure & Deadline (textarea, conditional)
  *
  * Enforcement tab:
- *   ws_jx_statute_process_types       Process Types taxonomy (multi_select)
- *   ws_jx_statute_adverse_action_types Adverse Action Types taxonomy (multi_select)
- *   ws_jx_statute_adverse_action_type_details Adverse Action Detail (textarea, conditional on has-details term)
- *   ws_jx_statute_fee_shiftings       Fee Shifting taxonomy (multi_select)
- *   ws_jx_statute_remedies            Available remedies taxonomy (multi_select)
- *   ws_jx_statute_remedy_details      Remedy detail (textarea, conditional on has-details term)
- *   ws_jx_statute_local_agencies     Local Agencies (post_object)
- *   ws_jx_statute_federal_agencies   Federal Agencies (post_object)
- *   ws_jx_statute_enforcement_channel Enforcement Channel Notes (textarea)
+ *   ws_jx_statute_process_types                  Process Types (multi_select, optional)
+ *   ws_jx_statute_adverse_action_types           Adverse Action Types (multi_select, optional)
+ *   ws_jx_statute_adverse_action_type_details    Adverse Action Details (textarea, optional)
+ *   ws_jx_statute_fee_shiftings                  Fee Shifting (multi_select, optional)
+ *   ws_jx_statute_remedies                       Available remedy (multi_select, optional)
+ *   ws_jx_statute_remedy_details                 remedy Details (textarea, optional)
+ *   ws_jx_statute_local_agencies                 Local Agencies (post_object, optional)
+ *   ws_jx_statute_federal_agencies               Federal Agencies (post_object, optional)
+ *   ws_jx_statute_enforcement_channel            Enforcement Channel Notes (textarea, optional)
  *
  * Burden of Proof tab:
- *   ws_jx_statute_employee_standards  Employee Standard taxonomy (multi_select)
- *   ws_jx_statute_employee_standard_details Employee Standard Detail (textarea, conditional on has-details term)
- *   ws_jx_statute_employer_defenses   Employer Defense taxonomy (multi_select)
- *   ws_jx_statute_employer_defense_details Employer Defense Details (textarea, conditional on has-details term)
- *   ws_jx_statute_has_rebuttable_presumption Rebuttable presumption exists (true_false)
- *   ws_jx_statute_rebuttable_presumption Rebuttable Presumption Details (textarea, conditional)
- *   ws_jx_statute_has_bop_details     BOP has supplementary detail (true_false)
- *   ws_jx_statute_bop_details  BOP detail (textarea, conditional)
- *   ws_jx_statute_bop_flag                BOP signal phrase (text, optional)
+ *   ws_jx_statute_employee_standards             Employee Standard (multi_select, optional)
+ *   ws_jx_statute_employee_standard_details      Employee Standard Details (textarea, optional)
+ *   ws_jx_statute_employer_defenses              Employer Defense (multi_select, optional)
+ *   ws_jx_statute_employer_defense_details       Employer Defense Details (textarea, optional)
+ *   ws_jx_statute_has_rebuttable_presumption     Rebuttable Presumption Exists (true_false, optional)
+ *   ws_jx_statute_rebuttable_presumption         Rebuttable Presumption Details (textarea, conditional)
+ *   ws_jx_statute_has_bop_details                BOP Has Supplementary Detail (true_false, optional)
+ *   ws_jx_statute_bop_details                    BOP Details (textarea, conditional)
+ *   ws_jx_statute_bop_flag                       BOP Flag (text, optional)
  *
  * Reward tab:
- *   ws_jx_statute_has_reward_available Reward available (true_false)
- *   ws_jx_statute_reward_details     Reward Details (textarea, conditional)
+ *   ws_jx_statute_has_reward_available           Reward Available (true_false, optional)
+ *   ws_jx_statute_reward_details                 Reward Details (textarea, conditional)
  *
  * Links tab:
- *   ws_jx_statute_url                Statute URL (url)
- *   ws_jx_statute_url_is_pdf     PDF link toggle (true_false)
+ *   ws_jx_statute_url                            Statute URL (url, optional)
+ *   ws_jx_statute_url_is_pdf                     Link is PDF? (true_false, optional)
+ *   ws_jx_statute_last_reviewed                  Last Verified Date (text, optional)
+ *
+ * Reference Materials tab:
+ *   ws_jx_statute_ref_materials                  Reference Materials (relationship, optional)
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------

@@ -15,33 +15,46 @@
  * FIELD SUMMARY
  * -------------
  * Case Identity tab:
- *   ws_jx_interp_official_name         Case full name (text, required)
- *   ws_jx_interp_case_citation         Reporter citation (text, optional)
- *   ws_jx_interp_court                 Court selector (select, required)
- *   ws_jx_interp_year                  Decision year (number, required)
- *   ws_jx_interp_url                   Opinion source URL (url, optional)
- *   ws_jx_interp_url_is_pdf            Opinion URL is PDF toggle (true_false, optional)
+ *   ws_jx_interp_court                          Court (select, required)
+ *   ws_jx_interp_court_name                     Court Name (text, conditional)
+ *   ws_jx_interp_year                           Decision Year (number, required)
+ *   ws_jx_interp_favorable                      Favorable to Whistleblower? (true_false, optional)
+ *   ws_jx_interp_official_name                  Official Name (text, required)
+ *   ws_jx_interp_common_name                    Common Name (text, optional)
+ *   ws_jx_interp_case_citation                  Citation (text, required)
+ *   ws_jx_interp_url                            Opinion URL (url, optional)
+ *   ws_jx_interp_url_is_pdf                     Link is PDF? (true_false, optional)
  *
  * Summary tab:
- *   ws_jx_interp_summary_wysiwyg       Holding summary content (wysiwyg, optional)
- *   ws_jx_interp_has_attach_flag       Summary-page attach toggle (true_false, optional)
- *   ws_jx_interp_display_order         Summary-page render order (number, optional)
- *   ws_jx_interp_last_reviewed         Last reviewed date value (text, optional)
+ *   ws_jx_interp_summary_wysiwyg                Summary (wysiwyg, required)
+ *   ws_jx_interp_has_attach_flag                Attach to Jurisdiction Page (true_false, optional)
+ *   ws_jx_interp_display_order                  Display Order (number, conditional)
  *
  * Classification tab:
- *   ws_jx_interp_disclosure_types       Disclosure categories (taxonomy, optional)
- *   ws_jx_interp_protected_classes      Protected classes (taxonomy, optional)
- *   ws_jx_interp_disclosure_targets     Disclosure targets (taxonomy, optional)
- *   ws_jx_interp_adverse_action_types   Adverse action types (taxonomy, optional)
- *   ws_jx_interp_remedies               Remedies (taxonomy, optional)
+ *   ws_jx_interp_disclosure_types               Disclosure Category (multi_select, optional)
+ *   ws_jx_interp_protected_classes              Protected Class (multi_select, optional)
+ *   ws_jx_interp_protected_class_details        Protected Class Details (textarea, optional)
+ *   ws_jx_interp_disclosure_targets             Disclosure Targets (multi_select, optional)
+ *   ws_jx_interp_disclosure_target_details      Disclosure Targets Details (textarea, optional)
+ *   ws_jx_interp_adverse_action_types           Adverse Action Types (multi_select, optional)
+ *   ws_jx_interp_adverse_action_type_details    Adverse Action Details (textarea, optional)
+ *   ws_jx_interp_process_types                  Process Type (multi_select, optional)
+ *   ws_jx_interp_remedies                       Remedies (multi_select, optional)
+ *   ws_jx_interp_remedy_details                 Remedies Details (textarea, optional)
+ *   ws_jx_interp_fee_shiftings                  Fee Shifting (multi_select, optional)
+ *   ws_jx_interp_employer_defenses              Employer Defense (multi_select, optional)
+ *   ws_jx_interp_employer_defense_details       Employer Defense Details (textarea, optional)
+ *   ws_jx_interp_employee_standards             Employee Standard (multi_select, optional)
+ *   ws_jx_interp_employee_standard_details      Employee Standard Details (textarea, optional)
  *
  * Relationships tab:
- *   ws_jx_interp_statute_id            Parent statute link (post_object, optional)
- *   ws_jx_interp_common_law_id         Parent common-law link (post_object, optional)
- *   ws_jx_interp_affected_jurisdictions Affected jurisdictions (taxonomy, optional)
+ *   ws_jx_interp_statute_id                     Parent Statute (post_object, optional)
+ *   ws_jx_interp_common_law_id                  Parent Common Law Doctrine (post_object, optional)
+ *   ws_jx_interp_affected_jurisdictions         Affected Jurisdictions (multi_select, optional)
+ *   ws_jx_interp_last_reviewed                  Last Verified Date (text, optional)
  *
  * Reference Materials tab:
- *   ws_jx_interp_ref_materials         Linked references (relationship, optional)
+ *   ws_jx_interp_ref_materials                  Reference Materials (relationship, optional)
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------

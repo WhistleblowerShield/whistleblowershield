@@ -15,19 +15,34 @@
  * FIELD SUMMARY
  * -------------
  * Procedure Identity tab:
- *   ws_ag_procedure_agency_id            Parent agency record (post_object, required)
- *   ws_ag_procedure_type                 Procedure category (taxonomy, required)
- *   ws_ag_procedure_jurisdictions        Covered jurisdictions (taxonomy, optional)
- *   ws_ag_procedure_disclosure_types     Covered disclosure categories (taxonomy, optional)
- *   ws_ag_procedure_title                Procedure title (text, required)
- * Procedure Steps tab:
- *   ws_ag_procedure_steps                Step-by-step instructions (repeater, optional)
- * Contact & Filing tab:
- *   ws_ag_procedure_submission_methods   Submission channels (taxonomy, optional)
- *   ws_ag_procedure_form_url             Filing form URL (url, optional)
- *   ws_ag_procedure_walkthrough_wysiwyg  Plain-language walkthrough (wysiwyg, optional)
+ *   ws_ag_procedure_agency_id                Parent Agency (post_object, required)
+ *   ws_ag_procedure_type                     Procedure Type (radio, required)
+ *   ws_ag_procedure_jurisdictions            Jurisdiction(s) (multi_select, optional)
+ *   ws_ag_procedure_disclosure_types         Disclosure Types Covered (multi_select, optional)
+ *   ws_ag_procedure_statute_ids              Related Statutes (relationship, optional)
  *
- * SHARED WORKFLOW GROUPS
+ * Filing Details tab:
+ *   ws_ag_procedure_entry_point              Entry Point (select, optional)
+ *   ws_ag_procedure_intake_url               Intake / Form URL (url, optional)
+ *   ws_ag_procedure_phone                    Direct Phone Number (text, optional)
+ *   ws_ag_procedure_identity_policy          Identity Policy (select, required)
+ *   ws_ag_procedure_intake_only              Intake Only — Does Not Investigate (true_false, optional)
+ *   ws_ag_procedure_deadline_days            Filing Deadline (Days) (number, optional)
+ *   ws_ag_procedure_deadline_clock_start     Deadline Clock Start (select, conditional)
+ *   ws_ag_procedure_has_prerequisites        Prerequisites Required Before Filing (true_false, optional)
+ *   ws_ag_procedure_prerequisites_details    Prerequisites — Details (textarea, conditional)
+ *
+ * Plain English tab:
+ *   ws_ag_procedure_walkthrough_wysiwyg      Step-by-Step Walkthrough (wysiwyg, optional)
+ *   ws_ag_procedure_exclusivity_details      Mutual Exclusivity Details (textarea, optional)
+ *
+ * Last Verified tab:
+ *   ws_ag_procedure_last_reviewed            Last Verified Date (date_picker, optional)
+ *
+ * Admin Review tab:
+ *   ws_ag_procedure_statute_override         Statute Link Override (true_false, optional)
+ *
+  * SHARED WORKFLOW GROUPS
  * ----------------------
  *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
  *   - group_source_verify_metadata (acf-source-verify.php)

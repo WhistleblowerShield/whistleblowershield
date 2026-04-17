@@ -15,26 +15,30 @@
  * FIELD SUMMARY
  * -------------
  * Identity tab:
- *   ws_jurisdiction_term_id           Canonical jurisdiction term mapping (taxonomy, required)
- *   ws_jx_code                        USPS code display value (message, optional)
- *   ws_jurisdiction_class             Jurisdiction class (text, required)
- *   ws_jurisdiction_name              Jurisdiction display name (text, required)
+ *   ws_jurisdiction_tax           Jurisdiction taxonomy (select, required)
+ *   ws_jurisdiction_class         Jurisdiction Class (text, required)
+ *   ws_jurisdiction_name          Jurisdiction Name (text, required)
  *
  * Government Leadership URLs tab:
- *   ws_jx_gov_portal_url              Government portal URL (url, optional)
- *   ws_jx_executive_url               Executive office URL (url, optional)
- *   ws_jx_wb_authority_url            Whistleblower authority URL (url, optional)
- *   ws_jx_legislature_url             Legislature URL (url, optional)
+ *   ws_jx_gov_portal_url          Government Portal URL (url, optional)
+ *   ws_jx_gov_portal_label        Government Portal Label (text, optional)
+ *   ws_jx_executive_url           Executive Office URL (url, optional)
+ *   ws_jx_executive_label         Executive Office Title (text, optional)
+ *   ws_jx_wb_authority_url        Whistleblower Authority URL (url, optional)
+ *   ws_jx_wb_authority_label      Whistleblower Authority Office (text, optional)
+ *   ws_jx_legislature_url         Legislature URL (url, optional)
+ *   ws_jx_legislature_label       Legislature Name (text, optional)
  *
  * Flag tab:
- *   ws_jx_flag_image                  Jurisdiction flag image (image, optional)
- *   ws_jx_flag_source_url             Flag source URL (url, optional)
- *   ws_jx_flag_license                Flag license string (text, optional)
+ *   ws_jx_flag_image              Flag Image (image, optional)
+ *   ws_jx_flag_attribution        Flag Attribution (text, optional)
+ *   ws_jx_flag_source_url         Flag Source URL (url, optional)
+ *   ws_jx_flag_license            Flag License (text, optional)
  *
  * Record Management tab:
- *   _ws_auto_last_edited_gmt          Hidden GMT audit stamp (hidden, optional)
- *   ws_auto_last_edited_author        Last editor attribution (user, optional)
- *   ws_auto_last_edited               Last edited local date (date_picker, optional)
+ *   _ws_auto_last_edited_gmt      Date Last Edited (GMT) (text, auto)
+ *   ws_auto_last_edited_author    Last Editor (user, auto)
+ *   ws_auto_last_edited           Date Last Edited (text, auto)
  *
  * AUTO-SELECTION NOTES
  * --------------------
