@@ -73,6 +73,7 @@ function ws_register_cpt_statutes() {
         'publicly_queryable'  => false,
         'exclude_from_search' => true,
         'has_archive'         => false,
+        'query_var'           => true,
         'rewrite'             => false,
 
         // ── Editor ────────────────────────────────────────────────────────

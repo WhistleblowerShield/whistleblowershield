@@ -121,7 +121,7 @@ function ws_q_build_assist_org_row( $oid ) {
         'status'        => get_post_status( $oid ),
         'official_name'        => (string) get_post_meta( $oid, 'ws_aorg_official_name',             true ),
         'common_name'          => (string) get_post_meta( $oid, 'ws_aorg_common_name',               true ),
-        'type'                 => (string) ( $tax_aorg_type['slugs'][0] ?? '' ),
+        'type'                 => (string) ( $tax_aorg_type['terms'][0] ?? '' ),
         'type_label'           => (string) ( $tax_aorg_type['names'][0] ?? '' ),
         'description'          => (string) get_post_meta( $oid, 'ws_aorg_description',               true ),
         'whistleblower_scope'  => (int) get_post_meta( $oid, 'ws_aorg_whistleblower_scope', true ),

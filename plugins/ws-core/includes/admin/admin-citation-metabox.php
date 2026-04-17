@@ -94,7 +94,7 @@ function ws_render_citation_metabox( $post ) {
     // statute_id/common_law_id
     //                    — read by acf/load_value in acf-jx-citations.php to
     //                      pre-select ws_jx_citation_statute_ids or
-    //                      ws_jx_citation_common_law_ids.
+    //                      ws_jx_citation_comlaw_ids.
     // tax_input[...][]   — WordPress core pre-assigns the ws_jurisdiction taxonomy
     //                      term(s) on the new post screen without any ACF hook.
     //                      All terms from the statute are forwarded; a statute
@@ -127,7 +127,7 @@ function ws_render_citation_metabox( $post ) {
     } else {
         // Common-law links can be stored from either side:
         // - ws_jx_comlaw_citation_ids on jx-common-law
-        // - ws_jx_citation_common_law_ids on jx-citation
+        // - ws_jx_citation_comlaw_ids on jx-citation
         // Use the union so the metabox remains accurate even if one side lags.
         $from_comlaw = array_filter( array_map( 'intval', (array) get_post_meta( $post->ID, 'ws_jx_comlaw_citation_ids', true ) ) );
         $from_citation = get_posts( [
@@ -139,12 +139,12 @@ function ws_render_citation_metabox( $post ) {
             'meta_query'     => [
                 'relation' => 'OR',
                 [
-                    'key'     => 'ws_jx_citation_common_law_ids',
+                    'key'     => 'ws_jx_citation_comlaw_ids',
                     'value'   => '"' . $post->ID . '"',
                     'compare' => 'LIKE',
                 ],
                 [
-                    'key'     => 'ws_jx_citation_common_law_ids',
+                    'key'     => 'ws_jx_citation_comlaw_ids',
                     'value'   => (string) $post->ID,
                     'compare' => '=',
                 ],

@@ -561,9 +561,9 @@ function ws_render_directory_listing( $items, int $results_total = 0 ) {
  * Renders a single assist-organization card.
  *
  * @param array<string,mixed> $org Normalized org row.
- * @param int                $position      1-based rank position in rendered list.
- * @param int                $results_total Total rendered results count across the page.
- * @return string HTML output.
+ * @param int                 $position      1-based rank position in rendered list.
+ * @param int                 $results_total Total rendered results count across the page.
+ * @return string             HTML output.
  */
 function ws_render_directory_card( array $org, int $position = 0, int $results_total = 0 ) {
 

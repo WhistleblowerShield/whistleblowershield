@@ -104,7 +104,7 @@ function ws_render_interpretation_metabox( $post ) {
     // statute_id/common_law_id
     //                    — read by acf/load_value in acf-jx-interpretations.php
     //                      to pre-select ws_jx_interp_statute_id or
-    //                      ws_jx_interp_common_law_id.
+    //                      ws_jx_interp_comlaw_id.
     // tax_input[...][]   — WordPress core pre-assigns the ws_jurisdiction taxonomy
     //                      term on the new post screen without any ACF hook.
     //                      Uses the statute's own jurisdiction term so state-level
@@ -113,7 +113,7 @@ function ws_render_interpretation_metabox( $post ) {
 
     $parent_terms = get_the_terms( $post->ID, WS_JURISDICTION_TAXONOMY );
     $parent_term  = ( $parent_terms && ! is_wp_error( $parent_terms ) ) ? $parent_terms[0] : null;
-    $parent_param = $is_statute ? 'statute_id' : 'common_law_id';
+    $parent_param = $is_statute ? 'statute_id' : 'comlaw_id';
     $add_url = admin_url( 'post-new.php?post_type=jx-interpretation&' . $parent_param . '=' . $post->ID );
     if ( $parent_term ) {
         $add_url .= '&tax_input[' . WS_JURISDICTION_TAXONOMY . '][]=' . $parent_term->term_id;
@@ -133,10 +133,10 @@ function ws_render_interpretation_metabox( $post ) {
         $interp_ids = array_filter( array_map( 'intval', (array) get_post_meta( $post->ID, 'ws_jx_statute_interp_ids', true ) ) );
     } else {
         // Common-law links can be stored from either side:
-        // - ws_jx_comlaw_interpretation_ids on jx-common-law
-        // - ws_jx_interp_common_law_id on jx-interpretation
+        // - ws_jx_comlaw_interp_ids on jx-common-law
+        // - ws_jx_interp_commlaw_id on jx-interpretation
         // Use the union so the metabox remains accurate even if one side lags.
-        $from_comlaw = array_filter( array_map( 'intval', (array) get_post_meta( $post->ID, 'ws_jx_comlaw_interpretation_ids', true ) ) );
+        $from_comlaw = array_filter( array_map( 'intval', (array) get_post_meta( $post->ID, 'ws_jx_comlaw_interp_ids', true ) ) );
         $from_interp = get_posts( [
             'post_type'      => 'jx-interpretation',
             'post_status'    => 'any',
@@ -144,7 +144,7 @@ function ws_render_interpretation_metabox( $post ) {
             'fields'         => 'ids',
             'no_found_rows'  => true,
             'meta_query'     => [ [
-                'key'     => 'ws_jx_interp_common_law_id',
+                'key'     => 'ws_jx_interp_comlaw_id',
                 'value'   => $post->ID,
                 'compare' => '=',
                 'type'    => 'NUMERIC',
@@ -166,19 +166,6 @@ function ws_render_interpretation_metabox( $post ) {
 
     // ── Render ────────────────────────────────────────────────────────────
     ?>
-    <style>
-        #ws_interpretations .ws-interp-table { width:100%; border-collapse:collapse; margin-bottom:12px; }
-        #ws_interpretations .ws-interp-table th,
-        #ws_interpretations .ws-interp-table td { padding:6px 10px; border-bottom:1px solid #e0e0e0; text-align:left; font-size:13px; }
-        #ws_interpretations .ws-interp-table th { background:#f6f7f7; font-weight:600; color:#1d2327; }
-        #ws_interpretations .ws-interp-table .ws-favorable-yes { color:#1a7a1a; font-weight:600; }
-        #ws_interpretations .ws-interp-table .ws-favorable-no  { color:#a00; }
-        #ws_interpretations .ws-interp-empty { color:#666; font-style:italic; margin-bottom:12px; }
-        #ws_interpretations .ws-interp-actions { display:flex; align-items:center; gap:10px; }
-        #ws_interpretations .ws-interp-add-btn { text-decoration:none; }
-        #ws_interpretations .ws-interp-add-btn[disabled] { opacity:.5; pointer-events:none; cursor:not-allowed; }
-    </style>
-
     <?php if ( empty( $interpretations ) ) : ?>
         <p class="ws-interp-empty">No court interpretation records linked to this record yet.</p>
     <?php else : ?>
@@ -198,7 +185,7 @@ function ws_render_interpretation_metabox( $post ) {
                     // Direct meta reads — admin metabox display only; query layer is for front-end shortcode rendering.
                     $court_key   = get_post_meta( $interp_id, 'ws_jx_interp_court', true );
                     $year        = get_post_meta( $interp_id, 'ws_jx_interp_year', true );
-                    $favorable   = get_post_meta( $interp_id, 'ws_jx_interp_favorable', true );
+                    $favorable   = get_post_meta( $interp_id, 'ws_jx_interp_is_favorable', true );
                     if ( $court_key === 'other' ) {
                         $court_label = esc_html( get_post_meta( $interp_id, 'ws_jx_interp_court_name', true ) ?: 'Other' );
                     } else {

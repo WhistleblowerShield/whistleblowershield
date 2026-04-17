@@ -8,13 +8,64 @@
  * @since   1.0.0
  */
 
-    .ws-acf-open-url-btn {
-        margin-left: 8px;
-        vertical-align: middle;
-    }
-    
-    .ws-acf-open-url-btn.is-disabled {
-        pointer-events: none;
-        opacity: .55;
-        cursor: default;
-    }
+.ws-acf-open-url-btn {
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.ws-acf-open-url-btn.is-disabled {
+    pointer-events: none;
+    opacity: .55;
+    cursor: default;
+}
+
+.ws-interp-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+}
+
+.ws-interp-table th,
+.ws-interp-table td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: left;
+    font-size: 13px;
+}
+
+.ws-interp-table th {
+    background: #f6f7f7;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.ws-interp-table .ws-favorable-yes {
+    color: #1a7a1a;
+    font-weight: 600;
+}
+
+.ws-interp-table .ws-favorable-no {
+    color: #a00;
+}
+
+.ws-interp-empty {
+    color: #666;
+    font-style: italic;
+    margin-bottom: 12px;
+}
+
+.ws-interp-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ws-interp-add-btn {
+    text-decoration: none;
+}
+
+.ws-interp-add-btn[disabled] {
+    opacity: .5;
+    pointer-events: none;
+    cursor: not-allowed;
+}

@@ -293,7 +293,7 @@ function ws_render_interp_column( $column, $post_id ) {
         $year = get_post_meta( $post_id, 'ws_jx_interp_year', true );
         echo $year ? esc_html( $year ) : '<span style="color:#999;">—</span>';
     } elseif ( $column === 'ws_favorable' ) {
-        $favorable = get_post_meta( $post_id, 'ws_jx_interp_favorable', true );
+        $favorable = get_post_meta( $post_id, 'ws_jx_interp_is_favorable', true );
         if ( $favorable === '' ) {
             echo '<span style="color:#999;">—</span>';
         } elseif ( $favorable ) {

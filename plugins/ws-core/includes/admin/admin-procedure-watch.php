@@ -107,11 +107,11 @@ function ws_procedure_check_parent_links( $post_id ) {
 
     $statute_ids_raw = get_post_meta( $post_id, 'ws_ag_procedure_statute_ids', true );
     $statute_ids     = is_array( $statute_ids_raw ) ? array_map( 'intval', array_filter( $statute_ids_raw ) ) : [];
-    $common_law_ids_raw = get_post_meta( $post_id, 'ws_ag_procedure_common_law_ids', true );
-    $common_law_ids     = is_array( $common_law_ids_raw ) ? array_map( 'intval', array_filter( $common_law_ids_raw ) ) : [];
+    $comlaw_ids_raw = get_post_meta( $post_id, 'ws_ag_procedure_comlaw_ids', true );
+    $comlaw_ids     = is_array( $comlaw_ids_raw ) ? array_map( 'intval', array_filter( $comlaw_ids_raw ) ) : [];
 
     // No linked authorities — clear all flags and return clean.
-    if ( empty( $statute_ids ) && empty( $common_law_ids ) ) {
+    if ( empty( $statute_ids ) && empty( $comlaw_ids ) ) {
         delete_post_meta( $post_id, 'ws_ag_procedure_parent_flagged' );
         delete_post_meta( $post_id, 'ws_ag_procedure_parent_flag_detail' );
         delete_post_meta( $post_id, 'ws_ag_procedure_parent_broad_scope' );
@@ -169,26 +169,26 @@ function ws_procedure_check_parent_links( $post_id ) {
         }
     }
 
-    foreach ( $common_law_ids as $common_law_id ) {
+    foreach ( $comlaw_ids as $comlaw_id ) {
 
-        if ( ! $common_law_id ) continue;
+        if ( ! $comlaw_id ) continue;
 
-        $common_law_disc_types = wp_get_object_terms( $common_law_id, 'ws_disclosure_type', [ 'fields' => 'ids' ] );
+        $comlaw_disc_types = wp_get_object_terms( $comlaw_id, 'ws_disclosure_type', [ 'fields' => 'ids' ] );
 
-        if ( is_wp_error( $common_law_disc_types ) || empty( $common_law_disc_types ) ) {
+        if ( is_wp_error( $comlaw_disc_types ) || empty( $comlaw_disc_types ) ) {
             continue; // Skip: linked record has no disclosure types — data incomplete on linked-record side.
         }
 
         if ( ! empty( $proc_disc_types ) ) {
             $intersection = array_intersect(
                 array_map( 'intval', $proc_disc_types ),
-                array_map( 'intval', $common_law_disc_types )
+                array_map( 'intval', $comlaw_disc_types )
             );
             if ( empty( $intersection ) ) {
                 $mismatches[] = [
                     'parent_type'  => 'common_law',
-                    'parent_id'    => $common_law_id,
-                    'parent_title' => get_the_title( $common_law_id ),
+                    'parent_id'    => $comlaw_id,
+                    'parent_title' => get_the_title( $comlaw_id ),
                     'reason'       => 'disclosure_type_mismatch',
                 ];
             }

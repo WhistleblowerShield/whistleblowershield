@@ -53,7 +53,8 @@ function ws_register_cpt_jx_citation() {
         'publicly_queryable'  => false,
         'exclude_from_search' => true,
         'has_archive'         => false,
-
+        'query_var'           => true,
+        
         // ── Editor ────────────────────────────────────────────────────────
         // Title used as the citation display label in the admin list.
         // No post editor — all content managed via ACF fields.

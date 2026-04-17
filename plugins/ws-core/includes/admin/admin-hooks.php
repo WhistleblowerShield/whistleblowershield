@@ -1515,15 +1515,15 @@ function ws_rebuild_jx_statute_interp_index( $statute_id ) {
 /**
  * Rebuilds ws_jx_comlaw_citation_ids on a jx-common-law post.
  *
- * Queries all jx-citation records whose ws_jx_citation_common_law_ids field
+ * Queries all jx-citation records whose ws_jx_citation_comlaw_ids field
  * references $common_law_id (plain integer or serialized array) and writes
  * the resulting ID array to the common-law post's meta.
  *
  * @param int $common_law_id  Post ID of the jx-common-law doctrine to rebuild.
  */
-function ws_rebuild_jx_comlaw_citation_index( $common_law_id ) {
-    $common_law_id = (int) $common_law_id;
-    if ( ! $common_law_id || get_post_type( $common_law_id ) !== 'jx-common-law' ) {
+function ws_rebuild_jx_comlaw_citation_index( $comlaw_id ) {
+    $comlaw_id = (int) $comlaw_id;
+    if ( ! $comlaw_id || get_post_type( $comlaw_id ) !== 'jx-common-law' ) {
         return;
     }
 
@@ -1535,13 +1535,13 @@ function ws_rebuild_jx_comlaw_citation_index( $common_law_id ) {
         'meta_query'     => [
             'relation' => 'OR',
             [
-                'key'     => 'ws_jx_citation_common_law_ids',
+                'key'     => 'ws_jx_citation_comlaw_ids',
                 'value'   => $common_law_id,
                 'compare' => '=',
                 'type'    => 'NUMERIC',
             ],
             [
-                'key'     => 'ws_jx_citation_common_law_ids',
+                'key'     => 'ws_jx_citation_comlaw_ids',
                 'value'   => serialize( $common_law_id ),
                 'compare' => 'LIKE',
             ],
@@ -1554,14 +1554,14 @@ function ws_rebuild_jx_comlaw_citation_index( $common_law_id ) {
 /**
  * Rebuilds ws_jx_comlaw_interp_ids on a jx-common-law post.
  *
- * Queries all jx-interpretation records whose ws_jx_interp_common_law_id
+ * Queries all jx-interpretation records whose ws_jx_interp_comlaw_id
  * equals $common_law_id and writes the resulting ID array to the doctrine's meta.
  *
  * @param int $common_law_id  Post ID of the jx-common-law doctrine to rebuild.
  */
-function ws_rebuild_jx_comlaw_interp_index( $common_law_id ) {
-    $common_law_id = (int) $common_law_id;
-    if ( ! $common_law_id || get_post_type( $common_law_id ) !== 'jx-common-law' ) {
+function ws_rebuild_jx_comlaw_interp_index( $comlaw_id ) {
+    $comlaw_id = (int) $comlaw_id;
+    if ( ! $comlaw_id || get_post_type( $comlaw_id ) !== 'jx-common-law' ) {
         return;
     }
 
@@ -1572,15 +1572,15 @@ function ws_rebuild_jx_comlaw_interp_index( $common_law_id ) {
         'fields'         => 'ids',
         'meta_query'     => [
             [
-                'key'     => 'ws_jx_interp_common_law_id',
-                'value'   => $common_law_id,
+                'key'     => 'ws_jx_interp_comlaw_id',
+                'value'   => $comlaw_id,
                 'compare' => '=',
                 'type'    => 'NUMERIC',
             ],
         ],
     ] );
 
-    update_post_meta( $common_law_id, 'ws_jx_comlaw_interp_ids', array_map( 'intval', (array) $ids ) );
+    update_post_meta( $comlaw_id, 'ws_jx_comlaw_interp_ids', array_map( 'intval', (array) $ids ) );
 }
 
 
@@ -1655,7 +1655,7 @@ add_action( 'acf/save_post', function( $post_id ) {
     $statute_ids = is_array( $raw_statute ) ? array_map( 'intval', $raw_statute ) : ( $raw_statute ? [ (int) $raw_statute ] : [] );
     ws_citation_statute_save_stash( $post_id, $statute_ids );
 
-    $raw_comlaw = get_post_meta( $post_id, 'ws_jx_citation_common_law_ids', true );
+    $raw_comlaw = get_post_meta( $post_id, 'ws_jx_citation_comlaw_ids', true );
     $comlaw_ids = is_array( $raw_comlaw ) ? array_map( 'intval', $raw_comlaw ) : ( $raw_comlaw ? [ (int) $raw_comlaw ] : [] );
     ws_citation_comlaw_save_stash( $post_id, $comlaw_ids );
 }, 5 );
@@ -1670,7 +1670,7 @@ add_action( 'acf/save_post', function( $post_id ) {
         ws_rebuild_jx_statute_citation_index( $sid );
     }
 
-    $raw_new_comlaw = get_post_meta( $post_id, 'ws_jx_citation_common_law_ids', true );
+    $raw_new_comlaw = get_post_meta( $post_id, 'ws_jx_citation_comlaw_ids', true );
     $new_comlaw_ids = is_array( $raw_new_comlaw ) ? array_map( 'intval', $raw_new_comlaw ) : ( $raw_new_comlaw ? [ (int) $raw_new_comlaw ] : [] );
     $all_comlaw_ids = array_unique( array_merge( ws_citation_comlaw_save_stash( $post_id ), $new_comlaw_ids ) );
     foreach ( array_filter( $all_comlaw_ids ) as $cid ) {
@@ -1685,7 +1685,7 @@ add_action( 'acf/save_post', function( $post_id ) {
 add_action( 'acf/save_post', function( $post_id ) {
     if ( get_post_type( $post_id ) !== 'jx-interpretation' ) { return; }
     ws_interp_statute_save_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_interp_statute_id', true ) );
-    ws_interp_comlaw_save_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_interp_common_law_id', true ) );
+    ws_interp_comlaw_save_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_interp_comlaw_id', true ) );
 }, 5 );
 
 // Priority 25: union old + new statute/common-law parent IDs; rebuild each.
@@ -1697,7 +1697,7 @@ add_action( 'acf/save_post', function( $post_id ) {
         ws_rebuild_jx_statute_interp_index( $sid );
     }
 
-    $new_comlaw_id  = (int) get_post_meta( $post_id, 'ws_jx_interp_common_law_id', true );
+    $new_comlaw_id  = (int) get_post_meta( $post_id, 'ws_jx_interp_comlaw_id', true );
     $all_comlaw_ids = array_unique( array_filter( [ ws_interp_comlaw_save_stash( $post_id ), $new_comlaw_id ] ) );
     foreach ( $all_comlaw_ids as $cid ) {
         ws_rebuild_jx_comlaw_interp_index( $cid );
@@ -1715,12 +1715,12 @@ add_action( 'before_delete_post', function( $post_id ) {
         $statute_ids = is_array( $raw_statute ) ? array_map( 'intval', $raw_statute ) : ( $raw_statute ? [ (int) $raw_statute ] : [] );
         ws_citation_statute_delete_stash( $post_id, $statute_ids );
 
-        $raw_comlaw = get_post_meta( $post_id, 'ws_jx_citation_common_law_ids', true );
+        $raw_comlaw = get_post_meta( $post_id, 'ws_jx_citation_comlaw_ids', true );
         $comlaw_ids = is_array( $raw_comlaw ) ? array_map( 'intval', $raw_comlaw ) : ( $raw_comlaw ? [ (int) $raw_comlaw ] : [] );
         ws_citation_comlaw_delete_stash( $post_id, $comlaw_ids );
     } elseif ( $type === 'jx-interpretation' ) {
         ws_interp_statute_delete_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_interp_statute_id', true ) );
-        ws_interp_comlaw_delete_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_interp_common_law_id', true ) );
+        ws_interp_comlaw_delete_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_interp_comlaw_id', true ) );
     }
 } );
 

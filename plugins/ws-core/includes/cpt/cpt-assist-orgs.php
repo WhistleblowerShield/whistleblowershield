@@ -54,11 +54,11 @@ function ws_register_cpt_assist_org() {
         // Public directory — each organization has its own findable page
         // and the archive serves as the full directory listing.
 
-        'public'              => true,
+        'public'              => false,
         'show_ui'             => true,
         'show_in_menu'        => true,
-        'publicly_queryable'  => true,
-        'exclude_from_search' => false,
+        'publicly_queryable'  => false,
+        'exclude_from_search' => true,
         'has_archive'         => 'assistance-organizations',
         'query_var'           => true,
 

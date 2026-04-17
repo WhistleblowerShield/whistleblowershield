@@ -34,11 +34,11 @@ function ws_register_cpt_ag_procedures() {
 
         // -- Visibility ----------------------------------------------------
 
-        'public'              => true,
+        'public'              => false,
         'show_ui'             => true,
         'show_in_menu'        => true,
-        'publicly_queryable'  => true,
-        'exclude_from_search' => false, // Phase 2: individual procedure posts are publicly accessible.
+        'publicly_queryable'  => false,
+        'exclude_from_search' => true,
         'has_archive'         => false,
         'query_var'           => true,
 
@@ -46,7 +46,7 @@ function ws_register_cpt_ag_procedures() {
         // No editor — all content is stored in ACF fields.
 
         'supports'            => [ 'title', 'revisions' ],
-        'rewrite'             => [ 'slug' => 'procedure', 'with_front' => false ],
+        'rewrite'             => [ 'slug' => 'ws-ag-procedure', 'with_front' => false ],
         'capability_type'     => 'post',
 
         // -- REST ----------------------------------------------------------

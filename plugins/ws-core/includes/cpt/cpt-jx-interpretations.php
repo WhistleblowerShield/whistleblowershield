@@ -56,6 +56,7 @@ function ws_register_cpt_jx_interpretation() {
         'publicly_queryable'  => false,
         'exclude_from_search' => true,
         'has_archive'         => false,
+        'query_var'           => true,
 
         // ── Editor ────────────────────────────────────────────────────────
         // Title used as the case name in the admin list.

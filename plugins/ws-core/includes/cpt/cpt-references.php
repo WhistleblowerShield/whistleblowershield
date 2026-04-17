@@ -68,13 +68,14 @@ function ws_register_cpt_ws_reference() {
         // Public with permalink so the reference page is reachable via URL.
         // No archive — records are accessed only via the parent post relationship.
 
-        'public'              => true,
+        'public'              => false,
         'show_ui'             => true,
         'show_in_menu'        => true,
-        'publicly_queryable'  => true,
+        'publicly_queryable'  => false,
         'exclude_from_search' => true,
         'has_archive'         => false,
-        'rewrite'             => [ 'slug' => 'ws-reference' ],
+        'query_var'           => true,
+        'rewrite'             => false,
 
         // ── Editor ────────────────────────────────────────────────────────
 
