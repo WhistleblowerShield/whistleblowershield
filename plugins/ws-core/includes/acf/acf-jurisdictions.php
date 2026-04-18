@@ -38,7 +38,7 @@
  * Record Management tab:
  *   _ws_auto_last_edited_gmt      Date Last Edited (GMT) (text, auto)
  *   ws_auto_last_edited_author    Last Editor (user, auto)
- *   ws_auto_last_edited           Date Last Edited (text, auto)
+ *   ws_auto_last_edited_date      Date Last Edited (text, auto)
  *
  * AUTO-SELECTION NOTES
  * --------------------
@@ -343,9 +343,9 @@ function ws_register_acf_jurisdiction_fields() {
             ],
 			
             [
-                'key'          => 'field_auto_last_edited',
+                'key'          => 'field_auto_last_edited_date',
                 'label'        => 'Date Last Edited',
-                'name'         => 'ws_auto_last_edited',
+                'name'         => 'ws_auto_last_edited_date',
                 'type'         => 'text',
                 'readonly'     => 1,
                 'disabled'     => 1,

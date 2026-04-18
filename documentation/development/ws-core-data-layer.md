@@ -46,8 +46,8 @@ change them.
 | Meta Key | Type | Written By | Notes |
 |---|---|---|---|
 | `ws_auto_last_edited_author` | user | Every save | The user who last saved — admin-overridable for attribution |
-| `ws_auto_date_created` | text | First save only | Local site date `Y-m-d`; never overwritten |
-| `ws_auto_last_edited` | text | Every save | Local site date `Y-m-d` |
+| `ws_auto_created_date` | text | First save only | Local site date `Y-m-d`; never overwritten |
+| `ws_auto_last_edited_date` | text | Every save | Local site date `Y-m-d` |
 | `ws_auto_create_author` | user | First save only | The user who created the record |
 
 Hidden audit keys (no ACF field, never shown in UI):
@@ -71,8 +71,8 @@ IS the plain language content. Neither carries this overlay.
 | `ws_has_plain_english` | true_false | Toggle — enables the plain language content field |
 | `ws_plain_english_wysiwyg` | wysiwyg | The plain language content (conditional on toggle) |
 | `ws_plain_english_reviewed` | true_false | Marks the plain language version as reviewed |
-| `ws_auto_plain_english_reviewed_by` | user | Auto-stamped once when review toggled on |
-| `ws_auto_plain_english_reviewed_date` | text | Auto-stamped once when review toggled on |
+| `ws_plain_english_reviewed_by` | user | Auto-stamped once when review toggled on |
+| `ws_plain_english_reviewed_date` | text | Auto-stamped once when review toggled on |
 | `ws_auto_plain_english_by` | user | Auto-stamped once on first plain language save |
 | `ws_auto_plain_english_date` | text | Auto-stamped once on first plain language save |
 
@@ -150,7 +150,7 @@ The toggle resets after the legal update is created.
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_jx_flag` | image | Flag image (WordPress media library) |
+| `ws_jx_flag_image` | image | Flag image (WordPress media library) |
 | `ws_jx_flag_attribution` | text | Wikimedia Commons attribution string |
 | `ws_jx_flag_source_url` | url | Canonical Wikimedia Commons SVG URL |
 | `ws_jx_flag_license` | text | License identifier (e.g. `Public Domain`) |
@@ -161,7 +161,7 @@ The toggle resets after the legal update is created.
 |---|---|---|
 | `_ws_auto_last_edited_gmt` | text | Hidden GMT audit timestamp |
 | `ws_auto_last_edited_author` | user | Last editor (jurisdiction uses its own field key) |
-| `ws_auto_last_edited` | text | Local date of last edit |
+| `ws_auto_last_edited_date` | text | Local date of last edit |
 
 ---
 

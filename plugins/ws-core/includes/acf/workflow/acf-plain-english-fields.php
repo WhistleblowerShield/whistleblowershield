@@ -22,8 +22,8 @@
  * ws_has_plain_english              Toggle — enables plain language content field.
  * ws_plain_english_wysiwyg          The plain language content (conditional on toggle).
  * ws_plain_english_reviewed         Toggle — marks content as human-reviewed.
- * ws_auto_plain_english_reviewed_by User ID of reviewer. Stamped once on toggle-on; cleared on toggle-off.
- * ws_auto_plain_english_reviewed_date  Local Y-m-d of first review. Same lifecycle.
+ * ws_plain_english_reviewed_by User ID of reviewer. Stamped once on toggle-on; cleared on toggle-off.
+ * ws_plain_english_reviewed_date  Local Y-m-d of first review. Same lifecycle.
  * ws_auto_plain_english_by          User ID of summarizer. Stamped once on first plain language save.
  * ws_auto_plain_english_date        Local Y-m-d of first plain language save.
  *
@@ -174,7 +174,7 @@ function ws_register_acf_plain_english_fields() {
             [
                 'key'           => 'field_plain_english_reviewed_by',
                 'label'         => 'Summary Reviewed By',
-                'name'          => 'ws_auto_plain_english_reviewed_by',
+                'name'          => 'ws_plain_english_reviewed_by',
                 'type'          => 'user',
                 'instructions'  => 'Auto-toggled when Plain-English-Reviewed is manually enabled or disabled. Read only.',
                 'role'          => [ 'author', 'editor', 'administrator' ],
@@ -192,7 +192,7 @@ function ws_register_acf_plain_english_fields() {
             [
                 'key'          => 'field_plain_english_reviewed_date',
                 'label'        => 'Summary Reviewed Date',
-                'name'         => 'ws_auto_plain_english_reviewed_date',
+                'name'         => 'ws_plain_english_reviewed_date',
                 'type'         => 'text',
                 'instructions' => 'Auto-toggled when Plain-English-Reviewed is manually enabled or disabled. Read only.',
                 'readonly'     => 1,
@@ -243,6 +243,6 @@ function ws_register_acf_plain_english_fields() {
 // fields are handled centrally in admin-hooks.php:
 //   - ws_acf_plain_english_guards()       — acf/save_post priority 5
 //   - ws_acf_stamp_plain_reviewed_by()    — acf/save_post priority 25
-//       writes: ws_auto_plain_english_reviewed_by, ws_auto_plain_english_reviewed_date
+//       writes: ws_plain_english_reviewed_by, ws_plain_english_reviewed_date
 //   - ws_acf_stamp_summarized_fields()    — acf/save_post priority 25
 //   - ws_acf_lock_for_non_editors()       — acf/load_field by field name

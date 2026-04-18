@@ -75,7 +75,7 @@ Returns the `record` sub-array:
     'created_date'    => string, // Y-m-d local (ws_auto_date_created)
     'edited_by'       => int,    // ws_auto_last_edited_author
     'edited_by_name'  => string, // display name resolved from edited_by
-    'edited_date'     => string, // Y-m-d local (ws_auto_last_edited)
+    'edited_date'     => string, // Y-m-d local (ws_auto_last_edited_date)
 ]
 ```
 

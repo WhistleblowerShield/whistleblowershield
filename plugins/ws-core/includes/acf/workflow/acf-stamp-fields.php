@@ -126,9 +126,9 @@ function ws_register_acf_stamp_fields() {
             // Readonly and disabled for all users — never submitted via UI.
 
             [
-                'key'          => 'field_date_created',
+                'key'          => 'field_created_date',
                 'label'        => 'Date Created',
-                'name'         => 'ws_auto_date_created',
+                'name'         => 'ws_auto_created_date',
                 'type'         => 'text',
                 'instructions' => 'Set automatically on first save. Read only.',
                 'readonly'     => 1,

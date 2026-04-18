@@ -182,8 +182,13 @@ or any other property.
 4. Content ACF meta names carry a CPT infix:
    `ws_jx_statute*`, `ws_jx_comlaw*` (common-law), `ws_agency_*`, `ws_aorg_*` (assist-org),
    `ws_legal_update_*`, `ws_jx_interp_*` (interpretation), `ws_jx_citation_*`, `ws_ag_proccedure_*`.
-5. Meta key infixes and CPT slugs are always singular unless they store arrays.
-   When in doubt, use singular.
+5. Meta name infixes and CPT slugs are always singular unless they store
+   mutliple values or arrays. When in doubt, use singular.
+6. Meta names that hold dates should end with `_date` or `_gmt` as appropriate.
+   Never end a meta name with `_date` if it stores any other value.
+7. Meta names that hold URLs should end with `_url` and have a companion
+   value: `_url_is_pdf` where appropriate. Never end a meta name with `_url`
+   if it stores any other value.
 
 ### Render Function Names
 
@@ -216,7 +221,7 @@ GMT audit timestamps use `gmdate( 'Y-m-d' )`.
 
 The query layer strips all `ws_` and `ws_auto_` prefixes from return keys.
 By Convention:
-created_by      — holds a user record
+created_by      — holds a user WP id
 created_by_name — is the user display name
 Applies to all meta that holds user values.
 

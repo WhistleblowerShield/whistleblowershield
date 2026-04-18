@@ -40,7 +40,7 @@
  *   ws_ag_procedure_last_reviewed            Last Verified Date (date_picker, optional)
  *
  * Admin Review tab:
- *   ws_ag_procedure_statute_override         Statute Link Override (true_false, optional)
+ *   ws_ag_procedure_parent_override         Statute Link Override (true_false, optional)
  *
   * SHARED WORKFLOW GROUPS
  * ----------------------

@@ -44,7 +44,7 @@ query layer):
 - `ws_get_edit_history( $post_id )` — returns full history array or `[]`
 
 The audit trail is intentionally separate from the stamp fields
-(`ws_auto_last_edited`, `ws_auto_create_author`) in the shared ACF
+(`ws_auto_last_edited_date`, `ws_auto_create_author`) in the shared ACF
 group. Stamp fields are visible to editors and are the editorial record.
 The audit trail is private and is the tamper-resistant record.
 
@@ -60,7 +60,7 @@ a `ws-legal-update` post is automatically created and published. This
 maintains the platform's changelog without requiring editors to manually
 create legal update entries.
 
-**Supported CPTs:** `jx-summary`, `jx-statute`, `jx-citation`,
+**Supported CPTs:** `jx-summary`, `jx-statute`,`jx-common-law`, `jx-citation`,
 `jx-interpretation`, `ws-ag-procedure`
 
 **Behavior on save:**

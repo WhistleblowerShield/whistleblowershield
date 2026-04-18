@@ -79,7 +79,7 @@ function ws_register_source_verify_field_group() {
             // ── Tab ───────────────────────────────────────────────────────
 
             [
-                'key'   => 'field_sv_tab',
+                'key'   => 'field_source_verify_tab',
                 'label' => 'Source & Verification',
                 'name'  => '',
                 'type'  => 'tab',

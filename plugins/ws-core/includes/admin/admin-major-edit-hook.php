@@ -136,10 +136,10 @@ function ws_acf_log_major_edit( $post_id ) {
 
 	// ── Stamp fields (written manually — wp_insert_post bypasses acf/save_post) ──
 
-	update_post_meta( $update_id, 'ws_auto_date_created',       $now_local );
+	update_post_meta( $update_id, 'ws_auto_created_date',       $now_local );
 	update_post_meta( $update_id, '_ws_auto_date_created_gmt',  $now_gmt   );
 	update_post_meta( $update_id, 'ws_auto_create_author',      $user_id   );
-	update_post_meta( $update_id, 'ws_auto_last_edited',        $now_local );
+	update_post_meta( $update_id, 'ws_auto_last_edited_date',   $now_local );
 	update_post_meta( $update_id, '_ws_auto_last_edited_gmt',   $now_gmt   );
 	update_post_meta( $update_id, 'ws_auto_last_edited_author', $user_id   );
 

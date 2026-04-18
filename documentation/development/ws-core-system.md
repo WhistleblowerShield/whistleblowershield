@@ -177,12 +177,12 @@ All plugin functions carry the `ws_` prefix. No exceptions.
 1. All custom meta keys carry the `ws_` prefix. No bare unprefixed keys.
 2. Auto-stamp keys — values written exclusively by hook logic, never
    by human input — carry the `ws_auto_` prefix:
-   `ws_auto_date_created`, `ws_auto_last_edited`,
+   `ws_auto_created_date`, `ws_auto_last_edited_date`,
    `ws_auto_create_author`, `ws_auto_last_edited_author`,
    `ws_auto_source_method`, `ws_auto_source_name`,
    `ws_auto_verified_by`, `ws_auto_verified_date`,
    `ws_auto_plain_english_by`, `ws_auto_plain_english_date`,
-   `ws_auto_plain_english_reviewed_by`.
+   `ws_plain_english_reviewed_by`.
 3. Private audit-only keys additionally carry a leading underscore per
    the WordPress hidden-meta convention:
    `_ws_auto_date_created_gmt`, `_ws_auto_last_edited_gmt`.

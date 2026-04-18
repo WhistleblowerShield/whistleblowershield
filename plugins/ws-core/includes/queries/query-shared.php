@@ -71,7 +71,7 @@ function ws_build_record_array( $post_id ) {
     return [
         'created_by'      => $create_author_id,
         'created_by_name' => ws_resolve_display_name( $create_author_id ),
-        'created_date'    => get_post_meta( $post_id, 'ws_auto_date_created', true ),
+        'created_date'    => get_post_meta( $post_id, 'ws_auto_created_date', true ),
         'edited_date'     => get_post_meta( $post_id, 'ws_auto_last_edited_date',  true ),
         'edited_by'       => $last_edited_author_id,
         'edited_by_name'  => ws_resolve_display_name( $last_edited_author_id ),
@@ -99,7 +99,7 @@ function ws_build_record_array( $post_id ) {
  */
 function ws_build_plain_english_array( $post_id ) {
 
-    $plain_english_reviewed_by_id = (int) get_post_meta( $post_id, 'ws_auto_plain_english_reviewed_by', true );
+    $plain_english_reviewed_by_id = (int) get_post_meta( $post_id, 'ws_plain_english_reviewed_by', true );
     $plain_english_by_id          = (int) get_post_meta( $post_id, 'ws_auto_plain_english_by',          true );
 
     return [
@@ -111,7 +111,7 @@ function ws_build_plain_english_array( $post_id ) {
         'is_reviewed'     => (bool) get_post_meta( $post_id, 'ws_plain_english_reviewed',              true ),
         'reviewed_by'     => $plain_english_reviewed_by_id,
         'reviewed_by_name'=> ws_resolve_display_name( $plain_english_reviewed_by_id ),
-        'reviewed_date'   => get_post_meta( $post_id, 'ws_auto_plain_english_reviewed_date',           true ),
+        'reviewed_date'   => get_post_meta( $post_id, 'ws_plain_english_reviewed_date',           true ),
     ];
 }
 

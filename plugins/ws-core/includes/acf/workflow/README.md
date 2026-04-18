@@ -42,9 +42,9 @@ non-administrators. The hook that writes them is
 
 | Meta Key | Written |
 |---|---|
-| `ws_auto_date_created` | Once on first save |
+| `ws_auto_created_date` | Once on first save |
 | `ws_auto_create_author` | Once on first save |
-| `ws_auto_last_edited` | Every save |
+| `ws_auto_last_edited_date` | Every save |
 | `ws_auto_last_edited_author` | Every save (admin-overridable) |
 
 ---
