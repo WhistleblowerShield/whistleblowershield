@@ -13,7 +13,7 @@
  *   2. Field locking        — makes ws_auto_date_created, ws_auto_last_edited,
  *                             ws_auto_last_edited_author, ws_auto_create_author,
  *                             ws_auto_plain_english_by, ws_auto_plain_english_date,
- *                             and ws_auto__auto_plain_english_reviewed_by readonly + disabled
+ *                             and ws_auto_plain_english_reviewed_by readonly + disabled
  *                             for non-administrators or non-editors.
  *
  *   3. Auto-fill today      — fills last_reviewed with today's date when the
@@ -70,8 +70,8 @@
  *   ws_auto_last_edited_author        — WP user ID, written every save (admin-overridable)
  *   ws_auto_plain_english_by          — WP user ID, written once on first plain English save
  *   ws_auto_plain_english_date        — local date (Y-m-d), written once on first plain English save
- *   ws_auto__auto_plain_english_reviewed_by   — WP user ID, written once when plain_reviewed first enabled
- *   ws_auto__auto_plain_english_reviewed_date — local date (Y-m-d), written once when plain_reviewed first enabled
+ *   ws_auto_plain_english_reviewed_by   — WP user ID, written once when plain_reviewed first enabled
+ *   ws_auto_plain_english_reviewed_date — local date (Y-m-d), written once when plain_reviewed first enabled
  *
  *
  * VERSION
@@ -142,7 +142,7 @@ add_filter( 'default_title', function( $title ) {
 //                        ws_auto_last_edited_author is admin-overridable for
 //                        attribution correction on minor edits.
 //
-//   Editor-only fields — last_reviewed, ws_auto__auto_plain_english_reviewed_by.
+//   Editor-only fields — last_reviewed, ws_auto_plain_english_reviewed_by.
 //                        Locked for any role below editor. plain_reviewed is not
 //                        listed here because it is a checkbox that the toggle-off
 //                        guard clears automatically; the field itself is hidden
@@ -162,7 +162,7 @@ unset( $_ws_f );
 // Legal update visibility control is admin-only.
 add_filter( 'acf/load_field/name=ws_legal_update_hide_public', 'ws_acf_lock_for_non_admins' );
 
-foreach ( [ 'last_reviewed', 'ws_auto__auto_plain_english_reviewed_by', 'ws_auto__auto_plain_english_reviewed_date' ] as $_ws_f ) {
+foreach ( [ 'last_reviewed', 'ws_auto_plain_english_reviewed_by', 'ws_auto_plain_english_reviewed_date' ] as $_ws_f ) {
     add_filter( "acf/load_field/name={$_ws_f}", 'ws_acf_lock_for_non_editors' );
 }
 unset( $_ws_f );
@@ -1516,10 +1516,10 @@ function ws_rebuild_jx_statute_interp_index( $statute_id ) {
  * Rebuilds ws_jx_comlaw_citation_ids on a jx-common-law post.
  *
  * Queries all jx-citation records whose ws_jx_citation_comlaw_ids field
- * references $common_law_id (plain integer or serialized array) and writes
+ * references $comlaw_id (plain integer or serialized array) and writes
  * the resulting ID array to the common-law post's meta.
  *
- * @param int $common_law_id  Post ID of the jx-common-law doctrine to rebuild.
+ * @param int $comlaw_id  Post ID of the jx-common-law doctrine to rebuild.
  */
 function ws_rebuild_jx_comlaw_citation_index( $comlaw_id ) {
     $comlaw_id = (int) $comlaw_id;
@@ -1536,28 +1536,28 @@ function ws_rebuild_jx_comlaw_citation_index( $comlaw_id ) {
             'relation' => 'OR',
             [
                 'key'     => 'ws_jx_citation_comlaw_ids',
-                'value'   => $common_law_id,
+                'value'   => $comlaw_id,
                 'compare' => '=',
                 'type'    => 'NUMERIC',
             ],
             [
                 'key'     => 'ws_jx_citation_comlaw_ids',
-                'value'   => serialize( $common_law_id ),
+                'value'   => serialize( $comlaw_id ),
                 'compare' => 'LIKE',
             ],
         ],
     ] );
 
-    update_post_meta( $common_law_id, 'ws_jx_comlaw_citation_ids', array_map( 'intval', (array) $ids ) );
+    update_post_meta( $comlaw_id, 'ws_jx_comlaw_citation_ids', array_map( 'intval', (array) $ids ) );
 }
 
 /**
  * Rebuilds ws_jx_comlaw_interp_ids on a jx-common-law post.
  *
  * Queries all jx-interpretation records whose ws_jx_interp_comlaw_id
- * equals $common_law_id and writes the resulting ID array to the doctrine's meta.
+ * equals $comlaw_id and writes the resulting ID array to the doctrine's meta.
  *
- * @param int $common_law_id  Post ID of the jx-common-law doctrine to rebuild.
+ * @param int $comlaw_id  Post ID of the jx-common-law doctrine to rebuild.
  */
 function ws_rebuild_jx_comlaw_interp_index( $comlaw_id ) {
     $comlaw_id = (int) $comlaw_id;

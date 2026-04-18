@@ -162,7 +162,7 @@ function ws_shortcode_jx_statutes() {
         foreach ( $statutes as $statute ) {
             $content .= $build_statute_chunk( $statute );
         }
-        return ws_render_section( 'Relevant Statutes', $content, 'ws-section--local' );
+        return ws_render_section( 'Relevant Statutes', $content, 'ws-statutes--local' );
     }
 
     // Two-group render: split local vs federal.
@@ -210,7 +210,7 @@ function ws_shortcode_jx_common_law() {
     if ( empty( $comlaws ) ) return '';
 
     // Check whether any federal records exist.
-    $has_fed = false;
+    //$has_fed = false;
     //foreach ( $comlaws as $s ) {
     //    if ( $s['is_fed'] ) { $has_fed = true; break; }
     //}
@@ -237,34 +237,18 @@ function ws_shortcode_jx_common_law() {
         // Returns '' when none exist — no section rendered for statutes with no procedures.
         $procs = ws_get_procedures_for_record( $comlaw['id'] );
         if ( ! empty( $procs ) ) {
-            $html .= ws_render_record_procedures( $procs, 'comlaw' );
+            $html .= ws_render_record_procedures( $procs, 'common_law' );
         }
 
         return $html;
     };
 
-    if ( ! $has_fed ) {
-        // Single-group render: no federal append.
-        $content = '';
+    $content = '';
     foreach ( $comlaws as $comlaw ) {
             $content .= $build_comlaw_chunk( $comlaw );
         }
-        return ws_render_section( 'Relevant Common Laws', $content, 'ws-section--local' );
-    }
+    return ws_render_section( 'Relevant Common Laws', $content, 'ws-common-laws--local' );
 
-    // Two-group render: split local vs federal.
-    // $local_html = '';
-    // $fed_html   = '';
-    //foreach ( $comlaws as $comlaw ) {
-    //    $chunk = $build_comlaw_chunk( $comlaw );
-    //    //if ( $comlaw['is_fed'] ) {
-    //    //     $fed_html   .= $chunk;
-    //    //} else {
-    //        $local_html .= $chunk;
-    //    //}
-    //}
-
-    //return ws_render_section_two_group( 'Relevant Common Laws', $local_html, 'Federal Statutes', $fed_html );
 }
 
 // ── [ws_jx_citation] ─────────────────────────────────────────────────────────

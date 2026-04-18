@@ -114,7 +114,7 @@ function ws_render_jx_navigation_box($post) {
     // Look up existing addendum posts via taxonomy (replaces get_field on relationship fields).
     $summary_post    = null;
     $statutes_post   = null;
-    $common_law_post = null;
+    $comlaw_post     = null;
 
     if ( $term_id ) {
         $summary_id = ws_find_related_jx_record_id( 'jx-summary', $term_id );
@@ -127,9 +127,9 @@ function ws_render_jx_navigation_box($post) {
             $statutes_post = get_post( $statute_id );
         }
 
-        $common_law_id = ws_find_related_jx_record_id( 'jx-common-law', $term_id );
-        if ( $common_law_id ) {
-            $common_law_post = get_post( $common_law_id );
+        $comlaw_id = ws_find_related_jx_record_id( 'jx-common-law', $term_id );
+        if ( $comlaw_id ) {
+            $comlaw_post = get_post( $comlaw_id );
         }
     }
 
@@ -137,7 +137,7 @@ function ws_render_jx_navigation_box($post) {
 
     ws_render_admin_link('Summary',  $summary_post,  'jx-summary', $post->ID);
     ws_render_admin_link('Statutes', $statutes_post, 'jx-statute', $post->ID);
-    ws_render_admin_link('Common Law', $common_law_post, 'jx-common-law', $post->ID);
+    ws_render_admin_link('Common Law', $comlaw_post, 'jx-common-law', $post->ID);
 
     ws_render_citation_row( $post->ID );
     ws_render_cpt_count_row( $post->ID, $term_slug, 'ws-legal-update', 'Legal Updates' );

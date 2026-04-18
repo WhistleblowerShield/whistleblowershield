@@ -15,7 +15,7 @@ major edit) live in `workflow/` — see `workflow/README.md`.
 | `acf-jurisdictions.php` | `jurisdiction` | `group_jurisdiction_metadata` |
 | `acf-jx-summaries.php` | `jx-summary` | `group_jx_summary_metadata` |
 | `acf-jx-statutes.php` | `jx-statute` | `group_jx_statute_metadata` |
-| `acf-jx-common-law.php` | `jx-common-law` | `group_jx_common_law_metadata` |
+| `acf-jx-common-law.php` | `jx-common-law` | `group_jx_comlaw_metadata` |
 | `acf-jx-citations.php` | `jx-citation` | `group_jx_citation_metadata` |
 | `acf-jx-interpretations.php` | `jx-interpretation` | `group_jx_interpretation_metadata` |
 | `acf-agencies.php` | `ws-agency` | `group_agency_metadata` |
@@ -46,7 +46,7 @@ were updated in the same pass.
 | `*_has_reward` | `*_reward_available` | statute, common-law |
 | `*_url_is_pdf` | `*_is_pdf` | statute only |
 
-New field added: `ws_jx_statute_bop_flag` / `ws_cl_bop_flag` — short
+New field added: `ws_jx_statute_bop_flag` / `ws_comlaw_bop_flag` — short
 signal phrase for non-standard burden shifts (text, 120 char max).
 
 ---
@@ -60,14 +60,14 @@ signal phrase for non-standard burden shifts (text, 120 char max).
 | `ws_jx_statute_official_name` | text | Required |
 | `ws_jx_statute_citation` | text | |
 | `ws_jx_statute_common_name` | text | |
-| `ws_jx_statute_disclosure_type` | taxonomy | `ws_disclosure_type` |
-| `ws_jx_statute_protected_class` | taxonomy | `ws_protected_class` — has-details |
+| `ws_jx_statute_disclosure_types` | taxonomy | `ws_disclosure_type` |
+| `ws_jx_statute_protected_classes` | taxonomy | `ws_protected_class` — has-details |
 | `ws_jx_statute_protected_class_details` | textarea | Conditional on has-details |
-| `ws_jx_statute_disclosure_targets` | taxonomy | `ws_disclosure_targets` — has-details |
-| `ws_jx_statute_disclosure_targets_details` | textarea | Conditional on has-details |
+| `ws_jx_statute_disclosure_targets` | taxonomy | `ws_disclosure_target` — has-details |
+| `ws_jx_statute_disclosure_target_details` | textarea | Conditional on has-details |
 | `ws_jx_statute_adverse_action_scope` | textarea | |
-| `ws_attach_flag` | true_false | Editorial curation flag |
-| `ws_display_order` | number | Conditional on attach_flag |
+| `ws_jx_statute_has_attach_flag` | true_false | Editorial curation flag |
+| `ws_jx_statute_display_order` | number | Conditional on attach_flag |
 
 **Statute of Limitations tab:**
 
@@ -76,23 +76,23 @@ signal phrase for non-standard burden shifts (text, 120 char max).
 | `ws_jx_statute_sol_value` | number | |
 | `ws_jx_statute_sol_unit` | select | days / months / years |
 | `ws_jx_statute_sol_trigger` | select | |
-| `ws_jx_statute_limit_ambiguous` | true_false | SOL derived, not explicit |
+| `ws_jx_statute_has_limit_ambiguous` | true_false | SOL derived, not explicit |
 | `ws_jx_statute_limit_details` | textarea | Conditional on limit_ambiguous |
-| `ws_jx_statute_tolling_has_notes` | true_false | Tolling provisions exist |
+| `ws_jx_statute_has_tolling_notes` | true_false | Tolling provisions exist |
 | `ws_jx_statute_tolling_notes` | textarea | Conditional on tolling_has_notes |
-| `ws_jx_statute_exhaustion_required` | true_false | |
+| `ws_jx_statute_has_exhaustion_required` | true_false | |
 | `ws_jx_statute_exhaustion_details` | textarea | Conditional on exhaustion_required |
 
 **Enforcement tab:**
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_jx_statute_process_type` | taxonomy | `ws_process_type` |
-| `ws_jx_statute_adverse_action` | taxonomy | `ws_adverse_action_types` — has-details |
+| `ws_jx_statute_process_types` | taxonomy | `ws_process_type` |
+| `ws_jx_statute_adverse_actions` | taxonomy | `ws_adverse_action_type` — has-details |
 | `ws_jx_statute_adverse_action_details` | textarea | Conditional on has-details |
-| `ws_jx_statute_fee_shifting` | taxonomy | `ws_fee_shifting` |
-| `ws_jx_statute_remedies` | taxonomy | `ws_remedies` — has-details |
-| `ws_jx_statute_remedies_details` | textarea | Conditional on has-details |
+| `ws_jx_statute_fee_shiftings` | taxonomy | `ws_fee_shifting` |
+| `ws_jx_statute_remedies` | taxonomy | `ws_remedy` — has-details |
+| `ws_jx_statute_remedy_details` | textarea | Conditional on has-details |
 | `ws_jx_statute_local_agencies` | post_object | `ws-agency` (local/regional) |
 | `ws_jx_statute_federal_agencies` | post_object | `ws-agency` (federal) |
 
@@ -100,13 +100,13 @@ signal phrase for non-standard burden shifts (text, 120 char max).
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_jx_statute_employee_standard` | taxonomy | `ws_employee_standard` — has-details |
+| `ws_jx_statute_employee_standards` | taxonomy | `ws_employee_standard` — has-details |
 | `ws_jx_statute_employee_standard_details` | textarea | Conditional on has-details |
-| `ws_jx_statute_employer_defense` | taxonomy | `ws_employer_defense` — has-details |
+| `ws_jx_statute_employer_defenses` | taxonomy | `ws_employer_defense` — has-details |
 | `ws_jx_statute_employer_defense_details` | textarea | Conditional on has-details |
-| `ws_jx_statute_rebuttable_has_presumption` | true_false | |
+| `ws_jx_statute_has_rebuttable_presumption` | true_false | |
 | `ws_jx_statute_rebuttable_presumption` | textarea | Conditional on rebuttable_has_presumption |
-| `ws_jx_statute_bop_has_details` | true_false | Derived at ingest from presence of burden_of_proof_details |
+| `ws_jx_statute_has_bop_details` | true_false | Derived at ingest from presence of burden_of_proof_details |
 | `ws_jx_statute_burden_of_proof_details` | textarea | Conditional on bop_has_details |
 | `ws_jx_statute_bop_flag` | text | Short burden-shift signal phrase, 120 char max |
 
@@ -114,7 +114,7 @@ signal phrase for non-standard burden shifts (text, 120 char max).
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_jx_statute_reward_available` | true_false | |
+| `ws_jx_statute_has_reward_available` | true_false | |
 | `ws_jx_statute_reward_details` | textarea | Conditional on reward_available |
 
 **Links tab:**
@@ -122,59 +122,59 @@ signal phrase for non-standard burden shifts (text, 120 char max).
 | Meta Key | Type | Notes |
 |---|---|---|
 | `ws_jx_statute_url` | url | |
-| `ws_jx_statute_is_pdf` | true_false | |
+| `ws_jx_statute_url_is_pdf` | true_false | |
 | `ws_jx_statute_last_reviewed` | text | Date string |
 
 ---
 
 ## acf-jx-common-law.php — Field Summary
 
-Added v3.13.0. Mirrors `acf-jx-statutes.php` with `ws_cl_` prefix
+Added v3.13.0. Mirrors `acf-jx-statutes.php` with `ws_comlaw_` prefix
 and doctrine-specific adaptations in the Legal Basis tab.
 
 **Legal Basis tab (unique to common-law):**
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_cl_doctrine_id` | text | Required. Format: `[JX]-CL-[SHORT-SLUG]` |
-| `ws_cl_doctrine_name` | text | |
-| `ws_cl_common_name` | text | |
-| `ws_cl_precedent_url` | url | Leading case on approved source |
-| `ws_cl_public_policy_sources` | checkbox | constitution, statute, administrative-rule, case-law, federal-law, other |
-| `ws_cl_other_sources` | text | Conditional on `other` in public_policy_sources |
-| `ws_cl_doctrine_basis` | wysiwyg | Required. Primary explanatory content |
-| `ws_cl_recognition_status` | wysiwyg | Required. Current judicial status |
-| `ws_cl_statutory_preclusion` | true_false | Bars common law claim when statutory remedy exists |
-| `ws_cl_statutory_preclusion_details` | textarea | Conditional on statutory_preclusion |
-| `ws_cl_disclosure_type` | taxonomy | `ws_disclosure_type` |
-| `ws_cl_protected_class` | taxonomy | `ws_protected_class` — has-details |
-| `ws_cl_protected_class_details` | textarea | Conditional on has-details |
-| `ws_cl_disclosure_targets` | taxonomy | `ws_disclosure_targets` — has-details |
-| `ws_cl_disclosure_targets_details` | textarea | Conditional on has-details |
-| `ws_cl_adverse_action_scope` | textarea | |
+| `ws_comlaw_doctrine_id` | text | Required. Format: `[JX]-CL-[SHORT-SLUG]` |
+| `ws_comlaw_doctrine_name` | text | |
+| `ws_comlaw_common_name` | text | |
+| `ws_comlaw_precedent_url` | url | Leading case on approved source |
+| `ws_comlaw_public_policy_sources` | checkbox | constitution, statute, administrative-rule, case-law, federal-law, other |
+| `ws_comlaw_other_sources` | text | Conditional on `other` in public_policy_sources |
+| `ws_comlaw_doctrine_basis` | wysiwyg | Required. Primary explanatory content |
+| `ws_comlaw_recognition_status` | wysiwyg | Required. Current judicial status |
+| `ws_comlaw_statutory_preclusion` | true_false | Bars common law claim when statutory remedy exists |
+| `ws_comlaw_statutory_preclusion_details` | textarea | Conditional on statutory_preclusion |
+| `ws_comlaw_disclosure_type` | taxonomy | `ws_disclosure_type` |
+| `ws_comlaw_protected_class` | taxonomy | `ws_protected_class` — has-details |
+| `ws_comlaw_protected_class_details` | textarea | Conditional on has-details |
+| `ws_comlaw_disclosure_targets` | taxonomy | `ws_disclosure_targets` — has-details |
+| `ws_comlaw_disclosure_targets_details` | textarea | Conditional on has-details |
+| `ws_comlaw_adverse_action_scope` | textarea | |
 | `ws_attach_flag` | true_false | |
 | `ws_display_order` | number | |
 
-**SOL tab:** Same fields as statutes with `ws_cl_` prefix:
-`ws_cl_sol_value`, `ws_cl_sol_unit`, `ws_cl_sol_trigger`,
-`ws_cl_limit_ambiguous`, `ws_cl_limit_details`,
-`ws_cl_tolling_has_notes`, `ws_cl_tolling_notes`,
-`ws_cl_exhaustion_required`, `ws_cl_exhaustion_details`.
+**SOL tab:** Same fields as statutes with `ws_comlaw_` prefix:
+`ws_comlaw_sol_value`, `ws_comlaw_sol_unit`, `ws_comlaw_sol_trigger`,
+`ws_comlaw_limit_ambiguous`, `ws_comlaw_limit_details`,
+`ws_comlaw_tolling_has_notes`, `ws_comlaw_tolling_notes`,
+`ws_comlaw_exhaustion_required`, `ws_comlaw_exhaustion_details`.
 SOL is almost always `limit_ambiguous: true` for common law.
 
-**Enforcement tab:** Same as statutes with `ws_cl_` prefix:
-`ws_cl_process_type`, `ws_cl_adverse_action`, `ws_cl_adverse_action_details`,
-`ws_cl_fee_shifting`, `ws_cl_remedies`, `ws_cl_remedies_details`,
-`ws_cl_related_agencies`.
+**Enforcement tab:** Same as statutes with `ws_comlaw_` prefix:
+`ws_comlaw_process_type`, `ws_comlaw_adverse_action`, `ws_comlaw_adverse_action_details`,
+`ws_comlaw_fee_shifting`, `ws_comlaw_remedies`, `ws_comlaw_remedies_details`,
+`ws_comlaw_related_agencies`.
 
-**Burden of Proof tab:** Same as statutes with `ws_cl_` prefix:
-`ws_cl_employee_standard`, `ws_cl_employee_standard_details`,
-`ws_cl_employer_defense`, `ws_cl_employer_defense_details`,
-`ws_cl_rebuttable_has_presumption`, `ws_cl_rebuttable_presumption`,
-`ws_cl_bop_has_details`, `ws_cl_burden_of_proof_details`,
-`ws_cl_bop_flag`.
+**Burden of Proof tab:** Same as statutes with `ws_comlaw_` prefix:
+`ws_comlaw_employee_standard`, `ws_comlaw_employee_standard_details`,
+`ws_comlaw_employer_defense`, `ws_comlaw_employer_defense_details`,
+`ws_comlaw_rebuttable_has_presumption`, `ws_comlaw_rebuttable_presumption`,
+`ws_comlaw_bop_has_details`, `ws_comlaw_burden_of_proof_details`,
+`ws_comlaw_bop_flag`.
 
-**Reward tab:** `ws_cl_reward_available`, `ws_cl_reward_details`.
+**Reward tab:** `ws_comlaw_reward_available`, `ws_comlaw_reward_details`.
 
 ---
 
@@ -213,7 +213,7 @@ SOL is almost always `limit_ambiguous: true` for common law.
 | `ws_jx_citation_employee_standard` | taxonomy | `ws_employee_standard` — has-details |
 | `ws_jx_citation_employee_standard_details` | textarea | |
 | `ws_jx_citation_statute_ids` | textarea | Pipe-delimited statute IDs this citation supports |
-| `ws_jx_citation_common_law_ids` | relationship | `jx-common-law` linkage |
+| `ws_jx_citation_comlaw_ids` | relationship | `jx-common-law` linkage |
 | `ws_ref_materials` | relationship | `ws-reference` |
 | `ws_jx_citation_last_reviewed` | text | |
 
@@ -233,7 +233,7 @@ SOL is almost always `limit_ambiguous: true` for common law.
 | `ws_jx_interp_summary` | textarea | |
 | `ws_jx_interp_url` | url | |
 | `ws_jx_interp_statute_id` | post_object | Anchor statute (`jx-statute`) |
-| `ws_jx_interp_common_law_id` | post_object | Anchor doctrine (`jx-common-law`) |
+| `ws_jx_interp_comlaw_id` | post_object | Anchor doctrine (`jx-common-law`) |
 | `ws_jx_interp_affected_jx` | taxonomy | `ws_jurisdiction` — `save_terms: 0` |
 | `ws_jx_interp_disclosure_type` | taxonomy | `ws_disclosure_type` |
 | `ws_jx_interp_protected_class` | taxonomy | `ws_protected_class` — has-details |
@@ -270,7 +270,7 @@ Keys follow the pattern `field_` + meta name with `ws_` prefix stripped.
 meta name:  ws_jx_statute_official_name
 field key:  field_jx_statute_official_name
 
-meta name:  ws_cl_doctrine_id
+meta name:  ws_comlaw_doctrine_id
 field key:  field_jx_cl_doctrine_id
 ```
 

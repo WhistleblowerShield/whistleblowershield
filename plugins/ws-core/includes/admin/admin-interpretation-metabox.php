@@ -101,7 +101,7 @@ function ws_render_interpretation_metabox( $post ) {
 
     // ── Build "Add New Interpretation" URL ────────────────────────────────
     //
-    // statute_id/common_law_id
+    // statute_id/comlaw_id
     //                    — read by acf/load_value in acf-jx-interpretations.php
     //                      to pre-select ws_jx_interp_statute_id or
     //                      ws_jx_interp_comlaw_id.
@@ -134,7 +134,7 @@ function ws_render_interpretation_metabox( $post ) {
     } else {
         // Common-law links can be stored from either side:
         // - ws_jx_comlaw_interp_ids on jx-common-law
-        // - ws_jx_interp_commlaw_id on jx-interpretation
+        // - ws_jx_interp_comlaw_id on jx-interpretation
         // Use the union so the metabox remains accurate even if one side lags.
         $from_comlaw = array_filter( array_map( 'intval', (array) get_post_meta( $post->ID, 'ws_jx_comlaw_interp_ids', true ) ) );
         $from_interp = get_posts( [

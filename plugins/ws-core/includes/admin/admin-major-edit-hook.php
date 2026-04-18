@@ -59,7 +59,7 @@ function ws_acf_log_major_edit( $post_id ) {
 	// ── Create the ws-legal-update post ──────────────────────────────────
 
 	$user_id    = get_current_user_id();
-	$now_local  = current_time( 'Y-m-d' );
+	//$now_local  = current_time( 'Y-m-d' );
 	$now_mysql  = current_time( 'mysql' );
 	$now_gmt    = gmdate( 'Y-m-d' );
 
@@ -90,8 +90,8 @@ function ws_acf_log_major_edit( $post_id ) {
 	// ── Write meta on the new update post ────────────────────────────────
 
 	update_post_meta( $update_id, 'ws_legal_update_summary_wysiwyg',  $description  );
-	update_post_meta( $update_id, 'ws_legal_update_source_post_id',   $post_id      );
-	update_post_meta( $update_id, 'ws_legal_update_source_post_type', $post_type    );
+	//update_post_meta( $update_id, 'ws_legal_update_source_post_id',   $post_id      );
+	//update_post_meta( $update_id, 'ws_legal_update_source_post_type', $post_type    );
 
 	// ── Attach jurisdiction from source post ─────────────────────────────────────
 	// Write to taxonomy table (save_terms=1 on the ACF field) so tax_query works.
@@ -101,7 +101,8 @@ function ws_acf_log_major_edit( $post_id ) {
 	}
 
 	// ── Update date and type ──────────────────────────────────────────────────
-	update_post_meta( $update_id, 'ws_legal_update_date', $now_local );
+	//update_post_meta( $update_id, 'ws_legal_update_date', $now_local );
+
 	$default_update_type = ( $post_type === 'ws-ag-procedure' )
 		? 'procedure'
 		: str_replace( 'jx-', '', $post_type );

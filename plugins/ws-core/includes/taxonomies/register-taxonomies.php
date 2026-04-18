@@ -850,6 +850,8 @@ function ws_seed_disclosure_type_taxonomy() {
                 'food-drug-safety'          => 'Food & Drug Safety',
                 'nuclear-energy-safety'     => 'Nuclear & Energy Safety',
                 'transportation-safety'     => 'Transportation & Aviation Safety',
+                'child-abuse-reporting'     =>  'Child Abuse & Exploitation Reporting',
+                'patient-abuse-reporting'   =>  'Patient Abuse & Neglect Reporting',
             ],
         ],
         'privacy-data-integrity' => [

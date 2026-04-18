@@ -556,17 +556,19 @@ if ( is_admin() ) {
 */
 if ( ! is_admin() ) {
 	// ASSEMBLY/RENDER Layer: (Only for Public Display)
-	// render-general.php  — general-page renderers (footer, disclaimer, legal updates, jx index)
-	// render-section.php  — jurisdiction-page section renderers (header, summary, statutes, etc.)
+	// render-general.php      — general-page renderers (footer, disclaimer, legal updates, jx index)
+	// render-section.php      — jurisdiction-page section renderers (header, summary, statutes, etc.)
 	// render-jurisdiction.php — the_content assembler that stitches shortcodes together
-	// render-directory.php — Directory page renderers (card grid, empty state, taxonomy guide stub)
+	// render-directory.php    — Directory page renderers (card grid, empty state, taxonomy guide stub)
+	// render-agency.php       — Agency page renderers (procedures list, header, etc.)
+	// ws-statute-bold.php     — Wraps statute citations in <strong> tags when output to HTML
 	//
 	// NOTE: Missing files in this layer are logged to the error log (see error_log() calls below)
 	// but do NOT trigger admin_notices — this block runs only on ! is_admin(), so admin_notices
 	// would never fire here. Check the server error log if assembly layer output is silently broken.
 	$render_files = [
-		'render-general', 'render-section', 'render-jurisdiction', 'render-directory', 'render-agency',
-		'render-common-law', 'ws-statute-bold',
+		'render-general', 'render-section', 'render-jurisdiction', 'render-directory',
+		'render-agency', 'ws-statute-bold'
 	];
 	foreach ( $render_files as $file ) {
 		$path = WS_CORE_PATH . "includes/render/{$file}.php";

@@ -576,8 +576,8 @@ function ws_render_directory_card( array $org, int $position = 0, int $results_t
         'unclear'         => 'Unclear',
     ];
 
-    $type_name = ( $org['type'] instanceof WP_Term ) ? $org['type']->name : '';
-    $type_slug = ( $org['type'] instanceof WP_Term ) ? $org['type']->slug : '';
+    $type_slug = (string) ( $org['type'] ?? '' );
+    $type_name = (string) ( $org['type_label'] ?? '' );
 
     $cost_slug  = is_array( $org['cost_model'] ) ? ( $org['cost_model'][0] ?? '' ) : '';
     $cost_label = ( $cost_slug === 'unclear' ) ? '' : ( $cost_labels[ $cost_slug ] ?? '' );

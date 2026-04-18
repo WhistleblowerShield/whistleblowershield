@@ -44,7 +44,7 @@
  *
  * Relationships tab:
  *   ws_jx_citation_statute_ids                    Related Statutes (post_object, optional)
- *   ws_jx_citation_common_law_ids                 Related Common Law Doctrines (post_object, optional)
+ *   ws_jx_citation_comlaw_ids                     Related Common Law Doctrines (post_object, optional)
  *
  * Reference Materials tab:
  *   ws_jx_citation_ref_materials                  Reference Materials (relationship, optional)
@@ -443,9 +443,9 @@ function ws_register_acf_jx_citations() {
             ],
 
             [
-                'key'           => 'field_jx_citation_common_law_ids',
+                'key'           => 'field_jx_citation_comlaw_ids',
                 'label'         => 'Related Common Law Doctrines',
-                'name'          => 'ws_jx_citation_common_law_ids',
+                'name'          => 'ws_jx_citation_comlaw_ids',
                 'type'          => 'post_object',
                 'post_type'     => [ 'jx-common-law' ],
                 'instructions'  => 'Link this citation to common-law doctrine record(s) it interprets or supports. Optional.',
@@ -567,17 +567,17 @@ function ws_citation_prefill_statute_ids( $value, $post_id, $field ) {
     return $value;
 }
 
-// ── Pre-populate ws_jx_citation_common_law_ids from ?common_law_id= URL param ──
+// ── Pre-populate ws_jx_citation_comlaw_ids from ?common_law_id= URL param ──
 //
 // Mirrors ws_citation_prefill_statute_ids() above.
 // When a new citation is opened from the common-law citation metabox,
 // common_law_id is passed as a URL param. acf/load_value returns it as the
 // field's live value so ACF renders the doctrine pre-selected.
-// Returns an array — ws_jx_citation_common_law_ids is a multiple post_object field.
+// Returns an array — ws_jx_citation_comlaw_ids is a multiple post_object field.
 
-add_filter( 'acf/load_value/key=field_jx_citation_common_law_ids', 'ws_citation_prefill_common_law_ids', 5, 3 );
+add_filter( 'acf/load_value/key=field_jx_citation_comlaw_ids', 'ws_citation_prefill_comlaw_ids', 5, 3 );
 
-function ws_citation_prefill_common_law_ids( $value, $post_id, $field ) {
+function ws_citation_prefill_comlaw_ids( $value, $post_id, $field ) {
 
     if ( get_post_status( $post_id ) !== 'auto-draft' ) {
         return $value;
@@ -587,10 +587,10 @@ function ws_citation_prefill_common_law_ids( $value, $post_id, $field ) {
         return $value;
     }
 
-    $common_law_id = absint( $_GET['common_law_id'] );
+    $comlaw_id = absint( $_GET['common_law_id'] );
 
-    if ( $common_law_id && get_post_type( $common_law_id ) === 'jx-common-law' ) {
-        return [ $common_law_id ];
+    if ( $comlaw_id && get_post_type( $comlaw_id ) === 'jx-common-law' ) {
+        return [ $comlaw_id ];
     }
 
     return $value;

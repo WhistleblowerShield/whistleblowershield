@@ -24,7 +24,7 @@ $_ws_agency_matrix = [
     [
         'title'              => 'U.S. Securities and Exchange Commission',
         'slug'               => 'sec-whistleblower-program',
-        'ws_agency_name'     => 'U.S. Securities and Exchange Commission',
+        'ws_agency_official_name'     => 'U.S. Securities and Exchange Commission',
         'ws_agency_acronym'  => 'SEC',
         'ws_agency_url'      => 'https://www.sec.gov/whistleblower',
         'ws_agency_mission'  => 'Administers the SEC Whistleblower Program under Dodd-Frank, awarding 10–30% of sanctions over $1 million to eligible whistleblowers.',
@@ -33,7 +33,7 @@ $_ws_agency_matrix = [
     [
         'title'              => 'Occupational Safety and Health Administration',
         'slug'               => 'osha-whistleblower-protection-program',
-        'ws_agency_name'     => 'Occupational Safety and Health Administration',
+        'ws_agency_official_name'     => 'Occupational Safety and Health Administration',
         'ws_agency_acronym'  => 'OSHA',
         'ws_agency_url'      => 'https://www.whistleblowers.gov',
         'ws_agency_mission'  => 'Investigates retaliation complaints under 25+ federal statutes including Sarbanes-Oxley, Clean Air Act, and STAA.',
@@ -42,7 +42,7 @@ $_ws_agency_matrix = [
     [
         'title'              => 'U.S. Office of Special Counsel',
         'slug'               => 'office-of-special-counsel',
-        'ws_agency_name'     => 'U.S. Office of Special Counsel',
+        'ws_agency_official_name'     => 'U.S. Office of Special Counsel',
         'ws_agency_acronym'  => 'OSC',
         'ws_agency_url'      => 'https://osc.gov',
         'ws_agency_mission'  => 'Receives disclosures from federal employees, investigates prohibited personnel practices, and enforces the Whistleblower Protection Act.',
@@ -51,7 +51,7 @@ $_ws_agency_matrix = [
     [
         'title'              => 'Merit Systems Protection Board',
         'slug'               => 'merit-systems-protection-board',
-        'ws_agency_name'     => 'Merit Systems Protection Board',
+        'ws_agency_official_name'     => 'Merit Systems Protection Board',
         'ws_agency_acronym'  => 'MSPB',
         'ws_agency_url'      => 'https://www.mspb.gov',
         'ws_agency_mission'  => 'Adjudicates federal employee appeals including individual right of action (IRA) cases under the Whistleblower Protection Act.',
@@ -60,7 +60,7 @@ $_ws_agency_matrix = [
     [
         'title'              => 'National Labor Relations Board',
         'slug'               => 'national-labor-relations-board',
-        'ws_agency_name'     => 'National Labor Relations Board',
+        'ws_agency_official_name'     => 'National Labor Relations Board',
         'ws_agency_acronym'  => 'NLRB',
         'ws_agency_url'      => 'https://www.nlrb.gov',
         'ws_agency_mission'  => 'Protects the right of private-sector employees to act collectively, which may include whistleblowing in concerted protected activity.',
@@ -69,7 +69,7 @@ $_ws_agency_matrix = [
     [
         'title'              => 'Commodity Futures Trading Commission',
         'slug'               => 'cftc-whistleblower-program',
-        'ws_agency_name'     => 'Commodity Futures Trading Commission',
+        'ws_agency_official_name'     => 'Commodity Futures Trading Commission',
         'ws_agency_acronym'  => 'CFTC',
         'ws_agency_url'      => 'https://www.whistleblower.gov',
         'ws_agency_mission'  => 'Administers the CFTC Whistleblower Program, providing awards to eligible whistleblowers reporting violations of the Commodity Exchange Act.',
@@ -78,7 +78,7 @@ $_ws_agency_matrix = [
     [
         'title'              => 'Internal Revenue Service Whistleblower Office',
         'slug'               => 'irs-whistleblower-office',
-        'ws_agency_name'     => 'Internal Revenue Service — Whistleblower Office',
+        'ws_agency_official_name'     => 'Internal Revenue Service — Whistleblower Office',
         'ws_agency_acronym'  => 'IRS WO',
         'ws_agency_url'      => 'https://www.irs.gov/compliance/whistleblower-informant-award',
         'ws_agency_mission'  => 'Awards 15–30% of collected proceeds to informants who report federal tax underpayments above $2 million (corporate) or $200,000 income threshold (individual).',
@@ -87,7 +87,7 @@ $_ws_agency_matrix = [
     [
         'title'              => 'U.S. Environmental Protection Agency',
         'slug'               => 'epa-whistleblower-protection',
-        'ws_agency_name'     => 'U.S. Environmental Protection Agency',
+        'ws_agency_official_name'     => 'U.S. Environmental Protection Agency',
         'ws_agency_acronym'  => 'EPA',
         'ws_agency_url'      => 'https://www.epa.gov/ocr/whistleblower-protection',
         'ws_agency_mission'  => 'Receives retaliation complaints under environmental whistleblower statutes including Clean Air Act, Clean Water Act, and Safe Drinking Water Act.',
@@ -96,7 +96,7 @@ $_ws_agency_matrix = [
     [
         'title'              => 'Department of Justice — False Claims Act Unit',
         'slug'               => 'doj-false-claims-act',
-        'ws_agency_name'     => 'U.S. Department of Justice — Civil Division',
+        'ws_agency_official_name'     => 'U.S. Department of Justice — Civil Division',
         'ws_agency_acronym'  => 'DOJ',
         'ws_agency_url'      => 'https://www.justice.gov/civil/false-claims-act',
         'ws_agency_mission'  => 'Pursues False Claims Act qui tam actions. Relators (whistleblowers) may receive 15–30% of government recoveries under 31 U.S.C. § 3730.',
@@ -150,7 +150,7 @@ function ws_seed_agency_matrix() {
 
         // Write agency meta fields.
         $meta_fields = [
-            'ws_agency_official_name' => $agency['ws_agency_name']    ?? '',
+            'ws_agency_official_name' => $agency['ws_agency_official_name']    ?? '',
             'ws_agency_acronym'       => $agency['ws_agency_acronym'] ?? '',
             'ws_agency_url'           => $agency['ws_agency_url']     ?? '',
             'ws_agency_mission'       => $agency['ws_agency_mission'] ?? '',

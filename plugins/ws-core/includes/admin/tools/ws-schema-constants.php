@@ -58,7 +58,7 @@
  */
 
 defined( 'ABSPATH' ) || exit;
-
+define( 'WS_SCHEMA_JSON_FORMAT_VERSION', "2.0" );
 
 // ════════════════════════════════════════════════════════════════════════════
 // Phone Type
@@ -96,6 +96,7 @@ define( 'WS_SCHEMA_EMAIL_TYPE', [
     'legal',
     'media',
     'support',
+    'secure', // For secure email addresses that may require special handling
     'other',
 ] );
 

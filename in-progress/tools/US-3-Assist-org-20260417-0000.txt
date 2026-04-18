@@ -184,7 +184,7 @@ scope_of_service:
                               exists but no slug fits cleanly, or no coverage is described clearly.
   protected_class_details     free text when protected_classes includes has-details slug; describe the
                               org's claim of coverage or note the missing description of coverage.
-  languages_supported         ws_languages slugs. List all languages the org claims to support.
+  languages_supported         ws_language slugs. List all languages the org claims to support.
                                 - Site is clearly in English (nav, forms, main text): use english slug.
                                 - Org explicitly claims non-taxonomy languages: add additional slug.
                                 - Operating language cannot be determined: use [] and note in _review_notes.
@@ -210,10 +210,10 @@ scope_of_service:
                               fit cleanly, or coverage is entirely unclear.
   case_stage_details          free text when case_stages includes other slug; describe the org's claim of
                               coverage or note the absence of coverage.
-  disclosure_targets          ws_disclosure_targets slugs; use has-details slug when
+  disclosure_targets          ws_disclosure_target slugs; use has-details slug when
                               disclosure target coverage exists but no slug fits cleanly, or
 							  coverage is entirely unclear.
-  disclosure_targets_details  free text when disclosure_targets includes has-details slug; describe the
+  disclosure_targets_details  free text when disclosure_target includes has-details slug; describe the
                               org's claim of coverage or note the absence of coverage.
   jurisdiction_exceptions     free text listing self-reported coverage gaps
                               (e.g. "nationwide except Texas"); omit if none are stated.
@@ -391,10 +391,10 @@ If a concept does not fit any listed slug cleanly:
 Field → taxonomy mapping:
   scope_of_service.disclosure_types        ws_disclosure_type        (multi-select)
   scope_of_service.protected_classes       ws_protected_class        (multi-select)
-  scope_of_service.disclosure_targets      ws_disclosure_targets     (multi-select)
+  scope_of_service.disclosure_targets      ws_disclosure_target      (multi-select)
   scope_of_service.process_types           ws_process_type           (multi-select)
   scope_of_service.case_stages             ws_case_stage             (multi-select)
-  scope_of_service.languages_supported     ws_languages              (multi-select)
+  scope_of_service.languages_supported     ws_language               (multi-select)
   scope_of_service.assistance_type         ws_aorg_type              (single value)
   scope_of_service.employment_sectors      ws_employment_sector      (multi-select)
   scope_of_service.cost_models             ws_aorg_cost_model        (multi-select)
@@ -469,7 +469,7 @@ has-details                        Has Details (use with protected_class_details
 
 
 ────────────────────────────────────────────────────────────────────────────
-TAXONOMY: ws_disclosure_targets
+TAXONOMY: ws_disclosure_target
 Description: Who the protected disclosure may be made to. Tag all that apply.
              List targets described in source material. Use has-details slug
 			 when coverage exists but no slug fits cleanly, or no coverage
@@ -526,7 +526,7 @@ other                              Other (explain in case_stage_details)
 
 
 ────────────────────────────────────────────────────────────────────────────
-TAXONOMY: ws_languages
+TAXONOMY: ws_language
 Description: Languages the org serves for intake or direct support.
              Tag all that apply. List languages confirmed by source material.
 			 Use additional slug when the org serves languages not in this list.
@@ -703,22 +703,19 @@ RUN SCOPE
 Record type:        assist-org
 Jurisdiction:       United States
 Jurisdiction ID:    US
-Requested Records:  3
+Requested Records:  0
 meta.nationwide_only: true
 
 ---
 Focus notes:
-Concentrate on the following three organizations using the field definitions in this prompt. Treat each as a distinct organization — do not conflate mission statements or contact channels across records. Do not work from memory.
- — Whistleblowers of America
- — Government Accountability Project
- — National Whistleblower Center
+Assistance Organizations already documented in matrix-assist-orgs.php
 ---
 
 When "meta.nationwide_only" is true, return nationwide or large multi-jurisdictional scoped organizations.
 Organizations that serve federal employees among a broader set of workers qualify.
 Do not include single jurisdiction organizations.
 
-Target up to 3 records, but return fewer when confidence is limited.
+As many records as you can comfortably find, stop when confidence is limited.
 Confidence is the hard constraint.
 
 Permission to fail and omit is explicit:

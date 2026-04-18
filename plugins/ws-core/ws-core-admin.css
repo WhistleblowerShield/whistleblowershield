@@ -19,52 +19,104 @@
     cursor: default;
 }
 
-.ws-interp-table {
+#ws_interpretations .ws-interp-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 12px;
 }
 
-.ws-interp-table th,
-.ws-interp-table td {
+#ws_interpretations .ws-interp-table th,
+#ws_interpretations .ws-interp-table td {
     padding: 6px 10px;
     border-bottom: 1px solid #e0e0e0;
     text-align: left;
     font-size: 13px;
 }
 
-.ws-interp-table th {
+#ws_interpretations .ws-interp-table th {
     background: #f6f7f7;
     font-weight: 600;
     color: #1d2327;
 }
 
-.ws-interp-table .ws-favorable-yes {
+#ws_interpretations .ws-interp-table .ws-favorable-yes {
     color: #1a7a1a;
     font-weight: 600;
 }
 
-.ws-interp-table .ws-favorable-no {
+#ws_interpretations .ws-interp-table .ws-favorable-no {
     color: #a00;
 }
 
-.ws-interp-empty {
+#ws_interpretations .ws-interp-empty {
     color: #666;
     font-style: italic;
     margin-bottom: 12px;
 }
 
-.ws-interp-actions {
+#ws_interpretations .ws-interp-actions {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.ws-interp-add-btn {
+#ws_interpretations .ws-interp-add-btn {
     text-decoration: none;
 }
 
-.ws-interp-add-btn[disabled] {
+#ws_interpretations .ws-interp-add-btn[disabled] {
+    opacity: .5;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+
+#ws_citations .ws-cite-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+}
+
+#ws_citations .ws-cite-table th,
+#ws_citations .ws-cite-table td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: left;
+    font-size: 13px;
+}
+
+#ws_citations .ws-cite-table th {
+    background: #f6f7f7;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+#ws_citations .ws-cite-table .ws-attached-yes {
+    color: #1a7a1a;
+    font-weight: 600;
+}
+
+#ws_citations .ws-cite-table .ws-attached-no {
+    color: #999;
+}
+
+#ws_citations .ws-cite-empty {
+    color: #666;
+    font-style: italic;
+    margin-bottom: 12px;
+}
+
+#ws_citations .ws-cite-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#ws_citations .ws-cite-add-btn {
+    text-decoration: none;
+}
+
+#ws_citations .ws-cite-add-btn[disabled] {
     opacity: .5;
     pointer-events: none;
     cursor: not-allowed;

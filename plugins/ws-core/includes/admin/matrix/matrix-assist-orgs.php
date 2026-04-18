@@ -4,7 +4,25 @@
  *
  * @package    WhistleblowerShield
  * @since      3.0.0
- * @version    3.17.0
+ * @version    3.17.1
+ *
+ * VERSION
+ * -------
+ * 3.17.1  Data corrections from deep research pass:
+ *         - GAP: corrected mailing address to 1612 K St NW Suite 808;
+ *           updated intake_url to /how-to-request-assistance/
+ *         - Whistleblower Aid: corrected mailing address to
+ *           1250 Connecticut Ave NW Suite 700 (Charity Navigator confirmed)
+ *         - TAF: re-branded from Taxpayers Against Fraud Education Fund
+ *           to The Anti-Fraud Coalition; slug, internal_id, description,
+ *           mailing address, and intake_url updated; gate bumped to 1.1.0
+ *         - The Signals Network: has_secure_channel set to 1 (ProtonMail
+ *           confirmed); secure fields populated; protect@ email added to
+ *           emails repeater; ProtonMail note removed from description;
+ *           intake_url added
+ *         - WIN: removed invalid public-general slug from disclosure_targets
+ *         - POGO: whistleblower_scope corrected from 3 to 1 (investigative
+ *           watchdog, not direct help org)
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -27,7 +45,7 @@ $_ws_assist_org_matrix = [
         'slug' => 'government-accountability-project',
         'description' => 'Promotes government and corporate accountability by advancing a culture of transparency, providing legal representation to whistleblowers, and advocating for strong whistleblower laws.',
         'ws_aorg_website_url' => 'https://whistleblower.org',
-        'ws_aorg_intake_url' => 'https://whistleblower.org/intake/',
+        'ws_aorg_intake_url' => 'https://whistleblower.org/how-to-request-assistance/',
         'ws_aorg_contact_url' => '',
         'phones' => [
             [
@@ -44,7 +62,7 @@ $_ws_assist_org_matrix = [
         'has_secure_channel' => 0,
         'secure_contact_url' => '',
         'secure_contact_tool' => '',
-        'mailing_address' => 'Government Accountability Project, 1100 G Street NW, Suite 500, Washington, DC 20005',
+        'mailing_address' => 'Government Accountability Project, 1612 K St NW, Suite 808, Washington, DC 20006-2802',
         'income_limit' => 0,
         'income_limit_notes' => '',
         'eligibility_notes' => '',
@@ -169,7 +187,7 @@ $_ws_assist_org_matrix = [
         'has_secure_channel' => 1,
         'secure_contact_url' => 'https://whistlebloweraid.org/become-a-whistleblower/signal/',
         'secure_contact_tool' => 'Signal',
-        'mailing_address' => 'Whistleblower Aid, 2001 S Street NW, Washington, DC 20009',
+        'mailing_address' => 'Whistleblower Aid, 1250 Connecticut Ave NW, Suite 700, Washington, DC 20036',
         'income_limit' => 0,
         'income_limit_notes' => '',
         'eligibility_notes' => '',
@@ -238,7 +256,7 @@ $_ws_assist_org_matrix = [
         'has_secure_channel' => 0,
         'secure_contact_url' => '',
         'secure_contact_tool' => '',
-        'mailing_address' => 'Project On Government Oversight, 1100 G Street NW, Suite 500, Washington, DC 20005',
+        'mailing_address' => 'Project On Government Oversight, 1100 13th Street NW, Suite 800, Washington, DC 20005',
         'income_limit' => 0,
         'income_limit_notes' => '',
         'eligibility_notes' => '',
@@ -249,7 +267,7 @@ $_ws_assist_org_matrix = [
         'community_scope' => '',
         'accepts_anon' => 1,
         'has_attorneys' => 0,
-        'whistleblower_scope' => 3,
+        'whistleblower_scope' => 1,
         'whistleblower_note' => 'POGO was founded to help bring attention to disclosures from Pentagon whistleblowers. Since then, we have worked with whistleblowers on countless investigative projects.',
         'services' => [
             'advocacy',
@@ -276,20 +294,20 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        'internal_id' => 'taxpayers-against-fraud-edu-fund-us',
-        'common_name' => 'TAF Coalition',
-        'title' => 'Taxpayers Against Fraud Education Fund',
-        'slug' => 'taxpayers-against-fraud-education-fund',
-        'description' => 'Supports whistleblowers and their counsel in False Claims Act and related anti-fraud cases, and maintains a network of qui tam attorneys.',
-        'ws_aorg_website_url' => 'https://taf.org',
-        'ws_aorg_intake_url' => 'https://www.taf.org/member-directory/',
+        'internal_id' => 'anti-fraud-coal-us',
+        'common_name' => 'TAF',
+        'title' => 'The Anti-Fraud Coalition',
+        'slug' => 'the-anti-fraud-coalition',
+        'description' => 'Formerly Taxpayers Against Fraud, the Anti-Fraud Coalition is the leading professional network for attorneys and whistleblowers in False Claims Act and financial fraud cases. Maintains a directory of 400+ qui tam specialists and publishes economic research on whistleblower program effectiveness.',
+        'ws_aorg_website_url' => 'https://www.taf.org',
+        'ws_aorg_intake_url' => 'https://www.taf.org/attorneys/find-an-attorney/',
         'ws_aorg_contact_url' => '',
         'phones' => [],
         'emails' => [],
         'has_secure_channel' => 0,
         'secure_contact_url' => '',
         'secure_contact_tool' => '',
-        'mailing_address' => 'Taxpayers Against Fraud Education Fund, 1140 Connecticut Ave NW, Suite 900, Washington, DC 20036',
+        'mailing_address' => 'The Anti-Fraud Coalition, 1220 19th St NW, Ste 501, Washington, DC 20036',
         'income_limit' => 0,
         'income_limit_notes' => '',
         'eligibility_notes' => '',
@@ -435,7 +453,7 @@ $_ws_assist_org_matrix = [
         ],
         'disclosure_targets' => [
             'agency-federal',
-            'public-general',
+            'public-nonprofit',
         ],
         'case_stages' => [
             'pre-report',
@@ -854,9 +872,9 @@ $_ws_assist_org_matrix = [
         'common_name' => 'TSN',
         'title' => 'The Signals Network',
         'slug' => 'the-signals-network',
-        'description' => 'The Signals Network is a nonprofit that provides holistic support to whistleblowers who share public interest information — including legal assistance, psychological counseling, physical security, and media coordination. Encrypted email via ProtonMail (account required): protect@thesignalsnetwork.org',
+        'description' => 'The Signals Network is a nonprofit that provides holistic support to whistleblowers who share public interest information — including legal assistance, psychological counseling, physical security, and media coordination.',
         'ws_aorg_website_url' => 'https://thesignalsnetwork.org',
-        'ws_aorg_intake_url' => '',
+        'ws_aorg_intake_url' => 'https://thesignalsnetwork.org/whistleblower-protection-program/',
         'ws_aorg_contact_url' => 'https://thesignalsnetwork.org/contact/',
         'phones' => [],
         'emails' => [
@@ -864,10 +882,14 @@ $_ws_assist_org_matrix = [
                 'type' => 'general',
                 'address' => 'info@thesignalsnetwork.org',
             ],
+            [
+                'type' => 'intake',
+                'address' => 'protect@thesignalsnetwork.org',
+            ],
         ],
-        'has_secure_channel' => 0,
-        'secure_contact_url' => '',
-        'secure_contact_tool' => '',
+        'has_secure_channel' => 1,
+        'secure_contact_url' => 'https://thesignalsnetwork.org/contact/',
+        'secure_contact_tool' => 'ProtonMail',
         'mailing_address' => 'The Signals Network, 416 Florida Ave NW #26152, Washington, DC 20001',
         'income_limit' => 0,
         'income_limit_notes' => '',
@@ -1086,7 +1108,7 @@ function ws_seed_assist_org_matrix() {
             'ws_aorg_secure_contact_tool'  => $org['secure_contact_tool']  ?? '',
             'ws_aorg_mailing_address'      => $org['mailing_address']      ?? '',
             'ws_aorg_has_income_limit'     => $org['income_limit']         ?? '',
-            'ws_aorg_income_limit_details' => $org['income_limit_notes']   ?? '',
+            'ws_aorg_has_income_limit_details' => $org['income_limit_notes']   ?? '',
             'ws_aorg_eligibility_details'  => $org['eligibility_notes']    ?? '',
             'ws_aorg_serves_nationwide'    => $org['is_nationwide']        ?? 0,
             'ws_aorg_has_limited_scope'    => $org['is_limited_scope']     ?? 0,

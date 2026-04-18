@@ -593,7 +593,7 @@ set limit_ambiguous to true regardless of your confidence in the derived
 value.
 
 limit_ambiguous: true is expected behavior, not an error. Do not include
-it in error_details. Note derivation method in _review_notes. When the
+it in notations. Note derivation method in _review_notes. When the
 source is unusual or weak be clear about the uncertainty.
 For example:
   "Derived from state civil procedure code, not the whistleblower statute"
@@ -707,8 +707,8 @@ A wrong record causes real harm: a guessed deadline or fabricated citation
 may cause a user to miss a legal deadline or act on law that does not exist.
 
 If confidence is insufficient for a field, omit it and note the gap in
-integrity.error_details. If you cannot research a record with confidence,
-it is acceptable to skip it — set with_errors: true and explain why.
+integrity.notations. If you cannot research a record with confidence,
+it is acceptable to skip it — set has_anomalies: true and explain why.
 
 The following fields are routinely empty in a well-produced run and their
 absence is never penalized:
@@ -841,7 +841,7 @@ function ws_prompt_taxonomy_tables( string $applies_to ): string {
             'label'       => 'Case Stages',
             'description' => "Lifecycle stage where help is needed. Tag all that explicitly\n             apply (for example pre-report, retaliation-active, litigation).",
         ],
-        'ws_languages' => [
+        'ws_language' => [
             'label'       => 'Languages',
             'description' => "Languages the organization can handle for intake or support. Tag all\n             available language options.",
         ],
@@ -868,7 +868,7 @@ function ws_prompt_taxonomy_tables( string $applies_to ): string {
         'jx-common-law'     => [ 'ws_adverse_action_types', 'ws_process_type', 'ws_remedies', 'ws_fee_shifting', 'ws_employer_defense', 'ws_employee_standard' ],
         'jx-citation'       => [ 'ws_adverse_action_types', 'ws_process_type', 'ws_remedies', 'ws_employer_defense', 'ws_employee_standard' ],
         'jx-interpretation' => [ 'ws_adverse_action_types', 'ws_process_type', 'ws_remedies', 'ws_employer_defense', 'ws_employee_standard' ],
-        'ws-assist-org'     => [ 'ws_process_type', 'ws_case_stage', 'ws_languages', 'ws_aorg_type', 'ws_employment_sector', 'ws_aorg_cost_model', 'ws_aorg_service' ],
+        'ws-assist-org'     => [ 'ws_process_type', 'ws_case_stage', 'ws_language', 'ws_aorg_type', 'ws_employment_sector', 'ws_aorg_cost_model', 'ws_aorg_service' ],
     ];
 
     $selected_flat = $flat_by_record_type[ $record_type ] ?? [];
@@ -911,7 +911,7 @@ function ws_prompt_registered_object_types( string $taxonomy ): array {
         'ws_remedies'          => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
         'ws_protected_class'   => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-assist-org' ],
         'ws_adverse_action_types' => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
-        'ws_languages'         => [ 'ws-agency', 'ws-assist-org' ],
+        'ws_language'         => [ 'ws-agency', 'ws-assist-org' ],
         'ws_case_stage'        => [ 'ws-assist-org' ],
         'ws_disclosure_target'=> [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-assist-org' ],
         'ws_fee_shifting'      => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
@@ -948,8 +948,8 @@ limited to {$list} — you must:
   1. Delete it from the array immediately
   2. Leave the array empty if no valid child slug applies
   3. Note the removed slug in json_run_notes
-  4. Set with_errors: true in the integrity block
-  5. Add to error_details: "[RECORD_ID]: Removed parent slug [SLUG] from
+  4. Set has_anomalies: true in the integrity block
+  5. Add to notations: "[RECORD_ID]: Removed parent slug [SLUG] from
      [FIELD] — no matching child slug found"
 
 A parent slug in a record array corrupts the database. This self-check
@@ -1022,34 +1022,35 @@ function ws_prompt_integrity_block(): string {
 INTEGRITY BLOCK
 
 The integrity block is your honest self-report on the state of this batch.
-Reporting errors here is not a failure — it is the most valuable contribution
+Reporting anomalies here is not a failure — it is the most valuable contribution
 you can make to the reliability of this platform.
 
 {
   "integrity": {
-    "with_errors":   [true | false],
-    "error_details": ["[SPECIFIC ERROR WITH DETAILS]"],
-    "error_count":   [INTEGER — must equal length of error_details]
+    "has_anomalies":    [true | false],
+    "notations":        ["[SPECIFIC NOTATION WITH DETAILS]"],
+    "notation_count":   [INTEGER — must equal length of notations array]
   }
 }
 
-with_errors must be true if ANY of the following occurred:
-  — fewer records returned than requested
-  — a required record could not be researched with sufficient confidence
-  — any schema rule was knowingly violated
+has_anomalies must be true if ANY of the following occurred:
+  — fewer records returned than requested, bail when you need to...
+    detail what happened to  alert the reviewer about a truncated batch.
+  — a requested record could not be researched with sufficient confidence
+  — any schema rule was discovered to be anomalous
   — a slug was used that does not appear in the taxonomy tables
 
-with_errors is not for:
+has_anomalies is not for:
   — observations a human reviewer should know about the batch; use _review_notes
   — fields omitted because data was unavailable; omission is the correct action
 
 Fail-safe policy:
-  — it is acceptable to fail one or more records instead of guessing
-  — it is acceptable to fail the full batch if source quality is insufficient
-  — in either case, set with_errors: true and explain exactly what and why
+  — it is acceptable to omit one or more records instead of guessing
+  — it is acceptable to omit the full batch if source quality is insufficient
+  — in either case, set has_anomalies: true and explain what happened
 
-OMISSION RULE: when with_errors is false, omit error_details and error_count
-entirely. The ingest tool treats a missing key differently from an empty array.
+OMISSION RULE: when has_anomalies is false, omit notations and notation_count
+entirely.
 
 ---
 
@@ -1081,25 +1082,35 @@ Before you write the JSON, confirm the following:
 
 4. Do not invent slugs. When a concept does not fit any listed slug:
    — leave the field empty or use has-details where permitted
-   — describe the gap in _review_notes
+   — describe the lack of taxonomy coverage in _review_notes
+   
+5. The Intake Commitment Rule: A URL only qualifies as an Intake URL if the page
+   explicitly offers a path for the individual to request personal assistance, legal
+   review, or peer support. If the page is primarily for reporting evidence of
+   wrongdoing to the organization (e.g., "Submit a Tip," "Send us a Leak"), it must
+   be moved to _review_notes and the intake field left empty.
 
-5. A standard HTTPS web form is not a secure channel.
+6. A standard HTTPS web form is not a secure channel.
    has_secure_channel is yes only when a dedicated encrypted tool is confirmed:
    SecureDrop, Signal, ProtonMail, Tutanota, Wire, Keybase.
 
-6. For every org-owned URL — official_homepage_url, intake_url, contact_url,
+7. For every org-owned URL — official_homepage_url, intake_url, contact_url,
    and secure_contact_url — verify the organization's name appears at that
    URL before including it. Do not cite these from memory alone.
    legitimacy_url points to a third-party verification source by design
-   (GuideStar, Charity Navigator, congressional directory) — verify the
+   (GuideStar, Charity Navigator, congressional directory, etc.) — verify the
    org is named on that page, not that it is the org's own domain.
 
-7. If any rule was broken:
-   — set integrity.with_errors: true
-   — explain exactly what and why in integrity.error_details
+8. If any rule couldn't be followed:
+   — set integrity.has_anomalies: true
+   — explain what happened and why in integrity.notations
+   
+9. You are not ultimately responsible for the data that makes to the platform.
+   There are many checks and balances in place. Bad data that makes it to the
+   platform is a failure in the pipeline, you are only the first stage of the
+   pipeline. Your research is the foundation of the data the platform uses.
 
 ---
-
 BLOCK;
 }
 
@@ -1110,10 +1121,11 @@ for WhistleblowerShield.org. This data exists for two people: Maya, who is consi
 coming forward and needs to know who is safe to contact before she has decided anything,
 and James, who has already reported and is now facing retaliation and needs a fast,
 accurate path to qualified help. A third person — a researcher or journalist — may
-eventually evaluate this directory for reliability. That person will find the errors
-you leave in it. A dead phone number, a closed intake, or a wrong URL is not a minor
-data quality issue. It is a failed handoff at the worst possible moment for someone
-who may have nowhere else to turn. Return a high-confidence, low-noise batch.
+eventually evaluate this directory for reliability. That person will find the bad data
+left in the record, by any failure in the pipeline. A dead phone number, a closed intake,
+or a wrong URL is not a minor data quality issue. It is a failed handoff at the worst
+possible moment for someone who may have nowhere else to turn. Return a high-confidence,
+low-noise batch.
 
 Do not return more records than requested.
 Do not return records where you are uncertain about the included data.
@@ -1171,7 +1183,7 @@ clarifications you make during your research:
   scope_of_service.assistance_type            mixed
   scope_of_service.cost_models                ["unclear"]
   scope_of_service.case_stages                ["other"]        → populate case_stage_details
-  scope_of_service.disclosure_targets         ["has-details"]  → populate disclosure_targets_details
+  scope_of_service.disclosure_targets         ["has-details"]  → populate disclosure_target_details
   scope_of_service.protected_classes          ["has-details"]  → populate protected_class_details
   scope_of_service.whistleblower_scope        0  (scope unclear)
   scope_of_service.whistleblower_note         state reason for inclusion
@@ -1205,7 +1217,7 @@ your research:
   scope_of_service.protected_class_details    protected_classes includes has-details
   scope_of_service.additional_services        services_provided includes additional
   scope_of_service.case_stage_details         case_stages includes other
-  scope_of_service.disclosure_targets_details disclosure_targets includes has-details
+  scope_of_service.disclosure_target_details  disclosure_targets includes has-details
   eligibility.income_eligibility_details      income_eligibility_required is yes
   security.secure_contact_url                 has_secure_channel is yes
   security.secure_contact_tool                has_secure_channel is yes
@@ -1238,7 +1250,7 @@ identity:
   official_homepage_url       official domain URL — the org's own homepage, not a directory listing.
   general_description         3 to 5 sentences: what the org does, who it serves, what help it provides.
   common_name                 widely used shorthand name or acronym; omit if none exists.
-  homepage_url_status         verified | redirects | unverified
+  homepage_url_status         verified | redirects | unverified | dead
   verified_url_date           YYYY-MM-DD; omit if the URL was not confirmed during this run.
 
 scope_of_service:
@@ -1250,7 +1262,7 @@ scope_of_service:
                               exists but no slug fits cleanly, or no coverage is described clearly.
   protected_class_details     free text when protected_classes includes has-details slug; describe the
                               org's claim of coverage or note the missing description of coverage.
-  languages_supported         ws_languages slugs. List all languages the org claims to support.
+  languages_supported         ws_language slugs. List all languages the org claims to support.
                                 - Site is clearly in English (nav, forms, main text): use english slug.
                                 - Org explicitly claims non-taxonomy languages: add additional slug.
                                 - Operating language cannot be determined: use [] and note in _review_notes.
@@ -1279,7 +1291,7 @@ scope_of_service:
   disclosure_targets          ws_disclosure_target slugs; use has-details slug when
                               disclosure target coverage exists but no slug fits cleanly, or
 							  coverage is entirely unclear.
-  disclosure_targets_details  free text when disclosure_targets includes has-details slug; describe the
+  disclosure_target_details   free text when disclosure_targets includes has-details slug; describe the
                               org's claim of coverage or note the absence of coverage.
   jurisdiction_exceptions     free text listing self-reported coverage gaps
                               (e.g. "nationwide except Texas"); omit if none are stated.
@@ -1357,8 +1369,8 @@ review:
                               — "email type marked other: listed as 'whistleblower secure
                                  tips inbox' without clear fit to slugs; included for
                                  human review"
-                              — "site language/support undetermined; languages_supported
-                                 left empty intentionally"
+                              — "site language/support undetermined, use many images and
+							     very little text; languages_supported left empty intentionally"
 
                               You may use _review_notes to briefly explain:
                               — why you left a taxonomy array empty even though the org seems
@@ -1374,7 +1386,7 @@ review:
 ORGANIZATION INCLUSION RULES
   Must provide direct help or a fast referral pathway. Help includes legal
   assistance, peer support, mental health support, or advocacy services.
-  Org must have a dedicated intake path — a form, hotline, or
+  Org should have a dedicated intake path — a form, hotline, or
   service-specific contact — not an informational page alone.
 
 ORGANIZATION EXCLUSION RULES
@@ -1418,7 +1430,7 @@ RECORD SCHEMA
         "case_stages": [],
         "case_stage_details": "",
         "disclosure_targets": [],
-        "disclosure_targets_details": "",
+        "disclosure_target_details": "",
         "jurisdiction_exceptions": "",
         "whistleblower_scope": 0,
         "whistleblower_note": ""
@@ -1475,10 +1487,10 @@ function ws_generate_assist_org_prompt( array $scope ): string {
     $out .= ws_prompt_assist_org_final_write_contract_block();
 
     $out .= "\nRUN SCOPE\n\n";
-    $out .= "Record type:        assist-org\n";
-    $out .= "Jurisdiction:       {$jx_name}\n";
-    $out .= "Jurisdiction ID:    {$jx}\n";
-    $out .= "Requested Records:  {$proposal_count}\n";
+    $out .= "Record type:          assist-org\n";
+    $out .= "Jurisdiction:         {$jx_name}\n";
+    $out .= "Jurisdiction ID:      {$jx}\n";
+    $out .= "Requested Records:    {$proposal_count}\n";
     $out .= 'meta.nationwide_only: ' . ( $nationwide_only ? 'true' : 'false' ) . "\n\n";
     if ( $focus_notes !== '' ) {
         $out .= "---\nFocus notes:\n{$focus_notes}\n---\n";
@@ -1489,7 +1501,7 @@ function ws_generate_assist_org_prompt( array $scope ): string {
         $out .= "\nWhen \"meta.nationwide_only\" is true, return nationwide or large multi-jurisdictional scoped organizations.\n";
         $out .= "Organizations that serve federal employees among a broader set of workers qualify.\nDo not include single jurisdiction organizations.\n";
     } else {
-        $out .= "\nWhen \"meta.nationwide_only\" is false, include strong {$jx} fits and optional broader coverage.\n";
+        $out .= "\nWhen \"meta.nationwide_only\" is false, include strong {$jx_name} fits and optional broader coverage.\n";
     }
 
     $out .= ws_prompt_truncation_permission_assist_org( $proposal_count );
@@ -1516,19 +1528,19 @@ If a concept does not fit any listed slug cleanly:
 Field → taxonomy mapping:
   scope_of_service.disclosure_types        ws_disclosure_type        (multi-select)
   scope_of_service.protected_classes       ws_protected_class        (multi-select)
-  scope_of_service.disclosure_targets      ws_disclosure_target     (multi-select)
+  scope_of_service.disclosure_targets      ws_disclosure_target      (multi-select)
   scope_of_service.process_types           ws_process_type           (multi-select)
   scope_of_service.case_stages             ws_case_stage             (multi-select)
-  scope_of_service.languages_supported     ws_languages              (multi-select)
+  scope_of_service.languages_supported     ws_language               (multi-select)
   scope_of_service.assistance_type         ws_aorg_type              (single value)
   scope_of_service.employment_sectors      ws_employment_sector      (multi-select)
   scope_of_service.cost_models             ws_aorg_cost_model        (multi-select)
   scope_of_service.services_provided       ws_aorg_service           (multi-select)
 
-SELF-CHECK: Before writing your final JSON, verify that every slug in every
-taxonomy array appears verbatim in the tables below. If it does not appear
-here, it is not a valid value — leave the array empty or use has-details.
-If empty, describe why in _review_notes.
+SELF-CHECK: Before writing your final JSON, verify that all slugs in each
+taxonomy array appears as listed in the tables below. If it does not appear
+here, it is not a valid value — move the invalid slug to _review_notes. Leave
+the array empty or use has-details. Describe occurance in _review_notes.
 ================================================================================
 
 
@@ -1555,6 +1567,8 @@ environmental-protection           Environmental Protection
 food-drug-safety                   Food & Drug Safety
 nuclear-energy-safety              Nuclear & Energy Safety
 transportation-safety              Transportation & Aviation Safety
+child-abuse-reporting              Child Abuse & Exploitation Reporting
+patient-abuse-reporting            Patient Abuse & Neglect Reporting
 cybersecurity-disclosure           Cybersecurity Disclosure
 hipaa-patient-privacy              HIPAA & Patient Privacy
 consumer-data-protection           Consumer Data Protection
@@ -1571,6 +1585,7 @@ Description: Worker or employment classification the org explicitly serves.
              Tag all that apply. List all classifications described in source
 			 material. Do not infer coverage. Use has-details slug when coverage
 			 exists but no slug fits cleanly, or no coverage is described clearly.
+			 Reserve all-employees for when the org explicitly claims to serve everyone.
 ────────────────────────────────────────────────────────────────────────────
 
 federal-employee                   Federal Employee
@@ -1638,7 +1653,8 @@ representative-action              Representative Action
 TAXONOMY: ws_case_stage
 Description: Legal stage where the org provides help. Tag all that apply.
              Use other slug when stage coverage exists but no slug fits
-			 cleanly, or no coverage is described clearly.
+			 cleanly, or no coverage is described clearly. other slug can be used
+			 when some case stages where covered and one stage didn't fit cleanly.
 ────────────────────────────────────────────────────────────────────────────
 
 pre-report                         Pre-Report (considering coming forward)
@@ -1649,10 +1665,12 @@ other                              Other (explain in case_stage_details)
 
 
 ────────────────────────────────────────────────────────────────────────────
-TAXONOMY: ws_languages
+TAXONOMY: ws_language
 Description: Languages the org serves for intake or direct support.
              Tag all that apply. List languages confirmed by source material.
 			 Use additional slug when the org serves languages not in this list.
+			 Free text in additional_languages can be used to describe any form
+			 of communication, such as hearing-impaired access.
 ────────────────────────────────────────────────────────────────────────────
 
 english                            English
@@ -1676,7 +1694,8 @@ additional                         Additional (list in languages_additional)
 ────────────────────────────────────────────────────────────────────────────
 TAXONOMY: ws_aorg_type
 Description: Primary classification of the organization. Choose the single
-             best fit. Use mixed slug when no single slug cleanly applies.
+             best fit. Use mixed slug when no single slug fits cleanly. It
+			 is understood some assist orgs "blur the line".
 ────────────────────────────────────────────────────────────────────────────
 
 nonprofit                          Nonprofit Organization
@@ -1709,6 +1728,8 @@ TAXONOMY: ws_aorg_cost_model
 Description: Cost structure of the org's help pathways. Tag all that apply.
              Use unclear slug when existing slugs do not fit cleanly to a
              model described by the org, or no model is described clearly.
+			 unclear can be used even when some cost models were covered and
+			 a there was something different about a remaining model.
 ────────────────────────────────────────────────────────────────────────────
 
 free                               Free of Charge
@@ -1758,7 +1779,7 @@ RECORD SCHEMA
   "jurisdiction_id":   "[TWO-LETTER CODE]",
   "citation_id":       "[JX]-CIT-[YEAR]-[SHORT-SLUG e.g. NJ-CIT-2003-DZWONAR]",
   "parent_statute_id": "[STATUTE_ID this citation directly supports e.g. NJ-34:19-1]",
-  "parent_common_law_id": "[OPTIONAL DOCTRINE_ID when citation supports common-law e.g. PA-CL-WRONGFUL-DISCHARGE]",
+  "parent_comlaw_id":  "[OPTIONAL DOCTRINE_ID when citation supports common-law e.g. PA-CL-WRONGFUL-DISCHARGE]",
   "case_name":         "[FULL CASE NAME e.g. Dzwonar v. McDevitt]",
   "court":             "[COURT SHORTHAND from list above e.g. NJ-SUP]",
   "effective_date":    "[YYYY-MM-DD — operative date of ruling]",
@@ -1814,7 +1835,7 @@ RECORD SCHEMA
   "jurisdiction_id":   "[TWO-LETTER CODE]",
   "interpretation_id": "[JX]-INTERP-[YEAR]-[SHORT-SLUG]",
   "parent_statute_id": "[STATUTE_ID this interpretation directly addresses]",
-  "parent_common_law_id": "[OPTIONAL DOCTRINE_ID when interpretation addresses common-law doctrine]",
+  "parent_comlaw_id":  "[OPTIONAL DOCTRINE_ID when interpretation addresses common-law doctrine]",
   "case_name":         "[FULL CASE NAME]",
   "court":             "[COURT SHORTHAND from list above]",
   "effective_date":    "[YYYY-MM-DD — operative date of ruling]",
@@ -1928,10 +1949,15 @@ A single JSON object with three top-level keys:
 
   - "meta"      — one block describing this batch
   - "records"   — an array of {$records_label}
-  - "integrity" — your honest self-report on the state of this batch
+  - "integrity" — your details of any anomalies present in this batch
 
-The ingest tool maps your JSON directly to internal data fields. Do not
-add keys that are not in the schema. Do not reorder fields within a record.
+The JSON you produce will be examined by a human reviewer. It will be verified
+and merged with other researcher's batches before publication. The meta block
+will be used to track the provenance and integrity of the batch. The merged
+records will be verified again and used as the basis for public-facing content on
+WhistleblowerShield.org. Accuracy and honesty are paramount. Your research will
+be the foundation for helping users in need find the right legal assistance and
+understand their protections.
 
 ---
 
@@ -1941,7 +1967,8 @@ BLOCK;
 
 function ws_prompt_final_json_block(): string {
     return "---\n\nProduce the complete JSON object now, inside a single code block.\n"
-         . "Do not include any commentary, explanation, or markdown outside the code block.\n";
+         . "Do not include any commentary, explanation, or markdown outside the code block.\n"
+         . "meta._json_run_researcher_notes is yours to use, unrestricted.\n";
 }
 
 function ws_prompt_render_exclusion_list( string $excludes, string $label ): string {
@@ -1966,15 +1993,15 @@ The following fields accept only the registered term slugs listed in the
 taxonomy tables below. Use the slug that best fits. If no slug fits, leave
 the array empty — do not invent a slug and insert it into the record.
 
-  legal_basis.disclosure_types     → ws_disclosure_type
-  legal_basis.protected_class      → ws_protected_class      → can use has-details
-  legal_basis.disclosure_targets   → ws_disclosure_target   → can use has-details
-  enforcement.process_type         → ws_process_type
-  enforcement.adverse_action       → ws_adverse_action_types → can use has-details
-  enforcement.remedies             → ws_remedies             → can use has-details
-  enforcement.fee_shifting         → ws_fee_shifting
-  burden_of_proof.employee_standard → ws_employee_standard   → can use has-details
-  burden_of_proof.employer_defense  → ws_employer_defense    → can use has-details
+  legal_basis.disclosure_types       → ws_disclosure_type
+  legal_basis.protected_classes      → ws_protected_class      → can use has-details
+  legal_basis.disclosure_targets     → ws_disclosure_target    → can use has-details
+  enforcement.process_types          → ws_process_type
+  enforcement.adverse_actions        → ws_adverse_action_type  → can use has-details
+  enforcement.remedies               → ws_remedy               → can use has-details
+  enforcement.fee_shiftings          → ws_fee_shifting
+  burden_of_proof.employee_standards → ws_employee_standard    → can use has-details
+  burden_of_proof.employer_defenses  → ws_employer_defense     → can use has-details
 
 Any taxonomy field set to has-details requires the details in an associated
 freetext field *_details following the taxonomy field. Omit the *_details
@@ -1987,7 +2014,7 @@ function ws_prompt_case_law_schema_notes(): string {
     return <<<'BLOCK'
 
 parent linkage: provide at least one of parent_statute_id or
-parent_common_law_id. Provide both only when the record directly supports both.
+parent_comlaw_id. Provide both only when the record directly supports both.
 
 taxonomy arrays: Tag sparingly. In almost all cases a ruling addresses exactly
 one taxonomy axis — tag one term with confidence rather than several with
@@ -2012,7 +2039,7 @@ circuit splits, or caveats the schema fields cannot capture.
 CALCULATED FIELDS — compute last:
   meta.record_count     — must equal length of records array
   meta.proposed_count   — must equal length of new_terms_proposed
-  integrity.error_count — must equal length of error_details
+  integrity.notation_count — must equal length of notations
 
 BLOCK;
 }
@@ -2027,7 +2054,7 @@ constraint.
 Permission to fail and omit is explicit:
   - omit uncertain fields instead of guessing
   - omit uncertain records instead of padding the batch
-  - set with_errors: true and explain gaps in integrity.error_details
+  - set has_anomalies: true and explain gaps in integrity.notations
 
 Why this matters: fabricated or guessed legal information can cause real harm
 (for example, missed filing deadlines, invalid venue assumptions, or reliance
@@ -2038,15 +2065,15 @@ BLOCK;
 
 function ws_prompt_truncation_permission_assist_org( int $requested_records = 0 ): string {
     $header = $requested_records > 0
-        ? "Target up to {$requested_records} records, but return fewer when confidence is limited."
-        : 'As many as you can confidently verify (fewer is correct).';
+        ? "Target up to {$requested_records} records, but stop when confidence is limited."
+        : 'As many records as you can confidently find; stop when confidence is limited.';
 
     return "\n{$header}\n"
         . "Confidence is the hard constraint.\n\n"
-        . "Permission to fail and omit is explicit:\n"
+        . "Permission to omit is explicit:\n"
         . "  - omit uncertain fields instead of guessing\n"
         . "  - omit uncertain records instead of padding the batch\n"
-        . "  - set with_errors: true and explain gaps in integrity.error_details\n\n";
+        . "  - set has_anomalies: true and document gaps in integrity.notations\n\n";
 }
 
 function ws_prompt_assist_org_meta_schema(): string {
@@ -2056,16 +2083,17 @@ META SCHEMA
 {
   "meta": {
     "json_format_version": "2.0",
-    "source_method": "ai_assisted",
-    "source_name": "[MODEL COMMON NAME]",
-    "jurisdiction_id": "[US OR STATE CODE]",
-    "generated_date": "[YYYY-MM-DD]",
-    "generated_by": "[FULL MODEL NAME + VERSION]",
-    "nationwide_only": false,
-    "record_count": 0,
-    "json_run_notes": "",
+    "source_method":       "ai_assisted",
+    "source_name":         "[MODEL COMMON NAME]",
+    "jurisdiction_id":     "[US OR STATE CODE]",
+    "generated_date":      "[YYYY-MM-DD]",
+    "generated_by":        "[FULL MODEL NAME + VERSION]",
+    "nationwide_only":     false,
+    "record_count":        0,
+    "record_type":         "assist-org",
+    "json_run_notes":      "",
     "_json_run_researcher_notes": "",
-    "batch_completed": "[YYYY-MM-DD HH:MM UTC]"
+    "batch_completed":     "[YYYY-MM-DD HH:MM UTC]"
   }
 }
 
@@ -2081,7 +2109,7 @@ meta.batch_completed          always UTC; format: YYYY-MM-DD HH:MM UTC; written 
 
 CALCULATED FIELDS — write last:
   meta.record_count           must equal the length of the records array.
-  integrity.error_count       must equal the length of error_details when with_errors is true.
+  integrity.notation_count    must equal the length of notations array when has_anomalies is true.
 
 ---
 

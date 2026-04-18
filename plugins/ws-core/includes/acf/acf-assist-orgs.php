@@ -58,7 +58,7 @@
  * Eligibility & Cost tab:
  *   ws_aorg_cost_models                    Cost Structure (multi_select, required)
  *   ws_aorg_has_income_limit               Income Eligibility Required? (true_false, optional)
- *   ws_aorg_income_limit_details           Income Eligibility Details (textarea, conditional)
+ *   ws_aorg_has_income_limit_details           Income Eligibility Details (textarea, conditional)
  *   ws_aorg_accepts_anonymous              Can Assist Anonymous Clients? (true_false, optional)
  *   ws_aorg_eligibility_details            Additional Eligibility Requirements (textarea, optional)
  *
@@ -721,9 +721,9 @@ function ws_register_acf_assist_org() {
             ],
 
             [
-                'key'          => 'field_aorg_income_limit_details',
+                'key'          => 'field_aorg_has_income_limit_details',
                 'label'        => 'Income Eligibility Details',
-                'name'         => 'ws_aorg_income_limit_details',
+                'name'         => 'ws_aorg_has_income_limit_details',
                 'type'         => 'textarea',
                 'instructions' => 'Describe the income thresholds or financial eligibility criteria — e.g., "Income must be below 200% of the federal poverty level."',
                 'rows'         => 3,

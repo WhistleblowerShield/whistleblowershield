@@ -27,7 +27,7 @@
  *
  * FUNCTIONS
  * ---------
- *   ws_render_section()                      Generic section wrapper (title + content).
+ *   ws_render_section()                      Generic section wrapper (title + content + class).
  *   ws_render_section_two_group()            Local + federal two-group section pair.
  *   ws_render_jx_header()                    Jurisdiction page header (H1, flag, gov offices).
  *   ws_render_jx_flag()                      Flag image with Wikimedia attribution.
@@ -580,7 +580,7 @@ function ws_render_record_procedures( $procedures, $record_type = 'statute' ) {
 
     if ( $record_type === 'statute' ) {
         $heading = 'Filing Procedures Under This Statute';
-    } elseif ( $record_type === 'comlaw' ) {
+    } elseif ( $record_type === 'common_law' ) {
         $heading = 'Filing Procedures Under This Common Law Principle';
     } else {
         $heading = 'Filing Procedures';

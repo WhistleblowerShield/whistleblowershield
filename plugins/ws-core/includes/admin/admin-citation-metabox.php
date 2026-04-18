@@ -91,7 +91,7 @@ function ws_render_citation_metabox( $post ) {
 
     // ── Build "Add New Citation" URL ──────────────────────────────────────
     //
-    // statute_id/common_law_id
+    // statute_id/comlaw_id
     //                    — read by acf/load_value in acf-jx-citations.php to
     //                      pre-select ws_jx_citation_statute_ids or
     //                      ws_jx_citation_comlaw_ids.
@@ -102,7 +102,7 @@ function ws_render_citation_metabox( $post ) {
     // post_title         — WordPress core pre-fills the title field.
 
     $terms   = wp_get_post_terms( $post->ID, WS_JURISDICTION_TAXONOMY );
-    $parent_param = $is_statute ? 'statute_id' : 'common_law_id';
+    $parent_param = $is_statute ? 'statute_id' : 'comlaw_id';
     $add_url = admin_url( 'post-new.php?post_type=jx-citation&' . $parent_param . '=' . $post->ID );
 
     if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
@@ -166,25 +166,13 @@ function ws_render_citation_metabox( $post ) {
     $type_labels = [
         'case_law'   => 'Case Law',
         'statute'    => 'Statute',
+        'common_law' => 'Common Law',
         'regulatory' => 'Regulatory',
         'secondary'  => 'Secondary Source',
     ];
 
     // ── Render ────────────────────────────────────────────────────────────
     ?>
-    <style>
-        #ws_citations .ws-cite-table { width:100%; border-collapse:collapse; margin-bottom:12px; }
-        #ws_citations .ws-cite-table th,
-        #ws_citations .ws-cite-table td { padding:6px 10px; border-bottom:1px solid #e0e0e0; text-align:left; font-size:13px; }
-        #ws_citations .ws-cite-table th { background:#f6f7f7; font-weight:600; color:#1d2327; }
-        #ws_citations .ws-cite-table .ws-attached-yes { color:#1a7a1a; font-weight:600; }
-        #ws_citations .ws-cite-table .ws-attached-no  { color:#999; }
-        #ws_citations .ws-cite-empty  { color:#666; font-style:italic; margin-bottom:12px; }
-        #ws_citations .ws-cite-actions { display:flex; align-items:center; gap:10px; }
-        #ws_citations .ws-cite-add-btn { text-decoration:none; }
-        #ws_citations .ws-cite-add-btn[disabled] { opacity:.5; pointer-events:none; cursor:not-allowed; }
-    </style>
-
     <?php if ( empty( $citations ) ) : ?>
         <p class="ws-cite-empty">No citation records linked to this record yet.</p>
     <?php else : ?>

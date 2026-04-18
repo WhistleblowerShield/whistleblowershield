@@ -106,6 +106,8 @@ function ws_filter_allowed_map(): array {
             'export-sanctions-compliance'   => 'export-sanctions-compliance',
             'general-wrongdoing'            => 'general-wrongdoing',
             'military-defense-reporting'    => 'military-defense-reporting',
+            'child-abuse-reporting'         => 'child-abuse-reporting',
+            'patient-abuse-reporting'       => 'patient-abuse-reporting',            
             // ws_adverse_action_type (retaliation branch)
             'termination'                   => 'termination',
             'constructive-discharge'        => 'constructive-discharge',
