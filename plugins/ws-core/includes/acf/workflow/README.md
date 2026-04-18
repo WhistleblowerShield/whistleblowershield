@@ -21,6 +21,15 @@ writes depend on stamp field definitions being registered.
 
 ---
 
+## Operational Note
+
+These groups are shared contracts. If a field is changed here, confirm
+that downstream query payloads (`plain`, `verify`, `record`) and all
+`acf/save_post` hooks in `admin-hooks.php` remain aligned. Changes here
+ripple across every CPT that carries the group.
+
+---
+
 ## Stamp Fields (`group_stamp_metadata`)
 
 Attaches to all 9 content CPTs. Intentionally excludes `jurisdiction`
@@ -75,20 +84,3 @@ Three write paths for `ws_auto_source_method`:
 `ws_verification_status` cannot be set to `verified` unless
 `ws_auto_source_name` is non-empty — enforced server-side by
 `ws_enforce_source_verify_roles()` in `admin-hooks.php` at priority 20.
-
-Non-admins cannot revert a `verified` record to `unverified`.
-Only admins may set `ws_needs_review`.
-
----
-
-## Major Edit (`group_major_edit_metadata`)
-
-**Attaches to:** `jx-summary`, `jx-statute`, `jx-citation`,
-`jx-interpretation`, `ws-ag-procedure`
-
-When `ws_is_major_edit` is saved as true with a non-empty description,
-`admin-major-edit-hook.php` creates a published `ws-legal-update` post
-automatically. Both fields reset after the legal update is created.
-
-An empty description with the toggle on resets the toggle and shows
-an admin notice. An empty description is worse than no log entry.

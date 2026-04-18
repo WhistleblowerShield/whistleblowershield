@@ -148,7 +148,7 @@ All constants are defined in `ws-core.php` before the bootstrap runs.
 | `WS_CORE_PATH` | `plugin_dir_path()` | Absolute filesystem path to plugin root |
 | `WS_CORE_URL` | `plugin_dir_url()` | URL to plugin root for asset enqueues |
 | `WS_JURISDICTION_TAXONOMY` | `'ws_jurisdiction'` | Canonical taxonomy slug — use everywhere WordPress expects a taxonomy identifier |
-| `WS_CACHE_ALL_JURISDICTIONS` | `'ws_all_jurisdictions_cache'` | Transient key for full jurisdiction list cache |
+| `WS_CACHE_ALL_JURISDICTIONS` | `'ws_all_jurisdictions_cache_'` | Transient key for full jurisdiction list cache |
 | `WS_CACHE_JX_INDEX` | `'ws_jx_index_cache'` | Transient key for jurisdiction index page cache |
 | `WS_CACHE_LEGAL_UPDATES_SITEWIDE` | `'ws_legal_updates_sitewide'` | Transient key for sitewide legal updates cache (up to 100 items) |
 | `WS_REF_PARENT_TYPES` | `['jx-statute', 'jx-citation', 'jx-interpretation']` | CPT slugs that support reference parent relationships |

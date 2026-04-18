@@ -266,7 +266,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	// this line. Actual term seeding fires on 'admin_init' inside self-gating
 	// closures in register-taxonomies.php — well after this loader completes.
 	// See TAXONOMY TWO-PHASE BEHAVIOUR in the docblock above.
-	$taxonomy_files = [
+/* 	$taxonomy_files = [
 		'register-taxonomies', 'register-glossary',
 	];
 	foreach ( $taxonomy_files as $file ) {
@@ -291,7 +291,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				echo '</p></div>';
 			} );
 		}
-	}
+	} */
 
 	// Cascade layer — filter config and resolver(context)
 	// Loaded on both frontend and admin
@@ -361,7 +361,7 @@ if ( is_admin() ) {
 	//   admin-matrix-watch    — divergence detection only; must be last
 	//
 	// MATRIX Layer: Loaded from /includes/admin/matrix/
-	$matrix_files = [
+/* 	$matrix_files = [
 		'matrix-helpers',      // Shared helpers — must load before all seeders.
 		'matrix-jurisdictions', 'matrix-fed-statutes', 'matrix-federal-courts', 'matrix-state-courts',
 		'matrix-assist-orgs', 'matrix-agencies', 'matrix-ag-procedures', 'admin-matrix-watch',
@@ -387,7 +387,7 @@ if ( is_admin() ) {
 				echo '</p></div>';
 			} );
 		}
-	}
+	} */
 	
     // ACF Layer: Huge memory save by keeping these out of the frontend.
     // BLIND SPOT: ACF field definitions are not registered in REST API or WP-CLI

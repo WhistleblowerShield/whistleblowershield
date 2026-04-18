@@ -5,7 +5,7 @@ model, editorial workflow, and public-facing output for the platform.
 
 **Stack:** WordPress + ACF Pro
 **Requires:** PHP 8.0+, WordPress 6.0+, ACF Pro
-**Version:** 3.15.0
+**Version:** 3.17.0
 
 Full project documentation is in `/documentation/`. This file covers the
 rules a developer needs open while writing code.
@@ -18,7 +18,8 @@ Six layers, loaded in strict dependency order by `includes/loader.php`:
 
 ```
 Universal Layer   CPTs, taxonomies, ACF field groups, query functions
-                  Loaded on frontend and admin
+                  cascade functions, Sentry SDK bootstrap. Loaded on both
+                  frontend and admin
 Matrix Layer      Idempotent seeders — run once on install (admin only)
 Admin Layer       ACF hooks, audit trail, monitoring, dashboard (admin only)
 Tools Layer       Admin tools in includes/admin/tools/ — prompt generator,
@@ -67,47 +68,52 @@ that lack codified statutory protections or where common law supplements
 statutes.
 
 Key differences from `jx-statute`:
-- Anchor is a judicial doctrine, not a statute section. `ws_cl_doctrine_id`
+- Anchor is a judicial doctrine, not a statute section. `ws_jx_comlaw_doctrine_id`
   (format: `[JX]-CL-[SHORT-SLUG]`) replaces `statute_id` as the stable
   pipeline identifier used in prompt exclusion lists.
-- `ws_cl_doctrine_basis` and `ws_cl_recognition_status` are WYSIWYG fields
+- `ws_jx_comlaw_doctrine_basis` and `ws_jx_comlaw_recognition_status` are WYSIWYG fields
   that carry the primary explanatory content.
-- `ws_cl_statutory_preclusion` boolean flags jurisdictions where the common
+- `ws_jx_comlaw_has_statutory_preclusion` boolean flags jurisdictions where the common
   law claim is unavailable when a statutory remedy exists (Wyoming pattern).
-- `ws_cl_public_policy_sources` checkbox tracks what sources of law the
+- `ws_jx_comlaw_public_policy_sources` checkbox tracks what sources of law the
   jurisdiction accepts as establishing public policy (constitution, statute,
   administrative-rule, case-law, federal-law, other).
-- `ws_cl_other_sources` freetext companion — visible when `other` is checked.
-- `ws_cl_precedent_url` links to the leading case on an approved source.
+- `ws_jx_comlaw_other_sources` freetext companion — visible when `other` is checked.
+- `ws_jx_comlaw_precedent_url` links to the leading case on an approved source.
 - SOL is almost always `limit_ambiguous: true` — common law claims borrow
   limitations periods from analogous statutes.
 
 Uses the same taxonomy palette as `jx-statute` and participates in the
 same query layer pattern via `ws_get_jx_common_law_data()`.
-Render stub: `render-common-law.php` — implement when Wyoming data build begins.
+
 
 ---
 
 ## Taxonomy Registry
 
 17 taxonomies registered in `includes/taxonomies/register-taxonomies.php`.
+Taxonomy names are always singular. Meta names that store arrays of
+taxonomy terms are always plural. Meta names the store a single term
+are always singular.
 
 ### Shared doctrinal taxonomies
 
-These attach to `jx-statute`, `jx-citation`, `jx-interpretation`, and
-`jx-common-law`. All support `tax_query` filtering.
+These attach to `jx-statute`, `jx-common-law`, `jx-citation`, and
+`jx-interpretation`. All support `tax_query` filtering.
 
 | Slug | Type | Notes |
 |---|---|---|
 | `ws_disclosure_type` | hierarchical | 6 parents, 26 children |
-| `ws_protected_class` | hierarchical | 4 parents, 12 children + `has-details` |
-| `ws_disclosure_targets` | hierarchical | 5 parents, 13 children + `has-details` |
-| `ws_adverse_action_types` | flat | 14 terms + `has-details` |
+| `ws_protected_class` | hierarchical | 4 parents, 12 children + `has-details` + super slug `all-employees` |
+| `ws_disclosure_target` | hierarchical | 5 parents, 13 children + `has-details` |
+| `ws_adverse_action_type` | flat | 14 terms + `has-details` |
 | `ws_process_type` | flat | 9 terms |
-| `ws_remedies` | flat | 20 terms + `has-details` |
+| `ws_remedy` | flat | 20 terms + `has-details` |
 | `ws_fee_shifting` | flat | 4 terms |
 | `ws_employer_defense` | flat | 6 terms + `has-details` |
 | `ws_employee_standard` | flat | 6 terms + `has-details` |
+| `ws_employment_sector` | flat | 6 terms + includes super slug `all-sectors` |
+
 
 ### has-details sentinel pattern
 
@@ -120,9 +126,9 @@ the registered slugs capture. Applies to `jx-statute`, `jx-common-law`,
 Companion field mapping:
 ```
 protected_class     → *_protected_class_details
-disclosure_targets  → *_disclosure_targets_details
-adverse_action      → *_adverse_action_details
-remedies            → *_remedies_details
+disclosure_target   → *_disclosure_target_details
+adverse_action_type → *_adverse_action_type_details
+remedy              → *_remedy_details
 employer_defense    → *_employer_defense_details
 employee_standard   → *_employee_standard_details
 ```
@@ -132,11 +138,11 @@ employee_standard   → *_employee_standard_details
 | Slug | Attaches To | Notes |
 |---|---|---|
 | `ws_jurisdiction` | All content CPTs | Canonical join key. USPS slug. |
-| `ws_languages` | `ws-agency`, `ws-assist-org` | `additional` is a system sentinel |
+| `ws_language` | `ws-agency`, `ws-assist-org` | `additional` is a system sentinel |
 | `ws_case_stage` | `ws-assist-org` | Phase 2 filter axis |
 | `ws_aorg_type` | `ws-assist-org` | Single-value |
-| `ws_employment_sector` | `ws-assist-org` | Phase 2 filter axis |
-| `ws_aorg_cost_model` | `ws-assist-org` | Single-value |
+| `ws_employment_sector` | `jx-statute`, `jx-common-law`, `jx-citation`, `jx-interpretation`,`ws-agency`, `ws-ag-procedure`, `ws-assist-org` | Phase 2 filter axis |
+| `ws_aorg_cost_model` | `ws-assist-org` | `other` is a system sentinel | |
 | `ws_aorg_service` | `ws-assist-org` | `additional` is a system sentinel |
 | `ws_procedure_type` | `ws-ag-procedure` | 3 stable terms |
 
@@ -144,37 +150,50 @@ employee_standard   → *_employee_standard_details
 
 ## Naming Conventions
 
-### ACF Field Keys
+### ACF Field 'key'
 
-These rules govern ACF `key` values only — not `name` (meta key), `label`,
+These rules govern ACF `key` values not `name` (meta key), `label`,
 or any other property.
 
-1. No `ws_` prefix on field keys. `field_` is sufficient namespacing.
-2. Group keys end with `_metadata`. Example: `group_jx_statute_metadata`.
-3. Tab field keys end with `_tab`. Example: `field_legal_basis_tab`.
-4. Field key = `field_` + meta name with `ws_` prefix stripped.
-   Example: `ws_jx_statute_official_name` → `field_jx_statute_official_name`.
-5. Fields whose meta name appears in multiple groups (e.g. `ws_attach_flag`,
-   `ws_display_order`, `ws_ref_materials`) prepend CPT context to disambiguate.
+1. No `ws_` or `ws_auto_` prefix on field keys. `field_` is sufficient namespacing.
+2. Parent record_types have approved abbreviations: `jurisdiction` -> `jx`,
+   `agency` -> `ag`
+3. Normal record_types have approved abbreviations: `assist-org` -> `aorg`,
+   `common-law` -> `comlaw`, `interpretation` -> `interp`. Retired abbreviations:
+   `cite` -> `citation`, `cl` -> `common-law`, `proc` -> `procedure` — do not use
+   retired abbreviations, `cl_` -> wrong, `jx_comlaw_` -> right
+4. Group keys include group_(parent-abbrev-where-needed_)unabbreviated-record-type and
+   end with `_metadata`. Example: `group_jx_common_law_metadata`.
+5. Tab field keys include field_(parent-abbrev-where-needed_)record-type_tab-label
+   (lowercase, abbrev'd) and end with `_tab`. Example: `field_jx_comlaw_legal_basis_tab`.
+6. No fields in standard ACFs should use meta names without
+   (parent-abbrev where needed)_record-type(lowercase)_meta-name.
+   `display_order` -> wrong, `jx_comlaw_display_order` -> right.
 
-### Post Meta Keys
+### ACF Field 'name' - (Meta Names)
 
+1. Follow all rules for ACF Field 'key'
 1. All custom meta keys carry a `ws_` prefix. No bare unprefixed keys.
 2. Auto-stamp keys carry the `ws_auto_` prefix (written by hook logic only).
 3. Private audit-only keys additionally carry a leading underscore:
    `_ws_auto_date_created_gmt`, `_ws_auto_last_edited_gmt`.
-4. Content CPT meta keys carry a CPT infix:
-   `ws_jx_*` (statute), `ws_cl_*` (common-law), `ws_agency_*`, `ws_aorg_*`,
-   `ws_legal_update_*`, `ws_jx_interp_*`, `ws_jx_citation_*`, `ws_proc_*`.
-5. Meta key infixes and CPT slugs are always singular. When in doubt, singular wins.
+4. All meta data meant to be hidden/private values fit normal naming rules
+   with underscore prefixed. Example: `_ws_aorg_internal_id`
+4. Content ACF meta names carry a CPT infix:
+   `ws_jx_statute*`, `ws_jx_comlaw*` (common-law), `ws_agency_*`, `ws_aorg_*` (assist-org),
+   `ws_legal_update_*`, `ws_jx_interp_*` (interpretation), `ws_jx_citation_*`, `ws_ag_proccedure_*`.
+5. Meta key infixes and CPT slugs are always singular unless they store arrays.
+   When in doubt, use singular.
 
 ### Render Function Names
 
-Render functions are named after their **data type**, not the page section
-they produce.
+1. Render functions are named after their **data type**, not the page section
+   they produce.
+2. Render functions do not abbreviate record_types.
 
 ```php
 ws_render_jx_common_law()   // correct — data type
+ws_render_jx_comlaw()       // wrong — abbrev name
 ws_render_jx_case_law()     // wrong — section name
 ```
 
@@ -196,6 +215,10 @@ GMT audit timestamps use `gmdate( 'Y-m-d' )`.
 ## Query Layer Return Keys
 
 The query layer strips all `ws_` and `ws_auto_` prefixes from return keys.
+By Convention:
+created_by      — holds a user record
+created_by_name — is the user display name
+Applies to all meta that holds user values.
 
 ```
 record  → created_by, created_by_name, created_date,
@@ -239,6 +262,9 @@ value. To re-run a seeder, bump its version string — never delete the option.
 | 3.10.0 | `ws_procedure_type` taxonomy; source verify for procedures |
 | 3.11.0 | `has-details` sentinel added to 5 taxonomies |
 | 3.12.0 | `ws_employee_standard` taxonomy; ACF companion field pattern for has-details |
-| 3.13.0 | `jx-common-law` CPT + ACF + query function + render stub; all shared taxonomies updated to include jx-common-law; `ws_cl_doctrine_id`, `ws_cl_statutory_preclusion`, `ws_cl_public_policy_sources`, `ws_cl_precedent_url` fields |
+| 3.13.0 | `jx-common-law` CPT + ACF + query function + render stub; all shared taxonomies updated to include jx-common-law; `ws_jx_comlaw_doctrine_id`, `ws_jx_comlaw_statutory_preclusion`, `ws_jx_comlaw_public_policy_sources`, `ws_jx_comlaw_precedent_url` fields |
 | 3.13.1 | `tool-generate-prompt.php` added to `includes/admin/tools/`; reads live taxonomy data via `get_terms()` — no hardcoded arrays |
 | 3.14.0 | `tool-ingest.php` added; ACF field names renamed throughout `acf-jx-statutes.php` and `acf-jx-common-law.php` to match JSON schema keys; four ingest log files added to `wp-content/logs/ws-ingest/` |
+| 3.16.0 | Cascade taxonomy filter developed |
+| 3.17.0 | Naming rules extended, refactor applied |
+| 3.18.0 | `ws_employment_sector` taxonomy extended to agencies, procedures, and legal records; `employer_threshold` added to legal records |

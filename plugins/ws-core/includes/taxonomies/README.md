@@ -21,6 +21,24 @@ Taxonomy registration and seeding for all ws-core taxonomies.
 
 ---
 
+## Current Naming Direction
+
+Canonical taxonomy slugs use singularized names. Migrated slugs include:
+
+- `ws_adverse_action_type`
+- `ws_remedy`
+- `ws_language`
+- `ws_disclosure_target`
+
+All core shared doctrinal taxonomies and assist-org filter taxonomies
+are defined in `register-taxonomies.php`.
+
+**Rule:** If the PHP taxonomy slug and any reference text file ever
+diverge, update the text files in the same pass. The PHP file is the
+authoritative source of truth.
+
+---
+
 ## Two-Phase Registration Behaviour
 
 WordPress requires taxonomies to be registered before CPTs that use
@@ -78,56 +96,3 @@ When an editor selects `has-details` in a taxonomy multi-select field,
 a companion ACF freetext `_details` textarea becomes visible via dynamic
 conditional logic (injected at field load time — not at registration time,
 because term IDs are only available at runtime).
-
-This pattern applies to `jx-statute`, `jx-common-law`, `jx-citation`,
-and `jx-interpretation`. The PHP is the single source of truth for which
-taxonomies carry the sentinel. The `taxonomy-*.txt` reference files must
-reflect this — any taxonomy listed without `has-details` in the text file
-but with it in the PHP is a documentation divergence.
-
----
-
-## PHP is the Single Source of Truth
-
-`register-taxonomies.php` is authoritative. The `taxonomy-*.txt` reference
-files exist for the AI research pipeline (prompt templates reference them
-directly). Any divergence between PHP and text files is a bug in the text
-files, not in the PHP.
-
-Whenever taxonomy slugs, parents, or sentinel terms change in PHP, the
-corresponding text file must be updated in the same pass.
-
----
-
-## Taxonomy Reference
-
-17 taxonomies registered.
-
-### Shared Doctrinal Taxonomies
-Attach to `jx-statute`, `jx-citation`, `jx-interpretation`, `jx-common-law`:
-
-| Slug | Type | has-details | Notes |
-|---|---|---|---|
-| `ws_disclosure_type` | hierarchical | No | 6 parents, 26 children |
-| `ws_protected_class` | hierarchical | Yes | 4 parents, 12 children |
-| `ws_disclosure_targets` | hierarchical | Yes | 5 parents, 13 children |
-| `ws_adverse_action_types` | flat | Yes | 14 terms |
-| `ws_process_type` | flat | No | 9 terms |
-| `ws_remedies` | flat | Yes | 20 terms |
-| `ws_fee_shifting` | flat | No | 4 terms |
-| `ws_employer_defense` | flat | Yes | 6 terms |
-| `ws_employee_standard` | flat | Yes | 6 terms |
-
-### Other Taxonomies
-
-| Slug | Type | Attaches To | Notes |
-|---|---|---|---|
-| `ws_jurisdiction` | flat | All content CPTs | Canonical join key. USPS slug. |
-| `ws_languages` | flat | `ws-agency`, `ws-assist-org` | `additional` sentinel |
-| `ws_case_stage` | flat | `ws-assist-org` | Phase 2 filter axis |
-| `ws_aorg_type` | flat | `ws-assist-org` | Single-value |
-| `ws_employment_sector` | flat | `ws-assist-org` | Phase 2 filter axis |
-| `ws_aorg_cost_model` | flat | `ws-assist-org` | Single-value |
-| `ws_aorg_service` | flat | `ws-assist-org` | `additional` sentinel |
-| `ws_procedure_type` | flat | `ws-ag-procedure` | 3 stable terms |
-| `ws_glossary` | flat | *(unattached)* | Admin-only; no public archive |

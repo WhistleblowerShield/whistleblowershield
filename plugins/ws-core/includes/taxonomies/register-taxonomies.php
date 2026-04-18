@@ -482,7 +482,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_employment_sector' ) ) {
         register_taxonomy(
             'ws_employment_sector',
-            [ 'ws-assist-org' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation', 'ws-agency', 'ag-procedure', 'ws-assist-org' ],
             [
                 'label'             => 'Employment Sectors',
                 'labels'            => [

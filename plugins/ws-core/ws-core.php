@@ -51,19 +51,19 @@ define( 'WS_JURISDICTION_TAXONOMY', 'ws_jurisdiction' );
 // Transient keys for the two jurisdiction-level query caches. Both are
 // invalidated together by ws_invalidate_jurisdiction_caches() whenever a
 // jurisdiction post is saved or deleted.
-define( 'WS_CACHE_ALL_JURISDICTIONS', 'ws_all_jurisdictions_cache' );
-define( 'WS_CACHE_JX_INDEX',          'ws_jx_index_cache'          );
+define( 'WS_CACHE_ALL_JURISDICTIONS', 'ws_all_jurisdictions_cache_' );
+define( 'WS_CACHE_JX_INDEX',          'ws_jx_index_cache_'          );
 
 // Transient key for the sitewide legal updates cache.
 // Stores up to 100 items; sliced to the requested count on read.
 // Sitewide calls with count > 100 bypass the cache entirely.
 // Per-jurisdiction calls are never cached.
 // Invalidated on every ws-legal-update save.
-define( 'WS_CACHE_LEGAL_UPDATES_SITEWIDE', 'ws_legal_updates_sitewide' );
+define( 'WS_CACHE_LEGAL_UPDATES_SITEWIDE', 'ws_legal_updates_sitewide_cache_' );
 
 // CPT slugs that support a reference parent relationship. Used by
 // ws_get_reference_parent_data() to gate lookups to valid parent types.
-define( 'WS_REF_PARENT_TYPES', [ 'jx-statute', 'jx-citation', 'jx-interpretation' ] );
+define( 'WS_REF_PARENT_TYPES', [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation' ] );
 
 // ── Source Method Constants ───────────────────────────────────────────────────
 //
@@ -85,7 +85,7 @@ define( 'WS_SOURCE_NAME_DIRECT', 'Direct' );
 // are intentionally excluded. Add a new type here when it is added to the
 // ws_legal_update_type ACF select in acf-legal-updates.php.
 define( 'WS_LEGAL_UPDATE_SUMMARY_TYPES', [
-    'statute', 'citation', 'summary', 'interpretation', 'regulation', 'policy',
+    'summary', 'statute', 'common law', 'citation', 'interpretation', 'agency', 'procedure','regulation', 'policy',
 ] );
 
 

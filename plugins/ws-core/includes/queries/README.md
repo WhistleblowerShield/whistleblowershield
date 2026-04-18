@@ -113,6 +113,13 @@ only return records where `ws_[record]_has_attach_flag = true`. This is the
 curated summary view — editorially selected records for the
 jurisdiction page.
 
+The current attach flag meta keys are:
+
+- `ws_jx_statute_has_attach_flag`
+- `ws_jx_citation_has_attach_flag`
+- `ws_jx_interp_has_attach_flag`
+- `ws_jx_comlaw_has_attach_flag`
+
 **This gate applies to the curated path only.** The Phase 2 filtered
 path (`ws_render_jx_filtered()`) bypasses `attach_flag` entirely and
 queries all published records. `attach_flag` is an editorial curation
