@@ -58,7 +58,7 @@ function ws_register_acf_stamp_fields() {
         'instruction_placement' => 'label',
         'active'                => true,
 
-        // Attaches to all 9 supported CPTs.
+        // Attaches to all 10 supported CPTs.
         // jurisdiction is intentionally excluded — see file header.
         'location' => [
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-summary'        ] ],
@@ -86,6 +86,22 @@ function ws_register_acf_stamp_fields() {
                 'type'  => 'tab',
             ],
 
+            // ── Last Edited Date ──────────────────────────────────────────
+            //
+            // Refreshed on every save by ws_acf_write_stamp_fields().
+            // Readonly and disabled for all users — never submitted via UI.
+
+            [
+                'key'          => 'field_last_edited_date',
+                'label'        => 'Last Edited Date',
+                'name'         => 'ws_auto_last_edited_date',
+                'type'         => 'text',
+                'instructions' => 'Stamped automatically on every save. Read only.',
+                'readonly'     => 1,
+                'disabled'     => 1,
+                'wrapper'      => [ 'width' => '33' ],
+            ],
+
             // ── Last Edited By ────────────────────────────────────────────
             //
             // Stamped automatically on every save. Admins may override to
@@ -94,7 +110,7 @@ function ws_register_acf_stamp_fields() {
             // ws_acf_autofill_current_editor() in admin-hooks.php.
 
             [
-                'key'           => 'field_auto_last_edited_author',
+                'key'           => 'field_last_edited_author',
                 'label'         => 'Last Edited By',
                 'name'          => 'ws_auto_last_edited_author',
                 'type'          => 'user',
@@ -110,27 +126,11 @@ function ws_register_acf_stamp_fields() {
             // Readonly and disabled for all users — never submitted via UI.
 
             [
-                'key'          => 'field_auto_date_created',
+                'key'          => 'field_date_created',
                 'label'        => 'Date Created',
                 'name'         => 'ws_auto_date_created',
                 'type'         => 'text',
                 'instructions' => 'Set automatically on first save. Read only.',
-                'readonly'     => 1,
-                'disabled'     => 1,
-                'wrapper'      => [ 'width' => '33' ],
-            ],
-
-            // ── Last Edited ───────────────────────────────────────────────
-            //
-            // Refreshed on every save by ws_acf_write_stamp_fields().
-            // Readonly and disabled for all users — never submitted via UI.
-
-            [
-                'key'          => 'field_auto_last_edited_date',
-                'label'        => 'Last Edited Date',
-                'name'         => 'ws_auto_last_edited_date',
-                'type'         => 'text',
-                'instructions' => 'Stamped automatically on every save. Read only.',
                 'readonly'     => 1,
                 'disabled'     => 1,
                 'wrapper'      => [ 'width' => '33' ],
@@ -144,7 +144,7 @@ function ws_register_acf_stamp_fields() {
             // user ID directly without unwrapping an array.
 
             [
-                'key'           => 'field_auto_create_author',
+                'key'           => 'field_create_author',
                 'label'         => 'Created By',
                 'name'          => 'ws_auto_create_author',
                 'type'          => 'user',
@@ -164,6 +164,6 @@ function ws_register_acf_stamp_fields() {
 
 
 // Field locking and stamp writes are handled centrally in admin-hooks.php.
-// ws_acf_lock_for_non_admins() applies to: ws_auto_date_created, ws_auto_last_edited,
+// ws_acf_lock_for_non_admins() applies to: ws_auto_date_created, ws_auto_last_edited_date,
 // ws_auto_last_edited_author, ws_auto_create_author (registered by field name, applies
 // to all CPTs carrying these field names — no per-file registration needed).

@@ -56,8 +56,6 @@ function ws_register_taxonomies() {
 
     // ── 1. Disclosure Categories ──────────────────────────────────────────
     //
-    // Bug #9 fix: 'ws-assist-org' added to object types so that
-    // save_terms fires correctly on assist-org edit screens.
 
     if ( ! taxonomy_exists( 'ws_disclosure_type' ) ) {
         register_taxonomy(
@@ -754,9 +752,9 @@ add_action( 'admin_init', function() {
         ws_seed_adverse_action_type_taxonomy();
         update_option( 'ws_seeded_adverse_action_type', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_language_taxonomy' ) !== '1.0.0' ) {
+    if ( get_option( 'ws_seeded_language' ) !== '1.0.0' ) {
         ws_seed_language_taxonomy();
-        update_option( 'ws_seeded_language_taxonomy', '1.0.0' );
+        update_option( 'ws_seeded_language', '1.0.0' );
     }
     if ( get_option( 'ws_seeded_case_stage' ) !== '1.0.0' ) {
         ws_seed_case_stage_taxonomy();

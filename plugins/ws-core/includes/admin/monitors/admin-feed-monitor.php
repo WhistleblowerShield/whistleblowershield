@@ -429,7 +429,7 @@ function ws_feed_ingest_item( $guid ) {
     // ── Plain English defaults ────────────────────────────────────────────
 
     update_post_meta( $post_id, 'ws_has_plain_english', 0 );
-    update_post_meta( $post_id, 'ws_auto_plain_english_reviewed', 0 );
+    update_post_meta( $post_id, 'ws_plain_english_reviewed', 0 );
 
     // ── Reviewer notes → post excerpt ─────────────────────────────────────
 

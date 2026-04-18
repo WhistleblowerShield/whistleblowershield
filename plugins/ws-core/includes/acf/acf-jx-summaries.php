@@ -25,15 +25,16 @@
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------
+ *   - group_plain_english_metadata (acf-plain-english-fields.php, menu_order 85)
  *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
  *   - group_source_verify_metadata (acf-source-verify.php)
  *   - group_major_edit_metadata (acf-major-edit.php, menu_order 99)
  *
  * PLAIN ENGLISH
  * -------------
- * jx-summary IS the plain language document. Plain English fields
- * (group_plain_english_metadata) do NOT attach here -- the summary carries
- * its own plain_english_reviewed toggle in this group instead.
+ * jx-summary has its own "plain-english" summary_wysiwyg. Plain-English fields
+ * (group_plain_english_metadata) still attach here — Use Plain-English fields
+ * normally and put placeholder content in the plain_english_summary_wysiwyg.
  *
  * @package    WhistleblowerShield
  * @since      2.1.0
@@ -99,7 +100,7 @@ function ws_register_acf_jx_summary() {
                 'label'        => 'Limitations & Ramifications',
                 'name'         => 'ws_jx_summary_limitations',
                 'type'         => 'repeater',
-                'instructions' => 'Each row is one limitation. Label: short name shown in bold (e.g. "Media Reporting"). Description: plain-language explanation. Rendered automatically after the case law section via [ws_jx_limitations].',
+                'instructions' => 'Each row is one limitation. Label: Short bold heading. Description: Plain-English explanation. Rendered to Jurisdiction pages after Case Law via [ws_jx_limitations].',
                 'button_label' => 'Add Limitation',
                 'layout'       => 'table',
                 'min'          => 0,
@@ -119,7 +120,7 @@ function ws_register_acf_jx_summary() {
                         'label'        => 'Description',
                         'name'         => 'ws_jx_summary_limit_text',
                         'type'         => 'textarea',
-                        'instructions' => 'Plain-language explanation. No HTML.',
+                        'instructions' => 'Plain-English explanation. No HTML.',
                         'required'     => 1,
                         'rows'         => 3,
                         'wrapper'      => [ 'width' => '75' ],
@@ -128,16 +129,16 @@ function ws_register_acf_jx_summary() {
             ],
             [
                 'key'          => 'field_jx_summary_sources',
-                'label'        => 'Sources & Citations',
+                'label'        => 'Source Attribution',
                 'name'         => 'ws_jx_summary_sources',
                 'type'         => 'textarea',
-                'instructions' => 'List source citations, statute references, and attribution. One per line recommended.',
+                'instructions' => 'Proper attribution required. List AI Agents, URL references, etc. One-per-line recommended.',
                 'rows'         => 6,
             ],
             [
-                'key'          => 'field_jx_summary_notes',
+                'key'          => 'field_jx_summary_internal_notes',
                 'label'        => 'Internal Notes',
-                'name'         => 'ws_jx_summary_notes',
+                'name'         => 'ws_jx_summary_internal_notes',
                 'type'         => 'textarea',
                 'instructions' => 'Internal editorial notes only. Not displayed publicly.',
                 'rows'         => 4,

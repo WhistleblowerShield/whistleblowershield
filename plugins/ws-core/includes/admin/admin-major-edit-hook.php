@@ -59,7 +59,7 @@ function ws_acf_log_major_edit( $post_id ) {
 	// ── Create the ws-legal-update post ──────────────────────────────────
 
 	$user_id    = get_current_user_id();
-	//$now_local  = current_time( 'Y-m-d' );
+	$now_local  = current_time( 'Y-m-d' );
 	$now_mysql  = current_time( 'mysql' );
 	$now_gmt    = gmdate( 'Y-m-d' );
 

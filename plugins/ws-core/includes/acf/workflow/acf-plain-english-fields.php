@@ -78,20 +78,24 @@ function ws_register_acf_plain_english_fields() {
         'instruction_placement' => 'label',
         'active'                => true,
 
-        // Attaches to CPTs whose content warrants plain language companions.
-        // See file header for excluded CPTs and rationale.
+        // Attaches to All CPTs. Ignore on jx-summary, which carries its own plain language fields in group_jx_summary_metadata.
+        // See file header for rationale.
         'location' => [
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-summary'        ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-statute'        ] ],
-            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-citation'        ] ],
-            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-interpretation'  ] ],
-            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-common-law'      ] ],
-            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-agency'          ] ],
-            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-assist-org'      ] ],
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-citation'       ] ],
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-interpretation' ] ],
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-common-law'     ] ],
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-agency'         ] ],
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-ag-procedure'   ] ],
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-assist-org'     ] ],
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-reference'      ] ],
+            
         ],
 
         'fields' => [
 
-            // ── Tab: Plain Language ───────────────────────────────────────
+            // ── Tab: Plain-English ───────────────────────────────────────
             //
             // menu_order 85 positions this group after each CPT's content
             // tabs and before Authorship & Review (menu_order 90) and
@@ -99,11 +103,11 @@ function ws_register_acf_plain_english_fields() {
 
             [
                 'key'   => 'field_plain_english_tab',
-                'label' => 'Plain Language',
+                'label' => 'Plain-English',
                 'type'  => 'tab',
             ],
 
-            // ── Has Plain Language Version ────────────────────────────────
+            // ── Has Plain-English Summary ────────────────────────────────
             //
             // Master toggle. Guards display of the wysiwyg editor below.
             // ws_acf_plain_english_guards() (priority 5) forces this to 0
@@ -111,27 +115,27 @@ function ws_register_acf_plain_english_fields() {
 
             [
                 'key'           => 'field_has_plain_english',
-                'label'         => 'Has Plain Language Version',
+                'label'         => 'Requires Plain-English Summary',
                 'name'          => 'ws_has_plain_english',
                 'type'          => 'true_false',
-                'instructions'  => 'Enable when a plain-language version of this record has been written below.',
+                'instructions'  => 'Enable when a Plain-English summary of this record is required.',
                 'ui'            => 1,
                 'ui_on_text'    => 'Yes',
                 'ui_off_text'   => 'No',
                 'default_value' => 0,
             ],
 
-            // ── Plain Language Content ────────────────────────────────────
+            // ── Plain-English Content ────────────────────────────────────
             //
             // Conditional on has_plain_english = 1. Content written here
             // is stamped via ws_acf_stamp_summarized_fields() on first save.
 
             [
                 'key'               => 'field_plain_english_wysiwyg',
-                'label'             => 'Plain Language Content',
+                'label'             => 'Plain-English Summary',
                 'name'              => 'ws_plain_english_wysiwyg',
                 'type'              => 'wysiwyg',
-                'instructions'      => 'Plain-language explanation of this record for non-experts.',
+                'instructions'      => 'Plain-English summary of this record in non-legalese.',
                 'tabs'              => 'all',
                 'toolbar'           => 'full',
                 'media_upload'      => 0,
@@ -150,13 +154,14 @@ function ws_register_acf_plain_english_fields() {
 
             [
                 'key'           => 'field_plain_english_reviewed',
-                'label'         => 'Plain Language Reviewed',
-                'name'          => 'ws_auto_plain_english_reviewed',
+                'label'         => 'Plain-English Summary Approved',
+                'name'          => 'ws_plain_english_reviewed',
                 'type'          => 'true_false',
-                'instructions'  => 'Check when a human has reviewed and approved the plain-language content.',
+                'instructions'  => 'Manually toggle when an Editor or Administrator has approved the Plain-English summary.',
                 'ui'            => 1,
                 'ui_on_text'    => 'Reviewed',
                 'ui_off_text'   => 'Pending',
+                'role'          => [ 'editor', 'administrator' ],
                 'default_value' => 0,
             ],
 
@@ -168,10 +173,10 @@ function ws_register_acf_plain_english_fields() {
 
             [
                 'key'           => 'field_plain_english_reviewed_by',
-                'label'         => 'Reviewed By',
+                'label'         => 'Summary Reviewed By',
                 'name'          => 'ws_auto_plain_english_reviewed_by',
                 'type'          => 'user',
-                'instructions'  => 'Auto-stamped when Plain Language Reviewed is first enabled.',
+                'instructions'  => 'Auto-toggled when Plain-English-Reviewed is manually enabled or disabled. Read only.',
                 'role'          => [ 'author', 'editor', 'administrator' ],
                 'return_format' => 'id',
                 'readonly'      => 1,
@@ -186,10 +191,10 @@ function ws_register_acf_plain_english_fields() {
 
             [
                 'key'          => 'field_plain_english_reviewed_date',
-                'label'        => 'Reviewed Date',
+                'label'        => 'Summary Reviewed Date',
                 'name'         => 'ws_auto_plain_english_reviewed_date',
                 'type'         => 'text',
-                'instructions' => 'Auto-stamped when Plain Language Reviewed is first enabled. Read only.',
+                'instructions' => 'Auto-toggled when Plain-English-Reviewed is manually enabled or disabled. Read only.',
                 'readonly'     => 1,
                 'disabled'     => 1,
             ],
@@ -205,7 +210,7 @@ function ws_register_acf_plain_english_fields() {
                 'label'         => 'Summarized By',
                 'name'          => 'ws_auto_plain_english_by',
                 'type'          => 'user',
-                'instructions'  => 'Auto-stamped on first save after plain language content is created.',
+                'instructions'  => 'User Auto-stamped on first save when Plain-English summary is created. Read only.',
                 'role'          => [ 'author', 'editor', 'administrator' ],
                 'return_format' => 'id',
                 'readonly'      => 1,
@@ -222,7 +227,7 @@ function ws_register_acf_plain_english_fields() {
                 'label'        => 'Summarized Date',
                 'name'         => 'ws_auto_plain_english_date',
                 'type'         => 'text',
-                'instructions' => 'Auto-stamped on first save after plain language content is created. Read only.',
+                'instructions' => 'Date Auto-stamped on first save after Plain-English summary is created. Read only.',
                 'readonly'     => 1,
                 'disabled'     => 1,
             ],
@@ -236,8 +241,8 @@ function ws_register_acf_plain_english_fields() {
 
 // All integrity guards, stamp writes, and field locking for plain language
 // fields are handled centrally in admin-hooks.php:
-//   ws_acf_plain_english_guards()       — acf/save_post priority 5
-//   ws_acf_stamp_plain_reviewed_by()    — acf/save_post priority 25
-//   writes: ws_auto_plain_english_reviewed_by, ws_auto_plain_english_reviewed_date
-//   ws_acf_stamp_summarized_fields()    — acf/save_post priority 25
-//   ws_acf_lock_for_non_editors()       — acf/load_field by field name
+//   - ws_acf_plain_english_guards()       — acf/save_post priority 5
+//   - ws_acf_stamp_plain_reviewed_by()    — acf/save_post priority 25
+//       writes: ws_auto_plain_english_reviewed_by, ws_auto_plain_english_reviewed_date
+//   - ws_acf_stamp_summarized_fields()    — acf/save_post priority 25
+//   - ws_acf_lock_for_non_editors()       — acf/load_field by field name
