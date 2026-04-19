@@ -679,9 +679,9 @@ legal impact of this ruling. Use one of these patterns:
   "rejects [legal argument]"      "resolves [conflict/ambiguity]"
 
 QUALITY values:
-  high     — appellate or supreme court; frequently cited
+  high   appellate or supreme court; frequently cited
   moderate — appellate but narrower scope or less cited
-  low      — trial-level or limited precedential value
+  low    trial-level or limited precedential value
 
 Prioritize appellate and supreme court decisions.
 
@@ -1021,9 +1021,10 @@ function ws_prompt_integrity_block(): string {
 
 INTEGRITY BLOCK
 
-The integrity block is your honest self-report on the state of this batch.
+The integrity block is your honest status report on the state of this batch.
 Reporting anomalies here is not a failure — it is the most valuable contribution
-you can make to the reliability of this platform.
+you can make to the reliability of this pipeline. Its purpose is to document
+issues that may compromise machine ingest.
 
 {
   "integrity": {
@@ -1035,14 +1036,18 @@ you can make to the reliability of this platform.
 
 has_anomalies must be true if ANY of the following occurred:
   — fewer records returned than requested, bail when you need to...
-    detail what happened to  alert the reviewer about a truncated batch.
-  — a requested record could not be researched with sufficient confidence
-  — any schema rule was discovered to be anomalous
-  — a slug was used that does not appear in the taxonomy tables
+    detail what happened to alert the reviewer about a truncated batch.
+  — a specifically requested record could not be researched with sufficient confidence
+  — any schema rule was discovered to be anomalous, inconsistent, or contradictory.
+  — a invalid slug was used that does not appear in the taxonomy tables
+  — anything in the batch that may risk machine ingest.
 
 has_anomalies is not for:
-  — observations a human reviewer should know about the batch; use _review_notes
+  — observations a human reviewer should know about a record; use _review_notes
+  — observations a human reviewer should know about the batch; use _json_run_notes
   — fields omitted because data was unavailable; omission is the correct action
+  — if you have some insight as to why a field is empty or omitted, note it in
+    the specific record using review._review_notes not as an anomaly.
 
 Fail-safe policy:
   — it is acceptable to omit one or more records instead of guessing
@@ -1073,44 +1078,41 @@ Before you write the JSON, confirm the following:
    generally.
 
 3. Field requirements are respected:
-   essential           — record is omitted if any essential field is missing.
-   expected            — field is present with a non-empty value or its stated fallback.
-   ternary             — field is present with yes, no, or unclear.
-   expected-if-found   — field is present even when empty ("" or []).
-   conditional         — field is present when its parent condition is met; omitted otherwise.
-   optional            — field is omitted when data is uncertain or unavailable.
+   essential         record is omitted if any essential field is missing.
+   expected          field is present with a non-empty value or its stated fallback.
+   ternary           field is present with yes, no, or unclear.
+   expected-if-found field is present even when empty ("" or []).
+   conditional       field is present when its parent condition is met; omitted otherwise.
+   optional          field is omitted when data is unavailable or unconfirmed.
 
-4. Do not invent slugs. When a concept does not fit any listed slug:
-   — leave the field empty or use has-details where permitted
-   — describe the lack of taxonomy coverage in _review_notes
-   
-5. The Intake Commitment Rule: A URL only qualifies as an Intake URL if the page
+4. The Intake Commitment Rule: A URL only qualifies as an Intake URL if the page
    explicitly offers a path for the individual to request personal assistance, legal
    review, or peer support. If the page is primarily for reporting evidence of
    wrongdoing to the organization (e.g., "Submit a Tip," "Send us a Leak"), it must
    be moved to _review_notes and the intake field left empty.
 
-6. A standard HTTPS web form is not a secure channel.
+5. A standard HTTPS web form is not a secure channel.
    has_secure_channel is yes only when a dedicated encrypted tool is confirmed:
    SecureDrop, Signal, ProtonMail, Tutanota, Wire, Keybase.
 
-7. For every org-owned URL — official_homepage_url, intake_url, contact_url,
+6. For every org-owned URL — official_homepage_url, intake_url, contact_url,
    and secure_contact_url — verify the organization's name appears at that
    URL before including it. Do not cite these from memory alone.
    legitimacy_url points to a third-party verification source by design
    (GuideStar, Charity Navigator, congressional directory, etc.) — verify the
    org is named on that page, not that it is the org's own domain.
 
-8. If any rule couldn't be followed:
-   — set integrity.has_anomalies: true
-   — explain what happened and why in integrity.notations
+7. If any rule couldn't be followed:
+    — set integrity.has_anomalies: true
+    — explain what happened and why in integrity.notations
    
-9. You are not ultimately responsible for the data that makes to the platform.
+8. You are not ultimately responsible for the data that makes to the platform.
    There are many checks and balances in place. Bad data that makes it to the
    platform is a failure in the pipeline, you are only the first stage of the
    pipeline. Your research is the foundation for the data the platform uses.
 
 ---
+
 BLOCK;
 }
 
@@ -1129,7 +1131,6 @@ low-noise batch.
 
 Do not return more records than requested. When requested records is set to dynamic,
 use your judgment to determine how many high-confidence records you can return.
-Do not return records where you are uncertain about the included data.
 
 ---
 
@@ -1145,26 +1146,31 @@ FIELD RULES
 
 OMISSION POLICY
 
-Omit any optional field when empty or uncertain.
+Omit any optional field when unavailable or unconfirmed.
+Omit any conditional field when its parent condition is not met.
 Omitting unverified data is correct.
-Fabricating data is wrong, and has real-world impact on the end user.
+Incorrect data has real-world impact on the end user.
 Contacting an assistance organization that was not properly vetted
-wastes time and creates stress for a person in crisis.
-When in doubt, omit. A missing field can be researched later.
-A wrong field sends someone in crisis to the wrong place.
+by the pipeline, wastes time and creates stress for a person in crisis.
+When in doubt, omit.
 
----
+When rules conflict, prioritize:
+ - Omission over guessing
+ - Anomaly reporting over silent failure
+ - Schema compliance over completeness
+
+ ---
 
 FIELD REQUIREMENTS
 
 Six tiers govern every field in the schema:
 
-  essential           — omit the entire record if missing; no fallback exists
-  expected            — always include; use the stated fallback when data is unavailable
-  ternary             — yes when present; no when not present; unclear when uncertain
-  expected-if-found   — include when present even if empty; omit only when genuinely not found
-  conditional         — required when its parent condition is met; omit otherwise
-  optional            — omit entirely when uncertain or unavailable
+  essential         omit the entire record if missing; no fallback exists
+  expected          always include; use the stated fallback when data is unavailable
+  ternary           'yes' when present; 'no' when not present; 'unclear' when uncertain
+  expected-if-found include when present even if empty
+  conditional       required when its parent condition is met; omit otherwise
+  optional          omit entirely when uncertain or unavailable
 
 ESSENTIAL — omit the record if any of these cannot be confidently sourced:
 
@@ -1172,66 +1178,61 @@ ESSENTIAL — omit the record if any of these cannot be confidently sourced:
   identity.official_homepage_url
   identity.general_description
 
-EXPECTED — always include; use the fallback when data is unavailable. Fallback values
-here are not “real” data; they are not considered failures, they are explicit signals
-for human review, when has-details is paired with *_details, it provides the essential
-starting point for a human follow up. Use these fallbacks instead of descriptions in
-_review_notes so that _review_notes can stay focused on the key clarifications you make
-during your research. Do not abort and omit the record if you encounter these
-uncertainties — it is expected 'some' data will be uncertain for 'some' orgs:
+EXPECTED — always try to include; use the fallback when data is unavailable. Fallback
+values are not “real” data; they are not considered failures, they are explicit signals
+for human review. do not abort and omit the record when fallback values are used.
+it is expected 'some' data will be unavailable for 'some' orgs:
 
   Field                                       Fallback
   ─────────────────────────────────────────   ────────────────────────────────────────────────
-  identity.homepage_url_status                unverified       → or dead when site is confirmed permanently offline
-  scope_of_service.assistance_type            mixed            → it is recognized some orgs "blur the line"
-  scope_of_service.cost_models                ["unclear"]      → include even if other cost models did fit slugs
-  scope_of_service.case_stages                ["other"]        → populate case_stage_details
-  scope_of_service.disclosure_targets         ["has-details"]  → populate disclosure_target_details
-  scope_of_service.protected_classes          ["has-details"]  → populate protected_class_details
+  identity.homepage_url_status                "unverified" — use 'dead' if the URL can be confirmed as non-functional
+  scope_of_service.cost_models                ["unclear"]
+  scope_of_service.case_stages                ["other"]
+  scope_of_service.disclosure_targets         ["has-details"]
+  scope_of_service.protected_classes          ["has-details"]
   scope_of_service.whistleblower_scope        0  (scope unclear)
   scope_of_service.whistleblower_note         provide quote from org or reason for inclusion
   review._review_notes                        "researcher had no notes on current record"
 
-TERNARY — use yes when the source confirms the presence of this feature, no when the source
-confirms its absence, and unclear when the source doesn't reference the feature. unclear is
-not a failure — it is a signal for human review and should be used whenever the source material
-does not confidently confirm or deny the presence of the feature.
+TERNARY — use 'yes' when the source confirms the presence of this feature, 'no' when the source
+confirms its absence, and 'unclear' when the source doesn't reference the feature. 'unclear' is
+not a failure — it should be used whenever the source material does not confidently confirm or
+deny the presence of the feature.
 
   security.has_secure_channel                 unclear
   security.anonymous_pre_consult_possible     unclear
   security.has_attorneys                      unclear
   eligibility.income_eligibility_required     unclear
 
-EXPECTED-IF-FOUND — fields must be included when actively searched for, even if the result is empty.
-Note the absence in _review_notes. This is important for capturing “I looked for this and it's not there”
-signals that are critical for human follow up on potentially suspect orgs:
+EXPECTED-IF-FOUND — fields must be included, even if the result is empty. Note the absence in
+_review_notes. This is important for capturing “I looked for this and it's not there”. it
+signals that the absence will require human review; it does not indicate failure:
 
   scope_of_service.nationwide_example         "" when no qualifying quote is found
   scope_of_service.disclosure_types           [] when none can be confirmed
   scope_of_service.languages_supported        [] when site's operating language cannot be determined.
 
-CONDITIONAL — required when the parent condition is met; omit otherwise. In most cases these
-fields are the structured breadcrumbs for human reviewers: use them to capture “what I found
-doesn't fit the schema”; keep _review_notes for any key clarifications you want to make during
-your research. has-details is a dual-purpose sentinel — it indicates the presence of coverage
-that doesn't fit existing slugs, and it can also signal the coverage is absent. in the companion
-*_details field, describe which purpose is intended.:
+CONDITIONAL — required when the parent condition is met; omit otherwise. use them to capture
+“what I found doesn't fit the schema” or “it could not be found”. 'has-details' is a dual-purpose
+sentinel. it can indicate the presence of coverage that doesn't fit valid slugs cleanly. it can
+also signal the coverage is absent. in the companion *_details field, describe which purpose
+is intended:
 
   Field                                       Condition
   ─────────────────────────────────────────   ────────────────────────────────────────────────
-  scope_of_service.protected_class_details    protected_classes includes   — has-details
-  scope_of_service.additional_services        services_provided includes   — additional
-  scope_of_service.languages_additional       languages_supported includes — additional
-  scope_of_service.case_stage_details         case_stages includes         — other
-  scope_of_service.disclosure_target_details  disclosure_targets includes  — has-details
-  eligibility.income_eligibility_details      income_eligibility_required  — is yes
-  security.secure_contact_url                 has_secure_channel           — is yes
-  security.secure_contact_tool                has_secure_channel           — is yes
-  security.secure_contact_tool_other          secure_contact_tool          — is other
+  scope_of_service.protected_class_details    protected_classes includes 'has-details'
+  scope_of_service.additional_services        services_provided includes 'additional'
+  scope_of_service.languages_additional       languages_supported includes 'additional'
+  scope_of_service.case_stage_details         case_stages includes 'other'
+  scope_of_service.disclosure_target_details  disclosure_targets includes 'has-details'
+  eligibility.income_eligibility_details      income_eligibility_required is 'yes'
+  security.secure_contact_url                 has_secure_channel is 'yes'
+  security.secure_contact_tool                has_secure_channel is 'yes'
+  security.secure_contact_tool_other          secure_contact_tool is 'other'
 
-OPTIONAL — omit entirely when uncertain or unavailable. It is not required, but use _review_notes
-if something was found that didn't fit the schema cleanly, and you think it may still be helpful:
+OPTIONAL — omit entirely when unavailable or unconfirmed.:
 
+No action required when omitted.
   identity.common_name
   identity.verified_url_date
   contact.intake_url
@@ -1240,11 +1241,16 @@ if something was found that didn't fit the schema cleanly, and you think it may 
   contact.emails
   contact.mailing_address
   scope_of_service.employment_sectors
-  scope_of_service.services_provided
   scope_of_service.process_types
   scope_of_service.jurisdiction_exceptions
   eligibility.eligibility_notes
   review.legitimacy_url
+However, if "something significant" is found that doesn't fit the schema cleanly, use _review_notes to describe it.
+
+
+Reviewer attention required when omitted, note the absence clearly in _review_notes.
+  scope_of_service.assistance_type
+  scope_of_service.services_provided
 
 ---
 
@@ -1254,55 +1260,38 @@ identity:
   official_name               full official name exactly as it appears on the org's homepage.
   official_homepage_url       official domain URL — the org's own homepage, not a directory listing.
   general_description         3 to 5 sentences: what the org does, who it serves, what help it provides.
-  common_name                 widely used shorthand name or acronym; omit if none exists.
+  common_name                 widely used shorthand name or acronym.
   homepage_url_status         verified | redirects | unverified | dead
-  verified_url_date           YYYY-MM-DD; omit if the URL was not confirmed during this run.
+  verified_url_date           YYYY-MM-DD; omit if the URL status is not 'verified'.
 
 scope_of_service:
   nationwide_example          verbatim quote (up to 3 sentences) from the org's own site or
                               mission statement showing nationwide scope; if explicit 'nationwide'
-                              language is not present, it may include indirect evidence of
-                              multi-jurisdictional scope. use "" if nothing is found. do not omit
-                              the org record, note the absence of jurisdictional scope in
-                              _review_notes instead.
+                              language is not present, include indirect evidence of
+                              multi-jurisdictional scope. if nothing is found use "" . do not omit.
+                              note the absence of jurisdictional scope in _review_notes.
   disclosure_types            ws_disclosure_type slugs; [] when none can be confirmed.
-  protected_classes           ws_protected_class slugs; use has-details slug when coverage
-                              exists but no slug fits cleanly, or no coverage is described clearly.
-  protected_class_details     free text when protected_classes includes has-details slug; describe the
-                              org's claim of coverage or note the missing description of coverage.
+  protected_classes           ws_protected_class slugs.
+  protected_class_details     free text when protected_classes includes has-details slug.
   languages_supported         ws_language slugs. List all languages the org claims to support.
                                 - Site is clearly in English (nav, forms, main text): use english slug.
                                 - Org explicitly claims non-taxonomy languages: add additional slug.
                                 - Operating language cannot be determined: use [] and note in _review_notes.
                                 - Google Translate or browser tools do not count as language support.
   languages_additional        free text listing languages not in taxonomy (e.g., “site claims to provide
-                              interpretations for Amharic, Swahili, and Navajo”); omit when additional slug
-                              is not included in languages_supported array.                              
-  assistance_type             single ws_aorg_type slug; use mixed slug when no single slug
-                              fits cleanly.
-  employment_sectors          ws_employment_sector slugs; omit when coverage is unclear.
-  cost_models                 ws_aorg_cost_model slugs; include all described cost models.
-                              Use unclear slug when other slugs do not fit a described cost model cleanly,
-                              or a no cost model is described clearly.
-  services_provided           ws_aorg_service slugs. Include secure-drop when the org runs a dedicated
-                              anonymous evidence drop (e.g. SecureDrop). Include additional slug when a
-							  service described doesn't fit existing slugs cleanly. Omit services_provided
-							  entirely when the site is unclear about what services it provides and strongly
-							  note the absence in _review_notes.
-  additional_services         free text when services_provided includes additional slug; describe services
-                              provide by org that existing slugs don't fit cleanly; omit otherwise.
-  process_types               ws_process_type slugs; omit when unclear
-  case_stages                 ws_case_stage slugs; use other slug when coverage is described that slugs don't
-                              fit cleanly, or coverage is entirely unclear.
-  case_stage_details          free text when case_stages includes other slug; describe the org's claim of
-                              coverage or note the absence of coverage.
-  disclosure_targets          ws_disclosure_target slugs; use has-details slug when
-                              disclosure target coverage exists but no slug fits cleanly, or
-							  coverage is entirely unclear.
-  disclosure_target_details   free text when disclosure_targets includes has-details slug; describe the
-                              org's claim of coverage or note the absence of coverage.
+                              interpretations for Amharic, Swahili, and Navajo”).                       
+  assistance_type             single ws_aorg_type slug.
+  employment_sectors          ws_employment_sector slugs.
+  cost_models                 ws_aorg_cost_model slugs.
+  services_provided           ws_aorg_service slugs.
+  additional_services         free text (e.g. "site claims to help you contact dead relatives").
+  process_types               ws_process_type slugs.
+  case_stages                 ws_case_stage slugs.
+  case_stage_details          free text (e.g. "site claims to help pre-report, but active legal counsel must be engaged")
+  disclosure_targets          ws_disclosure_target slugs.
+  disclosure_target_details   free text (e.g. "site claims to help when reporting to religious orgs, or clergy")
   jurisdiction_exceptions     free text describing clearly implied or self-reported coverage gaps
-                              (e.g. "nationwide except Texas", "where licensed"); omit if none are found.
+                              (e.g. "nationwide except Texas", "where licensed").
   whistleblower_scope         integer 0-3:
                                 0 = scope unclear or org is too general to rate
                                 1 = not whistleblower-specific (e.g. general ABA referral)
@@ -1314,39 +1303,32 @@ scope_of_service:
 
 contact:
   intake_url                  direct URL to the org's intake entry point or start-here page;
-                              "find a lawyer" type pages are acceptable. "submit a tip" or similar
-                              pages are not to be considered intake. omit when unavailable
-							  or unverified.
+                              "find a lawyer" or similar type pages are acceptable.
   contact_url                 general contact page or form URL; distinct from intake_url;
-                              omit when unavailable or unverified.
   phones                      array of { "type": "...", "number": "..." } objects;
                               type must be one of: hotline | intake | headquarters |
                               regional | tty | fax | other; if type is other, describe
-							  in _review_notes; omit the entire field when no phone is found.
+							  in _review_notes.
   emails                      array of { "type": "...", "address": "..." } objects;
                               type must be one of: intake | general | legal | media |
                               support | secure | other; if type is other, describe in
-                              _review_notes; omit the entire field when no email is found.
-  mailing_address             physical mailing address as plain text; omit if unavailable.
+                              _review_notes.
+  mailing_address             physical mailing address as plain text.
 
 eligibility:
   income_eligibility_required yes | no | unclear
-  income_eligibility_details  specific income thresholds or criteria; required when
-                              income_eligibility_required is yes; omit otherwise.
+  income_eligibility_details  specific income thresholds or criteria.
   eligibility_notes           non-income eligibility constraints (e.g. employer size thresholds
-                              or union membership requirements); omit when none are stated.
+                              or union membership requirements).
 
 security:
   has_secure_channel          yes | no | unclear
                               A secure channel means a dedicated encrypted tool:
                               SecureDrop, Signal, ProtonMail, Tutanota, Wire, Keybase.
-                              A standard HTTPS web form does not qualify.
-  secure_contact_url          URL to the secure channel or page providing instructions; required
-                              when has_secure_channel is yes.
-  secure_contact_tool         tool name; required when has_secure_channel is yes;
-                              choose one: SecureDrop | Signal | ProtonMail | Tutanota |
+  secure_contact_url          URL to the secure channel or page providing secure channel instructions.
+  secure_contact_tool         tool name; use one: SecureDrop | Signal | ProtonMail | Tutanota |
                               Wire | Keybase | other
-  secure_contact_tool_other   describe the tool when secure_contact_tool is other.
+  secure_contact_tool_other   name or describe the tool not in provided list.
   anonymous_pre_consult_possible  yes | no | unclear
                               Can a user make initial contact without identifying themselves?
   has_attorneys               yes | no | unclear
@@ -1356,36 +1338,36 @@ security:
 review:
   legitimacy_url              URL to a secondary source confirming legitimacy (GuideStar,
                               Charity Navigator, court listing, congressional directory);
-                              This is a nice-to-have-but-not-required datapoint; omit when not found.
-  _review_notes               required — free text for anything a human reviewer might need
-                              to know that the schema did not capture; use the default
-                              fallback only when you truly have nothing to add.
+                              This is a nice-to-have-but-not-required datapoint.
+  _review_notes               free text for anything that the schema did not capture.
 
                               Good examples:
-                              — "intake requires account creation before service details
+                            "intake requires account creation before service details
                                  are visible"
-                              — "org is well-regarded but intake page states it is not
+                            "org is well-regarded but intake page states it is not
                                  currently accepting new clients"
-                              — "'nationwide' claim is qualified in FAQ to licensed states
+                            "'nationwide' claim is qualified in FAQ to licensed states
                                  only"
-                              — "site recommends Signal and Tor but actual intake is
+                            "site recommends Signal and Tor but actual intake is
                                  through a standard HTTPS form; has_secure_channel was set
                                  to no"
-                              — "org appears to offer help but does not clearly describe
-                                 its services; services_provided left empty intentionally"
-                              — "phone type marked other: listed as 'after-hours crisis line
+                            "org appears to offer help but does not clearly describe
+                                 any actual services; services_provided omitted intentionally"
+                            "phone type marked other: listed as 'after-hours crisis line
 							     for existing clients only'; included for human review"
-                              — "email type marked other: listed as 'whistleblower secure
+                            "email type marked other: listed as 'whistleblower secure
                                  tips inbox' without clear fit to slugs; included for
                                  human review"
-                              — "site language/support undetermined, uses many images and
+                            "site language/support undetermined, uses many images and
 							     very little text; languages_supported left empty intentionally"
 
                               You may use _review_notes to briefly explain:
-                              — why you left a taxonomy array empty even though the org seems
+                            something you did find that seems significant but didn't map cleanly
+                                 to the schema, which resulted in an optional field being omitted.
+                            why you left a taxonomy array empty even though the org seems
                                  important (e.g. "org clearly serves federal workers but
                                  employment_sectors mapping is indeterminate")
-                              — why existing slugs do not fully capture the real-world pattern
+                            why existing slugs do not fully capture the real-world pattern
                                  you found
 
                               Keep notes concise; a few focused sentences can be very useful.
@@ -1395,9 +1377,9 @@ review:
 ORGANIZATION INCLUSION RULES
 Before in-depth research begins:
   Organizations must claim some form of direct help or a fast referral pathway.
-  Help includes legal assistance, peer support, mental health support, or advocacy
-  services. Prioritize organizations that claim a type of intake path — a
-  form, hotline, or service-specific contact.
+  Help includes legal assistance, peer support, mental health support, advocacy
+  services or similar assistance. Prioritize organizations that claim a type of
+  intake path — a form, hotline, service-specific contact or similar path.
 
 ORGANIZATION NON-EXCLUSION RULES
 One research has begun on an organization:
@@ -1407,7 +1389,7 @@ One research has begun on an organization:
   - These are organizations that will still need to be documented; Human
     review will evaluate if the org is included in the final data or listed
     as an exclusion in future research. Either way, the record is valuable,
-    potentially suspect orgs also need to be documented.
+    potentially illegitimate orgs also need to be documented.
 
 ORGANIZATION EXCLUSION RULES
   Exclude pure government reporting channels.
@@ -1545,9 +1527,9 @@ TAXONOMY TABLES
 
 These tables are your source of truth for taxonomy values.
 Use the valid slugs listed in the tables for the associated fields only.
-Do not invent slugs. If a concept does not fit any valid slug cleanly:
+Do not add invalid slugs. If a concept does not fit any valid slug cleanly:
   — leave the field empty or use has-details where permitted
-  — describe the gap in review._review_notes
+  — describe the gap in _review_notes
 
 Field → taxonomy mapping:
   scope_of_service.disclosure_types        ws_disclosure_type        (multi-select)
@@ -1562,8 +1544,8 @@ Field → taxonomy mapping:
   scope_of_service.services_provided       ws_aorg_service           (multi-select)
 
 SELF-CHECK: Before writing your final JSON, verify that all slugs in each
-taxonomy array appears as listed in the tables below. If it does not appear
-here, it is not a valid value — move the invalid slug to _review_notes. Leave
+taxonomy array appear as valid slugs in the tables below. If it does not appear
+here, it is not a valid slug — move the invalid slug to _review_notes. Leave
 the array empty or use has-details. Describe occurrence in _review_notes.
 ================================================================================
 
@@ -1571,7 +1553,6 @@ the array empty or use has-details. Describe occurrence in _review_notes.
 ────────────────────────────────────────────────────────────────────────────
 TAXONOMY: ws_disclosure_type
 Description: Subject matter of the protected disclosure. Tag all that apply.
-             If no slug fits cleanly, leave the array empty [].
 ────────────────────────────────────────────────────────────────────────────
 
 wage-hour-violations               Wage & Hour Violations
@@ -1605,11 +1586,10 @@ general-wrongdoing                 General Wrongdoing / Violation of Law
 
 ────────────────────────────────────────────────────────────────────────────
 TAXONOMY: ws_protected_class
-Description: Worker or employment classification the org explicitly serves.
+Description: Worker or employment classifications the org claims to serve.
              Tag all that apply. List all classifications described in source
-			 material. Do not infer coverage. Use has-details slug when coverage
-			 exists but no slug fits cleanly, or no coverage is described clearly.
-			 Reserve all-employees for when the org explicitly claims to serve everyone.
+			 material. Do not infer coverage. Reserve all-employees for when
+             the org explicitly claims to serve everyone.
 ────────────────────────────────────────────────────────────────────────────
 
 federal-employee                   Federal Employee
@@ -1633,9 +1613,7 @@ has-details                        Has Details (use with protected_class_details
 ────────────────────────────────────────────────────────────────────────────
 TAXONOMY: ws_disclosure_target
 Description: Who the protected disclosure may be made to. Tag all that apply.
-             List targets described in source material. Use has-details slug
-			 when coverage exists but no slug fits cleanly, or no coverage
-			 is described clearly.
+             List targets described in source material.
 ────────────────────────────────────────────────────────────────────────────
 
 internal-supervisor                Supervisor / Manager
@@ -1659,7 +1637,6 @@ has-details                        Has Details (use with disclosure_targets_deta
 ────────────────────────────────────────────────────────────────────────────
 TAXONOMY: ws_process_type
 Description: Procedural route the org can help navigate. Tag all that apply.
-             If no slug fits cleanly, leave the array empty [].
 ────────────────────────────────────────────────────────────────────────────
 
 administrative-complaint           Administrative Complaint
@@ -1677,8 +1654,9 @@ representative-action              Representative Action
 TAXONOMY: ws_case_stage
 Description: Legal stage where the org provides help. Tag all that apply.
              Use other slug when stage coverage exists but no slug fits
-			 cleanly, or no coverage is described clearly. other slug can be used
-			 when some case stages where covered and one stage didn't fit cleanly.
+			 cleanly, or no coverage is described clearly. other slug can
+             be used when some case stages were covered but one or more
+             stages didn't fit cleanly.
 ────────────────────────────────────────────────────────────────────────────
 
 pre-report                         Pre-Report (considering coming forward)
@@ -1690,11 +1668,11 @@ other                              Other (explain in case_stage_details)
 
 ────────────────────────────────────────────────────────────────────────────
 TAXONOMY: ws_language
-Description: Languages the org serves for intake or direct support.
-             Tag all that apply. List languages confirmed by source material.
-			 Use additional slug when the org serves languages not in this list.
-			 Free text in additional_languages can be used to describe any form
-			 of communication, such as hearing-impaired access.
+Description: Languages the org claims to serve and support. Tag all that apply.
+             List languages confirmed by source material.  Use additional slug
+             when the org serves languages not in this list. Free text in
+             additional_languages can be used to describe any form of
+			 communication, such as hearing-impaired access.
 ────────────────────────────────────────────────────────────────────────────
 
 english                            English
@@ -1734,7 +1712,7 @@ mixed                              Mixed / Does Not Fit a Single Category
 
 ────────────────────────────────────────────────────────────────────────────
 TAXONOMY: ws_employment_sector
-Description: Employment sectors the org serves. Tag all confirmed.
+Description: Employment sectors the org serves. Tag all that apply.
              Use all-sectors slug only when the org explicitly states it
 			 serves all employment types without restriction.
 ────────────────────────────────────────────────────────────────────────────
@@ -1972,17 +1950,19 @@ WHAT YOU ARE PRODUCING
 
 A single JSON object with three top-level keys:
 
-  - "meta"      — one block describing this batch
-  - "records"   — an array of {$records_label}
+  - "meta"    one block describing this batch
+  - "records" an array of {$records_label}
   - "integrity" — your details of any anomalies present in this batch
 
 The JSON you produce will be examined by a human reviewer. It will be verified
-and merged with other researcher's batches before publication. The meta block
-will be used to track the provenance and integrity of the batch. The merged
-records will be verified again and used as the basis for public-facing content on
-WhistleblowerShield.org. Accuracy and honesty are paramount. Your research will
-be the foundation for helping users in need find the right legal assistance and
-understand their protections.
+and merged with other researcher's batches by an AI reconciler agent before
+publication. The meta block will be used to track the provenance and integrity
+of the batch. The merged records will be verified again and machine ingested
+into the database, where it becomes 'draft' data and flagged for further
+human review before it is finally published. Once published, it then becomes
+the public-facing content for WhistleblowerShield.org. Accuracy and honesty are
+paramount. Your research will be the foundation for helping users in need find
+the right legal assistance and understand their protections.
 
 ---
 
@@ -2062,8 +2042,8 @@ need to know: limited holdings, procedural context that affects scope,
 circuit splits, or caveats the schema fields cannot capture.
 
 CALCULATED FIELDS — compute last:
-  meta.record_count     — must equal length of records array
-  meta.proposed_count   — must equal length of new_terms_proposed
+  meta.record_count   must equal length of records array
+  meta.proposed_count must equal length of new_terms_proposed
   integrity.notation_count — must equal length of notations
 
 BLOCK;
