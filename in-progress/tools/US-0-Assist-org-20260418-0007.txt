@@ -47,7 +47,7 @@ META SCHEMA
     "nationwide_only":     false,
     "record_count":        0,
     "record_type":         "assist-org",
-    "json_run_notes":      "",
+    "_json_run_notes":      "",
     "_json_run_researcher_notes": "",
     "batch_completed":     "[YYYY-MM-DD HH:MM UTC]"
   }
@@ -193,27 +193,28 @@ identity:
 scope_of_service:
   nationwide_example          verbatim quote (up to 3 sentences) from the org's own site or
                               mission statement showing nationwide scope; if explicit 'nationwide'
-                              language is not present, include indirect evidence of
-                              multi-jurisdictional scope. if nothing is found use "" . do not omit.
-                              note the absence of jurisdictional scope in _review_notes.
-  disclosure_types            ws_disclosure_type slugs; [] when none can be confirmed.
+                              language is not present, include evidence of multi-jurisdictional
+                              scope if found.
+  disclosure_types            ws_disclosure_type slugs.
   protected_classes           ws_protected_class slugs.
-  protected_class_details     free text when protected_classes includes has-details slug.
+  protected_class_details     free text (e.g. "site describes supporting persons reporting religious-misconduct").
   languages_supported         ws_language slugs. List all languages the org claims to support.
                                 - Site is clearly in English (nav, forms, main text): use english slug.
                                 - Org explicitly claims non-taxonomy languages: add additional slug.
                                 - Operating language cannot be determined: use [] and note in _review_notes.
                                 - Google Translate or browser tools do not count as language support.
-  languages_additional        free text listing languages not in taxonomy (e.g., “site claims to provide
-                              interpretations for Amharic, Swahili, and Navajo”).                       
+  languages_additional        free text (e.g., “site claims to provide interpreters for Amharic,
+                              Swahili, and Navajo”).                       
   assistance_type             single ws_aorg_type slug.
   employment_sectors          ws_employment_sector slugs.
   cost_models                 ws_aorg_cost_model slugs.
   services_provided           ws_aorg_service slugs.
-  additional_services         free text (e.g. "site claims to help you contact dead relatives").
+  additional_services         free text (e.g. "site describes helping coordinate with local
+                              co-counsel in jurisdictions where the org is not licensed").
   process_types               ws_process_type slugs.
   case_stages                 ws_case_stage slugs.
-  case_stage_details          free text (e.g. "site claims to help pre-report, but active legal counsel must be engaged")
+  case_stage_details          free text (e.g. "site claims to help pre-report, but active legal counsel
+                              must already be engaged")
   disclosure_targets          ws_disclosure_target slugs.
   disclosure_target_details   free text (e.g. "site claims to help when reporting to religious orgs, or clergy")
   jurisdiction_exceptions     free text describing clearly implied or self-reported coverage gaps
@@ -243,18 +244,18 @@ contact:
 
 eligibility:
   income_eligibility_required yes | no | unclear
-  income_eligibility_details  specific income thresholds or criteria.
+                              Are there any income-based eligibility requirements?
+  income_eligibility_details  free text — specific income thresholds or criteria.
   eligibility_notes           non-income eligibility constraints (e.g. employer size thresholds
                               or union membership requirements).
 
 security:
   has_secure_channel          yes | no | unclear
-                              A secure channel means a dedicated encrypted tool:
-                              SecureDrop, Signal, ProtonMail, Tutanota, Wire, Keybase.
+                              Does the site use a secure channel via a dedicated encrypted tool?
   secure_contact_url          URL to the secure channel or page providing secure channel instructions.
   secure_contact_tool         tool name; use one: SecureDrop | Signal | ProtonMail | Tutanota |
                               Wire | Keybase | other
-  secure_contact_tool_other   name or describe the tool not in provided list.
+  secure_contact_tool_other   free text — name or describe the tool not in provided list.
   anonymous_pre_consult_possible  yes | no | unclear
                               Can a user make initial contact without identifying themselves?
   has_attorneys               yes | no | unclear
@@ -286,6 +287,9 @@ review:
                                  human review"
                             "site language/support undetermined, uses many images and
 							     very little text; languages_supported left empty intentionally"
+                            "Org site does not explicitly claim nationwide service; actual
+                                 jurisdictions served could not be confidently confirmed
+                                 from site materials. nationwide_example left empty intentionally."
 
                               You may use _review_notes to briefly explain:
                             something you did find that seems significant but didn't map cleanly

@@ -2098,13 +2098,13 @@ META SCHEMA
     "nationwide_only":     false,
     "record_count":        0,
     "record_type":         "assist-org",
-    "json_run_notes":      "",
+    "_json_run_notes":     "",
     "_json_run_researcher_notes": "",
     "batch_completed":     "[YYYY-MM-DD HH:MM UTC]"
   }
 }
 
-meta.json_run_notes           include any notes about the entire run that a human
+meta._json_run_notes          include any notes about the entire run that a human
                               reviewer would want to know.
 meta.nationwide_only          must match meta.nationwide_only in RUN SCOPE exactly (true/false).
                               When true, each record should include nationwide_example evidence.
