@@ -14,13 +14,13 @@ Bump `WS_CORE_VERSION` to `3.18.0`. Add changelog entry:
 
 ```
 * 3.18.0  Schema additions — employment sector and employer threshold:
-*         - ws_employment_sector added to jx-statute, jx-common-law,
+*         - ws_employment_sectors added to jx-statute, jx-common-law,
 *           jx-citation, jx-interpretation ACF groups
-*         - ws_employment_sector added to ws-agency and ws-ag-procedure
+*         - ws_employment_sectors added to ws-agency and ws-ag-procedure
 *           ACF groups
 *         - ws_jx_statute_has_employer_threshold + _details added to
 *           jx-statute ACF group
-*         - ws_cl_has_employer_threshold + _details added to
+*         - ws_jx_comlaw_has_employer_threshold + _details added to
 *           jx-common-law ACF group
 *         - ws_jx_citation_has_employer_threshold + _details added to
 *           jx-citation ACF group
@@ -40,9 +40,9 @@ Add to the **Legal Basis** tab, after the existing `ws_disclosure_target` taxono
 
 ```php
 [
-    'key'           => 'field_jx_statute_employment_sector',
+    'key'           => 'field_jx_statute_employment_sectors',
     'label'         => 'Employment Sectors',
-    'name'          => 'ws_jx_statute_employment_sector',
+    'name'          => 'ws_jx_statute_employment_sectors',
     'type'          => 'taxonomy',
     'taxonomy'      => 'ws_employment_sector',
     'field_type'    => 'multi_select',
@@ -89,14 +89,14 @@ Add to the **Enforcement** tab, after `ws_jx_statute_has_exhaustion` / `exhausti
 
 ### 2. ACF — `acf-jx-common-law.php`
 
-Same two additions. Field key prefix `field_jx_comlaw_*`, meta key prefix `ws_cl_*`:
+Same two additions:
 
 **Legal Basis tab** — after disclosure_target taxonomy field:
 ```php
 [
-    'key'           => 'field_jx_comlaw_employment_sector',
+    'key'           => 'field_jx_comlaw_employment_sectors',
     'label'         => 'Employment Sectors',
-    'name'          => 'ws_cl_employment_sector',
+    'name'          => 'ws_jx_comlaw_employment_sectors',
     'type'          => 'taxonomy',
     'taxonomy'      => 'ws_employment_sector',
     'field_type'    => 'multi_select',
@@ -114,7 +114,7 @@ Same two additions. Field key prefix `field_jx_comlaw_*`, meta key prefix `ws_cl
 [
     'key'           => 'field_jx_comlaw_has_employer_threshold',
     'label'         => 'Employer Size Threshold',
-    'name'          => 'ws_cl_has_employer_threshold',
+    'name'          => 'ws_jx_comlaw_has_employer_threshold',
     'type'          => 'true_false',
     'instructions'  => 'Enable when the doctrine restricts coverage based on employer size.',
     'ui'            => 1,
@@ -125,7 +125,7 @@ Same two additions. Field key prefix `field_jx_comlaw_*`, meta key prefix `ws_cl
 [
     'key'               => 'field_jx_comlaw_employer_threshold_details',
     'label'             => 'Employer Threshold Details',
-    'name'              => 'ws_cl_employer_threshold_details',
+    'name'              => 'ws_jx_comlaw_employer_threshold_details',
     'type'              => 'textarea',
     'instructions'      => 'Describe the employer size requirement as stated in the doctrine.',
     'required'          => 0,
@@ -146,9 +146,9 @@ Sector only — citations refine statute sector coverage, same field pattern:
 
 ```php
 [
-    'key'           => 'field_jx_citation_employment_sector',
+    'key'           => 'field_jx_citation_employment_sectors',
     'label'         => 'Employment Sectors',
-    'name'          => 'ws_jx_citation_employment_sector',
+    'name'          => 'ws_jx_citation_employment_sectors',
     'type'          => 'taxonomy',
     'taxonomy'      => 'ws_employment_sector',
     'field_type'    => 'multi_select',
@@ -209,9 +209,9 @@ Sector only — agency carries all sectors it operates across. Add to the **Agen
 
 ```php
 [
-    'key'           => 'field_agency_employment_sector',
+    'key'           => 'field_agency_employment_sectors',
     'label'         => 'Employment Sectors',
-    'name'          => 'ws_agency_employment_sector',
+    'name'          => 'ws_agency_employment_sectors',
     'type'          => 'taxonomy',
     'taxonomy'      => 'ws_employment_sector',
     'field_type'    => 'multi_select',
@@ -232,9 +232,9 @@ Sector only — procedure carries the specific sector this pathway applies to. A
 
 ```php
 [
-    'key'           => 'field_ag_procedure_employment_sector',
+    'key'           => 'field_ag_procedure_employment_sectors',
     'label'         => 'Employment Sectors',
-    'name'          => 'ws_ag_procedure_employment_sector',
+    'name'          => 'ws_ag_procedure_employment_sectors',
     'type'          => 'taxonomy',
     'taxonomy'      => 'ws_employment_sector',
     'field_type'    => 'multi_select',
@@ -254,7 +254,7 @@ Sector only — procedure carries the specific sector this pathway applies to. A
 **`ws_get_jx_statute_data()`** — add to the row array:
 
 ```php
-'employment_sector'          => ws_q_normalize_id_list( get_field( 'ws_jx_statute_employment_sector', $sid ) ),
+'employment_sectors'          => ws_q_normalize_id_list( get_field( 'ws_jx_statute_employment_sectors', $sid ) ),
 'has_employer_threshold'     => (bool) get_post_meta( $sid, 'ws_jx_statute_has_employer_threshold', true ),
 'employer_threshold_details' => get_post_meta( $sid, 'ws_jx_statute_employer_threshold_details', true ),
 ```
@@ -262,15 +262,15 @@ Sector only — procedure carries the specific sector this pathway applies to. A
 **`ws_get_jx_common_law_data()`** — add to the row array:
 
 ```php
-'employment_sector'          => ws_q_normalize_id_list( get_field( 'ws_cl_employment_sector', $rid ) ),
-'has_employer_threshold'     => (bool) get_post_meta( $rid, 'ws_cl_has_employer_threshold', true ),
-'employer_threshold_details' => get_post_meta( $rid, 'ws_cl_employer_threshold_details', true ),
+'employment_sectors'          => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_employment_sectors', $rid ) ),
+'has_employer_threshold'     => (bool) get_post_meta( $rid, 'ws_jx_comlaw_has_employer_threshold', true ),
+'employer_threshold_details' => get_post_meta( $rid, 'ws_jx_comlaw_employer_threshold_details', true ),
 ```
 
 **`ws_get_jx_citation_data()`** — add to the row array:
 
 ```php
-'employment_sector'          => ws_q_normalize_id_list( get_field( 'ws_jx_citation_employment_sector', $cid ) ),
+'employment_sectors'          => ws_q_normalize_id_list( get_field( 'ws_jx_citation_employment_sectors', $cid ) ),
 'has_employer_threshold'     => (bool) get_post_meta( $cid, 'ws_jx_citation_has_employer_threshold', true ),
 'employer_threshold_details' => get_post_meta( $cid, 'ws_jx_citation_employer_threshold_details', true ),
 ```
@@ -278,7 +278,7 @@ Sector only — procedure carries the specific sector this pathway applies to. A
 **`ws_get_jx_interpretation_data()`** — add to the row array:
 
 ```php
-'employment_sector'          => ws_q_normalize_id_list( get_field( 'ws_jx_interp_employment_sector', $iid ) ),
+'employment_sectors'          => ws_q_normalize_id_list( get_field( 'ws_jx_interp_employment_sectors', $iid ) ),
 'has_employer_threshold'     => (bool) get_post_meta( $iid, 'ws_jx_interp_has_employer_threshold', true ),
 'employer_threshold_details' => get_post_meta( $iid, 'ws_jx_interp_employer_threshold_details', true ),
 ```
@@ -290,13 +290,13 @@ Sector only — procedure carries the specific sector this pathway applies to. A
 **`ws_get_agency_data()`** — add to the row array:
 
 ```php
-'employment_sector' => ws_q_normalize_id_list( get_field( 'ws_agency_employment_sector', $aid ) ),
+'employment_sectors' => ws_q_normalize_id_list( get_field( 'ws_agency_employment_sectors', $aid ) ),
 ```
 
 **`ws_get_jx_procedure_data()`** or equivalent — add to the row array:
 
 ```php
-'employment_sector' => ws_q_normalize_id_list( get_field( 'ws_ag_procedure_employment_sector', $pid ) ),
+'employment_sectors' => ws_q_normalize_id_list( get_field( 'ws_ag_procedure_employment_sectors', $pid ) ),
 ```
 
 ---
@@ -306,7 +306,7 @@ Sector only — procedure carries the specific sector this pathway applies to. A
 **Statute and common-law schemas** — add to the `legal_basis` block:
 
 ```
-"employment_sector":          ["ws_employment_sector slugs — tag all that apply; omit when coverage is not sector-specific"],
+"employment_sectors":          ["ws_employment_sectors slugs — tag all that apply; omit when coverage is not sector-specific"],
 ```
 
 Add to the `enforcement` block:
@@ -319,7 +319,7 @@ Add to the `enforcement` block:
 **Citation and interpretation schemas** — add to the record schema:
 
 ```
-"employment_sector":          ["ws_employment_sector slugs — tag only when this ruling refines sector coverage from the parent statute"],
+"employment_sectors":          ["ws_employment_sectors slugs — tag only when this ruling refines sector coverage from the parent statute"],
 "has_employer_threshold":     false,
 "employer_threshold_details": "",
 ```
@@ -332,7 +332,7 @@ has_employer_threshold        true when the statute restricts coverage by employ
 employer_threshold_details    Describe the threshold as stated in the statute text
                               (e.g. "Employers with 15 or more employees").
                               Omit when has_employer_threshold is false.
-employment_sector             Tag all sectors the statute explicitly covers.
+employment_sectors            Tag all sectors the statute explicitly covers.
                               Omit when coverage is not sector-specific or unclear.
 ```
 
@@ -356,4 +356,4 @@ After changes, confirm:
 - All six ACF files load without PHP errors
 - Taxonomy field saves and loads correctly on a test statute post
 - Toggle fires conditional textarea on citation and interpretation edit screens
-- Query layer returns `employment_sector`, `has_employer_threshold`, `employer_threshold_details` on statute records
+- Query layer returns `employment_sectors`, `has_employer_threshold`, `employer_threshold_details` on statute records
