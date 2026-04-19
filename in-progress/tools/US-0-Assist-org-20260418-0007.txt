@@ -140,6 +140,8 @@ signals that the absence will require human review; it does not indicate failure
   scope_of_service.nationwide_example         "" when no qualifying quote is found
   scope_of_service.disclosure_types           [] when none can be confirmed
   scope_of_service.languages_supported        [] when site's operating language cannot be determined.
+  scope_of_service.assistance_type            "" when no explicit assistance is described
+  scope_of_service.services_provided          [] when no services are clearly represented
 
 CONDITIONAL — required when the parent condition is met; omit otherwise. use them to capture
 “what I found doesn't fit the schema” or “it could not be found”. 'has-details' is a dual-purpose
@@ -159,9 +161,8 @@ is intended:
   security.secure_contact_tool                has_secure_channel is 'yes'
   security.secure_contact_tool_other          secure_contact_tool is 'other'
 
-OPTIONAL — omit entirely when unavailable or unconfirmed.:
+OPTIONAL — omit entirely when unavailable or unconfirmed:
 
-No action required when omitted.
   identity.common_name
   identity.verified_url_date
   contact.intake_url
@@ -174,12 +175,8 @@ No action required when omitted.
   scope_of_service.jurisdiction_exceptions
   eligibility.eligibility_notes
   review.legitimacy_url
+  
 However, if "something significant" is found that doesn't fit the schema cleanly, use _review_notes to describe it.
-
-
-Reviewer attention required when omitted, note the absence clearly in _review_notes.
-  scope_of_service.assistance_type
-  scope_of_service.services_provided
 
 ---
 
@@ -718,10 +715,11 @@ Before you write the JSON, confirm the following:
     — set integrity.has_anomalies: true
     — explain what happened and why in integrity.notations
    
-8. You are not ultimately responsible for the data that makes to the platform.
-   There are many checks and balances in place. Bad data that makes it to the
-   platform is a failure in the pipeline, you are only the first stage of the
-   pipeline. Your research is the foundation for the data the platform uses.
+8. You are not ultimately responsible for the data that is published to the
+   platform. There are many checks and balances in place. Incorrect data
+   that is published to the platform is a failure in the pipeline, you are
+   only the first stage of the pipeline. Your research is the foundation
+   for the data the platform builds from.
 
 ---
 

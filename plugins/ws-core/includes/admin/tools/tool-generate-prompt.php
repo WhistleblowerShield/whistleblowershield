@@ -679,9 +679,9 @@ legal impact of this ruling. Use one of these patterns:
   "rejects [legal argument]"      "resolves [conflict/ambiguity]"
 
 QUALITY values:
-  high   appellate or supreme court; frequently cited
+  high     — appellate or supreme court; frequently cited
   moderate — appellate but narrower scope or less cited
-  low    trial-level or limited precedential value
+  low      — trial-level or limited precedential value
 
 Prioritize appellate and supreme court decisions.
 
@@ -1078,12 +1078,12 @@ Before you write the JSON, confirm the following:
    generally.
 
 3. Field requirements are respected:
-   essential         record is omitted if any essential field is missing.
-   expected          field is present with a non-empty value or its stated fallback.
-   ternary           field is present with yes, no, or unclear.
-   expected-if-found field is present even when empty ("" or []).
-   conditional       field is present when its parent condition is met; omitted otherwise.
-   optional          field is omitted when data is unavailable or unconfirmed.
+   essential         — record is omitted if any essential field is missing.
+   expected          — field is present with a non-empty value or its stated fallback.
+   ternary           — field is present with 'yes', 'no', or 'unclear'.
+   expected-if-found — field is present even when empty ("" or []).
+   conditional       — field is present when its parent condition is met; omitted otherwise.
+   optional          — field is omitted when data is unavailable or unconfirmed.
 
 4. The Intake Commitment Rule: A URL only qualifies as an Intake URL if the page
    explicitly offers a path for the individual to request personal assistance, legal
@@ -1092,8 +1092,8 @@ Before you write the JSON, confirm the following:
    be moved to _review_notes and the intake field left empty.
 
 5. A standard HTTPS web form is not a secure channel.
-   has_secure_channel is yes only when a dedicated encrypted tool is confirmed:
-   SecureDrop, Signal, ProtonMail, Tutanota, Wire, Keybase.
+   has_secure_channel is 'yes' only when a dedicated encrypted tool is confirmed:
+   SecureDrop, Signal, ProtonMail, Tutanota, Wire, Keybase, or 'other'.
 
 6. For every org-owned URL — official_homepage_url, intake_url, contact_url,
    and secure_contact_url — verify the organization's name appears at that
@@ -1106,10 +1106,11 @@ Before you write the JSON, confirm the following:
     — set integrity.has_anomalies: true
     — explain what happened and why in integrity.notations
    
-8. You are not ultimately responsible for the data that makes to the platform.
-   There are many checks and balances in place. Bad data that makes it to the
-   platform is a failure in the pipeline, you are only the first stage of the
-   pipeline. Your research is the foundation for the data the platform uses.
+8. You are not ultimately responsible for the data that is published to the
+   platform. There are many checks and balances in place. Incorrect data
+   that is published to the platform is a failure in the pipeline, you are
+   only the first stage of the pipeline. Your research is the foundation
+   for the data the platform builds from.
 
 ---
 
@@ -1165,12 +1166,12 @@ FIELD REQUIREMENTS
 
 Six tiers govern every field in the schema:
 
-  essential         omit the entire record if missing; no fallback exists
-  expected          always include; use the stated fallback when data is unavailable
-  ternary           'yes' when present; 'no' when not present; 'unclear' when uncertain
-  expected-if-found include when present even if empty
-  conditional       required when its parent condition is met; omit otherwise
-  optional          omit entirely when uncertain or unavailable
+  essential         — omit the entire record if missing; no fallback exists
+  expected          — always include; use the stated fallback when data is unavailable
+  ternary           — 'yes' when present; 'no' when not present; 'unclear' when uncertain
+  expected-if-found — include when present even if empty
+  conditional       — required when its parent condition is met; omit otherwise
+  optional          — omit entirely when uncertain or unavailable
 
 ESSENTIAL — omit the record if any of these cannot be confidently sourced:
 
@@ -1211,6 +1212,8 @@ signals that the absence will require human review; it does not indicate failure
   scope_of_service.nationwide_example         "" when no qualifying quote is found
   scope_of_service.disclosure_types           [] when none can be confirmed
   scope_of_service.languages_supported        [] when site's operating language cannot be determined.
+  scope_of_service.assistance_type            [] when no explicit assistance is described
+  scope_of_service.services_provided          [] when no services are clearly represented
 
 CONDITIONAL — required when the parent condition is met; omit otherwise. use them to capture
 “what I found doesn't fit the schema” or “it could not be found”. 'has-details' is a dual-purpose
@@ -1230,9 +1233,8 @@ is intended:
   security.secure_contact_tool                has_secure_channel is 'yes'
   security.secure_contact_tool_other          secure_contact_tool is 'other'
 
-OPTIONAL — omit entirely when unavailable or unconfirmed.:
+OPTIONAL — omit entirely when unavailable or unconfirmed:
 
-No action required when omitted.
   identity.common_name
   identity.verified_url_date
   contact.intake_url
@@ -1245,12 +1247,8 @@ No action required when omitted.
   scope_of_service.jurisdiction_exceptions
   eligibility.eligibility_notes
   review.legitimacy_url
+  
 However, if "something significant" is found that doesn't fit the schema cleanly, use _review_notes to describe it.
-
-
-Reviewer attention required when omitted, note the absence clearly in _review_notes.
-  scope_of_service.assistance_type
-  scope_of_service.services_provided
 
 ---
 
@@ -1267,27 +1265,28 @@ identity:
 scope_of_service:
   nationwide_example          verbatim quote (up to 3 sentences) from the org's own site or
                               mission statement showing nationwide scope; if explicit 'nationwide'
-                              language is not present, include indirect evidence of
-                              multi-jurisdictional scope. if nothing is found use "" . do not omit.
-                              note the absence of jurisdictional scope in _review_notes.
-  disclosure_types            ws_disclosure_type slugs; [] when none can be confirmed.
+                              language is not present, include evidence of multi-jurisdictional
+                              scope if found.
+  disclosure_types            ws_disclosure_type slugs.
   protected_classes           ws_protected_class slugs.
-  protected_class_details     free text when protected_classes includes has-details slug.
+  protected_class_details     free text (e.g. "site describes supporting persons reporting religious-misconduct").
   languages_supported         ws_language slugs. List all languages the org claims to support.
                                 - Site is clearly in English (nav, forms, main text): use english slug.
                                 - Org explicitly claims non-taxonomy languages: add additional slug.
                                 - Operating language cannot be determined: use [] and note in _review_notes.
                                 - Google Translate or browser tools do not count as language support.
-  languages_additional        free text listing languages not in taxonomy (e.g., “site claims to provide
-                              interpretations for Amharic, Swahili, and Navajo”).                       
+  languages_additional        free text (e.g., “site claims to provide interpreters for Amharic,
+                              Swahili, and Navajo”).                       
   assistance_type             single ws_aorg_type slug.
   employment_sectors          ws_employment_sector slugs.
   cost_models                 ws_aorg_cost_model slugs.
   services_provided           ws_aorg_service slugs.
-  additional_services         free text (e.g. "site claims to help you contact dead relatives").
+  additional_services         free text (e.g. "site describes helping coordinate with local
+                              co-counsel in jurisdictions where the org is not licensed").
   process_types               ws_process_type slugs.
   case_stages                 ws_case_stage slugs.
-  case_stage_details          free text (e.g. "site claims to help pre-report, but active legal counsel must be engaged")
+  case_stage_details          free text (e.g. "site claims to help pre-report, but active legal counsel
+                              must already be engaged")
   disclosure_targets          ws_disclosure_target slugs.
   disclosure_target_details   free text (e.g. "site claims to help when reporting to religious orgs, or clergy")
   jurisdiction_exceptions     free text describing clearly implied or self-reported coverage gaps
@@ -1317,18 +1316,18 @@ contact:
 
 eligibility:
   income_eligibility_required yes | no | unclear
-  income_eligibility_details  specific income thresholds or criteria.
+                              Are there any income-based eligibility requirements?
+  income_eligibility_details  free text — specific income thresholds or criteria.
   eligibility_notes           non-income eligibility constraints (e.g. employer size thresholds
                               or union membership requirements).
 
 security:
   has_secure_channel          yes | no | unclear
-                              A secure channel means a dedicated encrypted tool:
-                              SecureDrop, Signal, ProtonMail, Tutanota, Wire, Keybase.
+                              Does the site use a secure channel via a dedicated encrypted tool?
   secure_contact_url          URL to the secure channel or page providing secure channel instructions.
   secure_contact_tool         tool name; use one: SecureDrop | Signal | ProtonMail | Tutanota |
                               Wire | Keybase | other
-  secure_contact_tool_other   name or describe the tool not in provided list.
+  secure_contact_tool_other   free text — name or describe the tool not in provided list.
   anonymous_pre_consult_possible  yes | no | unclear
                               Can a user make initial contact without identifying themselves?
   has_attorneys               yes | no | unclear
@@ -1360,6 +1359,9 @@ review:
                                  human review"
                             "site language/support undetermined, uses many images and
 							     very little text; languages_supported left empty intentionally"
+                            "Org site does not explicitly claim nationwide service; actual
+                                 jurisdictions served could not be confidently confirmed
+                                 from site materials. nationwide_example left empty intentionally."
 
                               You may use _review_notes to briefly explain:
                             something you did find that seems significant but didn't map cleanly
