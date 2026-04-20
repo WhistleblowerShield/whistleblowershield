@@ -158,6 +158,7 @@ If unclear, after reconciliation, try to update using source materials.
    materials confirms its absence, and 'unclear' when the source doesn't reference the feature
 If still unclear, preserve 'unclear' value.
 If updated to 'yes' on trigger fields, apply COMPANION FIELD BEHAVIOR RULES with Ternary Exception.
+
 — has_attorneys
 — anonymous_pre_consult_possible
 — income_eligibility_required — 'yes' triggers companion
@@ -194,6 +195,25 @@ After reconciliation:
     add or append meta.new_terms_proposed key array.
   If no new terms are proposed, new_terms_proposed key array should be omitted.
 
+ Special Case:
+  When anonymous_pre_consult_possible is set to 'no' or 'unclear', but services_provided
+  includes secure-drop slug, update anonymous_pre_consult_possible to 'yes'.
+
+ Suspected Illegitimate Organizations
+ For Assist-Org Records (assist-org) Batches Only:
+ After reconciliation,
+  When an org's whistleblower_scope is 0, and/or
+  When an org's services_provided is unclear, and/or
+  When an org's assistance_type is empty, and/or
+  When an org's jurisdictional scope is unclear
+   — (meta.nationwide_only is true, but scope_of_service.nationwide_example is empty)
+  Flag the org as 'Suspect' by adding meta.suspect_orgs array key before
+    meta.batch_completed and add each 'Suspect' org's [RECORD_ID], the
+    complete list of suspect triggers. Search source materials and append
+    with anything discovered that also indicates org may not be legitimate
+    that research and the current schema did not capture.
+  Illegitimate Organizations will need to be documented as exclusions.
+  
 ---
 
 PROPOSING NEW TAXONOMY TERMS
@@ -258,11 +278,11 @@ be an empty array [].
 
 EMPTY FIELD CLEANUP (PRE-OUTPUT)
 
-Apply cleanup before final output. Do not treat routine cleanup itself as an
-anomalies unless it changes field intent. Do no log cleanup unless empty field
+Apply cleanup before final output. Do not treat routine cleanup itself as
+anomalous unless it changes field intent. Do no log cleanup unless empty field
 was the result of rule enforcement.
 
-Omit when empty and conditional is not met:
+Omit when empty and conditional is not present:
 — assist-org records:
  — scope_of_service.protected_class_details
  — scope_of_service.additional_services
@@ -336,20 +356,21 @@ governed by current rules, when rules are inconsistent or contradictory, or when
 gaps in rules allow for unintended data inclusion.
 
 Scope:
-Per-record proposals : use when the proposal would positively affect record’s interpretation or validation.
-Batch-level proposals: use when the proposal would help avoid unintended recurring patterns across records.
+Record-level proposals : use when the proposal would positively affect record’s interpretation or validation.
+Batch-level proposals  : use when the proposal would help avoid unintended recurring patterns across records.
 
 NEW SCHEMA KEY EVOLUTION PERMISSION
 You are authorized to propose new schema keys when you encounter data not captured by
 or misrepresented in current schema.
 
-Hard constraints:
+Hard Constraints:
 Do not add new output schema keys, propose them.
 Do not change current behavior without updated rules.
 Resolve the current run using existing rules and highest-authority precedence.
 Treat your proposal as advisory unless explicitly adopted in rulesets or schema.
+Repeat proposal as needed when issue is not addressed.
 
-Where to place proposals:
+Where To Place Proposals:
 Record-level: append to _reconciled_notes as [Proposed [Rule|Key]]
 Batch-level : append to _reconciled_run_notes as [Proposed [Rule|Key]]
 
@@ -361,9 +382,9 @@ Impact: what this would change in future runs.
 Risk if not adopted: concrete failure mode.
 Scope: record-level, batch-level, or both
 Priority: high, medium, low
-Append anything else not cover by minimum fields.
+Append anything else not covered by minimum fields.
 
-Decision guidance:
+Decision Guidance:
 If multiple possible proposals exist for the same identified pattern, provide the
 narrowest proposal that resolves the issue.
 Prioritize proposals that don't require increased researcher or reconciler judgement.
@@ -387,25 +408,6 @@ has_anomalies false:
 
 ---
 
-MERGE OUTPUT REQUIREMENTS
-
-Meta updates required:
-— source_name:   NotebookLM Reconciliation
-— generated_by:  NotebookLM Legal Fact—Checker
-— record_type:   if missing, add key and record type:
-                 (statute|common-law|citation|interpretation|assist-org|unclear)
-— source_chain:  full provenance chain when available
-— embedded_core: Ruleset — Embedded Core version (numerals and decimals only)
-— addendum:      Ruleset — Addendum version (numerals and decimals only)
-— _reconciled_run_notes: include batch—level log entries were generated,
-                         report "No Log Entries Generated for Batch" if true.
-
-Record updates:
-— _reconciled_notes: include when record-level log entries were generated
-— omit _reconciled_notes only when no log entries were generated
-
----
-
 _RECONCILED_NOTES STANDARD
 _reconciled_notes is per-record audit detail.
 Use it when any record-level reconciliation action occurs.
@@ -418,8 +420,6 @@ Minimum expected content when present:
 — removal reasons for urls, citations, invalid slugs, or companion fields,
 — taxonomy selection during reconciliation with reasoning when non—obvious,
 — any unresolved gaps requiring reviewer attention.
-
-Omit only when no reconciliation action occurred for that record.
 
 ---
 
@@ -434,8 +434,6 @@ Use it for:
 — batch-level reconciler context,
 — responses to input prompt queries.
 
-Omit when no batch-level detail is needed.
-
 ---
 
 SOURCE CHAIN STANDARD
@@ -449,6 +447,24 @@ Role vocabulary:
 
 Entry format:
 { "model": "<model name>", "role": "<role>" }
+
+---
+
+MERGE OUTPUT REQUIREMENTS
+
+Meta updates required:
+— source_name:   NotebookLM Reconciliation
+— generated_by:  NotebookLM Legal Fact—Checker
+— record_type:   If missing, add key and record type:
+                 (statute|common-law|citation|interpretation|assist-org|unclear)
+— source_chain:  Full provenance chain when available
+— embedded_core: Ruleset — Embedded Core version (numerals and decimals only)
+— addendum:      Ruleset — Addendum version (numerals and decimals only)
+— _reconciled_run_notes: Do not omit. Include batch—level log entries. If no batch—level log
+                         entries were generated, report: "No Log Entries Generated for Batch".
+
+Record updates:
+— _reconciled_notes: Omit when no record-level log entries were generated.
 
 ---
 

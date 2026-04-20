@@ -237,8 +237,8 @@ TAXONOMY GRANULARITY (COLLAPSE RULES)
 Broad super-slugs exist for ws_protected_class (all-employees), ws_employment_sector
 (all-sectors), and ws_disclosure_type (general-wrongdoing), use only when justifiable.
 
-The following example applies equally to protected_classes (all-employees),
-employment_sectors (all-sectors) and disclosure_types (general-wrongdoing)
+The following example applies equally to protected_classes, employment_sectors
+and disclosure_types.
 Example:
 For employment_sectors prioritize as:
 1) Keep specific verified sector slugs when all-sectors is not justified.
