@@ -49,6 +49,36 @@ data is expected to be on a deeper page.
 
 ---
 
+LEGAL RECORD — CORE RULES
+Applies to Legal Record (statute, common-law, citations, interpretations) Batches.
+
+Statute of limitations
+— limit_ambiguous must be true whenever the SOL is derived from general
+  civil procedure law, secondary source, or case law.
+— limit_ambiguous: true is expected behavior, not an error. Do not log
+  to notations.
+— Log derivation method in _reconciled_notes if not present in _review_notes.
+  When the cited or implied source is unusual, weak, or conflicts across
+  researchers be clear about the uncertainty or conflict.
+  For example:
+    "Derived from state civil procedure code, not the whistleblower statute"
+    "Inferred from analogous federal statute and secondary sources; no clear
+     state-level guidance"
+    "[RESEARCHER] — [RECORD_ID]: Derived from state civil procedure code.
+	   [RESEARCHER] — [RECORD_ID]: Inferred from analogous federal statute."
+
+Exhaustion
+— exhaustion_required must be true when an administrative filing step is
+  mandatory before civil court access.
+— Notice requirements that do not block court access are not exhaustion.
+
+Burden of proof
+— burden_of_proof_flag is a short signal phrase, not a sentence, not boolean.
+— Use burden_of_proof_details for narrative.
+— Omit both when a non-standard burden shift isn't apparent.
+
+---
+
 ATTACHED CITATION RULES (PARENT-SCOPED)
 Applies to Legal Record (statute, common-law) Batches Only:
 
@@ -100,17 +130,23 @@ Applies to Assist-Org Record (assist-org) Batches.
 These rules apply when reconciling assist-org records. They document and supplement
 general behavior for fields that behave differently in the assist-org schema.
 
-NO LAW FIRMS
-Law firms are not assistance organizations. A law firm is defined as an entity
+LAW FIRM EXCLUSIONS
+Most law firms are not assistance organizations. A law firm is defined as an entity
 whose primary business is billing clients for legal representation.
 If a record's official_name, general_description, or whistleblower_note
 identifies it as a law firm (LLP, PC, law offices, attorneys at law):
-1) Remove the record entirely from the output.
-2) Log the removal in _reconciled_run_notes with the official_name and reason.
-Do not attempt to reclassify a law firm as an assist org.
-Attorney referral organizations (TAF model) are not law firms — Preserve the
-record. Log them as borderline, with a note that human review is needed to
-confirm they meet the assist-org definition.
+1) It must provide contingency-fee, pro-bono, and legal-aid models for inclusion.
+2) Private law firms with billable-hour primary intake only, should be excluded.
+3) A law firms where fee model is unclear: Search source materials for law firm's
+   fee model and researcher's context for inclusion. If fee model is still unclear,
+   it should be included but log it as "Borderline — Fee Model Unclear; Requires Human
+   Review and Approval Before Inclusion".
+4) Excluded law firm records should be removed before the batch is reconciled.
+   Log the removal and cite the reason for removal, and source of disqualifying data.
+
+Attorney Referral Organizations (TAF model) are not law firms — Include the
+record in batch reconciliation. Log each as "Borderline — TAF Model; Requires Human
+Review and Approval Before Inclusion".
 
 MULTI-SOURCE MERGE FOR SAME ORGANIZATION
 When two or more researcher batches contain records for the same organization,
@@ -130,7 +166,6 @@ When two or more researcher batches contain records for the same organization,
    own website. If multiple good quotes exist, keep the one most relevant
    to whistleblower scope. Do not merge multiple quotes into one string.
    Log omitted quotes.
-6) _review_notes: merge all researcher notes into one entry.
 
 VALID EMPTY FIELDS (DO NOT FLAG AS ANOMALOUS — see exception)
 The following fields are allowed empty in assist-org records.
@@ -142,7 +177,7 @@ differently for these fields and requires them.
 — nationwide_example:  "" is valid   — keep or add as "" in the record.
 — disclosure_types:    [] is valid   — keep or add as [] in the record.
 — languages_supported  [] is valid   — keep or add as [] in the record.
-— assistance_type      [] is valid   — keep or add as [] in the record.
+— assistance_type      "" is valid   — keep or add as "" in the record.
 — whistleblower_scope: 0  is valid   — keep or add as 0  in the record.
 Exception:
 — whistleblower_note:  "" is invalid — keep or add as "" in the record. Log to notations.
@@ -193,8 +228,7 @@ After reconciliation:
   If gap is defined and concept is legitimate, apply PROPOSING NEW TAXONOMY TERMS,
   and add new term proposal.
     add or append meta.new_terms_proposed key array.
-  If no new terms are proposed, new_terms_proposed key array should be omitted.
-
+ 
  Special Case:
   When anonymous_pre_consult_possible is set to 'no' or 'unclear', but services_provided
   includes secure-drop slug, update anonymous_pre_consult_possible to 'yes'.
@@ -208,12 +242,88 @@ After reconciliation:
   When an org's jurisdictional scope is unclear
    — (meta.nationwide_only is true, but scope_of_service.nationwide_example is empty)
   Flag the org as 'Suspect' by adding meta.suspect_orgs array key before
-    meta.batch_completed and add each 'Suspect' org's [RECORD_ID], the
-    complete list of suspect triggers. Search source materials and append
-    with anything discovered that also indicates org may not be legitimate
-    that research and the current schema did not capture.
+    meta.batch_completed (this is an authorized exception to the 'Do not invent keys'
+    rule). Add each 'Suspect' org's [RECORD_ID], the complete list of suspect triggers.
+    Search source materials and append with anything discovered that also indicates
+    org may not be legitimate that research and the current schema did not capture.
   Illegitimate Organizations will need to be documented as exclusions.
   
+---
+
+COMPANION FIELD RULES
+
+— COMPANION BEHAVIOR RULES:
+  Applies to all taxonomy sentinel terms and trigger values, unless noted otherwise.
+  When sentinel or trigger exists without companion, add companion and attempt to populate.
+  When companion exists with non-empty value and sentinel or trigger is missing, add
+  sentinel or trigger value. Remove sentinel or trigger value when companion is still empty.
+  Then remove companion. Log actions to notations.
+
+  Example for has-details sentinel:
+  — If has-details is present + *_details missing or empty: attempt to populate
+    *_details; if unresolved, remove sentinel and log removal to notations.
+  — If *_details are present + has-details missing: add sentinel if details content
+    is verifiably accurate; otherwise remove *_details entirely and log removal to notations.
+  — Ternary Exception - If trigger is set to 'yes' but companion field is missing
+    or empty and remains empty after population attempt, do not omit field. Set
+    value to 'unclear'. Remove companion field. Log actions to notations.
+  
+— has-details as sentinel taxonomy slug:
+  has-details slug is valid in:
+   — ws_protected_class
+   — ws_disclosure_target
+   — ws_adverse_action_type
+   — ws_remedy
+   — ws_employer_defense
+   — ws_employee_standard
+
+In all other taxonomies, has-details is invalid and must be removed. Log removal.
+
+— Companion mapping:
+  When sentinel slug or trigger value is used it must be accompanied by companion field.
+
+Taxonomy arrays with has-details sentinel slug:
+— protected_classes   —> protected_class_details
+— disclosure_targets  —> disclosure_target_details
+— adverse_actions     —> adverse_action_details
+— remedies            —> remedy_details
+— employer_defenses   —> employer_defense_details
+— employee_standards  —> employee_standard_details
+
+Taxonomy arrays with additional sentinel slug:
+— languages_supported —> languages_additional
+— services_provided   —> additional_services
+
+Taxonomy array with other sentinel slug:
+— case_stages         —> case_stage_details
+
+Taxonomy arrays with unclear sentinel slug:
+— services_provided   —> researcher note in _review_notes
+— cost_models         —> researcher note in _review_notes
+If unclear sentinel present with researcher note missing:
+Do not apply COMPANION BEHAVIOR RULES, preserve unclear. Log to notations.
+
+Key Arrays with other as trigger value:
+— phones [{ type: other, number: ... }]  —> researcher note in _review_notes
+— emails [{ type: other, address: ... }] —> researcher note in _review_notes
+If other trigger present with researcher note missing:
+Apply COMPANION BEHAVIOR RULES, but preserve array with type: other. Log to notations.
+
+Key fields with true as trigger value:
+— limit_ambiguous             —> limit_details
+— exhaustion_required         —> exhaustion_details
+— statutory_preclusion        —> statutory_preclusion_details
+— available                   —> reward_details
+
+Ternary Key Fields with yes as trigger value (Has Ternary Exception):
+— has_secure_channel          —> secure_contact_url
+                              —> secure_contact_tool —> if other trigger value present —> secure_contact_tool_other
+— income_eligibility_required —> income_eligibility_details
+
+NOTE: burden_of_proof_flag and burden_of_proof_details are companions,
+      but there is no set value as the trigger. They are both required
+	    when either one is non-empty. Log any discrepancy.
+
 ---
 
 PROPOSING NEW TAXONOMY TERMS
@@ -270,9 +380,8 @@ Before proposing a broad term:
 3) Propose broader term only when narrow term in combination with existing terms would misrepresent coverage.
 4) Log the reasoning and comparison in _reconciled_notes.
 
-For Legal Record Batches Only:
-After reconciliation, If no new terms are proposed, new_terms_proposed must
-be an empty array [].
+After reconciliation,
+  If no new terms have been proposed, omit the meta.new_terms_proposed array key entirely.
 
 ---
 
@@ -413,11 +522,12 @@ _reconciled_notes is per-record audit detail.
 Use it when any record-level reconciliation action occurs.
 
 Minimum expected content when present:
+Log entries for
 — any corrected schema violation,
 — any corrected data value,
 — source choice rationale for conflicts,
 — factual field changes and reasons,
-— removal reasons for urls, citations, invalid slugs, or companion fields,
+— removal of any key or data removed, include what was removed and reasoning,
 — taxonomy selection during reconciliation with reasoning when non—obvious,
 — any unresolved gaps requiring reviewer attention.
 
@@ -426,7 +536,8 @@ Minimum expected content when present:
 _RECONCILED_RUN_NOTES STANDARD
 _reconciled_run_notes is batch-level audit detail in meta.
 
-Use it for:
+Minimum expected content when present:
+Log entries for
 — global policies applied across records,
 — web research not available in source materials,
 — missing information in available web research ,

@@ -1197,8 +1197,9 @@ it is expected 'some' data will be unavailable for 'some' orgs:
   Field                                       Fallback
   ─────────────────────────────────────────   ────────────────────────────────────────────────
   identity.homepage_url_status                "unverified" — use 'dead' if the URL can be confirmed as non-functional
-  scope_of_service.cost_models                ["unclear"]  — when 'unclear' and add detailed note in _review_notes
-  scope_of_service.services_provided          ["unclear"]  — when 'unclear' and add detailed note in _review_notes  scope_of_service.case_stages                ["other"]
+  scope_of_service.cost_models                ["unclear"]
+  scope_of_service.services_provided          ["unclear"]
+  scope_of_service.case_stages                ["other"]
   scope_of_service.disclosure_targets         ["has-details"]
   scope_of_service.protected_classes          ["has-details"]
   scope_of_service.whistleblower_scope        0  (scope unclear)
@@ -1222,7 +1223,7 @@ signals that the absence will require human review; it does not indicate failure
   scope_of_service.nationwide_example         "" when no qualifying quote is found
   scope_of_service.disclosure_types           [] when none can be confirmed
   scope_of_service.languages_supported        [] when site's operating language cannot be determined.
-  scope_of_service.assistance_type            [] when no explicit assistance is described
+  scope_of_service.assistance_type            "" when no explicit assistance is described
 
 CONDITIONAL — required when the parent condition is met; omit otherwise. use them to capture
 “what I found doesn't fit the schema” or “it could not be found”. 'has-details' is a dual-purpose
@@ -1267,6 +1268,10 @@ identity:
   official_name               full official name exactly as it appears on the org's homepage.
   official_homepage_url       official domain URL — the org's own homepage, not a directory listing.
   general_description         3 to 5 sentences: what the org does, who it serves, what help it provides.
+                              If org is a law firm, detail their inclusion by referencing how it differs from
+                              excluded law firms with billable-hour as primary intake only (e.g. "firm uses
+                              contingency fees for qui tam representation", "has a pro bono practice focused
+                              on whistleblower cases", "site describes a free legal intake process").
   common_name                 widely used shorthand name or acronym.
   homepage_url_status         verified | redirects | unverified | dead
   verified_url_date           YYYY-MM-DD; omit if the URL status is not 'verified'.
@@ -1306,8 +1311,9 @@ scope_of_service:
                                 2 = subset of whistleblower concerns (e.g. securities fraud only)
                                 3 = all or broad whistleblower concerns
   whistleblower_note          verbatim quote (up to 3 sentences) from the org's own site
-                              describing its whistleblower mission; when scope is 0, state
-                              the reason for you were lead to the site instead.
+                              describing its whistleblower mission, for law firms focus on how
+                              differs from excluded law firms; when scope is 0, state
+                              the reason for you were lead to the site.
 
 contact:
   intake_url                  direct URL to the org's intake entry point or start-here page;
@@ -1442,7 +1448,7 @@ RECORD SCHEMA
         "protected_class_details": "",
         "languages_supported": [],
         "languages_additional": "",
-        "assistance_type": [],
+        "assistance_type": "",
         "employment_sectors": [],
         "cost_models": [],
         "services_provided": [],
@@ -1759,7 +1765,7 @@ pro-bono                           Pro Bono
 sliding-scale                      Sliding Scale Fee
 contingency                        Contingency Fee
 fee-for-service                    Fee for Service
-unclear                            Unclear (add detailed note to _reviewer_notes)
+unclear                            Unclear (add detailed note to _review_notes)
 
 
 ────────────────────────────────────────────────────────────────────────────
@@ -1768,7 +1774,7 @@ Description: Services the org offers. Tag all that apply.
              Use additional slug when services exist which no slug fits
              cleanly. Include secure-drop when the org runs a dedicated
              anonymous evidence drop such as SecureDrop or others. Do not
-             infer secure-channel. But has_anonymous_pre_consult_possible
+             infer secure-channel, but anonymous_pre_consult_possible
              can be set to 'yes'. If org does not clearly describe any
              services use 'unclear'.
 ────────────────────────────────────────────────────────────────────────────
@@ -1786,7 +1792,7 @@ mental-health                      Mental Health Support
 peer-support                       Peer Support
 secure-drop                        Secure Anonymous Evidence Drop
 additional                         Additional Services (list in additional_services)
-unclear                            Unclear (add detailed note to _reviewer_notes)
+unclear                            Unclear (add detailed note to _review_notes)
 
 
 ────────────────────────────────────────────────────────────────────────────

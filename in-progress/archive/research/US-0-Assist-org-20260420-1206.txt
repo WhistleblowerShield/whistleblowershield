@@ -115,8 +115,8 @@ it is expected 'some' data will be unavailable for 'some' orgs:
   Field                                       Fallback
   ─────────────────────────────────────────   ────────────────────────────────────────────────
   identity.homepage_url_status                "unverified" — use 'dead' if the URL can be confirmed as non-functional
-  scope_of_service.cost_models                ["unclear"]  — when 'unclear' and add detailed note in _review_notes
-  scope_of_service.services_provided          ["unclear"]  — when 'unclear' and add detailed note in _review_notes
+  scope_of_service.cost_models                ["unclear"]
+  scope_of_service.services_provided          ["unclear"]
   scope_of_service.case_stages                ["other"]
   scope_of_service.disclosure_targets         ["has-details"]
   scope_of_service.protected_classes          ["has-details"]
@@ -235,7 +235,7 @@ contact:
   phones                      array of { "type": "...", "number": "..." } objects;
                               type must be one of: hotline | intake | headquarters |
                               regional | tty | fax | other; if type is other, describe
-							                in _review_notes.
+							  in _review_notes.
   emails                      array of { "type": "...", "address": "..." } objects;
                               type must be one of: intake | general | legal | media |
                               support | secure | other; if type is other, describe in
@@ -283,19 +283,19 @@ review:
                                  through a standard HTTPS form; has_secure_channel was set
                                  to no"
                             "phone type marked other: listed as 'after-hours crisis line
-							                   for existing clients only'; included for human review"
+							     for existing clients only'; included for human review"
                             "email type marked other: listed as 'whistleblower secure
                                  tips inbox' without clear fit to slugs; included for
                                  human review"
                             "site language/support undetermined, uses many images and
-						              	     very little text; languages_supported left empty intentionally"
+							     very little text; languages_supported left empty intentionally"
                             "Org site does not explicitly claim nationwide service; actual
                                  jurisdictions served could not be confidently confirmed
                                  from site materials. nationwide_example left empty intentionally."
                             "Services provided are not clearly defined on the site; service_provided
                                  set to 'unclear'."
-					              		"Org provides peer-support which has a recommended minimum donation.
-						               	     cost_models includes 'other'."
+							"Org provides peer-support which has a recommended minimum donation.
+							     cost_models includes 'other'."
 
                               You may use _review_notes to briefly explain:
                             something you did find that seems significant but didn't map cleanly
@@ -529,7 +529,7 @@ representative-action              Representative Action
 TAXONOMY: ws_case_stage
 Description: Legal stage where the org provides help. Tag all that apply.
              Use other slug when stage coverage exists but no slug fits
-	      		 cleanly, or no coverage is described clearly. other slug can
+			 cleanly, or no coverage is described clearly. other slug can
              be included when some case stages were covered but one or more
              stages didn't fit cleanly.
 ────────────────────────────────────────────────────────────────────────────
@@ -547,7 +547,7 @@ Description: Languages the org claims to serve and support. Tag all that apply.
              List languages confirmed by source material.  Use additional slug
              when the org serves languages not in this list. Free text in
              additional_languages can be used to describe any form of
-		      	 communication, such as hearing-impaired access.
+			 communication, such as hearing-impaired access.
 ────────────────────────────────────────────────────────────────────────────
 
 english                            English
@@ -572,7 +572,7 @@ additional                         Additional (list in languages_additional)
 TAXONOMY: ws_aorg_type
 Description: Primary classification of the organization. Choose the single
              best fit. Use mixed slug when no single slug fits cleanly. It
-			       is understood some assist orgs "blur the line".
+			 is understood some assist orgs "blur the line".
 ────────────────────────────────────────────────────────────────────────────
 
 nonprofit                          Nonprofit Organization
@@ -589,7 +589,7 @@ mixed                              Mixed
 TAXONOMY: ws_employment_sector
 Description: Employment sectors the org serves. Tag all that apply.
              Use all-sectors slug only when the org explicitly states it
-			       serves all employment types without restriction.
+			 serves all employment types without restriction.
 ────────────────────────────────────────────────────────────────────────────
 
 federal-employee                   Federal Government Employee
@@ -605,8 +605,8 @@ TAXONOMY: ws_aorg_cost_model
 Description: Cost structure of the org's help pathways. Tag all that apply.
              Use unclear slug when existing slugs do not fit cleanly to a
              model described by the org, or no model is described clearly.
-	      		 unclear can be included  even when some cost models were covered and
-	      		 a there was something different about one or more remaining models.
+			 unclear can be included even when some cost models were covered and
+			 a there was something different about one or more remaining models.
 ────────────────────────────────────────────────────────────────────────────
 
 free                               Free of Charge
@@ -621,11 +621,11 @@ unclear                            Unclear (add detailed note to _reviewer_notes
 TAXONOMY: ws_aorg_service
 Description: Services the org offers. Tag all that apply.
              Use additional slug when services exist which no slug fits
-			       cleanly. Include secure-drop when the org runs a dedicated
+             cleanly. Include secure-drop when the org runs a dedicated
              anonymous evidence drop such as SecureDrop or others. Do not
-             infer secure-channel. But has_anonymous_pre_consult_possible
+             infer secure-channel, but anonymous_pre_consult_possible
              can be set to 'yes'. If org does not clearly describe any
-             services use 'unclear' slug.
+             services use 'unclear'.
 ────────────────────────────────────────────────────────────────────────────
 
 legal-rep                          Full Legal Representation
@@ -757,7 +757,7 @@ meta.nationwide_only: true
 
 ---
 Focus notes:
-Assistance Organizations already documented in matrix-assist-orgs.php with clear gaps in schema.
+Assistance Organizations already documented in matrix-assist-orgs.php with clear gaps when compared to current schema.
 ---
 
 When "meta.nationwide_only" is true, return nationwide or large multi-jurisdictional scoped organizations.
