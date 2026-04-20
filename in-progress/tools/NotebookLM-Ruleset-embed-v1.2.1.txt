@@ -247,13 +247,14 @@ When an invalid slug appears in a taxonomy array:
 — If no single valid slug fits cleanly, attempt to replace invalid slug with multiple valid slugs.
   Do not use more than 3 slugs.
 — If multiple valid slugs do not cover the concept cleanly:
-  1) — Add has-details as an array entry, where has-details is a valid slug.
+  1) — If has-details is a valid slug, add has-details to the taxonomy array once.
        — Remove invalid slug.
        — Populate _details with "[RESEARCHER] — Invalid Term Removed — <invalid term that was removed>.
        — Repeat for all invalid terms. Log removal(s) once per array to notations.
      — When has-details is not a valid slug for current taxonomy array:
-       — Remove invalid slug, and repeat for all invalid slugs in array.
-       — Log each slug removed and from which array to notations.
+       — Remove invalid slug.
+       — Log slug removed and from which array to notations.
+       — Repeat for all invalid slugs in array.
   2) — If invalid slug covers a concept not covered by taxonomy cleanly, using 1 to 3 slugs:
        — Propose invalid slug as new term in new_terms_proposed. (see addendum)
 
