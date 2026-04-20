@@ -95,10 +95,10 @@ non-institutional aggregator not listed above.
 ---
 
 ASSIST-ORG RECORD — CORE RULES
+Applies to Assist-Org Record (assist-org) Batches.
 
-These rules apply when reconciling assist-org records. They supplement
-and in some cases override general legal record behavior for fields
-that behave differently in the assist-org schema.
+These rules apply when reconciling assist-org records. They document and supplement
+general behavior for fields that behave differently in the assist-org schema.
 
 NO LAW FIRMS
 Law firms are not assistance organizations. A law firm is defined as an entity
@@ -144,7 +144,7 @@ differently for these fields and requires them.
 — disclosure_types:    [] is valid   — keep or add as [] in the record.
 — whistleblower_scope: 0  is valid   — keep or add as 0  in the record.
 Exception:
-— whistleblower_note   "" is invalid — keep or add as "" in the record. Log to notations.
+— whistleblower_note:  "" is invalid — keep or add as "" in the record. Log to notations.
 
 REQUIRED TERNARY FIELDS
 The following fields are required on every assist-org record:

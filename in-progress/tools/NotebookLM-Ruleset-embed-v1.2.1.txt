@@ -184,6 +184,7 @@ NOTE: burden_of_proof_flag and burden_of_proof_details are companions,
 ---
 
 LEGAL RECORD — CORE RULES
+Applies to Legal Record (statute, common-law, citations, interpretations) Batches.
 
 Statute of limitations
 — limit_ambiguous must be true whenever the SOL is derived from general
