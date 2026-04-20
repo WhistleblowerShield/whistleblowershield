@@ -1075,8 +1075,9 @@ Before you write the JSON, confirm the following:
    wrongdoing to the organization (e.g., "Submit a Tip," "Send us a Leak"), it must
    be moved to _review_notes and the intake field left empty.
 
-2. A standard HTTPS web form is not a secure channel.
-   A secure-drop service is not a secure channel, but does qualify as anonymous_pre_consult_possible.
+2. A standard HTTPS web form is not a secure contact channel.
+   A secure-drop service is not a secure contact channel, but does qualify as
+   anonymous_pre_consult_possible.
    has_secure_channel is 'yes' only when a dedicated encrypted tool is confirmed:
    Signal, ProtonMail, Tutanota, Wire, Keybase, or 'other'. Use 'other' if more
    than one secure tool is confirmed.
@@ -1104,9 +1105,15 @@ Before you write the JSON, confirm the following:
    (GuideStar, Charity Navigator, congressional directory, etc.) — verify the
    org is named on that page, not that it is the org's own domain.
 
-7. If any rule couldn't be followed:
+7. A record with services_provided: ["unclear"] requires a substantive _review_notes
+   explaining why the org passed the inclusion gate despite indeterminate services.
+   There is no fault to finding an inadequate org, end users will also be lured to
+   the site. Determining how the site creates the lure is crucial.
+
+7. If any rule generated an anomaly and couldn't be maintained:
     — set integrity.has_anomalies: true
     — explain which rule, what happened and why in integrity.notations
+    — rules must evolve to reality, a detailed notation here helps them evolve.
    
 8. You are not ultimately responsible for the data that is published to the
    platform. There are many checks and balances in place. Incorrect data
