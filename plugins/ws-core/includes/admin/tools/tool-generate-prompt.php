@@ -1069,31 +1069,33 @@ FINAL WRITE CONTRACT
 
 Before you write the JSON, confirm the following:
 
-1. Every record uses only the keys and nesting shown in RECORD SCHEMA.
+1. The Intake Commitment Rule: A URL only qualifies as an Intake URL if the page
+   explicitly offers a path for the individual to request personal assistance, legal
+   review, or peer support. If the page is primarily for reporting evidence of
+   wrongdoing to the organization (e.g., "Submit a Tip," "Send us a Leak"), it must
+   be moved to _review_notes and the intake field left empty.
+
+2. A standard HTTPS web form is not a secure channel.
+   A secure-drop service is not a secure channel, but does qualify as anonymous_pre_consult_possible.
+   has_secure_channel is 'yes' only when a dedicated encrypted tool is confirmed:
+   Signal, ProtonMail, Tutanota, Wire, Keybase, or 'other'. Use 'other' if more
+   than one secure tool is confirmed.
+
+3. Every record uses only the keys and nesting shown in RECORD SCHEMA.
    No extra keys. No reordered keys.
 
-2. Every slug in every taxonomy array appears as valid in the table for
+4. Every slug in every taxonomy array appears as valid in the table for
    that specific field. A slug that is valid in one taxonomy is not valid
    in another — verify each field against its own table, not the tables
    generally.
 
-3. Field requirements are respected:
+5. Field requirements are respected:
    essential         — record is omitted if any essential field is missing.
    expected          — field is present with a non-empty value or its stated fallback.
    ternary           — field is present with 'yes', 'no', or 'unclear'.
    expected-if-found — field is present even when empty ("" or []).
    conditional       — field is present when its parent condition is met; omitted otherwise.
    optional          — field is omitted when data is unavailable or unconfirmed.
-
-4. The Intake Commitment Rule: A URL only qualifies as an Intake URL if the page
-   explicitly offers a path for the individual to request personal assistance, legal
-   review, or peer support. If the page is primarily for reporting evidence of
-   wrongdoing to the organization (e.g., "Submit a Tip," "Send us a Leak"), it must
-   be moved to _review_notes and the intake field left empty.
-
-5. A standard HTTPS web form is not a secure channel.
-   has_secure_channel is 'yes' only when a dedicated encrypted tool is confirmed:
-   SecureDrop, Signal, ProtonMail, Tutanota, Wire, Keybase, or 'other'.
 
 6. For every org-owned URL — official_homepage_url, intake_url, contact_url,
    and secure_contact_url — verify the organization's name appears at that
@@ -1104,13 +1106,14 @@ Before you write the JSON, confirm the following:
 
 7. If any rule couldn't be followed:
     — set integrity.has_anomalies: true
-    — explain what happened and why in integrity.notations
+    — explain which rule, what happened and why in integrity.notations
    
 8. You are not ultimately responsible for the data that is published to the
    platform. There are many checks and balances in place. Incorrect data
    that is published to the platform is a failure in the pipeline, you are
    only the first stage of the pipeline. Your research is the foundation
-   for the data the platform builds from.
+   for the data the platform builds from. Accurate first-pass research
+   ensures a strong foundation.
 
 ---
 
@@ -1325,9 +1328,11 @@ security:
   has_secure_channel          yes | no | unclear
                               Does the site use a secure channel via a dedicated encrypted tool?
   secure_contact_url          URL to the secure channel or page providing secure channel instructions.
-  secure_contact_tool         tool name; use one: SecureDrop | Signal | ProtonMail | Tutanota |
-                              Wire | Keybase | other
-  secure_contact_tool_other   free text — name or describe the tool not in provided list.
+  secure_contact_tool         tool name; use one: Signal | ProtonMail | Tutanota | Wire | Keybase |
+                              other; use 'other' when more than one secure tool is available and
+                              list all secure tools in free text field.
+  secure_contact_tool_other   free text — name or describe the tool not in provided list, or list
+                              multiple tools when present, separate listed tools with ||.
   anonymous_pre_consult_possible  yes | no | unclear
                               Can a user make initial contact without identifying themselves?
   has_attorneys               yes | no | unclear
@@ -1337,8 +1342,10 @@ security:
 review:
   legitimacy_url              URL to a secondary source confirming legitimacy (GuideStar,
                               Charity Navigator, court listing, congressional directory);
-                              This is a nice-to-have-but-not-required datapoint.
-  _review_notes               free text for anything that the schema did not capture.
+  _review_notes               free text for anything that the schema did not capture, and
+                              notes required by triggers. Reserve commentary for
+                              _json_run_researcher_notes, you may use it to express any
+                              thoughts or opinions, you may be verbose.
 
                               Good examples:
                             "intake requires account creation before service details
@@ -1361,11 +1368,11 @@ review:
                                  jurisdictions served could not be confidently confirmed
                                  from site materials. nationwide_example left empty intentionally."
                             "Services provided are not clearly defined on the site; service_provided
-                                 set to 'unclear'. Human review required."
+                                 set to 'unclear'."
 
                               You may use _review_notes to briefly explain:
                             something you did find that seems significant but didn't map cleanly
-                                 to the schema, which resulted in an optional field being omitted.
+                                 to the schema, which may have resulted in an optional field being omitted.
                             why you left a taxonomy array empty even though the org seems
                                  important (e.g. "org clearly serves federal workers but
                                  employment_sectors mapping is indeterminate")

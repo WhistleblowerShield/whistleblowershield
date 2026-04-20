@@ -85,7 +85,7 @@ define( 'WS_SOURCE_NAME_DIRECT', 'Direct' );
 // are intentionally excluded. Add a new type here when it is added to the
 // ws_legal_update_type ACF select in acf-legal-updates.php.
 define( 'WS_LEGAL_UPDATE_SUMMARY_TYPES', [
-    'summary', 'statute', 'common law', 'citation', 'interpretation', 'agency', 'procedure','regulation', 'policy',
+    'summary', 'statute', 'common-law', 'citation', 'interpretation', 'agency', 'procedure','regulation', 'policy',
 ] );
 
 

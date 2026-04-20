@@ -206,7 +206,7 @@ define( 'WS_SCHEMA_WHISTLEBLOWER_SCOPE_MAX', 3 );
 // ════════════════════════════════════════════════════════════════════════════
 
 define( 'WS_SCHEMA_SECURE_TOOL', [
-    'SecureDrop',    // Freedom of the Press Foundation SecureDrop
+    //'SecureDrop',    // Freedom of the Press Foundation SecureDrop
     'Signal',        // Signal encrypted messaging
     'ProtonMail',    // ProtonMail encrypted email
     'Tutanota',      // Tutanota encrypted email
