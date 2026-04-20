@@ -1333,6 +1333,7 @@ function ws_seed_aorg_service_taxonomy() {
         'peer-support'  => 'Peer Support',
         'secure-drop'   => 'SecureDrop Intake',
         'additional'    => 'Additional Services',
+        'unclear'       => 'Services Unclear',
     ];
     foreach ( $terms as $slug => $name ) {
         if ( ! term_exists( $slug, $taxonomy ) ) {

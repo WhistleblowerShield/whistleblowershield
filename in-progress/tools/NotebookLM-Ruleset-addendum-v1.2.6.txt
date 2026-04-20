@@ -49,15 +49,18 @@ data is expected to be on a deeper page.
 
 ---
 
-ATTACHED CITATION DEDUPE (PARENT-SCOPED)
+ATTACHED CITATION RULES (PARENT-SCOPED)
+Applies to Legal Record (statute, common-law) Batches Only:
+
+CITATION DEDUPE
 For citations.attached_citations rows in the same record:
 
-1) Dedupe key
+1) Dedupe Key
 — Use CASE (first token before "||") as the canonical identity.
 — CASE matching is case-insensitive and whitespace-insensitive.
 — Do not emit duplicate rows for the same CASE within one parent record.
 
-2) Merge rule when IMPACT/URL differ for same CASE
+2) Merge Rule When IMPACT/URL Differ For Same CASE
 — Keep one row.
 — IMPACT: keep the most specific action-verbed statement; if both add distinct facts,
 	merge into one concise IMPACT sentence.
@@ -65,25 +68,25 @@ For citations.attached_citations rows in the same record:
 	(official/authoritative), keep that one.
 — SOURCE/QUALITY: keep values aligned to the selected URL/source confidence.
 
-3) Conflict logging
+3) Conflict Logging
 — When duplicate CASE rows were merged because IMPACT or URL disagreed,
 	and log actions.
 
-4) Prohibited output
+4) Prohibited Output
 — Never output two attached_citations rows for the same CASE under the same
 	parent record.
 
----
+CITATION SOURCES
+For citations.attached_citations:
 
-CITATION SOURCE CORE RULES
-
-CASE LAW SOURCES:
+APPROVED CASE LAW SOURCES:
   1. Official court websites (supremecourt.gov, ca9.uscourts.gov, etc.)
   2. courtlistener.com — PACER-sourced, highly reliable
   3. casetext.com — strong coverage, stable URLs
   4. law.justia.com — broad coverage
 
-FORBIDDEN: scholar.google.com (unstable URLs), law firm websites, any
+FORBIDDEN CASE LAW SOURCES:
+scholar.google.com (unstable URLs), law firm websites, any
 non-institutional aggregator not listed above.
 
 — If URL is not from approved sources or cannot be verified per active URL

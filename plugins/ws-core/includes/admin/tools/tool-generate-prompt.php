@@ -1188,6 +1188,7 @@ it is expected 'some' data will be unavailable for 'some' orgs:
   ─────────────────────────────────────────   ────────────────────────────────────────────────
   identity.homepage_url_status                "unverified" — use 'dead' if the URL can be confirmed as non-functional
   scope_of_service.cost_models                ["unclear"]
+  scope_of_service.services_provided          ["unclear"]  — use 'unclear' when no services are clearly represented and add detailed note in _review_notes
   scope_of_service.case_stages                ["other"]
   scope_of_service.disclosure_targets         ["has-details"]
   scope_of_service.protected_classes          ["has-details"]
@@ -1213,7 +1214,6 @@ signals that the absence will require human review; it does not indicate failure
   scope_of_service.disclosure_types           [] when none can be confirmed
   scope_of_service.languages_supported        [] when site's operating language cannot be determined.
   scope_of_service.assistance_type            [] when no explicit assistance is described
-  scope_of_service.services_provided          [] when no services are clearly represented
 
 CONDITIONAL — required when the parent condition is met; omit otherwise. use them to capture
 “what I found doesn't fit the schema” or “it could not be found”. 'has-details' is a dual-purpose
@@ -1350,8 +1350,6 @@ review:
                             "site recommends Signal and Tor but actual intake is
                                  through a standard HTTPS form; has_secure_channel was set
                                  to no"
-                            "org appears to offer help but does not clearly describe
-                                 any actual services; services_provided omitted intentionally"
                             "phone type marked other: listed as 'after-hours crisis line
 							     for existing clients only'; included for human review"
                             "email type marked other: listed as 'whistleblower secure
@@ -1362,6 +1360,8 @@ review:
                             "Org site does not explicitly claim nationwide service; actual
                                  jurisdictions served could not be confidently confirmed
                                  from site materials. nationwide_example left empty intentionally."
+                            "Services provided are not clearly defined on the site; service_provided
+                                 set to 'unclear'. Human review required."
 
                               You may use _review_notes to briefly explain:
                             something you did find that seems significant but didn't map cleanly
@@ -1752,7 +1752,10 @@ TAXONOMY: ws_aorg_service
 Description: Services the org offers. Tag all that apply.
              Use additional slug when services exist which no slug fits
 			 cleanly. Include secure-drop when the org runs a dedicated
-             anonymous evidence drop such as SecureDrop or others.
+             anonymous evidence drop such as SecureDrop or others. Do not
+             infer secure-channel. But has_anonymous_pre_consult_possible
+             can be set to 'yes'. If org does not clearly describe any
+             services use 'unclear' slug and note in _review_notes
 ────────────────────────────────────────────────────────────────────────────
 
 legal-rep                          Full Legal Representation
@@ -1768,6 +1771,7 @@ mental-health                      Mental Health Support
 peer-support                       Peer Support
 secure-drop                        Secure Anonymous Evidence Drop
 additional                         Additional Services (list in additional_services)
+unclear                            Services Unclear
 
 
 ────────────────────────────────────────────────────────────────────────────

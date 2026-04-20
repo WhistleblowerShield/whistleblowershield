@@ -110,6 +110,22 @@ missing web research on records being reconciled.
 
 COMPANION FIELD RULES
 
+— COMPANION BEHAVIOR RULES:
+  Applies to all taxonomy sentinel terms and trigger values, unless noted otherwise.
+  When sentinel or trigger exists without companion, add companion and attempt to populate.
+  When companion exists with non-empty value and sentinel or trigger is missing, add
+  sentinel or trigger value. Remove sentinel or trigger value when companion is still empty.
+  Then remove companion. Log actions to notations.
+
+  Example for has-details sentinel:
+  — If has-details is present + *_details missing or empty: attempt to populate
+    *_details; if unresolved, remove sentinel and log removal to notations.
+  — If *_details are present + has-details missing: add sentinel if details content
+    is verifiably accurate; otherwise remove *_details entirely and log removal to notations.
+  — Ternary Exception - If trigger is set to 'yes' but companion field is missing
+    or empty and remains empty after population attempt, do not omit field. Set
+    value to 'unclear'. Remove companion field. Log actions to notations.
+  
 — has-details as sentinel taxonomy slug:
   has-details slug is valid in:
    — ws_protected_class
@@ -139,9 +155,16 @@ Taxonomy arrays with additional sentinel slug:
 Taxonomy array with other sentinel slug:
 — case_stages         —> case_stage_details
 
+Taxonomy array with unclear sentinel slug:
+— services_provided   —> researcher note in _review_notes
+If unclear sentinel present with researcher note missing:
+Do not apply COMPANION BEHAVIOR RULES, preserve unclear. Log to notations.
+
 Key Arrays with other as trigger value:
 — phones [{ type: other, number: ... }]  —> researcher note in _review_notes
 — emails [{ type: other, address: ... }] —> researcher note in _review_notes
+If other trigger present with researcher note missing:
+Apply COMPANION BEHAVIOR RULES, but preserve array with type: other. Log to notations.
 
 Key fields with true as trigger value:
 — limit_ambiguous             —> limit_details
@@ -158,21 +181,6 @@ NOTE: burden_of_proof_flag and burden_of_proof_details are companions,
       but there is no set value as the trigger. They are both required
 	    when either one is non-empty. Log any discrepancy.
 
-— COMPANION BEHAVIOR RULES:
-  Applies to all taxonomy sentinel terms and trigger values (Except Ternary).
-  When trigger exists with companion, add companion and attempt to populate.
-  When companion exists with non-empty value and trigger is missing, add trigger value.
-  Log actions.
-
-  Example for has-details sentinel:
-  — If has-details is present + details missing or empty: attempt to populate
-    details; if unresolved, remove sentinel and log sentinel removal.
-  — If details are present + has-details missing: add sentinel if details content
-    is verifiably accurate; otherwise remove details entirely and log removal.
-  — Ternary Exception - If trigger is set to 'yes' but companion field was missing
-    or empty and remains empty after population attempt, do not omit field. Set
-    value to 'unclear'. Remove companion field. Log actions.
-  
 ---
 
 LEGAL RECORD — CORE RULES
