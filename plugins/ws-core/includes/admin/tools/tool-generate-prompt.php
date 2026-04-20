@@ -1387,6 +1387,7 @@ ORGANIZATION NON-EXCLUSION RULES
 One research has begun on an organization:
   Do not exclude organizations that do not have a documented intake path.
   Do not exclude organizations that have unclear jurisdictional scope.
+  Do not exclude organizations that have unclear services provided.
   Do not exclude organizations that have a whistleblower_scope of 0.
   - These are organizations that will still need to be documented; Human
     review will evaluate if the org is included in the final data or listed

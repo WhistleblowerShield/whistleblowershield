@@ -183,11 +183,15 @@ There is no starting meta.new_terms_proposed key array.
 After reconciliation:
   If invalid slugs resulted in new term proposals:
     Add and populate meta.new_terms_proposed key array.
-  Examine any reconciled use of the has-details sentinel slug. If companion field *_details
-  clearly indicates a concept missing from the associated taxonomy. Apply PROPOSING NEW TAXONOMY TERMS,
+  Examine any reconciled records for use of the has-details sentinel slug.
+  If companion field *_details clearly indicates a concept missing from the
+  associated taxonomy. Apply PROPOSING NEW TAXONOMY TERMS, and add new term proposal.
+    add or append meta.new_terms_proposed key array.
+  Examine all reconciled records _review_notes for documented gaps in taxonomy.
+  If gap is defined and concept is legitimate, apply PROPOSING NEW TAXONOMY TERMS,
   and add new term proposal.
-    If necessary, add and populate, or append meta.new_terms_proposed key array.
-  If no new terms are proposed, new_terms_proposed should be omitted.
+    add or append meta.new_terms_proposed key array.
+  If no new terms are proposed, new_terms_proposed key array should be omitted.
 
 ---
 
