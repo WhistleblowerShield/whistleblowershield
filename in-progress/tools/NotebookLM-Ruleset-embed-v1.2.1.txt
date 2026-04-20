@@ -152,8 +152,11 @@ Taxonomy arrays with additional sentinel slug:
 — languages_supported —> languages_additional
 — services_provided   —> additional_services
 
-Taxonomy array with other sentinel slug:
+Taxonomy arrays with other sentinel slug:
 — case_stages         —> case_stage_details
+— cost_models         —> researcher note in _review_notes
+If other sentinel present with researcher note missing:
+Do not apply COMPANION BEHAVIOR RULES, preserve other. Log to notations.
 
 Taxonomy array with unclear sentinel slug:
 — services_provided   —> researcher note in _review_notes

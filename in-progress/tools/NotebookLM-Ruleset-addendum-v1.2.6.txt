@@ -140,8 +140,9 @@ add them back to schema. The ingest tool handles empty field logic
 differently for these fields and requires them.
 
 — nationwide_example:  "" is valid   — keep or add as "" in the record.
-— protected_classes:   [] is valid   — keep or add as [] in the record.
 — disclosure_types:    [] is valid   — keep or add as [] in the record.
+— languages_supported  [] is valid   — keep or add as [] in the record.
+— assistance_type      [] is valid   — keep or add as [] in the record.
 — whistleblower_scope: 0  is valid   — keep or add as 0  in the record.
 Exception:
 — whistleblower_note:  "" is invalid — keep or add as "" in the record. Log to notations.

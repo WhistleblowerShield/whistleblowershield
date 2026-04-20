@@ -38,8 +38,3 @@ These gaps are worth capturing systematically in `_review_notes` (for human revi
 
 The current schema is already quite robust for legal/advocacy pathways, but whistleblower support often involves **psychosocial, community, and educational** elements that feel secondary in the taxonomy.
 
-Would you like me to:
-- Update the next 4 orgs (e.g., NELP, NELA, LSC Find Legal Aid, NLADA)?
-- Or first revise any of the previous 8 records to better highlight these uncaptured elements in `_review_notes`/`additional_services`?
-
-Just say the word.

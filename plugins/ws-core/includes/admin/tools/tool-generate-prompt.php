@@ -1197,9 +1197,8 @@ it is expected 'some' data will be unavailable for 'some' orgs:
   Field                                       Fallback
   ─────────────────────────────────────────   ────────────────────────────────────────────────
   identity.homepage_url_status                "unverified" — use 'dead' if the URL can be confirmed as non-functional
-  scope_of_service.cost_models                ["unclear"]
-  scope_of_service.services_provided          ["unclear"]  — use 'unclear' when no services are clearly represented and add detailed note in _review_notes
-  scope_of_service.case_stages                ["other"]
+  scope_of_service.cost_models                ["unclear"]  — when 'unclear' and add detailed note in _review_notes
+  scope_of_service.services_provided          ["unclear"]  — when 'unclear' and add detailed note in _review_notes  scope_of_service.case_stages                ["other"]
   scope_of_service.disclosure_targets         ["has-details"]
   scope_of_service.protected_classes          ["has-details"]
   scope_of_service.whistleblower_scope        0  (scope unclear)
@@ -1322,7 +1321,8 @@ contact:
                               type must be one of: intake | general | legal | media |
                               support | secure | other; if type is other, describe in
                               _review_notes.
-  mailing_address             physical mailing address as plain text.
+  mailing_address             physical mailing address as plain text. if more than one is
+                              listed, add all found separated by ||.
 
 eligibility:
   income_eligibility_required yes | no | unclear
@@ -1336,10 +1336,9 @@ security:
                               Does the site use a secure channel via a dedicated encrypted tool?
   secure_contact_url          URL to the secure channel or page providing secure channel instructions.
   secure_contact_tool         tool name; use one: Signal | ProtonMail | Tutanota | Wire | Keybase |
-                              other; use 'other' when more than one secure tool is available and
-                              list all secure tools in free text field.
+                              other; use 'other' when more than one secure tool is available.
   secure_contact_tool_other   free text — name or describe the tool not in provided list, or list
-                              multiple tools when present, separate listed tools with ||.
+                              multiple tools when present separated with ||.
   anonymous_pre_consult_possible  yes | no | unclear
                               Can a user make initial contact without identifying themselves?
   has_attorneys               yes | no | unclear
@@ -1376,6 +1375,8 @@ review:
                                  from site materials. nationwide_example left empty intentionally."
                             "Services provided are not clearly defined on the site; service_provided
                                  set to 'unclear'."
+							"Org provides peer-support which has a recommended minimum donation.
+							     cost_models includes 'other'."
 
                               You may use _review_notes to briefly explain:
                             something you did find that seems significant but didn't map cleanly
@@ -1650,7 +1651,7 @@ court-filing                       Court Filing
 attorney-counsel                   Personal Attorney / Counsel
 public-media                       Media / Press
 public-nonprofit                   Non-Profit / Advocacy Organization
-has-details                        Has Details (use with disclosure_targets_details)
+has-details                        Has Details (use with disclosure_target_details)
 
 
 ────────────────────────────────────────────────────────────────────────────
@@ -1674,7 +1675,7 @@ TAXONOMY: ws_case_stage
 Description: Legal stage where the org provides help. Tag all that apply.
              Use other slug when stage coverage exists but no slug fits
 			 cleanly, or no coverage is described clearly. other slug can
-             be used when some case stages were covered but one or more
+             be included when some case stages were covered but one or more
              stages didn't fit cleanly.
 ────────────────────────────────────────────────────────────────────────────
 
@@ -1726,7 +1727,7 @@ bar-program                        Bar Association Program
 advocacy                           Advocacy Organization
 oversight-office                   Government Oversight Office
 union                              Labor Union
-mixed                              Mixed / Does Not Fit a Single Category
+mixed                              Mixed
 
 
 ────────────────────────────────────────────────────────────────────────────
@@ -1749,9 +1750,8 @@ TAXONOMY: ws_aorg_cost_model
 Description: Cost structure of the org's help pathways. Tag all that apply.
              Use unclear slug when existing slugs do not fit cleanly to a
              model described by the org, or no model is described clearly.
-			 unclear can be used even when some cost models were covered and
+			 unclear can be included even when some cost models were covered and
 			 a there was something different about one or more remaining models.
-             Example: peer-support has a recommended minimum donation.
 ────────────────────────────────────────────────────────────────────────────
 
 free                               Free of Charge
@@ -1759,18 +1759,18 @@ pro-bono                           Pro Bono
 sliding-scale                      Sliding Scale Fee
 contingency                        Contingency Fee
 fee-for-service                    Fee for Service
-unclear                            Cannot Confirm Cost Structure
+unclear                            Unclear (add detailed note to _reviewer_notes)
 
 
 ────────────────────────────────────────────────────────────────────────────
 TAXONOMY: ws_aorg_service
 Description: Services the org offers. Tag all that apply.
              Use additional slug when services exist which no slug fits
-			 cleanly. Include secure-drop when the org runs a dedicated
+             cleanly. Include secure-drop when the org runs a dedicated
              anonymous evidence drop such as SecureDrop or others. Do not
              infer secure-channel. But has_anonymous_pre_consult_possible
              can be set to 'yes'. If org does not clearly describe any
-             services use 'unclear' slug and note in _review_notes
+             services use 'unclear'.
 ────────────────────────────────────────────────────────────────────────────
 
 legal-rep                          Full Legal Representation
@@ -1786,7 +1786,7 @@ mental-health                      Mental Health Support
 peer-support                       Peer Support
 secure-drop                        Secure Anonymous Evidence Drop
 additional                         Additional Services (list in additional_services)
-unclear                            Services Unclear
+unclear                            Unclear (add detailed note to _reviewer_notes)
 
 
 ────────────────────────────────────────────────────────────────────────────
