@@ -1426,7 +1426,7 @@ RECORD SCHEMA
         "protected_class_details": "",
         "languages_supported": [],
         "languages_additional": "",
-        "assistance_type": "",
+        "assistance_type": [],
         "employment_sectors": [],
         "cost_models": [],
         "services_provided": [],
@@ -1479,9 +1479,6 @@ function ws_generate_assist_org_prompt( array $scope ): string {
     $focus_notes     = sanitize_textarea_field( (string) ( $scope['assist_org_focus_notes'] ?? '' ) );
     $focus_notes     = trim( preg_replace( '/\R+/', "\n", $focus_notes ) );
     $excludes        = sanitize_textarea_field( (string) ( $scope['exclusion_list'] ?? '' ) );
-    if( !$proposal_count ) {
-        $proposal_count = "dynamic based on research quality and confidence";
-    }
 
     $out  = ws_prompt_assist_org_research_block();
     $out .= ws_prompt_what_you_are_producing( 'assistance organization records' );
@@ -1498,7 +1495,12 @@ function ws_generate_assist_org_prompt( array $scope ): string {
     $out .= "Record type:          assist-org\n";
     $out .= "Jurisdiction:         {$jx_name}\n";
     $out .= "Jurisdiction ID:      {$jx}\n";
-    $out .= "Requested Records:    {$proposal_count}\n";
+    if( !$proposal_count ) {
+        $out .= "Requested Records:    dynamic based on research quality and confidence\n";
+    } else {
+        $out .= "Requested Records:    {$proposal_count}\n";
+    }
+
     $out .= 'meta.nationwide_only: ' . ( $nationwide_only ? 'true' : 'false' ) . "\n\n";
     if ( $focus_notes !== '' ) {
         $out .= "---\nFocus notes:\n{$focus_notes}\n---\n";

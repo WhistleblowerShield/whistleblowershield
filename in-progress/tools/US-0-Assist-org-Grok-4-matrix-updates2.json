@@ -1,0 +1,252 @@
+{
+  "meta": {
+    "json_format_version": "2.0",
+    "source_method": "ai_assisted",
+    "source_name": "Grok",
+    "jurisdiction_id": "US",
+    "generated_date": "2026-04-19",
+    "generated_by": "Grok 4 by xAI",
+    "nationwide_only": true,
+    "record_count": 4,
+    "record_type": "assist-org",
+    "_json_run_notes": "Updated next 4 orgs from matrix-assist-orgs.php (POGO, PEER, TAF, WoA) with live verification April 2026. Focused on intake qualification, secure options, addresses, and verbatim evidence. POGO remains scope 1 per matrix intent.",
+    "_json_run_researcher_notes": "POGO heavily tip-oriented (no clear personal assistance intake). PEER has explicit legal intake form. TAF referral directory confirmed. WoA strong on peer support. Several fields left with sentinels due to limited explicit taxonomy matches on sites.",
+    "batch_completed": "2026-04-19 23:10 UTC"
+  },
+  "records": [
+    {
+      "identity": {
+        "official_name": "Project On Government Oversight",
+        "official_homepage_url": "https://www.pogo.org",
+        "general_description": "The Project On Government Oversight (POGO) is a nonpartisan independent watchdog organization that investigates and exposes waste, fraud, abuse, and corruption in the federal government. It supports whistleblowers by publishing their disclosures through investigative journalism and provides resources on whistleblower protections.",
+        "common_name": "POGO",
+        "homepage_url_status": "verified",
+        "verified_url_date": "2026-04-19"
+      },
+      "scope_of_service": {
+        "nationwide_example": "POGO has a long history of working with whistleblowers on countless investigative projects.",
+        "disclosure_types": ["public-corruption-ethics", "procurement-spending-fraud", "military-defense-reporting", "general-wrongdoing"],
+        "protected_classes": ["has-details"],
+        "protected_class_details": "Primarily federal employees and military/defense-related personnel",
+        "languages_supported": ["english"],
+        "languages_additional": "",
+        "assistance_type": "advocacy",
+        "employment_sectors": ["federal-employee", "military-defense"],
+        "cost_models": ["free"],
+        "services_provided": ["advocacy", "media"],
+        "additional_services": "",
+        "process_types": [],
+        "case_stages": ["pre-report"],
+        "case_stage_details": "",
+        "disclosure_targets": ["agency-federal", "legislative-federal", "public-media"],
+        "disclosure_target_details": "",
+        "jurisdiction_exceptions": "",
+        "whistleblower_scope": 1,
+        "whistleblower_note": "POGO was founded to help bring attention to disclosures from Pentagon whistleblowers. Since then, we have worked with whistleblowers on countless investigative projects."
+      },
+      "contact": {
+        "intake_url": "",
+        "contact_url": "https://www.pogo.org/contact-us",
+        "phones": [
+          {
+            "type": "other",
+            "number": "(202) 347-1122"
+          }
+        ],
+        "emails": [
+          {
+            "type": "general",
+            "address": "info@pogo.org"
+          }
+        ],
+        "mailing_address": "Project On Government Oversight, 1100 13th Street NW, Suite 800, Washington, DC 20005"
+      },
+      "eligibility": {
+        "income_eligibility_required": "unclear",
+        "income_eligibility_details": "",
+        "eligibility_notes": ""
+      },
+      "security": {
+        "has_secure_channel": "yes",
+        "secure_contact_url": "https://www.pogo.org/investigates/send-us-a-tip",
+        "secure_contact_tool": "other",
+        "secure_contact_tool_other": "Signal (1-202-658-5828) and secure email",
+        "anonymous_pre_consult_possible": "unclear",
+        "has_attorneys": "no"
+      },
+      "review": {
+        "legitimacy_url": "",
+        "_review_notes": "Primarily investigative journalism/tip line (send-us-a-tip page). Does not qualify as personal assistance intake under rule (left empty). Secure tip options confirmed but for reporting, not case consultation. Scope kept at 1 as watchdog, not direct legal help."
+      }
+    },
+    {
+      "identity": {
+        "official_name": "Public Employees for Environmental Responsibility",
+        "official_homepage_url": "https://peer.org",
+        "general_description": "Public Employees for Environmental Responsibility (PEER) is a nonprofit organization that protects the rights of public employees who speak out on environmental, public health, and scientific integrity issues. It provides free legal and strategic assistance to government whistleblowers and works to expose government wrongdoing while strengthening environmental protections.",
+        "common_name": "PEER",
+        "homepage_url_status": "verified",
+        "verified_url_date": "2026-04-19"
+      },
+      "scope_of_service": {
+        "nationwide_example": "PEER defends government employees, including whistleblowers, free of charge across federal, state, and local levels.",
+        "disclosure_types": ["environmental-protection", "occupational-health-safety"],
+        "protected_classes": ["has-details"],
+        "protected_class_details": "Public/government employees (federal, state, local)",
+        "languages_supported": ["english"],
+        "languages_additional": "",
+        "assistance_type": "nonprofit",
+        "employment_sectors": ["federal-employee", "state-local-employee"],
+        "cost_models": ["pro-bono"],
+        "services_provided": ["legal-rep", "consultation", "retaliation"],
+        "additional_services": "",
+        "process_types": [],
+        "case_stages": ["pre-report", "retaliation-active", "litigation"],
+        "case_stage_details": "",
+        "disclosure_targets": ["agency-federal", "agency-state", "legislative-state"],
+        "disclosure_target_details": "",
+        "jurisdiction_exceptions": "",
+        "whistleblower_scope": 2,
+        "whistleblower_note": "At PEER, our dedicated attorneys represent federal, state, and local government whistleblowers who wish to expose their agency's wrongdoings on environmental, public health, and scientific issues."
+      },
+      "contact": {
+        "intake_url": "https://peer.org/contact-legal-team/",
+        "contact_url": "",
+        "phones": [],
+        "emails": [],
+        "mailing_address": "Public Employees for Environmental Responsibility, 962 Wayne Ave, Suite 610, Silver Spring, MD 20910"
+      },
+      "eligibility": {
+        "income_eligibility_required": "no",
+        "income_eligibility_details": "",
+        "eligibility_notes": "Open to current or former public employees with environmental/public health/whistleblower issues"
+      },
+      "security": {
+        "has_secure_channel": "no",
+        "anonymous_pre_consult_possible": "unclear",
+        "has_attorneys": "yes"
+      },
+      "review": {
+        "legitimacy_url": "",
+        "_review_notes": "Clear legal intake path for public employees via Contact Legal Team form (qualifies as personal assistance). Free pro bono defense confirmed. No dedicated secure tool."
+      }
+    },
+    {
+      "identity": {
+        "official_name": "The Anti-Fraud Coalition",
+        "official_homepage_url": "https://www.taf.org",
+        "general_description": "The Anti-Fraud Coalition (formerly Taxpayers Against Fraud) is a leading professional network supporting attorneys and whistleblowers involved in False Claims Act and financial fraud cases. It maintains a directory of qualified qui tam lawyers and conducts research on the effectiveness of whistleblower reward programs.",
+        "common_name": "TAF",
+        "homepage_url_status": "verified",
+        "verified_url_date": "2026-04-19"
+      },
+      "scope_of_service": {
+        "nationwide_example": "TAF helps prospective whistleblowers find the best representation to win these tough cases through our membership directory of top whistleblower attorneys.",
+        "disclosure_types": ["securities-commodities-fraud", "healthcare-medicare-fraud", "procurement-spending-fraud", "tax-evasion-fraud", "banking-aml-compliance"],
+        "protected_classes": ["has-details"],
+        "protected_class_details": "Broad across sectors for False Claims Act/whistleblower cases",
+        "languages_supported": ["english"],
+        "languages_additional": "",
+        "assistance_type": "advocacy",
+        "employment_sectors": ["all-sectors"],
+        "cost_models": ["unclear"],
+        "services_provided": ["referral", "advocacy"],
+        "additional_services": "",
+        "process_types": ["qui-tam"],
+        "case_stages": ["pre-report", "post-report", "litigation"],
+        "case_stage_details": "",
+        "disclosure_targets": ["agency-federal", "agency-state"],
+        "disclosure_target_details": "",
+        "jurisdiction_exceptions": "",
+        "whistleblower_scope": 2,
+        "whistleblower_note": "Through our membership directory of top whistleblower attorneys, we help prospective whistleblowers find the best representation to win these tough cases."
+      },
+      "contact": {
+        "intake_url": "https://www.taf.org/attorneys/find-an-attorney/",
+        "contact_url": "",
+        "phones": [],
+        "emails": [],
+        "mailing_address": "The Anti-Fraud Coalition, 1220 19th St NW, Ste 501, Washington, DC 20036"
+      },
+      "eligibility": {
+        "income_eligibility_required": "unclear",
+        "income_eligibility_details": "",
+        "eligibility_notes": ""
+      },
+      "security": {
+        "has_secure_channel": "no",
+        "anonymous_pre_consult_possible": "unclear",
+        "has_attorneys": "no"
+      },
+      "review": {
+        "legitimacy_url": "",
+        "_review_notes": "Intake via attorney directory finder (qualifies as referral assistance). No direct representation or secure tools. Cost model remains unclear from site."
+      }
+    },
+    {
+      "identity": {
+        "official_name": "Whistleblowers of America",
+        "official_homepage_url": "https://www.whistleblowersofamerica.org",
+        "general_description": "Whistleblowers of America (WoA) is a nonprofit organization that provides peer support, advocacy, and guidance to whistleblowers experiencing retaliation. It focuses on trauma-informed peer mentoring, problem-solving, and reducing the stress of retaliation through evidence-based support programs.",
+        "common_name": "WoA",
+        "homepage_url_status": "verified",
+        "verified_url_date": "2026-04-19"
+      },
+      "scope_of_service": {
+        "nationwide_example": "WoA assists whistleblowers who have suffered retaliation after having identified harm to individuals or the public.",
+        "disclosure_types": ["general-wrongdoing", "occupational-health-safety"],
+        "protected_classes": ["has-details"],
+        "protected_class_details": "All whistleblowers who have faced retaliation",
+        "languages_supported": ["english"],
+        "languages_additional": "",
+        "assistance_type": "advocacy",
+        "employment_sectors": ["all-sectors"],
+        "cost_models": ["unclear"],
+        "services_provided": ["retaliation", "advocacy", "peer-support"],
+        "additional_services": "",
+        "process_types": [],
+        "case_stages": ["pre-report", "post-report", "retaliation-active"],
+        "case_stage_details": "",
+        "disclosure_targets": ["internal-hr", "internal-management", "public-media"],
+        "disclosure_target_details": "",
+        "jurisdiction_exceptions": "",
+        "whistleblower_scope": 3,
+        "whistleblower_note": "We help whistleblowers overcome the traumatic stress caused by retaliation and help with problem-solving — assisting whistleblowers who have suffered retaliation after having identified harm to individuals or the public."
+      },
+      "contact": {
+        "intake_url": "",
+        "contact_url": "https://www.whistleblowersofamerica.org/learn-more/peer-support",
+        "phones": [
+          {
+            "type": "other",
+            "number": "202-643-1956"
+          }
+        ],
+        "emails": [
+          {
+            "type": "general",
+            "address": "info@whistleblowersofamerica.org"
+          }
+        ],
+        "mailing_address": "Whistleblowers of America, 11130 Lillian Highway, Pensacola, FL 32506"
+      },
+      "eligibility": {
+        "income_eligibility_required": "unclear",
+        "income_eligibility_details": "",
+        "eligibility_notes": ""
+      },
+      "security": {
+        "has_secure_channel": "no",
+        "anonymous_pre_consult_possible": "unclear",
+        "has_attorneys": "no"
+      },
+      "review": {
+        "legitimacy_url": "",
+        "_review_notes": "Peer support contact form available but primarily general contact/mentoring signup (intake_url left empty pending clearer personal assistance path). Strong focus on mental-health/peer support not fully covered by core slugs."
+      }
+    }
+  ],
+  "integrity": {
+    "has_anomalies": false
+  }
+}
