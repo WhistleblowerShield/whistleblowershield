@@ -45,7 +45,7 @@ $_ws_assist_org_matrix = [
         'slug' => 'government-accountability-project',
         'description' => 'Promotes government and corporate accountability by advancing a culture of transparency, providing legal representation to whistleblowers, and advocating for strong whistleblower laws.',
         'ws_aorg_website_url' => 'https://whistleblower.org',
-        'ws_aorg_intake_url' => 'https://whistleblower.org/how-to-request-assistance/',
+        'ws_aorg_intake_url' => 'https://crm.whistleblower.org/form/online-intake-application',
         'ws_aorg_contact_url' => '',
         'phones' => [
             [
@@ -813,7 +813,7 @@ $_ws_assist_org_matrix = [
         'slug' => 'public-employees-for-environmental-responsibility',
         'description' => 'PEER provides free legal and strategic assistance to federal, state, and local government employees who blow the whistle on environmental harm, public health threats, and scientific integrity violations.',
         'ws_aorg_website_url' => 'https://peer.org',
-        'ws_aorg_intake_url' => '',
+        'ws_aorg_intake_url' => 'https://peer.org/contact-legal-team/',
         'ws_aorg_contact_url' => 'https://peer.org/about-us/contact-us/',
         'phones' => [
             [
