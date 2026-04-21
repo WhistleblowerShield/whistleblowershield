@@ -251,7 +251,7 @@ Every content record in the system carries source verification fields
 
 The source method values are:
 - `matrix_seed` — created by a matrix seeder at install
-- `ai_assisted` — created or substantially drafted with AI assistance
+- `ai_research` — created or substantially drafted with AI assistance
 - `human_created` — created directly by a human editor
 - `bulk_import` — created via a structured import process
 - `feed_import` — created via the Inoreader feed monitor

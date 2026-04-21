@@ -231,7 +231,7 @@ Every record carries source verification fields (from the shared
   record for editorial attention
 
 Matrix-seeded records start with `ws_auto_source_method = matrix_seed`.
-AI-assisted records carry `ws_auto_source_method = ai_assisted`. Both
+AI-assisted records carry `ws_auto_source_method = ai_research`. Both
 require human verification before `ws_verification_status` should be
 set to `verified`.
 

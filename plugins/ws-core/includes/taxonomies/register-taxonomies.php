@@ -1072,7 +1072,7 @@ function ws_seed_case_stage_taxonomy() {
         'post-report'        => 'Post-Report',
         'retaliation-active' => 'Retaliation Active',
         'litigation'         => 'Litigation',
-        'other'              => 'Other',
+        'has-details'        => 'Has Details',
     ];
     foreach ( $terms as $slug => $name ) {
         if ( ! term_exists( $slug, $taxonomy ) ) {

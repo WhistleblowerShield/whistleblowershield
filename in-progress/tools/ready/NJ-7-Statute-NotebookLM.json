@@ -1,7 +1,7 @@
 {
   "meta": {
     "json_format_version": "2.0",
-    "source_method": "ai_assisted",
+    "source_method": "ai_research",
     "source_name": "NotebookLM Reconciliation",
     "jurisdiction_id": "NJ",
     "generated_date": "2026-04-03",
@@ -11,8 +11,8 @@
     "new_terms_proposed": [
       {
         "taxonomy": "ws_protected_class",
-        "term_id": "victim-of-domestic-violence-or-sexual-assault",
-        "term_label": "Victim of Domestic Violence or Sexual Assault",
+        "term": "victim-of-domestic-violence-or-sexual-assault",
+        "label": "Victim of Domestic Violence or Sexual Assault",
         "notes": "Specifically protected under the NJ SAFE Act for taking leave or seeking assistance. No existing slug in ws_protected_class covers this specific status.",
         "seen_in": [
           "NJ-34:11C-1"

@@ -1,0 +1,186 @@
+WhistleblowerShield.org NotebookLM Ruleset — Addendum v2.1.0
+
+PURPOSE
+Operational edge-case rules that extend the Unified Core (v2.0).
+The researcher prompt is authoritative for schema, taxonomy, field definitions,
+tier system, and omission policy. This addendum does not repeat those.
+Addendum rules may override core only when explicitly marked [OVERRIDE].
+
+---
+
+AUTHORITY MODEL
+— Unified Core (v2.0) is the baseline.
+— This addendum refines and extends it.
+— Researcher prompt is authoritative for schema and taxonomy.
+— When rules conflict, follow the higher authority and log the conflict.
+
+---
+
+COMPANION FIELD MAPPING
+
+Apply the COMPANION FIELD PATTERN from the Unified Core using this mapping.
+When a sentinel or trigger is present without its companion, attempt to populate.
+When a companion is present without its sentinel or trigger, add the sentinel or trigger.
+When neither can be resolved, remove both. Log all actions.
+
+TERNARY EXCEPTION
+When a ternary field triggers a companion but the companion cannot be populated:
+— Do not omit the ternary field.
+— Set ternary value to 'unclear'. Remove companion field. Log to notations.
+
+Taxonomy sentinel → companion field:
+  protected_classes     has-details  →  protected_class_details
+  disclosure_targets    has-details  →  disclosure_target_details
+  adverse_actions       has-details  →  adverse_action_details
+  remedies              has-details  →  remedy_details
+  employer_defenses     has-details  →  employer_defense_details
+  employee_standards    has-details  →  employee_standard_details
+  languages_supported   additional   →  languages_additional
+  services_provided     additional   →  additional_services
+  services_provided     unclear      →  researcher note in _review_notes
+  cost_models           unclear      →  researcher note in _review_notes
+  case_stages           other        →  case_stage_details
+
+Key arrays with other as trigger:
+  phones  [{ type: other }]  →  note in _review_notes
+  emails  [{ type: other }]  →  note in _review_notes
+  When other trigger present with researcher note missing:
+  Apply COMPANION BEHAVIOR RULES but preserve array entry. Log to notations.
+
+Legal record boolean triggers → companion field:
+  limit_ambiguous           →  limit_details
+  exhaustion_required       →  exhaustion_details
+  statutory_preclusion      →  statutory_preclusion_details
+  reward.available          →  reward_details
+
+Ternary trigger fields (apply TERNARY EXCEPTION):
+  has_secure_channel yes    →  secure_contact_url
+                            →  secure_contact_tool
+                               if other → secure_contact_tool_other
+  income_eligibility_required yes → income_eligibility_details
+
+has-details is valid ONLY in:
+  ws_protected_class, ws_disclosure_target, ws_adverse_action_type,
+  ws_remedy, ws_employer_defense, ws_employee_standard
+In all other taxonomies, has-details is invalid. Remove and log.
+
+burden_of_proof_flag and burden_of_proof_details are mutual companions.
+No set trigger value — both are required when either is non-empty.
+Log any discrepancy.
+
+Special case:
+  When anonymous_pre_consult_possible is 'no' or 'unclear' but
+  services_provided includes secure-drop: set anonymous_pre_consult_possible
+  to 'yes'. Log the update.
+
+---
+
+URL DATE POLICY
+
+For any field following the pattern *_url_status / *_url_date:
+When *_url_status is 'verified', a corresponding *_url_date is required.
+
+If *_url_date is empty or absent when *_url_status is 'verified':
+— Check source materials for current verification evidence.
+— If present: populate *_url_date with current datestamp.
+— If unavailable: correct *_url_status to 'unverified'. Preserve the URL.
+— Log actions to notations.
+
+If *_url_date exists but is more than 90 days prior to batch_completed:
+— Log 'staleness' advisory to _reconciled_notes.
+— Do not add to notations — staleness is advisory, not a schema violation.
+
+---
+
+NEW TERM PROPOSALS
+
+When a concept does not fit any valid slug in its taxonomy field and cannot
+be cleanly represented by up to 3 existing slugs in combination:
+Propose the concept as a new taxonomy term.
+
+Proposals are expected and valued. Do not suppress proposals due to uncertainty.
+Resolve the current record using existing rules first, then propose.
+
+Proposal schema — all fields required:
+
+  {
+    "taxonomy":   "[registered taxonomy table]",
+    "term_id":    "[proposed slug in kebab-case]",
+    "term_label": "[human-readable label]",
+    "notes":      "[why this term is needed; why existing terms do not cover it]",
+    "seen_in":    ["[RECORD_ID]"],
+    "count":      [integer — must equal length of seen_in]
+  }
+
+Discipline:
+— Do not use the proposed slug in the record array. Remove it if present. Log removal.
+— If the same gap appears in multiple records, consolidate into one proposal.
+— Propose new taxonomy tables in _reconciled_run_notes, not in new_terms_proposed.
+— Consider whether a narrow new term combined with existing terms covers the concept
+  before proposing a broad term.
+— Omit meta.new_terms_proposed entirely when no proposals exist.
+
+For assist-org batches:
+Researchers are more likely to signal taxonomy gaps via has-details companions
+than formal proposals. After reconciliation, examine all *_details fields for
+concepts clearly absent from their taxonomy. Apply proposal logic if warranted.
+Also examine _review_notes for documented gaps. Propose if concept is legitimate.
+
+---
+
+RULE EVOLUTION PERMISSION
+
+When you encounter an edge case not governed by current rules, a contradiction
+between rules, or a gap that permits unintended output:
+— Produce the safest intended output using existing rules.
+— Add a structured proposal to _reconciled_notes (record-level) or
+  _reconciled_run_notes (batch-level).
+— Do not exploit gaps for permissive output.
+
+Required proposal format:
+  [Proposed Rule/Key]
+  Trigger:          what factual pattern was identified
+  Conflict:         which rules or keys were insufficient or in tension
+  Proposed text:    one concise normative rule or schema key
+  Impact:           what this changes in future runs
+  Risk if not adopted: concrete failure mode
+  Scope:            record-level | batch-level | both
+  Priority:         high | medium | low
+
+Provide the narrowest proposal that resolves the issue.
+Prefer proposals that do not increase researcher or reconciler judgment burden.
+
+---
+
+_RECONCILED_NOTES CONTENT STANDARD
+
+Per-record audit field. Omit when no record-level actions occurred.
+
+Include log entries for:
+— any corrected schema violation
+— any corrected data value with source rationale
+— source choice when researchers conflict
+— taxonomy changes with reasoning when non-obvious
+— any key or data removed — state what was removed and why
+— unresolved gaps requiring reviewer attention
+— [Proposed Rule/Key] entries when applicable
+
+---
+
+_RECONCILED_RUN_NOTES CONTENT STANDARD
+
+Batch-level audit field in meta. Do not omit — if no entries were generated,
+report: "No Log Entries Generated for Batch."
+
+Include log entries for:
+— global policies applied across records
+— web research absent from source materials
+— missing information in available web research
+— cross-record normalization patterns
+— batch-level reconciler context
+— responses to input prompt queries
+— [Proposed Rule/Key] entries when applicable
+
+---
+
+END OF ADDENDUM v2.1.0

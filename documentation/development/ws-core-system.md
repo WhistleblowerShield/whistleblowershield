@@ -153,7 +153,7 @@ All constants are defined in `ws-core.php` before the bootstrap runs.
 | `WS_CACHE_LEGAL_UPDATES_SITEWIDE` | `'ws_legal_updates_sitewide'` | Transient key for sitewide legal updates cache (up to 100 items) |
 | `WS_REF_PARENT_TYPES` | `['jx-statute', 'jx-citation', 'jx-interpretation']` | CPT slugs that support reference parent relationships |
 | `WS_SOURCE_MATRIX_SEED` | `'matrix_seed'` | Source method: created by matrix seeder |
-| `WS_SOURCE_AI_ASSISTED` | `'ai_assisted'` | Source method: created with AI assistance |
+| `WS_SOURCE_ai_research` | `'ai_research'` | Source method: created with AI assistance |
 | `WS_SOURCE_BULK_IMPORT` | `'bulk_import'` | Source method: created via bulk import |
 | `WS_SOURCE_FEED_IMPORT` | `'feed_import'` | Source method: created via feed monitor |
 | `WS_SOURCE_HUMAN_CREATED` | `'human_created'` | Source method: created directly by a human editor |

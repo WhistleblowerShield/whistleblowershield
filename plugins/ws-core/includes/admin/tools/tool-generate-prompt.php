@@ -997,8 +997,8 @@ to recommend them.
 
   {
     "taxonomy":   "[REGISTERED TAXONOMY TABLE SLUG]",
-    "term_id":    "[YOUR PROPOSED SLUG IN kebab-case]",
-    "term_label": "[HUMAN-READABLE LABEL]",
+    "term":       "[YOUR PROPOSED SLUG IN kebab-case]",
+    "label":      "[HUMAN-READABLE LABEL]",
     "notes":      "[WHY THIS TERM IS NEEDED AND WHY EXISTING TERMS DO NOT COVER IT]",
     "seen_in":    ["[RECORD_ID]"],
     "count":      [INTEGER — must equal length of seen_in]
@@ -1246,7 +1246,7 @@ is intended:
 OPTIONAL — omit entirely when unavailable or unconfirmed:
 
   identity.common_name
-  identity.verified_url_date
+  identity.homepage_url_date
   contact.intake_url
   contact.contact_url
   contact.phones
@@ -1274,7 +1274,7 @@ identity:
                               on whistleblower cases", "site describes a free legal intake process").
   common_name                 widely used shorthand name or acronym.
   homepage_url_status         verified | redirects | unverified | dead
-  verified_url_date           YYYY-MM-DD; omit if the URL status is not 'verified'.
+  homepage_url_date           YYYY-MM-DD; omit if the URL status is not 'verified'.
 
 scope_of_service:
   nationwide_example          verbatim quote (up to 3 sentences) from the org's own site or
@@ -1439,7 +1439,7 @@ RECORD SCHEMA
         "general_description": "",
         "common_name": "",
         "homepage_url_status": "",
-        "verified_url_date": ""
+        "homepage_url_date": ""
     },
     "scope_of_service": {
         "nationwide_example": "",
@@ -1920,7 +1920,7 @@ META BLOCK SCHEMA
 {
   "meta": {
     "json_format_version": "2.0",
-    "source_method":       "ai_assisted",
+    "source_method":       "ai_research",
     "source_name":         "[YOUR COMMON NAME e.g. Gemini]",
     "jurisdiction_id":     "[TWO-LETTER JURISDICTION CODE]",
     "generated_date":      "[YYYY-MM-DD]",
@@ -2117,7 +2117,7 @@ META SCHEMA
 {
   "meta": {
     "json_format_version": "2.0",
-    "source_method":       "ai_assisted",
+    "source_method":       "ai_research",
     "source_name":         "[MODEL COMMON NAME]",
     "jurisdiction_id":     "[US OR STATE CODE]",
     "generated_date":      "[YYYY-MM-DD]",

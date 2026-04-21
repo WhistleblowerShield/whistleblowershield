@@ -1340,14 +1340,14 @@ function ws_enforce_source_verify_roles( $post_id ) {
 // the value passed by the caller.
 //
 // Usage:
-//   ws_set_source_method( $post_id, WS_SOURCE_AI_ASSISTED );
+//   ws_set_source_method( $post_id, WS_SOURCE_ai_research );
 // ════════════════════════════════════════════════════════════════════════════
 
 function ws_set_source_method( $post_id, $method ) {
 
     $allowed = [
         WS_SOURCE_MATRIX_SEED,
-        WS_SOURCE_AI_ASSISTED,
+        WS_SOURCE_ai_research,
         WS_SOURCE_BULK_IMPORT,
         WS_SOURCE_FEED_IMPORT,
         WS_SOURCE_HUMAN_CREATED,

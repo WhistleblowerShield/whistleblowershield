@@ -1,7 +1,7 @@
 {
   "meta": {
     "json_format_version": "2.0",
-    "source_method": "ai_assisted",
+    "source_method": "ai_research",
     "source_name": "NotebookLM Reconciliation",
     "jurisdiction_id": "CA",
     "generated_date": "2026-04-04",
@@ -11,8 +11,8 @@
     "new_terms_proposed": [
       {
         "taxonomy": "ws_disclosure_type",
-        "term_id": "public-health",
-        "term_label": "Public Health",
+        "term": "public-health",
+        "label": "Public Health",
         "notes": "Specifically protects reports concerning broader public health risks rather than solely workplace safety. Existing child slugs under public-health-safety do not cover broad disease or generic patient safety reporting.",
         "seen_in": [
           "CA-6310",
@@ -30,8 +30,8 @@
       },
       {
         "taxonomy": "ws_disclosure_type",
-        "term_id": "labor-law",
-        "term_label": "Labor Law",
+        "term": "labor-law",
+        "label": "Labor Law",
         "notes": "Reporting violations of state or federal labor codes. Existing workplace-employment child slugs are specific (wage/hour, safety) and do not comprehensively cover general Labor Code violations.",
         "seen_in": [
           "CA-1102.5",
@@ -42,8 +42,8 @@
       },
       {
         "taxonomy": "ws_disclosure_type",
-        "term_id": "consumer-protection",
-        "term_label": "Consumer Protection",
+        "term": "consumer-protection",
+        "label": "Consumer Protection",
         "notes": "Reporting violations affecting consumers or clients in non-financial contexts (e.g., child care facilities). Existing slug consumer-financial-protection is too narrow.",
         "seen_in": [
           "CA-1596.881"

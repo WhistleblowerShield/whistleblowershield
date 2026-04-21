@@ -64,7 +64,7 @@ is set once at creation and never changed. The five values:
 |---|---|
 | `matrix_seed` | Created by a matrix seeder at install; canonical reference data |
 | `human_created` | Created directly by a human editor |
-| `ai_assisted` | Created or substantially drafted with AI assistance |
+| `ai_research` | Created or substantially drafted with AI assistance |
 | `bulk_import` | Created via a structured import process |
 | `feed_import` | Created via the Inoreader legislative feed monitor |
 
@@ -247,7 +247,7 @@ conditions:
 1. The AI-generated content is reviewed and verified by a human editor
    against primary sources before the record is marked `verified`.
 2. The `ws_auto_source_method` field correctly reflects
-   `ai_assisted` for records where AI substantially drafted the
+   `ai_research` for records where AI substantially drafted the
    content.
 3. The plain English review toggle is set only after a human has
    reviewed the plain language content for accuracy, regardless of

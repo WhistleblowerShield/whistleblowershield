@@ -1,7 +1,7 @@
 {
   "meta": {
     "json_format_version": "2.0",
-    "source_method": "ai_assisted",
+    "source_method": "ai_research",
     "source_name": "NotebookLM Reconciliation",
     "jurisdiction_id": "CA",
     "generated_date": "2026-04-06",
@@ -29,8 +29,8 @@
     "new_terms_proposed": [
       {
         "taxonomy": "ws_disclosure_type",
-        "term_id": "child-abuse-reporting",
-        "term_label": "Child Abuse Reporting",
+        "term": "child-abuse-reporting",
+        "label": "Child Abuse Reporting",
         "notes": "Used for anti-retaliation protection tied to mandated child-abuse reports. Existing terms do not precisely capture child-abuse reporting obligations.",
         "seen_in": [
           "CA-11166"
@@ -39,8 +39,8 @@
       },
       {
         "taxonomy": "ws_disclosure_type",
-        "term_id": "patient-abuse-reporting",
-        "term_label": "Patient Abuse Reporting",
+        "term": "patient-abuse-reporting",
+        "label": "Patient Abuse Reporting",
         "notes": "Used for statutes protecting reports of suspected patient abuse or neglect in hospitals and similar facilities. Existing terms do not cleanly capture this reporting context.",
         "seen_in": [
           "CA-11161.8",
@@ -50,8 +50,8 @@
       },
       {
         "taxonomy": "ws_disclosure_type",
-        "term_id": "public-health",
-        "term_label": "Public Health",
+        "term": "public-health",
+        "label": "Public Health",
         "notes": "General public health reporting not covered by specific child slugs. Proposed to replace improperly utilized parent slug 'public-health-safety'.",
         "seen_in": [
           "CA-8547",

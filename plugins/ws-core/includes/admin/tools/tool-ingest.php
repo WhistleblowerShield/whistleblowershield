@@ -350,7 +350,7 @@ function ws_ingest_save_proposed_terms_log( array $log ): bool {
 
 /**
  * Merges new_terms_proposed from a batch into the persistent log.
- * Deduplicates by term_id — appends seen_in values for existing entries.
+ * Deduplicates by term — appends seen_in values for existing entries.
  *
  * @return array [ 'merged' => int, 'new' => int ]
  */
@@ -358,12 +358,12 @@ function ws_ingest_merge_proposed_terms( array &$log, array $new_terms ): array 
     $counts = [ 'merged' => 0, 'new' => 0 ];
 
     foreach ( $new_terms as $proposal ) {
-        $term_id = $proposal['term_id'] ?? '';
-        if ( ! $term_id ) continue;
+        $term = $proposal['term'] ?? '';
+        if ( ! $term ) continue;
 
         $found = false;
         foreach ( $log['proposed_terms'] as &$existing ) {
-            if ( $existing['term_id'] === $term_id ) {
+            if ( $existing['term'] === $term ) {
                 // Merge seen_in
                 $new_seen = array_diff(
                     $proposal['seen_in'] ?? [],
@@ -383,8 +383,8 @@ function ws_ingest_merge_proposed_terms( array &$log, array $new_terms ): array 
         if ( ! $found ) {
             $log['proposed_terms'][] = [
                 'taxonomy'    => $proposal['taxonomy']   ?? '',
-                'term_id'     => $term_id,
-                'term_label'  => $proposal['term_label'] ?? '',
+                'term'        => $term,
+                'label'       => $proposal['label'] ?? '',
                 'notes'       => $proposal['notes']      ?? '',
                 'seen_in'     => $proposal['seen_in']    ?? [],
                 'count'       => count( $proposal['seen_in'] ?? [] ),
@@ -407,24 +407,24 @@ function ws_ingest_merge_proposed_terms( array &$log, array $new_terms ): array 
  * in WordPress. A term that has been approved and seeded should never
  * be blacklisted even if its log status has not been updated.
  *
- * @return array [ 'term_id' => 'taxonomy_slug' ]
+ * @return array [ 'term' => 'taxonomy_slug' ]
  */
 function ws_ingest_build_blacklist( array $log ): array {
     $blacklist = [];
     foreach ( $log['proposed_terms'] as $term ) {
         $status   = $term['status']   ?? 'pending';
-        $term_id  = $term['term_id']  ?? '';
+        $term  = $term['term']  ?? '';
         $taxonomy = $term['taxonomy'] ?? '';
 
         if ( $status !== 'pending' ) continue;
-        if ( ! $term_id || ! $taxonomy ) continue;
+        if ( ! $term || ! $taxonomy ) continue;
 
         // Do not blacklist if the term is already registered in WordPress.
         // This protects against the case where a term was approved and seeded
         // but the log status was not updated before the next ingest run.
-        if ( term_exists( $term_id, $taxonomy ) ) continue;
+        if ( term_exists( $term, $taxonomy ) ) continue;
 
-        $blacklist[ $term_id ] = $taxonomy;
+        $blacklist[ $term ] = $taxonomy;
     }
     return $blacklist;
 }
@@ -1297,7 +1297,7 @@ function ws_ingest_assist_org_field_map_v2(): array {
         // ── Advisory / omitted ───────────────────────────────────────────
         'internal_id'               => [ null, 'omit' ],
         'homepage_url_status'       => [ null, 'omit' ],
-        'verified_url_date'         => [ null, 'omit' ],
+        'homepage_url_date'         => [ null, 'omit' ],
         'nationwide_example'        => [ null, 'seed' ],
         'case_stage_details'        => [ null, 'seed' ],
         'jurisdiction_exceptions'   => [ null, 'seed' ],
@@ -1942,8 +1942,8 @@ function ws_ingest_match_agencies_for_jx_detailed( array $labels, string $jx_slu
         'no_found_rows'  => true,
         'tax_query'      => [ [
             'taxonomy' => WS_JURISDICTION_TAXONOMY,
-            'field'    => 'term_id',
-            'terms'    => [ (int) $term->term_id ],
+            'field'    => 'term',
+            'terms'    => [ (int) $term->term ],
         ] ],
     ] );
 
@@ -2110,22 +2110,22 @@ function ws_ingest_build_agency_stub_code( string $label ): string {
 /**
  * Returns true when post is assigned to the jurisdiction term.
  */
-function ws_ingest_post_has_jx_term( int $post_id, int $term_id ): bool {
-    if ( $post_id <= 0 || $term_id <= 0 ) {
+function ws_ingest_post_has_jx_term( int $post_id, int $term ): bool {
+    if ( $post_id <= 0 || $term <= 0 ) {
         return false;
     }
     $terms = wp_get_post_terms( $post_id, WS_JURISDICTION_TAXONOMY, [ 'fields' => 'ids' ] );
     if ( is_wp_error( $terms ) || empty( $terms ) ) {
         return false;
     }
-    return in_array( $term_id, array_map( 'intval', $terms ), true );
+    return in_array( $term, array_map( 'intval', $terms ), true );
 }
 
 /**
  * Finds an existing agency by normalized code/name within a jurisdiction.
  */
-function ws_ingest_find_existing_agency_stub( string $display_label, string $agency_code, int $term_id ): int {
-    if ( $term_id <= 0 ) {
+function ws_ingest_find_existing_agency_stub( string $display_label, string $agency_code, int $term ): int {
+    if ( $term <= 0 ) {
         return 0;
     }
 
@@ -2134,7 +2134,7 @@ function ws_ingest_find_existing_agency_stub( string $display_label, string $age
 
     if ( $agency_code !== '' ) {
         $by_path = get_page_by_path( $agency_code, OBJECT, 'ws-agency' );
-        if ( $by_path instanceof WP_Post && ws_ingest_post_has_jx_term( (int) $by_path->ID, $term_id ) ) {
+        if ( $by_path instanceof WP_Post && ws_ingest_post_has_jx_term( (int) $by_path->ID, $term ) ) {
             return (int) $by_path->ID;
         }
 
@@ -2146,8 +2146,8 @@ function ws_ingest_find_existing_agency_stub( string $display_label, string $age
             'no_found_rows'  => true,
             'tax_query'      => [ [
                 'taxonomy' => WS_JURISDICTION_TAXONOMY,
-                'field'    => 'term_id',
-                'terms'    => [ $term_id ],
+                'field'    => 'term',
+                'terms'    => [ $term ],
             ] ],
             'meta_query'     => [ [
                 'key'   => 'ws_agency_code',
@@ -2168,8 +2168,8 @@ function ws_ingest_find_existing_agency_stub( string $display_label, string $age
             'no_found_rows'  => true,
             'tax_query'      => [ [
                 'taxonomy' => WS_JURISDICTION_TAXONOMY,
-                'field'    => 'term_id',
-                'terms'    => [ $term_id ],
+                'field'    => 'term',
+                'terms'    => [ $term ],
             ] ],
             'meta_query'     => [ [
                 'key'   => 'ws_agency_official_name',
@@ -2220,7 +2220,7 @@ function ws_ingest_create_agency_stub( string $label, string $jx_slug, ?bool &$w
         $agency_code = sanitize_title( $display_label );
     }
 
-    $existing_id = ws_ingest_find_existing_agency_stub( $display_label, $agency_code, (int) $term->term_id );
+    $existing_id = ws_ingest_find_existing_agency_stub( $display_label, $agency_code, (int) $term->term );
     if ( $existing_id > 0 ) {
         return (int) $existing_id;
     }
@@ -2242,7 +2242,7 @@ function ws_ingest_create_agency_stub( string $label, string $jx_slug, ?bool &$w
     update_post_meta( $post_id, '_ws_agency_stub', 1 );
     update_post_meta( $post_id, '_ws_agency_stub_source', 'ingest.primary_agency' );
 
-    wp_set_object_terms( $post_id, [ (int) $term->term_id ], WS_JURISDICTION_TAXONOMY );
+    wp_set_object_terms( $post_id, [ (int) $term->term ], WS_JURISDICTION_TAXONOMY );
 
     $was_created = true;
 
@@ -2543,14 +2543,14 @@ function ws_ingest_create_citation_stubs_for_statute( int $statute_post_id, arra
         update_post_meta( $post_id, 'ws_jx_citation_has_attach_flag', 0 );
         update_post_meta( $post_id, 'ws_verification_status', 'unverified' );
         update_post_meta( $post_id, 'ws_needs_review', 0 );
-        update_post_meta( $post_id, 'ws_auto_source_method', sanitize_text_field( $meta['source_method'] ?? 'ai_assisted' ) );
+        update_post_meta( $post_id, 'ws_auto_source_method', sanitize_text_field( $meta['source_method'] ?? 'ai_research' ) );
         update_post_meta( $post_id, 'ws_auto_source_name', sanitize_text_field( $meta['source_name'] ?? '' ) );
         update_post_meta( $post_id, '_ws_ingest_citation_key', $citation_key );
         update_post_meta( $post_id, '_ws_citation_stub', 1 );
         update_post_meta( $post_id, '_ws_citation_stub_source', 'ingest.attached_citations' );
 
         if ( $jx_term && ! is_wp_error( $jx_term ) ) {
-            wp_set_object_terms( $post_id, [ (int) $jx_term->term_id ], WS_JURISDICTION_TAXONOMY );
+            wp_set_object_terms( $post_id, [ (int) $jx_term->term ], WS_JURISDICTION_TAXONOMY );
         }
 
         $created[] = (int) $post_id;
@@ -2674,14 +2674,14 @@ function ws_ingest_create_citation_stubs_for_common_law( int $comlaw_post_id, ar
         update_post_meta( $post_id, 'ws_jx_citation_has_attach_flag', 0 );
         update_post_meta( $post_id, 'ws_verification_status', 'unverified' );
         update_post_meta( $post_id, 'ws_needs_review', 0 );
-        update_post_meta( $post_id, 'ws_auto_source_method', sanitize_text_field( $meta['source_method'] ?? 'ai_assisted' ) );
+        update_post_meta( $post_id, 'ws_auto_source_method', sanitize_text_field( $meta['source_method'] ?? 'ai_research' ) );
         update_post_meta( $post_id, 'ws_auto_source_name', sanitize_text_field( $meta['source_name'] ?? '' ) );
         update_post_meta( $post_id, '_ws_ingest_citation_key', $citation_key );
         update_post_meta( $post_id, '_ws_citation_stub', 1 );
         update_post_meta( $post_id, '_ws_citation_stub_source', 'ingest.attached_citations' );
 
         if ( $jx_term && ! is_wp_error( $jx_term ) ) {
-            wp_set_object_terms( $post_id, [ (int) $jx_term->term_id ], WS_JURISDICTION_TAXONOMY );
+            wp_set_object_terms( $post_id, [ (int) $jx_term->term ], WS_JURISDICTION_TAXONOMY );
         }
 
         $created[] = (int) $post_id;
@@ -2791,7 +2791,7 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
     $result['post_id'] = $post_id;
 
     // ── Step 3: Source stamps ────────────────────────────────────────────
-    update_post_meta( $post_id, 'ws_auto_source_method', sanitize_text_field( $meta['source_method'] ?? 'ai_assisted' ) );
+    update_post_meta( $post_id, 'ws_auto_source_method', sanitize_text_field( $meta['source_method'] ?? 'ai_research' ) );
     update_post_meta( $post_id, 'ws_auto_source_name',   sanitize_text_field( $meta['source_name']   ?? '' ) );
     update_post_meta( $post_id, 'ws_verification_status', 'unverified' );
     update_post_meta( $post_id, 'ws_needs_review',        0 );
@@ -2806,7 +2806,7 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
     if ( $jx_slug ) {
         $term = get_term_by( 'slug', $jx_slug, WS_JURISDICTION_TAXONOMY );
         if ( $term && ! is_wp_error( $term ) ) {
-            wp_set_object_terms( $post_id, $term->term_id, WS_JURISDICTION_TAXONOMY );
+            wp_set_object_terms( $post_id, $term->term, WS_JURISDICTION_TAXONOMY );
             $result['log'][] = "jurisdiction: assigned '{$jx_slug}'";
         } else {
             $result['warnings'][] = "$sid: jurisdiction term '{$jx_slug}' not found in ws_jurisdiction taxonomy.";
@@ -2893,15 +2893,15 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
                 }
                 if ( ! empty( $validated['valid'] ) ) {
                     // Convert slugs to term IDs
-                    $term_ids = [];
+                    $terms = [];
                     foreach ( $validated['valid'] as $slug ) {
                         $term = get_term_by( 'slug', $slug, $taxonomy );
                         if ( $term && ! is_wp_error( $term ) ) {
-                            $term_ids[] = $term->term_id;
+                            $terms[] = $term->term;
                         }
                     }
-                    if ( $term_ids ) {
-                        wp_set_object_terms( $post_id, $term_ids, $taxonomy );
+                    if ( $terms ) {
+                        wp_set_object_terms( $post_id, $terms, $taxonomy );
                     }
                 }
                 break;
@@ -3098,7 +3098,7 @@ function ws_ingest_process_common_law_record( array $record, array $meta, array 
 
     $result['post_id'] = $post_id;
 
-    update_post_meta( $post_id, 'ws_auto_source_method', sanitize_text_field( $meta['source_method'] ?? 'ai_assisted' ) );
+    update_post_meta( $post_id, 'ws_auto_source_method', sanitize_text_field( $meta['source_method'] ?? 'ai_research' ) );
     update_post_meta( $post_id, 'ws_auto_source_name',   sanitize_text_field( $meta['source_name']   ?? '' ) );
     update_post_meta( $post_id, 'ws_verification_status', 'unverified' );
     update_post_meta( $post_id, 'ws_needs_review',        0 );
@@ -3110,7 +3110,7 @@ function ws_ingest_process_common_law_record( array $record, array $meta, array 
     if ( $jx_slug ) {
         $term = get_term_by( 'slug', $jx_slug, WS_JURISDICTION_TAXONOMY );
         if ( $term && ! is_wp_error( $term ) ) {
-            wp_set_object_terms( $post_id, $term->term_id, WS_JURISDICTION_TAXONOMY );
+            wp_set_object_terms( $post_id, $term->term, WS_JURISDICTION_TAXONOMY );
             $result['log'][] = "jurisdiction: assigned '{$jx_slug}'";
         } else {
             $result['warnings'][] = "$did: jurisdiction term '{$jx_slug}' not found in ws_jurisdiction taxonomy.";
@@ -3196,15 +3196,15 @@ function ws_ingest_process_common_law_record( array $record, array $meta, array 
                     }
                 }
                 if ( ! empty( $validated['valid'] ) ) {
-                    $term_ids = [];
+                    $terms = [];
                     foreach ( $validated['valid'] as $slug ) {
                         $term = get_term_by( 'slug', $slug, $taxonomy );
                         if ( $term && ! is_wp_error( $term ) ) {
-                            $term_ids[] = $term->term_id;
+                            $terms[] = $term->term;
                         }
                     }
-                    if ( $term_ids ) {
-                        wp_set_object_terms( $post_id, $term_ids, $taxonomy );
+                    if ( $terms ) {
+                        wp_set_object_terms( $post_id, $terms, $taxonomy );
                     }
                 }
                 break;
@@ -3385,7 +3385,7 @@ function ws_ingest_process_citation_record( array $record, array $meta, array $b
 
     $result['post_id'] = $post_id;
 
-    update_post_meta( $post_id, 'ws_auto_source_method', sanitize_text_field( $meta['source_method'] ?? 'ai_assisted' ) );
+    update_post_meta( $post_id, 'ws_auto_source_method', sanitize_text_field( $meta['source_method'] ?? 'ai_research' ) );
     update_post_meta( $post_id, 'ws_auto_source_name',   sanitize_text_field( $meta['source_name']   ?? '' ) );
     update_post_meta( $post_id, 'ws_verification_status', 'unverified' );
     update_post_meta( $post_id, 'ws_needs_review',        0 );
@@ -3398,7 +3398,7 @@ function ws_ingest_process_citation_record( array $record, array $meta, array $b
     if ( $jx_slug ) {
         $term = get_term_by( 'slug', $jx_slug, WS_JURISDICTION_TAXONOMY );
         if ( $term && ! is_wp_error( $term ) ) {
-            wp_set_object_terms( $post_id, $term->term_id, WS_JURISDICTION_TAXONOMY );
+            wp_set_object_terms( $post_id, $term->term, WS_JURISDICTION_TAXONOMY );
             $result['log'][] = "jurisdiction: assigned '{$jx_slug}'";
         } else {
             $result['warnings'][] = "$cid: jurisdiction term '{$jx_slug}' not found in ws_jurisdiction taxonomy.";
@@ -3469,15 +3469,15 @@ function ws_ingest_process_citation_record( array $record, array $meta, array $b
                     }
                 }
                 if ( ! empty( $validated['valid'] ) ) {
-                    $term_ids = [];
+                    $terms = [];
                     foreach ( $validated['valid'] as $slug ) {
                         $term = get_term_by( 'slug', $slug, $taxonomy );
                         if ( $term && ! is_wp_error( $term ) ) {
-                            $term_ids[] = $term->term_id;
+                            $terms[] = $term->term;
                         }
                     }
-                    if ( $term_ids ) {
-                        wp_set_object_terms( $post_id, $term_ids, $taxonomy );
+                    if ( $terms ) {
+                        wp_set_object_terms( $post_id, $terms, $taxonomy );
                     }
                 }
                 break;
@@ -3584,7 +3584,7 @@ function ws_ingest_process_interpretation_record( array $record, array $meta, ar
 
     $result['post_id'] = $post_id;
 
-    update_post_meta( $post_id, 'ws_auto_source_method', sanitize_text_field( $meta['source_method'] ?? 'ai_assisted' ) );
+    update_post_meta( $post_id, 'ws_auto_source_method', sanitize_text_field( $meta['source_method'] ?? 'ai_research' ) );
     update_post_meta( $post_id, 'ws_auto_source_name',   sanitize_text_field( $meta['source_name']   ?? '' ) );
     update_post_meta( $post_id, 'ws_verification_status', 'unverified' );
     update_post_meta( $post_id, 'ws_needs_review',        0 );
@@ -3596,7 +3596,7 @@ function ws_ingest_process_interpretation_record( array $record, array $meta, ar
     if ( $jx_slug ) {
         $term = get_term_by( 'slug', $jx_slug, WS_JURISDICTION_TAXONOMY );
         if ( $term && ! is_wp_error( $term ) ) {
-            wp_set_object_terms( $post_id, $term->term_id, WS_JURISDICTION_TAXONOMY );
+            wp_set_object_terms( $post_id, $term->term, WS_JURISDICTION_TAXONOMY );
             $result['log'][] = "jurisdiction: assigned '{$jx_slug}'";
         } else {
             $result['warnings'][] = "$iid: jurisdiction term '{$jx_slug}' not found in ws_jurisdiction taxonomy.";
@@ -3667,15 +3667,15 @@ function ws_ingest_process_interpretation_record( array $record, array $meta, ar
                     }
                 }
                 if ( ! empty( $validated['valid'] ) ) {
-                    $term_ids = [];
+                    $terms = [];
                     foreach ( $validated['valid'] as $slug ) {
                         $term = get_term_by( 'slug', $slug, $taxonomy );
                         if ( $term && ! is_wp_error( $term ) ) {
-                            $term_ids[] = $term->term_id;
+                            $terms[] = $term->term;
                         }
                     }
-                    if ( $term_ids ) {
-                        wp_set_object_terms( $post_id, $term_ids, $taxonomy );
+                    if ( $terms ) {
+                        wp_set_object_terms( $post_id, $terms, $taxonomy );
                     }
                 }
                 break;
@@ -3783,7 +3783,7 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
 
     $result['post_id'] = (int) $post_id;
 
-    update_post_meta( $post_id, 'ws_auto_source_method', sanitize_text_field( $meta['source_method'] ?? 'ai_assisted' ) );
+    update_post_meta( $post_id, 'ws_auto_source_method', sanitize_text_field( $meta['source_method'] ?? 'ai_research' ) );
     update_post_meta( $post_id, 'ws_auto_source_name',   sanitize_text_field( $meta['source_name']   ?? '' ) );
     update_post_meta( $post_id, 'ws_verification_status', 'unverified' );
     update_post_meta( $post_id, 'ws_needs_review',        0 );
@@ -3795,7 +3795,7 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
     if ( $jx_slug !== '' ) {
         $term = get_term_by( 'slug', $jx_slug, WS_JURISDICTION_TAXONOMY );
         if ( $term && ! is_wp_error( $term ) ) {
-            wp_set_object_terms( $post_id, [ (int) $term->term_id ], WS_JURISDICTION_TAXONOMY );
+            wp_set_object_terms( $post_id, [ (int) $term->term ], WS_JURISDICTION_TAXONOMY );
             $result['log'][] = "jurisdiction: assigned '{$jx_slug}'";
         } else {
             $result['warnings'][] = "{$org_name}: jurisdiction term '{$jx_slug}' not found in ws_jurisdiction taxonomy.";
@@ -3844,7 +3844,7 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
         switch ( $type ) {
             case 'text':
                 if ( $meta_key !== null && $value !== '' ) {
-                    if ( $json_path === 'verified_url_date' ) {
+                    if ( $json_path === 'homepage_url_date' ) {
                         $normalized_date = ws_ingest_normalize_ymd_date( $value );
                         if ( $normalized_date !== '' ) {
                             update_post_meta( $post_id, $meta_key, $normalized_date );
@@ -3927,23 +3927,23 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
                     break;
                 }
 
-                $term_ids = [];
+                $terms = [];
                 foreach ( $validated['valid'] as $slug ) {
                     $term = get_term_by( 'slug', $slug, (string) $taxonomy );
                     if ( $term && ! is_wp_error( $term ) ) {
-                        $term_ids[] = (int) $term->term_id;
+                        $terms[] = (int) $term->term;
                     }
                 }
-                if ( empty( $term_ids ) ) {
+                if ( empty( $terms ) ) {
                     break;
                 }
 
-                if ( in_array( (string) $taxonomy, $single_tax_types, true ) && count( $term_ids ) > 1 ) {
+                if ( in_array( (string) $taxonomy, $single_tax_types, true ) && count( $terms ) > 1 ) {
                     $result['warnings'][] = "{$org_name} [{$taxonomy}]: multiple slugs provided for single-select taxonomy; first term retained.";
-                    $term_ids = [ (int) $term_ids[0] ];
+                    $terms = [ (int) $terms[0] ];
                 }
 
-                wp_set_object_terms( $post_id, $term_ids, (string) $taxonomy );
+                wp_set_object_terms( $post_id, $terms, (string) $taxonomy );
                 break;
         }
     }

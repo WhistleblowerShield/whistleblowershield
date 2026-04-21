@@ -1,7 +1,7 @@
 {
   "meta": {
     "json_format_version": "2.0",
-    "source_method": "ai_assisted",
+    "source_method": "ai_research",
     "source_name": "NotebookLM Reconciliation",
     "jurisdiction_id": "PA",
     "generated_date": "2026-04-05",
@@ -11,8 +11,8 @@
     "new_terms_proposed": [
       {
         "taxonomy": "ws_disclosure_type",
-        "term_id": "child-abuse-reporting",
-        "term_label": "Child Abuse Reporting",
+        "term": "child-abuse-reporting",
+        "label": "Child Abuse Reporting",
         "notes": "Used for statutes protecting reports of suspected child abuse. Existing terms like general-wrongdoing are only a rough fallback and do not capture the specific child-protection reporting context.",
         "seen_in": [
           "PA-6320"
@@ -21,8 +21,8 @@
       },
       {
         "taxonomy": "ws_disclosure_type",
-        "term_id": "older-adult-abuse-reporting",
-        "term_label": "Older Adult Abuse Reporting",
+        "term": "older-adult-abuse-reporting",
+        "label": "Older Adult Abuse Reporting",
         "notes": "Used for statutes protecting reports of abuse, neglect, exploitation or abandonment of older adults. Existing disclosure-type terms do not cleanly capture elder-protective-services reporting.",
         "seen_in": [
           "PA-10225.303"
@@ -31,8 +31,8 @@
       },
       {
         "taxonomy": "ws_disclosure_type",
-        "term_id": "vulnerable-adult-abuse-reporting",
-        "term_label": "Vulnerable Adult Abuse Reporting",
+        "term": "vulnerable-adult-abuse-reporting",
+        "label": "Vulnerable Adult Abuse Reporting",
         "notes": "Used for statutes protecting reports of abuse, neglect, exploitation or abandonment of adults in need of protective services. Existing terms do not precisely fit adult-protective-services reporting.",
         "seen_in": [
           "PA-302"
@@ -41,8 +41,8 @@
       },
       {
         "taxonomy": "ws_disclosure_type",
-        "term_id": "government-ethics-reporting",
-        "term_label": "Government Ethics Reporting",
+        "term": "government-ethics-reporting",
+        "label": "Government Ethics Reporting",
         "notes": "Used for anti-retaliation provisions tied to filing complaints with or providing information to the State Ethics Commission. General-wrongdoing is a fallback but does not capture the ethics-enforcement context.",
         "seen_in": [
           "PA-1108"

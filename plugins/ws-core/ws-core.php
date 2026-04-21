@@ -72,7 +72,7 @@ define( 'WS_REF_PARENT_TYPES', [ 'jx-statute', 'jx-common-law', 'jx-citation', '
 // admin-hooks.php. The method set is intentionally stable; prefer adding a new
 // source_name under an existing method over introducing a new constant.
 define( 'WS_SOURCE_MATRIX_SEED',   'matrix_seed'   );
-define( 'WS_SOURCE_AI_ASSISTED',   'ai_assisted'   );
+define( 'WS_SOURCE_ai_research',   'ai_research'   );
 define( 'WS_SOURCE_BULK_IMPORT',   'bulk_import'   );
 define( 'WS_SOURCE_FEED_IMPORT',   'feed_import'   );
 define( 'WS_SOURCE_HUMAN_CREATED', 'human_created' );
