@@ -4,10 +4,27 @@
  *
  * @package    WhistleblowerShield
  * @since      3.0.0
- * @version    3.17.1
+ * @version    3.18.1
  *
  * VERSION
  * -------
+ * 3.18.1  Factual conflict resolution after live-site verification:
+ *         - NWC mailing_address corrected to 1800 M Street NW #33888, DC 20033
+ *           (whistleblowers.org contact page confirmed; old 1140 Connecticut Ave was stale)
+ *         - PEER mailing_address: expanded 'PEER' abbreviation to full org name
+ *         - GAP zip +4 (20006-2802): kept — USPS extended zip, not incorrect
+ *         - WbAid secure_contact_url /signal/: kept — specific page confirmed live
+ *         - POGO has_secure_channel: kept 0 — no live public secure channel confirmed
+ *         - TAF has_attorneys: kept 1 — staff page confirms 3 attorneys on staff
+ *         - NWC/PEER contact_url from JSON was blank — kept existing matrix values
+ *
+ * 3.18.0  Gap-fill from Grok research batches (US-0-Assist-org-Grok-4-matrix-updates*.json).
+ *         Filled ws_aorg_contact_url where empty: NWC, POGO.
+ *         (GAP, WbAid, TAF had no Grok contact_url to fill from.)
+ *         Inserted nationwide_example after whistleblower_note for all 8 orgs.
+ *         Inserted protected_classes and protected_class_details after sectors
+ *         for all 8 researched orgs. No existing values overwritten.
+ *
  * 3.17.1  Data corrections from deep research pass:
  *         - GAP: corrected mailing address to 1612 K St NW Suite 808;
  *           updated intake_url to /how-to-request-assistance/
@@ -75,6 +92,7 @@ $_ws_assist_org_matrix = [
         'has_attorneys' => 1,
         'whistleblower_scope' => 3,
         'whistleblower_note' => 'Government Accountability Project has empowered over 8,000 whistleblowers with legal protection and advocacy expertise.',
+        'nationwide_example' => 'Government Accountability Project is the nation’s leading whistleblower protection organization. Through litigating whistleblower cases, publicizing concerns and developing legal reforms...',
         'services' => [
             'legal-rep',
             'consultation',
@@ -86,6 +104,8 @@ $_ws_assist_org_matrix = [
             'private-sector',
             'nonprofit-ngo',
         ],
+        'protected_classes' => [ 'has-details' ],
+        'protected_class_details' => 'Serves federal employees, private sector/corporate staff, and nonprofit employees; broad coverage implied but not exhaustively listed by class',
         'disclosure_types' => [
             'public-corruption-ethics',
             'procurement-spending-fraud',
@@ -115,7 +135,7 @@ $_ws_assist_org_matrix = [
         'description' => 'Advocates for the rights of whistleblowers, promotes whistleblower protections, and educates the public and policymakers about the importance of whistleblowing.',
         'ws_aorg_website_url' => 'https://www.whistleblowers.org',
         'ws_aorg_intake_url' => 'https://www.report-fraud-now.info/',
-        'ws_aorg_contact_url' => '',
+        'ws_aorg_contact_url' => 'https://www.whistleblowers.org/contact-us/',
         'phones' => [
             [
                 'type' => 'other',
@@ -131,7 +151,7 @@ $_ws_assist_org_matrix = [
         'has_secure_channel' => 0,
         'secure_contact_url' => '',
         'secure_contact_tool' => '',
-        'mailing_address' => 'National Whistleblower Center, 1140 Connecticut Ave NW, Suite 900, Washington, DC 20036',
+        'mailing_address' => 'National Whistleblower Center, 1800 M Street NW #33888, Washington, DC 20033',
         'income_limit' => 0,
         'income_limit_notes' => '',
         'eligibility_notes' => '',
@@ -144,6 +164,7 @@ $_ws_assist_org_matrix = [
         'has_attorneys' => 1,
         'whistleblower_scope' => 3,
         'whistleblower_note' => 'The National Whistleblower Center (NWC) is the leading nonprofit dedicated to protecting and rewarding whistleblowers around the world. We assist whistleblowers in finding legal aid, advocate for stronger whistleblower protection laws, and educate the public about whistleblowers\' critical role in protecting democracy and the rule of law.',
+        'nationwide_example' => 'NWC is the leading nonprofit dedicated to protecting and rewarding whistleblowers around the world.',
         'services' => [
             'referral',
             'advocacy',
@@ -152,6 +173,8 @@ $_ws_assist_org_matrix = [
         'sectors' => [
             'all-sectors',
         ],
+        'protected_classes' => [ 'has-details' ],
+        'protected_class_details' => 'Broad support across all sectors; assists whistleblowers worldwide with US focus',
         'disclosure_types' => [
             'securities-commodities-fraud',
             'tax-evasion-fraud',
@@ -200,6 +223,7 @@ $_ws_assist_org_matrix = [
         'has_attorneys' => 1,
         'whistleblower_scope' => 3,
         'whistleblower_note' => 'Whistleblower Aid is a pioneering non-profit legal organization that helps public and private sector workers report and expose wrongdoing — safely, lawfully, and responsibly.',
+        'nationwide_example' => 'Whistleblower Aid is a pioneering non-profit legal organization that helps public and private sector workers report and expose wrongdoing — safely, lawfully, and responsibly.',
         'services' => [
             'legal-rep',
             'consultation',
@@ -211,6 +235,8 @@ $_ws_assist_org_matrix = [
             'federal-employee',
             'private-sector',
         ],
+        'protected_classes' => [ 'has-details' ],
+        'protected_class_details' => 'Government employees and private-sector/corporate staff; broad whistleblower support without narrow class restrictions stated',
         'disclosure_types' => [
             'public-corruption-ethics',
             'classified-information',
@@ -240,7 +266,7 @@ $_ws_assist_org_matrix = [
         'description' => 'Investigates and exposes waste, corruption, abuse of power, and when the government fails to serve the public interest, including supporting federal whistleblowers.',
         'ws_aorg_website_url' => 'https://www.pogo.org',
         'ws_aorg_intake_url' => '',
-        'ws_aorg_contact_url' => '',
+        'ws_aorg_contact_url' => 'https://www.pogo.org/contact-us',
         'phones' => [
             [
                 'type' => 'other',
@@ -269,6 +295,7 @@ $_ws_assist_org_matrix = [
         'has_attorneys' => 0,
         'whistleblower_scope' => 1,
         'whistleblower_note' => 'POGO was founded to help bring attention to disclosures from Pentagon whistleblowers. Since then, we have worked with whistleblowers on countless investigative projects.',
+        'nationwide_example' => 'POGO has a long history of working with whistleblowers on countless investigative projects.',
         'services' => [
             'advocacy',
             'hotline',
@@ -278,6 +305,8 @@ $_ws_assist_org_matrix = [
             'federal-employee',
             'military-defense',
         ],
+        'protected_classes' => [ 'has-details' ],
+        'protected_class_details' => 'Primarily federal employees and military/defense-related personnel',
         'disclosure_types' => [
             'public-corruption-ethics',
             'procurement-spending-fraud',
@@ -320,6 +349,7 @@ $_ws_assist_org_matrix = [
         'has_attorneys' => 1,
         'whistleblower_scope' => 2,
         'whistleblower_note' => 'Through our membership directory of top whistleblower attorneys, we help prospective whistleblowers find the best representation to win these tough cases.',
+        'nationwide_example' => 'TAF helps prospective whistleblowers find the best representation to win these tough cases through our membership directory of top whistleblower attorneys.',
         'services' => [
             'referral',
             'advocacy',
@@ -327,6 +357,8 @@ $_ws_assist_org_matrix = [
         'sectors' => [
             'all-sectors',
         ],
+        'protected_classes' => [ 'has-details' ],
+        'protected_class_details' => 'Broad across sectors for False Claims Act/whistleblower cases',
         'disclosure_types' => [
             'securities-commodities-fraud',
             'healthcare-medicare-fraud',
@@ -381,6 +413,7 @@ $_ws_assist_org_matrix = [
         'has_attorneys' => 0,
         'whistleblower_scope' => 3,
         'whistleblower_note' => 'We help whistleblowers overcome the traumatic stress caused by retaliation and help with problem-solving — assisting whistleblowers who have suffered retaliation after having identified harm to individuals or the public.',
+        'nationwide_example' => 'WoA assists whistleblowers who have suffered retaliation after having identified harm to individuals or the public.',
         'services' => [
             'retaliation',
             'advocacy',
@@ -390,6 +423,8 @@ $_ws_assist_org_matrix = [
         'sectors' => [
             'all-sectors',
         ],
+        'protected_classes' => [ 'has-details' ],
+        'protected_class_details' => 'All whistleblowers who have faced retaliation',
         'disclosure_types' => [
             'general-wrongdoing',
             'occupational-health-safety',
@@ -830,7 +865,7 @@ $_ws_assist_org_matrix = [
         'has_secure_channel' => 0,
         'secure_contact_url' => '',
         'secure_contact_tool' => '',
-        'mailing_address' => 'PEER, 962 Wayne Ave, Suite 610, Silver Spring, MD 20910',
+        'mailing_address' => 'Public Employees for Environmental Responsibility, 962 Wayne Ave, Suite 610, Silver Spring, MD 20910',
         'income_limit' => 0,
         'income_limit_notes' => '',
         'eligibility_notes' => '',
@@ -843,6 +878,7 @@ $_ws_assist_org_matrix = [
         'has_attorneys' => 1,
         'whistleblower_scope' => 2,
         'whistleblower_note' => 'At PEER, our dedicated attorneys represent federal, state, and local government whistleblowers who wish to expose their agency\'s wrongdoings on environmental, public health, and scientific issues.',
+        'nationwide_example' => 'PEER defends government employees, including whistleblowers, free of charge across federal, state, and local levels.',
         'services' => [
             'legal-rep',
             'consultation',
@@ -852,6 +888,8 @@ $_ws_assist_org_matrix = [
             'federal-employee',
             'state-local-employee',
         ],
+        'protected_classes' => [ 'has-details' ],
+        'protected_class_details' => 'Public/government employees (federal, state, local)',
         'disclosure_types' => [
             'environmental-protection',
             'occupational-health-safety',
@@ -903,6 +941,7 @@ $_ws_assist_org_matrix = [
         'has_attorneys' => 1,
         'whistleblower_scope' => 3,
         'whistleblower_note' => 'TSN\'s Whistleblower Protection Program aims to help whistleblowers navigate the legal, physical, psychological and economic consequences of speaking out.',
+        'nationwide_example' => 'TSN is a whistleblower support organization that exists to help support the brave whistleblowers who come forward for the public good.',
         'services' => [
             'consultation',
             'media',
@@ -911,6 +950,8 @@ $_ws_assist_org_matrix = [
         'sectors' => [
             'all-sectors',
         ],
+        'protected_classes' => [ 'has-details' ],
+        'protected_class_details' => 'Broad support for whistleblowers across sectors; no narrow employee class restrictions listed',
         'disclosure_types' => [
             'general-wrongdoing',
             'public-corruption-ethics',
