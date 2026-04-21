@@ -4,7 +4,17 @@
  *
  * @package    WhistleblowerShield
  * @since      3.0.0
- * @version    3.18.1
+ * @version    3.19.0
+ *
+ * VERSION
+ * -------
+ * 3.19.0  Gap-fill for remaining 7 orgs (WIN, NELP, NELA, LSC, NLADA,
+ *         NWC Referral, ABA) — nationwide_example and protected_classes
+ *         added to all 7; protected_class_details added to all 7.
+ *         NWC Referral: whistleblower_scope corrected 3→2 (referral
+ *         program, not full-service org); cost_models corrected
+ *         fee-for-service→free (ARP is explicitly free to whistleblowers).
+ *         Gate bumped to 1.2.0.
  *
  * VERSION
  * -------
@@ -472,6 +482,7 @@ $_ws_assist_org_matrix = [
         'has_attorneys' => 0,
         'whistleblower_scope' => 2,
         'whistleblower_note' => 'WIN supports whistleblowing organizations and individuals worldwide through its member network, advocacy, and capacity-building for civil society groups.',
+        'nationwide_example' => 'WIN connects and strengthens civil society organisations that defend and support whistleblowers.',
         'services' => [
             'referral',
             'advocacy',
@@ -479,6 +490,8 @@ $_ws_assist_org_matrix = [
         'sectors' => [
             'all-sectors',
         ],
+        'protected_classes'       => [ 'has-details' ],
+        'protected_class_details' => 'WIN is an org-to-org network; it does not serve individual whistleblowers directly. Member organizations collectively serve whistleblowers across all worker classes and sectors worldwide.',
         'disclosure_types' => [
             'public-corruption-ethics',
             'election-integrity',
@@ -532,6 +545,7 @@ $_ws_assist_org_matrix = [
         'has_attorneys' => 0,
         'whistleblower_scope' => 1,
         'whistleblower_note' => 'NELP champions the rights of low-wage workers through research and advocacy, including protection for those who report violations.',
+        'nationwide_example' => 'NELP is leading the fight for a good-jobs economy. Our victories over the last decade have impacted the lives of 100 million workers and their families.',
         'services' => [
             'advocacy',
         ],
@@ -539,6 +553,8 @@ $_ws_assist_org_matrix = [
             'private-sector',
             'nonprofit-ngo',
         ],
+        'protected_classes'       => [ 'corporate-staff', 'contractor-gig', 'agricultural-worker', 'has-details' ],
+        'protected_class_details' => 'Focused on low-wage, immigrant, contingent, and unemployed workers in private-sector and gig/temp arrangements; has-details reflects emphasis on economically vulnerable subsets rather than all corporate-staff broadly.',
         'disclosure_types' => [
             'wage-hour-violations',
             'occupational-health-safety',
@@ -589,12 +605,15 @@ $_ws_assist_org_matrix = [
         'has_attorneys' => 0,
         'whistleblower_scope' => 1,
         'whistleblower_note' => 'NELA members exclusively represent employees — plaintiffs — in labor, employment, and civil rights matters, providing a national referral network for workers seeking counsel.',
+        'nationwide_example' => 'NELA is the largest professional organization in the United States whose members are lawyers who either exclusively or primarily represent workers in cases involving employment and traditional civil rights issues.',
         'services' => [
             'referral',
         ],
         'sectors' => [
             'all-sectors',
         ],
+        'protected_classes'       => [ 'all-employees' ],
+        'protected_class_details' => 'Plaintiff-side attorneys in NELA\'s network represent all worker classifications in employment, wage theft, retaliation, discrimination, and civil rights matters nationwide.',
         'disclosure_types' => [
             'wage-hour-violations',
             'occupational-health-safety',
@@ -602,8 +621,8 @@ $_ws_assist_org_matrix = [
             'general-wrongdoing',
         ],
         'disclosure_targets' => [
-            'judicial-federal',
-            'judicial-state',
+            'court-filing',
+            
         ],
         'case_stages' => [
             'post-report',
@@ -643,12 +662,15 @@ $_ws_assist_org_matrix = [
         'has_attorneys' => 0,
         'whistleblower_scope' => 1,
         'whistleblower_note' => 'LSC funds civil legal aid providers across all 50 states and territories; employment and retaliation matters are within scope for many member organizations.',
+        'nationwide_example' => 'LSC currently provides funding to 129 independent nonprofit legal aid programs in every state, the District of Columbia, and U.S. territories.',
         'services' => [
             'referral',
         ],
         'sectors' => [
             'all-sectors',
         ],
+        'protected_classes'       => [ 'all-employees', 'has-details' ],
+        'protected_class_details' => 'Income-eligible individuals at or below 125% of Federal Poverty Guidelines (2026: $19,950/individual, $41,250/family of 4). Covers all employment classifications meeting income threshold — veterans, seniors, agricultural workers, gig/contract workers included.',
         'disclosure_types' => [
             'wage-hour-violations',
             'occupational-health-safety',
@@ -658,7 +680,7 @@ $_ws_assist_org_matrix = [
         'disclosure_targets' => [
             'agency-federal',
             'agency-state',
-            'judicial-state',
+            'court-filing',
         ],
         'case_stages' => [
             'pre-report',
@@ -698,6 +720,7 @@ $_ws_assist_org_matrix = [
         'has_attorneys' => 0,
         'whistleblower_scope' => 1,
         'whistleblower_note' => 'NLADA supports the nation\'s civil legal aid and public defense providers, offering pathways for users to locate income-eligible legal help across all jurisdictions.',
+        'nationwide_example' => 'NLADA is America\'s oldest and largest nonprofit association devoted to excellence in the delivery of legal services to those who cannot afford counsel. For more than a century, we have connected and supported people across the country committed to justice for all.',
         'services' => [
             'referral',
             'advocacy',
@@ -705,6 +728,8 @@ $_ws_assist_org_matrix = [
         'sectors' => [
             'all-sectors',
         ],
+        'protected_classes'       => [ 'all-employees', 'agricultural-worker', 'has-details' ],
+        'protected_class_details' => 'Low-income individuals across all worker classifications; dedicated sections for farmworkers and low-income Latinos; also serves seniors, persons with disabilities, and undocumented persons. Income constraint applies — services flow through member legal aid grantees, not NLADA directly.',
         'disclosure_types' => [
             'wage-hour-violations',
             'occupational-health-safety',
@@ -713,7 +738,7 @@ $_ws_assist_org_matrix = [
         ],
         'disclosure_targets' => [
             'agency-state',
-            'judicial-state',
+            'court-filing',
         ],
         'case_stages' => [
             'pre-report',
@@ -750,20 +775,23 @@ $_ws_assist_org_matrix = [
         'income_limit_notes' => '',
         'eligibility_notes' => '',
         'aorg_type' => 'bar-program',
-        'cost_models' => [ 'fee-for-service' ],
+        'cost_models' => [ 'free' ],
         'is_nationwide' => 1,
         'is_limited_scope' => 0,
         'community_scope' => '',
         'accepts_anon' => 0,
         'has_attorneys' => 0,
-        'whistleblower_scope' => 3,
+        'whistleblower_scope' => 2,
         'whistleblower_note' => 'NWC\'s attorney referral program connects whistleblowers with experienced counsel in False Claims Act, SEC, IRS, and other whistleblower law areas.',
+        'nationwide_example' => 'This program is free of charge for all whistleblowers and has connected hundreds of whistleblowers with attorneys.',
         'services' => [
             'referral',
         ],
         'sectors' => [
             'all-sectors',
         ],
+        'protected_classes'       => [ 'federal-employee', 'corporate-staff', 'contractor-gig' ],
+        'protected_class_details' => 'Government and private sector whistleblowers; cases reviewed under WPA (federal employees), Sarbanes-Oxley and Dodd-Frank (corporate), qui tam, and numerous federal and state laws. The referral itself is free; downstream attorney representation terms are set independently.',
         'disclosure_types' => [
             'securities-commodities-fraud',
             'tax-evasion-fraud',
@@ -773,7 +801,7 @@ $_ws_assist_org_matrix = [
         ],
         'disclosure_targets' => [
             'agency-federal',
-            'judicial-federal',
+            'court-filing',
         ],
         'case_stages' => [
             'pre-report',
@@ -818,12 +846,15 @@ $_ws_assist_org_matrix = [
         'has_attorneys' => 0,
         'whistleblower_scope' => 1,
         'whistleblower_note' => 'The ABA Find Legal Help portal directs the public to state and local lawyer referral services and bar-sponsored legal aid programs across the United States.',
+        'nationwide_example' => 'The ABA Free Legal Answers virtual advice legal clinic has responded to 400,000 civil legal questions to date, helping many low-income Americans access legal help.',
         'services' => [
             'referral',
         ],
         'sectors' => [
             'all-sectors',
         ],
+        'protected_classes'       => [ 'all-employees' ],
+        'protected_class_details' => 'All individuals regardless of employment classification or income; connects to state bar lawyer referral services in all 50 states. Note: ABA Free Legal Answers (sister program) is income-restricted for civil matters — the Find Legal Help directory entry point is unrestricted.',
         'disclosure_types' => [
             'wage-hour-violations',
             'occupational-health-safety',
@@ -832,8 +863,8 @@ $_ws_assist_org_matrix = [
             'general-wrongdoing',
         ],
         'disclosure_targets' => [
-            'judicial-federal',
-            'judicial-state',
+            'court-filing',
+            
         ],
         'case_stages' => [
             'pre-report',
@@ -1280,4 +1311,3 @@ add_action( 'admin_init', function() {
         update_option( 'ws_seeded_assist_org_matrix', '1.0.0' );
     }
 } );
-
