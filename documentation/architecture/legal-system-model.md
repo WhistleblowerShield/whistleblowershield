@@ -122,16 +122,16 @@ A procedure record captures:
 - Whether the agency only receives referrals without investigating
 - The filing deadline in calendar days and the event that starts the clock
 - Prerequisites before filing (e.g. exhaustion of internal remedies)
-- A plain-language step-by-step walkthrough
+- A plain-english step-by-step walkthrough
 - A mutual exclusivity note (remedies or procedures the filer may forfeit
   by using this pathway)
 - Links to related statutes
 
-Procedures are attached to their parent agency via the `ws_proc_agency_id`
-field and cross-referenced to relevant statutes via `ws_proc_statute_ids`.
-The statute cross-reference enables a compact "Filing Procedures Under
-This Statute" panel on the jurisdiction page and powers the procedure
-watch validation system.
+Procedures are attached to their parent agency via the `ws_ag_procedure_agency_id`
+field and cross-referenced to relevant statutes or common-laws via
+`_ws_ag_procedure_parent_ids`. The parent cross-reference enables a compact
+"Filing Procedures Under This Statute" or "Under This Common Law Principle"
+panel on the jurisdiction page, and powers the procedure watch validation system.
 
 ### Assist Organization
 
@@ -149,12 +149,12 @@ taxonomy term assignment.
 
 ### Summary
 
-The plain-language overview of whistleblower protections for a specific
+The plain-english overview of whistleblower protections for a specific
 jurisdiction. The summary is the first thing a user sees on a jurisdiction
 page and the primary answer to "am I protected?"
 
-Unlike other content CPTs, the summary is itself the plain-language
-document — it does not carry a plain English overlay. The summary is
+Unlike other content CPTs, the summary is itself the plain-english
+document — it does not carry a plain-english overlay. The summary is
 written for Persona 1 (Maya): someone who may be frightened, searching
 from a phone, and not familiar with legal terminology.
 
@@ -182,12 +182,16 @@ Jurisdiction (57)
     │
     ├── Statute (many, including federal appended to all states)
     │       ├── Citation (many, attach_flag for curation)
-    │       ├── construction (many, court-scoped)
+    │       ├── Construction (many, court-scoped)
+    │       └── Reference (many, external sources)
+    ├── Common Law (many, with no federal append)
+    │       ├── Citation (many, attach_flag for curation)
+    │       ├── Construction (many, court-scoped)
     │       └── Reference (many, external sources)
     │
     ├── Agency (many)
     │       └── Filing Procedure (many, type: disclosure | retaliation | both)
-    │               └── Statute cross-reference (many-to-many)
+    │               └── Parent cross-reference (many-to-many)
     │
     ├── Assist Organization (many + nationwide overlay)
     │
@@ -197,8 +201,8 @@ Jurisdiction (57)
 All relationships in the diagram above are implemented via the
 `ws_jurisdiction` taxonomy join — not via post meta or ACF relationship
 fields. The only exception is the procedure-to-agency link
-(`ws_proc_agency_id`, a direct post ID reference) and the
-procedure-to-statute cross-reference (`ws_proc_statute_ids`).
+(`ws_ag_procedure_agency_id`, a direct post ID reference) and the
+procedure-to-parent cross-reference (`_ws_ag_procedure_parent_ids`).
 
 ---
 
@@ -222,23 +226,23 @@ handles that mapping.
 
 ---
 
-## Plain Language as a Parallel Layer
+## Plain English as a Parallel Layer
 
-Legal accuracy and plain language are not the same document. The platform
+Legal accuracy and plain-english are not the same document. The platform
 maintains both.
 
 For statutes, citations, and constructions: the primary record contains
 the full technical detail — citation, burden of proof, statute of
-limitations, employer defense standards. A plain English overlay
-(controlled by `has_plain_english` and `ws_plain_english_wysiwyg`) can
+limitations, employer defense standards. A plain-english overlay
+(controlled by `ws_has_plain_english` and `ws_plain_english_wysiwyg`) can
 be added per-record. The overlay is optional and independently reviewable.
 
-For summaries: the entire document is the plain language layer. There is
+For summaries: the entire document is the plain-english layer. There is
 no technical overlay — the summary is written for Maya, not for Daniel.
 
-For filing procedures: the walkthrough field (`ws_proc_walkthrough`) is
-the plain language layer. The procedure record does not carry the separate
-plain English toggle because the walkthrough IS the plain language content
+For filing procedures: the walkthrough field (`ws_ag_procedure_walkthrough_wysiwyg`) is
+the plain-english layer. The procedure record does not carry the separate
+plain-english toggle because the walkthrough IS the plain-english content
 — there is no technical version of "here is how to file."
 
 ---
@@ -257,7 +261,7 @@ The source method values are:
 - `feed_import` — created via the Inoreader feed monitor
 
 Matrix-seeded records are the highest-staleness-risk category because
-they were never manually entered and have no natural editorial touchpoint.
+they were never manually entered and have no natural editorial touch-point.
 The source verify workflow combined with the matrix divergence detection
 system is designed specifically to surface these records when they need
 review.

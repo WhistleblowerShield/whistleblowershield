@@ -21,10 +21,10 @@ defined( 'ABSPATH' ) || exit;
  *   ws_jx_statute_citation                       Official Statute Citation (text, optional)
  *   ws_jx_statute_common_name                    Common Name (text, optional)
  *   ws_jx_statute_disclosure_types               Disclosure Categories (multi_select, optional)
- *   ws_jx_statute_protected_classes              Protected Class (multi_select, optional)
+ *   ws_jx_statute_protected_classes              Protected Classes (multi_select, optional)
  *   ws_jx_statute_protected_class_details        Protected Class Details (textarea, optional)
  *   ws_jx_statute_disclosure_targets             Disclosure Targets (multi_select, optional)
- *   ws_jx_statute_disclosure_target_details      Disclosure Targets Details (textarea, optional)
+ *   ws_jx_statute_disclosure_target_details      Disclosure Target Details (textarea, optional)
  *   ws_jx_statute_adverse_action_scope           Adverse Action Scope (textarea, optional)
  *   ws_jx_statute_has_attach_flag                Attach to Jurisdiction Page (true_false, optional)
  *   ws_jx_statute_display_order                  Display Order (number, conditional)
@@ -35,30 +35,30 @@ defined( 'ABSPATH' ) || exit;
  *   ws_jx_statute_sol_trigger                    Deadline Trigger (select, optional)
  *   ws_jx_statute_has_limit_ambiguous            SOL Has Supplementary Detail (true_false, optional)
  *   ws_jx_statute_limit_details                  SOL Details (textarea, conditional)
- *   ws_jx_statute_has_tolling_details            Tolling Provisions Exist (true_false, optional)
+ *   ws_jx_statute_has_tolling_details            Has Tolling Provisions (true_false, optional)
  *   ws_jx_statute_tolling_details                Tolling & Extension Details (textarea, conditional)
  *   ws_jx_statute_has_exhaustion_required        Exhaustion Required? (true_false, optional)
  *   ws_jx_statute_exhaustion_details             Exhaustion Procedure & Deadline (textarea, conditional)
  *
  * Enforcement tab:
  *   ws_jx_statute_process_types                  Process Types (multi_select, optional)
- *   ws_jx_statute_adverse_action_types           Adverse Action Types (multi_select, optional)
- *   ws_jx_statute_adverse_action_type_details    Adverse Action Details (textarea, optional)
+ *   ws_jx_statute_adverse_actions                Adverse Actions(multi_select, optional)
+ *   ws_jx_statute_adverse_action_details         Adverse Action Details (textarea, optional)
  *   ws_jx_statute_fee_shiftings                  Fee Shifting (multi_select, optional)
- *   ws_jx_statute_remedies                       Available remedy (multi_select, optional)
- *   ws_jx_statute_remedy_details                 remedy Details (textarea, optional)
+ *   ws_jx_statute_remedies                       Available remedies (multi_select, optional)
+ *   ws_jx_statute_remedy_details                 Remedy Details (textarea, optional)
  *   ws_jx_statute_local_agencies                 Local Agencies (post_object, optional)
  *   ws_jx_statute_federal_agencies               Federal Agencies (post_object, optional)
  *   ws_jx_statute_enforcement_channel            Enforcement Channel Notes (textarea, optional)
  *
  * Burden of Proof tab:
- *   ws_jx_statute_employee_standards             Employee Standard (multi_select, optional)
+ *   ws_jx_statute_employee_standards             Employee Standards (multi_select, optional)
  *   ws_jx_statute_employee_standard_details      Employee Standard Details (textarea, optional)
- *   ws_jx_statute_employer_defenses              Employer Defense (multi_select, optional)
+ *   ws_jx_statute_employer_defenses              Employer Defenses (multi_select, optional)
  *   ws_jx_statute_employer_defense_details       Employer Defense Details (textarea, optional)
  *   ws_jx_statute_has_rebuttable_presumption     Rebuttable Presumption Exists (true_false, optional)
  *   ws_jx_statute_rebuttable_presumption         Rebuttable Presumption Details (textarea, conditional)
- *   ws_jx_statute_has_bop_details                BOP Has Supplementary Detail (true_false, optional)
+ *   ws_jx_statute_has_bop_details                BOP Has Supplementary Details (true_false, optional)
  *   ws_jx_statute_bop_details                    BOP Details (textarea, conditional)
  *   ws_jx_statute_bop_flag                       BOP Flag (text, optional)
  *
@@ -455,11 +455,11 @@ function ws_register_acf_jx_statutes() {
             ],
 
             [
-                'key'           => 'field_jx_statute_adverse_action_types',
+                'key'           => 'field_jx_statute_adverse_actions',
                 'label'         => 'Adverse Action Types',
-                'name'          => 'ws_jx_statute_adverse_action_types',
+                'name'          => 'ws_jx_statute_adverse_actions',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_adverse_action_type',
+                'taxonomy'      => 'ws_adverse_action',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Select the adverse actions covered by this statute.',
                 'add_term'      => 0,
@@ -469,9 +469,9 @@ function ws_register_acf_jx_statutes() {
             ],
 
             [
-                'key'          => 'field_jx_statute_adverse_action_type_details',
+                'key'          => 'field_jx_statute_adverse_action_details',
                 'label'        => 'Adverse Action Details',
-                'name'         => 'ws_jx_statute_adverse_action_type_details',
+                'name'         => 'ws_jx_statute_adverse_action_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
                 'instructions' => 'Describe any statutory language, broad catch-all provisions, or nuance that the taxonomy terms do not fully capture.',
@@ -494,7 +494,7 @@ function ws_register_acf_jx_statutes() {
 
             [
                 'key'           => 'field_jx_statute_remedies',
-                'label'         => 'Available remedy',
+                'label'         => 'Available remedies',
                 'name'          => 'ws_jx_statute_remedies',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_remedy',
@@ -508,7 +508,7 @@ function ws_register_acf_jx_statutes() {
 
             [
                 'key'          => 'field_jx_statute_remedy_details',
-                'label'        => 'remedy Details',
+                'label'        => 'Remedy Details',
                 'name'         => 'ws_jx_statute_remedy_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
@@ -755,7 +755,7 @@ function ws_register_acf_jx_statutes() {
             // Authorship & Review tab removed — registered centrally in
             // acf-stamp-fields.php (group_stamp_metadata, menu_order 90).
 
-            // Plain Language tab removed — registered centrally in
+            // Plain-English tab removed — registered centrally in
             // acf-plain-english-fields.php (group_plain_english_metadata, menu_order 85).
 
             // ── Tab: Reference Materials ───────────────────────────────────
@@ -803,7 +803,7 @@ function ws_register_acf_jx_statutes() {
 // includes sentinel slug 'has-details':
 // - ws_jx_statute_protected_classes
 // - ws_jx_statute_disclosure_targets
-// - ws_jx_statute_adverse_action_types
+// - ws_jx_statute_adverse_actions
 // - ws_jx_statute_remedies
 // - ws_jx_statute_employee_standards
 // - ws_jx_statute_employer_defenses
@@ -816,7 +816,7 @@ function ws_jx_statute_details_conditional( $field ) {
     static $map = [
         'field_jx_statute_protected_class_details'    => [ 'ws_protected_class',      'field_jx_statute_protected_classes' ],
         'field_jx_statute_disclosure_target_details'  => [ 'ws_disclosure_target',    'field_jx_statute_disclosure_targets' ],
-        'field_jx_statute_adverse_action_type_details' => [ 'ws_adverse_action_type',  'field_jx_statute_adverse_action_types' ],
+        'field_jx_statute_adverse_action_details'     => [ 'ws_adverse_action',       'field_jx_statute_adverse_actions' ],
         'field_jx_statute_remedy_details'             => [ 'ws_remedy',               'field_jx_statute_remedies' ],
         'field_jx_statute_employee_standard_details'  => [ 'ws_employee_standard',    'field_jx_statute_employee_standards' ],
         'field_jx_statute_employer_defense_details'   => [ 'ws_employer_defense',     'field_jx_statute_employer_defenses' ],

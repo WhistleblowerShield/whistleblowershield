@@ -14,12 +14,12 @@ Subdirectories:
 
 | File | Purpose |
 |---|---|
-| `admin-hooks.php` | All ACF save hooks — stamps, plain English, source verify, language/service term sync |
+| `admin-hooks.php` | All ACF save hooks — stamps, plain-english, source verify, language/service term sync |
 | `admin-columns.php` | Admin list table columns for all ws-core CPTs |
 | `admin-navigation.php` | Navigation metaboxes on jurisdiction and agency edit screens |
 | `admin-audit-trail.php` | Tamper-resistant append-only edit history |
 | `admin-major-edit-hook.php` | Creates `ws-legal-update` posts on flagged saves |
-| `admin-procedure-watch.php` | Statute link validation + publish gate for `ws-ag-procedure` |
+| `admin-procedure-watch.php` | Statute link validation + publish gate for `ag-procedure` |
 | `admin-citation-metabox.php` | Citation context metabox on `jx-citation` edit screen |
 | `admin-construction-metabox.php` | Court select pre-population on `jx-construction` edit screen |
 | `jurisdiction-dashboard.php` | Jurisdiction completion tracker dashboard page (published counts with optional unpublished parenthetical) |

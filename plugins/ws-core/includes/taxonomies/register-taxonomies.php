@@ -12,16 +12,16 @@
  * 2.3.1   ws_process_type added.
  * 2.4.0   ws_coverage_scope, ws_retaliation_forms, ws_language, ws_case_stage added.
  * 3.0.0   ws_jurisdiction registered; all gates migrated to Unified Option-Gate Method.
- * 3.1.0   Taxonomy rename pass: ws_protected_class, ws_adverse_action_type, ws_remedy,
+ * 3.1.0   Taxonomy rename pass: ws_protected_class, ws_adverse_action, ws_remedy,
  *         ws_disclosure_target, ws_fee_shifting. ws_bulk_insert_hierarchical() added.
  * 3.2.0   ws_employer_defense added (jx-statute).
  * 3.3.0   ws_aorg_type added (ws-assist-org).
  * 3.6.0   National Security parent + 3 children added to ws_disclosure_type.
  * 3.7.0   ws_employment_sector added. Deprecated taxonomies removed.
  * 3.8.1   ws_seed_disclosure_taxonomy() refactored to ws_bulk_insert_hierarchical().
- * 3.9.0   ws-ag-procedure added to ws_jurisdiction and ws_disclosure_type object_types.
- * 3.10.0  ws_procedure_type added (ws-ag-procedure). Replaces ws_proc_type ACF select.
- * 3.11.0  has-details sentinel term added to ws_adverse_action_type, ws_remedy,
+ * 3.9.0   ag-procedure added to ws_jurisdiction and ws_disclosure_type object_types.
+ * 3.10.0  ws_procedure_type added (ag-procedure). Replaces ws_proc_type ACF select.
+ * 3.11.0  has-details sentinel term added to ws_adverse_action, ws_remedy,
  *         ws_disclosure_target, ws_protected_class, ws_employer_defense. Signals
  *         that a companion ACF freetext field holds detail beyond available slugs.
  *         Gate versions bumped to 1.1.0 for affected seeders.
@@ -35,7 +35,7 @@
  *         employee_standard field. Seven terms including has-details sentinel.
  * 3.13.0  jx-common-law added to object_types for all shared doctrinal taxonomies:
  *         ws_disclosure_type, ws_protected_class, ws_disclosure_target,
- *         ws_adverse_action_type, ws_process_type, ws_remedy, ws_fee_shifting,
+ *         ws_adverse_action, ws_process_type, ws_remedy, ws_fee_shifting,
  *         ws_employer_defense, ws_employee_standard, ws_jurisdiction.
  *         jx-citation and jx-construction also added to taxonomies where missing.
  * 3.14.2  ws_disclosure_type and ws_process_type set to non-public.
@@ -60,7 +60,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_disclosure_type' ) ) {
         register_taxonomy(
             'ws_disclosure_type',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-agency', 'ws-ag-procedure', 'ws-assist-org' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-agency', 'ag-procedure', 'ws-assist-org' ],
             [
                 'label'             => 'Disclosure Categories',
                 'labels'            => [
@@ -194,12 +194,12 @@ function ws_register_taxonomies() {
 
     // ── 5. Adverse Action Types ───────────────────────────────────────────
     //
-    // Renamed from ws_retaliation_forms → ws_adverse_action_type (3.1.0).
+    // Renamed from ws_retaliation_forms → ws_adverse_action (3.1.0).
     // Aligns with JSON field name adverse_action; cleaner legal terminology.
 
-    if ( ! taxonomy_exists( 'ws_adverse_action_type' ) ) {
+    if ( ! taxonomy_exists( 'ws_adverse_action' ) ) {
         register_taxonomy(
-            'ws_adverse_action_type',
+            'ws_adverse_action',
             [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
             [
                 'label'             => 'Adverse Action Types',
@@ -302,7 +302,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( WS_JURISDICTION_TAXONOMY ) ) {
         register_taxonomy(
             WS_JURISDICTION_TAXONOMY,
-            [ 'jurisdiction', 'jx-statute', 'jx-summary', 'jx-citation', 'jx-construction', 'jx-common-law', 'ws-agency', 'ws-ag-procedure', 'ws-assist-org' ],
+            [ 'jurisdiction', 'jx-statute', 'jx-summary', 'jx-citation', 'jx-construction', 'jx-common-law', 'ws-agency', 'ag-procedure', 'ws-assist-org' ],
             [
                 'label'             => 'Jurisdictions',
                 'labels'            => [
@@ -626,7 +626,7 @@ function ws_register_taxonomies() {
     // ── 16. Procedure Type ────────────────────────────────────────────────
     //
     // New in 3.10.0. Flat taxonomy classifying the purpose of a
-    // ws-ag-procedure record. Applied to ws-ag-procedure only.
+    // ag-procedure record. Applied to ag-procedure only.
     // Three stable terms: disclosure, retaliation, both.
     // Replaces ws_proc_type ACF select field — enables tax_query filtering
     // in the Phase 2 filter cascade. Single-value per record (radio UI).
@@ -635,7 +635,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_procedure_type' ) ) {
         register_taxonomy(
             'ws_procedure_type',
-            [ 'ws-ag-procedure' ],
+            [ 'ag-procedure' ],
             [
                 'label'             => 'Procedure Types',
                 'labels'            => [
@@ -748,9 +748,9 @@ add_action( 'admin_init', function() {
         ws_seed_protected_class_taxonomy();
         update_option( 'ws_seeded_protected_class', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_adverse_action_type' ) !== '1.0.0' ) {
-        ws_seed_adverse_action_type_taxonomy();
-        update_option( 'ws_seeded_adverse_action_type', '1.0.0' );
+    if ( get_option( 'ws_seeded_adverse_action' ) !== '1.0.0' ) {
+        ws_seed_adverse_action_taxonomy();
+        update_option( 'ws_seeded_adverse_action', '1.0.0' );
     }
     if ( get_option( 'ws_seeded_language' ) !== '1.0.0' ) {
         ws_seed_language_taxonomy();
@@ -999,12 +999,12 @@ function ws_seed_protected_class_taxonomy() {
 }
 
 /**
- * Seeds ws_adverse_action_type with its flat term list.
+ * Seeds ws_adverse_action with its flat term list.
  * Replaces ws_seed_retaliation_forms_taxonomy() for ws_retaliation_forms (deprecated).
  * 3.11.0: has-details sentinel added.
  */
-function ws_seed_adverse_action_type_taxonomy() {
-    $taxonomy = 'ws_adverse_action_type';
+function ws_seed_adverse_action_taxonomy() {
+    $taxonomy = 'ws_adverse_action';
     $terms    = [
         'termination'               => 'Termination',
         'constructive-discharge'    => 'Constructive Discharge',
@@ -1368,7 +1368,7 @@ function ws_seed_employer_defense_taxonomy() {
 /**
  * Seeds ws_procedure_type with its three flat terms.
  *
- * New in 3.10.0. Replaces the ws_proc_type ACF select field on ws-ag-procedure.
+ * New in 3.10.0. Replaces the ws_proc_type ACF select field on ag-procedure.
  * These three terms are stable — the set is not expected to grow.
  *
  *   disclosure  — procedure for reporting wrongdoing to the agency

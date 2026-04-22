@@ -2,7 +2,7 @@
 /**
  * acf-ag-procedures.php
  *
- * Registers ACF Pro fields for the `ws-ag-procedure` CPT.
+ * Registers ACF Pro fields for the `ag-procedure` CPT.
  *
  * PURPOSE
  * -------
@@ -16,10 +16,12 @@
  * -------------
  * Procedure Identity tab:
  *   ws_ag_procedure_agency_id                Parent Agency (post_object, required)
- *   ws_ag_procedure_type                     Procedure Type (radio, required)
+ *   ws_procedure_type                     Procedure Type (radio, required)
  *   ws_ag_procedure_jurisdictions            Jurisdiction(s) (multi_select, optional)
  *   ws_ag_procedure_disclosure_types         Disclosure Types Covered (multi_select, optional)
  *   ws_ag_procedure_statute_ids              Related Statutes (relationship, optional)
+ *   ws_ag_procedure_comlaw_ids               Related Common Laws (relationship, optional)
+ *   _ws_ag_procedure_parent_ids              Merged Related Statutes and Common Laws (relationship, optional)
  *
  * Filing Details tab:
  *   ws_ag_procedure_entry_point              Entry Point (select, optional)
@@ -51,15 +53,15 @@
  * PLAIN ENGLISH
  * -------------
  * Procedures use ws_ag_procedure_walkthrough_wysiwyg (registered in this file)
- * as their plain-English content. The central acf-plain-english-fields.php group
- * is NOT applied to this CPT -- the walkthrough IS the plain-English layer.
+ * as their plain-english content. The central acf-plain-english-fields.php group
+ * is NOT applied to this CPT -- the walkthrough IS the plain-english layer.
  *
  * PARENT AGENCY PRE-FILL
  * ----------------------
  * When a new procedure is created from the agency navigation box, the URL
  * carries ?agency_id={post_id}. The acf/load_value hook below pre-fills
  * ws_ag_procedure_agency_id on auto-draft posts, matching the pattern used by
- * ws_construction_prefill_statute_id() in acf-jx-constructions.php.
+ * ws_jx_construction_prefill_statute_id() in acf-jx-constructions.php.
  *
  * @package    WhistleblowerShield
  * @since      3.9.0
@@ -97,7 +99,7 @@ function ws_register_acf_ag_procedures() {
         'location' => [ [ [
             'param'    => 'post_type',
             'operator' => '==',
-            'value'    => 'ws-ag-procedure',
+            'value'    => 'ag-procedure',
         ] ] ],
 
         'fields' => [
@@ -132,7 +134,7 @@ function ws_register_acf_ag_procedures() {
             [
                 'key'           => 'field_ag_procedure_type',
                 'label'         => 'Procedure Type',
-                'name'          => 'ws_ag_procedure_type',
+                'name'          => 'ws_procedure_type',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_procedure_type',
                 'field_type'    => 'radio',
@@ -185,7 +187,7 @@ function ws_register_acf_ag_procedures() {
             //
             // Authoritative list of jx-statute posts this procedure operates
             // under. The relationship picker is auto-scoped via
-            // ws_ag_procedure_scope_statute_picker() (below) — it pre-filters to
+            // ws_ag_procedure_scope_parent_picker() (below) — it pre-filters to
             // statutes matching this procedure's jurisdiction and disclosure
             // types so the editor sees a relevant subset. Manual taxonomy
             // filter UI (jurisdiction + disclosure type) is also available
@@ -193,7 +195,7 @@ function ws_register_acf_ag_procedures() {
             //
             // Statute links are validated on save by admin-procedure-watch.php:
             // a hard mismatch (zero disclosure-type intersection) demotes the
-            // procedure to draft and sets ws_ag_procedure_statute_flagged. The Admin
+            // procedure to draft and sets ws_ag_procedure_parent_flagged. The Admin
             // Review tab's override field allows admins to publish despite a
             // known mismatch when the link is intentionally unconventional.
 
@@ -222,7 +224,7 @@ function ws_register_acf_ag_procedures() {
             //
             // Authoritative list of jx-common-law posts this procedure operates
             // under. The relationship picker is auto-scoped via
-            // ws_ag_procedure_scope_comlaw_picker() (below) — it pre-filters to
+            // ws_ag_procedure_scope_parent_picker() (below) — it pre-filters to
             // common law entries matching this procedure's jurisdiction and disclosure
             // types so the editor sees a relevant subset. Manual taxonomy
             // filter UI (jurisdiction + disclosure type) is also available
@@ -410,7 +412,7 @@ function ws_register_acf_ag_procedures() {
                 'label'        => 'Step-by-Step Walkthrough',
                 'name'         => 'ws_ag_procedure_walkthrough_wysiwyg',
                 'type'         => 'wysiwyg',
-                'instructions' => 'Plain-language guidance for a whistleblower using this procedure. Cover: what to prepare, how to submit, what happens after filing, and realistic timeline expectations. This is the core "what do I do next?" answer.',
+                'instructions' => 'Plain-English guidance for a whistleblower using this procedure. Cover: what to prepare, how to submit, what happens after filing, and realistic timeline expectations. This is the core "what do I do next?" answer.',
                 'tabs'         => 'all',
                 'toolbar'      => 'full',
                 'media_upload' => 0,
@@ -450,14 +452,14 @@ function ws_register_acf_ag_procedures() {
             //
             // When admin-procedure-watch.php detects a disclosure-type
             // mismatch between a linked statute and this procedure, it:
-            //   1. Sets ws_ag_procedure_stat_flagged = 1 in post meta.
+            //   1. Sets ws_ag_procedure_parent_flagged = 1 in post meta.
             //   2. Forces post_status back to 'draft'.
-            //   3. Records mismatch detail in ws_ag_procedure_stat_flag_detail.
+            //   3. Records mismatch detail in ws_ag_procedure_parent_flag_detail.
             //
             // The admin reviews the notice on this screen and either:
             //   A. Fixes the underlying data (resolves mismatches) — the flag
             //      clears automatically on the next clean save.
-            //   B. Checks ws_ag_procedure_stat_override and saves — the flag is cleared
+            //   B. Checks ws_ag_procedure_parent_override and saves — the flag is cleared
             //      and the override is logged. The procedure can then be published
             //      normally. The override resets to 0 after each save.
 
@@ -571,4 +573,51 @@ function ws_ag_procedure_prefill_agency_id( $value, $post_id, $field ) {
         return $agency_id;
     }
     return $value;
+}
+// ── Merge statute/common-law parent links into unified parent_ids ───────────
+//
+// ACF writes relationship values at priority 10. This hook runs at 15 so the
+// merged parent list is in place before downstream cache-diff hooks (priority 20)
+// read _ws_ag_procedure_parent_ids.
+add_action( 'acf/save_post', 'ws_ag_procedure_sync_parent_ids', 15 );
+
+/**
+ * Merge ws_ag_procedure_statute_ids + ws_ag_procedure_comlaw_ids into
+ * _ws_ag_procedure_parent_ids on save.
+ *
+ * @param int|string $post_id Post ID from acf/save_post.
+ * @return void
+ */
+function ws_ag_procedure_sync_parent_ids( $post_id ) {
+    $post_id = (int) $post_id;
+    if ( $post_id <= 0 || get_post_type( $post_id ) !== 'ag-procedure' ) {
+        return;
+    }
+
+    $statute_ids = ws_ag_procedure_normalize_id_array( get_post_meta( $post_id, 'ws_ag_procedure_statute_ids', true ) );
+    $comlaw_ids  = ws_ag_procedure_normalize_id_array( get_post_meta( $post_id, 'ws_ag_procedure_comlaw_ids', true ) );
+
+    // Preserve editor order (statutes first, then common-law), remove duplicates.
+    $merged = array_values( array_unique( array_merge( $statute_ids, $comlaw_ids ) ) );
+
+    update_post_meta( $post_id, '_ws_ag_procedure_parent_ids', $merged );
+}
+
+/**
+ * Normalize relationship/meta values into a clean integer ID list.
+ *
+ * @param mixed $raw Raw post meta value.
+ * @return int[]
+ */
+function ws_ag_procedure_normalize_id_array( $raw ): array {
+    if ( ! is_array( $raw ) ) {
+        $raw = ( $raw === '' || $raw === null ) ? [] : [ $raw ];
+    }
+
+    $ids = array_map( 'intval', $raw );
+    $ids = array_filter( $ids, static function( $id ) {
+        return $id > 0;
+    } );
+
+    return array_values( $ids );
 }

@@ -8,7 +8,7 @@
  * -------
  * Holds sub-array builder functions that are shared across multiple CPTs.
  * Each function here reads post meta and returns a structured array that
- * is embedded as a named key ('record', 'plain', 'verify') in the return
+ * is embedded as a named key ('author', 'plain', 'verify') in the return
  * value of every dataset function in query-jurisdiction.php.
  *
  * These functions are CPT-agnostic — they operate on any post ID whose
@@ -23,14 +23,14 @@
  *
  * FUNCTIONS
  * ---------
- *   ws_build_record_array()         Builds the 'record' sub-array (authorship stamps).
- *   ws_build_plain_english_array()  Builds the 'plain' sub-array (plain language workflow).
+ *   ws_build_author_array()         Builds the 'author' sub-array (authorship stamps).
+ *   ws_build_plain_english_array()  Builds the 'plain' sub-array (plain-english workflow).
  *   ws_build_source_verify_array()  Builds the 'verify' sub-array (source & verification).
  *
  * RETURN SHAPE REFERENCE
  * ----------------------
  * See query-jurisdiction.php DATASET RETURN FORMAT for the canonical shape
- * of the 'record', 'plain', and 'verify' sub-arrays these functions produce.
+ * of the 'author', 'plain', and 'verify' sub-arrays these functions produce.
  *
  * @package    WhistleblowerShield
  * @since      3.6.0
@@ -42,7 +42,7 @@
  * VERSION HISTORY
  * ---------------
  * 3.6.0  Extracted from query-jurisdiction.php as part of query-layer split.
- *        ws_build_record_array(), ws_build_plain_english_array(), and
+ *        ws_build_author_array(), ws_build_plain_english_array(), and
  *        ws_build_source_verify_array() previously defined in that file.
  */
 
@@ -52,7 +52,7 @@ defined( 'ABSPATH' ) || exit;
 // ════════════════════════════════════════════════════════════════════════════
 // Build Record Array
 //
-// Constructs the standard 'record' sub-array from stamp meta.
+// Constructs the standard 'author' sub-array from stamp meta.
 // Keys: created_by, created_by_name, created_date, edited_date, edited_by, edited_by_name.
 // Used by every dataset function to guarantee a consistent return shape.
 // ════════════════════════════════════════════════════════════════════════════
@@ -63,7 +63,7 @@ defined( 'ABSPATH' ) || exit;
  * @param  int   $post_id  Post ID.
  * @return array
  */
-function ws_build_record_array( $post_id ) {
+function ws_build_author_array( $post_id ) {
 
     $create_author_id      = (int) get_post_meta( $post_id, 'ws_auto_create_author',      true );
     $last_edited_author_id = (int) get_post_meta( $post_id, 'ws_auto_last_edited_author', true );
@@ -88,11 +88,11 @@ function ws_build_record_array( $post_id ) {
 //       is_reviewed, reviewed_by, reviewed_by_name, reviewed_date.
 //
 // jx-summary calls this function but ignores has_plain_english —
-// it is inherently plain English and uses the reviewed fields only.
+// it is inherently plain-english and uses the reviewed fields only.
 // ════════════════════════════════════════════════════════════════════════════
 
 /**
- * Builds the standard plain English sub-array for a given post.
+ * Builds the standard plain-english sub-array for a given post.
  *
  * @param  int   $post_id  Post ID.
  * @return array

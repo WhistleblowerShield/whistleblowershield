@@ -85,7 +85,7 @@ function ws_health_check_admin_notice() {
         'ws-reference',
         'ws-legal-update',
         'ws-agency',
-        'ws-ag-procedure',
+        'ag-procedure',
         'ws-assist-org',
     ];
 
@@ -135,7 +135,7 @@ function ws_health_check_admin_notice() {
     if ( $proc_seed_gate === '' || version_compare( $proc_seed_gate, '1.0.0', '<' ) ) {
         $issues[] = "Procedure seeder gate incomplete: <code>ws_seeded_procedure_matrix</code> expected <code>1.0.0</code>, found <code>" . esc_html( $proc_seed_gate ?: '(not set)' ) . '</code>.';
     } else {
-        $proc_counts = wp_count_posts( 'ws-ag-procedure' );
+        $proc_counts = wp_count_posts( 'ag-procedure' );
         $proc_total  = (int) ( $proc_counts->publish ?? 0 );
         if ( $proc_total < 1 ) {
             $issues[] = 'Procedure seeder gate is marked complete but there are 0 published procedures.';

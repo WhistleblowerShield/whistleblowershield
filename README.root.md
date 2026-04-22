@@ -8,7 +8,7 @@ WhistleblowerShield is a public-interest legal reference platform built
 to change that. It covers whistleblower protections across all 57 U.S.
 jurisdictions — 50 states, the District of Columbia, five U.S.
 territories, and the federal level — and presents that information in
-plain language grounded in primary legal sources.
+plain-english grounded in primary legal sources.
 
 ---
 

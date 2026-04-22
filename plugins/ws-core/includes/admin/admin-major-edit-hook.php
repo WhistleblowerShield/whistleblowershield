@@ -17,7 +17,7 @@ add_action( 'acf/save_post', 'ws_acf_log_major_edit', 20 );
  */
 function ws_acf_log_major_edit( $post_id ) {
 
-	$supported = [ 'jx-summary', 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-ag-procedure' ];
+	$supported = [ 'jx-summary', 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ag-procedure' ];
 
 	$post_type = get_post_type( $post_id );
 	if ( ! in_array( $post_type, $supported, true ) ) {
@@ -90,8 +90,8 @@ function ws_acf_log_major_edit( $post_id ) {
 	// ── Write meta on the new update post ────────────────────────────────
 
 	update_post_meta( $update_id, 'ws_legal_update_summary_wysiwyg',  $description  );
-	//update_post_meta( $update_id, 'ws_legal_update_source_post_id',   $post_id      );
-	//update_post_meta( $update_id, 'ws_legal_update_source_post_type', $post_type    );
+	update_post_meta( $update_id, 'ws_legal_update_parent_post_id',   $post_id      );
+	update_post_meta( $update_id, 'ws_legal_update_parent_post_type', $post_type    );
 
 	// ── Attach jurisdiction from source post ─────────────────────────────────────
 	// Write to taxonomy table (save_terms=1 on the ACF field) so tax_query works.
@@ -103,11 +103,11 @@ function ws_acf_log_major_edit( $post_id ) {
 	// ── Update date and type ──────────────────────────────────────────────────
 	//update_post_meta( $update_id, 'ws_legal_update_date', $now_local );
 
-	$default_update_type = ( $post_type === 'ws-ag-procedure' )
+	$default_update_type = ( $post_type === 'ag-procedure' )
 		? 'procedure'
 		: str_replace( 'jx-', '', $post_type );
 	$allowed_update_types = [
-		'statute', 'common-law','citation', 'summary', 'construction',
+		'summary', 'statute', 'common-law','citation', 'construction',
 		'regulation', 'policy', 'procedure', 'internal', 'other',
 	];
 	$update_type = in_array( $requested_type, $allowed_update_types, true )
@@ -137,7 +137,7 @@ function ws_acf_log_major_edit( $post_id ) {
 	// ── Stamp fields (written manually — wp_insert_post bypasses acf/save_post) ──
 
 	update_post_meta( $update_id, 'ws_auto_created_date',       $now_local );
-	update_post_meta( $update_id, '_ws_auto_date_created_gmt',  $now_gmt   );
+	update_post_meta( $update_id, '_ws_auto_created_date_gmt',  $now_gmt   );
 	update_post_meta( $update_id, 'ws_auto_create_author',      $user_id   );
 	update_post_meta( $update_id, 'ws_auto_last_edited_date',   $now_local );
 	update_post_meta( $update_id, '_ws_auto_last_edited_gmt',   $now_gmt   );

@@ -35,7 +35,7 @@
  *
  * includes/
  *      acf/
- *          workflow/       shared field groups (stamp, plain English, source verify, major edit)
+ *          workflow/       shared field groups (stamp, plain-english, source verify, major edit)
  *      admin/
  *          matrix/         seeders and divergence watch
  *          monitors/       URL health monitor, feed monitor
@@ -107,7 +107,7 @@
  *
  *      matrix-federal-courts.php
  *      matrix-state-courts.php
- *          Define the $ws_court_matrix and $ws_state_court_matrix
+ *          Define the $ws_court_matrix and $_ws_state_court_matrix
  *          in-memory arrays only. NO posts are created. These are
  *          PHP variable definitions — no database writes, no admin_init
  *          gate. They must load before acf-jx-constructions.php and
@@ -125,11 +125,11 @@
  *          matrix-ag-procedures depends on these posts existing.
  *
  *      matrix-ag-procedures.php
- *          Seeds ws-ag-procedure posts. Hard dependencies:
+ *          Seeds ag-procedure posts. Hard dependencies:
  *            — matrix-agencies must have run (resolves agency_slug via
  *              get_page_by_path() against ws-agency posts).
- *            — matrix-fed-statutes must have run (resolves statute_slugs
- *              via ws_procedure_matrix_resolve_statute_ids() against
+ *            — matrix-fed-statutes must have run (resolves parent_slugs
+ *              via ws_ag_procedure_matrix_resolve_parent_ids() against
  *              jx-statute posts).
  *          Must be last post-creating seeder before admin-matrix-watch.
  *
@@ -150,7 +150,7 @@
  * 3.6.0   Query layer load order: helpers → shared → jurisdiction.
  * 3.6.1   admin-health-check added.
  * 3.7.0   matrix-state-courts added.
- * 3.9.0   cpt/query/acf/render/admin files for ws-ag-procedure added.
+ * 3.9.0   cpt/query/acf/render/admin files for ag-procedure added.
  * 3.10.0  TAXONOMY TWO-PHASE BEHAVIOR and MATRIX LAYER DEPENDENCY CHAIN
  *         sections added. acf/workflow/ and admin/monitors/ subdirectory
  *         load blocks added.
@@ -352,8 +352,8 @@ if ( is_admin() ) {
 	//                           all other seeders depend on 'us' term
 	//   matrix-fed-statutes   — seeds jx-statute posts;
 	//                           matrix-ag-procedures depends on these
-	//   matrix-federal-courts — IN-MEMORY ONLY ($ws_court_matrix array)
-	//   matrix-state-courts   — IN-MEMORY ONLY ($ws_state_court_matrix array)
+	//   matrix-federal-courts — IN-MEMORY ONLY ($_ws_federal_court_matrix array)
+	//   matrix-state-courts   — IN-MEMORY ONLY ($_ws_state_court_matrix array)
 	//   matrix-assist-orgs    — seeds ws-assist-org posts; depends on us term
 	//   matrix-agencies       — seeds ws-agency posts;
 	//                           matrix-ag-procedures depends on these
@@ -427,7 +427,7 @@ if ( is_admin() ) {
 	}
 
     // Shared workflow ACF field groups — includes/acf/workflow/
-    // Load order: stamp-fields first (plain English stamp writes depend on it).
+    // Load order: stamp-fields first (plain-english stamp writes depend on it).
     $acf_workflow_files = [
         'acf-stamp-fields', 'acf-plain-english-fields',
         'acf-source-verify', 'acf-major-edit',

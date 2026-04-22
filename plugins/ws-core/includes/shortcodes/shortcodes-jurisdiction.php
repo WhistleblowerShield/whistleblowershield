@@ -146,7 +146,7 @@ function ws_shortcode_jx_statutes() {
         }
 
         // Authoritative cross-reference: procedures that operate under this statute.
-        // Queries ws-ag-procedure posts linking to this statute via ws_ag_procedure_statute_ids.
+        // Queries ag-procedure posts linking to this statute via _ws_ag_procedure_parent_ids.
         // Returns '' when none exist — no section rendered for statutes with no procedures.
         $procs = ws_get_procedures_for_record( $statute['id'] );
         if ( ! empty( $procs ) ) {
@@ -233,7 +233,7 @@ function ws_shortcode_jx_common_law() {
         }
 
         // Authoritative cross-reference: procedures that operate under this statute.
-        // Queries ws-ag-procedure posts linking to this statute via ws_ag_procedure_statute_ids.
+        // Queries ag-procedure posts linking to this statute via _ws_ag_procedure_parent_ids.
         // Returns '' when none exist — no section rendered for statutes with no procedures.
         $procs = ws_get_procedures_for_record( $comlaw['id'] );
         if ( ! empty( $procs ) ) {
@@ -356,23 +356,23 @@ function ws_shortcode_jx_citation() {
 }
 
 
-// ── [ws_jx_construction] ───────────────────────────────────────────────────
+// ── [ws_jx_construction_] ───────────────────────────────────────────────────
 //
 // Queries published jx-construction records for the current jurisdiction
 // where ws_jx_construction_has_attach_flag is true, ordered by ws_jx_construction_display_order ASC.
 // Appends US-scoped records (federal court decisions) to state pages via
 // the same is_fed pattern used by statutes and citations.
 //
-// Rendering is delegated to ws_render_jx_constructions() in render-section.php.
+// Rendering is delegated to ws_render_jx_construction_s() in render-section.php.
 // Returns empty string silently if no attached constructions exist.
 
-add_shortcode( 'ws_jx_construction', 'ws_shortcode_jx_construction' );
+add_shortcode( 'ws_jx_construction_', 'ws_shortcode_jx_construction_' );
 /**
  * Renders jurisdiction construction section.
  *
  * @return string
  */
-function ws_shortcode_jx_construction() {
+function ws_shortcode_jx_construction_() {
 
     global $post;
     if ( ! $post ) return '';
@@ -380,10 +380,10 @@ function ws_shortcode_jx_construction() {
     $term_id = ws_get_jx_term_id( $post->ID );
     if ( ! $term_id ) return '';
 
-    $interps = ws_get_jx_construction_data( $term_id );
-    if ( empty( $interps ) ) return '';
+    $constructs = ws_get_jx_construction_data( $term_id );
+    if ( empty( $constructs ) ) return '';
 
-    return ws_render_jx_constructions( $interps );
+    return ws_render_jx_construction_s( $constructs );
 }
 
 

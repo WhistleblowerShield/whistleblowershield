@@ -25,7 +25,7 @@ Taxonomy registration and seeding for all ws-core taxonomies.
 
 Canonical taxonomy slugs use singularized names. Migrated slugs include:
 
-- `ws_adverse_action_type`
+- `ws_adverse_action`
 - `ws_remedy`
 - `ws_language`
 - `ws_disclosure_target`
@@ -89,7 +89,7 @@ Flat taxonomies use `wp_insert_term()` directly with a
 ## has-details Sentinel Pattern
 
 Six taxonomies include a `has-details` sentinel term:
-`ws_protected_class`, `ws_disclosure_targets`, `ws_adverse_action_types`,
+`ws_protected_class`, `ws_disclosure_target`, `ws_adverse_actions`,
 `ws_remedies`, `ws_employer_defense`, `ws_employee_standard`.
 
 When an editor selects `has-details` in a taxonomy multi-select field,

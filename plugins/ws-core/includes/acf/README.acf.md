@@ -3,7 +3,7 @@
 ACF Pro field group registration for all ws-core CPTs.
 
 Each file in this directory registers one field group for one CPT.
-Shared workflow field groups (stamp, plain English, source verify,
+Shared workflow field groups (stamp, plain-english, source verify,
 major edit) live in `workflow/` — see `workflow/README.md`.
 
 ---
@@ -19,7 +19,7 @@ major edit) live in `workflow/` — see `workflow/README.md`.
 | `acf-jx-citations.php` | `jx-citation` | `group_jx_citation_metadata` |
 | `acf-jx-constructions.php` | `jx-construction` | `group_jx_construction_metadata` |
 | `acf-agencies.php` | `ws-agency` | `group_agency_metadata` |
-| `acf-ag-procedures.php` | `ws-ag-procedure` | `group_ag_procedure_metadata` |
+| `acf-ag-procedures.php` | `ag-procedure` | `group_ag_procedure_metadata` |
 | `acf-assist-orgs.php` | `ws-assist-org` | `group_assist_org_metadata` |
 | `acf-legal-updates.php` | `ws-legal-update` | `group_legal_update_metadata` |
 | `acf-references.php` | `ws-reference` | `group_reference_metadata` |
@@ -58,16 +58,16 @@ were updated in the same pass.
 
 | Old name | New name | Applies to |
 |---|---|---|
-| `*_sol_has_details` | `*_limit_ambiguous` | statute, common-law |
+| `*_has_sol_details` | `*_limit_ambiguous` | statute, common-law |
 | `*_sol_details` | `*_limit_details` | statute, common-law |
-| `*_tolling_has_details` | `*_tolling_has_notes` | statute, common-law |
-| `*_tolling_details` | `*_tolling_notes` | statute, common-law |
+| `*_has_tolling_details` | `*_tolling_has_notes` | statute, common-law |
+| `*_tolling_details` | `*_tolling_details` | statute, common-law |
 | `*_has_exhaustion` | `*_exhaustion_required` | statute, common-law |
-| `*_rebuttable_has_details` | `*_rebuttable_has_presumption` | statute, common-law |
+| `*_has_rebuttable_details` | `*_rebuttable_has_presumption` | statute, common-law |
 | `*_rebuttable_details` | `*_rebuttable_presumption` | statute, common-law |
 | `*_bop_details` | `*_burden_of_proof_details` | statute, common-law |
 | `*_has_reward` | `*_reward_available` | statute, common-law |
-| `*_url_is_pdf` | `*_is_pdf` | statute only |
+| `*_url_is_pdf` | `*_url_is_pdf` | statute only |
 
 New field added: `ws_jx_statute_bop_flag` / `ws_comlaw_bop_flag` — short
 signal phrase for non-standard burden shifts (text, 120 char max).

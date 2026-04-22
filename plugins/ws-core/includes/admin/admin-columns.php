@@ -29,7 +29,7 @@
  *        Duplicate manage_ws-agency_posts_columns / _custom_column hooks in
  *        that file removed — admin-columns.php is the single source for all
  *        CPT column definitions.
- * 3.10.0 ws-ag-procedure Type column: get_post_meta( 'ws_ag_procedure_type' ) replaced
+ * 3.10.0 ag-procedure Type column: get_post_meta( 'ws_procedure_type' ) replaced
  *        with wp_get_object_terms( 'ws_procedure_type' ). ws_procedure_type is
  *        now a taxonomy; direct taxonomy read is correct in admin list context.
  *
@@ -393,10 +393,10 @@ function ws_render_agency_column( $column, $post_id ) {
 
 
 // ════════════════════════════════════════════════════════════════════════════
-// ws-ag-procedure columns: Agency, Type, Disclosure Types, Deadline
+// ag-procedure columns: Agency, Type, Disclosure Types, Deadline
 // ════════════════════════════════════════════════════════════════════════════
 
-add_filter( 'manage_ws-ag-procedure_posts_columns', 'ws_add_procedure_columns' );
+add_filter( 'manage_ag-procedure_posts_columns', 'ws_add_procedure_columns' );
 function ws_add_procedure_columns( $columns ) {
     $new = [];
     foreach ( $columns as $key => $label ) {
@@ -411,7 +411,7 @@ function ws_add_procedure_columns( $columns ) {
     return $new;
 }
 
-add_action( 'manage_ws-ag-procedure_posts_custom_column', 'ws_render_procedure_column', 10, 2 );
+add_action( 'manage_ag-procedure_posts_custom_column', 'ws_render_procedure_column', 10, 2 );
 function ws_render_procedure_column( $column, $post_id ) {
     if ( $column === 'proc_agency' ) {
         // Direct meta read — admin list table display only.

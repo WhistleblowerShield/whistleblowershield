@@ -49,8 +49,8 @@
  *
  * Enforcement tab:
  *   ws_jx_comlaw_process_types                     Process Types (multi_select, optional)
- *   ws_jx_comlaw_adverse_action_types              Adverse Action Types (multi_select, optional)
- *   ws_jx_comlaw_adverse_action_type_details       Adverse Action Details (textarea, optional)
+ *   ws_jx_comlaw_adverse_actions              Adverse Action Types (multi_select, optional)
+ *   ws_jx_comlaw_adverse_action_details       Adverse Action Details (textarea, optional)
  *   ws_jx_comlaw_fee_shiftings                     Fee Shifting (multi_select, optional)
  *   ws_jx_comlaw_remedies                          Available Remedies (multi_select, optional)
  *   ws_jx_comlaw_remedy_details                    Remedies Details (textarea, optional)
@@ -75,7 +75,7 @@
  *
  * Relationships tab:
  *   ws_jx_comlaw_citation_ids                      Related Citations (post_object, optional)
- *   ws_jx_comlaw_construction_ids                        Related constructions (post_object, optional)
+ *   ws_jx_comlaw_construction_ids                  Related Constructions (post_object, optional)
  *
  * Reference Materials tab:
  *   ws_jx_comlaw_ref_materials                     Reference Materials (relationship, optional)
@@ -537,11 +537,11 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'           => 'field_jx_comlaw_adverse_action_types',
+                'key'           => 'field_jx_comlaw_adverse_actions',
                 'label'         => 'Adverse Action Types',
-                'name'          => 'ws_jx_comlaw_adverse_action_types',
+                'name'          => 'ws_jx_comlaw_adverse_actions',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_adverse_action_type',
+                'taxonomy'      => 'ws_adverse_action',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Select the adverse actions covered by this doctrine.',
                 'add_term'      => 0,
@@ -551,9 +551,9 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'          => 'field_jx_comlaw_adverse_action_type_details',
+                'key'          => 'field_jx_comlaw_adverse_action_details',
                 'label'        => 'Adverse Action Details',
-                'name'         => 'ws_jx_comlaw_adverse_action_type_details',
+                'name'         => 'ws_jx_comlaw_adverse_action_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
                 'instructions' => 'Describe any judicial language, broad catch-all provisions, or nuance that the taxonomy terms do not fully capture.',
@@ -862,7 +862,7 @@ function ws_register_acf_jx_common_law() {
 // includes sentinel slug 'has-details':
 // - ws_jx_comlaw_protected_classes
 // - ws_jx_comlaw_disclosure_targets
-// - ws_jx_comlaw_adverse_action_types
+// - ws_jx_comlaw_adverse_actions
 // - ws_jx_comlaw_remedies
 // - ws_jx_comlaw_employee_standards
 // - ws_jx_comlaw_employer_defenses
@@ -874,7 +874,7 @@ function ws_jx_comlaw_details_conditional( $field ) {
     static $map = [
         'field_jx_comlaw_protected_class_details'    => [ 'ws_protected_class',      'field_jx_comlaw_protected_classes' ],
         'field_jx_comlaw_disclosure_target_details'  => [ 'ws_disclosure_target',    'field_jx_comlaw_disclosure_targets' ],
-        'field_jx_comlaw_adverse_action_type_details' => [ 'ws_adverse_action_type',  'field_jx_comlaw_adverse_action_types' ],
+        'field_jx_comlaw_adverse_action_details'     => [ 'ws_adverse_action',       'field_jx_comlaw_adverse_actions' ],
         'field_jx_comlaw_remedy_details'             => [ 'ws_remedy',               'field_jx_comlaw_remedies' ],
         'field_jx_comlaw_employee_standard_details'  => [ 'ws_employee_standard',    'field_jx_comlaw_employee_standards' ],
         'field_jx_comlaw_employer_defense_details'   => [ 'ws_employer_defense',     'field_jx_comlaw_employer_defenses' ],

@@ -41,7 +41,7 @@
  *
  * @package    WhistleblowerShield
  * @since      1.0.0
- * @version   3.10.0
+ * @version    3.10.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -93,7 +93,7 @@ function ws_register_cpt_legal_update() {
         'exclude_from_search' => true,
         'has_archive'         => false,
         'query_var'           => true,
-        'rewrite'             => false,
+        'rewrite'         => [ 'slug' => 'ws-legal-update', 'with_front' => false ],
 
         // ── Editor ────────────────────────────────────────────────────────
 

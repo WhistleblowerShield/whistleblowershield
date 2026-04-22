@@ -2,12 +2,12 @@
 /**
  * admin-construction-metabox.php
  *
- * Adds a "Federal Court constructions" meta box to the jx-statute edit screen.
+ * Adds a "Federal Court Constructions" meta box to the jx-statute edit screen.
  *
  * PURPOSE
  * -------
  * Displays all jx-construction records linked to the current statute,
- * with a direct "Add New construction" button that opens the creation
+ * with a direct "Add New Construction" button that opens the creation
  * form in a new tab. Renders on all jx-statute posts — both federal and
  * state statutes can have court construction records.
  *
@@ -17,7 +17,7 @@
  * 2. The meta box appears below the ACF field groups.
  * 3. Existing constructions are listed: case name, court, year, favorable?,
  *    and an Edit link.
- * 4. "Add New construction" opens:
+ * 4. "Add New Construction" opens:
  *    post-new.php?post_type=jx-construction&statute_id={ID}
  *    in a new browser tab. The statute's own ws_jurisdiction term is passed
  *    via tax_input so the new construction inherits the correct jurisdiction.
@@ -36,7 +36,7 @@
  * -------
  * 2.4.0  Initial release.
  * 2.4.1  Bug #7 fix: get_posts() had two 'meta_key' entries in the same
- *         array. PHP silently used the second value ('ws_construction_year'),
+ *         array. PHP silently used the second value ('ws_jx_construction_year'),
  *         discarding the 'meta_value' => $post->ID filter entirely and
  *         returning constructions across all statutes. Fixed by using
  *         a proper meta_query for the statute filter and a separate
@@ -51,7 +51,7 @@
  *        state statutes now show the metabox. Court label resolution updated
  *        to use ws_court_lookup() + other branch. Add URL now uses the
  *        statute's own ws_jurisdiction term instead of hardcoded 'us'.
- *        Metabox title renamed from "Federal Court constructions".
+ *        Metabox title renamed from "Federal Court Constructions".
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -63,8 +63,8 @@ add_action( 'add_meta_boxes', 'ws_register_construction_metabox' );
  */
 function ws_register_construction_metabox() {
     add_meta_box(
-        'ws_constructions',
-        'Court constructions',
+        'ws_jx_construction_s',
+        'Court Constructions',
         'ws_render_construction_metabox',
         'jx-statute',
         'normal',
@@ -72,8 +72,8 @@ function ws_register_construction_metabox() {
     );
 
     add_meta_box(
-        'ws_constructions',
-        'Court constructions',
+        'ws_jx_construction_s',
+        'Court Constructions',
         'ws_render_construction_metabox',
         'jx-common-law',
         'normal',
@@ -83,7 +83,7 @@ function ws_register_construction_metabox() {
 
 
 /**
- * Renders the Court constructions meta box.
+ * Renders the Court Constructions meta box.
  *
  * Displays all jx-construction records linked to the current statute,
  * regardless of jurisdiction. Both federal and state statutes can have

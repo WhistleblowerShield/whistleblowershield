@@ -105,7 +105,7 @@ shortcode placement is required in jurisdiction posts.
 1. **Header** — jurisdiction flag, name, government offices panel
    (portal, executive, whistleblower authority, legislature)
 2. **Not Legal Advice notice**
-3. **Plain Language Summary** — the first and most important section;
+3. **Plain English Summary** — the first and most important section;
    answers "am I protected?" for Maya
 4. **Statutes** — curated (attach-flagged) statute blocks with
    local/federal two-group split; statute of limitations,
@@ -143,7 +143,7 @@ below that content automatically.
 - Filing deadline with the event that starts the clock
 - Entry point (online / mail / phone / in-person / multiple)
 - Prerequisites notice (if exhaustion or other conditions required)
-- Plain-language step-by-step walkthrough
+- Plain-English step-by-step walkthrough
 - Mutual exclusivity note (remedies or procedures the filer may forfeit)
 - CTA buttons: intake form URL + direct phone
 - Last verified date
@@ -195,24 +195,24 @@ The specific record is resolved from the `?post_id=` URL parameter.
 
 ---
 
-## Plain Language as a Trust Signal
+## Plain English as a Trust Signal
 
-The platform's editorial investment in plain language is not just a
+The platform's editorial investment in plain-english is not just a
 usability choice — it is a trust signal to all three personas.
 
-For Maya: plain language signals that the site is for people like her,
+For Maya: plain-english signals that the site is for people like her,
 not for lawyers. The absence of jargon signals safety.
 
-For James: plain language in the procedure walkthrough signals that
+For James: plain-english in the procedure walkthrough signals that
 the platform understands the urgency of his situation and is not
 wasting his time with background he already knows.
 
 For Daniel: the "Editor Reviewed" trust badge signals that a human
-editor has verified the plain language content for accuracy. The
-presence of primary source citations below the plain language signals
+editor has verified the plain-english content for accuracy. The
+presence of primary source citations below the plain-english signals
 that the clarity did not come at the cost of rigor.
 
-The plain English overlay system (via `acf-plain-english-fields.php`)
+The plain-english overlay system (via `acf-plain-english-fields.php`)
 and the trust badge rendering (via `ws_render_plain_english_reviewed_badge()`)
 exist to make this trust signal systematic and consistent across all
 content types.

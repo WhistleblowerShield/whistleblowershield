@@ -72,7 +72,7 @@ define( 'WS_REF_PARENT_TYPES', [ 'jx-statute', 'jx-common-law', 'jx-citation', '
 // admin-hooks.php. The method set is intentionally stable; prefer adding a new
 // source_name under an existing method over introducing a new constant.
 define( 'WS_SOURCE_MATRIX_SEED',   'matrix_seed'   );
-define( 'WS_SOURCE_ai_research',   'ai_research'   );
+define( 'WS_SOURCE_AI_RESEARCH',   'ai_research'   );
 define( 'WS_SOURCE_BULK_IMPORT',   'bulk_import'   );
 define( 'WS_SOURCE_FEED_IMPORT',   'feed_import'   );
 define( 'WS_SOURCE_HUMAN_CREATED', 'human_created' );
@@ -172,7 +172,7 @@ add_action( 'admin_enqueue_scripts', 'ws_core_enqueue_admin_assets' );
  *
  * @return void
  */
-function ws_core_enqueue_admin_assets() {
+function ws_core_enqueue_admin_assets( $hook_suffix ) {
     wp_enqueue_style(
         'ws-core-admin',
         WS_CORE_URL . 'ws-core-admin.css',
@@ -180,13 +180,16 @@ function ws_core_enqueue_admin_assets() {
         WS_CORE_VERSION
     );
 
-    wp_enqueue_script(
-        'ws-core-admin',
-        WS_CORE_URL . 'ws-core-admin.js',
-        [],
-        WS_CORE_VERSION,
-        true
-    );
+    // Prompt tool script only.
+    if ( $hook_suffix === 'tools_page_ws-prompt-generator' ) {
+        wp_enqueue_script(
+            'ws-core-admin',
+            WS_CORE_URL . 'ws-core-admin.js',
+            [],
+            WS_CORE_VERSION,
+            true
+        );
+    }
 }
 
 function ws_core_enqueue_assets() {

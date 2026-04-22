@@ -56,7 +56,7 @@ Retrieves structured data and assembles it into normalized PHP arrays.
 Four files loaded in strict dependency order:
 
 - `query-helpers.php` — pure stateless utilities (no WordPress data reads)
-- `query-shared.php` — shared sub-array builders (record, plain English,
+- `query-shared.php` — shared sub-array builders (record, plain english,
   source verify) used by all dataset functions
 - `query-jurisdiction.php` — the primary dataset API; one function per
   content type, all returning normalized arrays
@@ -77,7 +77,7 @@ make the output layer fragile and unmaintainable.
 Manages the editorial workflow and data integrity.
 
 Covers ACF field registration, admin columns, navigation metaboxes,
-audit trail, stamp fields, plain English workflow, source verification,
+audit trail, stamp fields, plain english workflow, source verification,
 major edit logging, procedure watch (statute link validation), URL health
 monitoring, feed monitoring, and the jurisdiction dashboard. All admin
 layer files load inside `is_admin()` — they are never present on the
@@ -224,7 +224,7 @@ Three transient-based caches reduce database load on high-traffic pages:
   or per-jurisdiction calls bypass the cache entirely. Invalidated on every
   legal update save.
 
-Per-agency procedure transients (`ws_agency_procs_{id}`) and per-statute
-procedure transients (`ws_statute_procs_{id}`) are managed by the query
+Per-agency procedure transients (`ws_agency_procedures_{id}_`) and per-statute
+procedure transients (`ws_parent_procedures_{id}_`) are managed by the query
 agencies layer with 24-hour TTL and cache invalidation on procedure save
 or delete.

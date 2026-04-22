@@ -7,7 +7,7 @@
  * PURPOSE
  * -------
  * Provides structured metadata for external reference materials attached
- * to individual statute, citation, or construction records.
+ * to individual statute, common-law, citation, or construction records.
  *
  * GROUP: group_reference_metadata
  *
@@ -29,7 +29,7 @@
  * PLAIN ENGLISH
  * -------------
  * ws-reference does not participate in the has_plain_english / plain_reviewed
- * workflow. References are outbound links with metadata — no plain language
+ * workflow. References are outbound links with metadata — no plain-english
  * companion use case exists.
  *
  * @package    WhistleblowerShield

@@ -4,8 +4,8 @@
  *
  * Group key: group_source_verify_metadata  (menu_order 95)
  *
- * Attaches to: jx-statute, jx-common-law, jx-citation, jx-construction,
- *              ws-agency, ws-ag-procedure, ws-assist-org, jx-summary, ws-reference
+ * Attaches to: jx-summary, jx-statute, jx-common-law, jx-citation, jx-construction,
+ *              ws-agency, ag-procedure, ws-assist-org, ws-reference
  *
  * Fields:
  *   ws_auto_source_method    Locked readonly. One of the WS_SOURCE_* constants.
@@ -23,9 +23,9 @@
  *   ws_needs_review          True/false. Admin-only.
  *
  * Hook dependencies (admin-hooks.php):
- *   priority 5  — ws_stamp_source_method, ws_default_verification_status
- *   priority 6  — ws_stamp_source_name
- *   priority 20 — ws_stamp_verified_by_date, ws_enforce_source_verify_roles
+ *   priority 5  — ws_auto_stamp_source_method, ws_default_verification_status
+ *   priority 6  — ws_auto_stamp_source_name
+ *   priority 20 — ws_auto_stamp_verified_by_date, ws_enforce_source_verify_roles
  *
  * @package    WhistleblowerShield
  * @since      1.0.0
@@ -38,7 +38,7 @@
  * -------
  * 1.0.0   Initial release.
  * 3.4.0   Centralized into acf/workflow/. Three-path ingest design documented.
- * 3.10.0  ws-ag-procedure added to location rules.
+ * 3.10.0  ag-procedure added to location rules.
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -63,14 +63,14 @@ function ws_register_source_verify_field_group() {
         // cleanest pattern for multi-CPT attachment.
 
         'location' => [
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-summary'        ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-statute'        ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-common-law'     ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-citation'       ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-construction' ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-agency'         ] ],
-            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-ag-procedure'   ] ],
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ag-procedure'   ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-assist-org'     ] ],
-            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-summary'        ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-reference'      ] ],
         ],
 

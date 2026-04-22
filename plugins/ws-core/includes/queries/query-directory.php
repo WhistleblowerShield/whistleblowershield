@@ -137,7 +137,7 @@ function ws_q_build_assist_org_row( $oid ) {
         'disclosure_targets'   => $tax_disclosure_target['slugs'],
         'disclosure_target_labels' => $tax_disclosure_target['names'],
         'disclosure_target_details' => (string) get_post_meta( $oid, 'ws_aorg_disclosure_target_details', true ),
-        'protected_class'      => $tax_protected_class['slugs'],
+        'protected_classes'    => $tax_protected_class['slugs'],
         'protected_class_labels' => $tax_protected_class['names'],
         'protected_class_details' => (string) get_post_meta( $oid, 'ws_aorg_protected_class_details', true ),
         'case_stages'          => $tax_case_stage['slugs'],
@@ -145,8 +145,8 @@ function ws_q_build_assist_org_row( $oid ) {
         'case_stage_details'   => (string) get_post_meta( $oid, 'ws_aorg_case_stage_details', true ),
         'process_types'        => $tax_process_type['slugs'],
         'process_type_labels'  => $tax_process_type['names'],
-        'services'             => $tax_services['names'], // render-facing labels
-        'service_slugs'        => $tax_services['slugs'],
+        'service_labels'       => $tax_services['names'], // render-facing labels
+        'services'             => $tax_services['slugs'],
         'additional_services'  => (string) get_post_meta( $oid, 'ws_aorg_additional_services',        true ),
         'employment_sectors'   => $tax_employment['slugs'],
         'employment_sector_labels' => $tax_employment['names'],
@@ -166,33 +166,33 @@ function ws_q_build_assist_org_row( $oid ) {
         'cost_model'           => $tax_cost_model['slugs'],
         'cost_model_labels'    => $tax_cost_model['names'],
         'has_income_limit'     => (bool) get_post_meta( $oid, 'ws_aorg_has_income_limit',               true ),
-        'income_limit_notes'   => (string) get_post_meta( $oid, 'ws_aorg_has_income_limit_details',         true ),
+        'income_limit_details'   => (string) get_post_meta( $oid, 'ws_aorg_income_limit_details',         true ),
         'has_anonymous'        => (bool) get_post_meta( $oid, 'ws_aorg_accepts_anonymous',   true ),
-        'eligibility_notes'    => (string) get_post_meta( $oid, 'ws_aorg_eligibility_details',          true ),
+        'eligibility_details'    => (string) get_post_meta( $oid, 'ws_aorg_eligibility_details',          true ),
         'has_attorneys'   => (bool) get_post_meta( $oid, 'ws_aorg_licensed_attorneys',  true ),
         'accreditation'        => (string) get_post_meta( $oid, 'ws_aorg_accreditation',              true ),
         'bar_states'           => (string) get_post_meta( $oid, 'ws_aorg_bar_states',                 true ),
         'legitimacy_url'       => $legitimacy_url,
-        'last_reviewed'        => (string) get_post_meta( $oid, 'ws_aorg_last_reviewed',              true ),
+        //'last_reviewed'        => (string) get_post_meta( $oid, 'ws_aorg_last_reviewed',              true ),
         'jurisdictions'        => $tax_jx['slugs'],
         'jurisdiction_labels'  => $tax_jx['names'],
         'has_extended_profile' => ! empty( $plain['is_reviewed'] ),
         'taxonomies' => [
             'jurisdiction'       => $tax_jx,
             'aorg_type'          => $tax_aorg_type,
-            'disclosure_type'    => $tax_disclosure_type,
+            'disclosure_types'   => $tax_disclosure_type,
             'disclosure_targets' => $tax_disclosure_target,
-            'protected_class'    => $tax_protected_class,
-            'case_stage'         => $tax_case_stage,
-            'process_type'       => $tax_process_type,
-            'aorg_service'       => $tax_services,
-            'employment_sector'  => $tax_employment,
+            'protected_classes'  => $tax_protected_class,
+            'case_stages'        => $tax_case_stage,
+            'process_types'      => $tax_process_type,
+            'aorg_services'      => $tax_services,
+            'employment_sectors' => $tax_employment,
             'languages'          => $tax_languages,
-            'cost_model'         => $tax_cost_model,
+            'cost_models'        => $tax_cost_model,
         ],
         'plain'  => $plain,
         'verify' => ws_build_source_verify_array( $oid ),
-        'record' => ws_build_record_array( $oid ),
+        'author' => ws_build_author_array( $oid ),
     ];
 }
 
@@ -281,9 +281,9 @@ function ws_get_nationwide_assist_org_data( $filters = [] ) {
 
     // Phase 2: concern filter — routed to correct taxonomy by context resolver.
     // $filters['concern_tax'] is either 'ws_disclosure_type' or
-    // 'ws_adverse_action_type' depending on the user's stage selection.
+    // 'ws_adverse_action' depending on the user's stage selection.
     if ( ! empty( $filters['concern'] ) && ! empty( $filters['concern_tax'] ) ) {
-        $allowed_concern_taxonomies = [ 'ws_disclosure_type', 'ws_adverse_action_type' ];
+        $allowed_concern_taxonomies = [ 'ws_disclosure_type', 'ws_adverse_action' ];
         $concern_tax = sanitize_key( $filters['concern_tax'] );
         if ( in_array( $concern_tax, $allowed_concern_taxonomies, true ) ) {
             $query_args['tax_query'][] = [

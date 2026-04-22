@@ -88,7 +88,7 @@
  *         - assistance_types key renamed to assistance_type (single-value)
  *         - coverage_exceptions key renamed to jurisdiction_exceptions
  *           and remapped to ws_aorg_jurisdiction_exceptions (was incorrectly
- *           mapped to ws_aorg_eligibility_notes)
+ *           mapped to ws_aorg_eligibility_details)
  *         - ws_aorg_official_name added to allowed keys and field map
  *         - jurisdiction_exceptions added to allowed keys and field map
  *         - assistance_type (singular) replaces assistance_types in allowed keys
@@ -115,7 +115,7 @@
  *         - citation stub dedupe keyed by normalized case name + parent record
  *         - optional parent_comlaw_ linkage for citation and construction records
  *         - common-law construction back-link support via ws_jx_comlaw_construction_ids
- * 3.14.2  Citation + construction ingest and neutral logging:
+ * 3.14.2  Citation + Construction ingest and neutral logging:
  *         - dedicated jx-citation field map and processor
  *         - dedicated jx-construction field map and processor
  *         - parent statute linkage via parent_statute_id lookup
@@ -680,7 +680,7 @@ function ws_ingest_allowed_record_keys( string $record_type ): array {
             'employer_defense_details',
             'employee_standards',
             'employee_standard_details',
-            '_multi_taxonomy_notes',
+            '_multi_taxonomy_details',
             'links',
             'quality',
             '_review_notes',
@@ -715,7 +715,7 @@ function ws_ingest_allowed_record_keys( string $record_type ): array {
             'employer_defense_details',
             'employee_standards',
             'employee_standard_details',
-            '_multi_taxonomy_notes',
+            '_multi_taxonomy_details',
             'links',
             'quality',
             '_review_notes',
@@ -844,7 +844,7 @@ function ws_ingest_assist_org_apply_companion_backstops( array $flat, array &$wa
     // Sentinel taxonomy/detail pairs.
     $ensure_sentinel( $flat, 'protected_class_details', 'protected_classes', 'has-details', 'protected class details sentinel' );
     $ensure_sentinel( $flat, 'disclosure_target_details', 'disclosure_targets', 'has-details', 'disclosure target details sentinel' );
-    $ensure_sentinel( $flat, 'case_stage_details', 'case_stages', 'other', 'case stage details sentinel' );
+    $ensure_sentinel( $flat, 'case_stage_details', 'case_stages', 'has-details', 'case stage details sentinel' );
     $ensure_sentinel( $flat, 'additional_services', 'services_provided', 'additional', 'additional services sentinel' );
     $ensure_sentinel( $flat, 'languages_additional', 'languages_supported', 'additional', 'additional languages sentinel' );
 
@@ -1045,7 +1045,7 @@ function ws_ingest_statute_field_map_v2(): array {
         'legal_basis.protected_class'            => [ 'ws_jx_statute_protected_classes',          'tax', 'ws_protected_class'     ],
         'legal_basis.protected_class_details'    => [ 'ws_jx_statute_protected_class_details',  'textarea' ],
         'legal_basis.disclosure_targets'         => [ 'ws_jx_statute_disclosure_targets',       'tax', 'ws_disclosure_target'  ],
-        'legal_basis.disclosure_target_details' => [ 'ws_jx_statute_disclosure_target_details','textarea'],
+        'legal_basis.disclosure_target_details'  => [ 'ws_jx_statute_disclosure_target_details','textarea'],
         'legal_basis.adverse_action_scope'       => [ 'ws_jx_statute_adverse_action_scope',     'textarea' ],
 
         // ── SOL ───────────────────────────────────────────────────────────
@@ -1056,22 +1056,22 @@ function ws_ingest_statute_field_map_v2(): array {
         'statute_of_limitations.trigger'           => [ 'ws_jx_statute_sol_trigger',        'text'    ],
         'statute_of_limitations.exhaustion_required' => [ 'ws_jx_statute_has_exhaustion_required', 'bool' ],
         'statute_of_limitations.exhaustion_details'  => [ 'ws_jx_statute_exhaustion_details',  'textarea'],
-        'statute_of_limitations.tolling_notes'     => [ 'ws_jx_statute_tolling_notes',      'textarea'],
-        // has_tolling_notes derived: set to 1 when tolling_notes is present
+        'statute_of_limitations.tolling_details'       => [ 'ws_jx_statute_tolling_details',      'textarea'],
+        // has_tolling_details derived: set to 1 when tolling_details is present
 
         // ── Enforcement ───────────────────────────────────────────────────
-        'enforcement.process_type'           => [ 'ws_jx_statute_process_types',      'tax', 'ws_process_type'         ],
-        'enforcement.adverse_action'         => [ 'ws_jx_statute_adverse_action_types',    'tax', 'ws_adverse_action_type'  ],
-        'enforcement.adverse_action_type_details' => [ 'ws_jx_statute_adverse_action_type_details', 'textarea' ],
-        'enforcement.fee_shifting'           => [ 'ws_jx_statute_fee_shiftings',      'tax', 'ws_fee_shifting'          ],
+        'enforcement.process_types'          => [ 'ws_jx_statute_process_types',      'tax', 'ws_process_type'         ],
+        'enforcement.adverse_actions'        => [ 'ws_jx_statute_adverse_actions',    'tax', 'ws_adverse_action'  ],
+        'enforcement.adverse_action_details' => [ 'ws_jx_statute_adverse_action_details', 'textarea' ],
+        'enforcement.fee_shiftings'          => [ 'ws_jx_statute_fee_shiftings',      'tax', 'ws_fee_shifting'          ],
         'enforcement.remedies'               => [ 'ws_jx_statute_remedies',          'tax', 'ws_remedy'              ],
-        'enforcement.remedies_details'       => [ 'ws_jx_statute_remedy_details',  'textarea' ],
+        'enforcement.remedy_details'         => [ 'ws_jx_statute_remedy_details',  'textarea' ],
         'enforcement.primary_agency'         => [ 'ws_jx_statute_enforcement_channel', 'textarea' ],
 
         // ── Burden of Proof ───────────────────────────────────────────────
-        'burden_of_proof.employee_standard'         => [ 'ws_jx_statute_employee_standards',         'tax', 'ws_employee_standard' ],
+        'burden_of_proof.employee_standards'         => [ 'ws_jx_statute_employee_standards',         'tax', 'ws_employee_standard' ],
         'burden_of_proof.employee_standard_details' => [ 'ws_jx_statute_employee_standard_details',  'textarea' ],
-        'burden_of_proof.employer_defense'          => [ 'ws_jx_statute_employer_defenses',           'tax', 'ws_employer_defense'  ],
+        'burden_of_proof.employer_defenses'          => [ 'ws_jx_statute_employer_defenses',           'tax', 'ws_employer_defense'  ],
         'burden_of_proof.employer_defense_details'  => [ 'ws_jx_statute_employer_defense_details',   'textarea' ],
         'burden_of_proof.rebuttable_presumption'    => [ 'ws_jx_statute_rebuttable_presumption',     'textarea' ],
         // has_rebuttable_presumption derived: set to 1 when rebuttable_presumption present
@@ -1085,7 +1085,7 @@ function ws_ingest_statute_field_map_v2(): array {
 
         // ── Links ─────────────────────────────────────────────────────────
         'links.statute_url' => [ 'ws_jx_statute_url',    'url'  ],
-        'links.is_pdf'      => [ 'ws_jx_statute_url_is_pdf', 'bool' ],
+        'links.url_is_pdf'  => [ 'ws_jx_statute_url_is_pdf', 'bool' ],
         'links.is_official' => [ null, 'omit' ], // advisory
         'links.url_source'  => [ null, 'omit' ], // advisory
 
@@ -1115,7 +1115,7 @@ function ws_ingest_common_law_field_map_v2(): array {
         'legal_basis.doctrine_basis'              => [ 'ws_jx_comlaw_doctrine_basis',               'textarea' ],
         'legal_basis.recognition_status'          => [ 'ws_jx_comlaw_recognition_status',           'textarea' ],
         'legal_basis.disclosure_types'            => [ 'ws_jx_comlaw_disclosure_types',              'tax', 'ws_disclosure_type'    ],
-        'legal_basis.protected_class'             => [ 'ws_jx_comlaw_protected_classes',              'tax', 'ws_protected_class'    ],
+        'legal_basis.protected_classes'             => [ 'ws_jx_comlaw_protected_classes',              'tax', 'ws_protected_class'    ],
         'legal_basis.protected_class_details'     => [ 'ws_jx_comlaw_protected_class_details',      'textarea' ],
         'legal_basis.disclosure_targets'          => [ 'ws_jx_comlaw_disclosure_targets',           'tax', 'ws_disclosure_target' ],
         'legal_basis.disclosure_target_details'  => [ 'ws_jx_comlaw_disclosure_target_details',   'textarea' ],
@@ -1129,26 +1129,26 @@ function ws_ingest_common_law_field_map_v2(): array {
         'statute_of_limitations.trigger'           => [ 'ws_jx_comlaw_sol_trigger',             'text'     ],
         'statute_of_limitations.exhaustion_required' => [ 'ws_jx_comlaw_has_exhaustion_required',   'bool'     ],
         'statute_of_limitations.exhaustion_details'  => [ 'ws_jx_comlaw_exhaustion_details',    'textarea' ],
-        'statute_of_limitations.tolling_notes'     => [ 'ws_jx_comlaw_tolling_notes',           'textarea' ],
+        'statute_of_limitations.tolling_details'     => [ 'ws_jx_comlaw_tolling_details',           'textarea' ],
 
         // ── Enforcement ───────────────────────────────────────────────────
-        'enforcement.process_type'           => [ 'ws_jx_comlaw_process_types',          'tax', 'ws_process_type'         ],
-        'enforcement.adverse_action'         => [ 'ws_jx_comlaw_adverse_action_types',        'tax', 'ws_adverse_action_type' ],
-        'enforcement.adverse_action_type_details' => [ 'ws_jx_comlaw_adverse_action_type_details', 'textarea' ],
-        'enforcement.fee_shifting'           => [ 'ws_jx_comlaw_fee_shiftings',          'tax', 'ws_fee_shifting'         ],
+        'enforcement.process_types'           => [ 'ws_jx_comlaw_process_types',          'tax', 'ws_process_type'         ],
+        'enforcement.adverse_actions'         => [ 'ws_jx_comlaw_adverse_actions',        'tax', 'ws_adverse_action' ],
+        'enforcement.adverse_action_details' => [ 'ws_jx_comlaw_adverse_action_details', 'textarea' ],
+        'enforcement.fee_shiftings'           => [ 'ws_jx_comlaw_fee_shiftings',          'tax', 'ws_fee_shifting'         ],
         'enforcement.remedies'               => [ 'ws_jx_comlaw_remedies',              'tax', 'ws_remedy'             ],
-        'enforcement.remedies_details'       => [ 'ws_jx_comlaw_remedy_details',      'textarea' ],
+        'enforcement.remedy_details'       => [ 'ws_jx_comlaw_remedy_details',      'textarea' ],
         'enforcement.primary_agency'         => [ null, 'omit' ],
 
         // ── Burden of Proof ───────────────────────────────────────────────
         'burden_of_proof.statutory_preclusion'         => [ 'ws_jx_comlaw_statutory_preclusion',         'bool'     ],
         'burden_of_proof.statutory_preclusion_details' => [ 'ws_jx_comlaw_statutory_preclusion_details', 'textarea' ],
-        'burden_of_proof.employee_standard'            => [ 'ws_jx_comlaw_employee_standards',             'tax', 'ws_employee_standard' ],
+        'burden_of_proof.employee_standards'            => [ 'ws_jx_comlaw_employee_standards',             'tax', 'ws_employee_standard' ],
         'burden_of_proof.employee_standard_details'    => [ 'ws_jx_comlaw_employee_standard_details',     'textarea' ],
-        'burden_of_proof.employer_defense'             => [ 'ws_jx_comlaw_employer_defenses',              'tax', 'ws_employer_defense'  ],
+        'burden_of_proof.employer_defenses'             => [ 'ws_jx_comlaw_employer_defenses',              'tax', 'ws_employer_defense'  ],
         'burden_of_proof.employer_defense_details'     => [ 'ws_jx_comlaw_employer_defense_details',      'textarea' ],
         'burden_of_proof.rebuttable_presumption'       => [ 'ws_jx_comlaw_rebuttable_presumption',        'textarea' ],
-        'burden_of_proof.burden_of_proof_details'      => [ 'ws_jx_comlaw_burden_of_proof_details',       'textarea' ],
+        'burden_of_proof.burden_of_proof_details'      => [ 'ws_jx_comlaw_bop_details',       'textarea' ],
         'burden_of_proof.burden_of_proof_flag'         => [ 'ws_jx_comlaw_bop_flag',                      'text'     ],
 
         // ── Reward ────────────────────────────────────────────────────────
@@ -1181,8 +1181,8 @@ function ws_ingest_citation_field_map_v2(): array {
         'protected_class_details'    => [ 'ws_jx_citation_protected_class_details',  'textarea' ],
         'disclosure_targets'         => [ 'ws_jx_citation_disclosure_targets',       'tax', 'ws_disclosure_target' ],
         'disclosure_target_details' => [ 'ws_jx_citation_disclosure_target_details','textarea' ],
-        'adverse_actions'             => [ 'ws_jx_citation_adverse_action_types',           'tax', 'ws_adverse_action_type' ],
-        'adverse_action_details'     => [ 'ws_jx_citation_adverse_action_type_details',   'textarea' ],
+        'adverse_actions'             => [ 'ws_jx_citation_adverse_actions',           'tax', 'ws_adverse_action' ],
+        'adverse_action_details'     => [ 'ws_jx_citation_adverse_action_details',   'textarea' ],
         'process_types'               => [ 'ws_jx_citation_process_types',             'tax', 'ws_process_type'       ],
         'remedies'                   => [ 'ws_jx_citation_remedies',                 'tax', 'ws_remedy'           ],
         'remedy_details'           => [ 'ws_jx_citation_remedy_details',         'textarea' ],
@@ -1194,7 +1194,7 @@ function ws_ingest_citation_field_map_v2(): array {
 
         // ── Advisory / omitted ───────────────────────────────────────────
         '_review_notes'         => [ null, 'omit' ],
-        '_multi_taxonomy_notes' => [ null, 'omit' ],
+        '_multi_taxonomy_details' => [ null, 'omit' ],
         'links.is_official'     => [ null, 'omit' ],
         'links.url_source'      => [ null, 'omit' ],
         'quality'               => [ null, 'omit' ],
@@ -1225,8 +1225,8 @@ function ws_ingest_construction_field_map_v2(): array {
         'protected_class_details'    => [ 'ws_jx_construction_protected_class_details',   'textarea' ],
         'disclosure_targets'         => [ 'ws_jx_construction_disclosure_targets',        'tax', 'ws_disclosure_target' ],
         'disclosure_target_details' => [ 'ws_jx_construction_disclosure_target_details','textarea' ],
-        'adverse_actions'             => [ 'ws_jx_construction_adverse_action_types',            'tax', 'ws_adverse_action_type' ],
-        'adverse_action_details'     => [ 'ws_jx_construction_adverse_action_type_details',    'textarea' ],
+        'adverse_actions'             => [ 'ws_jx_construction_adverse_actions',            'tax', 'ws_adverse_action' ],
+        'adverse_action_details'     => [ 'ws_jx_construction_adverse_action_details',    'textarea' ],
         'process_types'               => [ 'ws_jx_construction_process_types',              'tax', 'ws_process_type'       ],
         'remedies'                   => [ 'ws_jx_construction_remedies',                  'tax', 'ws_remedy'           ],
         'remedy_details'           => [ 'ws_jx_construction_remedy_details',          'textarea' ],
@@ -1238,9 +1238,10 @@ function ws_ingest_construction_field_map_v2(): array {
 
         // ── Advisory / omitted ───────────────────────────────────────────
         '_review_notes'         => [ null, 'omit' ],
-        '_multi_taxonomy_notes' => [ null, 'omit' ],
+        '_multi_taxonomy_details' => [ null, 'omit' ],
         'links.is_official'     => [ null, 'omit' ],
         'links.url_source'      => [ null, 'omit' ],
+        'links.url_is_pdf'      => [ null, 'omit' ],
         'quality'               => [ null, 'omit' ],
         'effective_date'        => [ null, 'omit' ],
         'ruling_date'           => [ null, 'omit' ],
@@ -1269,10 +1270,10 @@ function ws_ingest_assist_org_field_map_v2(): array {
         'secure_contact_tool_other' => [ 'ws_aorg_secure_contact_tool_other',   'text'     ],
         'languages_additional'      => [ 'ws_aorg_additional_languages',        'text'     ],
         'whistleblower_scope'       => [ 'ws_aorg_whistleblower_scope',         'number'   ],
-        'whistleblower_note'        => [ 'ws_aorg_whistleblower_scope_details', 'textarea' ],
+        'whistleblower_scope_details'        => [ 'ws_aorg_whistleblower_scope_details', 'textarea' ],
         'income_eligibility_required' => [ 'ws_aorg_has_income_limit',          'bool'     ],
-        'income_eligibility_details'=> [ 'ws_aorg_income_limit_notes',          'textarea' ],
-        'eligibility_notes'         => [ 'ws_aorg_eligibility_notes',           'textarea' ],
+        'income_eligibility_details'=> [ 'ws_aorg_income_limit_details',          'textarea' ],
+        'eligibility_details'         => [ 'ws_aorg_eligibility_details',           'textarea' ],
         'anonymous_pre_consult_possible' => [ 'ws_aorg_accepts_anonymous',      'bool'     ],
         'has_attorneys'             => [ 'ws_aorg_licensed_attorneys',          'bool'     ],
         'protected_class_details'   => [ 'ws_aorg_protected_class_details',     'textarea' ],
@@ -2910,10 +2911,10 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
 
     // ── Step 6: Derived boolean companions ───────────────────────────────
 
-    // has_tolling_notes: 1 when tolling_notes is present
-    $tolling = ws_ingest_get_value( $record, 'statute_of_limitations.tolling_notes' );
+    // has_tolling_details: 1 when tolling_details is present
+    $tolling = ws_ingest_get_value( $record, 'statute_of_limitations.tolling_details' );
     if ( $tolling ) {
-        update_post_meta( $post_id, 'ws_jx_statute_has_tolling_notes', 1 );
+        update_post_meta( $post_id, 'ws_jx_statute_has_tolling_details', 1 );
     }
 
     // has_rebuttable_presumption: 1 when rebuttable_presumption is present
@@ -3211,9 +3212,9 @@ function ws_ingest_process_common_law_record( array $record, array $meta, array 
         }
     }
 
-    $tolling = ws_ingest_get_value( $record, 'statute_of_limitations.tolling_notes' );
+    $tolling = ws_ingest_get_value( $record, 'statute_of_limitations.tolling_details' );
     if ( $tolling ) {
-        update_post_meta( $post_id, 'ws_jx_comlaw_has_tolling_notes', 1 );
+        update_post_meta( $post_id, 'ws_jx_comlaw_has_tolling_details', 1 );
     }
 
     $rebuttable = ws_ingest_get_value( $record, 'burden_of_proof.rebuttable_presumption' );
@@ -3985,7 +3986,7 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
         'general_description',
         'homepage_url_status',
         'whistleblower_scope',
-        'whistleblower_note',
+        'whistleblower_scope_details',
     ];
     foreach ( $required_presence as $required_key ) {
         $raw_val = ws_ingest_get_value( $flat, $required_key );
@@ -4035,15 +4036,15 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
     }
 
     $income_required = (int) ( $tri_values['income_eligibility_required'] ?? 0 );
-    $eligibility_notes = trim( (string) ws_ingest_get_value( $flat, 'income_eligibility_details' ) );
-    if ( $income_required === 1 && $eligibility_notes === '' ) {
+    $eligibility_details = trim( (string) ws_ingest_get_value( $flat, 'income_eligibility_details' ) );
+    if ( $income_required === 1 && $eligibility_details === '' ) {
         $result['warnings'][] = "{$org_name}: income_eligibility_required is yes but income_eligibility_details is missing.";
     }
 
     $scope_value = (int) get_post_meta( $post_id, 'ws_aorg_whistleblower_scope', true );
-    $scope_note  = trim( (string) get_post_meta( $post_id, 'ws_aorg_whistleblower_note', true ) );
-    if ( $scope_value === 0 && $scope_note === '' ) {
-        $result['warnings'][] = "{$org_name}: whistleblower_scope is 0 but whistleblower_note is empty.";
+    $scope_details  = trim( (string) get_post_meta( $post_id, 'ws_aorg_whistleblower_scope_details', true ) );
+    if ( $scope_value === 0 && $scope_details === '' ) {
+        $result['warnings'][] = "{$org_name}: whistleblower_scope is 0 but whistleblower_scope_details is empty.";
     }
 
     // Current ingest model: US jurisdiction defaults to nationwide.
@@ -4073,7 +4074,7 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
             'post_content' => wp_kses_post( $final_content ),
         ] );
 
-        // Assist-org plain English workflow:
+        // Assist-org plain-english workflow:
         // duplicate assembled seed content into ws_plain_english_wysiwyg.
         update_post_meta( $post_id, 'ws_has_plain_english', 1 );
         update_post_meta( $post_id, 'ws_plain_english_wysiwyg', wp_kses_post( $final_content ) );

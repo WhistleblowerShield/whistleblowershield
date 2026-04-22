@@ -37,7 +37,7 @@ sector, services offered, cost model, and jurisdiction.
 **"What do I do next?"**
 Answered through agency filing procedures — grouped by procedure type
 (disclosure vs. retaliation), with deadline, identity policy, entry point,
-prerequisites, and a plain-language walkthrough.
+prerequisites, and a plain-english walkthrough.
 
 These two questions are answered in separate places by design. A person
 considering coming forward needs to know what organizations exist to support
@@ -54,7 +54,7 @@ U.S. territories (American Samoa, Guam, Northern Mariana Islands, Puerto
 Rico, U.S. Virgin Islands), and the federal level.
 
 **Content types per jurisdiction:**
-- Plain-language summary of protections
+- Plain-English summary of protections
 - Statutes and regulations (with enforcement details, remedies, burden of
   proof, statute of limitations)
 - Case law citations (with attach-flag curation for summary page highlights)
@@ -100,9 +100,9 @@ objects with explicit relationships, not as articles that mention related
 topics in passing. This makes the content queryable, filterable, and
 maintainable in ways that narrative content is not.
 
-**Plain language as a parallel layer.** Legal accuracy and plain language
+**Plain language as a parallel layer.** Legal accuracy and plain-english
 are not opposites. The platform maintains both: structured legal records
-with full technical detail, and plain-language overlays that translate
+with full technical detail, and plain-english overlays that translate
 that detail for non-expert users. Both layers are editorially managed
 and independently reviewable.
 

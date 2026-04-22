@@ -6,7 +6,7 @@
  *
  * PURPOSE
  * -------
- * This CPT stores the plain-English legal summary explaining
+ * This CPT stores the plain-english legal summary explaining
  * whistleblower protections within a specific U.S. jurisdiction.
  *
  * Each jurisdiction should have exactly one associated summary record.
@@ -27,7 +27,7 @@
  *
  * CONTENT GUIDELINES
  * ------------------
- * Summaries should be written in plain English and designed
+ * Summaries should be written in plain-english and designed
  * for readers who may not have legal training.
  *
  * The purpose is to provide:
@@ -102,7 +102,7 @@ function ws_register_cpt_jx_summary() {
         // ── Capabilities ──────────────────────────────────────────────────
 
         'capability_type' => 'post',
-        'rewrite'         => false,
+        'rewrite'         => [ 'slug' => 'jx-summary', 'with_front' => false ],
 
     ];
 

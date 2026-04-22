@@ -2,30 +2,29 @@
 /**
  * acf-plain-english-fields.php
  *
- * Centralized Plain Language ACF field group shared across content CPTs.
+ * Centralized Plain-English ACF field group shared across content CPTs.
  * Group key: group_plain_english_metadata  (menu_order 85)
  *
  * ATTACHED CPTs
  * -------------
- * jx-statute, jx-citation, jx-construction, ws-agency, ws-assist-org
+ * jx-statute, jx-common-law, jx-citation, jx-construction, ws-agency, ws-assist-org
  *
  * EXCLUDED CPTs (and why)
  * -----------------------
- * jx-summary      — IS the plain language document; carries its own review fields.
- * (none)
- * ws-legal-update — Changelog entries; no plain language companion use case.
+ * jx-summary      — IS the plain-english document; carries its own review fields.
+ * ws-legal-update — Changelog entries; no plain-english companion use case.
  * ws-reference    — Outbound links with metadata; no prose to simplify.
  * jurisdiction    — Structured metadata container; not explanatory prose.
  *
  * FIELDS
  * ------
- * ws_has_plain_english              Toggle — enables plain language content field.
- * ws_plain_english_wysiwyg          The plain language content (conditional on toggle).
- * ws_plain_english_reviewed         Toggle — marks content as human-reviewed.
- * ws_plain_english_reviewed_by User ID of reviewer. Stamped once on toggle-on; cleared on toggle-off.
- * ws_plain_english_reviewed_date  Local Y-m-d of first review. Same lifecycle.
- * ws_auto_plain_english_by          User ID of summarizer. Stamped once on first plain language save.
- * ws_auto_plain_english_date        Local Y-m-d of first plain language save.
+ * ws_has_plain_english                 Toggle — enables plain-english content field.
+ * ws_plain_english_wysiwyg             The plain-english content (conditional on toggle).
+ * ws_plain_english_reviewed            Toggle — marks content as human-reviewed.
+ * ws_auto_plain_english_reviewed_by    User ID of reviewer. Stamped once on toggle-on; cleared on toggle-off.
+ * ws_auto_plain_english_reviewed_date  Local Y-m-d of first review. Same lifecycle.
+ * ws_auto_plain_english_by             User ID of summarizer. Stamped once on first plain-english save.
+ * ws_auto_plain_english_date           Local Y-m-d of first plain-english save.
  *
  * INTEGRITY GUARDS (admin-hooks.php, priority 5)
  * -----------------------------------------------
@@ -42,11 +41,11 @@
  *
  * VERSION
  * -------
- * 3.4.0  Initial release. Centralizes plain language fields previously
+ * 3.4.0  Initial release. Centralizes plain-english fields previously
  *        duplicated across four individual CPT ACF files.
  * 3.5.0  Group key renamed: group_ws_plain_english_fields → group_plain_english_metadata.
  * 3.6.0  Stamp field meta keys prefixed with ws_auto_.
- * 3.16.0 ws-assist-org added to shared Plain Language workflow.
+ * 3.16.0 ws-assist-org added to shared Plain-English workflow.
  *        Semantic intent:
  *          - ws_plain_english_wysiwyg is the enriched public profile body
  *          - ws_plain_english_reviewed gates the "More about this organization" link
@@ -59,7 +58,7 @@ defined( 'ABSPATH' ) || exit;
 add_action( 'acf/init', 'ws_register_acf_plain_english_fields' );
 
 /**
- * Registers the shared Plain Language field group for all supported CPTs.
+ * Registers the shared Plain-English field group for all supported CPTs.
  */
 function ws_register_acf_plain_english_fields() {
 
@@ -70,7 +69,7 @@ function ws_register_acf_plain_english_fields() {
     acf_add_local_field_group( [
 
         'key'                   => 'group_plain_english_metadata',
-        'title'                 => 'Plain Language',
+        'title'                 => 'Plain-English',
         'menu_order'            => 85,
         'position'              => 'normal',
         'style'                 => 'default',
@@ -78,18 +77,18 @@ function ws_register_acf_plain_english_fields() {
         'instruction_placement' => 'label',
         'active'                => true,
 
-        // Attaches to All CPTs. Ignore on jx-summary, which carries its own plain language fields in group_jx_summary_metadata.
+        // Attaches to All CPTs.
         // See file header for rationale.
         'location' => [
-            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-summary'        ] ],
+           // [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-summary'        ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-statute'        ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-citation'       ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-construction' ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-common-law'     ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-agency'         ] ],
-            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-ag-procedure'   ] ],
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ag-procedure'   ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-assist-org'     ] ],
-            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-reference'      ] ],
+           // [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-reference'      ] ],
             
         ],
 
@@ -146,7 +145,7 @@ function ws_register_acf_plain_english_fields() {
                 ] ] ],
             ],
 
-            // ── Plain Language Reviewed ───────────────────────────────────
+            // ── Plain-English Reviewed ───────────────────────────────────
             //
             // Requires editor rank or above — enforced server-side by
             // ws_acf_plain_english_guards() at priority 5. Cleared on
@@ -174,7 +173,7 @@ function ws_register_acf_plain_english_fields() {
             [
                 'key'           => 'field_plain_english_reviewed_by',
                 'label'         => 'Summary Reviewed By',
-                'name'          => 'ws_plain_english_reviewed_by',
+                'name'          => 'ws_auto_plain_english_reviewed_by',
                 'type'          => 'user',
                 'instructions'  => 'Auto-toggled when Plain-English-Reviewed is manually enabled or disabled. Read only.',
                 'role'          => [ 'author', 'editor', 'administrator' ],
@@ -192,7 +191,7 @@ function ws_register_acf_plain_english_fields() {
             [
                 'key'          => 'field_plain_english_reviewed_date',
                 'label'        => 'Summary Reviewed Date',
-                'name'         => 'ws_plain_english_reviewed_date',
+                'name'         => 'ws_auto_plain_english_reviewed_date',
                 'type'         => 'text',
                 'instructions' => 'Auto-toggled when Plain-English-Reviewed is manually enabled or disabled. Read only.',
                 'readonly'     => 1,
@@ -239,10 +238,10 @@ function ws_register_acf_plain_english_fields() {
 } // end ws_register_acf_plain_english_fields
 
 
-// All integrity guards, stamp writes, and field locking for plain language
+// All integrity guards, stamp writes, and field locking for plain-english
 // fields are handled centrally in admin-hooks.php:
 //   - ws_acf_plain_english_guards()       — acf/save_post priority 5
 //   - ws_acf_stamp_plain_reviewed_by()    — acf/save_post priority 25
-//       writes: ws_plain_english_reviewed_by, ws_plain_english_reviewed_date
+//      stamps: ws_auto_plain_english_reviewed_by, ws_auto_plain_english_reviewed_date
 //   - ws_acf_stamp_summarized_fields()    — acf/save_post priority 25
 //   - ws_acf_lock_for_non_editors()       — acf/load_field by field name

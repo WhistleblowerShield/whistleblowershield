@@ -4,8 +4,8 @@
  *
  * Group key: group_stamp_metadata  (menu_order 90)
  *
- * Attaches to: jx-summary, jx-statute, jx-citation, jx-construction,
- *              ws-agency, ws-ag-procedure, ws-assist-org, ws-legal-update,
+ * Attaches to: jx-summary, jx-statute, jx-common-law, jx-citation, jx-construction,
+ *              ws-agency, ag-procedure, ws-assist-org, ws-legal-update,
  *              ws-reference
  *
  * Excluded: jurisdiction — seeder-generated; create authorship not meaningful.
@@ -14,7 +14,7 @@
  *
  * Fields (all auto-filled, read-only for non-administrators):
  *   ws_auto_last_edited_author  — user who last saved; admin-overridable
- *   ws_auto_date_created        — local Y-m-d; written once
+ *   ws_auto_created_date        — local Y-m-d; written once
  *   ws_auto_last_edited_date    — local Y-m-d; every save
  *   ws_auto_create_author       — WP user ID; written once
  *
@@ -31,7 +31,7 @@
  *         across individual CPT ACF files.
  * 3.5.0   Group key renamed: group_ws_stamp_fields → group_auto_stamp_metadata.
  * 3.6.0   Stamp meta keys prefixed with ws_auto_.
- * 3.9.0   ws-ag-procedure added to location rules.
+ * 3.9.0   ag-procedure added to location rules.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -63,11 +63,11 @@ function ws_register_acf_stamp_fields() {
         'location' => [
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-summary'        ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-statute'         ] ],
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-common-law'      ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-citation'        ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-construction'  ] ],
-            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-common-law'      ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-agency'          ] ],
-            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-ag-procedure'    ] ],
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ag-procedure'    ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-assist-org'      ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-legal-update'    ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-reference'       ] ],
@@ -81,7 +81,7 @@ function ws_register_acf_stamp_fields() {
             // content tabs but before acf-major-edit.php (menu_order 99).
 
             [
-                'key'   => 'field_auto_stamp_authorship_tab',
+                'key'   => 'field_stamp_authorship_tab',
                 'label' => 'Authorship & Review',
                 'type'  => 'tab',
             ],
@@ -164,6 +164,6 @@ function ws_register_acf_stamp_fields() {
 
 
 // Field locking and stamp writes are handled centrally in admin-hooks.php.
-// ws_acf_lock_for_non_admins() applies to: ws_auto_date_created, ws_auto_last_edited_date,
+// ws_acf_lock_for_non_admins() applies to: ws_auto_created_date, ws_auto_last_edited_date,
 // ws_auto_last_edited_author, ws_auto_create_author (registered by field name, applies
 // to all CPTs carrying these field names — no per-file registration needed).

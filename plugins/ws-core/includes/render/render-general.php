@@ -130,7 +130,7 @@ function ws_render_footer( $data ) {
  *     @type string $summary          Sanitized wysiwyg HTML summary (wp_kses_post applied).
  *     @type int    $source_post_id   Post ID of the source jx-* record, or 0.
  *     @type string $source_post_type Post type slug of the source record, or empty string.
- *     @type array  $record           Stamp fields — see ws_build_record_array().
+ *     @type array  $record           Stamp fields — see ws_build_author_array().
  * }
  * @return string  HTML updates list block.
  */

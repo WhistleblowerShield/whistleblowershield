@@ -24,6 +24,9 @@
  *   ws_legal_update_law_name              Law / Statute Name (text, optional)
  *   ws_legal_update_summary_wysiwyg       Summary (wysiwyg, optional)
  *   ws_legal_update_effective_date        Effective Date (date_picker, optional)
+ *   ws_legal_update_parent_post_id        Parent Post ID (post meta, int, required) — links to the source post that triggered this update record; set programmatically on save.
+ *   ws_legal_update_parent_post_type      Parent Post Type (post meta, string, required) — the CPT of the source post; set programmatically on save.
+ * 
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------
@@ -31,7 +34,7 @@
  *
  * PLAIN ENGLISH
  * -------------
- * This record does not participate in a separate plain-English workflow.
+ * This record does not participate in a separate plain-english workflow.
  *
  * USE NOTES
  * ---------
@@ -180,24 +183,44 @@ function ws_register_acf_legal_update() {
                 'return_format' => 'value',
             ],
 
+            // ── Parent Post ID ────────────────────────────────────────
+
+            [
+                'key'          => 'field_legal_update_parent_post_id',
+                'label'        => 'Parent Post ID',
+                'name'         => 'ws_legal_update_parent_post_id',
+                'type'         => 'text',
+                'instructions' => 'The ID of the parent post to which this update relates.',
+            ],
+
+            // ── Law / Statute Name ────────────────────────────────────────
+
+            [
+                'key'          => 'field_legal_update_parent_post_type',
+                'label'        => 'Parent Post Type',
+                'name'         => 'ws_legal_update_parent_post_type',
+                'type'         => 'text',
+                'instructions' => 'The type of the parent post to which this update relates.',
+            ],
+
             // ── Law / Statute Name ────────────────────────────────────────
 
             [
                 'key'          => 'field_legal_update_law_name',
-                'label'        => 'Law / Statute Name',
+                'label'        => 'Law Name Updated',
                 'name'         => 'ws_legal_update_law_name',
                 'type'         => 'text',
-                'instructions' => 'The name of the law or statute affected by this update.',
+                'instructions' => 'The name of the law affected by this update.',
             ],
 
             // ── Summary ───────────────────────────────────────────────────
 
             [
                 'key'          => 'field_legal_update_summary_wysiwyg',
-                'label'        => 'Summary',
+                'label'        => 'Plain-English Summary',
                 'name'         => 'ws_legal_update_summary_wysiwyg',
                 'type'         => 'wysiwyg',
-                'instructions' => 'Brief summary of the legal change and its significance for whistleblowers.',
+                'instructions' => 'Brief plain-english summary of the legal change and its significance for whistleblowers.',
                 'tabs'         => 'all',
                 'toolbar'      => 'basic',
                 'media_upload' => 0,

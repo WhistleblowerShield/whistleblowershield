@@ -18,23 +18,20 @@
  *   ws_jx_summary_wysiwyg                   Jurisdiction Summary (wysiwyg, required)
  *   ws_jx_summary_limitations               Limitations & Ramifications [label|description] (repeater, optional)
  *   ws_jx_summary_sources                   Sources & Citations (textarea, optional)
- *   ws_jx_summary_notes                     Internal Notes (textarea, optional)
+ *   _ws_jx_summary_internal_notes           Internal Notes (textarea, optional)
  *
  * Summary Review tab:
  *   ws_jx_summary_plain_english_reviewed    Plain English Reviewed (true_false, optional)
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------
- *   - group_plain_english_metadata (acf-plain-english-fields.php, menu_order 85)
  *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
  *   - group_source_verify_metadata (acf-source-verify.php)
  *   - group_major_edit_metadata (acf-major-edit.php, menu_order 99)
  *
  * PLAIN ENGLISH
  * -------------
- * jx-summary has its own "plain-english" summary_wysiwyg. Plain-English fields
- * (group_plain_english_metadata) still attach here — Use Plain-English fields
- * normally and put placeholder content in the plain_english_summary_wysiwyg.
+ * jx-summary has its own "plain-english" summary_wysiwyg.
  *
  * @package    WhistleblowerShield
  * @since      2.1.0
@@ -138,7 +135,7 @@ function ws_register_acf_jx_summary() {
             [
                 'key'          => 'field_jx_summary_internal_notes',
                 'label'        => 'Internal Notes',
-                'name'         => 'ws_jx_summary_internal_notes',
+                'name'         => '_ws_jx_summary_internal_notes',
                 'type'         => 'textarea',
                 'instructions' => 'Internal editorial notes only. Not displayed publicly.',
                 'rows'         => 4,
@@ -146,12 +143,12 @@ function ws_register_acf_jx_summary() {
 
             // ── Tab: Authorship & Review ──────────────────────────────────
             //
-            // jx-summary is the plain language document — it does not use
+            // jx-summary is the plain-english document — it does not use
             // the has_plain_english / plain_english_reviewed pathway used
             // by other CPTs. Instead it carries its own reviewed fields here
             // with semantics appropriate to summary review (not translation).
             //
-            // Stamp fields (last_edited_author, date_created, last_edited,
+            // Stamp fields (last_edited_author, created_date, last_edited,
             // create_author) are registered centrally in acf-stamp-fields.php
             // and appear via that group's Authorship & Review tab (menu_order 90).
 
@@ -165,7 +162,7 @@ function ws_register_acf_jx_summary() {
                 'label'         => 'Plain English Reviewed',
                 'name'          => 'ws_jx_summary_plain_english_reviewed',
                 'type'          => 'true_false',
-                'instructions'  => 'Check when a human has reviewed and approved this plain-language summary.',
+                'instructions'  => 'Check when a human has reviewed and approved this plain-english summary.',
                 'ui'            => 1,
                 'ui_on_text'    => 'Reviewed',
                 'ui_off_text'   => 'Pending',

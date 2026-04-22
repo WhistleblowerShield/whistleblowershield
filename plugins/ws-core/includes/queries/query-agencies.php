@@ -13,13 +13,13 @@
  * FUNCTIONS
  * ---------
  *   ws_get_agency_procedures( $agency_id )
- *       Returns all published ws-ag-procedure records belonging to a given
+ *       Returns all published ag-procedure records belonging to a given
  *       agency, ordered alphabetically by title. Result is cached in a
  *       per-agency transient (24 hours). Invalidated on procedure save.
  *
  * LOAD ORDER
  * ----------
- * Must be loaded after query-shared.php (depends on ws_build_record_array).
+ * Must be loaded after query-shared.php (depends on ws_build_author_array).
  * Loaded fourth in the query file array: helpers → shared → jurisdiction → agencies.
  *
  * DATA CONTRACT
@@ -35,9 +35,9 @@
  *
  * CACHING
  * -------
- * Cache key:   ws_agency_procedures_{$agency_id}
+ * Cache key:   ws_agency_procedures_{$agency_id}_
  * TTL:         DAY_IN_SECONDS (24 hours)
- * Invalidated: save_post_ws-ag-procedure hook (clears the parent agency's key)
+ * Invalidated: save_post_ag-procedure hook (clears the parent agency's key)
  *
  * @package    WhistleblowerShield
  * @since      3.9.0
@@ -49,14 +49,14 @@
  * VERSION HISTORY
  * ---------------
  * 3.9.0  Initial. ws_get_agency_procedures() + per-agency transient cache.
- *        Phase 2 of ws-ag-procedure feature build.
+ *        Phase 2 of ag-procedure feature build.
  * 3.10.0 ws_proc_type get_post_meta() reads replaced with wp_get_object_terms()
  *        on ws_procedure_type in both ws_build_agency_procedure_row() and
- *        ws_get_procedures_for_statute(). Returns first term slug as plain
+ *        ws_get_procedures_for_parent(). Returns first term slug as plain
  *        string; empty string when no term assigned.
  * 3.10.1 Query hardening + field coverage sync:
- *        - procedure rows now expose statute_ids (normalized)
- *        - procedure rows now expose stat_override
+ *        - procedure rows now expose parent_ids (normalized)
+ *        - procedure rows now expose parent_override
  *        - relationship ID normalization aligned with query-jurisdiction helpers
  */
 
@@ -66,7 +66,7 @@ defined( 'ABSPATH' ) || exit;
 // ════════════════════════════════════════════════════════════════════════════
 // ws_get_agency_procedures( $agency_id )
 //
-// Returns all published ws-ag-procedure records for a given agency,
+// Returns all published ag-procedure records for a given agency,
 // ordered alphabetically by title. Grouped by type (disclosure / retaliation
 // / both) in the render layer — this function returns the flat list.
 //
@@ -89,11 +89,11 @@ defined( 'ABSPATH' ) || exit;
 //   deadline_days    int     Statutory deadline in calendar days. 0 = none/unknown.
 //   clock_start      string  'adverse_action' | 'knowledge' | 'last_act' | 'varies' | ''
 //   has_prereqs      bool    True if prerequisites must be satisfied before filing.
-//   prereq_note      string  Description of prerequisite conditions (when has_prereqs).
+//   prereq_details      string  Description of prerequisite conditions (when has_prereqs).
 //   walkthrough      string  Raw HTML from WYSIWYG field. Sanitize with wp_kses_post() before output.
-//   exclusivity_note string  Mutual exclusivity warning text. Plain text.
+//   exclusivity_details string  Mutual exclusivity warning text. Plain text.
 //   last_reviewed    string  Y-m-d date. Empty if not yet verified.
-//   record           array   ws_build_record_array() sub-array (authorship stamps).
+//   record           array   ws_build_author_array() sub-array (authorship stamps).
 //
 /**
  * Returns all published procedures for a single agency.
@@ -108,7 +108,7 @@ function ws_get_agency_procedures( $agency_id ) {
         return [];
     }
 
-    $cache_key = 'ws_agency_procedures_' . $agency_id;
+    $cache_key = 'ws_agency_procedures_' . $agency_id . '_';
     $cached    = get_transient( $cache_key );
 
     if ( false !== $cached ) {
@@ -116,7 +116,7 @@ function ws_get_agency_procedures( $agency_id ) {
     }
 
     $q = new WP_Query( [
-        'post_type'      => 'ws-ag-procedure',
+        'post_type'      => 'ag-procedure',
         'post_status'    => 'publish',
         'posts_per_page' => -1,
         'orderby'        => 'title',
@@ -146,7 +146,7 @@ function ws_get_agency_procedures( $agency_id ) {
 }
 
 /**
- * Returns one published ws-ag-procedure row for single-procedure rendering.
+ * Returns one published ag-procedure row for single-procedure rendering.
  *
  * @param  int   $procedure_id Procedure post ID.
  * @return array               Procedure row or [] when not found/not published.
@@ -162,14 +162,14 @@ function ws_get_agency_procedure( $procedure_id ) {
  * @return array      Procedure row, or [] when invalid/not published.
  */
 function ws_build_agency_procedure_row( $pid ) {
-    if ( ! $pid || get_post_type( $pid ) !== 'ws-ag-procedure' || get_post_status( $pid ) !== 'publish' ) {
+    if ( ! $pid || get_post_type( $pid ) !== 'ag-procedure' || get_post_status( $pid ) !== 'publish' ) {
         return [];
     }
 
     $agency_id      = (int) get_post_meta( $pid, 'ws_ag_procedure_agency_id', true );
     $agency_url     = $agency_id ? get_permalink( $agency_id ) : '';
     $agency_name    = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_official_name', true ) : '';
-    $agency_acronym = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_acronym', true ) : '';
+    $agency_common = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_common_name', true ) : '';
     $agency_mission = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_mission', true ) : '';
     $agency_title   = $agency_id ? get_the_title( $agency_id ) : '';
 
@@ -212,15 +212,15 @@ function ws_build_agency_procedure_row( $pid ) {
         'deadline_days'    => (int)  get_post_meta( $pid, 'ws_ag_procedure_deadline_days',  true ),
         'clock_start'      => get_post_meta( $pid, 'ws_ag_procedure_deadline_clock_start',  true ),
         'has_prereqs'      => (bool) get_post_meta( $pid, 'ws_ag_procedure_has_prerequisites',  true ),
-        'prereq_note'      => get_post_meta( $pid, 'ws_ag_procedure_prerequisites_details',    true ),
+        'prereq_details'      => get_post_meta( $pid, 'ws_ag_procedure_prerequisites_details',    true ),
         // walkthrough is a WYSIWYG field — stored as raw HTML.
         // Sanitize with wp_kses_post() before output; never echo raw.
         'walkthrough'      => get_post_meta( $pid, 'ws_ag_procedure_walkthrough_wysiwyg',           true ),
-        'exclusivity_note' => get_post_meta( $pid, 'ws_ag_procedure_exclusivity_details',      true ),
+        'exclusivity_details' => get_post_meta( $pid, 'ws_ag_procedure_exclusivity_details',      true ),
         'parent_override'  => (bool) get_post_meta( $pid, 'ws_ag_procedure_parent_override',  true ),
         'last_reviewed'    => get_post_meta( $pid, 'ws_ag_procedure_last_reviewed',         true ),
         // Standard authorship stamp sub-array (created_by, edited_by, dates).
-        'record'           => ws_build_record_array( $pid ),
+        'author'           => ws_build_author_array( $pid ),
     ];
 }
 
@@ -228,7 +228,7 @@ function ws_build_agency_procedure_row( $pid ) {
 // ════════════════════════════════════════════════════════════════════════════
 // ws_get_procedures_for_record( $record_id )
 //
-// Returns all published ws-ag-procedure records that explicitly link to the
+// Returns all published ag-procedure records that explicitly link to the
 // given jx-statute or jx-common-law post. Used by the statute (common law)
 // section renderer to surface "Filing Procedures Under This Statute"
 // (or Common Law) on jurisdiction pages.
@@ -246,14 +246,14 @@ function ws_build_agency_procedure_row( $pid ) {
 //   url            string  Permalink.
 //   type           string  'disclosure' | 'retaliation' | 'both'
 //   agency_id      int     Parent agency post ID.
-//   agency_name    string  Parent agency official_name, fallback to post title.
+//   agency_name    string  Parent agency official name, fallback to post title.
 //   agency_url     string  Parent agency permalink (empty string if not found).
-//   agency_acronym string  Parent agency acronym (empty string if not found).
+//   agency_common  string  Parent agency common name (empty string if not found).
 //   agency_mission string  Parent agency mission statement (empty string if not found).
 //   deadline_days  int     Statutory deadline in calendar days. 0 = none/unknown.
 //   intake_only    bool    True if agency receives and refers only.
 //
-// Result cached per record (ws_record_procedures_{id}, 24h).
+// Result cached per record (ws_record_procedures_{id}_, 24h).
 // Invalidated by the acf/save_post stash hooks below.
 //
 /* Returns all published procedures linked to a record.
@@ -269,7 +269,7 @@ function ws_get_procedures_for_record( $record_id ) {
         return [];
     }
 
-    $cache_key = 'ws_record_procedures_' . $record_id;
+    $cache_key = 'ws_record_procedures_' . $record_id . '_';
     $cached    = get_transient( $cache_key );
 
     if ( false !== $cached ) {
@@ -277,7 +277,7 @@ function ws_get_procedures_for_record( $record_id ) {
     }
 
     $q = new WP_Query( [
-        'post_type'      => 'ws-ag-procedure',
+        'post_type'      => 'ag-procedure',
         'post_status'    => 'publish',
         'posts_per_page' => -1,
         'orderby'        => 'title',
@@ -316,7 +316,7 @@ function ws_get_procedures_for_record( $record_id ) {
         $pid       = $post->ID;
         $agency_id    = (int) get_post_meta( $pid, 'ws_ag_procedure_agency_id', true );
         $agency_name     = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_official_name', true ) : '';
-        $agency_acronym  = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_acronym', true ) : '';
+        $agency_common  = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_common_name', true ) : '';
         $agency_mission  = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_mission', true ) : '';
         $agency_title = $agency_id ? get_the_title( $agency_id ) : '';
 
@@ -331,10 +331,13 @@ function ws_get_procedures_for_record( $record_id ) {
             'type'          => $pt_slug,
             'agency_id'     => $agency_id,
             'agency_name'   => $agency_name !== '' ? $agency_name : $agency_title,
+            'agency_common' => $agency_common,
+            'agency_mission' => $agency_mission,
             'agency_url'    => $agency_id ? (string) get_permalink( $agency_id ) : '',
             'employment_sectors' => ws_q_normalize_id_list( get_field( 'ws_ag_procedure_employment_sectors', $pid ) ),
             'statute_ids'   => ws_q_normalize_id_list( get_post_meta( $pid, 'ws_ag_procedure_statute_ids', true ) ),
             'comlaw_ids'    => ws_q_normalize_id_list( get_post_meta( $pid, 'ws_ag_procedure_comlaw_ids', true ) ),
+            'parent_ids'    => ws_q_normalize_id_list( get_post_meta( $pid, '_ws_ag_procedure_parent_ids', true ) ),
             'deadline_days' => (int)  get_post_meta( $pid, 'ws_ag_procedure_deadline_days', true ),
             'intake_only'   => (bool) get_post_meta( $pid, 'ws_ag_procedure_intake_only',   true ),
         ];
@@ -394,7 +397,7 @@ function ws_get_agency_data( $jx_term_id ) {
             'code'                  => get_post_meta( $aid, 'ws_agency_code', true ),
             'name'                  => get_post_meta( $aid, 'ws_agency_official_name', true ),
             'logo'                  => get_field( 'ws_agency_logo', $aid ),
-            'acronym'               => get_post_meta( $aid, 'ws_agency_acronym',           true ),
+            'common'               => get_post_meta( $aid, 'ws_agency_common_name',           true ),
             'mission'               => get_post_meta( $aid, 'ws_agency_mission',           true ),
             'disclosure_type'       => ws_q_normalize_id_list( get_field( 'ws_agency_disclosure_types', $aid ) ),
             'disclosure_targets'    => ws_q_normalize_id_list( get_field( 'ws_agency_disclosure_targets', $aid ) ),
@@ -404,7 +407,7 @@ function ws_get_agency_data( $jx_term_id ) {
             'website_url'           => get_post_meta( $aid, 'ws_agency_url', true ),
             'reporting_url'         => get_post_meta( $aid, 'ws_agency_reporting_url', true ),
             'phone'                 => get_post_meta( $aid, 'ws_agency_phone', true ),
-            'confidentiality_notes' => get_post_meta( $aid, 'ws_agency_confidentiality_details', true ),
+            'confidentiality_details' => get_post_meta( $aid, 'ws_agency_confidentiality_details', true ),
             'has_anonymous'         => (bool) get_post_meta( $aid, 'ws_agency_accepts_anonymous', true ),
             'has_reward'            => (bool) get_post_meta( $aid, 'ws_agency_has_reward_program', true ),
             'reward_details'        => get_post_meta( $aid, 'ws_agency_reward_program_details', true ),
@@ -413,7 +416,7 @@ function ws_get_agency_data( $jx_term_id ) {
             'last_reviewed'         => get_post_meta( $aid, 'ws_agency_last_reviewed', true ),
             'plain'                 => ws_build_plain_english_array( $aid ),
             'verify'                => ws_build_source_verify_array( $aid ),
-            'record'                => ws_build_record_array( $aid ),
+            'author'                => ws_build_author_array( $aid ),
         ];
     }
 
@@ -424,11 +427,11 @@ function ws_get_agency_data( $jx_term_id ) {
 // ════════════════════════════════════════════════════════════════════════════
 // Cache Invalidation — Agency Procedures
 //
-// Fires on save_post_ws-ag-procedure. Reads ws_ag_procedure_agency_id from the saved
+// Fires on save_post_ag-procedure. Reads ws_ag_procedure_agency_id from the saved
 // procedure and deletes the per-agency transient so the next page load
 // reflects updated procedure data.
 //
-// Uses save_post_ws-ag-procedure (not acf/save_post) to cover programmatic
+// Uses save_post_ag-procedure (not acf/save_post) to cover programmatic
 // saves as well as ACF edit-screen saves.
 // ════════════════════════════════════════════════════════════════════════════
 
@@ -449,13 +452,13 @@ function ws_ag_procedure_agency_stash( $post_id, $agency_id = null ) {
 
 // Capture old agency linkage before post/meta updates are written.
 add_action( 'pre_post_update', function( $post_id ) {
-    if ( get_post_type( $post_id ) !== 'ws-ag-procedure' ) {
+    if ( get_post_type( $post_id ) !== 'ag-procedure' ) {
         return;
     }
     ws_ag_procedure_agency_stash( $post_id, (int) get_post_meta( $post_id, 'ws_ag_procedure_agency_id', true ) );
 } );
 
-add_action( 'save_post_ws-ag-procedure', function( $post_id ) {
+add_action( 'save_post_ag-procedure', function( $post_id ) {
 
     // Ignore autosaves/revisions and new inserts with no previous state.
     if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
@@ -478,37 +481,37 @@ add_action( 'save_post_ws-ag-procedure', function( $post_id ) {
 
 
 // ════════════════════════════════════════════════════════════════════════════
-// Cache Invalidation — Statute Procedures (stash + diff pattern)
+// Cache Invalidation — Parent Procedures (stash + diff pattern)
 //
 // When a procedure is saved via the ACF edit screen, the set of linked
-// statutes may change. Both the old statutes (removed links) and the new
-// statutes (added links) need their transients cleared.
+// parents may change. Both the old parents (removed links) and the new
+// parents (added links) need their transients cleared.
 //
 // Requires a two-priority hook pattern because ACF writes field values at
 // acf/save_post priority 10 — the stash captures pre-write values at
 // priority 5, and the diff runs at priority 20 after the new values are
 // written.
 //
-// STASH:  priority 5  — read ws_ag_procedure_statute_ids from DB (old values).
-// DIFF:   priority 20 — read ws_ag_procedure_statute_ids from DB (new values),
+// STASH:  priority 5  — read _ws_ag_procedure_parent_ids from DB (old values).
+// DIFF:   priority 20 — read _ws_ag_procedure_parent_ids from DB (new values),
 //                       compute union of old+new, delete all affected keys.
 //
-// On delete: before_delete_post captures statute IDs while the post still
+// On delete: before_delete_post captures parent IDs while the post still
 // exists; deleted_post reads the stash and clears those transients.
 // ════════════════════════════════════════════════════════════════════════════
 
 
 /**
- * Stash helper for ws_ag_procedure_statute_ids before/after an ACF edit-screen save.
+ * Stash helper for _ws_ag_procedure_parent_ids before/after an ACF edit-screen save.
  *
  * Pass $ids to write; omit to read. Static storage persists for the
  * current PHP request only — values do not survive the request boundary.
  *
  * @param  int        $post_id  Procedure post ID.
- * @param  array|null $ids      Array of statute IDs to stash, or null to read.
+ * @param  array|null $ids      Array of parent IDs to stash, or null to read.
  * @return array                The stashed IDs (empty array if nothing stashed).
  */
-function ws_ag_procedure_statute_save_stash( $post_id, $ids = null ) {
+function ws_ag_procedure_parent_save_stash( $post_id, $ids = null ) {
     static $stash = [];
     if ( $ids !== null ) {
         $stash[ $post_id ] = $ids;
@@ -517,13 +520,13 @@ function ws_ag_procedure_statute_save_stash( $post_id, $ids = null ) {
 }
 
 /**
- * Stash helper for statute IDs captured before a procedure post is deleted.
+ * Stash helper for parent IDs captured before a procedure post is deleted.
  *
  * @param  int        $post_id  Procedure post ID.
- * @param  array|null $ids      Array of statute IDs to stash, or null to read.
+ * @param  array|null $ids      Array of parent IDs to stash, or null to read.
  * @return array                The stashed IDs (empty array if nothing stashed).
  */
-function ws_ag_procedure_statute_delete_stash( $post_id, $ids = null ) {
+function ws_ag_procedure_parent_delete_stash( $post_id, $ids = null ) {
     static $stash = [];
     if ( $ids !== null ) {
         $stash[ $post_id ] = $ids;
@@ -532,78 +535,78 @@ function ws_ag_procedure_statute_delete_stash( $post_id, $ids = null ) {
 }
 
 
-// Priority 5: capture statute IDs currently in the DB before ACF overwrites them.
+// Priority 5: capture parent IDs currently in the DB before ACF overwrites them.
 add_action( 'acf/save_post', function( $post_id ) {
 
-    if ( get_post_type( $post_id ) !== 'ws-ag-procedure' ) {
+    if ( get_post_type( $post_id ) !== 'ag-procedure' ) {
         return;
     }
 
-    $raw = get_post_meta( $post_id, 'ws_ag_procedure_statute_ids', true );
+    $raw = get_post_meta( $post_id, '_ws_ag_procedure_parent_ids', true );
     $ids = is_array( $raw ) ? array_map( 'intval', $raw ) : [];
 
-    ws_ag_procedure_statute_save_stash( $post_id, $ids );
+    ws_ag_procedure_parent_save_stash( $post_id, $ids );
 
 }, 5 );
 
 
-// Priority 20: diff old vs new statute IDs and delete affected transients.
+// Priority 20: diff old vs new parent IDs and delete affected transients.
 add_action( 'acf/save_post', function( $post_id ) {
 
-    if ( get_post_type( $post_id ) !== 'ws-ag-procedure' ) {
+    if ( get_post_type( $post_id ) !== 'ag-procedure' ) {
         return;
     }
 
-    $old_ids = ws_ag_procedure_statute_save_stash( $post_id );
+    $old_ids = ws_ag_procedure_parent_save_stash( $post_id );
 
-    $raw     = get_post_meta( $post_id, 'ws_ag_procedure_statute_ids', true );
+    $raw     = get_post_meta( $post_id, '_ws_ag_procedure_parent_ids', true );
     $new_ids = is_array( $raw ) ? array_map( 'intval', $raw ) : [];
 
-    // Clear transients for every statute that was linked before OR after this save.
+    // Clear transients for every parent that was linked before OR after this save.
     // Covers removed links (old \ new) and added links (new \ old) in one pass.
     $affected = array_unique( array_merge( $old_ids, $new_ids ) );
 
-    foreach ( $affected as $statute_id ) {
-        if ( $statute_id ) {
-            delete_transient( 'ws_statute_procedures_' . $statute_id );
+    foreach ( $affected as $parent_id ) {
+        if ( $parent_id ) {
+            delete_transient( 'ws_parent_procedures_' . $parent_id . '_');
         }
     }
 
 }, 20 );
 
 
-// Before delete: stash statute IDs while the post still exists.
+// Before delete: stash parent IDs while the post still exists.
 add_action( 'before_delete_post', function( $post_id ) {
 
-    if ( get_post_type( $post_id ) !== 'ws-ag-procedure' ) {
+    if ( get_post_type( $post_id ) !== 'ag-procedure' ) {
         return;
     }
 
-    $raw = get_post_meta( $post_id, 'ws_ag_procedure_statute_ids', true );
+    $raw = get_post_meta( $post_id, '_ws_ag_procedure_parent_ids', true );
     $ids = is_array( $raw ) ? array_map( 'intval', $raw ) : [];
 
-    ws_ag_procedure_statute_delete_stash( $post_id, $ids );
+    ws_ag_procedure_parent_delete_stash( $post_id, $ids );
     ws_ag_procedure_agency_stash( $post_id, (int) get_post_meta( $post_id, 'ws_ag_procedure_agency_id', true ) );
 
 } );
 
 
-// After delete: clear statute transients and agency transient.
+// After delete: clear parent transients and agency transient.
 add_action( 'deleted_post', function( $post_id ) {
 
     // get_post_type() is unreliable after deletion — gate on stash having data.
-    // If neither stash has data this post was not a ws-ag-procedure.
-    $statute_ids = ws_ag_procedure_statute_delete_stash( $post_id );
+    // If neither stash has data this post was not a ag-procedure.
+    $parent_ids = ws_ag_procedure_parent_delete_stash( $post_id );
 
-    foreach ( $statute_ids as $statute_id ) {
-        if ( $statute_id ) {
-            delete_transient( 'ws_statute_procedures_' . $statute_id );
+    foreach ( $parent_ids as $parent_id ) {
+        if ( $parent_id ) {
+            delete_transient( 'ws_parent_procedures_' . $parent_id . '_');
         }
     }
 
     $agency_id = ws_ag_procedure_agency_stash( $post_id );
     if ( $agency_id ) {
-        delete_transient( 'ws_agency_procedures_' . $agency_id );
+        delete_transient( 'ws_agency_procedures_' . $agency_id . '_');
     }
 
 } );

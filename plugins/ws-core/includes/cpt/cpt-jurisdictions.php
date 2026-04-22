@@ -45,14 +45,13 @@ function ws_register_cpt_jurisdiction() {
         // ── Visibility ────────────────────────────────────────────────────
         // Public CPT — jurisdiction pages are the primary front-end output.
 
-        'public'              => false,
+        'public'              => true,
         'show_ui'             => true,
         'show_in_menu'        => true,
-        'publicly_queryable'  => false,
-        'exclude_from_search' => true,
+        'publicly_queryable'  => true,
+        'exclude_from_search' => false,
         'has_archive'         => 'jurisdictions', // Creates whistleblowershield.org/jurisdictions/
         'query_var'           => true,
-        'rewrite'             => false,
 
         // ── Editor ────────────────────────────────────────────────────────
         // Title: jurisdiction name. Editor: optional notes — primary content

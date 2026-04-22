@@ -54,11 +54,11 @@ function ws_register_cpt_assist_org() {
         // Public directory — each organization has its own findable page
         // and the archive serves as the full directory listing.
 
-        'public'              => false,
+        'public'              => true,
         'show_ui'             => true,
         'show_in_menu'        => true,
-        'publicly_queryable'  => false,
-        'exclude_from_search' => true,
+        'publicly_queryable'  => true,
+        'exclude_from_search' => false,
         'has_archive'         => 'assistance-organizations',
         'query_var'           => true,
 
@@ -84,11 +84,8 @@ function ws_register_cpt_assist_org() {
 
         // ── Rewrite ───────────────────────────────────────────────────────
 
-        'rewrite' => [
-            'slug'       => 'assistance-organization',
-            'with_front' => false,
-        ],
-
+        'rewrite'       => [ 'slug' => 'ws-assist-org', 'with_front' => false ],
+        
         // ── Taxonomies ────────────────────────────────────────────────────
 
         'taxonomies' => [

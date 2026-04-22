@@ -31,7 +31,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.3.0
- * @version   3.10.0
+ * @version    3.10.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -75,7 +75,7 @@ function ws_register_cpt_ws_reference() {
         'exclude_from_search' => true,
         'has_archive'         => false,
         'query_var'           => true,
-        'rewrite'             => false,
+        'rewrite'             => [ 'slug' => 'ws-reference', 'with_front' => false ],
 
         // ── Editor ────────────────────────────────────────────────────────
 

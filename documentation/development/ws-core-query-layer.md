@@ -52,7 +52,7 @@ Returns `WP_Term` or `false`.
 
 ### `ws_court_lookup( $court_key )`
 Looks up a court entry from the federal or state court matrix. Checks
-`$ws_court_matrix` (federal) first, then `$ws_state_court_matrix` (state).
+`$ws_court_matrix` (federal) first, then `$_ws_state_court_matrix` (state).
 Returns the court entry array or `null` if not found. On the frontend both
 globals are empty (court matrices are admin-only) — callers must handle
 `null` gracefully. The query layer falls back to the raw court key when
@@ -65,14 +65,14 @@ globals are empty (court matrices are admin-only) — callers must handle
 Shared sub-array builders used by every dataset function. These produce
 the three standard sub-arrays present in all dataset returns.
 
-### `ws_build_record_array( $post_id )`
-Returns the `record` sub-array:
+### `ws_build_author_array( $post_id )`
+Returns the `author` sub-array:
 
 ```php
 [
     'created_by'      => int,    // ws_auto_create_author
     'created_by_name' => string, // display name resolved from created_by
-    'created_date'    => string, // Y-m-d local (ws_auto_date_created)
+    'created_date'    => string, // Y-m-d local (ws_auto_created_date)
     'edited_by'       => int,    // ws_auto_last_edited_author
     'edited_by_name'  => string, // display name resolved from edited_by
     'edited_date'     => string, // Y-m-d local (ws_auto_last_edited_date)
@@ -80,7 +80,7 @@ Returns the `record` sub-array:
 ```
 
 ### `ws_build_plain_english_array( $post_id )`
-Returns the `plain` sub-array for CPTs that carry the plain English
+Returns the `plain` sub-array for CPTs that carry the plain-english
 workflow. CPTs without the workflow still call this — it returns
 appropriate empty/false values:
 
@@ -125,7 +125,7 @@ jurisdiction page.
 #### `ws_get_term_id_by_code( $jx_code )`
 Resolves a USPS code to a `ws_jurisdiction` taxonomy term ID. Returns
 `int` term ID or `0`. Caches result in transient
-`ws_id_for_term_{term_id}` for `DAY_IN_SECONDS`.
+`ws_id_for_term_{term_id}_` for `DAY_IN_SECONDS`.
 
 #### `ws_get_id_by_code( $jx_code )`
 Resolves a USPS code to a jurisdiction post ID. Composes
@@ -172,7 +172,7 @@ global `$post`. Returns array or `null`.
     'flag'       => [ 'url', 'attribution', 'source_url', 'license' ],
     'gov'        => [ 'portal_url', 'portal_label', 'executive_url', 'executive_label',
                       'authority_url', 'authority_label', 'legislature_url', 'legislature_label' ],
-    'record'     => [ ...ws_build_record_array() ],
+    'author'     => [ ...ws_build_author_array() ],
 ]
 ```
 
@@ -189,7 +189,7 @@ or `null`.
     'notes'       => string,  // internal only — do not expose publicly
     'plain'       => [ ...ws_build_plain_english_array() ],
     'verify'      => [ ...ws_build_source_verify_array() ],
-    'record'      => [ ...ws_build_record_array() ],
+    'author'      => [ ...ws_build_author_array() ],
 ]
 ```
 
@@ -199,17 +199,19 @@ US-scoped federal statutes when the jurisdiction is not Federal.
 Each item has `is_fed: true` for appended federal records.
 
 Returns all fields from the statute ACF group: `official_name`,
-`citation`, `common_name`, `disclosure_type`, `protected_class`,
-`disclosure_targets`, `adverse_action_scope`, `attach_flag`, `order`,
-`sol_value`, `sol_unit`, `sol_trigger`, `sol_has_details`,
-`sol_details`, `tolling_has_details`, `tolling_details`,
-`has_exhaustion`, `exhaustion_details`, `process_type`,
-`adverse_action`, `fee_shifting`, `remedies`, `related_agencies`,
-`bop_standard`, `employer_defense`, `employer_defense_details`,
-`rebuttable_has_details`, `rebuttable_details`, `bop_has_details`,
+`citation`, `common_name`, `disclosure_type`, `protected_classes`,
+`protected_class_details`, `disclosure_targets`, ``disclosure_target_details_`,
+`adverse_action_scope`, `attach_flag`, `order`,
+`sol_value`, `sol_unit`, `sol_trigger`, `has_sol_details`,
+`sol_details`, `has_tolling_details`, `tolling_details`,
+`has_exhaustion`, `exhaustion_details`, `process_types`,
+`adverse_actions`, `adverse_action_deatils`, `fee_shiftings`, `remedies`,
+ `remedy_deatils`,`related_agencies`, `employee_standards`, 
+`employee_standard_details`, `employer_defenses`, `employer_defense_details`,
+`has_rebuttable_details`, `rebuttable_details`, `has_bop_details`,
 `bop_details`, `has_reward`, `reward_details`, `statute_url`,
 `url_is_pdf`, `last_reviewed`, `ref_materials`, plus `plain`,
-`verify`, and `record` sub-arrays.
+`verify`, and `author` sub-arrays.
 
 **Note:** Only returns published records with `attach_flag = true`,
 sorted by `ws_display_order ASC`. Unflagged statutes are not returned
@@ -220,7 +222,7 @@ Returns an array of citation data arrays. Same federal append logic as
 statutes. Fields: `citation_type`, `disclosure_type`, `official_name`,
 `common_name`, `url`, `url_is_pdf`, `attach_flag`, `order`,
 `last_reviewed`, `statute_ids`, `ref_materials`, plus `plain`,
-`verify`, `record`.
+`verify`, `author`.
 
 #### `ws_get_jx_construction_data( $jx_term_id )`
 Returns an array of construction data arrays. Same federal append
@@ -228,14 +230,14 @@ logic. Fields: `court` (resolved to short label via `ws_court_lookup()`),
 `court_name` (free-text when court is `other`), `year`, `favorable`,
 `official_name`, `common_name`, `case_citation`, `url`, `summary`,
 `process_type`, `attach_flag`, `order`, `last_reviewed`, `statute_id`,
-`affected_jx`, `ref_materials`, plus `plain`, `verify`, `record`.
+`affected_jx`, `ref_materials`, plus `plain`, `verify`, `author`.
 
 #### `ws_get_agency_data( $jx_term_id )`
 Returns an array of agency data arrays for the jurisdiction. Fields:
 `code`, `name`, `logo`, `mission`, `url`, `reporting_url`, `phone`,
-`confidentiality_notes`, `accepts_anonymous`, `reward_program`,
+`confidentiality_details`, `accepts_anonymous`, `reward_program`,
 `languages`, `additional_languages`, `last_reviewed`, plus `plain`,
-`verify`, `record`.
+`verify`, `author`.
 
 #### `ws_get_assist_org_data( $jx_term_id )`
 Returns an array of assist organization data arrays scoped to the
@@ -243,9 +245,9 @@ jurisdiction. Fields: `internal_id`, `org_type`, `description`,
 `logo`, `serves_nationwide`, `disclosure_types`, `services`,
 `additional_services`, `employment_sectors`, `case_stages`, `website`,
 `phone`, `email`, `address`, `languages`, `additional_languages`,
-`cost_model`, `income_limit`, `income_limit_notes`, `accepts_anonymous`,
-`eligibility_notes`, `licensed_attorneys`, `accreditation`,
-`bar_states`, `verify_url`, `last_reviewed`, plus `verify`, `record`.
+`cost_model`, `income_limit`, `income_limit_details`, `accepts_anonymous`,
+`eligibility_details`, `licensed_attorneys`, `accreditation`,
+`bar_states`, `verify_url`, `last_reviewed`, plus `verify`, `author`.
 
 #### `ws_get_nationwide_assist_org_data( $filters = [] )`
 Returns assist organizations scoped to the `'us'` jurisdiction term
@@ -292,17 +294,17 @@ data including two-part disclaimer and the trimmed reference list.
 Dataset functions for agencies and filing procedures.
 
 ### `ws_get_agency_procedures( $agency_id )`
-Returns all published `ws-ag-procedure` records for a given agency
+Returns all published `ag-procedure` records for a given agency
 post ID. Ordered alphabetically by title. Cached per-agency at
-`ws_agency_procs_{$agency_id}` for 24 hours. Invalidated on
+`ws_agency_procedures_{$agency_id}_` for 24 hours. Invalidated on
 procedure save or delete.
 
 Each row: `id`, `title`, `url`, `agency_id`, `agency_name`,
 `agency_url`, `type` (procedure type slug), `jurisdiction`,
 `disclosure_types`, `entry_point`, `intake_url`, `phone`,
 `identity_policy`, `intake_only`, `deadline_days`, `clock_start`,
-`has_prereqs`, `prereq_note`, `walkthrough`, `exclusivity_note`,
-`last_reviewed`, `record`.
+`has_prereqs`, `prereq_details`, `walkthrough`, `exclusivity_details`,
+`last_reviewed`, `author`.
 
 ### `ws_get_agency_procedure( $procedure_id )`
 Returns a single procedure row. Delegates to
@@ -312,11 +314,11 @@ Returns a single procedure row. Delegates to
 Builds one normalized procedure row. Returns `[]` when the post is
 invalid, wrong CPT, or not published.
 
-### `ws_get_procedures_for_statute( $statute_id )`
-Returns all published procedures that link a given `jx-statute` post
-via `ws_proc_statute_ids`. Used by the statute section renderer to
-surface "Filing Procedures Under This Statute" on jurisdiction pages.
-Cached per-statute at `ws_statute_procs_{$statute_id}` for 24 hours.
+### `ws_get_procedures_for_parent( $parent_id )`
+Returns all published procedures that link a given `jx-statute` or `jx-common-law` post
+via `_ws_ag_procedure_parent_ids`. Used by the parent section renderer to
+surface "Filing Procedures Under This Statute" or "`Common Law Principle" on jurisdiction pages.
+Cached per-statute at `ws_parent_procedures_{$parent_id}_` for 24 hours.
 Uses two LIKE queries to handle both serialized string and integer
 shapes ACF may write for relationship fields.
 
@@ -328,12 +330,12 @@ Each row: `id`, `title`, `url`, `type`, `agency_id`, `agency_name`,
 All agency/procedure transients are maintained by hooks in
 `query-agencies.php`:
 
-- **`save_post_ws-ag-procedure`** — clears `ws_agency_procs_{id}` for
+- **`save_post_ag-procedure`** — clears `ws_agency_procedures_{id}_` for
   the procedure's current and previous parent agency (stash pattern
   handles agency changes).
 - **`acf/save_post` (priority 5 stash + priority 25 diff)** — stashes
-  old statute IDs before ACF saves; after save, diffs old vs. new and
-  clears `ws_statute_procs_{id}` for all affected statute IDs.
+  old parent IDs before ACF saves; after save, diffs old vs. new and
+  clears `ws_parent_procedures_{id}_` for all affected statute IDs.
 - **`before_delete_post` / `deleted_post`** — clears both agency and
   all linked statute transients when a procedure is deleted.
 
@@ -343,9 +345,9 @@ All agency/procedure transients are maintained by hooks in
 
 | Cache Key | TTL | Invalidated By |
 |---|---|---|
-| `ws_id_for_term_{term_id}` | 24h | `save_post_jurisdiction` |
+| `ws_id_for_term_{term_id}_` | 24h | `save_post_jurisdiction` |
 | `WS_CACHE_ALL_JURISDICTIONS` | 12h | `save_post_jurisdiction`, `delete_post` |
 | `WS_CACHE_JX_INDEX` | 24h | `save_post_jurisdiction`, `delete_post` |
 | `WS_CACHE_LEGAL_UPDATES_SITEWIDE` | 1h | `save_post_ws-legal-update` |
-| `ws_agency_procs_{agency_id}` | 24h | `save_post_ws-ag-procedure`, procedure delete |
-| `ws_statute_procs_{statute_id}` | 24h | `acf/save_post` stash+diff, procedure delete |
+| `ws_agency_procedures_{agency_id}_` | 24h | `save_post_ag-procedure`, procedure delete |
+| `ws_parent_procedures_{parent_id}_` | 24h | `acf/save_post` stash+diff, procedure delete |

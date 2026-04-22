@@ -34,7 +34,7 @@
  *
  * TRANSIENT
  * ---------
- * ws_glossary_cache — stores the full flat lookup array.
+ * ws_glossary_cache_ — stores the full flat lookup array.
  * Invalidated on created_ws_glossary, edited_ws_glossary, and delete_ws_glossary hooks.
  * TTL: 24 hours as a safety net.
  *
@@ -66,7 +66,7 @@
  *        to consistent single-tab indentation. Misaligned closing brace on
  *        the early-return if(!$body) guard corrected.
  * 3.10.0 Three terms added: whistleblower, internal-reporting, compliance-program.
- *        Seven definitions rewritten for plain-language clarity — away from
+ *        Seven definitions rewritten for plain-english clarity — away from
  *        legal-test framing toward the whistleblower's perspective:
  *        qui-tam, false-claims-act, original-source, retaliation,
  *        contributing-factor, back-pay, treble-damages.
@@ -238,7 +238,7 @@ function ws_register_glossary_acf_fields() {
  */
 function ws_get_glossary_lookup() {
 
-    $cached = get_transient( 'ws_glossary_cache' );
+    $cached = get_transient( 'ws_glossary_cache_' );
     if ( false !== $cached ) {
         return $cached;
     }
@@ -252,7 +252,7 @@ function ws_get_glossary_lookup() {
     if ( is_wp_error( $terms ) || empty( $terms ) ) {
         // Cache empty result briefly to avoid hammering get_terms() on
         // every page load when no terms exist yet.
-        set_transient( 'ws_glossary_cache', [], 5 * MINUTE_IN_SECONDS );
+        set_transient( 'ws_glossary_cache_', [], 5 * MINUTE_IN_SECONDS );
         return [];
     }
 
@@ -289,7 +289,7 @@ function ws_get_glossary_lookup() {
     // Sort longest string first so multi-word phrases take priority.
     uksort( $lookup, fn( $a, $b ) => strlen( $b ) - strlen( $a ) );
 
-    set_transient( 'ws_glossary_cache', $lookup, DAY_IN_SECONDS );
+    set_transient( 'ws_glossary_cache_', $lookup, DAY_IN_SECONDS );
 
     return $lookup;
 }
@@ -303,7 +303,7 @@ add_action( 'delete_ws_glossary',  'ws_glossary_invalidate_cache' );
  * Deletes the glossary transient cache.
  */
 function ws_glossary_invalidate_cache() {
-    delete_transient( 'ws_glossary_cache' );
+    delete_transient( 'ws_glossary_cache_' );
 }
 
 

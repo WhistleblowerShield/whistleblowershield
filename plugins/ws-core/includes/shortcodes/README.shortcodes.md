@@ -5,7 +5,7 @@ frontend (`! is_admin()`).
 
 This directory is the primary contributor entry point. Both files
 are fully documented with `@param`, query return shapes, and
-plain-language notes on behavior and constraints.
+plain-english notes on behavior and constraints.
 
 ---
 
@@ -13,7 +13,7 @@ plain-language notes on behavior and constraints.
 
 | File | Shortcodes |
 |---|---|
-| `shortcodes-jurisdiction.php` | `[ws_jx_header]`, `[ws_jx_summary]`, `[ws_jx_statutes]`, `[ws_jx_citation]`, `[ws_jx_construction]`, `[ws_jx_limitations]` |
+| `shortcodes-jurisdiction.php` | `[ws_jx_header]`, `[ws_jx_summary]`, `[ws_jx_statutes]`, `[ws_jx_citation]`, `[ws_jx_construction_]`, `[ws_jx_limitations]` |
 | `shortcodes-general.php` | `[ws_nla_disclaimer_notice]`, `[ws_footer]`, `[ws_legal_updates]`, `[ws_reference_page]`, `[ws_jurisdiction_index]`, `[ws_assist_org_directory]` |
 
 See each file for complete `@param` documentation, attribute
@@ -39,10 +39,10 @@ to the shortcode.
 
 ## Shared Payload Glossary: query-shared.php
 
-`plain`, `verify`, and `record` are payload blocks returned by query-layer
+`plain`, `verify`, and `author` are payload blocks returned by query-layer
 dataset functions.
 
-### Payload: `record`
+### Payload: `author`
 
 - `created_by`, `created_by_name`, `created_date`
 - `edited_date`, `edited_by`, `edited_by_name`
@@ -70,11 +70,11 @@ Returns `array<int,agency>`:
 - `acronym`, `mission`,
 - `disclosure_type`, `disclosure_targets`, `process_type`, `jurisdictions`
 - `website_url`, `reporting_url`, `phone`
-- `confidentiality_notes`, `has_anonymous`
+- `confidentiality_details`, `has_anonymous`
 - `has_reward`, `reward_details`
 - `languages`, `additional_languages`
 - `last_reviewed`
-- `plain` (payload), `verify` (payload), `record` (payload)
+- `plain` (payload), `verify` (payload), `author` (payload)
 
 ### `ws_get_agency_procedure( $procedure_id )`
 Returns one normalized agency procedure row (or `[]` if not found):
@@ -88,10 +88,10 @@ Returns one normalized agency procedure row (or `[]` if not found):
 - `statute_ids`, `comlaw_ids`
 - `entry_point`, `intake_url`, `phone`, `identity_policy`
 - `intake_only`, `deadline_days`, `clock_start`
-- `has_prereqs`, `prereq_note`
-- `walkthrough`, `exclusivity_note`
-- `stat_override`, `last_reviewed`
-- `record` (payload)
+- `has_prereqs`, `prereq_details`
+- `walkthrough`, `exclusivity_details`
+- `parent_override`, `last_reviewed`
+- `author` (payload)
 
 ### `ws_get_agency_procedures( $agency_id )`
 Returns `array<int,row>` using the exact row shape from `ws_get_agency_procedure()`.
@@ -132,7 +132,7 @@ Returns one complete assist-org row:
 - `protected_class`, `protected_class_labels`, `protected_class_details`
 - `case_stages`, `case_stage_labels`, `case_stage_details`
 - `process_types`, `process_type_labels`
-- `services`, `service_slugs`, `additional_services`
+- `services`, `service_labels`, `additional_services`
 - `employment_sectors`, `employment_sector_labels`
 - `website_url`, `intake_url`, `contact_url`
 - `phones` (`[{type,value}]`), `emails` (`[{type,value}]`)
@@ -140,16 +140,16 @@ Returns one complete assist-org row:
 - `mailing_address`
 - `languages`, `language_labels`, `additional_languages`
 - `cost_model`, `cost_model_labels`
-- `has_income_limit`, `income_eligibility_required`, `income_limit_notes`
+- `has_income_limit`, `income_eligibility_required`, `income_limit_details`
 - `has_anonymous`
-- `eligibility_notes`
+- `eligibility_details`
 - `has_attorneys`
 - `accreditation`, `bar_states`
 - `legitimacy_url`, `last_reviewed`
 - `jurisdictions`, `jurisdiction_labels`
 - `has_extended_profile`
 - `taxonomies`
-- `plain` (payload), `verify` (payload), `record` (payload)
+- `plain` (payload), `verify` (payload), `author` (payload)
 
 ---
 
@@ -164,7 +164,7 @@ Returns `array<int,update>`:
 - `law_name`
 - `source_url`, `source_url_is_pdf`
 - `summary`
-- `verify` (payload), `record` (payload)
+- `verify` (payload), `author` (payload)
 
 ### `ws_get_ref_materials( $post_id )`
 Returns `array<int,reference>`:
@@ -192,7 +192,7 @@ Returns `array|false`:
 - `id`, `name`, `class`, `code`, `jx_term_id`
 - `flag` (`image_url`, `attribution`, `source_url`, `license`)
 - `gov` (`portal_url`, `portal_label`, `executive_url`, `executive_label`, `authority_url`, `authority_label`, `legislature_url`, `legislature_label`)
-- `record` (payload)
+- `author` (payload)
 
 ### `ws_get_jurisdiction_index_data()`
 Returns:
@@ -211,14 +211,14 @@ Returns `array<int,row>`:
 - `disclosure_targets`, `disclosure_target_details`
 - `adverse_action`, `adverse_action_details`
 - `process_type`
-- `remedies`, `remedies_details`
+- `remedies`, `remedy_details`
 - `fee_shifting`
 - `employer_defense`, `employer_defense_details`
 - `employee_standard`, `employee_standard_details`
 - `statute_ids`, `comlaw_ids`
 - `attach_flag`, `order`, `last_reviewed`
 - `ref_materials`
-- `plain` (payload), `verify` (payload), `record` (payload)
+- `plain` (payload), `verify` (payload), `author` (payload)
 
 ### `ws_get_jx_common_law_data( $jx_term_id )`
 Returns `array<int,row>`:
@@ -238,7 +238,7 @@ Returns `array<int,row>`:
 - `process_type`
 - `adverse_action`, `adverse_action_details`
 - `fee_shifting`
-- `remedies`, `remedies_details`
+- `remedies`, `remedy_details`
 - `related_agencies`
 - `has_preclusion`, `statutory_preclusion_details`
 - `employee_standard`, `employee_standard_details`
@@ -248,7 +248,7 @@ Returns `array<int,row>`:
 - `has_reward`, `reward_details`
 - `citation_ids`, `construction_ids`
 - `ref_materials`
-- `plain` (payload), `verify` (payload), `record` (payload)
+- `plain` (payload), `verify` (payload), `author` (payload)
 
 ### `ws_get_jx_construction_data( $jx_term_id )`
 Returns `array<int,row>`:
@@ -264,7 +264,7 @@ Returns `array<int,row>`:
 - `disclosure_targets`, `disclosure_target_details`
 - `adverse_action`, `adverse_action_details`
 - `process_type`
-- `remedies`, `remedies_details`
+- `remedies`, `remedy_details`
 - `fee_shifting`
 - `employer_defense`, `employer_defense_details`
 - `employee_standard`, `employee_standard_details`
@@ -272,7 +272,7 @@ Returns `array<int,row>`:
 - `affected_jx`
 - `attach_flag`, `last_reviewed`
 - `ref_materials`
-- `plain` (payload), `verify` (payload), `record` (payload)
+- `plain` (payload), `verify` (payload), `author` (payload)
 
 ### `ws_get_jx_statute_data( $jx_term_id )`
 Returns `array<int,row>`:
@@ -289,7 +289,7 @@ Returns `array<int,row>`:
 - `process_type`
 - `adverse_action`, `adverse_action_details`
 - `fee_shifting`
-- `remedies`, `remedies_details`
+- `remedies`, `remedy_details`
 - `local_agencies`, `federal_agencies`
 - `enforcement_channel`
 - `citation_ids`
@@ -301,7 +301,7 @@ Returns `array<int,row>`:
 - `statute_url`, `url_is_pdf`
 - `last_reviewed`
 - `ref_materials`
-- `plain` (payload), `verify` (payload), `record` (payload)
+- `plain` (payload), `verify` (payload), `author` (payload)
 
 ### `ws_get_jx_summary_data( $jx_term_id )`
 Returns `array|false`:
@@ -309,4 +309,4 @@ Returns `array|false`:
 - `id`, `title`, `url`, `status`
 - `content`, `sources`, `limitations`
 - `plain_english_reviewed`
-- `plain` (payload), `verify` (payload), `record` (payload)
+- `plain` (payload), `verify` (payload), `author` (payload)

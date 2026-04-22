@@ -10,10 +10,10 @@
  *                             post title on new-post screens opened from the
  *                             "Create Now" links in admin-navigation.php.
  *
- *   2. Field locking        — makes ws_auto_date_created, ws_auto_last_edited,
+ *   2. Field locking        — makes ws_auto_created_date, ws_auto_last_edited_date,
  *                             ws_auto_last_edited_author, ws_auto_create_author,
  *                             ws_auto_plain_english_by, ws_auto_plain_english_date,
- *                             and ws_plain_english_reviewed_by readonly + disabled
+ *                             and ws_auto_plain_english_reviewed_by readonly + disabled
  *                             for non-administrators or non-editors.
  *
  *   3. Auto-fill today      — fills last_reviewed with today's date when the
@@ -30,12 +30,12 @@
  *                             author IDs to post meta on every ACF save,
  *                             driven by a per-CPT configuration map.
  *
- *   6. Plain English guards — enforces has_plain_english / plain_reviewed /
+ *   6. Plain English guards — enforces ws_has_plain_english / plain_reviewed /
  *                             plain_reviewed_by integrity rules on save.
  *
  *   7. Plain English stamps — writes ws_auto_plain_english_by /
  *                             ws_auto_plain_english_date to post meta once when
- *                             plain English content is first saved on supported CPTs.
+ *                             plain-english content is first saved on supported CPTs.
  *
  *   8. Statute reverse index — maintains ws_jx_statute_citation_ids /
  *                             ws_jx_statute_construction_ids on jx-statute records,
@@ -62,17 +62,17 @@
  * keys follow the field_[meta_name] (no ws_auto_ prefix) convention matching
  * ws-jurisdiction.
  *
- *   ws_auto_date_created              — local date (Y-m-d), written once
- *   _ws_auto_date_created_gmt         — GMT date (Y-m-d), written once, private/hidden
- *   ws_auto_create_author             — WP user ID, written once
- *   ws_auto_last_edited_date          — local date (Y-m-d), written every save
- *   _ws_auto_last_edited_gmt          — GMT date (Y-m-d), written every save, private/hidden
- *   ws_auto_last_edited_author        — WP user ID, written every save (admin-overridable)
- *   ws_auto_plain_english_by          — WP user ID, written once on first plain English save
- *   ws_auto_plain_english_date        — local date (Y-m-d), written once on first plain English save
- *   ws_plain_english_reviewed_by   — WP user ID, written once when plain_reviewed first enabled
- *   ws_plain_english_reviewed_date — local date (Y-m-d), written once when plain_reviewed first enabled
- *
+ *   ws_auto_created_date                — local date (Y-m-d), written once
+ *   ws_auto_create_author               — WP user ID, written once
+ *   ws_auto_last_edited_date            — local date (Y-m-d), written every save
+ *   ws_auto_last_edited_author          — WP user ID, written every save (admin-overridable)
+ *   ws_auto_plain_english_by            — WP user ID, written once on first plain-english save
+ *   ws_auto_plain_english_date          — local date (Y-m-d), written once on first plain-english save
+ *   ws_auto_plain_english_reviewed_by   — WP user ID, written once when plain_reviewed first enabled
+ *   ws_auto_plain_english_reviewed_date — local date (Y-m-d), written once when plain_reviewed first enabled
+ *   _ws_auto_created_date_gmt           — GMT date (Y-m-d), written once, private/hidden
+ *   _ws_auto_last_edited_gmt            — GMT date (Y-m-d), written every save, private/hidden
+ *   
  *
  * VERSION
  * -------
@@ -83,7 +83,7 @@
  * 3.5.0   ws_auto_ prefix applied to all stamp and source-verify meta keys.
  * 3.6.0   Statute reverse index hooks added (citation and construction).
  * 3.9.0   Rule 3b: plain_reviewed resets on substantial content change.
- * 3.10.0  ws-ag-procedure added to $ws_stamp_cpts and ws_source_verify_post_types().
+ * 3.10.0  ag-procedure added to $ws_stamp_cpts and ws_source_verify_post_types().
  * 3.10.1  Header documentation refresh for current cross-CPT responsibilities.
  * 3.10.2  Shared phone format validator added for assist-org and agency ACF fields.
  *
@@ -135,14 +135,14 @@ add_filter( 'default_title', function( $title ) {
 // Stamp fields are system-managed and must not be altered through the ACF UI.
 // Two lock tiers apply:
 //
-//   Admin-only fields  — ws_auto_date_created, ws_auto_last_edited_date,
+//   Admin-only fields  — ws_auto_created_date, ws_auto_last_edited_date,
 //                        ws_auto_last_edited_author, ws_auto_create_author,
 //                        ws_auto_plain_english_by, ws_auto_plain_english_date.
 //                        Locked for any role below administrator.
 //                        ws_auto_last_edited_author is admin-overridable for
 //                        attribution correction on minor edits.
 //
-//   Editor-only fields — 'ws_plain_english_reviewed_date', ws_plain_english_reviewed_by.
+//   Editor-only fields — 'ws_auto_plain_english_reviewed_date', ws_auto_plain_english_reviewed_by.
 //                        Locked for any role below editor. plain_reviewed is not
 //                        listed here because it is a checkbox that the toggle-off
 //                        guard clears automatically; the field itself is hidden
@@ -162,7 +162,7 @@ unset( $_ws_f );
 // Legal update visibility control is admin-only.
 add_filter( 'acf/load_field/name=ws_legal_update_hide_public', 'ws_acf_lock_for_non_admins' );
 
-foreach ( [ 'ws_plain_english_reviewed_by', 'ws_plain_english_reviewed_date' ] as $_ws_f ) {
+foreach ( [ 'ws_auto_plain_english_reviewed_by', 'ws_auto_plain_english_reviewed_date' ] as $_ws_f ) {
     add_filter( "acf/load_field/name={$_ws_f}", 'ws_acf_lock_for_non_editors' );
 }
 unset( $_ws_f );
@@ -271,9 +271,9 @@ function ws_acf_validate_phone_number( $valid, $value, $field, $input_name ) {
     return true;
 }
 
-// @todo - get sane... fix this.... ws_[record_type]_last_reviewed is NOT related to the automated plain-English workflow.
+// @todo - get sane... fix this.... ws_[record_type]_last_reviewed is NOT related to the automated plain-english workflow.
 // It should be used editorially to indicate when the record itself was "last reviewed" for data currency. This is separate
-// from the plain-English review process, which is about content translation quality and carries its own reviewed date and
+// from the plain-english review process, which is about content translation quality and carries its own reviewed date and
 // reviewer fields.
 //
 // ── Auto-fill today: last_reviewed on existing posts when ws_plain_english_reviewed is on ─
@@ -283,13 +283,13 @@ function ws_acf_validate_phone_number( $valid, $value, $field, $input_name ) {
 //   2. The post exists (post_id > 0 — excludes new-post / options context).
 //   3. ws_plain_english_reviewed is already enabled on this post.
 //
-// This prevents last_reviewed from pre-filling on posts where plain English
+// This prevents last_reviewed from pre-filling on posts where plain-english
 // content has not yet been reviewed, and never fires on brand-new posts.
 
 //add_filter( 'acf/load_value/name=last_reviewed', 'ws_acf_autofill_today', 10, 3 );
 
 /**
- * Returns today's date (Y-m-d) when last_reviewed is empty and ws_plain_english_reviewed
+ * Returns today's date (Y-m-d) when last_reviewed is empty and ws_auto_plain_english_reviewed
  * is enabled on the post.
  *
  * @param  mixed  $value    Current field value.
@@ -340,41 +340,41 @@ function ws_acf_autofill_current_editor( $value, $post_id, $field ) {
 //
 // Enforces the following rules before ACF writes field values:
 //
-//   Rule 1 — has_plain_english requires a non-empty plain_english string.
-//             If submitted plain_english is empty, has_plain_english is forced
+//   Rule 1 — ws_has_plain_english requires a non-empty plain_english string.
+//             If submitted plain_english is empty, ws_has_plain_english is forced
 //             to 0 and the ACF checkbox value is cleared so it resets visually.
 //
 //   Rule 2 — ws_plain_english_reviewed requires editor rank or above. If the submitted
-//             value is 1 but the current user is below editor, ws_plain_english_reviewed
-//             and ws_plain_english_reviewed_by are wiped and an admin notice is queued.
+//             value is 1 but the current user is below editor, ws_auto_plain_english_reviewed
+//             and ws_auto_plain_english_reviewed_by are wiped and an admin notice is queued.
 //
-//   Rule 3 — ws_plain_english_reviewed toggle-off cleanup. If has_plain_english transitions
-//             from 1 to 0, ws_plain_english_reviewed and ws_plain_english_reviewed_by are cleared.
+//   Rule 3 — ws_plain_english_reviewed toggle-off cleanup. If ws_has_plain_english transitions
+//             from 1 to 0, ws_plain_english_reviewed and ws_auto_plain_english_reviewed_by are cleared.
 //             The plain_english string is preserved in case the admin re-enables.
 //             plain_english_by and plain_english_date are also cleared.
 //
-//   Rule 3b — Substantial content change resets review stamp. If has_plain_english
+//   Rule 3b — Substantial content change resets review stamp. If ws_has_plain_english
 //             remains on but the plain_english content has changed significantly
-//             (similar_text() similarity drops below 75%), ws_plain_english_reviewed
+//             (similar_text() similarity drops below 75%), ws_auto_plain_english_reviewed
 //             and its associated stamps are cleared. Typos and minor edits do not
 //             trigger this — only rewrites that materially change the content.
 //             An admin notice is queued so the editor knows why the stamp cleared.
 //
 // Applies to: jx-statute, jx-common-law, jx-citation, jx-construction, ws-agency,
-// ws-assist-org. jx-summary is excluded — it is inherently plain English and carries no
-// has_plain_english toggle.
+// ws-assist-org. jx-summary is excluded — it is inherently plain-english and carries no
+// ws_has_plain_english toggle.
 
 add_action( 'acf/save_post', 'ws_acf_plain_english_guards', 5 );
 
 /**
- * Enforces plain English field integrity before ACF commits field values.
+ * Enforces plain-english field integrity before ACF commits field values.
  *
  * @param  int|string $post_id  Post ID passed by acf/save_post.
  */
 function ws_acf_plain_english_guards( $post_id ) {
 
     $plain_english_cpts = [
-        'jx-statute', 'jx-common-law','jx-citation', 'jx-construction', 'ws-agency', 'ws-assist-org',
+        'jx-statute', 'jx-common-law','jx-citation', 'jx-construction', 'ws-agency', 'ag-procedure', 'ws-assist-org',
     ];
 
     $post_type = get_post_type( $post_id );
@@ -408,7 +408,7 @@ function ws_acf_plain_english_guards( $post_id ) {
         }
     }
 
-    // ── Rule 1: has_plain_english requires non-empty plain_english ────────────
+    // ── Rule 1: ws_has_plain_english requires non-empty plain_english ────────────
 
     if ( $submitted_has_plain && $submitted_plain_english === '' ) {
         foreach ( $_POST['acf'] as $field_key => $field_value ) {
@@ -427,14 +427,14 @@ function ws_acf_plain_english_guards( $post_id ) {
         foreach ( $_POST['acf'] as $field_key => $field_value ) {
             $field_obj = acf_get_field( $field_key );
             if ( ! $field_obj ) continue;
-            if ( in_array( $field_obj['name'], [ 'ws_plain_english_reviewed', 'ws_plain_english_reviewed_by' ], true ) ) {
+            if ( in_array( $field_obj['name'], [ 'ws_plain_english_reviewed', 'ws_auto_plain_english_reviewed_by' ], true ) ) {
                 $_POST['acf'][ $field_key ] = 0;
             }
         }
-        set_transient( 'ws_plain_reviewed_rank_notice_' . get_current_user_id(), true, 30 );
+        set_transient( 'ws_auto_plain_reviewed_rank_notice_' . get_current_user_id(), true, 30 );
     }
 
-    // ── Rule 3: has_plain_english toggle-off clears plain_reviewed fields ─────
+    // ── Rule 3: ws_has_plain_english toggle-off clears plain_reviewed fields ─────
     //
     // Direct meta read — acf/save_post fires during a save; reading stored state
     // here to compare the previous value against the submitted value before ACF writes.
@@ -445,22 +445,22 @@ function ws_acf_plain_english_guards( $post_id ) {
         foreach ( $_POST['acf'] as $field_key => $field_value ) {
             $field_obj = acf_get_field( $field_key );
             if ( ! $field_obj ) continue;
-            if ( in_array( $field_obj['name'], [ 'ws_plain_english_reviewed', 'ws_plain_english_reviewed_by' ], true ) ) {
+            if ( in_array( $field_obj['name'], [ 'ws_plain_english_reviewed', 'ws_auto_plain_english_reviewed_by' ], true ) ) {
                 $_POST['acf'][ $field_key ] = 0;
             }
         }
-        // Clear plain English stamp meta written by ws_acf_stamp_summarized_fields()
+        // Clear plain-english stamp meta written by ws_acf_stamp_summarized_fields()
         // and ws_acf_stamp_plain_reviewed_by().
         delete_post_meta( $post_id, 'ws_auto_plain_english_by' );
         delete_post_meta( $post_id, 'ws_auto_plain_english_date' );
-        delete_post_meta( $post_id, 'ws_plain_english_reviewed_date' );
-        delete_post_meta( $post_id, 'ws_plain_english_reviewed_by' );
+        delete_post_meta( $post_id, 'ws_auto_plain_english_reviewed_date' );
+        delete_post_meta( $post_id, 'ws_auto_plain_english_reviewed_by' );
     }
 
     // ── Rule 3b: substantial content change resets review stamp ───────────────
     //
     // Only runs when:
-    //   - has_plain_english is still on (toggle-off is handled by Rule 3 above)
+    //   - ws_has_plain_english is still on (toggle-off is handled by Rule 3 above)
     //   - ws_plain_english_reviewed is currently 1 in stored meta (nothing to reset otherwise)
     //   - a previous plain_english value exists to compare against (new records are skipped)
     //
@@ -487,15 +487,15 @@ function ws_acf_plain_english_guards( $post_id ) {
                     foreach ( $_POST['acf'] as $field_key => $field_value ) {
                         $field_obj = acf_get_field( $field_key );
                         if ( ! $field_obj ) continue;
-                        if ( in_array( $field_obj['name'], [ 'ws_plain_english_reviewed', 'ws_plain_english_reviewed_by' ], true ) ) {
+                        if ( in_array( $field_obj['name'], [ 'ws_plain_english_reviewed', 'ws_auto_plain_english_reviewed_by' ], true ) ) {
                             $_POST['acf'][ $field_key ] = 0;
                         }
                     }
 
-                    delete_post_meta( $post_id, 'ws_plain_english_reviewed_date' );
-                    delete_post_meta( $post_id, 'ws_plain_english_reviewed_by' );
+                    delete_post_meta( $post_id, 'ws_auto_plain_english_reviewed_date' );
+                    delete_post_meta( $post_id, 'ws_auto_plain_english_reviewed_by' );
 
-                    set_transient( 'ws_plain_rewrite_notice_' . get_current_user_id(), true, 30 );
+                    set_transient( 'ws_auto_plain_rewrite_notice_' . get_current_user_id(), true, 30 );
                 }
             }
         }
@@ -506,7 +506,7 @@ function ws_acf_plain_english_guards( $post_id ) {
 // ── Admin notice: plain_reviewed rank violation ───────────────────────────────
 
 add_action( 'admin_notices', function() {
-    $transient = 'ws_plain_reviewed_rank_notice_' . get_current_user_id();
+    $transient = 'ws_auto_plain_reviewed_rank_notice_' . get_current_user_id();
     if ( ! get_transient( $transient ) ) {
         return;
     }
@@ -514,7 +514,7 @@ add_action( 'admin_notices', function() {
     echo '<div class="notice notice-warning is-dismissible">'
         . '<p><strong>WhistleblowerShield:</strong> '
         . 'Setting the Plain-English-Reviewed flag requires Editor access or above. '
-        . 'The ws_plain_english_reviewed and ws_plain_english_reviewed_by fields were not saved.</p>'
+        . 'The ws_plain_english_reviewed and ws_auto_plain_english_reviewed_by fields were not saved.</p>'
         . '</div>';
 } );
 
@@ -522,7 +522,7 @@ add_action( 'admin_notices', function() {
 // ── Admin notice: plain_reviewed cleared due to substantial content change ────
 
 add_action( 'admin_notices', function() {
-    $transient = 'ws_plain_rewrite_notice_' . get_current_user_id();
+    $transient = 'ws_auto_plain_rewrite_notice_' . get_current_user_id();
     if ( ! get_transient( $transient ) ) {
         return;
     }
@@ -561,7 +561,7 @@ add_action( 'admin_notices', function() {
 //     'jx-statute'        => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
 //     'jx-construction' => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
 //     'ws-agency'         => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
-//     'ws-ag-procedure'   => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
+//     'ag-procedure'   => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
 //     'ws-legal-update'   => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
 //     'ws-assist-org'     => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
 //     // ws-reference uses shared field keys — unique key retired in v3.4.0.
@@ -606,7 +606,7 @@ function ws_acf_write_stamp_fields( $post_id ) {
     if ( ! get_post_meta( $post_id,  'ws_auto_created_date', true ) ) {
         update_post_meta( $post_id,  'ws_auto_create_author',    $user_id );
         update_post_meta( $post_id,  'ws_auto_created_date',     $now_local );
-        update_post_meta( $post_id, '_ws_auto_date_created_gmt', $now_gmt );
+        update_post_meta( $post_id, '_ws_auto_created_date_gmt', $now_gmt );
         }
 
     // ── Last-edited date-stamps (every save) ──────────────────────────────
@@ -632,8 +632,8 @@ function ws_acf_write_stamp_fields( $post_id ) {
 
 // ── _auto_plain_english_reviewed_by one-time stamp ──────────────────────────────────
 //
-// Stamped once when _auto_plain_english_reviewed is first enabled on a supported CPT.
-// Cleared by ws_acf_plain_english_guards() (priority 5) when _auto_plain_english_reviewed
+// Stamped once when ws_plain_english_reviewed is first enabled on a supported CPT.
+// Cleared by ws_acf_plain_english_guards() (priority 5) when ws_plain_english_reviewed
 // is toggled off, allowing a fresh stamp on the next toggle-on.
 //
 // Applies to: jx-statute, jx-common-law,jx-citation, jx-construction, ws-agency,
@@ -645,7 +645,7 @@ function ws_acf_write_stamp_fields( $post_id ) {
 add_action( 'acf/save_post', 'ws_acf_stamp_plain_reviewed_by', 25 );
 
 /**
- * Writes _auto_plain_english_reviewed_by once when _auto_plain_english_reviewed is first enabled.
+ * Writes ws_auto_plain_english_reviewed_by once when ws_plain_english_reviewed is first enabled.
  *
  * @param  int|string $post_id  Post ID passed by acf/save_post.
  */
@@ -664,7 +664,7 @@ function ws_acf_stamp_plain_reviewed_by( $post_id ) {
         return;
     }
 
-    if ( get_post_meta( $post_id, 'ws_plain_english_reviewed_by', true ) ) {
+    if ( get_post_meta( $post_id, 'ws_auto_plain_english_reviewed_by', true ) ) {
         return;
     }
 
@@ -673,20 +673,20 @@ function ws_acf_stamp_plain_reviewed_by( $post_id ) {
         return;
     }
 
-    update_post_meta( $post_id, 'ws_plain_english_reviewed_by',   get_current_user_id() );
-    update_post_meta( $post_id, 'ws_plain_english_reviewed_date', current_time( 'Y-m-d' ) );
+    update_post_meta( $post_id, 'ws_auto_plain_english_reviewed_by',   get_current_user_id() );
+    update_post_meta( $post_id, 'ws_auto_plain_english_reviewed_date', current_time( 'Y-m-d' ) );
 }
 
 
 // ── plain_english_by + plain_english_date one-time stamps ────────────────────
 //
-// Stamped once when plain English content is first saved on a supported CPT
-// and has_plain_english is enabled.
+// Stamped once when plain-english content is first saved on a supported CPT
+// and ws_has_plain_english is enabled.
 //
-// jx-summary is excluded — it is inherently plain English and carries no
-// has_plain_english toggle.
+// jx-summary is excluded — it is inherently plain-english and carries no
+// ws_has_plain_english toggle.
 //
-// Cleared on has_plain_english toggle-off by ws_acf_plain_english_guards() at
+// Cleared on ws_has_plain_english toggle-off by ws_acf_plain_english_guards() at
 // priority 5 (deletes plain_english_by and plain_english_date from post meta).
 //
 // Runs at priority 25 (after ACF fields at 10, after main stamps at 20).
@@ -694,7 +694,7 @@ function ws_acf_stamp_plain_reviewed_by( $post_id ) {
 add_action( 'acf/save_post', 'ws_acf_stamp_summarized_fields', 25 );
 
 /**
- * Writes summarized_by and summarized_date once when plain English is first
+ * Writes summarized_by and summarized_date once when plain-english is first
  * saved on a supported CPT.
  *
  * @param  int|string $post_id  Post ID passed by acf/save_post.
@@ -1077,7 +1077,7 @@ function ws_source_verify_post_types() {
         'jx-citation',
         'jx-construction',
         'ws-agency',
-        'ws-ag-procedure',
+        'ag-procedure',
         'ws-assist-org',
         'jx-summary',
         'ws-reference',
@@ -1340,14 +1340,14 @@ function ws_enforce_source_verify_roles( $post_id ) {
 // the value passed by the caller.
 //
 // Usage:
-//   ws_set_source_method( $post_id, WS_SOURCE_ai_research );
+//   ws_set_source_method( $post_id, WS_SOURCE_AI_RESEARCH );
 // ════════════════════════════════════════════════════════════════════════════
 
 function ws_set_source_method( $post_id, $method ) {
 
     $allowed = [
         WS_SOURCE_MATRIX_SEED,
-        WS_SOURCE_ai_research,
+        WS_SOURCE_AI_RESEARCH,
         WS_SOURCE_BULK_IMPORT,
         WS_SOURCE_FEED_IMPORT,
         WS_SOURCE_HUMAN_CREATED,

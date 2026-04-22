@@ -48,13 +48,17 @@
  * ------------------
  * Defined in ws_audited_post_types(). Currently covers:
  *
- *   jurisdiction
+ *   ws-jurisdiction
  *   jx-summary
  *   jx-statute
+ *   jx-common-law
  *   jx-citation
  *   jx-construction
  *   ws-legal-update
  *   ws-agency
+ *   ag-procedure
+ *   ws-assist-orgs
+ *   ws-reference
  *
  * RETRIEVAL
  * ---------
@@ -95,7 +99,7 @@ defined( 'ABSPATH' ) || exit;
 
 function ws_audited_post_types() {
     return [
-        'jurisdiction',
+        'ws-jurisdiction',
         'jx-summary',
         'jx-statute',
         'jx-common-law',

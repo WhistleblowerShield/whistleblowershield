@@ -103,9 +103,6 @@ That dramatically lowers invalid term proposals and cleanup work downstream.
 - Reports:
   - extra terms (live but not seed-declared)
   - missing terms (seed-declared but not live)
-- Includes a focused spot check for `ws_protected_class`:
-  - `all-sectors`
-  - `all-employees`
 
 ### Why it matters
 

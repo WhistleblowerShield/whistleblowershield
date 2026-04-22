@@ -23,7 +23,7 @@ shared groups that attach to multiple CPTs via their location rules:
 | Stamp Fields | `group_stamp_metadata` | All 9 content CPTs | Created/edited timestamps and authorship |
 | Plain English Fields | `group_plain_english_metadata` | `jx-statute`, `jx-common-law`, `jx-citation`, `jx-construction`, `ws-agency` | Plain language overlay toggle, content, and review stamps |
 | Source Verify Fields | `group_source_verify_metadata` | All content CPTs except `jurisdiction` | Source method, verification status, needs-review flag |
-| Major Edit | `group_major_edit_metadata` | `jx-summary`, `jx-statute`, `jx-citation`, `jx-construction`, `ws-ag-procedure` | Flag + describe a major editorial change that triggers a legal update post |
+| Major Edit | `group_major_edit_metadata` | `jx-summary`, `jx-statute`, `jx-citation`, `jx-construction`, `ag-procedure` | Flag + describe a major editorial change that triggers a legal update post |
 
 The shared groups load at `menu_order` 85–90, appearing after CPT-specific
 groups in the admin edit screen. They are never duplicated in individual
@@ -36,7 +36,7 @@ CPT field files.
 **Group key:** `group_stamp_metadata`
 **File:** `acf/acf-stamp-fields.php`
 **Attaches to:** `jx-summary`, `jx-statute`, `jx-citation`,
-`jx-construction`, `ws-agency`, `ws-ag-procedure`, `ws-assist-org`,
+`jx-construction`, `ws-agency`, `ag-procedure`, `ws-assist-org`,
 `ws-legal-update`, `ws-reference`
 
 All fields in this group are auto-filled by hook logic and locked
@@ -51,7 +51,7 @@ change them.
 | `ws_auto_create_author` | user | First save only | The user who created the record |
 
 Hidden audit keys (no ACF field, never shown in UI):
-`_ws_auto_date_created_gmt`, `_ws_auto_last_edited_gmt`
+`_ws_auto_created_date_gmt`, `_ws_auto_last_edited_gmt`
 
 ---
 
@@ -62,19 +62,19 @@ Hidden audit keys (no ACF field, never shown in UI):
 **Attaches to:** `jx-statute`, `jx-citation`, `jx-construction`,
 `ws-agency`
 
-Note: `jx-summary` and `ws-ag-procedure` are intentionally excluded.
-The summary IS the plain language document. The procedure walkthrough
-IS the plain language content. Neither carries this overlay.
+Note: `jx-summary` and `ag-procedure` are intentionally excluded.
+The summary IS the plain-english document. The procedure walkthrough
+IS the plain-english content. Neither carries this overlay.
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_has_plain_english` | true_false | Toggle — enables the plain language content field |
-| `ws_plain_english_wysiwyg` | wysiwyg | The plain language content (conditional on toggle) |
-| `ws_plain_english_reviewed` | true_false | Marks the plain language version as reviewed |
-| `ws_plain_english_reviewed_by` | user | Auto-stamped once when review toggled on |
-| `ws_plain_english_reviewed_date` | text | Auto-stamped once when review toggled on |
-| `ws_auto_plain_english_by` | user | Auto-stamped once on first plain language save |
-| `ws_auto_plain_english_date` | text | Auto-stamped once on first plain language save |
+| `ws_has_plain_english` | true_false | Toggle — enables the plain-english content field |
+| `ws_plain_english_wysiwyg` | wysiwyg | The plain-english content (conditional on toggle) |
+| `ws_plain_english_reviewed` | true_false | Marks the plain-english version as reviewed |
+| `ws_auto_plain_english_reviewed_by` | user | Auto-stamped once when review toggled on |
+| `ws_auto_plain_english_reviewed_date` | text | Auto-stamped once when review toggled on |
+| `ws_auto_plain_english_by` | user | Auto-stamped once on first plain-english save |
+| `ws_auto_plain_english_date` | text | Auto-stamped once on first plain-english save |
 
 ---
 
@@ -83,7 +83,7 @@ IS the plain language content. Neither carries this overlay.
 **Group key:** `group_source_verify_metadata`
 **File:** `acf/acf-source-verify.php`
 **Attaches to:** `jx-statute`, `jx-citation`, `jx-construction`,
-`ws-agency`, `ws-ag-procedure`, `ws-assist-org`, `jx-summary`,
+`ws-agency`, `ag-procedure`, `ws-assist-org`, `jx-summary`,
 `ws-reference`
 
 Source method and name fields are admin-only and locked read-only.
@@ -105,7 +105,7 @@ Verification status and needs-review are editable by editors.
 **Group key:** `group_major_edit_metadata`
 **File:** `acf/acf-major-edit.php`
 **Attaches to:** `jx-summary`, `jx-statute`, `jx-citation`,
-`jx-construction`, `ws-ag-procedure`
+`jx-construction`, `ag-procedure`
 
 When `ws_is_major_edit` is toggled on save, a `ws-legal-update` post is
 automatically created with the source post title, type, and description.
@@ -172,16 +172,16 @@ The toggle resets after the legal update is created.
 **Attaches to:** `jx-summary`
 
 Plain English fields and stamp fields attach separately via their
-shared groups. The summary is excluded from plain English overlay
-(it is inherently plain language) but carries its own review toggle.
+shared groups. The summary is excluded from plain-english overlay
+(it is inherently plain-english) but carries its own review toggle.
 
 **Tab: Content**
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_jurisdiction_summary_wysiwyg` | wysiwyg | The plain language summary content |
+| `ws_jurisdiction_summary_wysiwyg` | wysiwyg | The plain-english summary content |
 | `ws_jx_summary_sources` | textarea | Sources and citations for the summary |
-| `ws_jx_summary_notes` | textarea | Internal editorial notes (not public) |
+| `_ws_jx_summary_notes` | textarea | Internal editorial notes (not public) |
 | `ws_jx_limitations` | repeater | Limitations and ramifications; each row: `ws_jx_limit_label` (text) + `ws_jx_limit_text` (textarea) |
 
 **Tab: Summary Review**
@@ -199,7 +199,7 @@ shared groups. The summary is excluded from plain English overlay
 **Attaches to:** `jx-statute`
 
 The most field-dense CPT in the system. Six content tabs plus
-stamp, plain English, source verify, and major edit from shared groups.
+stamp, plain-english, source verify, and major edit from shared groups.
 
 **Tab: Legal Basis**
 
@@ -208,12 +208,13 @@ stamp, plain English, source verify, and major edit from shared groups.
 | `ws_jx_statute_official_name` | text | Official statute name |
 | `ws_jx_statute_citation` | text | Official citation (e.g. `29 U.S.C. § 660(c)`) |
 | `ws_jx_statute_common_name` | text | Common or short name |
-| `ws_jx_statute_disclosure_type` | taxonomy | `ws_disclosure_type` terms; `save_terms: 1` |
-| `ws_jx_statute_protected_class` | taxonomy | `ws_protected_class` terms; `save_terms: 1` |
-| `ws_jx_statute_disclosure_targets` | taxonomy | `ws_disclosure_targets` terms; `save_terms: 1` |
+| `ws_jx_statute_disclosure_types` | taxonomy | `ws_disclosure_type` terms; `save_terms: 1` |
+| `ws_jx_statute_protected_classes` | taxonomy | `ws_protected_class` terms; `save_terms: 1` |
+| `ws_jx_statute_protected_class_details` | textarea | Protected class details (conditional) |
+| `ws_jx_statute_disclosure_targets` | taxonomy | `ws_disclosure_target` terms; `save_terms: 1` |
 | `ws_jx_statute_adverse_action_scope` | textarea | Free-text description of covered adverse actions |
-| `ws_attach_flag` | true_false | Surface this statute on the jurisdiction summary page |
-| `ws_display_order` | number | Sort order among flagged records (conditional on flag) |
+| `ws_jx_statute_has_attach_flag` | true_false | Surface this statute on the jurisdiction summary page |
+| `ws_jx_statute_display_order` | number | Sort order among flagged records (conditional on flag) |
 
 **Tab: Statute of Limitations**
 
@@ -222,9 +223,9 @@ stamp, plain English, source verify, and major edit from shared groups.
 | `ws_jx_statute_sol_value` | number | Filing window value (e.g. `180`) |
 | `ws_jx_statute_sol_unit` | select | `days` / `months` / `years` |
 | `ws_jx_statute_sol_trigger` | select | What event starts the clock |
-| `ws_jx_statute_sol_has_details` | true_false | Toggle — enables SOL detail field |
+| `ws_jx_statute_has_sol_details` | true_false | Toggle — enables SOL detail field |
 | `ws_jx_statute_sol_details` | textarea | Supplementary SOL detail (conditional) |
-| `ws_jx_statute_tolling_has_details` | true_false | Toggle — tolling provisions exist |
+| `ws_jx_statute_has_tolling_details` | true_false | Toggle — tolling provisions exist |
 | `ws_jx_statute_tolling_details` | textarea | Tolling and extension details (conditional) |
 | `ws_jx_statute_has_exhaustion` | true_false | Toggle — exhaustion required before filing |
 | `ws_jx_statute_exhaustion_details` | textarea | Exhaustion procedure and deadline (conditional) |
@@ -234,21 +235,23 @@ stamp, plain English, source verify, and major edit from shared groups.
 | Meta Key | Type | Notes |
 |---|---|---|
 | `ws_jx_statute_process_types` | taxonomy | `ws_process_type` terms; `save_terms: 1` |
-| `ws_jx_statute_adverse_action_types` | taxonomy | `ws_adverse_action_type` terms; `save_terms: 1` |
+| `ws_jx_statute_adverse_actions` | taxonomy | `ws_adverse_action` terms; `save_terms: 1` |
 | `ws_jx_statute_fee_shiftings` | taxonomy | `ws_fee_shifting` terms; `save_terms: 1` |
 | `ws_jx_statute_remedies` | taxonomy | `ws_remedy` terms; `save_terms: 1` |
+| `ws_jx_statute_remedy_details` | textarea | Remedy details (conditional) |
 | `ws_jx_statute_related_agencies` | post_object | Links to `ws-agency` posts that enforce this statute |
 
 **Tab: Burden of Proof**
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_jx_statute_bop_standard` | select | Employee burden standard |
-| `ws_jx_statute_employer_defense` | taxonomy | `ws_employer_defense` terms; `save_terms: 1` |
+| `ws_jx_statute_employee_standards` | taxonomy | `ws_employee_standard` terms; `save_terms: 1` |
+| `ws_jx_statute_employee_standard_details` | textarea | Details on employee standard |
+| `ws_jx_statute_employer_defenses` | taxonomy | `ws_employer_defense` terms; `save_terms: 1` |
 | `ws_jx_statute_employer_defense_details` | textarea | Details on employer defense |
-| `ws_jx_statute_rebuttable_has_details` | true_false | Toggle — rebuttable presumption exists |
+| `ws_jx_statute_has_rebuttable_details` | true_false | Toggle — rebuttable presumption exists |
 | `ws_jx_statute_rebuttable_details` | textarea | Rebuttable presumption details (conditional) |
-| `ws_jx_statute_bop_has_details` | true_false | Toggle — supplementary BOP detail |
+| `ws_jx_statute_has_bop_details` | true_false | Toggle — supplementary BOP detail |
 | `ws_jx_statute_bop_details` | textarea | BOP supplementary detail (conditional) |
 
 **Tab: Reward**
@@ -285,13 +288,13 @@ stamp, plain English, source verify, and major edit from shared groups.
 | Meta Key | Type | Notes |
 |---|---|---|
 | `ws_jx_citation_type` | select | Case law type (`federal_circuit` / `federal_district` / `state` / `administrative` / `supreme_court`) |
-| `ws_jx_citation_disclosure_type` | taxonomy | `ws_disclosure_type` terms; `save_terms: 1` |
+| `ws_jx_citation_disclosure_types` | taxonomy | `ws_disclosure_type` terms; `save_terms: 1` |
 | `ws_jx_citation_official_name` | text | Official case name |
 | `ws_jx_citation_common_name` | text | Short / common name |
 | `ws_jx_citation_url` | url | Source URL (court opinion or database) |
-| `ws_jx_citation_is_pdf` | true_false | True if URL points to a PDF |
-| `ws_attach_flag` | true_false | Surface this citation on the jurisdiction summary page |
-| `ws_display_order` | number | Sort order among flagged records (conditional on flag) |
+| `ws_jx_citation_url_is_pdf` | true_false | True if URL points to a PDF |
+| `ws_jx_citation_has_attach_flag` | true_false | Surface this citation on the jurisdiction summary page |
+| `ws_jx_citation_display_order` | number | Sort order among flagged records (conditional on flag) |
 | `ws_jx_citation_last_reviewed` | text | Last verified date `Y-m-d` |
 
 **Tab: Relationships**
@@ -318,31 +321,32 @@ stamp, plain English, source verify, and major edit from shared groups.
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_jx_constructioncourt` | select | Court key from the federal or state court matrix; `other` triggers free-text field |
-| `ws_jx_constructioncourt_name` | text | Free-text court name (conditional on `other` selection) |
-| `ws_jx_constructionyear` | number | Year of decision |
-| `ws_jx_constructionfavorable` | true_false | Whether outcome favored the whistleblower |
-| `ws_jx_constructionofficial_name` | text | Official case name |
-| `ws_jx_constructioncommon_name` | text | Short / common name |
-| `ws_jx_constructioncase_citation` | text | Reporter citation |
-| `ws_jx_constructionurl` | url | URL to the court opinion |
+| `ws_jx_construction_court` | select | Court key from the federal or state court matrix; `other` triggers free-text field |
+| `ws_jx_construction_court_name` | text | Free-text court name (conditional on `other` selection) |
+| `ws_jx_construction_year` | number | Year of decision |
+| `ws_jx_construction_favorable` | true_false | Whether outcome favored the whistleblower |
+| `ws_jx_construction_official_name` | text | Official case name |
+| `ws_jx_construction_common_name` | text | Short / common name |
+| `ws_jx_construction_case_citation` | text | Reporter citation |
+| `ws_jx_construction_url` | url | URL to the court opinion |
+| `ws_jx_construction_url_is_pdf` | true_false | True if URL points to a PDF |
 
 **Tab: Summary**
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_jx_constructionsummary` | textarea | Plain-language summary of the holding |
-| `ws_process_type` | taxonomy | `ws_process_type` terms; `save_terms: 1` |
-| `ws_attach_flag` | true_false | Surface this construction on the jurisdiction summary page |
-| `ws_display_order` | number | Sort order among flagged records (conditional on flag) |
-| `ws_jx_constructionlast_reviewed` | text | Last verified date `Y-m-d` |
+| `ws_jx_construction_summary_wysiwyg` | wysiwyg | Plain-English summary of the holding |
+| `ws_jx_construction_process_types` | taxonomy | `ws_process_type` terms; `save_terms: 1` |
+| `ws_jx_construction_has_attach_flag` | true_false | Surface this construction on the jurisdiction summary page |
+| `ws_jx_construction_display_order` | number | Sort order among flagged records (conditional on flag) |
+| `ws_jx_construction_last_reviewed` | text | Last verified date `Y-m-d` |
 
 **Tab: Relationships**
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_jx_constructionstatute_id` | post_object | Parent `jx-statute` post (single, required) |
-| `ws_jx_constructionaffected_jx` | taxonomy | `ws_jurisdiction` terms auto-populated from court's `ws_jx_codes`; `save_terms: 0` to avoid taxonomy pollution |
+| `ws_jx_construction_statute_id` | post_object | Parent `jx-statute` post (single, required) |
+| `ws_jx_construction_affected_jx` | taxonomy | `ws_jurisdiction` terms auto-populated from court's `ws_jx_codes`; `save_terms: 0` to avoid taxonomy pollution |
 
 **Tab: Reference Materials**
 
@@ -363,11 +367,11 @@ stamp, plain English, source verify, and major edit from shared groups.
 | Meta Key | Type | Notes |
 |---|---|---|
 | `ws_agency_code` | text | Short reference code (e.g. `SEC`, `OSHA`) |
-| `ws_agency_name` | text | Full official agency name |
+| `ws_agency_official_name` | text | Full official agency name |
 | `ws_agency_logo` | image | Agency logo (WordPress media library) |
-| `ws_jurisdiction` *(taxonomy field)* | taxonomy | Jurisdiction scope; `save_terms: 1` |
-| `ws_agency_disclosure_type` | taxonomy | `ws_disclosure_type` terms; `save_terms: 1` |
-| `ws_process_type` | taxonomy | `ws_process_type` terms; `save_terms: 1` |
+| `ws_agency_jurisdictions` *(taxonomy field)* | taxonomy | Jurisdiction scope; `save_terms: 1` |
+| `ws_agency_disclosure_types` | taxonomy | `ws_disclosure_type` terms; `save_terms: 1` |
+| `ws_agency_process_types` | taxonomy | `ws_process_type` terms; `save_terms: 1` |
 
 **Tab: Contact & Reporting**
 
@@ -376,10 +380,10 @@ stamp, plain English, source verify, and major edit from shared groups.
 | `ws_agency_url` | url | Official website |
 | `ws_agency_reporting_url` | url | Secure reporting portal |
 | `ws_agency_phone` | text | Whistleblower hotline |
-| `ws_agency_confidentiality_notes` | textarea | Notes on identity and confidentiality policies |
+| `ws_agency_confidentiality_details` | textarea | Details on identity and confidentiality policies |
 | `ws_agency_accepts_anonymous` | true_false | Whether anonymous reporting is permitted |
 | `ws_agency_reward_program` | true_false | Whether a reward or bounty program exists |
-| `ws_languages` | taxonomy | `ws_languages` terms; `save_terms: 1` |
+| `ws_languages` | taxonomy | `ws_language` terms; `save_terms: 1` |
 | `ws_agency_additional_languages` | text | Free-text overflow; auto-assigns `additional` term |
 | `ws_agency_last_reviewed` | date_picker | Last verified date |
 
@@ -389,54 +393,56 @@ stamp, plain English, source verify, and major edit from shared groups.
 
 **Group key:** `group_ag_procedure_metadata`
 **File:** `acf/acf-ag-procedures.php`
-**Attaches to:** `ws-ag-procedure`
+**Attaches to:** `ag-procedure`
 
 Stamp fields attach via the shared group. Plain English fields do NOT
-attach — the walkthrough is the plain English content. Source verify
+attach — the walkthrough is the plain-english content. Source verify
 fields DO attach.
 
 **Tab: Procedure Identity**
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_proc_agency_id` | post_object | Parent `ws-agency` post; pre-filled from `?agency_id=` URL param on new posts |
+| `ws_ag_procedure_agency_id` | post_object | Parent `ws-agency` post; pre-filled from `?agency_id=` URL param on new posts |
 | `ws_procedure_type` | taxonomy | `ws_procedure_type` terms; radio UI; `save_terms: 1` |
-| `ws_jurisdiction` *(taxonomy field)* | taxonomy | Jurisdiction scope; `save_terms: 1` |
-| `ws_proc_disclosure_types` | taxonomy | `ws_disclosure_type` terms; `save_terms: 1` |
-| `ws_proc_statute_ids` | relationship | Related `jx-statute` posts; auto-scoped to matching jurisdiction and disclosure types |
+| `ws_jurisdictions` *(taxonomy field)* | taxonomy | Jurisdiction scope; `save_terms: 1` |
+| `ws_ag_procedure_disclosure_types` | taxonomy | `ws_disclosure_type` terms; `save_terms: 1` |
+| `ws_ag_procedure_statute_ids` | relationship | Related `jx-statute` posts; auto-scoped to matching jurisdiction and disclosure types |
+| `ws_ag_procedure_comlaw_ids` | relationship | Related `jx-common-law` posts; auto-scoped to matching jurisdiction |
+| `_ws_ag_procedure_parent_ids` | relationship | (Internal) Merged array of related `jx-statute` and `jx-common-law` posts |
 
 **Tab: Filing Details**
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_proc_entry_point` | select | `online` / `mail` / `phone` / `in_person` / `multi` |
-| `ws_proc_intake_url` | url | Direct intake form URL |
-| `ws_proc_phone` | text | Direct hotline for this procedure |
-| `ws_proc_identity_policy` | select | `anonymous` / `confidential` / `identified` / `varies` |
-| `ws_proc_intake_only` | true_false | Agency receives and refers only — does not investigate |
-| `ws_proc_deadline_days` | number | Filing deadline in calendar days; `0` = none or unknown |
-| `ws_proc_deadline_clock_start` | select | `adverse_action` / `knowledge` / `last_act` / `varies` (conditional on deadline > 0) |
-| `ws_proc_prerequisites` | true_false | Prerequisites required before filing |
-| `ws_proc_prerequisites_note` | textarea | What prerequisites must be satisfied (conditional on toggle) |
+| `ws_ag_procedure_entry_point` | select | `online` / `mail` / `phone` / `in_person` / `multi` |
+| `ws_ag_procedure_intake_url` | url | Direct intake form URL |
+| `ws_ag_procedure_phone` | text | Direct hotline for this procedure |
+| `ws_ag_procedure_identity_policy` | select | `anonymous` / `confidential` / `identified` / `varies` |
+| `ws_ag_procedure_intake_only` | true_false | Agency receives and refers only — does not investigate |
+| `ws_ag_procedure_deadline_days` | number | Filing deadline in calendar days; `0` = none or unknown |
+| `ws_ag_procedure_deadline_clock_start` | select | `adverse_action` / `knowledge` / `last_act` / `varies` (conditional on deadline > 0) |
+| `ws_ag_procedure_has_prerequisites` | true_false | Prerequisites required before filing |
+| `ws_ag_procedure_prerequisites_details` | textarea | Details of prerequisites that must be satisfied (conditional on toggle) |
 
 **Tab: Plain English**
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_proc_walkthrough` | wysiwyg | Step-by-step plain language filing guide |
-| `ws_proc_exclusivity_note` | textarea | Remedies or procedures the filer may forfeit by using this pathway |
+| `ws_ag_procedure_walkthrough_wysiwyg` | wysiwyg | Step-by-step plain-english filing guide |
+| `ws_ag_procedure_exclusivity_details` | textarea | Details on remedies or procedures the filer may forfeit by using this pathway |
 
 **Tab: Last Verified**
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_proc_last_reviewed` | date_picker | Last verified date |
+| `ws_ag_procedure_last_reviewed` | date_picker | Last verified date |
 
 **Tab: Admin Review** *(admin-only)*
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_proc_stat_override` | true_false | Admin override for statute link mismatch flag; resets to 0 after save |
+| `ws_ag_procedure_parent_override` | true_false | Admin override for statute link mismatch flag; resets to 0 after save |
 
 ---
 
@@ -450,7 +456,9 @@ fields DO attach.
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_aorg_internal_id` | text | Internal reference code |
+| `_ws_aorg_internal_id` | text | Internal reference code |
+| `ws_aorg_official_name` | text | Organization's Official Name |
+| `ws_aorg_common_name` | text | Widely recognized common name or acronym |
 | `ws_aorg_type` | taxonomy | `ws_aorg_type` terms; radio UI; `save_terms: 1` |
 | `ws_aorg_description` | textarea | Organization description |
 | `ws_aorg_logo` | image | Organization logo |
@@ -460,22 +468,23 @@ fields DO attach.
 | Meta Key | Type | Notes |
 |---|---|---|
 | `ws_aorg_serves_nationwide` | true_false | Serves all 57 jurisdictions — enables nationwide overlay |
-| `ws_jurisdiction` *(taxonomy field)* | taxonomy | Specific jurisdictions served; `save_terms: 1` |
+| `ws_jurisdictions` *(taxonomy field)* | taxonomy | Specific jurisdictions served; `save_terms: 1` |
 | `ws_aorg_disclosure_types` | taxonomy | `ws_disclosure_type` terms; `save_terms: 1` |
 | `ws_aorg_services` | taxonomy | `ws_aorg_service` terms; `save_terms: 1` |
 | `ws_aorg_additional_services` | textarea | Free-text overflow; auto-assigns `additional` service term |
-| `ws_employment_sector` | taxonomy | `ws_employment_sector` terms; `save_terms: 1` |
-| `ws_case_stage` | taxonomy | `ws_case_stage` terms; `save_terms: 1` |
+| `ws_aorg_employment_sectors` | taxonomy | `ws_employment_sector` terms; `save_terms: 1` |
+| `ws_aorg_case_stages` | taxonomy | `ws_case_stage` terms; `save_terms: 1` |
+| `ws_aorg_case_stage_details` | textarea | Details of non-taxonomy case stage (conditional `has-details`) |
 
 **Tab: Contact**
 
 | Meta Key | Type | Notes |
 |---|---|---|
 | `ws_aorg_website_url` | url | Website |
-| `ws_aorg_phone` | text | Phone |
-| `ws_aorg_email` | email | Contact email |
-| `ws_aorg_mailing_address` | textarea | Mailing address |
-| `ws_languages` | taxonomy | `ws_languages` terms; `save_terms: 1` |
+| `ws_aorg_phone` | array | [type, number] |
+| `ws_aorg_email` | array| [type, address] |
+| `ws_aorg_mailing_address` | textarea | Mailing address (split by || if multiple) |
+| `ws_languages` | taxonomy | `ws_language` terms; `save_terms: 1` |
 | `ws_aorg_additional_languages` | text | Free-text overflow; auto-assigns `additional` language term |
 
 **Tab: Eligibility & Cost**
@@ -483,17 +492,17 @@ fields DO attach.
 | Meta Key | Type | Notes |
 |---|---|---|
 | `ws_aorg_cost_model` | taxonomy | `ws_aorg_cost_model` terms; radio UI; `save_terms: 1` |
-| `ws_aorg_income_limit` | true_false | Income eligibility required |
-| `ws_aorg_income_limit_notes` | textarea | Eligibility details (conditional) |
+| `ws_aorg__has_income_limit` | true_false | Income eligibility required |
+| `ws_aorg_income_limit_details` | textarea | Eligibility details (conditional) |
 | `ws_aorg_accepts_anonymous` | true_false | Can assist anonymous clients |
-| `ws_aorg_eligibility_notes` | textarea | Additional eligibility requirements |
+| `ws_aorg_eligibility_details` | textarea | Additional eligibility requirements |
 
 **Tab: Credentials**
 
 | Meta Key | Type | Notes |
 |---|---|---|
 | `ws_aorg_licensed_attorneys` | true_false | Licensed attorneys on staff |
-| `ws_aorg_accreditation` | text | Accreditations and certifications |
+| `ws_aorg_accreditation` | text | Accreditation and certifications |
 | `ws_aorg_bar_states` | text | State bar memberships |
 | `ws_aorg_verify_url` | url | Verification or transparency URL |
 | `ws_aorg_last_reviewed` | date_picker | Last verified date |
@@ -510,17 +519,17 @@ fields DO attach.
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_legal_update_jurisdiction` | taxonomy | Affected jurisdiction; `ws_jurisdiction` term; `save_terms: 1` |
+| `ws_legal_update_jurisdictions` | taxonomy | Affected jurisdiction; `ws_jurisdiction` term; `save_terms: 1` |
 | `ws_legal_update_multi_jurisdiction` | true_false | Affects multiple jurisdictions |
-| `ws_legal_update_date` | date_picker | Date of the legal development |
 | `ws_legal_update_source_url` | url | Primary source URL |
-| `ws_legal_update_type` | select | `statute` / `citation` / `summary` / `construction` / `regulation` / `policy` / `internal` / `other` |
+| `ws_legal_update_source_url_is_pdf` | true_false | Is primary source URL a PDF |
+| `ws_legal_update_type` | select | `summary` /`statute` / `common-law` / `citation` / `summary` / `construction` / `regulation` / `policy` / `internal` / `other` |
 | `ws_legal_update_law_name` | text | Name of the law or case (auto-filled by major edit hook) |
 | `ws_legal_update_summary_wysiwyg` | wysiwyg | Summary of the legal development |
 | `ws_legal_update_effective_date` | date_picker | Effective date of the change |
 
 Auto-written meta keys (set by major edit hook, never via ACF UI):
-`ws_legal_update_source_post_id`, `ws_legal_update_source_post_type`
+`ws_legal_update_parent_post_id`, `ws_legal_update_parent_post_type`
 
 ---
 
@@ -569,6 +578,6 @@ and what allows matrix seeders to use `wp_set_object_terms()` directly
 without an ACF save cycle.
 
 Fields that explicitly use `save_terms: 0` do so to prevent taxonomy
-query pollution — `ws_jx_constructionaffected_jx` is the notable example,
+query pollution — `ws_jx_construction_affected_jx` is the notable example,
 where terms are auto-populated from court matrix data and should not
 affect standard `ws_jurisdiction` taxonomy queries.

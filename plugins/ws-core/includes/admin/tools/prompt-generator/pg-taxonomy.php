@@ -69,7 +69,7 @@ function ws_prompt_taxonomy_descriptions(): array {
         'ws_employment_sector'    => 'Sectors served',
         'ws_aorg_cost_model'      => 'Cost structure',
         'ws_aorg_service'         => 'Services offered',
-        'ws_adverse_action_type'  => 'Adverse actions addressed',
+        'ws_adverse_action'  => 'Adverse actions addressed',
         'ws_remedy'               => 'Remedies addressed',
         'ws_fee_shifting'         => 'Fee shifting posture',
         'ws_employer_defense'     => 'Employer defenses',
@@ -83,10 +83,10 @@ function ws_prompt_taxonomies_for_record_type( string $record_type ): array {
             return [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_target', 'ws_process_type', 'ws_case_stage', 'ws_language', 'ws_aorg_type', 'ws_employment_sector', 'ws_aorg_cost_model', 'ws_aorg_service' ];
         case 'statute':
         case 'common-law':
-            return [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_target', 'ws_employment_sector', 'ws_adverse_action_type', 'ws_process_type', 'ws_remedy', 'ws_fee_shifting', 'ws_employer_defense', 'ws_employee_standard' ];
+            return [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_target', 'ws_employment_sector', 'ws_adverse_action', 'ws_process_type', 'ws_remedy', 'ws_fee_shifting', 'ws_employer_defense', 'ws_employee_standard' ];
         case 'citation':
         case 'construction':
-            return [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_target', 'ws_employment_sector', 'ws_adverse_action_type', 'ws_process_type', 'ws_remedy', 'ws_employer_defense', 'ws_employee_standard' ];
+            return [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_target', 'ws_employment_sector', 'ws_adverse_action', 'ws_process_type', 'ws_remedy', 'ws_employer_defense', 'ws_employee_standard' ];
         default:
             return [];
     }

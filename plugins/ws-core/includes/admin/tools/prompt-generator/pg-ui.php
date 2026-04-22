@@ -172,7 +172,7 @@ function ws_render_prompt_generator_page() {
                             <option value="statute"        <?php selected( $record_type, 'statute' ); ?>>Statute</option>
                             <option value="common-law"     <?php selected( $record_type, 'common-law' ); ?>>Common Law</option>
                             <option value="citation"       <?php selected( $record_type, 'citation' ); ?>>Citation</option>
-                            <option value="construction" <?php selected( $record_type, 'construction' ); ?>>construction</option>
+                            <option value="construction"   <?php selected( $record_type, 'construction' ); ?>>Construction</option>
                             <option value="assist-org"     <?php selected( $record_type, 'assist-org' ); ?>>Assist Org</option>
                         </select>
                     </td>

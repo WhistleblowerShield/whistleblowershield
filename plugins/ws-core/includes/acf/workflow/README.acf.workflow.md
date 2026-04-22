@@ -24,7 +24,7 @@ writes depend on stamp field definitions being registered.
 ## Operational Note
 
 These groups are shared contracts. If a field is changed here, confirm
-that downstream query payloads (`plain`, `verify`, `record`) and all
+that downstream query payloads (`plain`, `verify`, `author`) and all
 `acf/save_post` hooks in `admin-hooks.php` remain aligned. Changes here
 ripple across every CPT that carries the group.
 
@@ -55,9 +55,9 @@ non-administrators. The hook that writes them is
 `ws-agency`
 
 **Intentionally excluded:**
-- `jx-summary` — IS the plain language document; carries its own
+- `jx-summary` — IS the plain-english document; carries its own
   review fields in `acf-jx-summaries.php`
-- `ws-assist-org` — content is plain language by nature
+- `ws-assist-org` — content is plain-english by nature
 - `ws-legal-update` — changelog entries, no overlay use case
 - `ws-reference` — outbound links, no prose to simplify
 - `jurisdiction` — structured metadata container, not explanatory prose
@@ -73,7 +73,7 @@ Integrity guards enforced by `ws_acf_plain_english_guards()` in
 ## Source Verify Fields (`group_source_verify_metadata`)
 
 **Attaches to:** `jx-statute`, `jx-citation`, `jx-construction`,
-`ws-agency`, `ws-ag-procedure`, `ws-assist-org`, `jx-summary`,
+`ws-agency`, `ag-procedure`, `ws-assist-org`, `jx-summary`,
 `ws-reference`
 
 Three write paths for `ws_auto_source_method`:

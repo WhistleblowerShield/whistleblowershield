@@ -118,8 +118,8 @@ function ws_register_acf_agencies() {
             ],
             [
                 'key'          => 'field_agency_acronym',
-                'label'        => 'Agency Acronym',
-                'name'         => 'ws_agency_acronym',
+                'label'        => 'Agency Common Name / Acronym',
+                'name'         => 'ws_agency_common_name',
                 'type'         => 'text',
                 'required'     => 1,
                 'instructions' => 'Example: OSC',
@@ -348,7 +348,7 @@ function ws_register_acf_agencies() {
                 'first_day'      => 1,
             ],
 
-            // ── Tab: Plain Language ───────────────────────────────────────
+            // ── Tab: Plain-English ───────────────────────────────────────
             // Removed — registered centrally in acf-plain-english-fields.php
             // (group_plain_english_metadata, menu_order 85).
 

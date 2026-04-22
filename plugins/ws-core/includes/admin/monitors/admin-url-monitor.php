@@ -111,7 +111,7 @@ $ws_url_monitor_map = [
 ];
 
 $ws_url_monitor_priority_map = [
-    'ws-ag-procedure' => [
+    'ag-procedure' => [
         'ws_ag_procedure_intake_url',
     ],
 ];

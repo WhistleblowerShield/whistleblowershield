@@ -69,7 +69,7 @@ is set once at creation and never changed. The five values:
 | `feed_import` | Created via the Inoreader legislative feed monitor |
 
 `jx-summary` records always carry `human_created` regardless of how
-they were initiated. Summaries are the plain-language editorial voice
+they were initiated. Summaries are the plain-english editorial voice
 of the platform — AI assistance in drafting is acceptable but the
 method stamp must reflect human authorship.
 
@@ -169,13 +169,13 @@ in particular uses it to evaluate whether information can be attributed.
 ### Review Status Badge
 
 The "Editor Reviewed" trust badge (`ws_render_plain_english_reviewed_badge()`)
-appears on records whose plain English content has been reviewed for
+appears on records whose plain-english content has been reviewed for
 accuracy. It shows the reviewer's name on hover. It does not appear
 on unreviewed content, and it never appears on records where the
 review toggle has not been explicitly set.
 
 The badge is a signal, not a guarantee. It means a human editor has
-read the plain language content and judged it accurate as of the review
+read the plain-english content and judged it accurate as of the review
 date. It does not mean the underlying law has not changed since.
 
 ### Primary Source Links
@@ -249,8 +249,8 @@ conditions:
 2. The `ws_auto_source_method` field correctly reflects
    `ai_research` for records where AI substantially drafted the
    content.
-3. The plain English review toggle is set only after a human has
-   reviewed the plain language content for accuracy, regardless of
+3. The plain-english review toggle is set only after a human has
+   reviewed the plain-english content for accuracy, regardless of
    how it was drafted.
 
 AI assistance does not change the accuracy standard. A record verified

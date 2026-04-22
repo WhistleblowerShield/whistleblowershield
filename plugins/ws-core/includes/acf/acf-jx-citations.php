@@ -30,8 +30,8 @@
  *   ws_jx_citation_protected_class_details        Protected Class Details (textarea, optional)
  *   ws_jx_citation_disclosure_targets             Disclosure Targets (multi_select, optional)
  *   ws_jx_citation_disclosure_target_details      Disclosure Targets Details (textarea, optional)
- *   ws_jx_citation_adverse_action_types           Adverse Action Types (multi_select, optional)
- *   ws_jx_citation_adverse_action_type_details    Adverse Action Details (textarea, optional)
+ *   ws_jx_citation_adverse_actions           Adverse Action Types (multi_select, optional)
+ *   ws_jx_citation_adverse_action_details    Adverse Action Details (textarea, optional)
  *   ws_jx_citation_process_types                  Process Type (multi_select, optional)
  *   ws_jx_citation_remedies                       Remedies (multi_select, optional)
  *   ws_jx_citation_remedy_details                 Remedies Details (textarea, optional)
@@ -313,11 +313,11 @@ function ws_register_acf_jx_citations() {
             ],
 
             [
-                'key'           => 'field_jx_citation_adverse_action_types',
+                'key'           => 'field_jx_citation_adverse_actions',
                 'label'         => 'Adverse Action Types',
-                'name'          => 'ws_jx_citation_adverse_action_types',
+                'name'          => 'ws_jx_citation_adverse_actions',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_adverse_action_type',
+                'taxonomy'      => 'ws_adverse_action',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Retaliatory action at issue in this citation. Tag only where the cited source explicitly addresses the type of adverse action taken or alleged.',
                 'add_term'      => 0,
@@ -327,9 +327,9 @@ function ws_register_acf_jx_citations() {
             ],
 
             [
-                'key'          => 'field_jx_citation_adverse_action_type_details',
+                'key'          => 'field_jx_citation_adverse_action_details',
                 'label'        => 'Adverse Action Details',
-                'name'         => 'ws_jx_citation_adverse_action_type_details',
+                'name'         => 'ws_jx_citation_adverse_action_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
                 'instructions' => 'Describe nuance in the adverse action coverage as addressed by this citation.',
@@ -453,7 +453,7 @@ function ws_register_acf_jx_citations() {
                 'instructions' => 'Update this date each time the citation is meaningfully revised.',
             ],
 
-            // ── Tab: Plain Language ───────────────────────────────────────
+            // ── Tab: Plain-English ───────────────────────────────────────
             // Removed — registered centrally in acf-plain-english-fields.php
             // (group_plain_english_metadata, menu_order 85).
 
@@ -541,7 +541,7 @@ function ws_register_acf_jx_citations() {
 // includes sentinel slug 'has-details':
 // - ws_jx_citation_protected_classes
 // - ws_jx_citation_disclosure_targets
-// - ws_jx_citation_adverse_action_types
+// - ws_jx_citation_adverse_actions
 // - ws_jx_citation_remedies
 // - ws_jx_citation_employee_standards
 // - ws_jx_citation_employer_defenses
@@ -553,7 +553,7 @@ function ws_jx_citation_details_conditional( $field ) {
     static $map = [
         'field_jx_citation_protected_class_details'    => [ 'ws_protected_class',      'field_jx_citation_protected_classes' ],
         'field_jx_citation_disclosure_target_details'  => [ 'ws_disclosure_target',    'field_jx_citation_disclosure_targets' ],
-        'field_jx_citation_adverse_action_type_details'  => [ 'ws_adverse_action_type',  'field_jx_citation_adverse_action_types' ],
+        'field_jx_citation_adverse_action_details'     => [ 'ws_adverse_action',       'field_jx_citation_adverse_actions' ],
         'field_jx_citation_remedy_details'             => [ 'ws_remedy',               'field_jx_citation_remedies' ],
         'field_jx_citation_employee_standard_details'  => [ 'ws_employee_standard',    'field_jx_citation_employee_standards' ],
         'field_jx_citation_employer_defense_details'   => [ 'ws_employer_defense',     'field_jx_citation_employer_defenses' ],

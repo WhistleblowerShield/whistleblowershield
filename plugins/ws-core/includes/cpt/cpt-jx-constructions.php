@@ -7,7 +7,7 @@
  * Linked to parent statute via ws_jx_construction_statute_id (post_object).
  * Scoped via ws_jurisdiction taxonomy term.
  *
- * Created via "Add New construction" button in admin-construction-metabox.php
+ * Created via "Add New Construction" button in admin-construction-metabox.php
  * on the jx-statute edit screen.
  *
  * @package WhistleblowerShield
@@ -22,24 +22,24 @@
 
 defined( 'ABSPATH' ) || exit;
 
-add_action( 'init', 'ws_register_cpt_jx_construction' );
+add_action( 'init', 'ws_register_cpt_jx_construction_' );
 
-function ws_register_cpt_jx_construction() {
+function ws_register_cpt_jx_construction_() {
 
     $labels = [
-        'name'               => 'Legal constructions',
-        'singular_name'      => 'Legal construction',
-        'menu_name'          => 'JX constructions',
-        'name_admin_bar'     => 'JX construction',
+        'name'               => 'Legal Constructions',
+        'singular_name'      => 'Legal Construction',
+        'menu_name'          => 'JX Constructions',
+        'name_admin_bar'     => 'JX Construction',
         'add_new'            => 'Add New',
-        'add_new_item'       => 'Add New Legal construction',
-        'edit_item'          => 'Edit Legal construction',
-        'new_item'           => 'New Legal construction',
-        'view_item'          => 'View construction',
-        'search_items'       => 'Search constructions',
-        'not_found'          => 'No constructions found',
-        'not_found_in_trash' => 'No constructions found in trash',
-        'all_items'          => 'All constructions',
+        'add_new_item'       => 'Add New Legal Construction',
+        'edit_item'          => 'Edit Legal Construction',
+        'new_item'           => 'New Legal Construction',
+        'view_item'          => 'View Construction',
+        'search_items'       => 'Search Constructions',
+        'not_found'          => 'No Constructions found',
+        'not_found_in_trash' => 'No Constructions found in trash',
+        'all_items'          => 'All Constructions',
     ];
 
     $args = [
@@ -68,7 +68,7 @@ function ws_register_cpt_jx_construction() {
             'ws_process_type',
             'ws_remedy',
             'ws_protected_class',
-            'ws_adverse_action_type',
+            'ws_adverse_action',
             'ws_disclosure_target',
             'ws_fee_shifting',
             'ws_employer_defense',
@@ -89,7 +89,8 @@ function ws_register_cpt_jx_construction() {
         // ── Capabilities ──────────────────────────────────────────────────
 
         'capability_type' => 'post',
-        'rewrite'         => false,
+        'rewrite'         => [ 'slug' => 'jx-construction', 'with_front' => false ],
+
 
     ];
 

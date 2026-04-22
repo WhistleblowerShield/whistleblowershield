@@ -48,7 +48,7 @@ function ws_generate_legal_prompt( string $record_type, array $scope ): string {
     $jx_name  = sanitize_text_field( $scope['jx_name'] );
     $leg_url  = esc_url_raw( (string) ( $scope['legislature_url'] ?? '' ) );
     $records  = (int) ( $scope['records_requested'] ?? 0 );
-    $notes    = trim( (string) ( $scope['scope_notes'] ?? '' ) );
+    $notes    = trim( (string) ( $scope['scope_details'] ?? '' ) );
     $excludes = (string) ( $scope['exclusion_list'] ?? '' );
 
     $out  = ws_prompt_shared_intro_block( $record_type );

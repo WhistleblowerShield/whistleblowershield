@@ -33,10 +33,10 @@
  *   ws_render_jx_flag()                      Flag image with Wikimedia attribution.
  *   ws_render_jx_gov_offices()               Leadership offices link box.
  *   ws_render_jx_summary_section()           Summary content + footer wrapper.
- *   ws_render_plain_english_reviewed_badge() Plain-language review status badge.
+ *   ws_render_plain_english_reviewed_badge() Plain-English review status badge.
  *   ws_render_jx_summary_footer()            Summary footer (author, date, badge, sources).
  *   ws_render_jx_citations()                 Case law / citations footnote section.
- *   ws_render_jx_constructions()           Court constructions card section.
+ *   ws_render_jx_construction_s()             Court constructions card section.
  *   ws_render_jx_limitations()               Limitations section wrapper.
  *
  *
@@ -45,7 +45,7 @@
  *
  * The rendered HTML structure should remain simple, accessible, and readable
  * for users who may be experiencing stress or urgency. WhistleblowerShield
- * prioritizes plain language presentation, clear section separation, and
+ * prioritizes plain-english presentation, clear section separation, and
  * predictable layout.
  *
  *
@@ -76,9 +76,9 @@
  * 3.10.1 ws_render_jx_limitations(): text field switched from sanitize_text_field/
  *        esc_html to wp_kses_post; glossary scan applied to assembled $items
  *        before section wrapper. Labels remain esc_html (identifiers, not prose).
- * 3.7.0  ws_render_jx_constructions() added. Renders court construction
+ * 3.7.0  ws_render_jx_construction_s() added. Renders court construction
  *        cards (case name, court/year/citation, favorable indicator, summary,
- *        External References button). Called by [ws_jx_construction].
+ *        External References button). Called by [ws_jx_construction_].
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -286,10 +286,10 @@ function ws_render_jx_summary_section( $content, $review_html = '' ) {
 // ════════════════════════════════════════════════════════════════════════════
 // Trust Badge (plain_reviewed)
 //
-// Renders the plain-language review status badge for a summary record.
+// Renders the plain-english review status badge for a summary record.
 // Legal review badge system was removed in Phase 9.0.
 //
-// @param  bool   $plain_reviewed  True if a human has reviewed the plain-language content.
+// @param  bool   $plain_reviewed  True if a human has reviewed the plain-english content.
 // @param  string $reviewer_name   Display name of the reviewer, or empty.
 // @param  string $reviewed_date   Date review was completed (Y-m-d), or empty.
 // @return string                  HTML badge span.
@@ -316,7 +316,7 @@ function ws_render_plain_english_reviewed_badge( $plain_reviewed, $reviewer_name
 /**
  * Renders the summary section footer.
  *
- * Displays author, creation date, last reviewed date, plain-language
+ * Displays author, creation date, last reviewed date, plain-english
  * review badge, and sources & citations. All fields are optional — sections
  * are omitted when their data is empty.
  *
@@ -326,9 +326,9 @@ function ws_render_plain_english_reviewed_badge( $plain_reviewed, $reviewer_name
  * @param  array $data {
  *     @type string $created_by_name  Display name of the content author.
  *     @type string $created_date     Creation date (Y-m-d), or empty.
- *     @type bool   $is_reviewed      True if plain-language review is complete.
- *     @type string $reviewed_by_name Display name of the plain-language reviewer.
- *     @type string $reviewed_date    Date the plain-language review was completed (Y-m-d), or empty.
+ *     @type bool   $is_reviewed      True if plain-english review is complete.
+ *     @type string $reviewed_by_name Display name of the plain-english reviewer.
+ *     @type string $reviewed_date    Date the plain-english review was completed (Y-m-d), or empty.
  *     @type string $sources          Sources & citations raw text, or empty.
  * }
  * @return string  HTML footer block.
@@ -381,7 +381,7 @@ function ws_render_jx_summary_footer( $data ) {
 
 // ws_render_jx_review_status() removed in Phase 9.0.
 // The [ws_jx_review_status] shortcode was the only caller; it has been
-// removed along with the legal review badge system. Plain-language review
+// removed along with the legal review badge system. Plain-English review
 // status is now rendered inline by ws_render_jx_summary_footer().
 
 
@@ -424,39 +424,39 @@ function ws_render_jx_citations( $items, $section_class = '' ) {
  *
  * Calls ws_get_reference_page_url() to build the ref button URL — a lightweight
  * URL builder, not a database query. Wraps output in ws_render_section() which
- * applies wp_kses_post(). Called by ws_shortcode_jx_construction().
+ * applies wp_kses_post(). Called by ws_shortcode_jx_construction_().
  *
- * Note: constructions are federal court decisions. On state jurisdiction pages
+ * Note: Constructions are federal court decisions. On state jurisdiction pages
  * they arrive with is_fed = true (US-term append). The --fed modifier class is
  * applied but the local/federal two-group split used for statutes and citations
  * is not appropriate here — all constructions share a single section heading.
  *
- * @param  array  $interps  construction data arrays from ws_get_jx_construction_data().
- * @return string           HTML section block, or empty string if $interps is empty.
+ * @param  array  $constructs  construction data arrays from ws_get_jx_construction_data().
+ * @return string           HTML section block, or empty string if $constructs is empty.
  */
-function ws_render_jx_constructions( $interps ) {
-    if ( empty( $interps ) ) return '';
+function ws_render_jx_construction_s( $constructs ) {
+    if ( empty( $constructs ) ) return '';
 
     $content = '';
-    foreach ( $interps as $interp ) {
+    foreach ( $constructs as $construct ) {
 
-        $name_html = $interp['opinion_url']
-            ? '<a href="' . esc_url( $interp['opinion_url'] ) . '" target="_blank" rel="noopener noreferrer">'
-              . esc_html( $interp['official_name'] ) . '</a>'
-            : esc_html( $interp['official_name'] );
+        $name_html = $construct['opinion_url']
+            ? '<a href="' . esc_url( $construct['opinion_url'] ) . '" target="_blank" rel="noopener noreferrer">'
+              . esc_html( $construct['official_name'] ) . '</a>'
+            : esc_html( $construct['official_name'] );
 
         $meta_parts = array_filter( [
-            esc_html( $interp['court'] ),
-            esc_html( $interp['year'] ),
-            esc_html( $interp['citation'] ),
+            esc_html( $construct['court'] ),
+            esc_html( $construct['year'] ),
+            esc_html( $construct['citation'] ),
         ] );
 
-        $favorable_class = $interp['is_favorable'] ? 'ws-construction-favorable' : 'ws-construction-unfavorable';
-        $favorable_label = $interp['is_favorable'] ? 'Favorable' : 'Unfavorable';
+        $favorable_class = $construct['is_favorable'] ? 'ws-construction-favorable' : 'ws-construction-unfavorable';
+        $favorable_label = $construct['is_favorable'] ? 'Favorable' : 'Unfavorable';
 
         $ref_btn = '';
-        if ( ! empty( $interp['ref_materials'] ) ) {
-            $ref_url = ws_get_reference_page_url( $interp['id'], 'constructions' );
+        if ( ! empty( $construct['ref_materials'] ) ) {
+            $ref_url = ws_get_reference_page_url( $construct['id'], 'constructions' );
             if ( $ref_url ) {
                 $ref_btn = '<div class="ws-ref-materials-link">'
                          . '<a href="' . esc_url( $ref_url ) . '" class="ws-ref-materials-btn" target="_blank">'
@@ -466,14 +466,14 @@ function ws_render_jx_constructions( $interps ) {
         }
 
         $card_class = 'ws-construction-card'
-                    . ( $interp['is_fed'] ? ' ws-construction-card--fed' : '' );
+                    . ( $construct['is_fed'] ? ' ws-construction-card--fed' : '' );
 
         $card  = '<div class="' . esc_attr( $card_class ) . '">';
         $card .= '<p class="ws-construction-case-name">' . $name_html . '</p>';
 
-        if ( $interp['common_name'] ) {
+        if ( $construct['common_name'] ) {
             $card .= '<p class="ws-construction-common-name">'
-                   . esc_html( $interp['common_name'] ) . '</p>';
+                   . esc_html( $construct['common_name'] ) . '</p>';
         }
 
         if ( $meta_parts ) {
@@ -484,9 +484,9 @@ function ws_render_jx_constructions( $interps ) {
                    . ' &bull; ' . $favorable_span . '</p>';
         }
 
-        if ( $interp['summary'] ) {
+        if ( $construct['summary'] ) {
             $card .= '<p class="ws-construction-summary">'
-                   . esc_html( $interp['summary'] ) . '</p>';
+                   . esc_html( $construct['summary'] ) . '</p>';
         }
 
         $card    .= $ref_btn;
@@ -494,7 +494,7 @@ function ws_render_jx_constructions( $interps ) {
         $content .= $card;
     }
 
-    return ws_render_section( 'Court constructions', $content );
+    return ws_render_section( 'Court Constructions', $content );
 }
 
 

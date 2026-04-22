@@ -160,7 +160,7 @@ $_ws_state_court_matrix = [
 // ════════════════════════════════════════════════════════════════════════════
 // Gate: ws_seeded_state_court_matrix
 //
-// $ws_state_court_matrix is loaded at runtime — no posts or terms are created.
+// $_ws_state_court_matrix is loaded at runtime — no posts or terms are created.
 // The gate option tracks the matrix version for tooling consistency.
 // Increment the string to signal a data change (e.g., new court added).
 // ════════════════════════════════════════════════════════════════════════════

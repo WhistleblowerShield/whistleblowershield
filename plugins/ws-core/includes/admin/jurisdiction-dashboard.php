@@ -8,7 +8,7 @@
  * CACHING
  * -------
  * The full rendered HTML table is cached as a 10-minute transient
- * (ws_jx_dashboard_html). The cache is invalidated automatically whenever
+ * (ws_jx_dashboard_html_). The cache is invalidated automatically whenever
  * any of the tracked CPTs is saved or deleted via save_post / delete_post.
  * A "Refresh" button on the page clears it on demand.
  *
@@ -66,7 +66,7 @@ function ws_render_jurisdiction_dashboard() {
         isset( $_POST['ws_jx_dash_refresh'] ) &&
         check_admin_referer( 'ws_jx_dash_refresh' )
     ) {
-        delete_transient( 'ws_jx_dashboard_html' );
+        delete_transient( 'ws_jx_dashboard_html_' );
     }
 
     echo '<div class="wrap">';
@@ -81,7 +81,7 @@ function ws_render_jurisdiction_dashboard() {
     echo '</form>';
 
     // ── Serve from cache if available ─────────────────────────────────────
-    $cached = get_transient( 'ws_jx_dashboard_html' );
+    $cached = get_transient( 'ws_jx_dashboard_html_' );
     if ( false !== $cached ) {
         echo wp_kses_post( $cached );
         echo '</div>';
@@ -169,7 +169,7 @@ function ws_render_jurisdiction_dashboard() {
     echo '<p style="color:#999;font-size:11px;margin-top:8px;">Cached for 10 minutes. Use Refresh to rebuild.</p>';
 
     $html = ob_get_clean();
-    set_transient( 'ws_jx_dashboard_html', $html, 10 * MINUTE_IN_SECONDS );
+    set_transient( 'ws_jx_dashboard_html_', $html, 10 * MINUTE_IN_SECONDS );
     echo $html;
 
     echo '</div>';
@@ -199,7 +199,7 @@ function ws_jx_dashboard_invalidate_cache( $post_id ) {
         'jx-construction', 'ws-legal-update', 'ws-agency', 'ws-assist-org',
     ];
     if ( in_array( get_post_type( $post_id ), $tracked, true ) ) {
-        delete_transient( 'ws_jx_dashboard_html' );
+        delete_transient( 'ws_jx_dashboard_html_' );
     }
 }
 

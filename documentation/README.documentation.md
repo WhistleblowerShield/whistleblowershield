@@ -51,7 +51,7 @@ implements the entire platform. Required reading before touching any code.
 Standards and guidelines for content creation and maintenance.
 
 - `editorial-system.md` — writing standards, content structure, the
-  plain-language layer, the layered content model
+  plain-english layer, the layered content model
 - `research-and-transparency.md` — source handling, primary vs. secondary
   sources, construction standards, transparency practices
 

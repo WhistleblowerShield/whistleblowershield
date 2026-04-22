@@ -46,7 +46,7 @@ defined( 'ABSPATH' ) || exit;
 // for readability at pre-launch stage.
 
 define( 'WS_FILTER_PARAM_STAGE',   'ws_stage'   ); // ws_case_stage
-define( 'WS_FILTER_PARAM_CONCERN', 'ws_concern' ); // ws_disclosure_type or ws_adverse_action_type
+define( 'WS_FILTER_PARAM_CONCERN', 'ws_concern' ); // ws_disclosure_type or ws_adverse_action
 define( 'WS_FILTER_PARAM_SECTOR',  'ws_sector'  ); // ws_employment_sector
 define( 'WS_FILTER_PARAM_TARGET',  'ws_target'  ); // ws_disclosure_target (optional)
 
@@ -78,7 +78,7 @@ function ws_filter_allowed_map(): array {
 
         // Concern maps to different taxonomies depending on stage.
         // pre-report / research → ws_disclosure_type
-        // retaliation-active / litigation → ws_adverse_action_type
+        // retaliation-active / litigation → ws_adverse_action
         // post-report → either (resolver picks based on stage)
         // The resolver handles the taxonomy routing; config just validates values.
         WS_FILTER_PARAM_CONCERN => [
@@ -108,7 +108,7 @@ function ws_filter_allowed_map(): array {
             'military-defense-reporting'    => 'military-defense-reporting',
             'child-abuse-reporting'         => 'child-abuse-reporting',
             'patient-abuse-reporting'       => 'patient-abuse-reporting',            
-            // ws_adverse_action_type (retaliation branch)
+            // ws_adverse_action (retaliation branch)
             'termination'                   => 'termination',
             'constructive-discharge'        => 'constructive-discharge',
             'demotion'                      => 'demotion',
@@ -177,7 +177,7 @@ function ws_filter_score_weights(): array {
     'scope_per_level'       => 10,
 
     // Taxonomy match bonuses — applied per matched term
-    'disclosure_type_match' =>  8,   // ws_disclosure_type or ws_adverse_action_type
+    'disclosure_type_match' =>  8,   // ws_disclosure_type or ws_adverse_action
     'case_stage_match'      =>  8,   // ws_case_stage
     'sector_match'          =>  5,   // ws_employment_sector
     'target_match'          =>  3,   // ws_disclosure_target (optional axis)

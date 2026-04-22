@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 
 global $_ws_federal_court_matrix;
 
-$ws_federal_court_matrix = [
+$_ws_federal_court_matrix = [
 
     // ── 0. Other (edge case — court not in matrix) ────────────────────────
     //

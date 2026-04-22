@@ -48,13 +48,13 @@ metaboxes) carry inline comments explaining why.
 | Slug | Purpose | Public |
 |---|---|---|
 | `jurisdiction` | One post per U.S. jurisdiction (57 total) | Yes |
-| `jx-summary` | Plain-language summary for each jurisdiction | No |
+| `jx-summary` | Plain-English summary for each jurisdiction | No |
 | `jx-statute` | Codified statutory whistleblower protections | No |
 | `jx-common-law` | Judicially-recognized common law protections | No |
 | `jx-citation` | Case law citations supporting statute records | No |
 | `jx-construction` | Court rulings interpreting specific statutes | No |
 | `ws-agency` | Enforcement and oversight agencies | Yes |
-| `ws-ag-procedure` | Agency-specific filing procedures | Yes |
+| `ag-procedure` | Agency-specific filing procedures | Yes |
 | `ws-assist-org` | Legal aid and advocacy organizations | Yes |
 | `ws-legal-update` | Legal development notices | No |
 | `ws-reference` | External reference materials | Yes |
@@ -106,7 +106,7 @@ These attach to `jx-statute`, `jx-common-law`, `jx-citation`, and
 | `ws_disclosure_type` | hierarchical | 6 parents, 26 children |
 | `ws_protected_class` | hierarchical | 4 parents, 12 children + `has-details` + super slug `all-employees` |
 | `ws_disclosure_target` | hierarchical | 5 parents, 13 children + `has-details` |
-| `ws_adverse_action_type` | flat | 14 terms + `has-details` |
+| `ws_adverse_action` | flat | 14 terms + `has-details` |
 | `ws_process_type` | flat | 9 terms |
 | `ws_remedy` | flat | 20 terms + `has-details` |
 | `ws_fee_shifting` | flat | 4 terms |
@@ -125,12 +125,12 @@ the registered slugs capture. Applies to `jx-statute`, `jx-common-law`,
 
 Companion field mapping:
 ```
-protected_class     → *_protected_class_details
-disclosure_target   → *_disclosure_target_details
-adverse_action_type → *_adverse_action_type_details
-remedy              → *_remedy_details
-employer_defense    → *_employer_defense_details
-employee_standard   → *_employee_standard_details
+protected_classes    → *_protected_class_details
+disclosure_targets   → *_disclosure_target_details
+adverse_actions      → *_adverse_action_details
+remedies             → *_remedy_details
+employer_defenses    → *_employer_defense_details
+employee_standards   → *_employee_standard_details
 ```
 
 ### Other taxonomies
@@ -141,10 +141,10 @@ employee_standard   → *_employee_standard_details
 | `ws_language` | `ws-agency`, `ws-assist-org` | `additional` is a system sentinel |
 | `ws_case_stage` | `ws-assist-org` | Phase 2 filter axis |
 | `ws_aorg_type` | `ws-assist-org` | Single-value |
-| `ws_employment_sector` | `jx-statute`, `jx-common-law`, `jx-citation`, `jx-construction`,`ws-agency`, `ws-ag-procedure`, `ws-assist-org` | Phase 2 filter axis |
+| `ws_employment_sector` | `jx-statute`, `jx-common-law`, `jx-citation`, `jx-construction`,`ws-agency`, `ag-procedure`, `ws-assist-org` | Phase 2 filter axis |
 | `ws_aorg_cost_model` | `ws-assist-org` | `other` is a system sentinel | |
 | `ws_aorg_service` | `ws-assist-org` | `additional` is a system sentinel |
-| `ws_procedure_type` | `ws-ag-procedure` | 3 stable terms |
+| `ws_procedure_type` | `ag-procedure` | 3 stable terms |
 
 ---
 
@@ -176,12 +176,12 @@ or any other property.
 1. All custom meta keys carry a `ws_` prefix. No bare unprefixed keys.
 2. Auto-stamp keys carry the `ws_auto_` prefix (written by hook logic only).
 3. Private audit-only keys additionally carry a leading underscore:
-   `_ws_auto_date_created_gmt`, `_ws_auto_last_edited_gmt`.
+   `_ws_auto_created_date_gmt`, `_ws_auto_last_edited_gmt`.
 4. All meta data meant to be hidden/private values fit normal naming rules
    with underscore prefixed. Example: `_ws_aorg_internal_id`
 4. Content ACF meta names carry a CPT infix:
    `ws_jx_statute*`, `ws_jx_comlaw*` (common-law), `ws_agency_*`, `ws_aorg_*` (assist-org),
-   `ws_legal_update_*`, `ws_jx_construction*` (construction), `ws_jx_citation_*`, `ws_ag_proccedure_*`.
+   `ws_legal_update_*`, `ws_jx_construction_*` (construction), `ws_jx_citation_*`, `ws_ag_proccedure_*`.
 5. Meta name infixes and CPT slugs are always singular unless they store
    mutliple values or arrays. When in doubt, use singular.
 6. Meta names that hold dates should end with `_date` or `_gmt` as appropriate.
@@ -257,13 +257,13 @@ value. To re-run a seeder, bump its version string — never delete the option.
 | 3.1.0 | ACF key naming rules; meta key naming rules; query layer return key standardization |
 | 3.2.0 | `ws_auto_` prefix pass; legal update system overhaul |
 | 3.3.0 | Dataset completeness pass; source verify system; query layer split |
-| 3.4.0 | Admin layer audit; plain English fields centralized; source verify role gates |
+| 3.4.0 | Admin layer audit; plain-english fields centralized; source verify role gates |
 | 3.5.0 | jx-statute ingest alignment; `ws_employer_defense` taxonomy; ACF overhaul |
 | 3.6.0 | Query layer split (helpers/shared/jurisdiction/agencies); render naming rules |
 | 3.7.0 | `ws_employment_sector` taxonomy; deprecated taxonomy cleanup |
 | 3.8.0 | Court matrix split; construction system; reference page implementation |
 | 3.8.1 | Post-audit pass — PHP 8 fatal fix, output escaping, race conditions |
-| 3.9.0 | `ws-ag-procedure` CPT; agency render pipeline; procedure seeder |
+| 3.9.0 | `ag-procedure` CPT; agency render pipeline; procedure seeder |
 | 3.10.0 | `ws_procedure_type` taxonomy; source verify for procedures |
 | 3.11.0 | `has-details` sentinel added to 5 taxonomies |
 | 3.12.0 | `ws_employee_standard` taxonomy; ACF companion field pattern for has-details |

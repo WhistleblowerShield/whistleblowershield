@@ -35,11 +35,11 @@ function ws_register_cpt_agencies() {
         // -- Visibility ----------------------------------------------------
         // Agencies are a public directory for users to find help.
         
-        'public'              => false,
+        'public'              => true,
         'show_ui'             => true,
         'show_in_menu'        => true,
-        'publicly_queryable'  => false,
-        'exclude_from_search' => true,
+        'publicly_queryable'  => true,
+        'exclude_from_search' => false,
         'has_archive'         => 'agencies', // Creates whistleblowershield.org/agencies/
         'query_var'           => true,
 

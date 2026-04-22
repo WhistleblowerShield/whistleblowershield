@@ -101,7 +101,7 @@ function ws_jx_term_by_code( $code ) {
 // ws_court_lookup()
 //
 // Returns the court entry array for a given court key, checking both
-// $ws_court_matrix (federal) and $ws_state_court_matrix (state) in order.
+// $_ws_federal_court_matrix (federal) and $_ws_state_court_matrix (state) in order.
 // Returns null if the key is not found in either matrix.
 //
 // The court matrices are populated by matrix-federal-courts.php and

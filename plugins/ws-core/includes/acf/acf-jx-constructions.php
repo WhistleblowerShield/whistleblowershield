@@ -36,8 +36,8 @@
  *   ws_jx_construction_protected_class_details        Protected Class Details (textarea, optional)
  *   ws_jx_construction_disclosure_targets             Disclosure Targets (multi_select, optional)
  *   ws_jx_construction_disclosure_target_details      Disclosure Targets Details (textarea, optional)
- *   ws_jx_construction_adverse_action_types           Adverse Action Types (multi_select, optional)
- *   ws_jx_construction_adverse_action_type_details    Adverse Action Details (textarea, optional)
+ *   ws_jx_construction_adverse_actions           Adverse Action Types (multi_select, optional)
+ *   ws_jx_construction_adverse_action_details    Adverse Action Details (textarea, optional)
  *   ws_jx_construction_process_types                  Process Type (multi_select, optional)
  *   ws_jx_construction_remedies                       Remedies (multi_select, optional)
  *   ws_jx_construction_remedy_details                 Remedies Details (textarea, optional)
@@ -80,9 +80,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
-add_action( 'acf/init', 'ws_register_acf_jx_constructions' );
+add_action( 'acf/init', 'ws_register_acf_jx_construction_s' );
 
-function ws_register_acf_jx_constructions() {
+function ws_register_acf_jx_construction_s() {
 
     if ( ! function_exists( 'acf_add_local_field_group' ) ) {
         return;
@@ -242,7 +242,7 @@ function ws_register_acf_jx_constructions() {
                 'label'        => 'Summary',
                 'name'         => 'ws_jx_construction_summary_wysiwyg',
                 'type'         => 'wysiwyg',
-                'instructions' => 'Summarize what the court decided in plain language. Focus on what this ruling means for whistleblowers — not legal procedure. Citation is captured above.',
+                'instructions' => 'Summarize what the court decided in plain-english. Focus on what this ruling means for whistleblowers — not legal procedure. Citation is captured above.',
                 'required'     => 1,
                 'tabs'         => 'visual',
                 'toolbar'      => 'basic',
@@ -398,11 +398,11 @@ function ws_register_acf_jx_constructions() {
             ],
 
             [
-                'key'           => 'field_jx_construction_adverse_action_types',
+                'key'           => 'field_jx_construction_adverse_actions',
                 'label'         => 'Adverse Action Types',
-                'name'          => 'ws_jx_construction_adverse_action_types',
+                'name'          => 'ws_jx_construction_adverse_actions',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_adverse_action_type',
+                'taxonomy'      => 'ws_adverse_action',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Retaliatory action addressed or clarified by this construction. Tag only where the construction explicitly explains or narrows the type of adverse action covered.',
                 'add_term'      => 0,
@@ -412,9 +412,9 @@ function ws_register_acf_jx_constructions() {
             ],
 
             [
-                'key'          => 'field_jx_construction_adverse_action_type_details',
+                'key'          => 'field_jx_construction_adverse_action_details',
                 'label'        => 'Adverse Action Details',
-                'name'         => 'ws_jx_construction_adverse_action_type_details',
+                'name'         => 'ws_jx_construction_adverse_action_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
                 'instructions' => 'Describe nuance in adverse action coverage as addressed by this construction.',
@@ -594,7 +594,7 @@ function ws_register_acf_jx_constructions() {
                 'instructions' => 'Update this date each time the record is meaningfully revised.',
             ],
 
-            // ── Tab: Plain Language ───────────────────────────────────────
+            // ── Tab: Plain-English ───────────────────────────────────────
             // Removed — registered centrally in acf-plain-english-fields.php
             // (group_plain_english_metadata, menu_order 85).
 
@@ -626,7 +626,7 @@ function ws_register_acf_jx_constructions() {
         ],
     ] );
 
-} // end ws_register_acf_jx_constructions
+} // end ws_register_acf_jx_construction_s
 
 
 // ── Conditional logic: taxonomy sentinel-gated details fields ─────────────────
@@ -635,7 +635,7 @@ function ws_register_acf_jx_constructions() {
 // includes sentinel slug 'has-details':
 // - ws_jx_construction_protected_classes
 // - ws_jx_construction_disclosure_targets
-// - ws_jx_construction_adverse_action_types
+// - ws_jx_construction_adverse_actions
 // - ws_jx_construction_remedies
 // - ws_jx_construction_employee_standards
 // - ws_jx_construction_employer_defenses
@@ -647,7 +647,7 @@ function ws_jx_construction_details_conditional( $field ) {
     static $map = [
         'field_jx_construction_protected_class_details'     => [ 'ws_protected_class',      'field_jx_construction_protected_classes' ],
         'field_jx_construction_disclosure_target_details'   => [ 'ws_disclosure_target',    'field_jx_construction_disclosure_targets' ],
-        'field_jx_construction_adverse_action_type_details' => [ 'ws_adverse_action_type',  'field_jx_construction_adverse_action_types' ],
+        'field_jx_construction_adverse_action_details'      => [ 'ws_adverse_action',       'field_jx_construction_adverse_actions' ],
         'field_jx_construction_remedy_details'              => [ 'ws_remedy',               'field_jx_construction_remedies' ],
         'field_jx_construction_employee_standard_details'   => [ 'ws_employee_standard',    'field_jx_construction_employee_standards' ],
         'field_jx_construction_employer_defense_details'    => [ 'ws_employer_defense',     'field_jx_construction_employer_defenses' ],

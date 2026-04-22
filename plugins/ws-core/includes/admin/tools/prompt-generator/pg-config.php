@@ -16,10 +16,19 @@ function ws_prompt_output_dir(): string {
 
 function ws_prompt_resolve_jx_context( string $jx_id ): array {
     $jx = strtoupper( sanitize_text_field( $jx_id ) );
+    $jx_type = 'state';
+    if ( $jx === 'us' ) {
+        $jx_type = 'federal';
+    } elseif ( $jx === 'dc' ) {
+        $jx_type = 'district';
+    } elseif ( in_array( $jx, [ 'as', 'gu', 'mp', 'pr', 'vi' ], true ) ) {
+        $jx_type = 'territory';
+    }
+
     $context = [
         'jx_id'           => $jx,
         'jx_name'         => $jx,
-        'jx_type'         => ( $jx === 'US' ) ? 'federal' : 'state',
+        'jx_type'         => $jx_type,
         'legislature_url' => '',
     ];
 
@@ -100,4 +109,3 @@ function ws_prompt_extract_record_identifier( string $record_type, int $post_id 
 
     return trim( (string) get_the_title( $post_id ) );
 }
-

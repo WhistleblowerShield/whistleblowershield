@@ -18,7 +18,7 @@ fields, no query logic. One file, one CPT, one job.
 | `jx-citation` | `cpt-jx-citations.php` | 27 | false | false |
 | `jx-construction` | `cpt-jx-constructions.php` | 29 | false | false |
 | `ws-agency` | `cpt-agencies.php` | 28 | true | — |
-| `ws-ag-procedure` | `cpt-ag-procedures.php` | 29 | true | false |
+| `ag-procedure` | `cpt-ag-procedures.php` | 29 | true | false |
 | `ws-assist-org` | `cpt-assist-orgs.php` | 30 | true | — |
 | `ws-legal-update` | `cpt-legal-updates.php` | 25 | false | false |
 | `ws-reference` | `cpt-references.php` | 32 | true | false |
@@ -56,7 +56,7 @@ Enabling archives would produce unstyled, uncontrolled listing pages.
 They are never accessed directly by URL — their content is assembled
 and rendered on jurisdiction pages by the Assembly Layer.
 
-`jurisdiction`, `ws-agency`, `ws-ag-procedure`, `ws-assist-org`, and
+`jurisdiction`, `ws-agency`, `ag-procedure`, `ws-assist-org`, and
 `ws-reference` are publicly queryable because they have dedicated
 render handlers that produce a styled page.
 
@@ -71,7 +71,7 @@ Admin sidebar positions are allocated to keep related CPTs adjacent:
 26  jx-summary
 27  jx-citation
 28  ws-agency
-29  jx-construction, ws-ag-procedure
+29  jx-construction, ag-procedure
 30  ws-assist-org
 32  jx-statute, ws-reference
 33  jx-common-law

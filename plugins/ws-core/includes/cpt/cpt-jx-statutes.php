@@ -74,7 +74,7 @@ function ws_register_cpt_statutes() {
         'exclude_from_search' => true,
         'has_archive'         => false,
         'query_var'           => true,
-        'rewrite'             => false,
+        'rewrite'             => [ 'slug' => 'jx-statute', 'with_front' => false ],
 
         // ── Editor ────────────────────────────────────────────────────────
         // Title: official statutory name. All structured metadata via ACF.
@@ -85,7 +85,7 @@ function ws_register_cpt_statutes() {
             'ws_process_type',
             'ws_remedy',
             'ws_protected_class',
-            'ws_adverse_action_type',
+            'ws_adverse_action',
             'ws_disclosure_target',
             'ws_fee_shifting',
             'ws_employer_defense',

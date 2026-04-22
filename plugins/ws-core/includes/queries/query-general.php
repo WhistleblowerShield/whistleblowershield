@@ -110,7 +110,7 @@ function ws_get_legal_updates_data( $jx_id = 0, $count = 0 ) {
             'source_url_is_pdf'  => (bool) get_post_meta( $uid, 'ws_legal_update_source_url_is_pdf', true ),
             'summary'            => wp_kses_post( get_post_meta( $uid, 'ws_legal_update_summary_wysiwyg', true ) ?: '' ),
             'verify'             => ws_build_source_verify_array( $uid ),
-            'record'             => ws_build_record_array( $uid ),
+            'author'             => ws_build_author_array( $uid ),
         ];
     }
 

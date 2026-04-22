@@ -61,7 +61,7 @@ maintains the platform's changelog without requiring editors to manually
 create legal update entries.
 
 **Supported CPTs:** `jx-summary`, `jx-statute`,`jx-common-law`, `jx-citation`,
-`jx-construction`, `ws-ag-procedure`
+`jx-construction`, `ag-procedure`
 
 **Behavior on save:**
 
@@ -80,8 +80,8 @@ create legal update entries.
 | `ws_legal_update_summary_wysiwyg` | The description text |
 | `ws_legal_update_effective_date` | Today (local `Y-m-d`) |
 | `ws_legal_update_date` | Today (local `Y-m-d`) |
-| `ws_legal_update_source_post_id` | Source post ID |
-| `ws_legal_update_source_post_type` | Source CPT slug |
+| `ws_legal_update_parent_post_id` | Source post ID |
+| `ws_legal_update_parent_post_type` | Source CPT slug |
 | `ws_legal_update_type` | Derived from CPT (`jx-statute` → `statute`, etc.) |
 | `ws_legal_update_law_name` | Official name from source post; falls back to post title |
 | `ws_jurisdiction` (taxonomy) | Copied from source post via `wp_set_post_terms()` |
@@ -119,7 +119,7 @@ users only.
 
 **File:** `admin/admin-procedure-watch.php`
 
-Guards against inaccurate statute cross-references on `ws-ag-procedure`
+Guards against inaccurate statute cross-references on `ag-procedure`
 posts. A procedure linked to a statute with no disclosure-type
 intersection is misleading guidance — this system catches it before
 the procedure can be published.
@@ -128,23 +128,23 @@ the procedure can be published.
 
 **Hard mismatch** — a linked statute has zero `ws_disclosure_type`
 term intersection with the procedure's own disclosure types:
-- Sets `ws_proc_stat_flagged = 1`
-- Writes mismatch detail JSON to `ws_proc_stat_flag_detail`
+- Sets `ws_ag_procedure_stat_flagged = 1`
+- Writes mismatch detail JSON to `ws_ag_procedure_stat_flag_detail`
 - Demotes post status to `draft`
 - Publish gate (`wp_insert_post_data`) blocks all subsequent publish
   attempts (quick edit, bulk edit, REST, programmatic) until resolved
 
 **Broad-scope advisory** (soft, no demotion) — procedure has no
 disclosure types set AND has statute links:
-- Sets `ws_proc_stat_broad_scope = 1`
+- Sets `ws_ag_procedure_stat_broad_scope = 1`
 - Admin notice surfaces the advisory on the edit screen
 - No publish block
 
-**Admin override:** An admin can check `ws_proc_stat_override` on the
+**Admin override:** An admin can check `ws_ag_procedure_parent_override` on the
 Admin Review tab and save. The override is read by `wp_insert_post_data`
 before ACF saves (reading `$_POST['acf']` directly), allowing the
 publish to proceed. After save, the hook writes an append-only override
-audit log to `ws_proc_stat_override_log`, clears the mismatch flag,
+audit log to `ws_ag_procedure_parent_override_log`, clears the mismatch flag,
 and resets the override field to 0.
 
 **Note on skipped statutes:** Statutes with no `ws_disclosure_type`
@@ -253,7 +253,7 @@ sidebar menu. Shows each jurisdiction's status across all content CPTs:
 summary, statutes, citations, constructions, legal updates, agencies,
 and assist organizations.
 
-**Caching:** Full rendered HTML table cached as `ws_jx_dashboard_html`
+**Caching:** Full rendered HTML table cached as `ws_jx_dashboard_html_`
 transient for 10 minutes. Auto-invalidated on `save_post` and
 `delete_post` for any tracked CPT. Manual "Refresh" button clears the
 cache on demand.

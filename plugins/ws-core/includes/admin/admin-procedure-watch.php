@@ -2,7 +2,7 @@
 /**
  * admin-procedure-watch.php — Procedure authority link validation + publish gate.
  *
- * Guards against inaccurate authority cross-references on ws-ag-procedure posts.
+ * Guards against inaccurate authority cross-references on ag-procedure posts.
  * Owns three concerns: mismatch detection, publish gate, admin notice display.
  * Cache invalidation is handled by query-agencies.php (data layer owns cache).
  *
@@ -10,13 +10,13 @@
  * ---------------
  * Hard mismatch: linked jx-statute or jx-common-law has zero ws_disclosure_type term intersection
  * with this procedure's ws_ag_procedure_disclosure_types.
- *   → sets ws_ag_procedure_statute_flagged = 1
+ *   → sets ws_ag_procedure_parent_flagged = 1
  *   → demotes published post to draft
  *   → publish gate blocks all subsequent publish attempts
  *
  * Broad-scope advisory (soft — no demotion): procedure has no disclosure types
  * set AND has statute/common-law links. Links cannot be automatically verified.
- *   → sets ws_ag_procedure_statute_broad_scope = 1
+ *   → sets ws_ag_procedure_parent_broad_scope = 1
  *   → admin notice only
  *
  * Linked records with no ws_disclosure_type terms assigned are skipped — the data
@@ -24,11 +24,11 @@
  *
  * ADMIN OVERRIDE FLOW
  * -------------------
- * Admin checks field_ag_procedure_statute_override (Admin Review tab) and saves:
+ * Admin checks field_ag_procedure_parent_override (Admin Review tab) and saves:
  *   wp_insert_post_data fires first — reads $_POST['acf'] directly (before ACF
  *   saves at priority 10) — allows publish through if admin + override set.
  *   acf/save_post (priority 20) fires after — writes override audit log to
- *   ws_ag_procedure_statute_override_log, clears mismatch flag, resets override to 0.
+ *   ws_ag_procedure_parent_override_log, clears mismatch flag, resets override to 0.
  *
  * @package WhistleblowerShield
  * @since   3.9.0
@@ -36,7 +36,7 @@
  *
  * VERSION
  * -------
- * 3.9.0   Initial release. Phase 3 of ws-ag-procedure feature build.
+ * 3.9.0   Initial release. Phase 3 of ag-procedure feature build.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -49,18 +49,18 @@ defined( 'ABSPATH' ) || exit;
 // and disclosure types from post meta and checks for hard mismatches.
 // ════════════════════════════════════════════════════════════════════════════
 
-add_action( 'acf/save_post', 'ws_procedure_check_parent_links', 20 );
+add_action( 'acf/save_post', 'ws_ag_procedure_check_parent_links', 20 );
 
 /**
- * Validates statute/common-law links on ws-ag-procedure save. Demotes to draft on mismatch.
+ * Validates statute/common-law links on ag-procedure save. Demotes to draft on mismatch.
  *
  * @param  int|string  $post_id  Post ID from acf/save_post.
  */
-function ws_procedure_check_parent_links( $post_id ) {
+function ws_ag_procedure_check_parent_links( $post_id ) {
 
     $post_id = (int) $post_id;
 
-    if ( get_post_type( $post_id ) !== 'ws-ag-procedure' ) {
+    if ( get_post_type( $post_id ) !== 'ag-procedure' ) {
         return;
     }
 
@@ -118,9 +118,9 @@ function ws_procedure_check_parent_links( $post_id ) {
         return;
     }
 
-    $proc_disc_types = wp_get_object_terms( $post_id, 'ws_disclosure_type', [ 'fields' => 'ids' ] );
-    if ( is_wp_error( $proc_disc_types ) ) {
-        $proc_disc_types = [];
+    $procedure_disc_types = wp_get_object_terms( $post_id, 'ws_disclosure_type', [ 'fields' => 'ids' ] );
+    if ( is_wp_error( $procedure_disc_types ) ) {
+        $procedure_disc_types = [];
     }
 
     // ── Broad-scope advisory: no disclosure types + linked authorities ─────
@@ -129,7 +129,7 @@ function ws_procedure_check_parent_links( $post_id ) {
     // to filter by — the picker showed everything. Any authority links made
     // under these conditions cannot be automatically verified.
 
-    if ( empty( $proc_disc_types ) ) {
+    if ( empty( $procedure_disc_types ) ) {
         update_post_meta( $post_id, 'ws_ag_procedure_parent_broad_scope', 1 );
     } else {
         delete_post_meta( $post_id, 'ws_ag_procedure_parent_broad_scope' );
@@ -153,9 +153,9 @@ function ws_procedure_check_parent_links( $post_id ) {
             continue; // Skip: linked record has no disclosure types — data incomplete on linked-record side.
         }
 
-        if ( ! empty( $proc_disc_types ) ) {
+        if ( ! empty( $procedure_disc_types ) ) {
             $intersection = array_intersect(
-                array_map( 'intval', $proc_disc_types ),
+                array_map( 'intval', $procedure_disc_types ),
                 array_map( 'intval', $statute_disc_types )
             );
             if ( empty( $intersection ) ) {
@@ -179,9 +179,9 @@ function ws_procedure_check_parent_links( $post_id ) {
             continue; // Skip: linked record has no disclosure types — data incomplete on linked-record side.
         }
 
-        if ( ! empty( $proc_disc_types ) ) {
+        if ( ! empty( $procedure_disc_types ) ) {
             $intersection = array_intersect(
-                array_map( 'intval', $proc_disc_types ),
+                array_map( 'intval', $procedure_disc_types ),
                 array_map( 'intval', $comlaw_disc_types )
             );
             if ( empty( $intersection ) ) {
@@ -236,18 +236,18 @@ function ws_procedure_check_parent_links( $post_id ) {
 // The detection hook (priority 20) then clears the flag and resets override.
 // ════════════════════════════════════════════════════════════════════════════
 
-add_filter( 'wp_insert_post_data', 'ws_procedure_gate_publish', 10, 2 );
+add_filter( 'wp_insert_post_data', 'ws_ag_procedure_gate_publish', 10, 2 );
 
 /**
- * Prevents flagged ws-ag-procedure posts from being published.
+ * Prevents flagged ag-procedure posts from being published.
  *
  * @param  array  $data     The post data array about to be written.
  * @param  array  $postarr  The raw submitted post array.
  * @return array
  */
-function ws_procedure_gate_publish( $data, $postarr ) {
+function ws_ag_procedure_gate_publish( $data, $postarr ) {
 
-    if ( ( $data['post_type'] ?? '' ) !== 'ws-ag-procedure' ) {
+    if ( ( $data['post_type'] ?? '' ) !== 'ag-procedure' ) {
         return $data;
     }
 
@@ -288,22 +288,22 @@ function ws_procedure_gate_publish( $data, $postarr ) {
 // Admin Notice
 //
 // Displays on the procedure edit screen (post.php) when flag meta is set.
-// Scoped to ws-ag-procedure only — not a global admin notice.
+// Scoped to ag-procedure only — not a global admin notice.
 //
 // Hard mismatch: error-level notice listing each flagged statute or common law
 // with title. Broad-scope advisory: warning-level notice (no demotion,
 // informational). Both may appear simultaneously.
 // ════════════════════════════════════════════════════════════════════════════
 
-add_action( 'admin_notices', 'ws_procedure_conflict_admin_notice' );
+add_action( 'admin_notices', 'ws_ag_procedure_conflict_admin_notice' );
 
 /**
  * Renders authority link validation notices on the procedure edit screen.
  */
-function ws_procedure_conflict_admin_notice() {
+function ws_ag_procedure_conflict_admin_notice() {
 
     $screen = get_current_screen();
-    if ( ! $screen || 'post' !== $screen->base || 'ws-ag-procedure' !== $screen->post_type ) {
+    if ( ! $screen || 'post' !== $screen->base || 'ag-procedure' !== $screen->post_type ) {
         return;
     }
 

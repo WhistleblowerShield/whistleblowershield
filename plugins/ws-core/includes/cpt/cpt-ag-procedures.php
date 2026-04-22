@@ -1,6 +1,6 @@
 <?php
 /**
- * cpt-ag-procedures.php — Registers the ws-ag-procedure CPT.
+ * cpt-ag-procedures.php — Registers the ag-procedure CPT.
  *
  * @package WhistleblowerShield
  * @since   3.9.0
@@ -34,19 +34,19 @@ function ws_register_cpt_ag_procedures() {
 
         // -- Visibility ----------------------------------------------------
 
-        'public'              => false,
+        'public'              => true,
         'show_ui'             => true,
         'show_in_menu'        => true,
-        'publicly_queryable'  => false,
-        'exclude_from_search' => true,
-        'has_archive'         => false,
+        'publicly_queryable'  => true,
+        'exclude_from_search' => false,
+        'has_archive'         => 'procedures',
         'query_var'           => true,
 
         // -- Editor --------------------------------------------------------
         // No editor — all content is stored in ACF fields.
 
         'supports'            => [ 'title', 'revisions' ],
-        'rewrite'             => [ 'slug' => 'ws-ag-procedure', 'with_front' => false ],
+        'rewrite'             => [ 'slug' => 'ag-procedure', 'with_front' => false ],
         'capability_type'     => 'post',
 
         // -- REST ----------------------------------------------------------
@@ -64,10 +64,10 @@ function ws_register_cpt_ag_procedures() {
         'taxonomies'          => [ 'ws_disclosure_type' ],
     ];
 
-    register_post_type( 'ws-ag-procedure', $args );
+    register_post_type( 'ag-procedure', $args );
 }
 
-// Admin columns for ws-ag-procedure are registered in admin-columns.php. Do not register
-// manage_ws-ag-procedure_posts_columns or manage_ws-ag-procedure_posts_custom_column hooks
+// Admin columns for ag-procedure are registered in admin-columns.php. Do not register
+// manage_ag-procedure_posts_columns or manage_ag-procedure_posts_custom_column hooks
 // here — duplicate registrations cause conflicting column sets. All CPT column logic lives
 // in admin-columns.php.

@@ -50,8 +50,11 @@ ws-core/
     ├── queries/                    Query layer — data retrieval API (4 files)
     ├── render/                     Assembly layer — HTML output (5 files)
     ├── shortcodes/                 Shortcode registrations (2 files)
-    └── admin/                      Admin layer (12 files + matrix/ subdirectory)
+    └── admin/                      Admin layer (12 files + matrix/ monitors/ tools/ subdirectory)
         └── matrix/                 Matrix seeders + divergence watch (9 files)
+        └── monitors/               Cron job invoked monitors (URL and feed) (2 files)
+        └── tools/                  Admin utility tools + schema constants (4 files + prompt-generator/ subdirectory)
+            └── prompt-generator/   Prompt-Generator config + functions (8 files)
 ```
 
 ---
@@ -64,13 +67,13 @@ denotes site-wide or directory CPTs.
 
 | Slug | Label | Public | Archive URL | Purpose |
 |---|---|---|---|---|
-| `jurisdiction` | Jurisdiction | ✓ | `/jurisdiction/{slug}/` | Primary page for each of the 57 jurisdictions |
-| `jx-summary` | Jurisdiction Summary | — | — | Plain-language overview of protections; one per jurisdiction |
+| `jurisdiction` | Jurisdiction | ✓ | `/jurisdictions/{slug}/` | Primary page for each of the 57 jurisdictions |
+| `jx-summary` | Jurisdiction Summary | — | — | Plain-English overview of protections; one per jurisdiction |
 | `jx-statute` | Statute | — | — | Individual statute or regulation record |
 | `jx-citation` | Jurisdiction Citation | — | — | Case law citation; attach-flag for curation |
 | `jx-construction` | Statute construction | — | — | Court-specific statutory construction |
 | `ws-agency` | Agency | ✓ | `/agencies/` | Government agency with whistleblower jurisdiction |
-| `ws-ag-procedure` | Procedure | ✓ | — | Filing procedure attached to a parent agency |
+| `ag-procedure` | Procedure | ✓ | — | Filing procedure attached to a parent agency |
 | `ws-assist-org` | Assistance Organization | ✓ | `/assistance-organizations/` | Non-government help organization |
 | `ws-legal-update` | Legal Update | — | — | Timestamped record of a legal development |
 | `ws-reference` | Reference | ✓ | — | External source document linked to legal content |
@@ -81,9 +84,15 @@ denotes site-wide or directory CPTs.
 - `jx-summary`, `jx-statute`, `jx-citation`, `jx-construction`, and
   `ws-legal-update` are non-public. Their content is rendered exclusively
   through the query layer and assembly layer on parent pages.
-- `ws-ag-procedure` is publicly queryable so individual procedure
+- `ws-agency` is publicly queryable so individual agencies
+  permalinks resolve — the agency assembler renders standalone agency
+  pages when an agency URL is accessed directly.
+- `ag-procedure` is publicly queryable so individual procedures
   permalinks resolve — the agency assembler renders standalone procedure
   pages when a procedure URL is accessed directly.
+- `ws-assist-org` is publicly queryable so individual assist-orgs
+  permalinks resolve — the directory assembler renders standalone assistance-organization
+  pages when a assistance-organization URL is accessed directly.
 - All addendum CPT content lives in ACF fields, not `post_content`.
   Published status is the editorial gate; `post_content` is always empty.
 
@@ -93,26 +102,28 @@ denotes site-wide or directory CPTs.
 
 Sixteen taxonomies are registered. `ws_jurisdiction` is the canonical
 join key used across every content CPT. All others are classification
-or filtering taxonomies.
+or filtering taxonomies. Taxonomy tables are always singular. Strings
+that are single-select taxonomy are also always singular. Arrays that
+are multi-select are always plural.
 
 | Slug | Label | Hierarchical | Public | Applied To |
 |---|---|---|---|---|
-| `ws_jurisdiction` | Jurisdictions | — | — | All content CPTs |
-| `ws_disclosure_type` | Disclosure Categories | ✓ | ✓ | `jx-statute`, `jx-citation`, `ws-agency`, `ws-ag-procedure`, `ws-assist-org` |
-| `ws_process_type` | Process Types | — | ✓ | `jx-statute`, `ws-agency`, `ws-assist-org`, `jx-construction` |
-| `ws_remedy` | Remedies | — | — | `jx-statute` |
-| `ws_protected_class` | Protected Classes | ✓ | — | `jx-statute` |
-| `ws_adverse_action_type` | Adverse Action Types | — | — | `jx-statute` |
-| `ws_language` | Languages | — | — | `ws-agency`, `ws-assist-org` |
-| `ws_case_stage` | Case Stages | — | — | `ws-assist-org` |
-| `ws_disclosure_target` | Disclosure Targets | ✓ | — | `jx-statute`, `ws-assist-org` |
-| `ws_fee_shifting` | Fee Shifting Rules | — | — | `jx-statute` |
-| `ws_employer_defense` | Employer Defense Standards | — | — | `jx-statute` |
-| `ws_aorg_type` | Organization Types | — | — | `ws-assist-org` |
-| `ws_employment_sector` | Employment Sectors | — | — | `ws-assist-org` |
-| `ws_aorg_cost_model` | Cost Structure | — | — | `ws-assist-org` |
-| `ws_aorg_service` | Services Offered | — | — | `ws-assist-org` |
-| `ws_procedure_type` | Procedure Types | — | — | `ws-ag-procedure` |
+| `ws_jurisdiction` | Jurisdictions | — | — | All content CPTs | multi-select |
+| `ws_disclosure_type` | Disclosure Categories | ✓ | ✓ | `jx-statute`, `jx-citation`, `ws-agency`, `ag-procedure`, `ws-assist-org` | multi-select |
+| `ws_process_type` | Process Types | — | ✓ | `jx-statute`, `ws-agency`, `ws-assist-org`, `jx-construction` | multi-select |
+| `ws_remedy` | Remedies | — | — | `jx-statute` | multi-select |
+| `ws_protected_class` | Protected Classes | ✓ | — | `jx-statute` | multi-select |
+| `ws_adverse_action` | Adverse Action Types | — | — | `jx-statute` | multi-select |
+| `ws_language` | Languages | — | — | `ws-agency`, `ws-assist-org` | multi-select |
+| `ws_case_stage` | Case Stages | — | — | `ws-assist-org` | multi-select |
+| `ws_disclosure_target` | Disclosure Targets | ✓ | — | `jx-statute`, `ws-assist-org` | multi-select |
+| `ws_fee_shifting` | Fee Shifting Rules | — | — | `jx-statute` | multi-select |
+| `ws_employer_defense` | Employer Defense Standards | — | — | `jx-statute` | multi-select |
+| `ws_aorg_type` | Organization Types | — | — | `ws-assist-org` | single-select |
+| `ws_employment_sector` | Employment Sectors | — | — | `ws-assist-org` | multi-select |
+| `ws_aorg_cost_model` | Cost Structure | — | — | `ws-assist-org` | multi-select |
+| `ws_aorg_service` | Services Offered | — | — | `ws-assist-org` | multi-select |
+| `ws_procedure_type` | Procedure Types | — | — | `ag-procedure` | single-select |
 
 **`ws_jurisdiction` details:** Private taxonomy. Slugs are lowercase
 USPS codes (`us`, `ca`, `tx`, `dc`, `pr`, etc.). Terms are seeded by
@@ -124,10 +135,10 @@ USPS codes (`us`, `ca`, `tx`, `dc`, `pr`, etc.). Terms are seeded by
 categories with ~30 child terms covering the main areas of whistleblower
 law (workplace, financial, government accountability, public health,
 privacy, national security). `ws_protected_class` and
-`ws_disclosure_targets` are also hierarchical. All other taxonomies
+`ws_disclosure_target` are also hierarchical. All other taxonomies
 are flat.
 
-**`ws_languages` sentinel term:** The `additional` term is
+**`ws_language` sentinel term:** The `additional` term is
 auto-assigned when the companion free-text field
 (`ws_agency_additional_languages` or `ws_aorg_additional_languages`)
 is non-empty. This enables `tax_query` filtering on "supports additional
@@ -144,21 +155,21 @@ All constants are defined in `ws-core.php` before the bootstrap runs.
 
 | Constant | Value | Purpose |
 |---|---|---|
-| `WS_CORE_VERSION` | `'3.10.0'` | Plugin version — used as asset enqueue version string |
+| `WS_CORE_VERSION` | `'3.19.0'` | Plugin version — used as asset enqueue version string |
 | `WS_CORE_PATH` | `plugin_dir_path()` | Absolute filesystem path to plugin root |
 | `WS_CORE_URL` | `plugin_dir_url()` | URL to plugin root for asset enqueues |
 | `WS_JURISDICTION_TAXONOMY` | `'ws_jurisdiction'` | Canonical taxonomy slug — use everywhere WordPress expects a taxonomy identifier |
 | `WS_CACHE_ALL_JURISDICTIONS` | `'ws_all_jurisdictions_cache_'` | Transient key for full jurisdiction list cache |
-| `WS_CACHE_JX_INDEX` | `'ws_jx_index_cache'` | Transient key for jurisdiction index page cache |
-| `WS_CACHE_LEGAL_UPDATES_SITEWIDE` | `'ws_legal_updates_sitewide'` | Transient key for sitewide legal updates cache (up to 100 items) |
-| `WS_REF_PARENT_TYPES` | `['jx-statute', 'jx-citation', 'jx-construction']` | CPT slugs that support reference parent relationships |
+| `WS_CACHE_JX_INDEX` | `'ws_jx_index_cache_'` | Transient key for jurisdiction index page cache |
+| `WS_CACHE_LEGAL_UPDATES_SITEWIDE` | `'ws_legal_updates_sitewide_'` | Transient key for sitewide legal updates cache (up to 100 items) |
+| `WS_REF_PARENT_TYPES` | `['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction']` | CPT slugs that support reference parent relationships |
 | `WS_SOURCE_MATRIX_SEED` | `'matrix_seed'` | Source method: created by matrix seeder |
-| `WS_SOURCE_ai_research` | `'ai_research'` | Source method: created with AI assistance |
+| `WS_SOURCE_AI_RESEARCH` | `'ai_research'` | Source method: created with AI assistance |
 | `WS_SOURCE_BULK_IMPORT` | `'bulk_import'` | Source method: created via bulk import |
 | `WS_SOURCE_FEED_IMPORT` | `'feed_import'` | Source method: created via feed monitor |
 | `WS_SOURCE_HUMAN_CREATED` | `'human_created'` | Source method: created directly by a human editor |
 | `WS_SOURCE_NAME_DIRECT` | `'Direct'` | Source name value for matrix_seed and human_created posts where source and method are the same |
-| `WS_LEGAL_UPDATE_SUMMARY_TYPES` | `['statute','citation','summary','construction','regulation','policy']` | Legal update types that appear on public-facing pages; `internal` and `other` are excluded |
+| `WS_LEGAL_UPDATE_SUMMARY_TYPES` | `['statute','common-law','citation','summary','construction','regulation','policy']` | Legal update types that appear on public-facing pages; `internal` and `other` are excluded |
 
 ---
 
@@ -182,23 +193,27 @@ All plugin functions carry the `ws_` prefix. No exceptions.
    `ws_auto_source_method`, `ws_auto_source_name`,
    `ws_auto_verified_by`, `ws_auto_verified_date`,
    `ws_auto_plain_english_by`, `ws_auto_plain_english_date`,
-   `ws_plain_english_reviewed_by`.
+   `ws_auto_plain_english_reviewed_by`.
 3. Private audit-only keys additionally carry a leading underscore per
    the WordPress hidden-meta convention:
-   `_ws_auto_date_created_gmt`, `_ws_auto_last_edited_gmt`.
+   `_ws_auto_created_date_gmt`, `_ws_auto_last_edited_gmt`.
 4. Content CPT meta keys carry a CPT infix:
-   `ws_jx_*`, `ws_agency_*`, `ws_aorg_*`, `ws_legal_update_*`,
-   `ws_jx_construction*`, `ws_jx_citation_*`, `ws_proc_*`.
+   `ws_jx_statute_*`, `ws_jx_comlaw_*`, `ws_agency_*`, `ws_aorg_*`, `ws_legal_update_*`,
+   `ws_jx_construction_*`, `ws_jx_citation_*`, `ws_ag_procedure_*`,`ws_ref_*`.
 5. Data-type suffixes: `_url` (URL string), `_wysiwyg` (rich-text
-   content), `_id` (integer foreign key or term ID).
-6. Plural vs. singular: filenames and directories may be plural.
+   content), `_id` (integer foreign key or term ID), `_date` (datestamp), `_date_gmt` (GMT datestamp).
+6. Plural vs. singular: filenames and directories are always plural.
    Meta key infixes, CPT slugs, and taxonomy slugs are always singular:
    `ws_aorg_*` not `ws_aorgs_*`, `ws_agency_*` not `ws_agencies_*`.
+7. Data-set naming: Meta names (arrays) with multiple values are always plural;
+   meta names with single value (strings) are always singular.
+8. Cache meta names (where not constants) always end with underscore.
+9. Global, Hidden and Internal meta names always begin with underscore.
 
 ### ACF Field Key Names
 
-1. No `ws_` prefix on field keys. The `field_` prefix is sufficient.
-   `field_ws_foo` → `field_foo`.
+1. No `ws_` or `ws_auto_` prefix on field keys. The `field_` prefix is sufficient.
+   `ws_foo` → `field_foo`, `ws_auto_foo` → `field_foo`.
 2. Group keys end with `_metadata`:
    `group_foo_metadata` not `group_ws_foo` or `group_foo_fields`.
 3. Tab field keys: `_tab` appears only at the end:
@@ -221,7 +236,7 @@ not govern what the query layer exposes.
 
 Standard sub-arrays returned by all dataset functions:
 
-- `record` — `created_by`, `created_by_name`, `created_date`,
+- `author` — `created_by`, `created_by_name`, `created_date`,
   `edited_by`, `edited_by_name`, `edited_date`
 - `plain` — `has_content`, `plain_content`, `written_by`,
   `written_by_name`, `written_date`, `is_reviewed`,
@@ -229,6 +244,8 @@ Standard sub-arrays returned by all dataset functions:
 - `verify` — `source_method`, `source_name`, `verified_by`,
   `verified_by_name`, `verified_date`, `verify_status`,
   `needs_review`
+
+  always: `_by` -> WP user_ID, `_by_name` -> display_name
 
 ### Render Function Names
 
@@ -280,7 +297,7 @@ taxonomy associations, and the query API.
 
 1. **CPT Layer** — all ten CPT registration files
 2. **Query Layer** — `query-helpers` → `query-shared` →
-   `query-jurisdiction` → `query-agencies`
+   `query-jurisdiction` → `query-directory` → `query-agencies`
    *(strict dependency order — do not reorder)*
 3. **Taxonomy Layer** — `register-taxonomies` → `register-glossary`
    *(registers taxonomy functions on `init`; terms are seeded on
@@ -298,8 +315,8 @@ and admin tooling are never present on the frontend.
 | `matrix-helpers` | Utilities | Nothing |
 | `matrix-jurisdictions` | Post seeder | Nothing (runs first) |
 | `matrix-fed-statutes` | Post seeder | `us` jurisdiction term |
-| `matrix-federal-courts` | In-memory only | Nothing — defines `$ws_court_matrix` array, no DB writes |
-| `matrix-state-courts` | In-memory only | Nothing — defines `$ws_state_court_matrix` array, no DB writes |
+| `matrix-federal-courts` | In-memory only | Nothing — defines `$_ws_federal_court_matrix` array, no DB writes |
+| `matrix-state-courts` | In-memory only | Nothing — defines `$_ws_state_court_matrix` array, no DB writes |
 | `matrix-assist-orgs` | Post seeder | `us` jurisdiction term |
 | `matrix-agencies` | Post seeder | `us` jurisdiction term |
 | `matrix-ag-procedures` | Post seeder | Agency posts + statute posts must exist |

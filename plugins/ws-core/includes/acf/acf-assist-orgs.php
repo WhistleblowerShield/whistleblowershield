@@ -15,7 +15,7 @@
  * FIELD SUMMARY
  * -------------
  * Identity tab:
- *   ws_aorg_internal_id                    Internal Reference Code (text, required)
+ *   _ws_aorg_internal_id                    Internal Reference Code (text, required)
  *   ws_aorg_official_name                  Official Organization Name (text, required)
  *   ws_aorg_type                           Organization Type (radio, required)
  *   ws_aorg_description                    Organization Description (textarea, optional)
@@ -70,12 +70,12 @@
  *   ws_aorg_last_reviewed                  Last Verified Date (date_picker, optional)
  *
  * Internal Contact & Relationship Notes tab:
- *   ws_aorg_internal_contact_name          Internal Contact Name (text, optional)
- *   ws_aorg_internal_contact_role          Internal Contact Role/Title (text, optional)
- *   ws_aorg_internal_contact_email         Internal Contact Email (email, optional)
- *   ws_aorg_internal_contact_phone         Internal Contact Phone (text, optional)
- *   ws_aorg_internal_last_contacted        Internal Last Contacted (date_picker, optional)
- *   ws_aorg_internal_relationship_notes    Internal Relationship Notes (textarea, optional)
+ *   _ws_aorg_internal_contact_name          Internal Contact Name (text, optional)
+ *   _ws_aorg_internal_contact_role          Internal Contact Role/Title (text, optional)
+ *   _ws_aorg_internal_contact_email         Internal Contact Email (email, optional)
+ *   _ws_aorg_internal_contact_phone         Internal Contact Phone (text, optional)
+ *   _ws_aorg_internal_last_contacted        Internal Last Contacted (date_picker, optional)
+ *   _ws_aorg_internal_relationship_notes    Internal Relationship Notes (textarea, optional)
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------
@@ -85,10 +85,10 @@
  *
  * META KEY NOTE
  * -------------
- * ws_aorg_internal_id is stored WITHOUT a leading underscore. ACF uses the
+ * _ws_aorg_internal_id is stored WITHOUT a leading underscore. ACF uses the
  * _ws_aorg_internal_id key (underscore prefix) for its own internal field
  * reference -- writing a value there clobbers ACF's mapping. Ingest must write
- * to ws_aorg_internal_id. The leading underscore in prompt JSON schema output
+ * to _ws_aorg_internal_id. The leading underscore in prompt JSON schema output
  * is a naming convention only; ingest strips it during mapping.
  *
  * @package    WhistleblowerShield
@@ -150,7 +150,7 @@ function ws_register_acf_assist_org() {
             [
                 'key'          => 'field_aorg_internal_id',
                 'label'        => 'Internal Reference Code',
-                'name'         => 'ws_aorg_internal_id',
+                'name'         => '_ws_aorg_internal_id',
                 'type'         => 'text',
                 'instructions' => 'Slug-safe internal identifier — lowercase, hyphens only. Examples: "aclu-national", "nwc-dc", "gp-ca". Used for programmatic lookups and deduplication.',
                 'required'     => 1,
@@ -189,7 +189,7 @@ function ws_register_acf_assist_org() {
                 'label'        => 'Organization Description',
                 'name'         => 'ws_aorg_description',
                 'type'         => 'textarea',
-                'instructions' => 'Plain-language overview of this organization\'s mission, focus areas, and typical whistleblower support.',
+                'instructions' => 'Plain-English overview of this organization\'s mission, focus areas, and typical whistleblower support.',
                 'required'     => 0,
                 'rows'         => 4,
                 'new_lines'    => 'wpautop',
@@ -840,7 +840,7 @@ function ws_register_acf_assist_org() {
             [
                 'key'          => 'field_aorg_internal_contact_name',
                 'label'        => 'Internal Contact Name',
-                'name'         => 'ws_aorg_internal_contact_name',
+                'name'         => '_ws_aorg_internal_contact_name',
                 'type'         => 'text',
                 'instructions' => 'Internal-use only. Primary relationship contact at the organization. This field is never shown publicly.',
                 'required'     => 0,
@@ -850,7 +850,7 @@ function ws_register_acf_assist_org() {
             [
                 'key'          => 'field_aorg_internal_contact_role',
                 'label'        => 'Internal Contact Role/Title',
-                'name'         => 'ws_aorg_internal_contact_role',
+                'name'         => '_ws_aorg_internal_contact_role',
                 'type'         => 'text',
                 'instructions' => 'Internal-use only. Role/title for context during outreach.',
                 'required'     => 0,
@@ -860,7 +860,7 @@ function ws_register_acf_assist_org() {
             [
                 'key'          => 'field_aorg_internal_contact_email',
                 'label'        => 'Internal Contact Email',
-                'name'         => 'ws_aorg_internal_contact_email',
+                'name'         => '_ws_aorg_internal_contact_email',
                 'type'         => 'email',
                 'instructions' => 'Internal-use only. Direct working contact email (if available).',
                 'required'     => 0,
@@ -869,7 +869,7 @@ function ws_register_acf_assist_org() {
             [
                 'key'          => 'field_aorg_internal_contact_phone',
                 'label'        => 'Internal Contact Phone',
-                'name'         => 'ws_aorg_internal_contact_phone',
+                'name'         => '_ws_aorg_internal_contact_phone',
                 'type'         => 'text',
                 'instructions' => 'Internal-use only. Direct phone/extension for relationship follow-up.',
                 'required'     => 0,
@@ -879,7 +879,7 @@ function ws_register_acf_assist_org() {
             [
                 'key'            => 'field_aorg_internal_last_contacted',
                 'label'          => 'Internal Last Contacted',
-                'name'           => 'ws_aorg_internal_last_contacted',
+                'name'           => '_ws_aorg_internal_last_contacted',
                 'type'           => 'date_picker',
                 'instructions'   => 'Internal-use only. Most recent direct outreach date.',
                 'required'       => 0,
@@ -891,14 +891,14 @@ function ws_register_acf_assist_org() {
             [
                 'key'          => 'field_aorg_internal_relationship_notes',
                 'label'        => 'Internal Relationship Notes',
-                'name'         => 'ws_aorg_internal_relationship_notes',
+                'name'         => '_ws_aorg_internal_relationship_notes',
                 'type'         => 'textarea',
                 'instructions' => 'Internal-use only. Keep concise, factual notes for relationship continuity and follow-up context.',
                 'required'     => 0,
                 'rows'         => 4,
             ],
 
-            // Plain Language fields are now provided by the shared
+            // Plain-English fields are now provided by the shared
             // group_plain_english_metadata workflow group.
 
         ], // end fields

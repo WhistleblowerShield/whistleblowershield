@@ -5,7 +5,7 @@
  * Intercepts the_content for ws-agency CPT singles. Appends structured
  * procedure sections after the editorial post_content.
  *
- * Also handles ws-ag-procedure singles so public permalinks render correctly.
+ * Also handles ag-procedure singles so public permalinks render correctly.
  *
  * PROCEDURE GROUPING ORDER:
  *   1. disclosure  → "How to Report Wrongdoing"
@@ -21,7 +21,7 @@
  *
  * VERSION
  * -------
- * 3.9.0   Initial release. Phase 2 of ws-ag-procedure feature build.
+ * 3.9.0   Initial release. Phase 2 of ag-procedure feature build.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -54,7 +54,7 @@ $_ws_proc_type_groups = [
     ],
 ];
 
-/** @var array<string,string> Identity policy slug → plain-English label. */
+/** @var array<string,string> Identity policy slug → plain-english label. */
 $_ws_proc_identity_labels = [
     'anonymous'    => 'Anonymous — your identity is never disclosed to the agency',
     'confidential' => 'Confidential — your identity is known to the agency but will not be shared externally',
@@ -62,7 +62,7 @@ $_ws_proc_identity_labels = [
     'varies'       => 'Identity policy varies — see the walkthrough below for details',
 ];
 
-/** @var array<string,string> Deadline clock-start slug → plain-English phrase. */
+/** @var array<string,string> Deadline clock-start slug → plain-english phrase. */
 $_ws_proc_clock_labels = [
     'adverse_action' => 'the adverse action',
     'knowledge'      => 'the date you learned of the action',
@@ -70,7 +70,7 @@ $_ws_proc_clock_labels = [
     'varies'         => 'varies — see walkthrough for details',
 ];
 
-/** @var array<string,string> Entry-point slug → plain-English label. */
+/** @var array<string,string> Entry-point slug → plain-english label. */
 $_ws_proc_entry_labels = [
     'online'    => 'Online — web form or portal',
     'mail'      => 'Mail — written submission',
@@ -89,12 +89,12 @@ Dispatcher
 add_filter( 'the_content', 'ws_handle_agency_render' );
 
 /**
- * Intercepts the_content for ws-agency and ws-ag-procedure posts.
+ * Intercepts the_content for ws-agency and ag-procedure posts.
  *
  * ws-agency:
  *   Appends grouped procedure sections beneath editorial content.
  *
- * ws-ag-procedure:
+ * ag-procedure:
  *   Renders a standalone procedure page using procedure ACF data so
  *   publicly queryable procedure permalinks do not display as blank pages.
  *
@@ -133,7 +133,7 @@ function ws_handle_agency_render( $content ) {
         return $content . $proc_section;
     }
 
-    if ( $post->post_type === 'ws-ag-procedure' ) {
+    if ( $post->post_type === 'ag-procedure' ) {
         $rendered     = ws_render_single_agency_procedure_page( $post->ID );
         $is_rendering = false;
         return $rendered ?: $content;
@@ -299,8 +299,8 @@ function ws_render_agency_procedure_card( $proc ) {
         <?php if ( ! empty( $proc['has_prereqs'] ) ) : ?>
             <div class="ws-proc-card__prereqs-notice" role="note">
                 <strong>Prerequisites Required Before Filing:</strong>
-                <?php if ( ! empty( $proc['prereq_note'] ) ) : ?>
-                    <?php echo esc_html( $proc['prereq_note'] ); ?>
+                <?php if ( ! empty( $proc['prereq_details'] ) ) : ?>
+                    <?php echo esc_html( $proc['prereq_details'] ); ?>
                 <?php else : ?>
                     You must satisfy certain conditions before using this procedure. See the walkthrough below for details.
                 <?php endif; ?>
@@ -316,10 +316,10 @@ function ws_render_agency_procedure_card( $proc ) {
         <?php endif; ?>
 
         <?php // ── Mutual exclusivity notice ──────────────────────────────────── ?>
-        <?php if ( ! empty( $proc['exclusivity_note'] ) ) : ?>
+        <?php if ( ! empty( $proc['exclusivity_details'] ) ) : ?>
             <div class="ws-proc-card__exclusivity-notice" role="note">
                 <strong>Important — Other Procedures May Be Affected:</strong>
-                <?php echo esc_html( $proc['exclusivity_note'] ); ?>
+                <?php echo esc_html( $proc['exclusivity_details'] ); ?>
             </div>
         <?php endif; ?>
 
@@ -369,7 +369,7 @@ function ws_render_agency_procedure_card( $proc ) {
 
 
 /**
- * Renders full procedure content on single ws-ag-procedure permalinks.
+ * Renders full procedure content on single ag-procedure permalinks.
  *
  * @param  int    $procedure_id Procedure post ID.
  * @return string HTML block for single procedure page.

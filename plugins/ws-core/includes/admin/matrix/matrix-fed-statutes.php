@@ -279,9 +279,9 @@ function ws_seed_fed_statutes_matrix() {
             ws_matrix_assign_terms( $post_id, $statute['protected_classes'], 'ws_protected_class' );
         }
 
-        // ws_adverse_action_type
+        // ws_adverse_action
         if ( ! empty( $statute['adverse_actions'] ) ) {
-            ws_matrix_assign_terms( $post_id, $statute['adverse_actions'], 'ws_adverse_action_type' );
+            ws_matrix_assign_terms( $post_id, $statute['adverse_actions'], 'ws_adverse_action' );
         }
 
         // ws_disclosure_target

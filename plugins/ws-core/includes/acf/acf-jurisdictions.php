@@ -307,7 +307,7 @@ function ws_register_acf_jurisdiction_fields() {
             // Tab: Record Management
             //
             // Jurisdiction records are seeder-generated — create_author and
-            // date_created are not meaningful and are not tracked here.
+            // created_date are not meaningful and are not tracked here.
             // Matrix-watch handles the audit trail for post-install edits.
             //
             // last_edited and last_edited_author are stamped automatically

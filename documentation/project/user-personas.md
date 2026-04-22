@@ -38,7 +38,7 @@ trying to get her business. If the site feels cold or corporate she will
 leave before she finds what she needs.
 
 **What she needs:**
-- A fast, plain-language answer to: "Does the law protect someone like me?"
+- A fast, plain-english answer to: "Does the law protect someone like me?"
 - Enough information to decide whether it is safe to move forward
 - A clear sense of what a "whistleblower" actually is and whether she qualifies
 - Links to legitimate help organizations and official government resources
@@ -50,7 +50,7 @@ of what her next step could be, and feels less alone. She does not need to
 have read everything — she needs to have found something that helps.
 
 **Design implications:**
-- Jurisdiction pages must lead with protections in plain language
+- Jurisdiction pages must lead with protections in plain-english
 - The question "am I protected?" should be answerable without reading a
   full legal summary
 - Navigation must support "I don't know what I'm looking for" entry points

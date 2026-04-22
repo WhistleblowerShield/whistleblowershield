@@ -402,7 +402,7 @@ function ws_render_agency_navigation_box( $post ) {
 
     // Query procedures attached to this agency via ws_ag_procedure_agency_id meta.
     $procedures = get_posts( [
-        'post_type'      => 'ws-ag-procedure',
+        'post_type'      => 'ag-procedure',
         'post_status'    => [ 'publish', 'draft', 'pending' ],
         'posts_per_page' => 50,
         'no_found_rows'  => true,
@@ -420,12 +420,12 @@ function ws_render_agency_navigation_box( $post ) {
     ];
 
     $add_url = add_query_arg( [
-        'post_type' => 'ws-ag-procedure',
+        'post_type' => 'ag-procedure',
         'agency_id' => $post->ID,
     ], admin_url( 'post-new.php' ) );
 
     $all_url = add_query_arg( [
-        'post_type' => 'ws-ag-procedure',
+        'post_type' => 'ag-procedure',
     ], admin_url( 'edit.php' ) );
 
     echo '<div style="line-height:1.6;">';

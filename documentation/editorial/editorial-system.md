@@ -25,7 +25,7 @@ Every content decision should be tested against the three personas
 3. **Daniel** (researcher) — is this accurate, well-cited, and
    attributable?
 
-If content serves Daniel but fails Maya, it needs more plain-language
+If content serves Daniel but fails Maya, it needs more plain-english
 work. If it serves Maya but fails Daniel, it needs more citation work.
 The goal is both.
 
@@ -36,9 +36,9 @@ The goal is both.
 Most content on the platform follows a four-layer structure. Not every
 layer is present on every record — use the layers that apply.
 
-**Layer 1 — Plain Language Summary**
+**Layer 1 — Plain English Summary**
 The first thing the user reads. Answers the user's immediate question
-in plain language. Written for Maya, not Daniel. No legal citations
+in plain-english. Written for Maya, not Daniel. No legal citations
 visible at this layer — they are reachable but not leading.
 
 **Layer 2 — Practical Guidance**
@@ -70,7 +70,7 @@ non-lawyer to understand what they mean in practice.
 Do not write for a general reader — write for someone who is stressed,
 in a hurry, and not familiar with legal terminology. If a sentence
 requires the reader to already know what a term means to understand
-the sentence, it is not plain language.
+the sentence, it is not plain-english.
 
 ### Accuracy
 
@@ -110,11 +110,11 @@ anything actionable, cut it.
 
 ### Summary (`jx-summary`)
 
-The plain-language overview of whistleblower protections for a
+The plain-english overview of whistleblower protections for a
 jurisdiction. One per jurisdiction.
 
-The summary is inherently plain language — there is no separate plain
-language overlay. It is the plain language document. Write it for Maya.
+The summary is inherently plain-english — there is no separate plain
+language overlay. It is the plain-english document. Write it for Maya.
 
 Every summary should answer: "Does the law in this jurisdiction protect
 someone like me, and what are the most important things I should know?"
@@ -130,9 +130,9 @@ The detailed record for a specific law or regulation. Statutes are the
 primary legal content of the platform — every other content type
 relates back to one or more statutes.
 
-The plain English overlay (`ws_plain_english_wysiwyg`) is optional per
+The plain-english overlay (`ws_plain_english_wysiwyg`) is optional per
 record. When added, it should explain what the statute means in
-practice, not restate the legal text. A good plain English note
+practice, not restate the legal text. A good plain-english note
 answers: "What does this statute actually do for a whistleblower?"
 
 The `attach_flag` marks statutes for the curated summary page view.
@@ -146,7 +146,7 @@ A court decision or administrative ruling that interprets a statute.
 Citations show how law works in practice, which is often different
 from how it reads on paper.
 
-Write the plain English overlay to answer: "What did this decision
+Write the plain-english overlay to answer: "What did this decision
 establish, and why does it matter to a whistleblower?"
 
 The `attach_flag` marks citations significant enough for the summary
@@ -161,7 +161,7 @@ A structured record of how a specific court has interpreted a
 statutory protection. More structured than a general citation — links
 explicitly to a statute and a specific court.
 
-The `ws_jx_constructionfavorable` boolean records whether the outcome
+The `ws_jx_construction_favorable` boolean records whether the outcome
 favored the whistleblower. This is editorial judgment and should
 reflect the practical outcome for the whistleblower, not just the
 technical disposition of the case.
@@ -175,28 +175,28 @@ Keep the description focused on what the agency actually does for
 whistleblowers. Do not describe the agency's general mission — describe
 its whistleblower-specific role.
 
-The `ws_agency_confidentiality_notes` field should capture any
+The `ws_agency_confidentiality_details` field should capture any
 non-obvious identity protection policies. Many users' first question
 is "can I report anonymously?" — this field answers it for agencies
 where the answer is nuanced.
 
-### Filing Procedure (`ws-ag-procedure`)
+### Filing Procedure (`ag-procedure`)
 
 The most operationally critical content type on the platform. Mistakes
 here have direct real-world consequences.
 
-The walkthrough (`ws_proc_walkthrough`) is the plain language core of
+The walkthrough (`ws_ag_procedure_walkthrough`) is the plain-english core of
 the procedure record. It should answer: what should I prepare, how do
 I submit, what happens after I file, and what is a realistic timeline?
 Write it as if explaining to someone who has never filed a legal
 complaint before.
 
-**Filing deadlines** must be accurate. The `ws_proc_deadline_days`
+**Filing deadlines** must be accurate. The `ws_ag_procedure_deadline_days`
 field holds the number of calendar days. When the deadline varies by
 statute, use the shortest applicable deadline as the value and explain
 the variance in the walkthrough.
 
-The `ws_proc_exclusivity_note` is critical and frequently overlooked.
+The `ws_ag_procedure_exclusivity_details` is critical and frequently overlooked.
 Filing under some procedures forecloses other remedies or procedures.
 This must be documented clearly. If there are no known exclusivity
 implications, leave the field blank — do not write "none" or a
@@ -235,15 +235,15 @@ AI-assisted records carry `ws_auto_source_method = ai_research`. Both
 require human verification before `ws_verification_status` should be
 set to `verified`.
 
-### Plain Language Review
+### Plain English Review
 
-Records with a plain English overlay carry a reviewed toggle
+Records with a plain-english overlay carry a reviewed toggle
 (`ws_plain_english_reviewed`). When toggled on, the reviewer's name
 and date are auto-stamped. The trust badge on the public-facing page
 reflects this review status.
 
 The "Editor Reviewed" badge signals to users — particularly Daniel —
-that a human editor has reviewed the plain language content for
+that a human editor has reviewed the plain-english content for
 accuracy. Do not toggle it on unless the review has genuinely occurred.
 
 ### Major Edit Logging
@@ -279,7 +279,7 @@ news coverage) may be used for context and are appropriate in the
 Legal information goes stale. Statutes are amended. Agencies
 restructure. Deadlines change. Court decisions alter constructions.
 
-The `ws_proc_last_reviewed` and equivalent last-reviewed fields on
+The `ws_ag_procedure_last_reviewed` and equivalent last-reviewed fields on
 other CPTs record when a record was last verified against its source.
 These fields must be updated when a record is verified, not just when
 it is edited.

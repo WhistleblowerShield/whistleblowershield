@@ -138,7 +138,7 @@ function ws_render_directory_page( array $targeted, array $nationwide, array $co
  *
  * Filter axes rendered (all optional — absence = "not sure" = broadest match):
  *   1. Situation stage (ws_case_stage)
- *   2. Concern (ws_disclosure_type or ws_adverse_action_type, routed by stage)
+ *   2. Concern (ws_disclosure_type or ws_adverse_action, routed by stage)
  *   3. Employment sector (ws_employment_sector)
  *   4. Disclosure target — optional, shown as "optional refinement"
  *
@@ -480,7 +480,7 @@ function ws_filter_can_narrow( array $context ): bool {
 // ════════════════════════════════════════════════════════════════════════════
 
 /**
- * Returns plain-language disclosure type options for the concern fieldset.
+ * Returns plain-english disclosure type options for the concern fieldset.
  *
  * @return array slug => label
  */
@@ -505,7 +505,7 @@ function ws_filter_get_disclosure_type_options(): array {
 }
 
 /**
- * Returns plain-language adverse action options for the concern fieldset.
+ * Returns plain-english adverse action options for the concern fieldset.
  *
  * @return array slug => label
  */

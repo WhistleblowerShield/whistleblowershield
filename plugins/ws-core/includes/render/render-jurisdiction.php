@@ -138,8 +138,9 @@ Curated Render Path  (default)
  * explicitly flagged appear here. Called by ws_handle_jurisdiction_render()
  * when no filter context is active.
  *
- * Render order: header → disclaimer → summary → statutes → citations →
- *               constructions → limitations → legal updates → fallback
+ * Render order: header → disclaimer → summary → statutes → common laws →
+ *                citations → constructions → limitations → legal updates →
+ *                fallback
  *
  * @param  WP_Post  $post        The jurisdiction post object.
  * @param  int|null $jx_term_id  The ws_jurisdiction term ID for this post.
@@ -186,7 +187,7 @@ function ws_render_jx_curated( $post, $jx_term_id ) {
 
     // constructions — after citations, before limitations.
     // id="ws-constructions" is the anchor target for the reference page back link.
-    $constructions = do_shortcode( '[ws_jx_construction]' );
+    $constructions = do_shortcode( '[ws_jx_construction_]' );
     if ( $constructions ) {
         $output      .= '<div id="ws-constructions">' . $constructions . '</div>';
         $has_content  = true;
@@ -211,10 +212,10 @@ function ws_render_jx_curated( $post, $jx_term_id ) {
         $summary_data = ws_get_jx_summary_data( $jx_term_id );
         if ( $summary_data ) {
             $output .= ws_render_jx_summary_footer( [
-                'created_by_name'  => $summary_data['record']['created_by_name'],
-                'edited_by_name'   => $summary_data['record']['edited_by_name'],
-                'created_date'     => $summary_data['record']['created_date'],
-                'edited_date'      => $summary_data['record']['edited_date'],
+                'created_by_name'  => $summary_data['author']['created_by_name'],
+                'edited_by_name'   => $summary_data['author']['edited_by_name'],
+                'created_date'     => $summary_data['author']['created_date'],
+                'edited_date'      => $summary_data['author']['edited_date'],
                 'is_reviewed'      => $summary_data['plain']['is_reviewed'],
                 'reviewed_by_name' => $summary_data['plain']['reviewed_by_name'],
                 'reviewed_date'    => $summary_data['plain']['reviewed_date'] ?? '',
@@ -256,7 +257,7 @@ function ws_render_jx_curated( $post, $jx_term_id ) {
 //
 // Implementation notes (Phase 2):
 //   - $filter_context is an array of resolved taxonomy term IDs built from
-//     the plain-English question panel ($_GET params on page load).
+//     the plain-english question panel ($_GET params on page load).
 //     Example: [ 'ws_industry' => [12, 47], 'ws_disclosure_type' => [8] ]
 //   - Output includes statutes, citations, constructions, limitations, and
 //     ws-assist-org records matched by the filter context. ws-assist-org and

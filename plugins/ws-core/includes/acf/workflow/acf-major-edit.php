@@ -9,7 +9,7 @@
  * Adds a "Major Edit Flag" field group to the five content CPTs that
  * feed the ws-legal-update changelog system:
  *
- *   jx-summary, jx-statute, jx-citation, jx-construction, ws-ag-procedure
+ *   jx-summary, jx-statute, jx-common-law, jx-citation, jx-construction, ag-procedure
  *
  * When an editor checks `is_major_edit` and provides a description,
  * ws_acf_log_major_edit() in admin-major-edit-hook.php intercepts the save,
@@ -82,7 +82,7 @@ function ws_register_acf_major_edit() {
 			[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-common-law',      ] ],
 			[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-citation',        ] ],
 			[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-construction',  ] ],
-			[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-ag-procedure',    ] ],
+			[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ag-procedure',    ] ],
 		],
 
 		'fields' => [
