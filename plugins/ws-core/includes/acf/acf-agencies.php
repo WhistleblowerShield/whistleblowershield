@@ -15,7 +15,7 @@
  * FIELD SUMMARY
  * -------------
  * Agency Identity tab:
- *   ws_agency_code                       Agency Reference Code (text, required)
+ *   _ws_agency_id                       Agency Reference Code (text, required)
  *   ws_agency_official_name              Full Agency Official Name (text, required)
  *   ws_agency_logo                       Agency Logo (image, optional)
  *   ws_agency_jurisdictions              Jurisdiction(s) (multi_select, optional)
@@ -29,27 +29,58 @@
  *   ws_agency_phone                      Whistleblower Hotline (text, optional)
  *   ws_agency_confidentiality_details    Confidentiality & Privacy Details (textarea, optional)
  *   ws_agency_accepts_anonymous          Anonymous Reporting Allowed? (true_false, optional)
- *   ws_agency_has_reward_program         Reward/Bounty Program Available? (true_false, optional)
- *   ws_agency_reward_program_details     Reward/Bounty Program Details (textarea, conditional)
+ *   ws_agency_has_reward                 Reward/Bounty Program Available? (true_false, optional)
+ *   ws_agency_reward_details             Reward/Bounty Program Details (textarea, conditional)
  *   ws_agency_languages                  Languages Supported (multi_select, optional)
  *   ws_agency_additional_languages       Additional Languages (text, optional)
  *   ws_agency_last_reviewed              Last Verified Date (date_picker, optional)
+ * 
+ * Hidden fields:
+ *   __ws_agency_id                       Reserved: Ingest Dedupe Code (text, hidden)
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------
- *   - group_plain_english_metadata (acf-plain-english-fields.php, menu_order 85)
  *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
+ *   - group_plain_english_metadata (acf-plain-english-fields.php, menu_order 85)
  *   - group_source_verify_metadata (acf-source-verify.php)
- *
+ *   - group_major_edit_metadata (acf-major-edit.php, menu_order 99)
+ * 
+ * SHARDED WORKFLOW FIELDS
+ * -----------------------
+ *  - auto-filled on save by ws_acf_write_stamp_fields()
+ *    - ws_auto_last_edited_date            (text, readonly, date of last edit)
+ *    - ws_auto_last_edited_author          (text, readonly, user id of last editor)
+ *    - ws_auto_create_date                 (text, readonly, date authored)
+ *    - ws_auto_create_author               (text, readonly, user id of author)
+ *  - auto-checked on save by ws_acf_write_plain_english()
+ *    - ws_has_plain_english                (true_false, defaults to false, enable to expose wysiwyg summary field)
+ *    - ws_plain_english_wysiwyg            (wysiwyg, summary of legal record, conditional on ws_has_plain_english)
+ *    - ws_plain_english_reviewed           (true_false, defaults to false, must be enabled by Admin to enable summary render)
+ *  - auto-filled on save by ws_acf_write_plain_english() when ws_plain_english_wysiwyg is non-empty
+ *    - ws_auto_plain_english_by            (user, readonly, user id when summary was last edited)
+ *    - ws_auto_plain_english_date          (text, readonly, date of last edit to summary)
+ *  - auto-filled on save by ws_acf_write_plain_english() when ws_plain_english_reviewed is true
+ *    - ws_auto_plain_english_reviewed_by   (user, readonly, user id of Admin who approved summary)
+ *    - ws_auto_plain_english_reviewed_date (text, readonly, date summary was approved)
+ *  - auto-filled on post creation by ws_acf_write_source_method()
+ *    - ws_auto_source_method               (text, readonly, set to method of post creation (e.g. "ai_research", "human_created", "matrix_seeded"))
+ *    - ws_auto_source_name                 (text, readonly, "Direct" when human_created or matrix_seeded, auto-set when ingested to tool or feed name (e.g. NoteBookLM or Inoreader ))
+ *  - auto-set on post creation by ws_acf_write_verification_status() — (conditional on ws_auto_source_name is non-empty AND is not 'Direct')
+ *    - ws_verification_status              (select: unverified, verified, defaults to unverified — set to verified by Authors, Admins required to unverified)
+ *    - ws_needs_review                     (true_false, default true — must be disabled by Admin to enable publishing)
+ *  - auto-filled on save by ws_acf_write_verification_status() when ws_verification_status is true
+ *    - ws_auto_verified_by                (user, readonly, user that verified the post)
+ *    - ws_auto_verified_date              (text, readonly, date of verification)
+ *  - auto-checked on save by ws_acf_write_major_edit() ws_is_major_edit true triggers legal-update post creation
+ *    - ws_is_major_edit                   (true_false, set to true when manual edit warrants legal-update post)
+ *    - ws_major_edit_description          (textarea, required when ws_is_major_edit is true, description of the edit for legal-update seed summary)
+ *    - ws_major_edit_update_type          (select, required when ws_is_major_edit is true, legal-update type  — auto derives from source; override if necessary)
+ * 
  * JURISDICTION FIELD
  * ------------------
  * Scoped via the ws_jurisdiction taxonomy (field_agency_jurisdictions).
  * ACF saves/loads terms natively -- no dynamic choice filter needed.
  * Replaces the retired ws_jx_code meta select.
- *
- * HOOK
- * ----
- * Registered on acf/init, consistent with all other ACF files in ws-core.
  *
  *
  * @package    WhistleblowerShield
@@ -101,23 +132,23 @@ function ws_register_acf_agencies() {
                 'type'  => 'tab',
             ],
             [
-                'key'          => 'field_agency_code',
+                'key'          => 'field_agency_id',
                 'label'        => 'Agency Reference Code',
-                'name'         => 'ws_agency_code',
+                'name'         => '_ws_agency_id',
                 'type'         => 'text',
                 'instructions' => 'Internal slug-safe unique ID — e.g., "osc", "sec-owb", "ny-ag-wb".',
                 'required'     => 1,
             ],
             [
                 'key'          => 'field_agency_official_name',
-                'label'        => 'Full Agency Official Name',
+                'label'        => 'Agency Official Name',
                 'name'         => 'ws_agency_official_name',
                 'type'         => 'text',
                 'required'     => 1,
                 'instructions' => 'Example: U.S. Office of Special Counsel',
             ],
             [
-                'key'          => 'field_agency_acronym',
+                'key'          => 'field_agency_common_name',
                 'label'        => 'Agency Common Name / Acronym',
                 'name'         => 'ws_agency_common_name',
                 'type'         => 'text',
@@ -281,9 +312,9 @@ function ws_register_acf_agencies() {
                 'default_value' => 0,
             ],
             [
-                'key'           => 'field_agency_has_reward_program',
+                'key'           => 'field_agency_has_reward',
                 'label'         => 'Reward/Bounty Program Available?',
-                'name'          => 'ws_agency_has_reward_program',
+                'name'          => 'ws_agency_has_reward',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable if this agency offers financial rewards or bounties to whistleblowers.',
                 'ui'            => 1,
@@ -292,14 +323,14 @@ function ws_register_acf_agencies() {
                 'default_value' => 0,
             ],
                     [
-                        'key'          => 'field_agency_reward_program_details',
+                        'key'          => 'field_agency_reward_details',
                         'label'        => 'Reward/Bounty Program Details',
-                        'name'         => 'ws_agency_reward_program_details',
+                        'name'         => 'ws_agency_reward_details',
                         'type'         => 'textarea',
                         'rows'         => 3,
-                        'instructions' => 'Briefly describe what the rewards or bounty program entails.',
+                        'instructions' => 'Describe what the rewards or bounty program entails.',
                         'conditional_logic' => [ [ [
-                            'field'    => 'field_agency_has_reward_program',
+                            'field'    => 'field_agency_has_reward',
                             'operator' => '==',
                             'value'    => '1',
                         ] ] ],

@@ -25,7 +25,7 @@
  * 3.8.0  jx-construction Court column updated to use ws_court_lookup()
  *        for label resolution. 'other' court key shows the free-text
  *        ws_jx_construction_court_name value instead of the raw key.
- * 3.8.1  ws_agency_code column migrated here from cpt-agencies.php.
+ * 3.8.1  _ws_agency_id column migrated here from cpt-agencies.php.
  *        Duplicate manage_ws-agency_posts_columns / _custom_column hooks in
  *        that file removed — admin-columns.php is the single source for all
  *        CPT column definitions.
@@ -354,7 +354,7 @@ function ws_add_agency_columns( $columns ) {
         $new[ $key ] = $label;
         if ( $key === 'title' ) {
             $new['ws_jx']           = 'Jurisdiction';
-            $new['ws_agency_code']  = 'Agency Code';
+            $new['_ws_agency_id']  = 'Agency Code';
             $new['ws_process_type'] = 'Process Types';
             $new['ws_language']     = 'Languages';
         }
@@ -364,9 +364,9 @@ function ws_add_agency_columns( $columns ) {
 
 add_action( 'manage_ws-agency_posts_custom_column', 'ws_render_agency_column', 10, 2 );
 function ws_render_agency_column( $column, $post_id ) {
-    if ( $column === 'ws_agency_code' ) {
+    if ( $column === '_ws_agency_id' ) {
         // Direct meta read — admin list table display only.
-        echo esc_html( get_post_meta( $post_id, 'ws_agency_code', true ) );
+        echo esc_html( get_post_meta( $post_id, '_ws_agency_id', true ) );
     } elseif ( $column === 'ws_jx' ) {
         $terms = get_the_terms( $post_id, WS_JURISDICTION_TAXONOMY );
         if ( $terms && ! is_wp_error( $terms ) ) {

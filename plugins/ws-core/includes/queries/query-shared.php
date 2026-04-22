@@ -71,7 +71,7 @@ function ws_build_author_array( $post_id ) {
     return [
         'created_by'      => $create_author_id,
         'created_by_name' => ws_resolve_display_name( $create_author_id ),
-        'created_date'    => get_post_meta( $post_id, 'ws_auto_created_date', true ),
+        'created_date'    => get_post_meta( $post_id, 'ws_auto_create_date', true ),
         'edited_date'     => get_post_meta( $post_id, 'ws_auto_last_edited_date',  true ),
         'edited_by'       => $last_edited_author_id,
         'edited_by_name'  => ws_resolve_display_name( $last_edited_author_id ),

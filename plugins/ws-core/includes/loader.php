@@ -357,7 +357,7 @@ if ( is_admin() ) {
 	//   matrix-assist-orgs    — seeds ws-assist-org posts; depends on us term
 	//   matrix-agencies       — seeds ws-agency posts;
 	//                           matrix-ag-procedures depends on these
-	//   matrix-ag-procedures  — depends on BOTH fed-statutes AND agencies posts
+	//   matrix-ag-procedures  — depends on BOTH fed-statutes AND agencies matrices seeded.
 	//   admin-matrix-watch    — divergence detection only; must be last
 	//
 	// MATRIX Layer: Loaded from /includes/admin/matrix/

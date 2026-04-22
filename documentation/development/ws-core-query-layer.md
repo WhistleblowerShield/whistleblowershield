@@ -72,7 +72,7 @@ Returns the `author` sub-array:
 [
     'created_by'      => int,    // ws_auto_create_author
     'created_by_name' => string, // display name resolved from created_by
-    'created_date'    => string, // Y-m-d local (ws_auto_created_date)
+    'created_date'    => string, // Y-m-d local (ws_auto_create_date)
     'edited_by'       => int,    // ws_auto_last_edited_author
     'edited_by_name'  => string, // display name resolved from edited_by
     'edited_date'     => string, // Y-m-d local (ws_auto_last_edited_date)
@@ -235,7 +235,7 @@ logic. Fields: `court` (resolved to short label via `ws_court_lookup()`),
 #### `ws_get_agency_data( $jx_term_id )`
 Returns an array of agency data arrays for the jurisdiction. Fields:
 `code`, `name`, `logo`, `mission`, `url`, `reporting_url`, `phone`,
-`confidentiality_details`, `accepts_anonymous`, `reward_program`,
+`confidentiality_details`, `accepts_anonymous`, `reward_`,
 `languages`, `additional_languages`, `last_reviewed`, plus `plain`,
 `verify`, `author`.
 

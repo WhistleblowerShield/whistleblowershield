@@ -14,7 +14,7 @@
  *
  * Fields (all auto-filled, read-only for non-administrators):
  *   ws_auto_last_edited_author  — user who last saved; admin-overridable
- *   ws_auto_created_date        — local Y-m-d; written once
+ *   ws_auto_create_date        — local Y-m-d; written once
  *   ws_auto_last_edited_date    — local Y-m-d; every save
  *   ws_auto_create_author       — WP user ID; written once
  *
@@ -126,9 +126,9 @@ function ws_register_acf_stamp_fields() {
             // Readonly and disabled for all users — never submitted via UI.
 
             [
-                'key'          => 'field_created_date',
-                'label'        => 'Date Created',
-                'name'         => 'ws_auto_created_date',
+                'key'          => 'field_create_date',
+                'label'        => 'Date Authored',
+                'name'         => 'ws_auto_create_date',
                 'type'         => 'text',
                 'instructions' => 'Set automatically on first save. Read only.',
                 'readonly'     => 1,
@@ -145,7 +145,7 @@ function ws_register_acf_stamp_fields() {
 
             [
                 'key'           => 'field_create_author',
-                'label'         => 'Created By',
+                'label'         => 'Authored By',
                 'name'          => 'ws_auto_create_author',
                 'type'          => 'user',
                 'instructions'  => 'Stamped automatically on first save. Read only.',
@@ -164,6 +164,6 @@ function ws_register_acf_stamp_fields() {
 
 
 // Field locking and stamp writes are handled centrally in admin-hooks.php.
-// ws_acf_lock_for_non_admins() applies to: ws_auto_created_date, ws_auto_last_edited_date,
+// ws_acf_lock_for_non_admins() applies to: ws_auto_create_date, ws_auto_last_edited_date,
 // ws_auto_last_edited_author, ws_auto_create_author (registered by field name, applies
 // to all CPTs carrying these field names — no per-file registration needed).

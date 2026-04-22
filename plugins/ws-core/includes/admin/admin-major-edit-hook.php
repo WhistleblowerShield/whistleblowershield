@@ -108,7 +108,7 @@ function ws_acf_log_major_edit( $post_id ) {
 		: str_replace( 'jx-', '', $post_type );
 	$allowed_update_types = [
 		'summary', 'statute', 'common-law','citation', 'construction',
-		'regulation', 'policy', 'procedure', 'internal', 'other',
+		'agency', 'procedure', 'assist-org', 'regulation', 'policy', 'internal', 'other',
 	];
 	$update_type = in_array( $requested_type, $allowed_update_types, true )
 		? $requested_type
@@ -121,10 +121,13 @@ function ws_acf_log_major_edit( $post_id ) {
 	// Direct meta reads — acf/save_post context; reading from the source post to populate the new ws-legal-update record.
 	$law_name = ( $post_type !== 'jx-summary' )
 		? (
-			get_post_meta( $post_id, 'ws_jx_statute_official_name', true )
+			get_post_meta( $post_id,    'ws_jx_statute_official_name', true )
 			?: get_post_meta( $post_id, 'ws_jx_comlaw_doctrine_name', true )
 			?: get_post_meta( $post_id, 'ws_jx_citation_official_name', true )
 			?: get_post_meta( $post_id, 'ws_jx_construction_official_name', true )
+			?: get_post_meta( $post_id, 'ws_agency_official_name', true )
+			?: get_post_meta( $post_id, 'ws_ag_procedure_name', true )
+			?: get_post_meta( $post_id, 'ws_aorg_official_name', true )
 		)
 		: '';
 	if ( ! $law_name ) {
@@ -135,14 +138,13 @@ function ws_acf_log_major_edit( $post_id ) {
 	}
 
 	// ── Stamp fields (written manually — wp_insert_post bypasses acf/save_post) ──
-
-	update_post_meta( $update_id, 'ws_auto_created_date',       $now_local );
-	update_post_meta( $update_id, '_ws_auto_created_date_gmt',  $now_gmt   );
+	update_post_meta( $update_id, 'ws_auto_create_date',        $now_local );
 	update_post_meta( $update_id, 'ws_auto_create_author',      $user_id   );
 	update_post_meta( $update_id, 'ws_auto_last_edited_date',   $now_local );
-	update_post_meta( $update_id, '_ws_auto_last_edited_gmt',   $now_gmt   );
 	update_post_meta( $update_id, 'ws_auto_last_edited_author', $user_id   );
-
+    update_post_meta( $update_id, '_ws_auto_create_date_gmt',   $now_gmt   );
+	update_post_meta( $update_id, '_ws_auto_last_edited_gmt',   $now_gmt   );
+	
 	// Clear major-edit trigger fields only after the legal-update post
 	// and its required metadata were written successfully.
 	update_post_meta( $post_id, 'ws_is_major_edit',          0  );
@@ -175,7 +177,7 @@ add_action( 'admin_notices', function() {
 	if ( $state === 'success' ) {
 		echo '<div class="notice notice-success is-dismissible">'
 			. '<p><strong>WhistleblowerShield:</strong> '
-			. 'Major edit logged — a Legal Updates entry has been created.</p>'
+			. 'Major Edit Logged — a Legal Update has been created.</p>'
 			. '</div>';
 		return;
 	}
@@ -183,7 +185,7 @@ add_action( 'admin_notices', function() {
 	if ( $state === 'missing_description' ) {
 		echo '<div class="notice notice-warning is-dismissible">'
 			. '<p><strong>WhistleblowerShield:</strong> '
-			. 'Major Edit flag was set but no description was provided. '
+			. 'Major Edit Flag was set but no description was provided. '
 			. 'No changelog entry was created. Re-check the flag and add a description before saving again.</p>'
 			. '</div>';
 		return;
@@ -192,7 +194,7 @@ add_action( 'admin_notices', function() {
 	if ( $state === 'insert_failed' ) {
 		echo '<div class="notice notice-error is-dismissible">'
 			. '<p><strong>WhistleblowerShield:</strong> '
-			. 'Major Edit flag was set but the Legal Updates entry could not be created. '
+			. 'Major Edit Flag was set but the Legal Update could not be created. '
 			. 'Check the error log for details.</p>'
 			. '</div>';
 	}

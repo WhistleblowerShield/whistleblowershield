@@ -152,7 +152,7 @@ define( 'WS_SCHEMA_TRI_STATE', [
 define( 'WS_SCHEMA_SOURCE_METHOD', [
     'ai_research',    // Created or substantially drafted with AI assistance
     'human_created',  // Created directly by a human editor
-    'matrix_seed',    // Created by a matrix seeder at install
+    'matrix_seeded',  // Created by a matrix seeder at install
     'bulk_import',    // Created via a structured import process
     'feed_import',    // Created via the Inoreader legislative feed monitor
 ] );

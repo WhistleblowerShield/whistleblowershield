@@ -590,7 +590,7 @@ function ws_ingest_detect_record_type_from_filename( string $batch_filename ): s
     if ( strpos( $base, 'common-law' ) !== false || strpos( $base, 'common_law' ) !== false ) {
         return 'common-law';
     }
-    if ( strpos( $base, 'interp' ) !== false ) {
+    if ( strpos( $base, 'construction' ) !== false || strpos( $base, 'construction' ) !== false ) {
         return 'construction';
     }
     if ( strpos( $base, 'citation' ) !== false ) {
@@ -1541,7 +1541,7 @@ function ws_ingest_find_assist_org_post_id( string $record_key, string $internal
             'fields'         => 'ids',
             'no_found_rows'  => true,
             'meta_query'     => [ [
-                'key'     => '_ws_aorg_internal_id',
+                'key'     => '_ws_aorg_id',
                 'value'   => $internal_id,
                 'compare' => '=',
             ] ],
@@ -1972,7 +1972,7 @@ function ws_ingest_match_agencies_for_jx_detailed( array $labels, string $jx_slu
         $candidates = [
             ws_ingest_normalize_agency_label( get_the_title( $agency_id ) ),
             ws_ingest_normalize_agency_label( (string) get_post_meta( $agency_id, 'ws_agency_official_name', true ) ),
-            ws_ingest_normalize_agency_label( (string) get_post_meta( $agency_id, 'ws_agency_code', true ) ),
+            ws_ingest_normalize_agency_label( (string) get_post_meta( $agency_id, '_ws_agency_id', true ) ),
         ];
         $candidates = array_values( array_unique( array_filter( $candidates ) ) );
 
@@ -2151,7 +2151,7 @@ function ws_ingest_find_existing_agency_stub( string $display_label, string $age
                 'terms'    => [ $term ],
             ] ],
             'meta_query'     => [ [
-                'key'   => 'ws_agency_code',
+                'key'   => '_ws_agency_id',
                 'value' => $agency_code,
             ] ],
         ] );
@@ -2239,7 +2239,7 @@ function ws_ingest_create_agency_stub( string $label, string $jx_slug, ?bool &$w
     }
 
     update_post_meta( $post_id, 'ws_agency_official_name', $display_label );
-    update_post_meta( $post_id, 'ws_agency_code', $agency_code );
+    update_post_meta( $post_id, '_ws_agency_id', $agency_code );
     update_post_meta( $post_id, '_ws_agency_stub', 1 );
     update_post_meta( $post_id, '_ws_agency_stub_source', 'ingest.primary_agency' );
 
@@ -3806,7 +3806,7 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
     if ( $record_key !== '' ) {
         update_post_meta( $post_id, '_ws_ingest_record_key', $record_key );
     }
-    update_post_meta( $post_id, '_ws_aorg_internal_id', sanitize_text_field( $internal_id ) );
+    update_post_meta( $post_id, '_ws_aorg_id', sanitize_text_field( $internal_id ) );
     $result['log'][] = "{$org_name}: internal_id generated as '{$internal_id}'";
 
     // Double-write official_name to the dedicated meta field.

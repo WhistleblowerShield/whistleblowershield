@@ -16,12 +16,12 @@
  * -------------
  * Procedure Identity tab:
  *   ws_ag_procedure_agency_id                Parent Agency (post_object, required)
- *   ws_procedure_type                     Procedure Type (radio, required)
+ *   ws_ag_procedure_name                     Procedure Name (text, required)
+ *   ws_ag_procedure_type                     Procedure Type (radio, required)
  *   ws_ag_procedure_jurisdictions            Jurisdiction(s) (multi_select, optional)
  *   ws_ag_procedure_disclosure_types         Disclosure Types Covered (multi_select, optional)
  *   ws_ag_procedure_statute_ids              Related Statutes (relationship, optional)
  *   ws_ag_procedure_comlaw_ids               Related Common Laws (relationship, optional)
- *   _ws_ag_procedure_parent_ids              Merged Related Statutes and Common Laws (relationship, optional)
  *
  * Filing Details tab:
  *   ws_ag_procedure_entry_point              Entry Point (select, optional)
@@ -42,13 +42,37 @@
  *   ws_ag_procedure_last_reviewed            Last Verified Date (date_picker, optional)
  *
  * Admin Review tab:
- *   ws_ag_procedure_parent_override         Statute Link Override (true_false, optional)
+ *   ws_ag_procedure_parent_override          Parent (statute/common law) Link Override (true_false, optional)
+ * 
+ * Hidden fields:
+ *   _ws_ag_procedure_parent_ids              Merged Related Statutes and Common Laws (relationship, hidden)
  *
-  * SHARED WORKFLOW GROUPS
+ * SHARED WORKFLOW GROUPS
  * ----------------------
  *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
  *   - group_source_verify_metadata (acf-source-verify.php)
  *   - group_major_edit_metadata (acf-major-edit.php, menu_order 99)
+ * 
+ * SHARDED WORKFLOW FIELDS
+ * -----------------------
+ *  - auto-filled on save by ws_acf_write_stamp_fields()
+ *    - ws_auto_last_edited_date            (text, readonly, date of last edit)
+ *    - ws_auto_last_edited_author          (text, readonly, user id of last editor)
+ *    - ws_auto_create_date                 (text, readonly, date authored)
+ *    - ws_auto_create_author               (text, readonly, user id of author)
+ *  - auto-filled on post creation by ws_acf_write_source_method()
+ *    - ws_auto_source_method               (text, readonly, set to method of post creation (e.g. "ai_research", "human_created", "matrix_seeded"))
+ *    - ws_auto_source_name                 (text, readonly, "Direct" when human_created or matrix_seeded, auto-set when ingested to tool or feed name (e.g. NoteBookLM or Inoreader ))
+ *  - auto-set on post creation by ws_acf_write_verification_status() — (conditional on ws_auto_source_name is non-empty AND is not 'Direct')
+ *    - ws_verification_status              (select: unverified, verified, defaults to unverified — set to verified by Authors, Admins required to unverified)
+ *    - ws_needs_review                     (true_false, default true — must be disabled by Admin to enable publishing)
+ *  - auto-filled on save by ws_acf_write_verification_status() when ws_verification_status is true
+ *    - ws_auto_verified_by                (user, readonly, user that verified the post)
+ *    - ws_auto_verified_date              (text, readonly, date of verification)
+ *  - auto-checked on save by ws_acf_write_major_edit() ws_is_major_edit true triggers legal-update post creation
+ *    - ws_is_major_edit                   (true_false, set to true when manual edit warrants legal-update post)
+ *    - ws_major_edit_description          (textarea, required when ws_is_major_edit is true, description of the edit for legal-update seed summary)
+ *    - ws_major_edit_update_type          (select, required when ws_is_major_edit is true, legal-update type  — auto derives from source; override if necessary)
  *
  * PLAIN ENGLISH
  * -------------
@@ -63,6 +87,7 @@
  * ws_ag_procedure_agency_id on auto-draft posts, matching the pattern used by
  * ws_jx_construction_prefill_statute_id() in acf-jx-constructions.php.
  *
+ * 
  * @package    WhistleblowerShield
  * @since      3.9.0
  * @version    3.17.0
@@ -132,9 +157,17 @@ function ws_register_acf_ag_procedures() {
                 'ui'            => 1,
             ],
             [
+                'key'           => 'filed_ag_procedure_name',
+                'label'         => 'Procedure Name',
+                'name'          => 'ws_ag_procedure_name',
+                'type'          => 'text',
+                'instructions'  => 'The name of this procedure (e.g. "SEC Fraud Claim Intake").',
+                'required'      => 1,
+            ],
+            [
                 'key'           => 'field_ag_procedure_type',
                 'label'         => 'Procedure Type',
-                'name'          => 'ws_procedure_type',
+                'name'          => 'ws_ag_procedure_type',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_procedure_type',
                 'field_type'    => 'radio',
@@ -202,7 +235,7 @@ function ws_register_acf_ag_procedures() {
             [
                 'key'          => 'field_ag_procedure_statute_ids',
                 'label'        => 'Related Statutes',
-                'name'         => 'ws_ag_procedure_statute_ids',
+                'name'         => 'ws_ag_procedure_statute_ids', // merges on post_save with common law IDs in _ws_ag_procedure_parent_ids
                 'type'         => 'relationship',
                 'instructions' => 'Statutes this procedure specifically operates under. The picker is pre-filtered by this procedure\'s jurisdiction and disclosure types. Use the taxonomy dropdowns to refine further if needed.',
                 'post_type'    => [ 'jx-statute' ],
@@ -239,7 +272,7 @@ function ws_register_acf_ag_procedures() {
             [
                 'key'          => 'field_ag_procedure_comlaw_ids',
                 'label'        => 'Related Common Law',
-                'name'         => 'ws_ag_procedure_comlaw_ids',
+                'name'         => 'ws_ag_procedure_comlaw_ids', // merges on post_save with statute IDs in _ws_ag_procedure_parent_ids
                 'type'         => 'relationship',
                 'instructions' => 'Common Law entries this procedure specifically operates under. The picker is pre-filtered by this procedure\'s jurisdiction and disclosure types. Use the taxonomy dropdowns to refine further if needed.',
                 'post_type'    => [ 'jx-common-law' ],

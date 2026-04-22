@@ -15,11 +15,11 @@
  * FIELD SUMMARY
  * -------------
  * Identity tab:
- *   _ws_aorg_internal_id                    Internal Reference Code (text, required)
+ *   ws_aorg_internal_id                    Internal ID Code (text, required, slug-safe, lowercase-hyphen, abbreviated-by-table)
  *   ws_aorg_official_name                  Official Organization Name (text, required)
  *   ws_aorg_type                           Organization Type (radio, required)
  *   ws_aorg_description                    Organization Description (textarea, optional)
- *   ws_aorg_common_name                    Common Name / Abbreviation (text, optional)
+ *   ws_aorg_common_name                    Common Name / Acronym (text, optional)
  *   ws_aorg_logo                           Organization Logo (image, optional)
  *
  * Scope of Service tab:
@@ -47,7 +47,7 @@
  *   ws_aorg_contact_url                    Contact URL (url, optional)
  *   ws_aorg_phones                         Phone Numbers [type|number] (repeater, optional)
  *   ws_aorg_emails                         Email Addresses [type|email] (repeater, optional)
- *   ws_aorg_mailing_address                Mailing Address (textarea, optional)
+ *   ws_aorg_mailing_address                Mailing Address (textarea, optional, use || to separate multiple)
  *   ws_aorg_has_secure_channel             Secure Contact Channel Available? (true_false, optional)
  *   ws_aorg_secure_contact_url             Secure Contact URL (url, conditional)
  *   ws_aorg_secure_contact_tool            Secure Contact Tool (select, conditional)
@@ -58,9 +58,9 @@
  * Eligibility & Cost tab:
  *   ws_aorg_cost_models                    Cost Structure (multi_select, required)
  *   ws_aorg_has_income_limit               Income Eligibility Required? (true_false, optional)
- *   ws_aorg_has_income_limit_details           Income Eligibility Details (textarea, conditional)
+ *   ws_aorg_income_limit_details           Income Eligibility Details (textarea, conditional)
  *   ws_aorg_accepts_anonymous              Can Assist Anonymous Clients? (true_false, optional)
- *   ws_aorg_eligibility_details            Additional Eligibility Requirements (textarea, optional)
+ *   ws_aorg_eligibility_details            Non-Income Eligibility Requirements (textarea, optional)
  *
  * Credentials tab:
  *   ws_aorg_licensed_attorneys             Licensed Attorneys on Staff? (true_false, optional)
@@ -69,26 +69,61 @@
  *   ws_aorg_legitimacy_url                 Legitimacy / Transparency URL (url, optional)
  *   ws_aorg_last_reviewed                  Last Verified Date (date_picker, optional)
  *
- * Internal Contact & Relationship Notes tab:
+ * Internal Contact & Relationship Notes tab (no rendering on front end, for internal use only):
  *   _ws_aorg_internal_contact_name          Internal Contact Name (text, optional)
  *   _ws_aorg_internal_contact_role          Internal Contact Role/Title (text, optional)
  *   _ws_aorg_internal_contact_email         Internal Contact Email (email, optional)
  *   _ws_aorg_internal_contact_phone         Internal Contact Phone (text, optional)
  *   _ws_aorg_internal_last_contacted        Internal Last Contacted (date_picker, optional)
  *   _ws_aorg_internal_relationship_notes    Internal Relationship Notes (textarea, optional)
- *
+ * 
+ * Hidden Fields (used by Admin Tool Ingest, not visible to public):
+ *   _ws_aorg_id                            Ingest Dedupe Code (text, hidden)
+ * 
  * SHARED WORKFLOW GROUPS
  * ----------------------
- *   - group_plain_english_metadata (acf-plain-english-fields.php, menu_order 85)
  *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
+ *   - group_plain_english_metadata (acf-plain-english-fields.php, menu_order 85)
  *   - group_source_verify_metadata (acf-source-verify.php)
- *
+ *   - group_major_edit_metadata (acf-major-edit.php, menu_order 99)
+ * 
+ * SHARDED WORKFLOW FIELDS
+ * -----------------------
+ *  - auto-filled on save by ws_acf_write_stamp_fields()
+ *    - ws_auto_last_edited_date            (text, readonly, date of last edit)
+ *    - ws_auto_last_edited_author          (text, readonly, user id of last editor)
+ *    - ws_auto_create_date                 (text, readonly, date authored)
+ *    - ws_auto_create_author               (text, readonly, user id of author)
+ *  - auto-checked on save by ws_acf_write_plain_english()
+ *    - ws_has_plain_english                (true_false, defaults to false, enable to expose wysiwyg summary field)
+ *    - ws_plain_english_wysiwyg            (wysiwyg, summary of legal record, conditional on ws_has_plain_english)
+ *    - ws_plain_english_reviewed           (true_false, defaults to false, must be enabled by Admin to enable summary render)
+ *  - auto-filled on save by ws_acf_write_plain_english() when ws_plain_english_wysiwyg is non-empty
+ *    - ws_auto_plain_english_by            (user, readonly, user id when summary was last edited)
+ *    - ws_auto_plain_english_date          (text, readonly, date of last edit to summary)
+ *  - auto-filled on save by ws_acf_write_plain_english() when ws_plain_english_reviewed is true
+ *    - ws_auto_plain_english_reviewed_by   (user, readonly, user id of Admin who approved summary)
+ *    - ws_auto_plain_english_reviewed_date (text, readonly, date summary was approved)
+ *  - auto-filled on post creation by ws_acf_write_source_method()
+ *    - ws_auto_source_method               (text, readonly, set to method of post creation (e.g. "ai_research", "human_created", "matrix_seeded"))
+ *    - ws_auto_source_name                 (text, readonly, "Direct" when human_created or matrix_seeded, auto-set when ingested to tool or feed name (e.g. NoteBookLM or Inoreader ))
+ *  - auto-set on post creation by ws_acf_write_verification_status() — (conditional on ws_auto_source_name is non-empty AND is not 'Direct')
+ *    - ws_verification_status              (select: unverified, verified, defaults to unverified — set to verified by Authors, Admins required to unverified)
+ *    - ws_needs_review                     (true_false, default true — must be disabled by Admin to enable publishing)
+ *  - auto-filled on save by ws_acf_write_verification_status() when ws_verification_status is true
+ *    - ws_auto_verified_by                (user, readonly, user that verified the post)
+ *    - ws_auto_verified_date              (text, readonly, date of verification)
+ *  - auto-checked on save by ws_acf_write_major_edit() ws_is_major_edit true triggers legal-update post creation
+ *    - ws_is_major_edit                   (true_false, set to true when manual edit warrants legal-update post)
+ *    - ws_major_edit_description          (textarea, required when ws_is_major_edit is true, description of the edit for legal-update seed summary)
+ *    - ws_major_edit_update_type          (select, required when ws_is_major_edit is true, legal-update type  — auto derives from source; override if necessary)
+ * 
  * META KEY NOTE
  * -------------
- * _ws_aorg_internal_id is stored WITHOUT a leading underscore. ACF uses the
- * _ws_aorg_internal_id key (underscore prefix) for its own internal field
+ * ws_aorg_internal_id is stored WITHOUT a leading underscore. ACF uses the
+ * _ws_aorg_id key (underscore prefix) for its own internal field
  * reference -- writing a value there clobbers ACF's mapping. Ingest must write
- * to _ws_aorg_internal_id. The leading underscore in prompt JSON schema output
+ * to _ws_aorg_id. The leading underscore in prompt JSON schema output
  * is a naming convention only; ingest strips it during mapping.
  *
  * @package    WhistleblowerShield
@@ -150,7 +185,7 @@ function ws_register_acf_assist_org() {
             [
                 'key'          => 'field_aorg_internal_id',
                 'label'        => 'Internal Reference Code',
-                'name'         => '_ws_aorg_internal_id',
+                'name'         => '_ws_aorg_id',
                 'type'         => 'text',
                 'instructions' => 'Slug-safe internal identifier — lowercase, hyphens only. Examples: "aclu-national", "nwc-dc", "gp-ca". Used for programmatic lookups and deduplication.',
                 'required'     => 1,

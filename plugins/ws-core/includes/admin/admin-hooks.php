@@ -10,7 +10,7 @@
  *                             post title on new-post screens opened from the
  *                             "Create Now" links in admin-navigation.php.
  *
- *   2. Field locking        — makes ws_auto_created_date, ws_auto_last_edited_date,
+ *   2. Field locking        — makes ws_auto_create_date, ws_auto_last_edited_date,
  *                             ws_auto_last_edited_author, ws_auto_create_author,
  *                             ws_auto_plain_english_by, ws_auto_plain_english_date,
  *                             and ws_auto_plain_english_reviewed_by readonly + disabled
@@ -62,7 +62,7 @@
  * keys follow the field_[meta_name] (no ws_auto_ prefix) convention matching
  * ws-jurisdiction.
  *
- *   ws_auto_created_date                — local date (Y-m-d), written once
+ *   ws_auto_create_date                — local date (Y-m-d), written once
  *   ws_auto_create_author               — WP user ID, written once
  *   ws_auto_last_edited_date            — local date (Y-m-d), written every save
  *   ws_auto_last_edited_author          — WP user ID, written every save (admin-overridable)
@@ -70,7 +70,7 @@
  *   ws_auto_plain_english_date          — local date (Y-m-d), written once on first plain-english save
  *   ws_auto_plain_english_reviewed_by   — WP user ID, written once when plain_reviewed first enabled
  *   ws_auto_plain_english_reviewed_date — local date (Y-m-d), written once when plain_reviewed first enabled
- *   _ws_auto_created_date_gmt           — GMT date (Y-m-d), written once, private/hidden
+ *   _ws_auto_create_date_gmt           — GMT date (Y-m-d), written once, private/hidden
  *   _ws_auto_last_edited_gmt            — GMT date (Y-m-d), written every save, private/hidden
  *   
  *
@@ -135,7 +135,7 @@ add_filter( 'default_title', function( $title ) {
 // Stamp fields are system-managed and must not be altered through the ACF UI.
 // Two lock tiers apply:
 //
-//   Admin-only fields  — ws_auto_created_date, ws_auto_last_edited_date,
+//   Admin-only fields  — ws_auto_create_date, ws_auto_last_edited_date,
 //                        ws_auto_last_edited_author, ws_auto_create_author,
 //                        ws_auto_plain_english_by, ws_auto_plain_english_date.
 //                        Locked for any role below administrator.
@@ -154,7 +154,7 @@ add_filter( 'default_title', function( $title ) {
 // All CPTs share these field names (unprefixed), so a single filter registration
 // per name applies across every post type that carries the field.
 
-foreach ( [ 'ws_auto_created_date', 'ws_auto_last_edited_date', 'ws_auto_last_edited_author', 'ws_auto_create_author', 'ws_auto_plain_english_by', 'ws_auto_plain_english_date' ] as $_ws_f ) {
+foreach ( [ 'ws_auto_create_date', 'ws_auto_last_edited_date', 'ws_auto_last_edited_author', 'ws_auto_create_author', 'ws_auto_plain_english_by', 'ws_auto_plain_english_date' ] as $_ws_f ) {
     add_filter( "acf/load_field/name={$_ws_f}", 'ws_acf_lock_for_non_admins' );
 }
 unset( $_ws_f );
@@ -603,10 +603,10 @@ function ws_acf_write_stamp_fields( $post_id ) {
 
     // ── Created stamps (once only) ────────────────────────────────────────
 
-    if ( ! get_post_meta( $post_id,  'ws_auto_created_date', true ) ) {
+    if ( ! get_post_meta( $post_id,  'ws_auto_create_date', true ) ) {
         update_post_meta( $post_id,  'ws_auto_create_author',    $user_id );
-        update_post_meta( $post_id,  'ws_auto_created_date',     $now_local );
-        update_post_meta( $post_id, '_ws_auto_created_date_gmt', $now_gmt );
+        update_post_meta( $post_id,  'ws_auto_create_date',     $now_local );
+        update_post_meta( $post_id, '_ws_auto_create_date_gmt', $now_gmt );
         }
 
     // ── Last-edited date-stamps (every save) ──────────────────────────────

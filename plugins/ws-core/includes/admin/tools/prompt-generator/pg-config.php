@@ -101,7 +101,7 @@ function ws_prompt_extract_record_identifier( string $record_type, int $post_id 
     }
 
     if ( $record_type === 'assist-org' ) {
-        $v = trim( (string) get_post_meta( $post_id, '_ws_aorg_internal_id', true ) );
+        $v = trim( (string) get_post_meta( $post_id, '_ws_aorg_id', true ) );
         if ( $v !== '' ) {
             return $v;
         }

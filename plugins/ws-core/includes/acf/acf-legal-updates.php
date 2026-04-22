@@ -17,24 +17,47 @@
  * Content tab:
  *   ws_legal_update_jurisdictions         Affected Jurisdiction(s) (multi_select, optional)
  *   ws_legal_update_multi_jurisdiction    Multi-Jurisdiction (true_false, optional)
- *   ws_legal_update_hide_public           Hide from Public Change Log (true_false, optional)
+ *   ws_legal_update_hide_public           Hide from Public Change Log (true_false, optional, Admin-only)
  *   ws_legal_update_source_url            Primary Source URL (url, optional)
  *   ws_legal_update_source_url_is_pdf     Link is PDF? (true_false, optional)
- *   ws_legal_update_type                  Update Type (select, optional)
- *   ws_legal_update_law_name              Law / Statute Name (text, optional)
+ *   ws_legal_update_law_name              Updated Law Name (text, optional)
  *   ws_legal_update_summary_wysiwyg       Summary (wysiwyg, optional)
  *   ws_legal_update_effective_date        Effective Date (date_picker, optional)
- *   ws_legal_update_parent_post_id        Parent Post ID (post meta, int, required) — links to the source post that triggered this update record; set programmatically on save.
- *   ws_legal_update_parent_post_type      Parent Post Type (post meta, string, required) — the CPT of the source post; set programmatically on save.
  * 
+ *     ws_legal_update_type                  Update Type (select, optional)
+ * - auto-set when triggered by ws_acf_log_major_edit() in admin-major-edit-hook.php:
+ *     ws_legal_update_parent_post_id        Parent Post ID (post meta, int, required)
+ *     ws_legal_update_parent_post_type      Parent Post Type (post meta, string, required)
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------
  *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
- *
+ *   - group_source_verify_metadata (acf-source-verify.php)
+ * 
+ * SHARDED WORKFLOW FIELDS
+ * -----------------------
+ *  - auto-filled on save by ws_acf_write_stamp_fields()
+ *    - ws_auto_last_edited_date            (text, readonly, date of last edit)
+ *    - ws_auto_last_edited_author          (text, readonly, user id of last editor)
+ *    - ws_auto_create_date                 (text, readonly, date authored)
+ *    - ws_auto_create_author               (text, readonly, user id of author)
+ *  - auto-filled on post creation by ws_acf_write_source_method()
+ *    - ws_auto_source_method               (text, readonly, set to method of post creation (e.g. "ai_research", "human_created", "matrix_seeded"))
+ *    - ws_auto_source_name                 (text, readonly, "Direct" when human_created or matrix_seeded, auto-set when ingested to tool or feed name (e.g. NoteBookLM or Inoreader ))
+ *  - auto-set on post creation by ws_acf_write_verification_status() — (conditional on ws_auto_source_name is non-empty AND is not 'Direct')
+ *    - ws_verification_status              (select: unverified, verified, defaults to unverified — set to verified by Authors, Admins required to unverified)
+ *    - ws_needs_review                     (true_false, default true — must be disabled by Admin to enable publishing)
+ *  - auto-filled on save by ws_acf_write_verification_status() when ws_verification_status is true
+ *    - ws_auto_verified_by                (user, readonly, user that verified the post)
+ *    - ws_auto_verified_date              (text, readonly, date of verification)
+ * 
  * PLAIN ENGLISH
  * -------------
  * This record does not participate in a separate plain-english workflow.
+ * 
+ * MAJOR EDIT
+ * ----------
+ * Legal updates are not subject to major edit review, they are the result of major edits of posts.
  *
  * USE NOTES
  * ---------

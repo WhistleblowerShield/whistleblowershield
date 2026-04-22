@@ -51,7 +51,7 @@
  * META KEY NAMING RULES). The GMT audit keys are private (_ws_auto_*) and are
  * not exposed through the query layer:
  *
- *      ws_auto_created_date        — local date (Y-m-d), written once
+ *      ws_auto_create_date        — local date (Y-m-d), written once
  *      ws_auto_create_author       — WP user ID, written once
  *      ws_auto_last_edited_date    — local date (Y-m-d), written every save
  *      ws_auto_last_edited_author  — WP user ID, written every save (admin-overridable)
@@ -71,7 +71,7 @@
  *          'author'  => [
  *              'created_by'      => int,    // WP user ID (ws_auto_create_author)
  *              'created_by_name' => string, // display name resolved from created_by
- *              'created_date'    => string, // Y-m-d local (ws_auto_created_date)
+ *              'created_date'    => string, // Y-m-d local (ws_auto_create_date)
  *              'edited_by'       => int,    // WP user ID (ws_auto_last_edited_author)
  *              'edited_by_name'  => string, // display name resolved from edited_by
  *              'edited_date'     => string, // Y-m-d local (ws_auto_last_edited)

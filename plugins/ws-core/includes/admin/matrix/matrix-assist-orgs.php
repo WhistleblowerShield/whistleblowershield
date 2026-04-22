@@ -1168,7 +1168,7 @@ function ws_seed_assist_org_matrix() {
         // Boolean fields (0/1) and array fields always write — 0 is meaningful.
 
         $meta = [
-            '_ws_aorg_internal_id'          => $internal_id,
+            '_ws_aorg_id'          => $internal_id,
             'ws_aorg_official_name'        => $org['title']                ?? '',
             'ws_aorg_common_name'          => $org['common_name']          ?? '',
             'ws_aorg_description'          => $org['description']          ?? '',

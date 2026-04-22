@@ -166,18 +166,21 @@ function ws_register_source_verify_field_group() {
                 'label'             => 'Verification Status',
                 'name'              => 'ws_verification_status',
                 'type'              => 'select',
-                'instructions'      => 'Authors and above may mark as Verified. Only admins may revert to Unverified. Requires Source Name to be set.',
+                'instructions'      => 'Authors and above may mark as Verified. Only Admins may revert to Unverified. Requires Source Name to be set.',
                 'required'          => 0,
                 'choices'           => [
                     'unverified' => 'Unverified',
                     'verified'   => 'Verified',
                 ],
+                'ui'            => 1,
+                'ui_on_text'    => 'Verified',
+                'ui_off_text'   => 'Verification Required',
                 'default_value'     => 'unverified',
                 'allow_null'        => 0,
                 'return_format'     => 'value',
 
                 // ── Conditional logic (UI layer) ──────────────────────────
-                // Hides this field until source_name is non-empty.
+                // Hides this field until source_name non-empty AND is not 'Direct'.
                 // The server-side hook is the hard enforcement layer.
 
                 'conditional_logic' => [
@@ -185,6 +188,12 @@ function ws_register_source_verify_field_group() {
                         [
                             'field'    => 'field_source_name',
                             'operator' => '!=empty',
+
+                        ],
+                        [
+                            'field'    => 'field_source_name',
+                            'operator' => '!=',
+                            'value'    => 'Direct',
                         ],
                     ],
                 ],
@@ -197,10 +206,28 @@ function ws_register_source_verify_field_group() {
                 'type'          => 'true_false',
                 'instructions'  => 'Admin only. When enabled, this post is blocked from front-end rendering regardless of verification status. Clear this flag once the review is complete.',
                 'required'      => 0,
-                'default_value' => 0,
+                'default_value' => 1,
                 'ui'            => 1,
-                'ui_on_text'    => 'Review Required',
-                'ui_off_text'   => 'Clear',
+                'ui_on_text'    => 'Admin Review Required',
+                'ui_off_text'   => 'Approved',
+
+                // ── Conditional logic (UI layer) ──────────────────────────
+                // Hides this field until source_name non-empty AND is not 'Direct'.
+                // The server-side hook is the hard enforcement layer.
+
+                'conditional_logic' => [
+                    [
+                        [
+                            'field'    => 'field_source_name',
+                            'operator' => '!=empty',
+                        ],
+                        [
+                            'field'    => 'field_source_name',
+                            'operator' => '!=',
+                            'value'    => 'Direct',
+                        ],
+                    ],
+                ],
             ],
 
         ], // end fields

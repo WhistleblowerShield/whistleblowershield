@@ -46,12 +46,12 @@ change them.
 | Meta Key | Type | Written By | Notes |
 |---|---|---|---|
 | `ws_auto_last_edited_author` | user | Every save | The user who last saved — admin-overridable for attribution |
-| `ws_auto_created_date` | text | First save only | Local site date `Y-m-d`; never overwritten |
+| `ws_auto_create_date` | text | First save only | Local site date `Y-m-d`; never overwritten |
 | `ws_auto_last_edited_date` | text | Every save | Local site date `Y-m-d` |
 | `ws_auto_create_author` | user | First save only | The user who created the record |
 
 Hidden audit keys (no ACF field, never shown in UI):
-`_ws_auto_created_date_gmt`, `_ws_auto_last_edited_gmt`
+`_ws_auto_create_date_gmt`, `_ws_auto_last_edited_gmt`
 
 ---
 
@@ -366,8 +366,9 @@ stamp, plain-english, source verify, and major edit from shared groups.
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_agency_code` | text | Short reference code (e.g. `SEC`, `OSHA`) |
+| `_ws_agency_id` | text | Short reference slug, lower-case, kebab-case, abbreviated (e.g. `sec`, `ca-osha`) |
 | `ws_agency_official_name` | text | Full official agency name |
+| `ws_agency_common_name` | text | Widely recognized common agency name or acronym |
 | `ws_agency_logo` | image | Agency logo (WordPress media library) |
 | `ws_agency_jurisdictions` *(taxonomy field)* | taxonomy | Jurisdiction scope; `save_terms: 1` |
 | `ws_agency_disclosure_types` | taxonomy | `ws_disclosure_type` terms; `save_terms: 1` |
@@ -382,7 +383,8 @@ stamp, plain-english, source verify, and major edit from shared groups.
 | `ws_agency_phone` | text | Whistleblower hotline |
 | `ws_agency_confidentiality_details` | textarea | Details on identity and confidentiality policies |
 | `ws_agency_accepts_anonymous` | true_false | Whether anonymous reporting is permitted |
-| `ws_agency_reward_program` | true_false | Whether a reward or bounty program exists |
+| `ws_agency_has_reward` | true_false | Whether a reward or bounty program exists |
+| `ws_agency_reward_details` | text | Details about reward or bounty programs |
 | `ws_languages` | taxonomy | `ws_language` terms; `save_terms: 1` |
 | `ws_agency_additional_languages` | text | Free-text overflow; auto-assigns `additional` term |
 | `ws_agency_last_reviewed` | date_picker | Last verified date |
@@ -456,7 +458,7 @@ fields DO attach.
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `_ws_aorg_internal_id` | text | Internal reference code |
+| `_ws_aorg_id` | text | Internal reference code |
 | `ws_aorg_official_name` | text | Organization's Official Name |
 | `ws_aorg_common_name` | text | Widely recognized common name or acronym |
 | `ws_aorg_type` | taxonomy | `ws_aorg_type` terms; radio UI; `save_terms: 1` |

@@ -73,13 +73,48 @@ defined( 'ABSPATH' ) || exit;
  *
  * Reference Materials tab:
  *   ws_jx_statute_ref_materials                  Reference Materials (relationship, optional)
+ * 
+ * Hidden fields:
+ *   _ws_jx_citation_id                            Ingest Dedupe Code (text, hidden)
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------
- *   - group_plain_english_metadata (acf-plain-english-fields.php, menu_order 85)
  *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
+ *   - group_plain_english_metadata (acf-plain-english-fields.php, menu_order 85)
  *   - group_source_verify_metadata (acf-source-verify.php)
  *   - group_major_edit_metadata (acf-major-edit.php, menu_order 99)
+ * 
+ * SHARDED WORKFLOW FIELDS
+ * -----------------------
+ *  - auto-filled on save by ws_acf_write_stamp_fields()
+ *    - ws_auto_last_edited_date            (text, readonly, date of last edit)
+ *    - ws_auto_last_edited_author          (text, readonly, user id of last editor)
+ *    - ws_auto_create_date                 (text, readonly, date authored)
+ *    - ws_auto_create_author               (text, readonly, user id of author)
+ *  - auto-checked on save by ws_acf_write_plain_english()
+ *    - ws_has_plain_english                (true_false, defaults to false, enable to expose wysiwyg summary field)
+ *    - ws_plain_english_wysiwyg            (wysiwyg, summary of legal record, conditional on ws_has_plain_english)
+ *    - ws_plain_english_reviewed           (true_false, defaults to false, must be enabled by Admin to enable summary render)
+ *  - auto-filled on save by ws_acf_write_plain_english() when ws_plain_english_wysiwyg is non-empty
+ *    - ws_auto_plain_english_by            (user, readonly, user id when summary was last edited)
+ *    - ws_auto_plain_english_date          (text, readonly, date of last edit to summary)
+ *  - auto-filled on save by ws_acf_write_plain_english() when ws_plain_english_reviewed is true
+ *    - ws_auto_plain_english_reviewed_by   (user, readonly, user id of Admin who approved summary)
+ *    - ws_auto_plain_english_reviewed_date (text, readonly, date summary was approved)
+ *  - auto-filled on post creation by ws_acf_write_source_method()
+ *    - ws_auto_source_method               (text, readonly, set to method of post creation (e.g. "ai_research", "human_created", "matrix_seeded"))
+ *    - ws_auto_source_name                 (text, readonly, "Direct" when human_created or matrix_seeded, auto-set when ingested to tool or feed name (e.g. NoteBookLM or Inoreader ))
+ *  - auto-set on post creation by ws_acf_write_verification_status() — (conditional on ws_auto_source_name is non-empty AND is not 'Direct')
+ *    - ws_verification_status              (select: unverified, verified, defaults to unverified — set to verified by Authors, Admins required to unverified)
+ *    - ws_needs_review                     (true_false, default true — must be disabled by Admin to enable publishing)
+ *  - auto-filled on save by ws_acf_write_verification_status() when ws_verification_status is true
+ *    - ws_auto_verified_by                (user, readonly, user that verified the post)
+ *    - ws_auto_verified_date              (text, readonly, date of verification)
+ *  - auto-checked on save by ws_acf_write_major_edit() ws_is_major_edit true triggers legal-update post creation
+ *    - ws_is_major_edit                   (true_false, set to true when manual edit warrants legal-update post)
+ *    - ws_major_edit_description          (textarea, required when ws_is_major_edit is true, description of the edit for legal-update seed summary)
+ *    - ws_major_edit_update_type          (select, required when ws_is_major_edit is true, legal-update type  — auto derives from source; override if necessary)
+ * 
  *
  * @package    WhistleblowerShield
  * @since      2.0.0

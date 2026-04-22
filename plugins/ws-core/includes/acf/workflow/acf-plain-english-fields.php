@@ -144,7 +144,40 @@ function ws_register_acf_plain_english_fields() {
                     'value'    => '1',
                 ] ] ],
             ],
+            
+            // ── Summarized By ─────────────────────────────────────────────
+            //
+            // Stamped once by ws_acf_stamp_summarized_fields() on first save
+            // after has_plain_english is enabled and content exists.
+            // Cleared on has_plain_english toggle-off.
 
+            [
+                'key'           => 'field_plain_english_by',
+                'label'         => 'Summarized By',
+                'name'          => 'ws_auto_plain_english_by',
+                'type'          => 'user',
+                'instructions'  => 'User Auto-stamped on first save when Plain-English summary is created. Read only.',
+                'role'          => [ 'author', 'editor', 'administrator' ],
+                'return_format' => 'id',
+                'readonly'      => 1,
+                'disabled'      => 1,
+            ],
+
+            // ── Summarized Date ───────────────────────────────────────────
+            //
+            // Stamped once by ws_acf_stamp_summarized_fields() alongside
+            // plain_english_by. Cleared on has_plain_english toggle-off.
+
+            [
+                'key'          => 'field_plain_english_date',
+                'label'        => 'Summarized Date',
+                'name'         => 'ws_auto_plain_english_date',
+                'type'         => 'text',
+                'instructions' => 'Date Auto-stamped on first save after Plain-English summary is created. Read only.',
+                'readonly'     => 1,
+                'disabled'     => 1,
+            ],
+            
             // ── Plain-English Reviewed ───────────────────────────────────
             //
             // Requires editor rank or above — enforced server-side by
@@ -198,38 +231,6 @@ function ws_register_acf_plain_english_fields() {
                 'disabled'     => 1,
             ],
 
-            // ── Summarized By ─────────────────────────────────────────────
-            //
-            // Stamped once by ws_acf_stamp_summarized_fields() on first save
-            // after has_plain_english is enabled and content exists.
-            // Cleared on has_plain_english toggle-off.
-
-            [
-                'key'           => 'field_plain_english_by',
-                'label'         => 'Summarized By',
-                'name'          => 'ws_auto_plain_english_by',
-                'type'          => 'user',
-                'instructions'  => 'User Auto-stamped on first save when Plain-English summary is created. Read only.',
-                'role'          => [ 'author', 'editor', 'administrator' ],
-                'return_format' => 'id',
-                'readonly'      => 1,
-                'disabled'      => 1,
-            ],
-
-            // ── Summarized Date ───────────────────────────────────────────
-            //
-            // Stamped once by ws_acf_stamp_summarized_fields() alongside
-            // plain_english_by. Cleared on has_plain_english toggle-off.
-
-            [
-                'key'          => 'field_plain_english_date',
-                'label'        => 'Summarized Date',
-                'name'         => 'ws_auto_plain_english_date',
-                'type'         => 'text',
-                'instructions' => 'Date Auto-stamped on first save after Plain-English summary is created. Read only.',
-                'readonly'     => 1,
-                'disabled'     => 1,
-            ],
 
         ], // end fields
 

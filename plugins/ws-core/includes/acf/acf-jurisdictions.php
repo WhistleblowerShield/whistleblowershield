@@ -36,7 +36,6 @@
  *   ws_jx_flag_license            Flag License (text, optional)
  *
  * Record Management tab:
- *   _ws_auto_last_edited_gmt      Date Last Edited (GMT) (text, auto)
  *   ws_auto_last_edited_author    Last Editor (user, auto)
  *   ws_auto_last_edited_date      Date Last Edited (text, auto)
  *

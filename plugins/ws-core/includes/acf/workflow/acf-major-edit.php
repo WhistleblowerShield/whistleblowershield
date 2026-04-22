@@ -82,7 +82,9 @@ function ws_register_acf_major_edit() {
 			[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-common-law',      ] ],
 			[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-citation',        ] ],
 			[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-construction',  ] ],
+			[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-agency',  ] ],
 			[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ag-procedure',    ] ],
+	    	[ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-assist-org',  ] ],
 		],
 
 		'fields' => [
@@ -129,7 +131,7 @@ function ws_register_acf_major_edit() {
 					'common-law'     => 'Common Law Update',
 					'citation'       => 'Citation Update',
 					'summary'        => 'Summary Update',
-					'construction' => 'construction Update',
+					'construction'   => 'Construction Update',
 					'regulation'     => 'Regulatory Change',
 					'policy'         => 'Agency Policy',
 					'procedure'      => 'Agency Procedure',

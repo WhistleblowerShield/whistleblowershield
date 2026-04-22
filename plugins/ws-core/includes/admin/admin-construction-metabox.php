@@ -137,7 +137,7 @@ function ws_render_construction_metabox( $post ) {
         // - ws_jx_construction_comlaw_id on jx-construction
         // Use the union so the metabox remains accurate even if one side lags.
         $from_comlaw = array_filter( array_map( 'intval', (array) get_post_meta( $post->ID, 'ws_jx_comlaw_construction_ids', true ) ) );
-        $from_interp = get_posts( [
+        $from_construct = get_posts( [
             'post_type'      => 'jx-construction',
             'post_status'    => 'any',
             'posts_per_page' => -1,
@@ -150,7 +150,7 @@ function ws_render_construction_metabox( $post ) {
                 'type'    => 'NUMERIC',
             ] ],
         ] );
-        $construction_ids = array_values( array_unique( array_merge( $from_comlaw, array_map( 'intval', (array) $from_interp ) ) ) );
+        $construction_ids = array_values( array_unique( array_merge( $from_comlaw, array_map( 'intval', (array) $from_construct ) ) ) );
     }
 
     $constructions = empty( $construction_ids ) ? [] : get_posts( [
