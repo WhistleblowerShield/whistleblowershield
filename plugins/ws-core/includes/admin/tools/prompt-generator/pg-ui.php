@@ -46,9 +46,9 @@ function ws_handle_prompt_generation(): array {
 
     $jx_context = ws_prompt_resolve_jx_context( $jx_id );
 
-    $scope_notes = sanitize_textarea_field( (string) ( $_POST['scope_notes'] ?? '' ) );
-    if ( $scope_notes === '' && in_array( $record_type, [ 'statute', 'common-law' ], true ) ) {
-        $scope_notes = sanitize_key( (string) ( $jx_context['jx_type'] ?? 'state' ) ) . '-level whistleblower laws and protections';
+    $scope_details = sanitize_textarea_field( (string) ( $_POST['scope_details'] ?? '' ) );
+    if ( $scope_details === '' && in_array( $record_type, [ 'statute', 'common-law' ], true ) ) {
+        $scope_details = sanitize_key( (string) ( $jx_context['jx_type'] ?? 'state' ) ) . '-level whistleblower laws and protections';
     }
 
     $disable_exclusions = ! empty( $_POST['disable_exclusion_list'] );
@@ -69,7 +69,7 @@ function ws_handle_prompt_generation(): array {
         'legislature_url'        => (string) $jx_context['legislature_url'],
         'records_requested'      => $records_requested,
         'proposal_count'         => $proposal_count,
-        'scope_notes'            => $scope_notes,
+        'scope_details'          => $scope_details,
         'assist_org_focus_notes' => sanitize_textarea_field( (string) ( $_POST['assist_org_focus_notes'] ?? '' ) ),
         'nationwide_only'        => ! empty( $_POST['assist_org_nationwide'] ) ? 1 : 0,
         'exclusion_list'         => $exclusion_list,
@@ -124,14 +124,14 @@ function ws_render_prompt_generator_page() {
     $auto_exclusions = ( $posted_jx && $record_type ) ? ws_prompt_get_auto_exclusions( $record_type, $posted_jx ) : [];
     $auto_exclusions_text = ws_prompt_resolve_auto_exclusions_text( $_POST, $auto_exclusions );
 
-    $default_scope_note = 'state-level whistleblower laws and protections';
+    $default_scope_details = 'state-level whistleblower laws and protections';
     if ( $posted_jx !== '' ) {
         $ctx = ws_prompt_resolve_jx_context( $posted_jx );
-        $default_scope_note = sanitize_key( (string) ( $ctx['jx_type'] ?? 'state' ) ) . '-level whistleblower laws and protections';
+        $default_scope_details = sanitize_key( (string) ( $ctx['jx_type'] ?? 'state' ) ) . '-level whistleblower laws and protections';
     }
-    $scope_note_value = sanitize_textarea_field( (string) ( $_POST['scope_notes'] ?? '' ) );
-    if ( $scope_note_value === '' && in_array( $record_type, [ 'statute', 'common-law' ], true ) ) {
-        $scope_note_value = $default_scope_note;
+    $scope_details_value = sanitize_textarea_field( (string) ( $_POST['scope_details'] ?? '' ) );
+    if ( $scope_details_value === '' && in_array( $record_type, [ 'statute', 'common-law' ], true ) ) {
+        $scope_details_value = $default_scope_details;
     }
 
     $manual_exclusions = sanitize_textarea_field( (string) ( $_POST['exclusion_list_manual'] ?? ( $_POST['exclusion_list'] ?? '' ) ) );
@@ -148,7 +148,7 @@ function ws_render_prompt_generator_page() {
         'order'      => 'ASC',
     ] );
     ?>
-    <div class="wrap">
+    <div class="wrap" id="ws-prompt-generator-root">
         <h1>WS Prompt Generator</h1>
         <p>Generates AI research prompt templates from live taxonomy data. Output files are written to <code><?php echo esc_html( str_replace( ABSPATH, '/', WP_CONTENT_DIR . '/logs/ws-prompts/' ) ); ?></code>.</p>
 
@@ -209,15 +209,15 @@ function ws_render_prompt_generator_page() {
                     <td><textarea name="assist_org_focus_notes" id="assist_org_focus_notes" rows="3" class="large-text"><?php echo esc_textarea( $assist_org_focus_notes ); ?></textarea></td>
                 </tr>
                 <tr class="ws-field-statute ws-field-common-law">
-                    <th scope="row"><label for="scope_notes">Scope Notes</label></th>
+                    <th scope="row"><label for="scope_details">Scope Details</label></th>
                     <td>
-                        <textarea name="scope_notes" id="scope_notes" rows="3" class="large-text"><?php echo esc_textarea( $scope_note_value ); ?></textarea>
-                        <p class="description">Optional. If blank, defaults to: <?php echo esc_html( $default_scope_note ); ?>.</p>
+                        <textarea name="scope_details" id="scope_details" rows="3" class="large-text"><?php echo esc_textarea( $scope_details_value ); ?></textarea>
+                        <p class="description">Optional. If blank, defaults to: <?php echo esc_html( $default_scope_details ); ?>.</p>
                     </td>
                 </tr>
                 <tr class="ws-field-citation ws-field-construction" style="display:none;">
-                    <th scope="row"><label for="scope_notes_citations">Statutes to Research</label></th>
-                    <td><textarea name="scope_notes" id="scope_notes_citations" rows="5" class="large-text"><?php echo esc_textarea( $_POST['scope_notes'] ?? '' ); ?></textarea></td>
+                    <th scope="row"><label for="scope_details_citations">Statutes to Research</label></th>
+                    <td><textarea name="scope_details" id="scope_details_citations" rows="5" class="large-text"><?php echo esc_textarea( $_POST['scope_details'] ?? '' ); ?></textarea></td>
                 </tr>
                 <tr class="ws-field-citation ws-field-construction" style="display:none;">
                     <th scope="row"><label for="min_quality">Minimum Quality</label></th>
@@ -265,101 +265,5 @@ function ws_render_prompt_generator_page() {
         </form>
     </div>
 
-    <script>
-    var wsPromptLastAutoScope = '';
-
-    function wsPromptGetDefaultScopeForJx(jxCode) {
-        var jx = (jxCode || '').toUpperCase().trim();
-        var jxType = (jx === 'US') ? 'federal' : 'state';
-        return jxType + '-level whistleblower laws and protections';
-    }
-
-    function wsPromptSyncScopeFromJx() {
-        var recordType = document.getElementById('record_type');
-        var jxInput = document.getElementById('jx_id');
-        var scopeNotes = document.getElementById('scope_notes');
-        if (!recordType || !jxInput || !scopeNotes) return;
-
-        var type = (recordType.value || '').toLowerCase();
-        if (type !== 'statute' && type !== 'common-law') return;
-
-        var current = (scopeNotes.value || '').trim();
-        var nextDefault = wsPromptGetDefaultScopeForJx(jxInput.value);
-        var looksLikeDefault = /^(state|federal)-level whistleblower laws and protections$/i.test(current);
-
-        if (current === '' || current === wsPromptLastAutoScope || looksLikeDefault) {
-            scopeNotes.value = nextDefault;
-            wsPromptLastAutoScope = nextDefault;
-        }
-    }
-
-    function wsPromptApplyJxFromSelect() {
-        var select = document.getElementById('jx_select');
-        var input = document.getElementById('jx_id');
-        if (!select || !input) return;
-        if (select.value) input.value = select.value.toUpperCase();
-        wsPromptSyncScopeFromJx();
-    }
-
-    function wsPromptToggleFields() {
-        var type = document.getElementById('record_type').value;
-        var groups = {
-            'statute':        ['ws-field-statute'],
-            'common-law':     ['ws-field-statute', 'ws-field-common-law'],
-            'citation':       ['ws-field-citation'],
-            'construction': ['ws-field-citation', 'ws-field-construction'],
-            'assist-org':     ['ws-field-assist-org']
-        };
-        var allClasses = ['ws-field-statute', 'ws-field-common-law', 'ws-field-citation', 'ws-field-construction', 'ws-field-assist-org'];
-        allClasses.forEach(function(cls) {
-            document.querySelectorAll('.' + cls).forEach(function(el) { el.style.display = 'none'; });
-        });
-        (groups[type] || []).forEach(function(cls) {
-            document.querySelectorAll('.' + cls).forEach(function(el) { el.style.display = ''; });
-        });
-        var countInput = document.getElementById('records_requested');
-        if (countInput) countInput.required = (type === 'statute' || type === 'common-law');
-        var proposalInput = document.getElementById('proposal_count');
-        if (proposalInput) proposalInput.required = (type === 'assist-org');
-        wsPromptToggleExclusions();
-    }
-
-    function wsPromptToggleExclusions() {
-        var disable = document.getElementById('disable_exclusion_list');
-        var autoField = document.getElementById('exclusion_list_auto');
-        var manualField = document.getElementById('exclusion_list_manual');
-        var refreshButton = document.getElementById('ws_refresh_exclusions');
-        if (!disable) return;
-        var blocked = !!disable.checked;
-        if (autoField) autoField.disabled = blocked;
-        if (manualField) manualField.disabled = blocked;
-        if (refreshButton) refreshButton.disabled = blocked;
-    }
-
-    document.addEventListener('DOMContentLoaded', wsPromptToggleFields);
-    document.addEventListener('DOMContentLoaded', function() {
-        var jxInput = document.getElementById('jx_id');
-        var scopeNotes = document.getElementById('scope_notes');
-        if (scopeNotes) {
-            var initial = (scopeNotes.value || '').trim();
-            if (/^(state|federal)-level whistleblower laws and protections$/i.test(initial)) {
-                wsPromptLastAutoScope = initial;
-            }
-        }
-        if (jxInput) {
-            jxInput.addEventListener('change', wsPromptSyncScopeFromJx);
-            jxInput.addEventListener('blur', wsPromptSyncScopeFromJx);
-        }
-        wsPromptSyncScopeFromJx();
-
-        var autoTextarea = document.getElementById('exclusion_list_auto');
-        var autoEdited = document.getElementById('exclusion_list_auto_edited');
-        var disableExclusions = document.getElementById('disable_exclusion_list');
-        if (autoTextarea && autoEdited) autoTextarea.addEventListener('input', function() { autoEdited.value = '1'; });
-        if (disableExclusions) disableExclusions.addEventListener('change', wsPromptToggleExclusions);
-        wsPromptToggleExclusions();
-    });
-    </script>
     <?php
 }
-
