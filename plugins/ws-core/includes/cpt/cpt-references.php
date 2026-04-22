@@ -8,7 +8,7 @@
  * -------
  * Stores external reference materials — case law, academic papers, government
  * reports, journalism, and policy analysis — attached to individual statute,
- * citation, or interpretation records via a relationship field on the parent.
+ * citation, or construction records via a relationship field on the parent.
  *
  * AUDIENCE
  * --------
@@ -20,7 +20,7 @@
  * ------------
  * ws-reference is NOT part of the jurisdiction assembly pipeline.
  * Records are attached to individual jx-statute, jx-citation, or
- * jx-interpretation posts via the ws_ref_materials relationship field
+ * jx-construction posts via the ws_ref_materials relationship field
  * defined on each parent CPT. They are never rendered directly on
  * jurisdiction pages.
  *

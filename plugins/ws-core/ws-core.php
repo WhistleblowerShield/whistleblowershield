@@ -21,7 +21,7 @@
  * Plugin Name:  WhistleblowerShield Core
  * Description:  Core architecture for WhistleblowerShield.org. Assembles
  *               public whistleblower protection pages for 57 U.S. jurisdictions.
- * Version:      3.15.0
+ * Version:      3.18.0
  * Author:       Whistleblower Shield
  * Author URI:   https://whistleblowershield.org
  *
@@ -29,7 +29,7 @@
  *
  * @package    WhistleblowerShield
  * @since      1.0.0
- * @version    3.17.0
+ * @version    3.18.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -40,7 +40,7 @@ defined( 'ABSPATH' ) || exit;
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-define( 'WS_CORE_VERSION', '3.17.0' );
+define( 'WS_CORE_VERSION', '3.18.0' );
 define( 'WS_CORE_PATH',    plugin_dir_path( __FILE__ ) );
 define( 'WS_CORE_URL',     plugin_dir_url( __FILE__ ) );
 
@@ -63,7 +63,7 @@ define( 'WS_CACHE_LEGAL_UPDATES_SITEWIDE', 'ws_legal_updates_sitewide_cache_' );
 
 // CPT slugs that support a reference parent relationship. Used by
 // ws_get_reference_parent_data() to gate lookups to valid parent types.
-define( 'WS_REF_PARENT_TYPES', [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation' ] );
+define( 'WS_REF_PARENT_TYPES', [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ] );
 
 // ── Source Method Constants ───────────────────────────────────────────────────
 //
@@ -85,7 +85,7 @@ define( 'WS_SOURCE_NAME_DIRECT', 'Direct' );
 // are intentionally excluded. Add a new type here when it is added to the
 // ws_legal_update_type ACF select in acf-legal-updates.php.
 define( 'WS_LEGAL_UPDATE_SUMMARY_TYPES', [
-    'summary', 'statute', 'common-law', 'citation', 'interpretation', 'agency', 'procedure','regulation', 'policy',
+    'summary', 'statute', 'common-law', 'citation', 'construction', 'agency', 'procedure','regulation', 'policy',
 ] );
 
 

@@ -120,7 +120,7 @@ function ws_jx_term_by_code( $code ) {
 /**
  * Returns the court entry array for a given court key.
  *
- * @param  string     $court_key  The stored ws_jx_interp_court meta value.
+ * @param  string     $court_key  The stored ws_jx_construction_court meta value.
  * @return array|null             Court entry (typically includes 'short',
  *                                'name', and optional 'ws_jx_codes'), or
  *                                null if not found.

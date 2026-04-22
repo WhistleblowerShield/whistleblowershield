@@ -75,7 +75,7 @@
  *
  * Relationships tab:
  *   ws_jx_comlaw_citation_ids                      Related Citations (post_object, optional)
- *   ws_jx_comlaw_interp_ids                        Related Interpretations (post_object, optional)
+ *   ws_jx_comlaw_construction_ids                        Related constructions (post_object, optional)
  *
  * Reference Materials tab:
  *   ws_jx_comlaw_ref_materials                     Reference Materials (relationship, optional)
@@ -288,6 +288,21 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
+                'key'           => 'field_jx_comlaw_employment_sectors',
+                'label'         => 'Employment Sectors',
+                'name'          => 'ws_jx_comlaw_employment_sectors',
+                'type'          => 'taxonomy',
+                'taxonomy'      => 'ws_employment_sector',
+                'field_type'    => 'multi_select',
+                'instructions'  => 'Employment sectors this doctrine explicitly covers.',
+                'required'      => 0,
+                'add_term'      => 0,
+                'save_terms'    => 1,
+                'load_terms'    => 1,
+                'return_format' => 'id',
+            ],
+
+            [
                 'key'          => 'field_jx_comlaw_disclosure_target_details',
                 'label'        => 'Disclosure Targets Details',
                 'name'         => 'ws_jx_comlaw_disclosure_target_details',
@@ -468,6 +483,33 @@ function ws_register_acf_jx_common_law() {
                     'value'    => '1',
                 ] ] ],
                 'wrapper'           => [ 'width' => '70' ],
+            ],
+
+            [
+                'key'           => 'field_jx_comlaw_has_employer_threshold',
+                'label'         => 'Employer Size Threshold',
+                'name'          => 'ws_jx_comlaw_has_employer_threshold',
+                'type'          => 'true_false',
+                'instructions'  => 'Enable when the doctrine restricts coverage based on employer size.',
+                'ui'            => 1,
+                'ui_on_text'    => 'Yes',
+                'ui_off_text'   => 'No',
+                'default_value' => 0,
+            ],
+
+            [
+                'key'               => 'field_jx_comlaw_employer_threshold_details',
+                'label'             => 'Employer Threshold Details',
+                'name'              => 'ws_jx_comlaw_employer_threshold_details',
+                'type'              => 'textarea',
+                'instructions'      => 'Describe the employer size requirement as stated in the doctrine.',
+                'required'          => 0,
+                'rows'              => 3,
+                'conditional_logic' => [ [ [
+                    'field'    => 'field_jx_comlaw_has_employer_threshold',
+                    'operator' => '==',
+                    'value'    => '1',
+                ] ] ],
             ],
 
             // ────────────────────────────────────────────────────────────────
@@ -774,12 +816,12 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'           => 'field_jx_comlaw_interp_ids',
-                'label'         => 'Related Interpretations',
-                'name'          => 'ws_jx_comlaw_interp_ids',
+                'key'           => 'field_jx_comlaw_construction_ids',
+                'label'         => 'Related constructions',
+                'name'          => 'ws_jx_comlaw_construction_ids',
                 'type'          => 'post_object',
-                'post_type'     => [ 'jx-interpretation' ],
-                'instructions'  => 'Link interpretations that directly analyze this doctrine. Optional.',
+                'post_type'     => [ 'jx-construction' ],
+                'instructions'  => 'Link constructions that directly analyze this doctrine. Optional.',
                 'required'      => 0,
                 'multiple'      => 1,
                 'allow_null'    => 1,

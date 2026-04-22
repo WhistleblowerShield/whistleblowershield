@@ -167,7 +167,7 @@ function ws_register_acf_legal_update() {
                     'common_law'     => 'Common Law Development',
                     'citation'       => 'Citation Update',
                     'summary'        => 'Summary Update',
-                    'interpretation' => 'Interpretation Update',
+                    'construction' => 'construction Update',
                     'regulation'     => 'Regulatory Change',
                     'policy'         => 'Agency Policy',
                     'procedure'      => 'Agency Procedure',

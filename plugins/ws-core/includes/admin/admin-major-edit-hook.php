@@ -17,7 +17,7 @@ add_action( 'acf/save_post', 'ws_acf_log_major_edit', 20 );
  */
 function ws_acf_log_major_edit( $post_id ) {
 
-	$supported = [ 'jx-summary', 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation', 'ws-ag-procedure' ];
+	$supported = [ 'jx-summary', 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-ag-procedure' ];
 
 	$post_type = get_post_type( $post_id );
 	if ( ! in_array( $post_type, $supported, true ) ) {
@@ -107,7 +107,7 @@ function ws_acf_log_major_edit( $post_id ) {
 		? 'procedure'
 		: str_replace( 'jx-', '', $post_type );
 	$allowed_update_types = [
-		'statute', 'common-law','citation', 'summary', 'interpretation',
+		'statute', 'common-law','citation', 'summary', 'construction',
 		'regulation', 'policy', 'procedure', 'internal', 'other',
 	];
 	$update_type = in_array( $requested_type, $allowed_update_types, true )
@@ -124,7 +124,7 @@ function ws_acf_log_major_edit( $post_id ) {
 			get_post_meta( $post_id, 'ws_jx_statute_official_name', true )
 			?: get_post_meta( $post_id, 'ws_jx_comlaw_doctrine_name', true )
 			?: get_post_meta( $post_id, 'ws_jx_citation_official_name', true )
-			?: get_post_meta( $post_id, 'ws_jx_interp_official_name', true )
+			?: get_post_meta( $post_id, 'ws_jx_construction_official_name', true )
 		)
 		: '';
 	if ( ! $law_name ) {

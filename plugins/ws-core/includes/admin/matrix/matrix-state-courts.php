@@ -1,6 +1,6 @@
 <?php
 /**
- * matrix-state-courts.php — State and territory court registry for jx-interpretation fields.
+ * matrix-state-courts.php — State and territory court registry for jx-construction fields.
  *
  * @package    WhistleblowerShield
  * @since      3.8.0
@@ -136,9 +136,9 @@ $_ws_state_court_matrix = [
 
     // ── Other (edge case — court not in matrix) ───────────────────────────
     //
-    // Selecting this entry reveals ws_jx_interp_court_name (free text field).
+    // Selecting this entry reveals ws_jx_construction_court_name (free text field).
     // ws_jx_codes = '__manual__' signals the save hook to skip auto-population
-    // of ws_jx_interp_affected_jurisdictions — the editor must set scope manually.
+    // of ws_jx_construction_affected_jurisdictions — the editor must set scope manually.
     // level = 99 ensures this entry sorts last in the select list.
     //
     // Defined in both matrices so 'other' is available regardless of whether

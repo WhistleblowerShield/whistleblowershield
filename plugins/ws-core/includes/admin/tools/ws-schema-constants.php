@@ -35,7 +35,7 @@
  * LOAD ORDER
  * ----------
  * Loaded in the Admin Layer by loader.php alongside other tool files.
- * Must load before tool-ingest.php and tool-generate-prompt.php.
+ * Must load before tool-ingest.php and tool-prompt-generator.php.
  *
  * @package    WhistleblowerShield
  * @since      3.16.0
@@ -170,7 +170,7 @@ define( 'WS_SCHEMA_RECORD_TYPE', [
     'statute',
     'common-law',
     'citation',
-    'interpretation',
+    'construction',
     'assist-org',
     'agency',
     'procedure',

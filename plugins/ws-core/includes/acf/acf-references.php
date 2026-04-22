@@ -7,7 +7,7 @@
  * PURPOSE
  * -------
  * Provides structured metadata for external reference materials attached
- * to individual statute, citation, or interpretation records.
+ * to individual statute, citation, or construction records.
  *
  * GROUP: group_reference_metadata
  *

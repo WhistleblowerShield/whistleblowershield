@@ -59,7 +59,7 @@
  * When a new procedure is created from the agency navigation box, the URL
  * carries ?agency_id={post_id}. The acf/load_value hook below pre-fills
  * ws_ag_procedure_agency_id on auto-draft posts, matching the pattern used by
- * ws_interp_prefill_statute_id() in acf-jx-interpretations.php.
+ * ws_construction_prefill_statute_id() in acf-jx-constructions.php.
  *
  * @package    WhistleblowerShield
  * @since      3.9.0
@@ -261,6 +261,20 @@ function ws_register_acf_ag_procedures() {
                 'key'   => 'field_ag_procedure_filing_details_tab',
                 'label' => 'Filing Details',
                 'type'  => 'tab',
+            ],
+            [
+                'key'           => 'field_ag_procedure_employment_sectors',
+                'label'         => 'Employment Sectors',
+                'name'          => 'ws_ag_procedure_employment_sectors',
+                'type'          => 'taxonomy',
+                'taxonomy'      => 'ws_employment_sector',
+                'field_type'    => 'multi_select',
+                'instructions'  => 'Employment sectors this specific procedure applies to.',
+                'required'      => 0,
+                'add_term'      => 0,
+                'save_terms'    => 1,
+                'load_terms'    => 1,
+                'return_format' => 'id',
             ],
             [
                 'key'          => 'field_ag_procedure_entry_point',
@@ -541,7 +555,7 @@ function ws_ag_procedure_scope_parent_ids( $args, $field, $post_id ) {
 // When "Add Procedure" is clicked from the agency navigation box, the URL
 // carries ?agency_id={post_id}. On auto-draft posts, this hook returns the
 // agency ID as the field value so ACF renders the parent agency pre-selected.
-// Mirrors ws_interp_prefill_statute_id() in acf-jx-interpretations.php.
+// Mirrors ws_construction_prefill_statute_id() in acf-jx-constructions.php.
 
 add_filter( 'acf/load_value/key=field_ag_procedure_agency_id', 'ws_ag_procedure_prefill_agency_id', 5, 3 );
 

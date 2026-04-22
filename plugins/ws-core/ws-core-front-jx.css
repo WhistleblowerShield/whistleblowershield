@@ -6,7 +6,7 @@
  *
  * Covers shortcodes assembled by render-jurisdiction.php:
  *   [ws_jx_header], [ws_jx_summary], [ws_jx_statutes],
- *   [ws_jx_citation], [ws_jx_interpretation], [ws_jx_limitations].
+ *   [ws_jx_citation], [ws_jx_construction], [ws_jx_limitations].
  *
  * General shortcode styles (disclaimer, footer, index, directory, etc.)
  * are in ws-core-front-general.css.
@@ -215,10 +215,10 @@
 }
 
 
-/* ── Interpretations Section ─────────────────────────────────────────────── */
+/* ── constructions Section ─────────────────────────────────────────────── */
 /*
- * Added v3.8.0. Rendered via [ws_jx_interpretation] inside
- * <div id="ws-interpretations"> by render-jurisdiction.php.
+ * Added v3.8.0. Rendered via [ws_jx_construction] inside
+ * <div id="ws-constructions"> by render-jurisdiction.php.
  * Scoped styles TBD in theme pass — stub present so the section
  * does not inherit unstyled block defaults.
  */

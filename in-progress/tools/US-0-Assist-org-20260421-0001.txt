@@ -67,7 +67,7 @@ Ternary fields use 'unclear' as the fallback. It is the expected value for many 
       "term":       "[proposed slug in kebab-case]",
       "label":      "[human-readable label]",
       "notes":      "[concept covered; describe taxonomy gap affected]",
-      "seen_in":    ["[common_name or official_name]"], (prioitize common_name)
+      "seen_in":    ["[common_name or official_name]"], (prioritize common_name)
       "count":      [integer matching seen_in length]
     }
   Proposal Guidance: Prioritize narrow-scoped over broad-scope. Consider terms that would provide meaningful coverage combined with existing slugs.
@@ -82,7 +82,7 @@ Ternary fields use 'unclear' as the fallback. It is the expected value for many 
 - homepage_url_date (OPTIONAL): YYYY-MM-DD. Omit if status is not 'verified'.
 
 [RECORDS ARRAY: SCOPE_OF_SERVICE] (empty "" or [] fallbacks require notes added to _review_notes when used)
-- nationwide_example (EXPECTED-IF-FOUND): Verbatim quote showing multi-jurisdictional scope, prioitize nationwide language. Fallback: "".
+- nationwide_example (EXPECTED-IF-FOUND): Verbatim quote showing multi-jurisdictional scope, prioritize nationwide language. Fallback: "".
 - disclosure_types (EXPECTED-IF-FOUND): Array of ws_disclosure_type slugs. Fallback: [].
 - protected_classes (EXPECTED): Array of ws_protected_class slugs. Fallback: ["has-details"].
 - protected_class_details (CONDITIONAL): Free text. Required if protected_classes includes 'has-details'.

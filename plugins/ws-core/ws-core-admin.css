@@ -19,52 +19,52 @@
     cursor: default;
 }
 
-#ws_interpretations .ws-interp-table {
+#ws_constructions .ws-interp-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 12px;
 }
 
-#ws_interpretations .ws-interp-table th,
-#ws_interpretations .ws-interp-table td {
+#ws_constructions .ws-interp-table th,
+#ws_constructions .ws-interp-table td {
     padding: 6px 10px;
     border-bottom: 1px solid #e0e0e0;
     text-align: left;
     font-size: 13px;
 }
 
-#ws_interpretations .ws-interp-table th {
+#ws_constructions .ws-interp-table th {
     background: #f6f7f7;
     font-weight: 600;
     color: #1d2327;
 }
 
-#ws_interpretations .ws-interp-table .ws-favorable-yes {
+#ws_constructions .ws-interp-table .ws-favorable-yes {
     color: #1a7a1a;
     font-weight: 600;
 }
 
-#ws_interpretations .ws-interp-table .ws-favorable-no {
+#ws_constructions .ws-interp-table .ws-favorable-no {
     color: #a00;
 }
 
-#ws_interpretations .ws-interp-empty {
+#ws_constructions .ws-interp-empty {
     color: #666;
     font-style: italic;
     margin-bottom: 12px;
 }
 
-#ws_interpretations .ws-interp-actions {
+#ws_constructions .ws-interp-actions {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-#ws_interpretations .ws-interp-add-btn {
+#ws_constructions .ws-interp-add-btn {
     text-decoration: none;
 }
 
-#ws_interpretations .ws-interp-add-btn[disabled] {
+#ws_constructions .ws-interp-add-btn[disabled] {
     opacity: .5;
     pointer-events: none;
     cursor: not-allowed;

@@ -7,7 +7,7 @@
  * PURPOSE
  * -------
  * Processes validated JSON ingest files and writes supported records to
- * the appropriate CPT (jx-statute, jx-common-law, jx-citation, jx-interpretation,
+ * the appropriate CPT (jx-statute, jx-common-law, jx-citation, jx-construction,
  * or ws-assist-org) with normalized field
  * mapping, taxonomy assignments, and deterministic linkage to related
  * agency/citation records.
@@ -21,7 +21,7 @@
  * - statute (jx-statute CPT)
  * - common-law (jx-common-law CPT)
  * - citation (jx-citation CPT)
- * - interpretation (jx-interpretation CPT)
+ * - construction (jx-construction CPT)
  * - assist-org (ws-assist-org CPT)
  *
  * PIPELINE PHASES
@@ -113,11 +113,11 @@
  *         - in-pass agency label dedupe by normalized code key
  * 3.14.3  Citation dedupe + common-law relationship linkage:
  *         - citation stub dedupe keyed by normalized case name + parent record
- *         - optional parent_comlaw_ linkage for citation and interpretation records
- *         - common-law interpretation back-link support via ws_jx_comlaw_interp_ids
- * 3.14.2  Citation + interpretation ingest and neutral logging:
+ *         - optional parent_comlaw_ linkage for citation and construction records
+ *         - common-law construction back-link support via ws_jx_comlaw_construction_ids
+ * 3.14.2  Citation + construction ingest and neutral logging:
  *         - dedicated jx-citation field map and processor
- *         - dedicated jx-interpretation field map and processor
+ *         - dedicated jx-construction field map and processor
  *         - parent statute linkage via parent_statute_id lookup
  *         - neutral record_id logging across record types
  * 3.14.1  Common-law ingest support:
@@ -536,8 +536,8 @@ function ws_ingest_preflight( array $data, string $batch_filename = '' ): array 
                 $result['warnings'][] = "record[$i]: missing doctrine_id.";
             } elseif ( $record_type === 'citation' ) {
                 $result['warnings'][] = "record[$i]: missing citation_id.";
-            } elseif ( $record_type === 'interpretation' ) {
-                $result['warnings'][] = "record[$i]: missing interpretation_id.";
+            } elseif ( $record_type === 'construction' ) {
+                $result['warnings'][] = "record[$i]: missing construction_id.";
             } elseif ( $record_type === 'assist-org' ) {
                 $result['warnings'][] = "record[$i]: missing internal_id and official_name.";
             } else {
@@ -564,7 +564,7 @@ function ws_ingest_preflight( array $data, string $batch_filename = '' ): array 
  */
 function ws_ingest_detect_record_type( array $data, string $batch_filename = '' ): string {
     $meta_type = strtolower( trim( (string) ( $data['meta']['record_type'] ?? '' ) ) );
-    if ( in_array( $meta_type, [ 'statute', 'common-law', 'citation', 'interpretation', 'assist-org' ], true ) ) {
+    if ( in_array( $meta_type, [ 'statute', 'common-law', 'citation', 'construction', 'assist-org' ], true ) ) {
         return $meta_type;
     }
 
@@ -591,7 +591,7 @@ function ws_ingest_detect_record_type_from_filename( string $batch_filename ): s
         return 'common-law';
     }
     if ( strpos( $base, 'interp' ) !== false ) {
-        return 'interpretation';
+        return 'construction';
     }
     if ( strpos( $base, 'citation' ) !== false ) {
         return 'citation';
@@ -612,8 +612,8 @@ function ws_ingest_get_record_identifier( array $record, string $record_type ): 
     if ( $record_type === 'citation' ) {
         return (string) ( $record['citation_id'] ?? 'UNKNOWN' );
     }
-    if ( $record_type === 'interpretation' ) {
-        return (string) ( $record['interpretation_id'] ?? 'UNKNOWN' );
+    if ( $record_type === 'construction' ) {
+        return (string) ( $record['construction_id'] ?? 'UNKNOWN' );
     }
     if ( $record_type === 'assist-org' ) {
         $flat        = ws_ingest_flatten_assist_org_record( $record );
@@ -687,10 +687,10 @@ function ws_ingest_allowed_record_keys( string $record_type ): array {
         ];
     }
 
-    if ( $record_type === 'interpretation' ) {
+    if ( $record_type === 'construction' ) {
         return [
             'jurisdiction_id',
-            'interpretation_id',
+            'construction_id',
             'parent_statute_id',
             'parent_comlaw_id',
             'case_name',
@@ -944,8 +944,8 @@ function ws_ingest_validate_record_shape( array $record, string $record_type, in
         $id_key = 'doctrine_id';
     } elseif ( $record_type === 'citation' ) {
         $id_key = 'citation_id';
-    } elseif ( $record_type === 'interpretation' ) {
-        $id_key = 'interpretation_id';
+    } elseif ( $record_type === 'construction' ) {
+        $id_key = 'construction_id';
     } elseif ( $record_type === 'assist-org' ) {
         $id_key = 'official_name';
     }
@@ -987,7 +987,7 @@ function ws_ingest_validate_record_shape( array $record, string $record_type, in
         }
     }
 
-    if ( in_array( $record_type, [ 'citation', 'interpretation' ], true ) ) {
+    if ( in_array( $record_type, [ 'citation', 'construction' ], true ) ) {
         $parent_statute_id    = trim( (string) ( $record['parent_statute_id'] ?? '' ) );
         $parent_comlaw_id = trim( (string) ( $record['parent_comlaw_id'] ?? '' ) );
         if ( $parent_statute_id === '' && $parent_comlaw_id === '' ) {
@@ -1206,35 +1206,35 @@ function ws_ingest_citation_field_map_v2(): array {
 }
 
 /**
- * Returns the complete interpretation field map for json_format_version 2.0.
+ * Returns the complete construction field map for json_format_version 2.0.
  */
-function ws_ingest_interpretation_field_map_v2(): array {
+function ws_ingest_construction_field_map_v2(): array {
     return [
         // ── Core content ─────────────────────────────────────────────────
-        'case_name'                  => [ 'ws_jx_interp_official_name',             'text'     ],
-        'common_name'                => [ 'ws_jx_interp_common_name',               'text'     ],
-        'links.case_url'             => [ 'ws_jx_interp_url',                       'url'      ],
-        'links.case_url_is_pdf'      => [ 'ws_jx_interp_url_is_pdf',                'bool'     ],
-        'specific_impact'            => [ 'ws_jx_interp_summary',                   'textarea' ],
-        'favorable'                  => [ 'ws_jx_interp_is_favorable',              'bool'     ],
-        'court'                      => [ 'ws_jx_interp_court',                     'text'     ],
+        'case_name'                  => [ 'ws_jx_construction_official_name',             'text'     ],
+        'common_name'                => [ 'ws_jx_construction_common_name',               'text'     ],
+        'links.case_url'             => [ 'ws_jx_construction_url',                       'url'      ],
+        'links.case_url_is_pdf'      => [ 'ws_jx_construction_url_is_pdf',                'bool'     ],
+        'specific_impact'            => [ 'ws_jx_construction_summary',                   'textarea' ],
+        'favorable'                  => [ 'ws_jx_construction_is_favorable',              'bool'     ],
+        'court'                      => [ 'ws_jx_construction_court',                     'text'     ],
 
         // ── Taxonomy classification ─────────────────────────────────────
-        'disclosure_types'           => [ 'ws_jx_interp_disclosure_types',           'tax', 'ws_disclosure_type'    ],
-        'protected_classes'            => [ 'ws_jx_interp_protected_classes',           'tax', 'ws_protected_class'    ],
-        'protected_class_details'    => [ 'ws_jx_interp_protected_class_details',   'textarea' ],
-        'disclosure_targets'         => [ 'ws_jx_interp_disclosure_targets',        'tax', 'ws_disclosure_target' ],
-        'disclosure_target_details' => [ 'ws_jx_interp_disclosure_target_details','textarea' ],
-        'adverse_actions'             => [ 'ws_jx_interp_adverse_action_types',            'tax', 'ws_adverse_action_type' ],
-        'adverse_action_details'     => [ 'ws_jx_interp_adverse_action_type_details',    'textarea' ],
-        'process_types'               => [ 'ws_jx_interp_process_types',              'tax', 'ws_process_type'       ],
-        'remedies'                   => [ 'ws_jx_interp_remedies',                  'tax', 'ws_remedy'           ],
-        'remedy_details'           => [ 'ws_jx_interp_remedy_details',          'textarea' ],
-        'fee_shiftings'               => [ 'ws_jx_interp_fee_shiftings',              'tax', 'ws_fee_shifting'       ],
-        'employer_defenses'           => [ 'ws_jx_interp_employer_defenses',          'tax', 'ws_employer_defense'   ],
-        'employer_defense_details'   => [ 'ws_jx_interp_employer_defense_details',  'textarea' ],
-        'employee_standards'          => [ 'ws_jx_interp_employee_standards',         'tax', 'ws_employee_standard'  ],
-        'employee_standard_details'  => [ 'ws_jx_interp_employee_standard_details', 'textarea' ],
+        'disclosure_types'           => [ 'ws_jx_construction_disclosure_types',           'tax', 'ws_disclosure_type'    ],
+        'protected_classes'            => [ 'ws_jx_construction_protected_classes',           'tax', 'ws_protected_class'    ],
+        'protected_class_details'    => [ 'ws_jx_construction_protected_class_details',   'textarea' ],
+        'disclosure_targets'         => [ 'ws_jx_construction_disclosure_targets',        'tax', 'ws_disclosure_target' ],
+        'disclosure_target_details' => [ 'ws_jx_construction_disclosure_target_details','textarea' ],
+        'adverse_actions'             => [ 'ws_jx_construction_adverse_action_types',            'tax', 'ws_adverse_action_type' ],
+        'adverse_action_details'     => [ 'ws_jx_construction_adverse_action_type_details',    'textarea' ],
+        'process_types'               => [ 'ws_jx_construction_process_types',              'tax', 'ws_process_type'       ],
+        'remedies'                   => [ 'ws_jx_construction_remedies',                  'tax', 'ws_remedy'           ],
+        'remedy_details'           => [ 'ws_jx_construction_remedy_details',          'textarea' ],
+        'fee_shiftings'               => [ 'ws_jx_construction_fee_shiftings',              'tax', 'ws_fee_shifting'       ],
+        'employer_defenses'           => [ 'ws_jx_construction_employer_defenses',          'tax', 'ws_employer_defense'   ],
+        'employer_defense_details'   => [ 'ws_jx_construction_employer_defense_details',  'textarea' ],
+        'employee_standards'          => [ 'ws_jx_construction_employee_standards',         'tax', 'ws_employee_standard'  ],
+        'employee_standard_details'  => [ 'ws_jx_construction_employee_standard_details', 'textarea' ],
 
         // ── Advisory / omitted ───────────────────────────────────────────
         '_review_notes'         => [ null, 'omit' ],
@@ -2343,7 +2343,7 @@ function ws_ingest_citation_type_from_batch( array $meta ): string {
     $map = [
         'statute'        => 'statute',
         'citation'       => 'case_law',
-        'interpretation' => 'case_law',
+        'construction' => 'case_law',
         'common-law'     => 'case_law',
         'regulatory'     => 'regulatory',
         'secondary'      => 'secondary',
@@ -3534,9 +3534,9 @@ function ws_ingest_process_citation_record( array $record, array $meta, array $b
 }
 
 /**
- * Processes a single interpretation record.
+ * Processes a single construction record.
  */
-function ws_ingest_process_interpretation_record( array $record, array $meta, array $blacklist ): array {
+function ws_ingest_process_construction_record( array $record, array $meta, array $blacklist ): array {
     $result = [
         'success'  => false,
         'post_id'  => null,
@@ -3544,14 +3544,14 @@ function ws_ingest_process_interpretation_record( array $record, array $meta, ar
         'warnings' => [],
     ];
 
-    $iid = $record['interpretation_id'] ?? 'UNKNOWN';
+    $iid = $record['construction_id'] ?? 'UNKNOWN';
     $jx_slug = strtolower( (string) ( $meta['jurisdiction_id'] ?? '' ) );
     $record_key = $jx_slug && $iid !== 'UNKNOWN' ? strtolower( $jx_slug . '|' . $iid ) : '';
 
     $duplicates = [];
     if ( $record_key ) {
         $duplicates = get_posts( [
-            'post_type'      => 'jx-interpretation',
+            'post_type'      => 'jx-construction',
             'post_status'    => 'any',
             'meta_query'     => [ [
                 'key'     => '_ws_ingest_record_key',
@@ -3571,7 +3571,7 @@ function ws_ingest_process_interpretation_record( array $record, array $meta, ar
 
     $title = sanitize_text_field( (string) ( $record['case_name'] ?? $iid ) );
     $post_id = wp_insert_post( [
-        'post_type'   => 'jx-interpretation',
+        'post_type'   => 'jx-construction',
         'post_status' => 'draft',
         'post_title'  => $title !== '' ? $title : $iid,
         'post_author' => get_current_user_id(),
@@ -3607,10 +3607,10 @@ function ws_ingest_process_interpretation_record( array $record, array $meta, ar
         update_post_meta( $post_id, '_ws_ingest_record_key', $record_key );
     }
     if ( $iid !== '' && $iid !== 'UNKNOWN' ) {
-        update_post_meta( $post_id, '_ws_jx_interpretation_id', sanitize_text_field( $iid ) );
+        update_post_meta( $post_id, '_ws_jx_construction_id', sanitize_text_field( $iid ) );
     }
 
-    $field_map      = ws_ingest_interpretation_field_map_v2();
+    $field_map      = ws_ingest_construction_field_map_v2();
     $tax_removals   = [];
     $omitted_fields = [];
 
@@ -3687,14 +3687,14 @@ function ws_ingest_process_interpretation_record( array $record, array $meta, ar
         $year_source = trim( (string) ( $record['ruling_date'] ?? '' ) );
     }
     if ( preg_match( '/^(\d{4})-\d{2}-\d{2}$/', $year_source, $m ) ) {
-        update_post_meta( $post_id, 'ws_jx_interp_year', (int) $m[1] );
+        update_post_meta( $post_id, 'ws_jx_construction_year', (int) $m[1] );
     }
 
     $parent_statute_id = trim( (string) ( $record['parent_statute_id'] ?? '' ) );
     if ( $parent_statute_id !== '' ) {
         $statute_post_id = ws_ingest_find_statute_post_id_by_statute_id( $parent_statute_id, $jx_slug );
         if ( $statute_post_id > 0 ) {
-            update_post_meta( $post_id, 'ws_jx_interp_statute_id', (int) $statute_post_id );
+            update_post_meta( $post_id, 'ws_jx_construction_statute_id', (int) $statute_post_id );
             $result['log'][] = "$iid: linked parent statute {$parent_statute_id} (post #{$statute_post_id})";
         } else {
             $result['warnings'][] = "$iid: parent_statute_id {$parent_statute_id} not found in jx-statute.";
@@ -3705,13 +3705,13 @@ function ws_ingest_process_interpretation_record( array $record, array $meta, ar
     if ( $parent_comlaw_id !== '' ) {
         $comlaw_post_id = ws_ingest_find_common_law_post_id_by_doctrine_id( $parent_comlaw_id, $jx_slug );
         if ( $comlaw_post_id > 0 ) {
-            update_post_meta( $post_id, 'ws_jx_interp_comlaw_id', (int) $comlaw_post_id );
+            update_post_meta( $post_id, 'ws_jx_construction_comlaw_id', (int) $comlaw_post_id );
 
-            $raw_interp_ids = get_post_meta( $comlaw_post_id, 'ws_jx_comlaw_interp_ids', true );
-            $interp_ids     = is_array( $raw_interp_ids ) ? array_map( 'intval', $raw_interp_ids ) : [];
-            if ( ! in_array( (int) $post_id, $interp_ids, true ) ) {
-                $interp_ids[] = (int) $post_id;
-                update_post_meta( $comlaw_post_id, 'ws_jx_comlaw_interp_ids', array_values( array_unique( $interp_ids ) ) );
+            $raw_construction_ids = get_post_meta( $comlaw_post_id, 'ws_jx_comlaw_construction_ids', true );
+            $construction_ids     = is_array( $raw_construction_ids ) ? array_map( 'intval', $raw_construction_ids ) : [];
+            if ( ! in_array( (int) $post_id, $construction_ids, true ) ) {
+                $construction_ids[] = (int) $post_id;
+                update_post_meta( $comlaw_post_id, 'ws_jx_comlaw_construction_ids', array_values( array_unique( $construction_ids ) ) );
             }
 
             $result['log'][] = "$iid: linked parent common-law {$parent_comlaw_id} (post #{$comlaw_post_id})";
@@ -4307,8 +4307,8 @@ function ws_ingest_process_batch_data( array $data, string $batch_filename ): ar
             $record_result = ws_ingest_process_common_law_record( $record, $meta, $blacklist );
         } elseif ( $record_type === 'citation' ) {
             $record_result = ws_ingest_process_citation_record( $record, $meta, $blacklist );
-        } elseif ( $record_type === 'interpretation' ) {
-            $record_result = ws_ingest_process_interpretation_record( $record, $meta, $blacklist );
+        } elseif ( $record_type === 'construction' ) {
+            $record_result = ws_ingest_process_construction_record( $record, $meta, $blacklist );
         } elseif ( $record_type === 'assist-org' ) {
             $record_result = ws_ingest_process_assist_org_record( $record, $meta, $blacklist );
         } else {
@@ -4684,7 +4684,7 @@ function ws_render_ingest_tool_page() {
     ?>
     <div class="wrap">
         <h1>WS Ingest Tool <span style="font-size:13px;color:#666;font-weight:normal;">v<?php echo esc_html( WS_INGEST_VERSION ); ?> — schema <?php echo esc_html( WS_INGEST_SCHEMA_VERSION ); ?></span></h1>
-        <p><strong>This version handles:</strong> <code>statute</code>, <code>common-law</code>, <code>citation</code>, <code>interpretation</code>, and <code>assist-org</code> records, <code>json_format_version 2.0</code> only.</p>
+        <p><strong>This version handles:</strong> <code>statute</code>, <code>common-law</code>, <code>citation</code>, <code>construction</code>, and <code>assist-org</code> records, <code>json_format_version 2.0</code> only.</p>
 
         <?php if ( ! empty( $run_result['errors'] ) ): ?>
             <div class="notice notice-error">

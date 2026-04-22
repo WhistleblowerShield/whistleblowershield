@@ -356,23 +356,23 @@ function ws_shortcode_jx_citation() {
 }
 
 
-// ── [ws_jx_interpretation] ───────────────────────────────────────────────────
+// ── [ws_jx_construction] ───────────────────────────────────────────────────
 //
-// Queries published jx-interpretation records for the current jurisdiction
-// where ws_jx_interp_has_attach_flag is true, ordered by ws_jx_interp_display_order ASC.
+// Queries published jx-construction records for the current jurisdiction
+// where ws_jx_construction_has_attach_flag is true, ordered by ws_jx_construction_display_order ASC.
 // Appends US-scoped records (federal court decisions) to state pages via
 // the same is_fed pattern used by statutes and citations.
 //
-// Rendering is delegated to ws_render_jx_interpretations() in render-section.php.
-// Returns empty string silently if no attached interpretations exist.
+// Rendering is delegated to ws_render_jx_constructions() in render-section.php.
+// Returns empty string silently if no attached constructions exist.
 
-add_shortcode( 'ws_jx_interpretation', 'ws_shortcode_jx_interpretation' );
+add_shortcode( 'ws_jx_construction', 'ws_shortcode_jx_construction' );
 /**
- * Renders jurisdiction interpretation section.
+ * Renders jurisdiction construction section.
  *
  * @return string
  */
-function ws_shortcode_jx_interpretation() {
+function ws_shortcode_jx_construction() {
 
     global $post;
     if ( ! $post ) return '';
@@ -380,10 +380,10 @@ function ws_shortcode_jx_interpretation() {
     $term_id = ws_get_jx_term_id( $post->ID );
     if ( ! $term_id ) return '';
 
-    $interps = ws_get_jx_interpretation_data( $term_id );
+    $interps = ws_get_jx_construction_data( $term_id );
     if ( empty( $interps ) ) return '';
 
-    return ws_render_jx_interpretations( $interps );
+    return ws_render_jx_constructions( $interps );
 }
 
 

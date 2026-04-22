@@ -1,13 +1,13 @@
 <?php
 /**
- * cpt-jx-interpretations.php — Registers the jx-interpretation CPT.
+ * cpt-jx-constructions.php — Registers the jx-construction CPT.
  *
- * Stores court interpretations of whistleblower statutes. Each record
+ * Stores court constructions of whistleblower statutes. Each record
  * captures one case — citation, court, holding, favorable flag.
- * Linked to parent statute via ws_jx_interp_statute_id (post_object).
+ * Linked to parent statute via ws_jx_construction_statute_id (post_object).
  * Scoped via ws_jurisdiction taxonomy term.
  *
- * Created via "Add New Interpretation" button in admin-interpretation-metabox.php
+ * Created via "Add New construction" button in admin-construction-metabox.php
  * on the jx-statute edit screen.
  *
  * @package WhistleblowerShield
@@ -22,24 +22,24 @@
 
 defined( 'ABSPATH' ) || exit;
 
-add_action( 'init', 'ws_register_cpt_jx_interpretation' );
+add_action( 'init', 'ws_register_cpt_jx_construction' );
 
-function ws_register_cpt_jx_interpretation() {
+function ws_register_cpt_jx_construction() {
 
     $labels = [
-        'name'               => 'Legal Interpretations',
-        'singular_name'      => 'Legal Interpretation',
-        'menu_name'          => 'JX Interpretations',
-        'name_admin_bar'     => 'JX Interpretation',
+        'name'               => 'Legal constructions',
+        'singular_name'      => 'Legal construction',
+        'menu_name'          => 'JX constructions',
+        'name_admin_bar'     => 'JX construction',
         'add_new'            => 'Add New',
-        'add_new_item'       => 'Add New Legal Interpretation',
-        'edit_item'          => 'Edit Legal Interpretation',
-        'new_item'           => 'New Legal Interpretation',
-        'view_item'          => 'View Interpretation',
-        'search_items'       => 'Search Interpretations',
-        'not_found'          => 'No interpretations found',
-        'not_found_in_trash' => 'No interpretations found in trash',
-        'all_items'          => 'All Interpretations',
+        'add_new_item'       => 'Add New Legal construction',
+        'edit_item'          => 'Edit Legal construction',
+        'new_item'           => 'New Legal construction',
+        'view_item'          => 'View construction',
+        'search_items'       => 'Search constructions',
+        'not_found'          => 'No constructions found',
+        'not_found_in_trash' => 'No constructions found in trash',
+        'all_items'          => 'All constructions',
     ];
 
     $args = [
@@ -81,7 +81,7 @@ function ws_register_cpt_jx_interpretation() {
         'show_in_rest'        => true,
 
         // ── Admin Menu ────────────────────────────────────────────────────
-        // Citations 27 → Agencies 28 → Interpretations 29 → Assist Orgs 30
+        // Citations 27 → Agencies 28 → constructions 29 → Assist Orgs 30
 
         'menu_icon'       => 'dashicons-hammer',
         'menu_position'   => 34,
@@ -93,5 +93,5 @@ function ws_register_cpt_jx_interpretation() {
 
     ];
 
-    register_post_type( 'jx-interpretation', $args );
+    register_post_type( 'jx-construction', $args );
 }

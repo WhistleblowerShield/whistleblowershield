@@ -5,7 +5,7 @@ model, editorial workflow, and public-facing output for the platform.
 
 **Stack:** WordPress + ACF Pro
 **Requires:** PHP 8.0+, WordPress 6.0+, ACF Pro
-**Version:** 3.17.0
+**Version:** 3.18.0
 
 Full project documentation is in `/documentation/`. This file covers the
 rules a developer needs open while writing code.
@@ -272,4 +272,4 @@ value. To re-run a seeder, bump its version string — never delete the option.
 | 3.14.0 | `tool-ingest.php` added; ACF field names renamed throughout `acf-jx-statutes.php` and `acf-jx-common-law.php` to match JSON schema keys; four ingest log files added to `wp-content/logs/ws-ingest/` |
 | 3.16.0 | Cascade taxonomy filter developed |
 | 3.17.0 | Naming rules extended, refactor applied |
-| 3.18.0 | `ws_employment_sector` taxonomy extended to agencies, procedures, and legal records; `employer_threshold` added to legal records |
+| 3.18.0 | Schema additions: employment sectors + employer threshold fields across legal records, agencies, procedures, query layer, and prompt generator |

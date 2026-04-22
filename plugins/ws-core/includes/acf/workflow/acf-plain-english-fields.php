@@ -7,7 +7,7 @@
  *
  * ATTACHED CPTs
  * -------------
- * jx-statute, jx-citation, jx-interpretation, ws-agency, ws-assist-org
+ * jx-statute, jx-citation, jx-construction, ws-agency, ws-assist-org
  *
  * EXCLUDED CPTs (and why)
  * -----------------------
@@ -84,7 +84,7 @@ function ws_register_acf_plain_english_fields() {
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-summary'        ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-statute'        ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-citation'       ] ],
-            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-interpretation' ] ],
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-construction' ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-common-law'     ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-agency'         ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-ag-procedure'   ] ],

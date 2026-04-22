@@ -29,7 +29,7 @@ Subdirectories:
 
 | File | Purpose |
 |---|---|
-| `tools/tool-generate-prompt.php` | Generates AI research prompts from live taxonomy data. Writes to `wp-content/logs/ws-prompts/` |
+| `tools/tool-prompt-generator.php` | Generates AI research prompts from live taxonomy data. Writes to `wp-content/logs/ws-prompts/` |
 | `tools/tool-ingest.php` | Processes validated JSON batches for `jx-statute`, `jx-common-law`, `jx-citation`, and `jx-interpretation`. Writes ledger logs to `wp-content/logs/ws-ingest/` and detailed run logs to `wp-content/logs/ws-ingest/ingested/` |
 
 **Ingest log files** (`wp-content/logs/ws-ingest/`):

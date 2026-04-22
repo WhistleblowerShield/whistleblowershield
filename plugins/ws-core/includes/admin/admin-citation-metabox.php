@@ -11,7 +11,7 @@
  * that opens the creation form pre-populated with the statute relationship,
  * jurisdiction taxonomy, and post title.
  *
- * Unlike the interpretation metabox, this metabox is not jurisdiction-gated —
+ * Unlike the construction metabox, this metabox is not jurisdiction-gated —
  * it appears on all jx-statute records regardless of jurisdiction.
  *
  * WORKFLOW
@@ -40,7 +40,7 @@
  *
  * VERSION
  * -------
- * 3.6.0  Initial release. Mirrors admin-interpretation-metabox.php pattern.
+ * 3.6.0  Initial release. Mirrors admin-construction-metabox.php pattern.
  *        No jurisdiction gate. Pre-assigns ws_jurisdiction via tax_input URL
  *        param (WordPress core); pre-selects statute via acf/load_value hook.
  *        Metabox reads ws_jx_statute_citation_ids (reverse index maintained

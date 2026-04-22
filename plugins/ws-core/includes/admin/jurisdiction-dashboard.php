@@ -19,7 +19,7 @@
  * 2.3.1  Fixed status checks: query layer returns arrays, not WP_Post objects.
  *        Added Citations column using ws_get_attached_citation_count()
  *        (defined in admin-navigation.php, which loads first).
- * 3.0.0  Removed Resources column (CPT deleted). Added Interpretations, Legal
+ * 3.0.0  Removed Resources column (CPT deleted). Added constructions, Legal
  *        Updates, Agencies, and Assist-Orgs count columns. All counts use
  *        ws_jurisdiction taxonomy queries — no ACF relationship fields.
  * 3.6.1  Added 10-minute transient cache with auto-invalidation on save/delete
@@ -142,10 +142,10 @@ function ws_render_jurisdiction_dashboard() {
         $cite_unpublished = ws_jx_dashboard_unpublished_count( $term_id, 'jx-citation' );
         echo ws_jx_dashboard_count_cell( $cite_count, $cite_unpublished );
 
-        // ── Interpretations (count of editorially curated) ────────────────
-        $interp_count = ws_jx_dashboard_count( $term_id, 'jx-interpretation', true, 'ws_jx_interp_has_attach_flag' );
-        $interp_unpublished = ws_jx_dashboard_unpublished_count( $term_id, 'jx-interpretation' );
-        echo ws_jx_dashboard_count_cell( $interp_count, $interp_unpublished );
+        // ── constructions (count of editorially curated) ────────────────
+        $construction_count = ws_jx_dashboard_count( $term_id, 'jx-construction', true, 'ws_jx_construction_has_attach_flag' );
+        $construction_unpublished = ws_jx_dashboard_unpublished_count( $term_id, 'jx-construction' );
+        echo ws_jx_dashboard_count_cell( $construction_count, $construction_unpublished );
 
         // ── Legal Updates (any published for this jurisdiction) ───────────
         $update_count = ws_jx_dashboard_count( $term_id, 'ws-legal-update', false );
@@ -196,7 +196,7 @@ function ws_jx_dashboard_invalidate_cache( $post_id ) {
 
     static $tracked = [
         'jurisdiction', 'jx-summary', 'jx-statute', 'jx-common-law', 'jx-citation',
-        'jx-interpretation', 'ws-legal-update', 'ws-agency', 'ws-assist-org',
+        'jx-construction', 'ws-legal-update', 'ws-agency', 'ws-assist-org',
     ];
     if ( in_array( get_post_type( $post_id ), $tracked, true ) ) {
         delete_transient( 'ws_jx_dashboard_html' );

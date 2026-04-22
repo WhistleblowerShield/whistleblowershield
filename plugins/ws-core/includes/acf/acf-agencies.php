@@ -196,6 +196,21 @@ function ws_register_acf_agencies() {
                 'return_format' => 'id',
             ],
 
+            [
+                'key'           => 'field_agency_employment_sectors',
+                'label'         => 'Employment Sectors',
+                'name'          => 'ws_agency_employment_sectors',
+                'type'          => 'taxonomy',
+                'taxonomy'      => 'ws_employment_sector',
+                'field_type'    => 'multi_select',
+                'instructions'  => 'All employment sectors this agency has jurisdiction over.',
+                'required'      => 0,
+                'add_term'      => 0,
+                'save_terms'    => 1,
+                'load_terms'    => 1,
+                'return_format' => 'id',
+            ],
+
             // ── Process Types ─────────────────────────────────────────────
             //
             // What types of legal action does this agency handle?

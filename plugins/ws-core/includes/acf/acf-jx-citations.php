@@ -7,7 +7,7 @@
  * PURPOSE
  * -------
  * Provides structured metadata for citation records used to support statutes,
- * common-law doctrines, and interpretation summaries with linked source
+ * common-law doctrines, and construction summaries with linked source
  * authority and structured classification tags.
  *
  * GROUP: group_jx_citation_metadata
@@ -261,6 +261,21 @@ function ws_register_acf_jx_citations() {
             ],
 
             [
+                'key'           => 'field_jx_citation_employment_sectors',
+                'label'         => 'Employment Sectors',
+                'name'          => 'ws_jx_citation_employment_sectors',
+                'type'          => 'taxonomy',
+                'taxonomy'      => 'ws_employment_sector',
+                'field_type'    => 'multi_select',
+                'instructions'  => 'Employment sectors this ruling affects. May refine, extend, or restrict the parent statute\'s sector coverage.',
+                'required'      => 0,
+                'add_term'      => 0,
+                'save_terms'    => 1,
+                'load_terms'    => 1,
+                'return_format' => 'id',
+            ],
+
+            [
                 'key'          => 'field_jx_citation_disclosure_target_details',
                 'label'        => 'Disclosure Targets Details',
                 'name'         => 'ws_jx_citation_disclosure_target_details',
@@ -268,6 +283,33 @@ function ws_register_acf_jx_citations() {
                 'rows'         => 3,
                 'instructions' => 'Describe nuance in the reporting channel as addressed by this citation.',
                 // conditional_logic set dynamically — see ws_jx_citation_details_conditional()
+            ],
+
+            [
+                'key'           => 'field_jx_citation_has_employer_threshold',
+                'label'         => 'Employer Size Threshold',
+                'name'          => 'ws_jx_citation_has_employer_threshold',
+                'type'          => 'true_false',
+                'instructions'  => 'Enable when this ruling addresses or modifies employer size threshold coverage.',
+                'ui'            => 1,
+                'ui_on_text'    => 'Yes',
+                'ui_off_text'   => 'No',
+                'default_value' => 0,
+            ],
+
+            [
+                'key'               => 'field_jx_citation_employer_threshold_details',
+                'label'             => 'Employer Threshold Details',
+                'name'              => 'ws_jx_citation_employer_threshold_details',
+                'type'              => 'textarea',
+                'instructions'      => 'Describe how this ruling affects employer size threshold coverage.',
+                'required'          => 0,
+                'rows'              => 3,
+                'conditional_logic' => [ [ [
+                    'field'    => 'field_jx_citation_has_employer_threshold',
+                    'operator' => '==',
+                    'value'    => '1',
+                ] ] ],
             ],
 
             [
@@ -540,7 +582,7 @@ function ws_jx_citation_details_conditional( $field ) {
 
 // ── Pre-populate ws_jx_citation_statute_ids from ?statute_id= URL param ──────
 //
-// Mirrors ws_interp_prefill_statute_id() in acf-jx-interpretations.php.
+// Mirrors ws_construction_prefill_statute_id() in acf-jx-constructions.php.
 // When a new citation is opened from the statute's citation metabox,
 // statute_id is passed as a URL param. acf/load_value returns it as the
 // field's live value so ACF renders the statute pre-selected.

@@ -146,7 +146,7 @@ function ws_get_ref_materials( $post_id ) {
     $ref_field_by_type = [
         'jx-statute'        => 'ws_jx_statute_ref_materials',
         'jx-citation'       => 'ws_jx_citation_ref_materials',
-        'jx-interpretation' => 'ws_jx_interp_ref_materials',
+        'jx-construction' => 'ws_jx_construction_ref_materials',
         'jx-common-law'     => 'ws_jx_comlaw_ref_materials',
     ];
     $ref_field = $ref_field_by_type[ $post_type ] ?? '';

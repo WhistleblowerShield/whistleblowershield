@@ -110,7 +110,7 @@
  *          Define the $ws_court_matrix and $ws_state_court_matrix
  *          in-memory arrays only. NO posts are created. These are
  *          PHP variable definitions — no database writes, no admin_init
- *          gate. They must load before acf-jx-interpretations.php and
+ *          gate. They must load before acf-jx-constructions.php and
  *          query-jurisdiction.php consume ws_court_lookup(), but since
  *          those files are in the ACF and Universal layers respectively,
  *          loading courts here in the matrix block satisfies that need.
@@ -156,7 +156,7 @@
  *         load blocks added.
  * 3.10.2  ws-statute-bold added to render files.
  * 3.13.0  cpt-jx-common-law and acf-jx-common-law added.
- * 3.13.1  tool-generate-prompt added to tools load block.
+ * 3.13.1  tool-prompt-generator added to tools load block.
  * 3.13.2  tool-taxonomy-term-audit added to tools load block.
  * 3.13.3  query-assist-orgs added; assist-org query functions extracted from
  *         query-jurisdiction.php.
@@ -197,7 +197,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	$cpt_files = [
 		'cpt-jurisdictions', 'cpt-jx-summaries', 'cpt-jx-statutes', 'cpt-legal-updates',
 		'cpt-jx-citations', 'cpt-agencies', 'cpt-ag-procedures', 'cpt-assist-orgs',
-		'cpt-jx-interpretations', 'cpt-jx-common-law', 'cpt-references',
+		'cpt-jx-constructions', 'cpt-jx-common-law', 'cpt-references',
 	];
 	foreach ( $cpt_files as $file ) {
 		$path = WS_CORE_PATH . "includes/cpt/{$file}.php";
@@ -400,7 +400,7 @@ if ( is_admin() ) {
     $acf_files = [
         'acf-jurisdictions', 'acf-jx-summaries', 'acf-jx-statutes', 'acf-legal-updates',
         'acf-jx-citations', 'acf-agencies', 'acf-ag-procedures', 'acf-assist-orgs',
-        'acf-jx-interpretations', 'acf-jx-common-law', 'acf-references',
+        'acf-jx-constructions', 'acf-jx-common-law', 'acf-references',
     ];
 
     foreach ( $acf_files as $file ) {
@@ -460,7 +460,7 @@ if ( is_admin() ) {
 		'admin-navigation', // MUST load first — defines ws_get_attached_citation_count()
 		                    // which is called by admin-columns.php and jurisdiction-dashboard.php.
 		'admin-audit-trail', 'admin-columns',
-		'admin-hooks', 'admin-interpretation-metabox', 'admin-citation-metabox',
+		'admin-hooks', 'admin-construction-metabox', 'admin-citation-metabox',
 		'admin-major-edit-hook', 'admin-procedure-watch', 'jurisdiction-dashboard', 'admin-health-check',
 	];
 	foreach ( $admin_files as $file ) {
@@ -519,7 +519,7 @@ if ( is_admin() ) {
     // Each tool registers its own admin menu page via add_submenu_page().
     $tool_files = [
     	'ws-schema-constants', // loads first includes tool-based schema rules.
-        'tool-generate-prompt',
+        'tool-prompt-generator',
         'tool-ingest',
 		'tool-taxonomy-term-audit',
      ];

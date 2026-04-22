@@ -52,7 +52,7 @@
  *   jx-summary
  *   jx-statute
  *   jx-citation
- *   jx-interpretation
+ *   jx-construction
  *   ws-legal-update
  *   ws-agency
  *
@@ -100,7 +100,7 @@ function ws_audited_post_types() {
         'jx-statute',
         'jx-common-law',
         'jx-citation',
-        'jx-interpretation',
+        'jx-construction',
         'ws-legal-update',
         'ws-agency',
         'ag-procedure',

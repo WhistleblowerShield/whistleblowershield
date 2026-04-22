@@ -38,15 +38,15 @@
  *                             plain English content is first saved on supported CPTs.
  *
  *   8. Statute reverse index — maintains ws_jx_statute_citation_ids /
- *                             ws_jx_statute_interp_ids on jx-statute records,
+ *                             ws_jx_statute_construction_ids on jx-statute records,
  *                             rebuilt from scratch on every citation and
- *                             interpretation save and delete.
+ *                             construction save and delete.
  *
  *
  * JURISDICTION TAXONOMY
  * ---------------------
  * ws_jx_code has been retired as the jurisdiction join mechanism. Addendum
- * CPTs (jx-summary, jx-statute, jx-citation, jx-interpretation) now use the
+ * CPTs (jx-summary, jx-statute, jx-citation, jx-construction) now use the
  * ws_jurisdiction taxonomy to identify their parent jurisdiction.
  *
  * Auto-assignment on Create Now flow: when a new addendum post is created from
@@ -81,7 +81,7 @@
  * 3.0.0   ws_jx_code pre-populate removed. ws_jx_term_id hook added.
  * 3.1.0   Stamp keys unprefixed. Plain English guards and stamps added.
  * 3.5.0   ws_auto_ prefix applied to all stamp and source-verify meta keys.
- * 3.6.0   Statute reverse index hooks added (citation and interpretation).
+ * 3.6.0   Statute reverse index hooks added (citation and construction).
  * 3.9.0   Rule 3b: plain_reviewed resets on substantial content change.
  * 3.10.0  ws-ag-procedure added to $ws_stamp_cpts and ws_source_verify_post_types().
  * 3.10.1  Header documentation refresh for current cross-CPT responsibilities.
@@ -109,7 +109,7 @@ add_action( 'wp_insert_post', function( $post_id, $post, $update ) {
     if ( $update ) return;
     if ( ! isset( $_GET['ws_jx_term'] ) ) return;
 
-    $addendum_types = [ 'jx-summary', 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation' ];
+    $addendum_types = [ 'jx-summary', 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ];
     if ( ! in_array( $post->post_type, $addendum_types, true ) ) return;
 
     $term_slug = sanitize_key( $_GET['ws_jx_term'] );
@@ -360,7 +360,7 @@ function ws_acf_autofill_current_editor( $value, $post_id, $field ) {
 //             trigger this — only rewrites that materially change the content.
 //             An admin notice is queued so the editor knows why the stamp cleared.
 //
-// Applies to: jx-statute, jx-common-law, jx-citation, jx-interpretation, ws-agency,
+// Applies to: jx-statute, jx-common-law, jx-citation, jx-construction, ws-agency,
 // ws-assist-org. jx-summary is excluded — it is inherently plain English and carries no
 // has_plain_english toggle.
 
@@ -374,7 +374,7 @@ add_action( 'acf/save_post', 'ws_acf_plain_english_guards', 5 );
 function ws_acf_plain_english_guards( $post_id ) {
 
     $plain_english_cpts = [
-        'jx-statute', 'jx-common-law','jx-citation', 'jx-interpretation', 'ws-agency', 'ws-assist-org',
+        'jx-statute', 'jx-common-law','jx-citation', 'jx-construction', 'ws-agency', 'ws-assist-org',
     ];
 
     $post_type = get_post_type( $post_id );
@@ -559,7 +559,7 @@ add_action( 'admin_notices', function() {
 //     'jx-summary'        => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
 //     'jx-citation'       => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
 //     'jx-statute'        => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
-//     'jx-interpretation' => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
+//     'jx-construction' => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
 //     'ws-agency'         => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
 //     'ws-ag-procedure'   => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
 //     'ws-legal-update'   => [ 'author_acf_key' => 'field_auto_last_edited_author' ],
@@ -636,7 +636,7 @@ function ws_acf_write_stamp_fields( $post_id ) {
 // Cleared by ws_acf_plain_english_guards() (priority 5) when _auto_plain_english_reviewed
 // is toggled off, allowing a fresh stamp on the next toggle-on.
 //
-// Applies to: jx-statute, jx-common-law,jx-citation, jx-interpretation, ws-agency,
+// Applies to: jx-statute, jx-common-law,jx-citation, jx-construction, ws-agency,
 // ws-assist-org.
 // 
 //
@@ -652,7 +652,7 @@ add_action( 'acf/save_post', 'ws_acf_stamp_plain_reviewed_by', 25 );
 function ws_acf_stamp_plain_reviewed_by( $post_id ) {
 
     $supported = [
-        'jx-summary', 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation', 'ws-agency', 'ws-assist-org',
+        'jx-summary', 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-agency', 'ws-assist-org',
     ];
 
     $post_type = get_post_type( $post_id );
@@ -702,7 +702,7 @@ add_action( 'acf/save_post', 'ws_acf_stamp_summarized_fields', 25 );
 function ws_acf_stamp_summarized_fields( $post_id ) {
 
     $supported = [
-        'jx-summary', 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation', 'ws-agency', 'ws-assist-org',
+        'jx-summary', 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-agency', 'ws-assist-org',
     ];
 
     $post_type = get_post_type( $post_id );
@@ -1075,7 +1075,7 @@ function ws_source_verify_post_types() {
         'jx-statute',
         'jx-common-law',
         'jx-citation',
-        'jx-interpretation',
+        'jx-construction',
         'ws-agency',
         'ws-ag-procedure',
         'ws-assist-org',
@@ -1407,18 +1407,18 @@ function ws_set_source_name( $post_id, $name ) {
 // ════════════════════════════════════════════════════════════════════════════
 // STATUTE REVERSE INDEXES
 //
-// jx-citation and jx-interpretation each store their parent statute as a
+// jx-citation and jx-construction each store their parent statute as a
 // forward relationship:
 //   jx-citation       → ws_jx_citation_statute_ids  (post_object, multiple)
-//   jx-interpretation → ws_jx_interp_statute_id     (post_object, single)
+//   jx-construction → ws_jx_construction_statute_id     (post_object, single)
 //
 // These hooks maintain a reverse index on the jx-statute side:
 //   ws_jx_statute_citation_ids  — PHP array of citation post IDs
-//   ws_jx_statute_interp_ids    — PHP array of interpretation post IDs
+//   ws_jx_statute_construction_ids    — PHP array of construction post IDs
 //
 // And on the jx-common-law side:
 //   ws_jx_comlaw_citation_ids       — PHP array of citation post IDs
-//   ws_jx_comlaw_interp_ids         — PHP array of interpretation post IDs
+//   ws_jx_comlaw_construction_ids         — PHP array of construction post IDs
 //
 // The index is always rebuilt from scratch — no append logic, no deduplication
 // risk, no stale entries. Admin metaboxes read the index via get_post_meta()
@@ -1432,8 +1432,8 @@ function ws_set_source_name( $post_id, $name ) {
 //                citation index. Handles reassignment: old statute loses the
 //                citation, new statute gains it.
 //
-// SAVE FLOW (interpretations)
-//   Priority 5:  Stash pre-save ws_jx_interp_statute_id.
+// SAVE FLOW (constructions)
+//   Priority 5:  Stash pre-save ws_jx_construction_statute_id.
 //   Priority 25: Union old + new statute ID; rebuild each.
 //
 // DELETE FLOW
@@ -1489,27 +1489,27 @@ function ws_rebuild_jx_statute_citation_index( $statute_id ) {
 }
 
 /**
- * Rebuilds ws_jx_statute_interp_ids on a jx-statute post.
+ * Rebuilds ws_jx_statute_construction_ids on a jx-statute post.
  *
- * Queries all jx-interpretation records whose ws_jx_interp_statute_id equals
+ * Queries all jx-construction records whose ws_jx_construction_statute_id equals
  * $statute_id and writes the resulting ID array to the statute's meta.
  *
  * @param int $statute_id  Post ID of the jx-statute to rebuild.
  */
-function ws_rebuild_jx_statute_interp_index( $statute_id ) {
+function ws_rebuild_jx_statute_construction_index( $statute_id ) {
     $statute_id = (int) $statute_id;
     if ( ! $statute_id || get_post_type( $statute_id ) !== 'jx-statute' ) {
         return;
     }
 
     $ids = get_posts( [
-        'post_type'      => 'jx-interpretation',
+        'post_type'      => 'jx-construction',
         'post_status'    => [ 'publish', 'draft', 'pending' ],
         'posts_per_page' => -1,
         'fields'         => 'ids',
         'meta_query'     => [
             [
-                'key'     => 'ws_jx_interp_statute_id',
+                'key'     => 'ws_jx_construction_statute_id',
                 'value'   => $statute_id,
                 'compare' => '=',
                 'type'    => 'NUMERIC',
@@ -1517,7 +1517,7 @@ function ws_rebuild_jx_statute_interp_index( $statute_id ) {
         ],
     ] );
 
-    update_post_meta( $statute_id, 'ws_jx_statute_interp_ids', array_map( 'intval', (array) $ids ) );
+    update_post_meta( $statute_id, 'ws_jx_statute_construction_ids', array_map( 'intval', (array) $ids ) );
 }
 
 /**
@@ -1560,27 +1560,27 @@ function ws_rebuild_jx_comlaw_citation_index( $comlaw_id ) {
 }
 
 /**
- * Rebuilds ws_jx_comlaw_interp_ids on a jx-common-law post.
+ * Rebuilds ws_jx_comlaw_construction_ids on a jx-common-law post.
  *
- * Queries all jx-interpretation records whose ws_jx_interp_comlaw_id
+ * Queries all jx-construction records whose ws_jx_construction_comlaw_id
  * equals $comlaw_id and writes the resulting ID array to the doctrine's meta.
  *
  * @param int $comlaw_id  Post ID of the jx-common-law doctrine to rebuild.
  */
-function ws_rebuild_jx_comlaw_interp_index( $comlaw_id ) {
+function ws_rebuild_jx_comlaw_construction_index( $comlaw_id ) {
     $comlaw_id = (int) $comlaw_id;
     if ( ! $comlaw_id || get_post_type( $comlaw_id ) !== 'jx-common-law' ) {
         return;
     }
 
     $ids = get_posts( [
-        'post_type'      => 'jx-interpretation',
+        'post_type'      => 'jx-construction',
         'post_status'    => [ 'publish', 'draft', 'pending' ],
         'posts_per_page' => -1,
         'fields'         => 'ids',
         'meta_query'     => [
             [
-                'key'     => 'ws_jx_interp_comlaw_id',
+                'key'     => 'ws_jx_construction_comlaw_id',
                 'value'   => $comlaw_id,
                 'compare' => '=',
                 'type'    => 'NUMERIC',
@@ -1588,7 +1588,7 @@ function ws_rebuild_jx_comlaw_interp_index( $comlaw_id ) {
         ],
     ] );
 
-    update_post_meta( $comlaw_id, 'ws_jx_comlaw_interp_ids', array_map( 'intval', (array) $ids ) );
+    update_post_meta( $comlaw_id, 'ws_jx_comlaw_construction_ids', array_map( 'intval', (array) $ids ) );
 }
 
 
@@ -1596,7 +1596,7 @@ function ws_rebuild_jx_comlaw_interp_index( $comlaw_id ) {
 //
 // Static arrays pass pre-save statute IDs from the priority-5 capture hook to
 // the priority-25 rebuild hook within the same acf/save_post call chain.
-// Separate functions for citations (array) and interpretations (scalar).
+// Separate functions for citations (array) and constructions (scalar).
 
 function ws_citation_statute_save_stash( $post_id, $ids = null ) {
     static $stash = [];
@@ -1604,7 +1604,7 @@ function ws_citation_statute_save_stash( $post_id, $ids = null ) {
     return $stash[ $post_id ] ?? [];
 }
 
-function ws_interp_statute_save_stash( $post_id, $id = null ) {
+function ws_construction_statute_save_stash( $post_id, $id = null ) {
     static $stash = [];
     if ( $id !== null ) { $stash[ $post_id ] = $id; }
     return $stash[ $post_id ] ?? 0;
@@ -1616,7 +1616,7 @@ function ws_citation_comlaw_save_stash( $post_id, $ids = null ) {
     return $stash[ $post_id ] ?? [];
 }
 
-function ws_interp_comlaw_save_stash( $post_id, $id = null ) {
+function ws_construction_comlaw_save_stash( $post_id, $id = null ) {
     static $stash = [];
     if ( $id !== null ) { $stash[ $post_id ] = $id; }
     return $stash[ $post_id ] ?? 0;
@@ -1635,7 +1635,7 @@ function ws_citation_statute_delete_stash( $post_id, $ids = null ) {
     return $stash[ $post_id ] ?? [];
 }
 
-function ws_interp_statute_delete_stash( $post_id, $id = null ) {
+function ws_construction_statute_delete_stash( $post_id, $id = null ) {
     static $stash = [];
     if ( $id !== null ) { $stash[ $post_id ] = $id; }
     return $stash[ $post_id ] ?? 0;
@@ -1647,7 +1647,7 @@ function ws_citation_comlaw_delete_stash( $post_id, $ids = null ) {
     return $stash[ $post_id ] ?? [];
 }
 
-function ws_interp_comlaw_delete_stash( $post_id, $id = null ) {
+function ws_construction_comlaw_delete_stash( $post_id, $id = null ) {
     static $stash = [];
     if ( $id !== null ) { $stash[ $post_id ] = $id; }
     return $stash[ $post_id ] ?? 0;
@@ -1687,28 +1687,28 @@ add_action( 'acf/save_post', function( $post_id ) {
 }, 25 );
 
 
-// ── Interpretation save hooks ─────────────────────────────────────────────────
+// ── construction save hooks ─────────────────────────────────────────────────
 
 // Priority 5: capture pre-save statute ID.
 add_action( 'acf/save_post', function( $post_id ) {
-    if ( get_post_type( $post_id ) !== 'jx-interpretation' ) { return; }
-    ws_interp_statute_save_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_interp_statute_id', true ) );
-    ws_interp_comlaw_save_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_interp_comlaw_id', true ) );
+    if ( get_post_type( $post_id ) !== 'jx-construction' ) { return; }
+    ws_construction_statute_save_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_construction_statute_id', true ) );
+    ws_construction_comlaw_save_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_construction_comlaw_id', true ) );
 }, 5 );
 
 // Priority 25: union old + new statute/common-law parent IDs; rebuild each.
 add_action( 'acf/save_post', function( $post_id ) {
-    if ( get_post_type( $post_id ) !== 'jx-interpretation' ) { return; }
-    $new_statute_id  = (int) get_post_meta( $post_id, 'ws_jx_interp_statute_id', true );
-    $all_statute_ids = array_unique( array_filter( [ ws_interp_statute_save_stash( $post_id ), $new_statute_id ] ) );
+    if ( get_post_type( $post_id ) !== 'jx-construction' ) { return; }
+    $new_statute_id  = (int) get_post_meta( $post_id, 'ws_jx_construction_statute_id', true );
+    $all_statute_ids = array_unique( array_filter( [ ws_construction_statute_save_stash( $post_id ), $new_statute_id ] ) );
     foreach ( $all_statute_ids as $sid ) {
-        ws_rebuild_jx_statute_interp_index( $sid );
+        ws_rebuild_jx_statute_construction_index( $sid );
     }
 
-    $new_comlaw_id  = (int) get_post_meta( $post_id, 'ws_jx_interp_comlaw_id', true );
-    $all_comlaw_ids = array_unique( array_filter( [ ws_interp_comlaw_save_stash( $post_id ), $new_comlaw_id ] ) );
+    $new_comlaw_id  = (int) get_post_meta( $post_id, 'ws_jx_construction_comlaw_id', true );
+    $all_comlaw_ids = array_unique( array_filter( [ ws_construction_comlaw_save_stash( $post_id ), $new_comlaw_id ] ) );
     foreach ( $all_comlaw_ids as $cid ) {
-        ws_rebuild_jx_comlaw_interp_index( $cid );
+        ws_rebuild_jx_comlaw_construction_index( $cid );
     }
 }, 25 );
 
@@ -1726,15 +1726,15 @@ add_action( 'before_delete_post', function( $post_id ) {
         $raw_comlaw = get_post_meta( $post_id, 'ws_jx_citation_comlaw_ids', true );
         $comlaw_ids = is_array( $raw_comlaw ) ? array_map( 'intval', $raw_comlaw ) : ( $raw_comlaw ? [ (int) $raw_comlaw ] : [] );
         ws_citation_comlaw_delete_stash( $post_id, $comlaw_ids );
-    } elseif ( $type === 'jx-interpretation' ) {
-        ws_interp_statute_delete_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_interp_statute_id', true ) );
-        ws_interp_comlaw_delete_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_interp_comlaw_id', true ) );
+    } elseif ( $type === 'jx-construction' ) {
+        ws_construction_statute_delete_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_construction_statute_id', true ) );
+        ws_construction_comlaw_delete_stash( $post_id, (int) get_post_meta( $post_id, 'ws_jx_construction_comlaw_id', true ) );
     }
 } );
 
 // deleted_post: rebuild statute indexes now that the deleted post is gone.
 // Fires for every deleted post; stash functions return empty/zero for non-
-// citation/interpretation posts, so unrelated deletions are no-ops.
+// citation/construction posts, so unrelated deletions are no-ops.
 add_action( 'deleted_post', function( $post_id ) {
     foreach ( array_filter( ws_citation_statute_delete_stash( $post_id ) ) as $sid ) {
         ws_rebuild_jx_statute_citation_index( $sid );
@@ -1743,13 +1743,13 @@ add_action( 'deleted_post', function( $post_id ) {
         ws_rebuild_jx_comlaw_citation_index( $cid );
     }
 
-    $interp_sid = ws_interp_statute_delete_stash( $post_id );
-    if ( $interp_sid ) {
-        ws_rebuild_jx_statute_interp_index( $interp_sid );
+    $construction_sid = ws_construction_statute_delete_stash( $post_id );
+    if ( $construction_sid ) {
+        ws_rebuild_jx_statute_construction_index( $construction_sid );
     }
 
-    $interp_cid = ws_interp_comlaw_delete_stash( $post_id );
-    if ( $interp_cid ) {
-        ws_rebuild_jx_comlaw_interp_index( $interp_cid );
+    $construction_cid = ws_construction_comlaw_delete_stash( $post_id );
+    if ( $construction_cid ) {
+        ws_rebuild_jx_comlaw_construction_index( $construction_cid );
     }
 } );

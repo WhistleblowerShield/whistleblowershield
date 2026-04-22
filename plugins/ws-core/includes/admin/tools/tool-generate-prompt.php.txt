@@ -615,6 +615,21 @@ in _review_notes instead.
 
 ---
 
+EMPLOYER SIZE THRESHOLD
+
+has_employer_threshold must be true when coverage is restricted by employer
+size (for example, "15 or more employees"). When true, include
+employer_threshold_details with the threshold and directionality
+(minimum/maximum) as stated in source text.
+
+If source text is unclear or does not state a threshold, omit
+has_employer_threshold and employer_threshold_details.
+
+employment_sectors should include all sectors explicitly covered by the
+authority. Omit when coverage is not sector-specific or unclear.
+
+---
+
 BURDEN OF PROOF
 
 burden_of_proof_flag is a short signal phrase identifying the non-standard
@@ -734,6 +749,7 @@ them as empty arrays [] or empty strings "":
   - legal_basis.disclosure_types
   - legal_basis.protected_class
   - legal_basis.disclosure_targets
+  - legal_basis.employment_sectors
   - burden_of_proof.employee_standard
   - burden_of_proof.employer_defense
   - common_name
@@ -864,10 +880,10 @@ function ws_prompt_taxonomy_tables( string $applies_to ): string {
     ];
 
     $flat_by_record_type = [
-        'jx-statute'        => [ 'ws_adverse_action_types', 'ws_process_type', 'ws_remedies', 'ws_fee_shifting', 'ws_employer_defense', 'ws_employee_standard' ],
-        'jx-common-law'     => [ 'ws_adverse_action_types', 'ws_process_type', 'ws_remedies', 'ws_fee_shifting', 'ws_employer_defense', 'ws_employee_standard' ],
-        'jx-citation'       => [ 'ws_adverse_action_types', 'ws_process_type', 'ws_remedies', 'ws_employer_defense', 'ws_employee_standard' ],
-        'jx-interpretation' => [ 'ws_adverse_action_types', 'ws_process_type', 'ws_remedies', 'ws_employer_defense', 'ws_employee_standard' ],
+        'jx-statute'        => [ 'ws_adverse_action_types', 'ws_process_type', 'ws_remedies', 'ws_fee_shifting', 'ws_employer_defense', 'ws_employee_standard', 'ws_employment_sector' ],
+        'jx-common-law'     => [ 'ws_adverse_action_types', 'ws_process_type', 'ws_remedies', 'ws_fee_shifting', 'ws_employer_defense', 'ws_employee_standard', 'ws_employment_sector' ],
+        'jx-citation'       => [ 'ws_adverse_action_types', 'ws_process_type', 'ws_remedies', 'ws_employer_defense', 'ws_employee_standard', 'ws_employment_sector' ],
+        'jx-interpretation' => [ 'ws_adverse_action_types', 'ws_process_type', 'ws_remedies', 'ws_employer_defense', 'ws_employee_standard', 'ws_employment_sector' ],
         'ws-assist-org'     => [ 'ws_process_type', 'ws_case_stage', 'ws_language', 'ws_aorg_type', 'ws_employment_sector', 'ws_aorg_cost_model', 'ws_aorg_service' ],
     ];
 
@@ -917,7 +933,7 @@ function ws_prompt_registered_object_types( string $taxonomy ): array {
         'ws_fee_shifting'      => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
         'ws_employer_defense'  => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
         'ws_aorg_type'         => [ 'ws-assist-org' ],
-        'ws_employment_sector' => [ 'ws-assist-org' ],
+        'ws_employment_sector' => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-agency', 'ws-ag-procedure', 'ws-assist-org' ],
         'ws_aorg_cost_model'   => [ 'ws-assist-org' ],
         'ws_aorg_service'      => [ 'ws-assist-org' ],
         'ws_employee_standard' => [ 'jx-statute', 'jx-citation', 'jx-interpretation', 'jx-common-law' ],
@@ -1822,6 +1838,9 @@ RECORD SCHEMA
   "disclosure_types":    [],
   "protected_class":     [],
   "disclosure_targets":  [],
+  "employment_sectors":  [],
+  "has_employer_threshold":     false,
+  "employer_threshold_details": "",
   "adverse_action":      [],
   "remedies":            [],
   "process_type":        [],
@@ -1878,6 +1897,9 @@ RECORD SCHEMA
   "disclosure_types":    [],
   "protected_class":     [],
   "disclosure_targets":  [],
+  "employment_sectors":  [],
+  "has_employer_threshold":     false,
+  "employer_threshold_details": "",
   "adverse_action":      [],
   "remedies":            [],
   "process_type":        [],
@@ -2030,6 +2052,7 @@ the array empty — do not invent a slug and insert it into the record.
   legal_basis.disclosure_types       → ws_disclosure_type
   legal_basis.protected_classes      → ws_protected_class      → can use has-details
   legal_basis.disclosure_targets     → ws_disclosure_target    → can use has-details
+  legal_basis.employment_sectors     → ws_employment_sector
   enforcement.process_types          → ws_process_type
   enforcement.adverse_actions        → ws_adverse_action_type  → can use has-details
   enforcement.remedies               → ws_remedy               → can use has-details
@@ -2056,6 +2079,14 @@ uncertainty. If and only if the ruling explicitly and materially addresses
 multiple taxonomy axes in a single holding, tag all that apply and populate
 _multi_taxonomy_notes. Multiple tags without _multi_taxonomy_notes is an error.
 _multi_taxonomy_notes without multiple tags is an error.
+
+employment_sectors: Tag only when the ruling clearly refines or changes sector
+coverage from the parent statute/doctrine. Omit when no sector-specific impact
+is present or confidence is low.
+
+has_employer_threshold: true only when the ruling addresses employer-size
+coverage thresholds. When true, employer_threshold_details is required.
+Omit both keys when threshold treatment is not clear.
 
 favorable: Set to true only when the ruling materially expands, strengthens,
 or clarifies protection in a way that changes what the statute covers or how
@@ -2150,6 +2181,33 @@ CALCULATED FIELDS — write last:
 ENDSCHEMA;
 }
 
+function ws_prompt_sector_threshold_schema_addendum( string $record_type ): string {
+    if ( $record_type === 'statute' || $record_type === 'common-law' ) {
+        return <<<'BLOCK'
+
+SCHEMA ADDITIONS
+
+Include these keys in statute/common-law records:
+
+  legal_basis.employment_sectors: []
+    - ws_employment_sector slugs
+    - tag all sectors explicitly covered
+    - omit when coverage is not sector-specific or unclear
+
+  enforcement.has_employer_threshold: false
+  enforcement.employer_threshold_details: ""
+    - set has_employer_threshold true when coverage is restricted by employer size
+    - when true, employer_threshold_details is required
+    - omit employer_threshold_details when has_employer_threshold is false
+
+---
+
+BLOCK;
+    }
+
+    return '';
+}
+
 
 // ── Full prompt assemblers ────────────────────────────────────────────────
 
@@ -2179,6 +2237,7 @@ function ws_generate_statute_prompt( array $scope ): string {
     $out .= ws_prompt_citation_rules();
     $out .= ws_prompt_meta_schema();
     $out .= ws_prompt_statute_schema();
+    $out .= ws_prompt_sector_threshold_schema_addendum( 'statute' );
     $out .= ws_prompt_integrity_block();
 
     // RUN SCOPE
@@ -2232,6 +2291,7 @@ function ws_generate_common_law_prompt( array $scope ): string {
     $out .= ws_prompt_citation_rules();
     $out .= ws_prompt_meta_schema();
     $out .= ws_prompt_common_law_schema();
+    $out .= ws_prompt_sector_threshold_schema_addendum( 'common-law' );
     $out .= ws_prompt_integrity_block();
 
     $out .= "RUN SCOPE\n\n";

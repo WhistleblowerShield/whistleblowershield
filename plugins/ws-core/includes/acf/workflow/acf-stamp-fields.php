@@ -4,7 +4,7 @@
  *
  * Group key: group_stamp_metadata  (menu_order 90)
  *
- * Attaches to: jx-summary, jx-statute, jx-citation, jx-interpretation,
+ * Attaches to: jx-summary, jx-statute, jx-citation, jx-construction,
  *              ws-agency, ws-ag-procedure, ws-assist-org, ws-legal-update,
  *              ws-reference
  *
@@ -64,7 +64,7 @@ function ws_register_acf_stamp_fields() {
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-summary'        ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-statute'         ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-citation'        ] ],
-            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-interpretation'  ] ],
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-construction'  ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-common-law'      ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-agency'          ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-ag-procedure'    ] ],

@@ -1,60 +1,60 @@
 <?php
 /**
- * acf-jx-interpretations.php
+ * acf-jx-constructions.php
  *
- * Registers ACF Pro fields for the `jx-interpretation` CPT.
+ * Registers ACF Pro fields for the `jx-construction` CPT.
  *
  * PURPOSE
  * -------
- * Provides structured metadata for interpretation records, including case
+ * Provides structured metadata for construction records, including case
  * identity, classification tags, parent-record linkage, and jurisdiction
  * impact signals used by legal analysis and summary workflows.
  *
- * GROUP: group_jx_interpretation_metadata
+ * GROUP: group_jx_construction_metadata
  *
  * FIELD SUMMARY
  * -------------
  * Case Identity tab:
- *   ws_jx_interp_court                          Court (select, required)
- *   ws_jx_interp_court_name                     Court Name (text, conditional)
- *   ws_jx_interp_year                           Decision Year (number, required)
- *   ws_jx_interp_is_favorable                   Favorable to Whistleblower? (true_false, optional)
- *   ws_jx_interp_official_name                  Official Name (text, required)
- *   ws_jx_interp_common_name                    Common Name (text, optional)
- *   ws_jx_interp_case_citation                  Citation (text, required)
- *   ws_jx_interp_url                            Opinion URL (url, optional)
- *   ws_jx_interp_url_is_pdf                     Link is PDF? (true_false, optional)
+ *   ws_jx_construction_court                          Court (select, required)
+ *   ws_jx_construction_court_name                     Court Name (text, conditional)
+ *   ws_jx_construction_year                           Decision Year (number, required)
+ *   ws_jx_construction_is_favorable                   Favorable to Whistleblower? (true_false, optional)
+ *   ws_jx_construction_official_name                  Official Name (text, required)
+ *   ws_jx_construction_common_name                    Common Name (text, optional)
+ *   ws_jx_construction_case_citation                  Citation (text, required)
+ *   ws_jx_construction_url                            Opinion URL (url, optional)
+ *   ws_jx_construction_url_is_pdf                     Link is PDF? (true_false, optional)
  *
  * Summary tab:
- *   ws_jx_interp_summary_wysiwyg                Summary (wysiwyg, required)
- *   ws_jx_interp_has_attach_flag                Attach to Jurisdiction Page (true_false, optional)
- *   ws_jx_interp_display_order                  Display Order (number, conditional)
+ *   ws_jx_construction_summary_wysiwyg                Summary (wysiwyg, required)
+ *   ws_jx_construction_has_attach_flag                Attach to Jurisdiction Page (true_false, optional)
+ *   ws_jx_construction_display_order                  Display Order (number, conditional)
  *
  * Classification tab:
- *   ws_jx_interp_disclosure_types               Disclosure Category (multi_select, optional)
- *   ws_jx_interp_protected_classes              Protected Class (multi_select, optional)
- *   ws_jx_interp_protected_class_details        Protected Class Details (textarea, optional)
- *   ws_jx_interp_disclosure_targets             Disclosure Targets (multi_select, optional)
- *   ws_jx_interp_disclosure_target_details      Disclosure Targets Details (textarea, optional)
- *   ws_jx_interp_adverse_action_types           Adverse Action Types (multi_select, optional)
- *   ws_jx_interp_adverse_action_type_details    Adverse Action Details (textarea, optional)
- *   ws_jx_interp_process_types                  Process Type (multi_select, optional)
- *   ws_jx_interp_remedies                       Remedies (multi_select, optional)
- *   ws_jx_interp_remedy_details                 Remedies Details (textarea, optional)
- *   ws_jx_interp_fee_shiftings                  Fee Shifting (multi_select, optional)
- *   ws_jx_interp_employer_defenses              Employer Defense (multi_select, optional)
- *   ws_jx_interp_employer_defense_details       Employer Defense Details (textarea, optional)
- *   ws_jx_interp_employee_standards             Employee Standard (multi_select, optional)
- *   ws_jx_interp_employee_standard_details      Employee Standard Details (textarea, optional)
+ *   ws_jx_construction_disclosure_types               Disclosure Category (multi_select, optional)
+ *   ws_jx_construction_protected_classes              Protected Class (multi_select, optional)
+ *   ws_jx_construction_protected_class_details        Protected Class Details (textarea, optional)
+ *   ws_jx_construction_disclosure_targets             Disclosure Targets (multi_select, optional)
+ *   ws_jx_construction_disclosure_target_details      Disclosure Targets Details (textarea, optional)
+ *   ws_jx_construction_adverse_action_types           Adverse Action Types (multi_select, optional)
+ *   ws_jx_construction_adverse_action_type_details    Adverse Action Details (textarea, optional)
+ *   ws_jx_construction_process_types                  Process Type (multi_select, optional)
+ *   ws_jx_construction_remedies                       Remedies (multi_select, optional)
+ *   ws_jx_construction_remedy_details                 Remedies Details (textarea, optional)
+ *   ws_jx_construction_fee_shiftings                  Fee Shifting (multi_select, optional)
+ *   ws_jx_construction_employer_defenses              Employer Defense (multi_select, optional)
+ *   ws_jx_construction_employer_defense_details       Employer Defense Details (textarea, optional)
+ *   ws_jx_construction_employee_standards             Employee Standard (multi_select, optional)
+ *   ws_jx_construction_employee_standard_details      Employee Standard Details (textarea, optional)
  *
  * Relationships tab:
- *   ws_jx_interp_statute_id                     Parent Statute (post_object, optional)
- *   ws_jx_interp_comlaw_id                      Parent Common Law Doctrine (post_object, optional)
- *   ws_jx_interp_affected_jx                    Affected Jurisdictions (multi_select, optional)
- *   ws_jx_interp_last_reviewed                  Last Verified Date (text, optional)
+ *   ws_jx_construction_statute_id                     Parent Statute (post_object, optional)
+ *   ws_jx_construction_comlaw_id                      Parent Common Law Doctrine (post_object, optional)
+ *   ws_jx_construction_affected_jx                    Affected Jurisdictions (multi_select, optional)
+ *   ws_jx_construction_last_reviewed                  Last Verified Date (text, optional)
  *
  * Reference Materials tab:
- *   ws_jx_interp_ref_materials                  Reference Materials (relationship, optional)
+ *   ws_jx_construction_ref_materials                  Reference Materials (relationship, optional)
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------
@@ -65,8 +65,8 @@
  *
  * IMPLEMENTATION NOTES
  * --------------------
- * Court choices are populated dynamically by ws_jx_interp_load_court_choices().
- * ws_jx_interp_affected_jx is auto-computed on save from the court
+ * Court choices are populated dynamically by ws_jx_construction_load_court_choices().
+ * ws_jx_construction_affected_jx is auto-computed on save from the court
  * matrix mapping and uses save_terms: 0 to avoid taxonomy query pollution.
  *
  * @package    WhistleblowerShield
@@ -80,17 +80,17 @@
 
 defined( 'ABSPATH' ) || exit;
 
-add_action( 'acf/init', 'ws_register_acf_jx_interpretations' );
+add_action( 'acf/init', 'ws_register_acf_jx_constructions' );
 
-function ws_register_acf_jx_interpretations() {
+function ws_register_acf_jx_constructions() {
 
     if ( ! function_exists( 'acf_add_local_field_group' ) ) {
         return;
     }
 
     acf_add_local_field_group( [
-        'key'                   => 'group_jx_interpretation_metadata',
-        'title'                 => 'Interpretation Details',
+        'key'                   => 'group_jx_construction_metadata',
+        'title'                 => 'construction Details',
         'menu_order'            => 0,
         'position'              => 'normal',
         'style'                 => 'default',
@@ -101,7 +101,7 @@ function ws_register_acf_jx_interpretations() {
         'location' => [ [ [
             'param'    => 'post_type',
             'operator' => '==',
-            'value'    => 'jx-interpretation',
+            'value'    => 'jx-construction',
         ] ] ],
 
         'fields' => [
@@ -114,18 +114,18 @@ function ws_register_acf_jx_interpretations() {
             // ────────────────────────────────────────────────────────────────
 
             [
-                'key'   => 'field_jx_interp_case_identity_tab',
+                'key'   => 'field_jx_construction_case_identity_tab',
                 'label' => 'Case Identity',
                 'type'  => 'tab',
             ],
 
             [
-                'key'           => 'field_jx_interp_court',
+                'key'           => 'field_jx_construction_court',
                 'label'         => 'Court',
-                'name'          => 'ws_jx_interp_court',
+                'name'          => 'ws_jx_construction_court',
                 'type'          => 'select',
                 'instructions'  => 'Select the court that issued this decision. For state court decisions, select "State Level" and enter the court name in the field below.',
-                'choices'       => [],  // populated by ws_interp_load_court_choices()
+                'choices'       => [],  // populated by ws_construction_load_court_choices()
                 'allow_null'    => 0,
                 'required'      => 1,
                 'ui'            => 1,
@@ -134,14 +134,14 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'               => 'field_jx_interp_court_name',
+                'key'               => 'field_jx_construction_court_name',
                 'label'             => 'Court Name',
-                'name'              => 'ws_jx_interp_court_name',
+                'name'              => 'ws_jx_construction_court_name',
                 'type'              => 'text',
                 'instructions'      => 'Enter the court name. Include jurisdiction and level where relevant, e.g., "Superior Court of California, Sacramento County". This field only appears when "Other" is selected above.',
                 'required'          => 1,
                 'conditional_logic' => [ [ [
-                    'field'    => 'field_jx_interp_court',
+                    'field'    => 'field_jx_construction_court',
                     'operator' => '==',
                     'value'    => 'other',
                 ] ] ],
@@ -149,9 +149,9 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'          => 'field_jx_interp_year',
+                'key'          => 'field_jx_construction_year',
                 'label'        => 'Decision Year',
-                'name'         => 'ws_jx_interp_year',
+                'name'         => 'ws_jx_construction_year',
                 'type'         => 'number',
                 'instructions' => 'Four-digit year the decision was issued.',
                 'required'     => 1,
@@ -162,9 +162,9 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'           => 'field_jx_interp_is_favorable',
+                'key'           => 'field_jx_construction_is_favorable',
                 'label'         => 'Favorable to Whistleblower?',
-                'name'          => 'ws_jx_interp_is_favorable',
+                'name'          => 'ws_jx_construction_is_favorable',
                 'type'          => 'true_false',
                 'instructions'  => 'Does this ruling support the whistleblower\'s position?',
                 'ui'            => 1,
@@ -175,9 +175,9 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'          => 'field_jx_interp_official_name',
+                'key'          => 'field_jx_construction_official_name',
                 'label'        => 'Official Name',
-                'name'         => 'ws_jx_interp_official_name',
+                'name'         => 'ws_jx_construction_official_name',
                 'type'         => 'text',
                 'instructions' => 'Full case name, e.g., "Bechtel v. Administrative Review Board".',
                 'required'     => 1,
@@ -185,9 +185,9 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'          => 'field_jx_interp_common_name',
+                'key'          => 'field_jx_construction_common_name',
                 'label'        => 'Common Name',
-                'name'         => 'ws_jx_interp_common_name',
+                'name'         => 'ws_jx_construction_common_name',
                 'type'         => 'text',
                 'instructions' => 'Shortened or colloquial name if this case is commonly cited by a shorter title — e.g., "Bechtel". Leave blank if no common name applies.',
                 'required'     => 0,
@@ -195,9 +195,9 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'          => 'field_jx_interp_case_citation',
+                'key'          => 'field_jx_construction_case_citation',
                 'label'        => 'Citation',
-                'name'         => 'ws_jx_interp_case_citation',
+                'name'         => 'ws_jx_construction_case_citation',
                 'type'         => 'text',
                 'instructions' => 'Standard legal citation, e.g., "710 F.3d 443 (1st Cir. 2013)".',
                 'required'     => 1,
@@ -205,17 +205,17 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'          => 'field_jx_interp_url',
+                'key'          => 'field_jx_construction_url',
                 'label'        => 'Opinion URL',
-                'name'         => 'ws_jx_interp_url',
+                'name'         => 'ws_jx_construction_url',
                 'type'         => 'url',
                 'instructions' => 'Link to the full opinion (CourtListener, Google Scholar, PACER, etc.).',
             ],
 
             [
-                'key'           => 'field_jx_interp_url_is_pdf',
+                'key'           => 'field_jx_construction_url_is_pdf',
                 'label'         => 'Link is PDF?',
-                'name'          => 'ws_jx_interp_url_is_pdf',
+                'name'          => 'ws_jx_construction_url_is_pdf',
                 'type'          => 'true_false',
                 'instructions'  => 'Enable if the opinion URL links directly to a PDF document.',
                 'ui'            => 1,
@@ -232,15 +232,15 @@ function ws_register_acf_jx_interpretations() {
             // ────────────────────────────────────────────────────────────────
 
             [
-                'key'   => 'field_jx_interp_summary_tab',
+                'key'   => 'field_jx_construction_summary_tab',
                 'label' => 'Summary',
                 'type'  => 'tab',
             ],
 
             [
-                'key'          => 'field_jx_interp_summary_wysiwyg',
+                'key'          => 'field_jx_construction_summary_wysiwyg',
                 'label'        => 'Summary',
-                'name'         => 'ws_jx_interp_summary_wysiwyg',
+                'name'         => 'ws_jx_construction_summary_wysiwyg',
                 'type'         => 'wysiwyg',
                 'instructions' => 'Summarize what the court decided in plain language. Focus on what this ruling means for whistleblowers — not legal procedure. Citation is captured above.',
                 'required'     => 1,
@@ -251,11 +251,11 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'           => 'field_jx_interp_has_attach_flag',
+                'key'           => 'field_jx_construction_has_attach_flag',
                 'label'         => 'Attach to Jurisdiction Page',
-                'name'          => 'ws_jx_interp_has_attach_flag',
+                'name'          => 'ws_jx_construction_has_attach_flag',
                 'type'          => 'true_false',
-                'instructions'  => 'Enable to include this interpretation in the rendered section on the jurisdiction page. Disable to store for reference only.',
+                'instructions'  => 'Enable to include this construction in the rendered section on the jurisdiction page. Disable to store for reference only.',
                 'ui'            => 1,
                 'ui_on_text'    => 'Attached',
                 'ui_off_text'   => 'Unattached',
@@ -263,15 +263,15 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'               => 'field_jx_interp_display_order',
+                'key'               => 'field_jx_construction_display_order',
                 'label'             => 'Display Order',
-                'name'              => 'ws_jx_interp_display_order',
+                'name'              => 'ws_jx_construction_display_order',
                 'type'              => 'number',
-                'instructions'      => 'Set the order in which this interpretation appears on the jurisdiction page. Lower numbers appear first.',
+                'instructions'      => 'Set the order in which this construction appears on the jurisdiction page. Lower numbers appear first.',
                 'min'               => 1,
                 'step'              => 1,
                 'conditional_logic' => [ [ [
-                    'field'    => 'field_jx_interp_has_attach_flag',
+                    'field'    => 'field_jx_construction_has_attach_flag',
                     'operator' => '==',
                     'value'    => '1',
                 ] ] ],
@@ -281,26 +281,26 @@ function ws_register_acf_jx_interpretations() {
             // Tab: Classification
             //
             // Doctrinal taxonomy fields mirroring jx-statute. Tag only what
-            // the interpretation genuinely addresses or clarifies — do not
+            // the construction genuinely addresses or clarifies — do not
             // inherit from the parent statute. has-details sentinel pattern
             // active on all supporting taxonomies — companion _details fields
             // follow each.
             // ────────────────────────────────────────────────────────────────
 
             [
-                'key'   => 'field_jx_interp_classification_tab',
+                'key'   => 'field_jx_construction_classification_tab',
                 'label' => 'Classification',
                 'type'  => 'tab',
             ],
 
             [
-                'key'           => 'field_jx_interp_disclosure_types',
+                'key'           => 'field_jx_construction_disclosure_types',
                 'label'         => 'Disclosure Category',
-                'name'          => 'ws_jx_interp_disclosure_types',
+                'name'          => 'ws_jx_construction_disclosure_types',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_disclosure_type',
                 'field_type'    => 'multi_select',
-                'instructions'  => 'Subject matter addressed or clarified by this interpretation. Tag only what the interpretation genuinely explains or narrows.',
+                'instructions'  => 'Subject matter addressed or clarified by this construction. Tag only what the construction genuinely explains or narrows.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,
@@ -308,13 +308,13 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'           => 'field_jx_interp_protected_classes',
+                'key'           => 'field_jx_construction_protected_classes',
                 'label'         => 'Protected Class',
-                'name'          => 'ws_jx_interp_protected_classes',
+                'name'          => 'ws_jx_construction_protected_classes',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_protected_class',
                 'field_type'    => 'multi_select',
-                'instructions'  => 'Worker classification addressed or clarified by this interpretation. Tag only where the interpretation explicitly turns on or explains protected class applicability.',
+                'instructions'  => 'Worker classification addressed or clarified by this construction. Tag only where the construction explicitly turns on or explains protected class applicability.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,
@@ -322,23 +322,23 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'          => 'field_jx_interp_protected_class_details',
+                'key'          => 'field_jx_construction_protected_class_details',
                 'label'        => 'Protected Class Details',
-                'name'         => 'ws_jx_interp_protected_class_details',
+                'name'         => 'ws_jx_construction_protected_class_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
-                'instructions' => 'Describe nuance in protected class coverage as addressed by this interpretation.',
-                // conditional_logic set dynamically — see ws_jx_interp_details_conditional()
+                'instructions' => 'Describe nuance in protected class coverage as addressed by this construction.',
+                // conditional_logic set dynamically — see ws_jx_construction_details_conditional()
             ],
 
             [
-                'key'           => 'field_jx_interp_disclosure_targets',
+                'key'           => 'field_jx_construction_disclosure_targets',
                 'label'         => 'Disclosure Targets',
-                'name'          => 'ws_jx_interp_disclosure_targets',
+                'name'          => 'ws_jx_construction_disclosure_targets',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_disclosure_target',
                 'field_type'    => 'multi_select',
-                'instructions'  => 'Reporting target addressed or clarified by this interpretation. Tag only where the interpretation explicitly discusses or turns on the reporting channel.',
+                'instructions'  => 'Reporting target addressed or clarified by this construction. Tag only where the construction explicitly discusses or turns on the reporting channel.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,
@@ -346,23 +346,65 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'          => 'field_jx_interp_disclosure_target_details',
-                'label'        => 'Disclosure Targets Details',
-                'name'         => 'ws_jx_interp_disclosure_target_details',
-                'type'         => 'textarea',
-                'rows'         => 3,
-                'instructions' => 'Describe nuance in the reporting channel as addressed by this interpretation.',
-                // conditional_logic set dynamically — see ws_jx_interp_details_conditional()
+                'key'           => 'field_jx_construction_employment_sectors',
+                'label'         => 'Employment Sectors',
+                'name'          => 'ws_jx_construction_employment_sectors',
+                'type'          => 'taxonomy',
+                'taxonomy'      => 'ws_employment_sector',
+                'field_type'    => 'multi_select',
+                'instructions'  => 'Employment sectors this ruling affects. May refine, extend, or restrict the parent statute\'s sector coverage.',
+                'required'      => 0,
+                'add_term'      => 0,
+                'save_terms'    => 1,
+                'load_terms'    => 1,
+                'return_format' => 'id',
             ],
 
             [
-                'key'           => 'field_jx_interp_adverse_action_types',
+                'key'          => 'field_jx_construction_disclosure_target_details',
+                'label'        => 'Disclosure Targets Details',
+                'name'         => 'ws_jx_construction_disclosure_target_details',
+                'type'         => 'textarea',
+                'rows'         => 3,
+                'instructions' => 'Describe nuance in the reporting channel as addressed by this construction.',
+                // conditional_logic set dynamically — see ws_jx_construction_details_conditional()
+            ],
+
+            [
+                'key'           => 'field_jx_construction_has_employer_threshold',
+                'label'         => 'Employer Size Threshold',
+                'name'          => 'ws_jx_construction_has_employer_threshold',
+                'type'          => 'true_false',
+                'instructions'  => 'Enable when this ruling addresses or modifies employer size threshold coverage.',
+                'ui'            => 1,
+                'ui_on_text'    => 'Yes',
+                'ui_off_text'   => 'No',
+                'default_value' => 0,
+            ],
+
+            [
+                'key'               => 'field_jx_construction_employer_threshold_details',
+                'label'             => 'Employer Threshold Details',
+                'name'              => 'ws_jx_construction_employer_threshold_details',
+                'type'              => 'textarea',
+                'instructions'      => 'Describe how this ruling affects employer size threshold coverage.',
+                'required'          => 0,
+                'rows'              => 3,
+                'conditional_logic' => [ [ [
+                    'field'    => 'field_jx_construction_has_employer_threshold',
+                    'operator' => '==',
+                    'value'    => '1',
+                ] ] ],
+            ],
+
+            [
+                'key'           => 'field_jx_construction_adverse_action_types',
                 'label'         => 'Adverse Action Types',
-                'name'          => 'ws_jx_interp_adverse_action_types',
+                'name'          => 'ws_jx_construction_adverse_action_types',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_adverse_action_type',
                 'field_type'    => 'multi_select',
-                'instructions'  => 'Retaliatory action addressed or clarified by this interpretation. Tag only where the interpretation explicitly explains or narrows the type of adverse action covered.',
+                'instructions'  => 'Retaliatory action addressed or clarified by this construction. Tag only where the construction explicitly explains or narrows the type of adverse action covered.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,
@@ -370,23 +412,23 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'          => 'field_jx_interp_adverse_action_type_details',
+                'key'          => 'field_jx_construction_adverse_action_type_details',
                 'label'        => 'Adverse Action Details',
-                'name'         => 'ws_jx_interp_adverse_action_type_details',
+                'name'         => 'ws_jx_construction_adverse_action_type_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
-                'instructions' => 'Describe nuance in adverse action coverage as addressed by this interpretation.',
-                // conditional_logic set dynamically — see ws_jx_interp_details_conditional()
+                'instructions' => 'Describe nuance in adverse action coverage as addressed by this construction.',
+                // conditional_logic set dynamically — see ws_jx_construction_details_conditional()
             ],
 
             [
-                'key'           => 'field_jx_interp_process_types',
+                'key'           => 'field_jx_construction_process_types',
                 'label'         => 'Process Type',
-                'name'          => 'ws_jx_interp_process_types',
+                'name'          => 'ws_jx_construction_process_types',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_process_type',
                 'field_type'    => 'multi_select',
-                'instructions'  => 'Procedural route addressed or clarified by this interpretation. Tag only where the interpretation explicitly explains or narrows procedural requirements or options.',
+                'instructions'  => 'Procedural route addressed or clarified by this construction. Tag only where the construction explicitly explains or narrows procedural requirements or options.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,
@@ -394,13 +436,13 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'           => 'field_jx_interp_remedies',
+                'key'           => 'field_jx_construction_remedies',
                 'label'         => 'Remedies',
-                'name'          => 'ws_jx_interp_remedies',
+                'name'          => 'ws_jx_construction_remedies',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_remedy',
                 'field_type'    => 'multi_select',
-                'instructions'  => 'Remedies addressed, clarified, or limited by this interpretation. Tag only where the interpretation explicitly explains remedy availability or scope.',
+                'instructions'  => 'Remedies addressed, clarified, or limited by this construction. Tag only where the construction explicitly explains remedy availability or scope.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,
@@ -408,23 +450,23 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'          => 'field_jx_interp_remedy_details',
+                'key'          => 'field_jx_construction_remedy_details',
                 'label'        => 'Remedies Details',
-                'name'         => 'ws_jx_interp_remedy_details',
+                'name'         => 'ws_jx_construction_remedy_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
-                'instructions' => 'Describe nuance in remedy availability or scope as addressed by this interpretation.',
-                // conditional_logic set dynamically — see ws_jx_interp_details_conditional()
+                'instructions' => 'Describe nuance in remedy availability or scope as addressed by this construction.',
+                // conditional_logic set dynamically — see ws_jx_construction_details_conditional()
             ],
 
             [
-                'key'           => 'field_jx_interp_fee_shiftings',
+                'key'           => 'field_jx_construction_fee_shiftings',
                 'label'         => 'Fee Shifting',
-                'name'          => 'ws_jx_interp_fee_shiftings',
+                'name'          => 'ws_jx_construction_fee_shiftings',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_fee_shifting',
                 'field_type'    => 'multi_select',
-                'instructions'  => 'Fee-shifting rule addressed or clarified by this interpretation. Tag only where the interpretation explicitly explains fee-shifting applicability or limits. Single value.',
+                'instructions'  => 'Fee-shifting rule addressed or clarified by this construction. Tag only where the construction explicitly explains fee-shifting applicability or limits. Single value.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,
@@ -432,13 +474,13 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'           => 'field_jx_interp_employer_defenses',
+                'key'           => 'field_jx_construction_employer_defenses',
                 'label'         => 'Employer Defense',
-                'name'          => 'ws_jx_interp_employer_defenses',
+                'name'          => 'ws_jx_construction_employer_defenses',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_employer_defense',
                 'field_type'    => 'multi_select',
-                'instructions'  => 'Employer defense addressed, validated, or rejected by this interpretation. Tag only where the interpretation explicitly explains or limits a defense posture.',
+                'instructions'  => 'Employer defense addressed, validated, or rejected by this construction. Tag only where the construction explicitly explains or limits a defense posture.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,
@@ -446,23 +488,23 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'          => 'field_jx_interp_employer_defense_details',
+                'key'          => 'field_jx_construction_employer_defense_details',
                 'label'        => 'Employer Defense Details',
-                'name'         => 'ws_jx_interp_employer_defense_details',
+                'name'         => 'ws_jx_construction_employer_defense_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
-                'instructions' => 'Describe nuance in the employer defense posture as addressed by this interpretation.',
-                // conditional_logic set dynamically — see ws_jx_interp_details_conditional()
+                'instructions' => 'Describe nuance in the employer defense posture as addressed by this construction.',
+                // conditional_logic set dynamically — see ws_jx_construction_details_conditional()
             ],
 
             [
-                'key'           => 'field_jx_interp_employee_standards',
+                'key'           => 'field_jx_construction_employee_standards',
                 'label'         => 'Employee Standard',
-                'name'          => 'ws_jx_interp_employee_standards',
+                'name'          => 'ws_jx_construction_employee_standards',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_employee_standard',
                 'field_type'    => 'multi_select',
-                'instructions'  => 'Burden-of-proof standard addressed or clarified by this interpretation. Tag only where the interpretation explicitly explains or narrows the employee burden standard.',
+                'instructions'  => 'Burden-of-proof standard addressed or clarified by this construction. Tag only where the construction explicitly explains or narrows the employee burden standard.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,
@@ -470,32 +512,32 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'          => 'field_jx_interp_employee_standard_details',
+                'key'          => 'field_jx_construction_employee_standard_details',
                 'label'        => 'Employee Standard Details',
-                'name'         => 'ws_jx_interp_employee_standard_details',
+                'name'         => 'ws_jx_construction_employee_standard_details',
                 'type'         => 'textarea',
                 'rows'         => 3,
-                'instructions' => 'Describe nuance in the burden-of-proof standard as addressed by this interpretation.',
-                // conditional_logic set dynamically — see ws_jx_interp_details_conditional()
+                'instructions' => 'Describe nuance in the burden-of-proof standard as addressed by this construction.',
+                // conditional_logic set dynamically — see ws_jx_construction_details_conditional()
             ],
 
             // ────────────────────────────────────────────────────────────────
             // Tab: Relationships
             //
-            // Links this interpretation back to statute and/or common-law parent.
+            // Links this construction back to statute and/or common-law parent.
             // Jurisdiction scope is provided by ws_jurisdiction taxonomy.
             // ────────────────────────────────────────────────────────────────
 
             [
-                'key'   => 'field_jx_interp_relationships_tab',
+                'key'   => 'field_jx_construction_relationships_tab',
                 'label' => 'Relationships',
                 'type'  => 'tab',
             ],
 
             [
-                'key'           => 'field_jx_interp_statute_id',
+                'key'           => 'field_jx_construction_statute_id',
                 'label'         => 'Parent Statute',
-                'name'          => 'ws_jx_interp_statute_id',
+                'name'          => 'ws_jx_construction_statute_id',
                 'type'          => 'post_object',
                 'post_type'     => [ 'jx-statute' ],
                 'instructions'  => 'Parent statute this case interprets, when statute-linked.',
@@ -507,9 +549,9 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'           => 'field_jx_interp_comlaw_id',
+                'key'           => 'field_jx_construction_comlaw_id',
                 'label'         => 'Parent Common Law Doctrine',
-                'name'          => 'ws_jx_interp_comlaw_id',
+                'name'          => 'ws_jx_construction_comlaw_id',
                 'type'          => 'post_object',
                 'post_type'     => [ 'jx-common-law' ],
                 'instructions'  => 'Parent common-law doctrine this case interprets, when doctrine-linked.',
@@ -521,9 +563,9 @@ function ws_register_acf_jx_interpretations() {
             ],
 
             [
-                'key'           => 'field_jx_interp_affected_jx',
+                'key'           => 'field_jx_construction_affected_jx',
                 'label'         => 'Affected Jurisdictions',
-                'name'          => 'ws_jx_interp_affected_jx',
+                'name'          => 'ws_jx_construction_affected_jx',
                 'type'          => 'taxonomy',
                 'taxonomy'      => WS_JURISDICTION_TAXONOMY,
                 'field_type'    => 'multi_select',
@@ -542,12 +584,12 @@ function ws_register_acf_jx_interpretations() {
             // ── Last Verified Date ────────────────────────────────────────
             //
             // Content-owned field — not a stamp. Retained here in the
-            // interpretation's own group.
+            // construction's own group.
 
             [
-                'key'          => 'field_jx_interp_last_reviewed',
+                'key'          => 'field_jx_construction_last_reviewed',
                 'label'        => 'Last Verified Date',
-                'name'         => 'ws_jx_interp_last_reviewed',
+                'name'         => 'ws_jx_construction_last_reviewed',
                 'type'         => 'text',
                 'instructions' => 'Update this date each time the record is meaningfully revised.',
             ],
@@ -558,20 +600,20 @@ function ws_register_acf_jx_interpretations() {
 
             // ── Tab: Reference Materials ───────────────────────────────────
             //
-            // Links this interpretation to ws-reference records for researchers
+            // Links this construction to ws-reference records for researchers
             // and legal professionals. Not rendered on jurisdiction pages.
             // Only approved references display publicly via [ws_reference_page].
 
             [
-                'key'   => 'field_jx_interp_ref_materials_tab',
+                'key'   => 'field_jx_construction_ref_materials_tab',
                 'label' => 'Reference Materials',
                 'type'  => 'tab',
             ],
 
             [
-                'key'           => 'field_jx_interp_ref_materials',
+                'key'           => 'field_jx_construction_ref_materials',
                 'label'         => 'Reference Materials',
-                'name'          => 'ws_jx_interp_ref_materials',
+                'name'          => 'ws_jx_construction_ref_materials',
                 'type'          => 'relationship',
                 'post_type'     => [ 'ws-reference' ],
                 'filters'       => [ 'search' ],
@@ -584,31 +626,31 @@ function ws_register_acf_jx_interpretations() {
         ],
     ] );
 
-} // end ws_register_acf_jx_interpretations
+} // end ws_register_acf_jx_constructions
 
 
 // ── Conditional logic: taxonomy sentinel-gated details fields ─────────────────
 //
 // The following detail textareas are shown when the companion trigger field
 // includes sentinel slug 'has-details':
-// - ws_jx_interp_protected_classes
-// - ws_jx_interp_disclosure_targets
-// - ws_jx_interp_adverse_action_types
-// - ws_jx_interp_remedies
-// - ws_jx_interp_employee_standards
-// - ws_jx_interp_employer_defenses
+// - ws_jx_construction_protected_classes
+// - ws_jx_construction_disclosure_targets
+// - ws_jx_construction_adverse_action_types
+// - ws_jx_construction_remedies
+// - ws_jx_construction_employee_standards
+// - ws_jx_construction_employer_defenses
 
-add_filter( 'acf/load_field', 'ws_jx_interp_details_conditional' );
+add_filter( 'acf/load_field', 'ws_jx_construction_details_conditional' );
 
-function ws_jx_interp_details_conditional( $field ) {
+function ws_jx_construction_details_conditional( $field ) {
 
     static $map = [
-        'field_jx_interp_protected_class_details'     => [ 'ws_protected_class',      'field_jx_interp_protected_classes' ],
-        'field_jx_interp_disclosure_target_details'   => [ 'ws_disclosure_target',    'field_jx_interp_disclosure_targets' ],
-        'field_jx_interp_adverse_action_type_details' => [ 'ws_adverse_action_type',  'field_jx_interp_adverse_action_types' ],
-        'field_jx_interp_remedy_details'              => [ 'ws_remedy',               'field_jx_interp_remedies' ],
-        'field_jx_interp_employee_standard_details'   => [ 'ws_employee_standard',    'field_jx_interp_employee_standards' ],
-        'field_jx_interp_employer_defense_details'    => [ 'ws_employer_defense',     'field_jx_interp_employer_defenses' ],
+        'field_jx_construction_protected_class_details'     => [ 'ws_protected_class',      'field_jx_construction_protected_classes' ],
+        'field_jx_construction_disclosure_target_details'   => [ 'ws_disclosure_target',    'field_jx_construction_disclosure_targets' ],
+        'field_jx_construction_adverse_action_type_details' => [ 'ws_adverse_action_type',  'field_jx_construction_adverse_action_types' ],
+        'field_jx_construction_remedy_details'              => [ 'ws_remedy',               'field_jx_construction_remedies' ],
+        'field_jx_construction_employee_standard_details'   => [ 'ws_employee_standard',    'field_jx_construction_employee_standards' ],
+        'field_jx_construction_employer_defense_details'    => [ 'ws_employer_defense',     'field_jx_construction_employer_defenses' ],
     ];
 
     if ( ! isset( $map[ $field['key'] ] ) ) {
@@ -652,14 +694,14 @@ function ws_jx_interp_details_conditional( $field ) {
 // parameters (new records): statute_id, then comlaw_id.
 //
 // The 'other' entry (level=99) sorts last and reveals the free-text
-// ws_jx_interp_court_name field for courts not in either matrix.
+// ws_jx_construction_court_name field for courts not in either matrix.
 //
 // Sorted by level ascending so SCOTUS / state supreme courts appear before
 // appellate courts, which appear before district / trial courts.
 
-add_filter( 'acf/load_field/key=field_jx_interp_court', 'ws_jx_interp_load_court_choices' );
+add_filter( 'acf/load_field/key=field_jx_construction_court', 'ws_jx_construction_load_court_choices' );
 
-function ws_jx_interp_load_court_choices( $field ) {
+function ws_jx_construction_load_court_choices( $field ) {
     global $_ws_federal_court_matrix, $_ws_state_court_matrix, $post;
 
     if ( empty( $_ws_federal_court_matrix ) ) {
@@ -668,9 +710,9 @@ function ws_jx_interp_load_court_choices( $field ) {
 
     // Resolve parent context — saved meta first, URL param fallback.
     $parent_id = 0;
-    if ( $post && get_post_type( $post->ID ) === 'jx-interpretation' && get_post_status( $post->ID ) !== 'auto-draft' ) {
-        $statute_id = (int) get_post_meta( $post->ID, 'ws_jx_interp_statute_id', true );
-        $comlaw_id = (int) get_post_meta( $post->ID, 'ws_jx_interp_comlaw_id', true );
+    if ( $post && get_post_type( $post->ID ) === 'jx-construction' && get_post_status( $post->ID ) !== 'auto-draft' ) {
+        $statute_id = (int) get_post_meta( $post->ID, 'ws_jx_construction_statute_id', true );
+        $comlaw_id = (int) get_post_meta( $post->ID, 'ws_jx_construction_comlaw_id', true );
         $parent_id = $statute_id > 0 ? $statute_id : $comlaw_id;
     }
     if ( ! $parent_id && isset( $_GET['statute_id'] ) ) {
@@ -714,9 +756,9 @@ function ws_jx_interp_load_court_choices( $field ) {
 // ACF renders the statute pre-selected. On saved posts, or when no URL
 // parameter is present, we return $value unchanged.
 
-add_filter( 'acf/load_value/key=field_jx_interp_statute_id', 'ws_interp_prefill_statute_id', 5, 3 );
+add_filter( 'acf/load_value/key=field_jx_construction_statute_id', 'ws_construction_prefill_statute_id', 5, 3 );
 
-function ws_interp_prefill_statute_id( $value, $post_id, $field ) {
+function ws_construction_prefill_statute_id( $value, $post_id, $field ) {
 
     // Only pre-fill on brand-new auto-draft posts.
     if ( get_post_status( $post_id ) !== 'auto-draft' ) {
@@ -737,16 +779,16 @@ function ws_interp_prefill_statute_id( $value, $post_id, $field ) {
     return $value;
 }
 
-// ── Pre-populate ws_jx_interp_comlaw_id from ?comlaw_id= URL param ──
+// ── Pre-populate ws_jx_construction_comlaw_id from ?comlaw_id= URL param ──
 //
-// Mirrors ws_interp_prefill_statute_id() above.
-// When a new interpretation is opened from the common-law interpretation metabox,
+// Mirrors ws_construction_prefill_statute_id() above.
+// When a new construction is opened from the common-law construction metabox,
 // comlaw_id is passed as a URL param. acf/load_value returns it as the
 // field's live value so ACF renders the doctrine pre-selected.
 
-add_filter( 'acf/load_value/key=field_jx_interp_comlaw_id', 'ws_interp_prefill_comlaw_id', 5, 3 );
+add_filter( 'acf/load_value/key=field_jx_construction_comlaw_id', 'ws_construction_prefill_comlaw_id', 5, 3 );
 
-function ws_interp_prefill_comlaw_id( $value, $post_id, $field ) {
+function ws_construction_prefill_comlaw_id( $value, $post_id, $field ) {
 
     // Only pre-fill on brand-new auto-draft posts.
     if ( get_post_status( $post_id ) !== 'auto-draft' ) {
@@ -768,11 +810,11 @@ function ws_interp_prefill_comlaw_id( $value, $post_id, $field ) {
 }
 
 
-// ── Auto-populate ws_jx_interp_affected_jx ─────────────────────────────────
+// ── Auto-populate ws_jx_construction_affected_jx ─────────────────────────────────
 // ── from court matrix on every save ────────────────────────────────────────
 //
 // Runs at priority 20 (after ACF saves its fields at 10). Reads the court key
-// saved to ws_jx_interp_court, looks it up via ws_court_lookup() (checks both
+// saved to ws_jx_construction_court, looks it up via ws_court_lookup() (checks both
 // $_ws_federal_court_matrix and $_ws_state_court_matrix), and resolves
 // ws_jx_codes to ws_jurisdiction taxonomy term IDs.
 //
@@ -782,15 +824,15 @@ function ws_interp_prefill_comlaw_id( $value, $post_id, $field ) {
 //
 // Recomputes on every save so the value stays in sync if the court is changed.
 
-add_action( 'acf/save_post', 'ws_jx_interp_auto_populate_affected_jx', 20 );
+add_action( 'acf/save_post', 'ws_jx_construction_auto_populate_affected_jx', 20 );
 
-function ws_jx_interp_auto_populate_affected_jx( $post_id ) {
+function ws_jx_construction_auto_populate_affected_jx( $post_id ) {
 
-    if ( get_post_type( $post_id ) !== 'jx-interpretation' ) {
+    if ( get_post_type( $post_id ) !== 'jx-construction' ) {
         return;
     }
 
-    $court_key  = get_post_meta( $post_id, 'ws_jx_interp_court', true );
+    $court_key  = get_post_meta( $post_id, 'ws_jx_construction_court', true );
     $court_data = ws_court_lookup( $court_key );
 
     if ( ! $court_data ) {
@@ -806,7 +848,7 @@ function ws_jx_interp_auto_populate_affected_jx( $post_id ) {
 
     // SCOTUS: null = all jurisdictions. Store empty to signal bind-all.
     if ( $jx_codes === null ) {
-        update_post_meta( $post_id, 'ws_jx_interp_affected_jx', [] );
+        update_post_meta( $post_id, 'ws_jx_construction_affected_jx', [] );
         return;
     }
 
@@ -819,5 +861,5 @@ function ws_jx_interp_auto_populate_affected_jx( $post_id ) {
         }
     }
 
-    update_post_meta( $post_id, 'ws_jx_interp_affected_jx', $term_ids );
+    update_post_meta( $post_id, 'ws_jx_construction_affected_jx', $term_ids );
 }

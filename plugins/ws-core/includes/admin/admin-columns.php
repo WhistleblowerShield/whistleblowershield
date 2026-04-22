@@ -18,13 +18,13 @@
  * 3.0.0  Removed Resources column (CPT deleted). Replaced ACF relationship
  *        field lookups (ws_related_summary, ws_related_statutes) with
  *        taxonomy queries on ws_jurisdiction — matches admin-navigation.php.
- * 3.1.0  Added columns for jx-statute, jx-citation, jx-interpretation,
+ * 3.1.0  Added columns for jx-statute, jx-citation, jx-construction,
  *        ws-legal-update, ws-agency, and ws-assist-org list tables.
  * 3.1.1  Added inline comments to direct meta reads explaining why the
  *        query layer is not used in admin list table context.
- * 3.8.0  jx-interpretation Court column updated to use ws_court_lookup()
+ * 3.8.0  jx-construction Court column updated to use ws_court_lookup()
  *        for label resolution. 'other' court key shows the free-text
- *        ws_jx_interp_court_name value instead of the raw key.
+ *        ws_jx_construction_court_name value instead of the raw key.
  * 3.8.1  ws_agency_code column migrated here from cpt-agencies.php.
  *        Duplicate manage_ws-agency_posts_columns / _custom_column hooks in
  *        that file removed — admin-columns.php is the single source for all
@@ -252,11 +252,11 @@ function ws_render_citation_column( $column, $post_id ) {
 
 
 // ════════════════════════════════════════════════════════════════════════════
-// jx-interpretation columns: Jurisdiction, Court, Year, Favorable
+// jx-construction columns: Jurisdiction, Court, Year, Favorable
 // ════════════════════════════════════════════════════════════════════════════
 
-add_filter( 'manage_jx-interpretation_posts_columns', 'ws_add_interp_columns' );
-function ws_add_interp_columns( $columns ) {
+add_filter( 'manage_jx-construction_posts_columns', 'ws_add_construction_columns' );
+function ws_add_construction_columns( $columns ) {
     $new = [];
     foreach ( $columns as $key => $label ) {
         $new[ $key ] = $label;
@@ -270,8 +270,8 @@ function ws_add_interp_columns( $columns ) {
     return $new;
 }
 
-add_action( 'manage_jx-interpretation_posts_custom_column', 'ws_render_interp_column', 10, 2 );
-function ws_render_interp_column( $column, $post_id ) {
+add_action( 'manage_jx-construction_posts_custom_column', 'ws_render_construction_column', 10, 2 );
+function ws_render_construction_column( $column, $post_id ) {
     if ( $column === 'ws_jx' ) {
         $terms = get_the_terms( $post_id, WS_JURISDICTION_TAXONOMY );
         if ( $terms && ! is_wp_error( $terms ) ) {
@@ -281,19 +281,19 @@ function ws_render_interp_column( $column, $post_id ) {
         }
     } elseif ( $column === 'ws_court' ) {
         // Direct meta reads — admin list table display only; query layer is for front-end shortcode rendering.
-        $court_key = get_post_meta( $post_id, 'ws_jx_interp_court', true );
+        $court_key = get_post_meta( $post_id, 'ws_jx_construction_court', true );
         if ( $court_key === 'other' ) {
-            $name = get_post_meta( $post_id, 'ws_jx_interp_court_name', true ) ?: 'Other';
+            $name = get_post_meta( $post_id, 'ws_jx_construction_court_name', true ) ?: 'Other';
             echo esc_html( $name );
         } else {
             $court_entry = ws_court_lookup( $court_key );
             echo $court_entry ? esc_html( $court_entry['short'] ) : ( $court_key ? esc_html( $court_key ) : '<span style="color:#999;">—</span>' );
         }
     } elseif ( $column === 'ws_year' ) {
-        $year = get_post_meta( $post_id, 'ws_jx_interp_year', true );
+        $year = get_post_meta( $post_id, 'ws_jx_construction_year', true );
         echo $year ? esc_html( $year ) : '<span style="color:#999;">—</span>';
     } elseif ( $column === 'ws_favorable' ) {
-        $favorable = get_post_meta( $post_id, 'ws_jx_interp_is_favorable', true );
+        $favorable = get_post_meta( $post_id, 'ws_jx_construction_is_favorable', true );
         if ( $favorable === '' ) {
             echo '<span style="color:#999;">—</span>';
         } elseif ( $favorable ) {

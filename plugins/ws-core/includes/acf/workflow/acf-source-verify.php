@@ -4,7 +4,7 @@
  *
  * Group key: group_source_verify_metadata  (menu_order 95)
  *
- * Attaches to: jx-statute, jx-common-law, jx-citation, jx-interpretation,
+ * Attaches to: jx-statute, jx-common-law, jx-citation, jx-construction,
  *              ws-agency, ws-ag-procedure, ws-assist-org, jx-summary, ws-reference
  *
  * Fields:
@@ -66,7 +66,7 @@ function ws_register_source_verify_field_group() {
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-statute'        ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-common-law'     ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-citation'       ] ],
-            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-interpretation' ] ],
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-construction' ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-agency'         ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-ag-procedure'   ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'ws-assist-org'     ] ],

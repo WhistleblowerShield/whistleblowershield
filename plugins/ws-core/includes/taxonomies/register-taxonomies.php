@@ -37,7 +37,7 @@
  *         ws_disclosure_type, ws_protected_class, ws_disclosure_target,
  *         ws_adverse_action_type, ws_process_type, ws_remedy, ws_fee_shifting,
  *         ws_employer_defense, ws_employee_standard, ws_jurisdiction.
- *         jx-citation and jx-interpretation also added to taxonomies where missing.
+ *         jx-citation and jx-construction also added to taxonomies where missing.
  * 3.14.2  ws_disclosure_type and ws_process_type set to non-public.
  *         Both remain visible in wp-admin and available to internal tooling.
  */
@@ -60,7 +60,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_disclosure_type' ) ) {
         register_taxonomy(
             'ws_disclosure_type',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation', 'ws-agency', 'ws-ag-procedure', 'ws-assist-org' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-agency', 'ws-ag-procedure', 'ws-assist-org' ],
             [
                 'label'             => 'Disclosure Categories',
                 'labels'            => [
@@ -94,7 +94,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_process_type' ) ) {
         register_taxonomy(
             'ws_process_type',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation', 'ws-agency', 'ws-assist-org' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-agency', 'ws-assist-org' ],
             [
                 'label'             => 'Process Types',
                 'labels'            => [
@@ -128,7 +128,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_remedy' ) ) {
         register_taxonomy(
             'ws_remedy',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
             [
                 'label'             => 'Remedies',
                 'labels'            => [
@@ -163,7 +163,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_protected_class' ) ) {
         register_taxonomy(
             'ws_protected_class',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation', 'ws-assist-org' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-assist-org' ],
             [
                 'label'             => 'Protected Classes',
                 'labels'            => [
@@ -200,7 +200,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_adverse_action_type' ) ) {
         register_taxonomy(
             'ws_adverse_action_type',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
             [
                 'label'             => 'Adverse Action Types',
                 'labels'            => [
@@ -302,7 +302,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( WS_JURISDICTION_TAXONOMY ) ) {
         register_taxonomy(
             WS_JURISDICTION_TAXONOMY,
-            [ 'jurisdiction', 'jx-statute', 'jx-summary', 'jx-citation', 'jx-interpretation', 'jx-common-law', 'ws-agency', 'ws-ag-procedure', 'ws-assist-org' ],
+            [ 'jurisdiction', 'jx-statute', 'jx-summary', 'jx-citation', 'jx-construction', 'jx-common-law', 'ws-agency', 'ws-ag-procedure', 'ws-assist-org' ],
             [
                 'label'             => 'Jurisdictions',
                 'labels'            => [
@@ -337,7 +337,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_disclosure_target' ) ) {
         register_taxonomy(
             'ws_disclosure_target',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation', 'ws-assist-org' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-assist-org' ],
             [
                 'label'             => 'Disclosure Targets',
                 'labels'            => [
@@ -374,7 +374,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_fee_shifting' ) ) {
         register_taxonomy(
             'ws_fee_shifting',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
             [
                 'label'             => 'Fee Shifting Rules',
                 'labels'            => [
@@ -409,7 +409,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_employer_defense' ) ) {
         register_taxonomy(
             'ws_employer_defense',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
             [
                 'label'             => 'Employer Defense Standards',
                 'labels'            => [
@@ -482,7 +482,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_employment_sector' ) ) {
         register_taxonomy(
             'ws_employment_sector',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation', 'ws-agency', 'ag-procedure', 'ws-assist-org' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-agency', 'ag-procedure', 'ws-assist-org' ],
             [
                 'label'             => 'Employment Sectors',
                 'labels'            => [
@@ -596,7 +596,7 @@ function ws_register_taxonomies() {
     if ( ! taxonomy_exists( 'ws_employee_standard' ) ) {
         register_taxonomy(
             'ws_employee_standard',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-interpretation' ],
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
             [
                 'label'             => 'Employee Burden Standards',
                 'labels'            => [

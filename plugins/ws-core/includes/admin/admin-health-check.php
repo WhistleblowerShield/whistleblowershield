@@ -81,7 +81,7 @@ function ws_health_check_admin_notice() {
         'jx-statute',
         'jx-citation',
         'jx-common-law',
-        'jx-interpretation',
+        'jx-construction',
         'ws-reference',
         'ws-legal-update',
         'ws-agency',
@@ -98,7 +98,7 @@ function ws_health_check_admin_notice() {
     // ── 3. Core taxonomy registration ─────────────────────────────────────
     //
     // ws_jurisdiction drives the jurisdiction metabox guard, the tax_input
-    // pre-fill on interpretation/citation add URLs, and front-end term queries.
+    // pre-fill on construction/citation add URLs, and front-end term queries.
 
     if ( ! taxonomy_exists( WS_JURISDICTION_TAXONOMY ) ) {
         $issues[] = "Taxonomy not registered: <code>" . WS_JURISDICTION_TAXONOMY . "</code>";

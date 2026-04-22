@@ -147,7 +147,7 @@ function ws_shortcode_reference_page( $atts ) {
 
     // Build back URL — anchor to the originating section when section param is present.
     // section is set by ws_get_reference_page_url() at each call site (statutes,
-    // citations, interpretations). Matches id="ws-{section}" wrappers in the assembler.
+    // citations, constructions). Matches id="ws-{section}" wrappers in the assembler.
     $section  = isset( $_GET['section'] ) ? sanitize_key( $_GET['section'] ) : '';
     $back_url = $data['parent_url'];
     if ( $section ) {

@@ -36,7 +36,7 @@
  *   ws_render_plain_english_reviewed_badge() Plain-language review status badge.
  *   ws_render_jx_summary_footer()            Summary footer (author, date, badge, sources).
  *   ws_render_jx_citations()                 Case law / citations footnote section.
- *   ws_render_jx_interpretations()           Court interpretations card section.
+ *   ws_render_jx_constructions()           Court constructions card section.
  *   ws_render_jx_limitations()               Limitations section wrapper.
  *
  *
@@ -76,9 +76,9 @@
  * 3.10.1 ws_render_jx_limitations(): text field switched from sanitize_text_field/
  *        esc_html to wp_kses_post; glossary scan applied to assembled $items
  *        before section wrapper. Labels remain esc_html (identifiers, not prose).
- * 3.7.0  ws_render_jx_interpretations() added. Renders court interpretation
+ * 3.7.0  ws_render_jx_constructions() added. Renders court construction
  *        cards (case name, court/year/citation, favorable indicator, summary,
- *        External References button). Called by [ws_jx_interpretation].
+ *        External References button). Called by [ws_jx_construction].
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -415,26 +415,26 @@ function ws_render_jx_citations( $items, $section_class = '' ) {
 
 
 /**
- * Renders the court interpretations section.
+ * Renders the court constructions section.
  *
- * Formats each interpretation as a card: case name (linked to opinion URL
+ * Formats each construction as a card: case name (linked to opinion URL
  * when available), optional common name, court / year / citation meta line,
  * favorable-to-whistleblower indicator, plain-text summary, and a conditional
  * "→ External References" button.
  *
  * Calls ws_get_reference_page_url() to build the ref button URL — a lightweight
  * URL builder, not a database query. Wraps output in ws_render_section() which
- * applies wp_kses_post(). Called by ws_shortcode_jx_interpretation().
+ * applies wp_kses_post(). Called by ws_shortcode_jx_construction().
  *
- * Note: interpretations are federal court decisions. On state jurisdiction pages
+ * Note: constructions are federal court decisions. On state jurisdiction pages
  * they arrive with is_fed = true (US-term append). The --fed modifier class is
  * applied but the local/federal two-group split used for statutes and citations
- * is not appropriate here — all interpretations share a single section heading.
+ * is not appropriate here — all constructions share a single section heading.
  *
- * @param  array  $interps  Interpretation data arrays from ws_get_jx_interpretation_data().
+ * @param  array  $interps  construction data arrays from ws_get_jx_construction_data().
  * @return string           HTML section block, or empty string if $interps is empty.
  */
-function ws_render_jx_interpretations( $interps ) {
+function ws_render_jx_constructions( $interps ) {
     if ( empty( $interps ) ) return '';
 
     $content = '';
@@ -456,7 +456,7 @@ function ws_render_jx_interpretations( $interps ) {
 
         $ref_btn = '';
         if ( ! empty( $interp['ref_materials'] ) ) {
-            $ref_url = ws_get_reference_page_url( $interp['id'], 'interpretations' );
+            $ref_url = ws_get_reference_page_url( $interp['id'], 'constructions' );
             if ( $ref_url ) {
                 $ref_btn = '<div class="ws-ref-materials-link">'
                          . '<a href="' . esc_url( $ref_url ) . '" class="ws-ref-materials-btn" target="_blank">'
@@ -465,8 +465,8 @@ function ws_render_jx_interpretations( $interps ) {
             }
         }
 
-        $card_class = 'ws-interpretation-card'
-                    . ( $interp['is_fed'] ? ' ws-interpretation-card--fed' : '' );
+        $card_class = 'ws-construction-card'
+                    . ( $interp['is_fed'] ? ' ws-construction-card--fed' : '' );
 
         $card  = '<div class="' . esc_attr( $card_class ) . '">';
         $card .= '<p class="ws-interp-case-name">' . $name_html . '</p>';
@@ -494,7 +494,7 @@ function ws_render_jx_interpretations( $interps ) {
         $content .= $card;
     }
 
-    return ws_render_section( 'Court Interpretations', $content );
+    return ws_render_section( 'Court constructions', $content );
 }
 
 

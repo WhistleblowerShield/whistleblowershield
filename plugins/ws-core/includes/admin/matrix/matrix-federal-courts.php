@@ -1,6 +1,6 @@
 <?php
 /**
- * matrix-federal-courts.php — Global registry of U.S. federal courts for jx-interpretation fields.
+ * matrix-federal-courts.php — Global registry of U.S. federal courts for jx-construction fields.
  *
  * @package    WhistleblowerShield
  * @since      3.8.0
@@ -19,9 +19,9 @@ $ws_federal_court_matrix = [
 
     // ── 0. Other (edge case — court not in matrix) ────────────────────────
     //
-    // Selecting this entry reveals ws_jx_interp_court_name (free text field).
+    // Selecting this entry reveals ws_jx_construction_court_name (free text field).
     // ws_jx_codes = '__manual__' signals the save hook to skip auto-population
-    // of ws_jx_interp_affected_jurisdictions — the editor must set scope manually.
+    // of ws_jx_construction_affected_jurisdictions — the editor must set scope manually.
     // level = 99 ensures this entry sorts last in the select list.
 
     'other' => [
@@ -311,8 +311,8 @@ $ws_federal_court_matrix = [
 //
 // Courts are not a CPT. $_ws_federal_court_matrix is the single source of truth —
 // loaded into memory at runtime and consumed directly by:
-//   - acf-jx-interpretations.php  (ws_interp_court select field choices)
-//   - admin-interpretation-metabox.php  (court label resolution)
+//   - acf-jx-constructions.php  (ws_construction_court select field choices)
+//   - admin-construction-metabox.php  (court label resolution)
 //
 // No posts are created. No database rows need to exist for courts to work.
 //
@@ -324,7 +324,7 @@ $ws_federal_court_matrix = [
 //      can confirm every matrix loaded successfully on a given install.
 //
 // If courts ever need front-end pages or per-court admin UI, a ws-court CPT
-// can be added at that time. The ws_interp_court meta key already stores the
+// can be added at that time. The ws_construction_court meta key already stores the
 // matrix array key as a string, so no migration of existing data would be
 // required — the CPT slug would simply match the stored key.
 // ════════════════════════════════════════════════════════════════════════════

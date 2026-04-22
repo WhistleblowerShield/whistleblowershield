@@ -206,6 +206,21 @@ function ws_register_acf_jx_statutes() {
             ],
 
             [
+                'key'           => 'field_jx_statute_employment_sectors',
+                'label'         => 'Employment Sectors',
+                'name'          => 'ws_jx_statute_employment_sectors',
+                'type'          => 'taxonomy',
+                'taxonomy'      => 'ws_employment_sector',
+                'field_type'    => 'multi_select',
+                'instructions'  => 'Employment sectors this statute explicitly covers. Tag only what the statute text supports.',
+                'required'      => 0,
+                'add_term'      => 0,
+                'save_terms'    => 1,
+                'load_terms'    => 1,
+                'return_format' => 'id',
+            ],
+
+            [
                 'key'          => 'field_jx_statute_disclosure_target_details',
                 'label'        => 'Disclosure Targets Details',
                 'name'         => 'ws_jx_statute_disclosure_target_details',
@@ -386,6 +401,33 @@ function ws_register_acf_jx_statutes() {
                     'value'    => '1',
                 ] ] ],
                 'wrapper'           => [ 'width' => '70' ],
+            ],
+
+            [
+                'key'           => 'field_jx_statute_has_employer_threshold',
+                'label'         => 'Employer Size Threshold',
+                'name'          => 'ws_jx_statute_has_employer_threshold',
+                'type'          => 'true_false',
+                'instructions'  => 'Enable when the statute restricts coverage based on employer size (e.g. "employers with 15 or more employees").',
+                'ui'            => 1,
+                'ui_on_text'    => 'Yes',
+                'ui_off_text'   => 'No',
+                'default_value' => 0,
+            ],
+
+            [
+                'key'               => 'field_jx_statute_employer_threshold_details',
+                'label'             => 'Employer Threshold Details',
+                'name'              => 'ws_jx_statute_employer_threshold_details',
+                'type'              => 'textarea',
+                'instructions'      => 'Describe the employer size requirement as stated in the statute. Include the threshold number and whether it is a minimum or maximum.',
+                'required'          => 0,
+                'rows'              => 3,
+                'conditional_logic' => [ [ [
+                    'field'    => 'field_jx_statute_has_employer_threshold',
+                    'operator' => '==',
+                    'value'    => '1',
+                ] ] ],
             ],
 
             // ────────────────────────────────────────────────────────────────

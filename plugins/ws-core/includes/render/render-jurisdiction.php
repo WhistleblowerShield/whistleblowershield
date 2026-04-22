@@ -139,7 +139,7 @@ Curated Render Path  (default)
  * when no filter context is active.
  *
  * Render order: header → disclaimer → summary → statutes → citations →
- *               interpretations → limitations → legal updates → fallback
+ *               constructions → limitations → legal updates → fallback
  *
  * @param  WP_Post  $post        The jurisdiction post object.
  * @param  int|null $jx_term_id  The ws_jurisdiction term ID for this post.
@@ -184,11 +184,11 @@ function ws_render_jx_curated( $post, $jx_term_id ) {
         $has_content  = true;
     }
 
-    // Interpretations — after citations, before limitations.
-    // id="ws-interpretations" is the anchor target for the reference page back link.
-    $interpretations = do_shortcode( '[ws_jx_interpretation]' );
-    if ( $interpretations ) {
-        $output      .= '<div id="ws-interpretations">' . $interpretations . '</div>';
+    // constructions — after citations, before limitations.
+    // id="ws-constructions" is the anchor target for the reference page back link.
+    $constructions = do_shortcode( '[ws_jx_construction]' );
+    if ( $constructions ) {
+        $output      .= '<div id="ws-constructions">' . $constructions . '</div>';
         $has_content  = true;
     }
 
@@ -258,7 +258,7 @@ function ws_render_jx_curated( $post, $jx_term_id ) {
 //   - $filter_context is an array of resolved taxonomy term IDs built from
 //     the plain-English question panel ($_GET params on page load).
 //     Example: [ 'ws_industry' => [12, 47], 'ws_disclosure_type' => [8] ]
-//   - Output includes statutes, citations, interpretations, limitations, and
+//   - Output includes statutes, citations, constructions, limitations, and
 //     ws-assist-org records matched by the filter context. ws-assist-org and
 //     ws-agency records are not on the curated page — they appear here only.
 //   - Render order mirrors the curated path; assist-orgs append last.

@@ -382,7 +382,7 @@ function ws_render_citation_row( $post_id ) {
 //
 // The agency_id URL parameter is read by ws_ag_procedure_prefill_agency_id() in
 // acf-ag-procedures.php, which pre-selects the parent agency on auto-draft
-// posts — matching the pattern used for interpretations and statutes.
+// posts — matching the pattern used for constructions and statutes.
 // ════════════════════════════════════════════════════════════════════════════
 
 add_action( 'add_meta_boxes', 'ws_add_agency_navigation_box' );
