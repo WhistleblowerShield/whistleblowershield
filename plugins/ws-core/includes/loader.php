@@ -128,8 +128,8 @@
  *          Seeds ag-procedure posts. Hard dependencies:
  *            — matrix-agencies must have run (resolves agency_slug via
  *              get_page_by_path() against ws-agency posts).
- *            — matrix-fed-statutes must have run (resolves parent_slugs
- *              via ws_ag_procedure_matrix_resolve_parent_ids() against
+ *            — matrix-fed-statutes must have run (resolves statute_slugs
+ *              via ws_ag_procedure_matrix_resolve_statute_ids() against
  *              jx-statute posts).
  *          Must be last post-creating seeder before admin-matrix-watch.
  *
