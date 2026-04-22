@@ -17,7 +17,7 @@ major edit) live in `workflow/` — see `workflow/README.md`.
 | `acf-jx-statutes.php` | `jx-statute` | `group_jx_statute_metadata` |
 | `acf-jx-common-law.php` | `jx-common-law` | `group_jx_comlaw_metadata` |
 | `acf-jx-citations.php` | `jx-citation` | `group_jx_citation_metadata` |
-| `acf-jx-interpretations.php` | `jx-interpretation` | `group_jx_interpretation_metadata` |
+| `acf-jx-constructions.php` | `jx-construction` | `group_jx_construction_metadata` |
 | `acf-agencies.php` | `ws-agency` | `group_agency_metadata` |
 | `acf-ag-procedures.php` | `ws-ag-procedure` | `group_ag_procedure_metadata` |
 | `acf-assist-orgs.php` | `ws-assist-org` | `group_assist_org_metadata` |

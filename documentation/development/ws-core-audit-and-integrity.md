@@ -31,7 +31,7 @@ never exposed in the WordPress admin UI or ACF field groups.
 | `_ws_edit_history` | Append-only, never overwritten | Array of `{ user_id, display_name, timestamp }` entries |
 
 **Audited CPTs:** `jurisdiction`, `jx-summary`, `jx-statute`,
-`jx-citation`, `jx-interpretation`, `ws-legal-update`, `ws-agency`
+`jx-citation`, `jx-construction`, `ws-legal-update`, `ws-agency`
 
 **Hook priority:** `save_post` at priority 99 — after ACF finishes
 writing its own fields — to avoid any race condition with ACF data.
@@ -61,7 +61,7 @@ maintains the platform's changelog without requiring editors to manually
 create legal update entries.
 
 **Supported CPTs:** `jx-summary`, `jx-statute`,`jx-common-law`, `jx-citation`,
-`jx-interpretation`, `ws-ag-procedure`
+`jx-construction`, `ws-ag-procedure`
 
 **Behavior on save:**
 
@@ -250,7 +250,7 @@ prevent race conditions on concurrent cron runs.
 
 A completion tracker for all 57 jurisdictions. Accessible via the admin
 sidebar menu. Shows each jurisdiction's status across all content CPTs:
-summary, statutes, citations, interpretations, legal updates, agencies,
+summary, statutes, citations, constructions, legal updates, agencies,
 and assist organizations.
 
 **Caching:** Full rendered HTML table cached as `ws_jx_dashboard_html`

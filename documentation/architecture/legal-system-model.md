@@ -16,7 +16,7 @@ database schema — that lives in `ws-core-data-layer.md`.
 
 Whistleblower law in the United States is not a single body of law. It is
 a patchwork of federal statutes, state statutes, agency-specific regulations,
-and case law interpretations that vary by:
+and case law constructions that vary by:
 
 - **Jurisdiction** — federal law applies everywhere; state law varies
   dramatically; territorial law is its own category
@@ -54,7 +54,7 @@ content records scoped to it.
 
 A specific law or regulation that provides whistleblower protection.
 Statutes are the foundational legal content of the platform — everything
-else (citations, interpretations, procedures) connects back to statutes.
+else (citations, constructions, procedures) connects back to statutes.
 
 A statute record captures:
 - The official name and citation
@@ -85,13 +85,13 @@ more statutes. The `attach_flag` marks citations that are significant
 enough to surface on the jurisdiction summary page as curated highlights.
 Unflagged citations are fully accessible via filtering.
 
-### Interpretation
+### construction
 
 A structured record of how a specific court or tribunal has interpreted
 a statutory protection, linked to both a statute and a specific court.
 
 The court dimension is significant: the same statute may be interpreted
-differently by the Ninth Circuit and the Fifth Circuit. Interpretations
+differently by the Ninth Circuit and the Fifth Circuit. constructions
 carry the court key, which resolves to a court entry in one of two
 in-memory court matrices (federal courts or state/territorial courts).
 When no court applies or the court is not in the matrix, the `other`
@@ -167,7 +167,7 @@ Legal updates appear on jurisdiction pages and in a sitewide feed.
 ### Reference
 
 An external source document linked to a statute, citation, or
-interpretation. References appear in a dedicated reference page surfaced
+construction. References appear in a dedicated reference page surfaced
 from a small trigger link on the parent record. All reference links
 carry `rel="noopener noreferrer nofollow"` and open in a new tab.
 
@@ -182,7 +182,7 @@ Jurisdiction (57)
     │
     ├── Statute (many, including federal appended to all states)
     │       ├── Citation (many, attach_flag for curation)
-    │       ├── Interpretation (many, court-scoped)
+    │       ├── construction (many, court-scoped)
     │       └── Reference (many, external sources)
     │
     ├── Agency (many)
@@ -227,7 +227,7 @@ handles that mapping.
 Legal accuracy and plain language are not the same document. The platform
 maintains both.
 
-For statutes, citations, and interpretations: the primary record contains
+For statutes, citations, and constructions: the primary record contains
 the full technical detail — citation, burden of proof, statute of
 limitations, employer defense standards. A plain English overlay
 (controlled by `has_plain_english` and `ws_plain_english_wysiwyg`) can

@@ -68,7 +68,7 @@ denotes site-wide or directory CPTs.
 | `jx-summary` | Jurisdiction Summary | — | — | Plain-language overview of protections; one per jurisdiction |
 | `jx-statute` | Statute | — | — | Individual statute or regulation record |
 | `jx-citation` | Jurisdiction Citation | — | — | Case law citation; attach-flag for curation |
-| `jx-interpretation` | Statute Interpretation | — | — | Court-specific statutory interpretation |
+| `jx-construction` | Statute construction | — | — | Court-specific statutory construction |
 | `ws-agency` | Agency | ✓ | `/agencies/` | Government agency with whistleblower jurisdiction |
 | `ws-ag-procedure` | Procedure | ✓ | — | Filing procedure attached to a parent agency |
 | `ws-assist-org` | Assistance Organization | ✓ | `/assistance-organizations/` | Non-government help organization |
@@ -78,7 +78,7 @@ denotes site-wide or directory CPTs.
 **Notes:**
 - `jurisdiction` has no archive — the jurisdictions index is a standard
   WordPress page using the `[ws_jurisdiction_index]` shortcode.
-- `jx-summary`, `jx-statute`, `jx-citation`, `jx-interpretation`, and
+- `jx-summary`, `jx-statute`, `jx-citation`, `jx-construction`, and
   `ws-legal-update` are non-public. Their content is rendered exclusively
   through the query layer and assembly layer on parent pages.
 - `ws-ag-procedure` is publicly queryable so individual procedure
@@ -99,7 +99,7 @@ or filtering taxonomies.
 |---|---|---|---|---|
 | `ws_jurisdiction` | Jurisdictions | — | — | All content CPTs |
 | `ws_disclosure_type` | Disclosure Categories | ✓ | ✓ | `jx-statute`, `jx-citation`, `ws-agency`, `ws-ag-procedure`, `ws-assist-org` |
-| `ws_process_type` | Process Types | — | ✓ | `jx-statute`, `ws-agency`, `ws-assist-org`, `jx-interpretation` |
+| `ws_process_type` | Process Types | — | ✓ | `jx-statute`, `ws-agency`, `ws-assist-org`, `jx-construction` |
 | `ws_remedy` | Remedies | — | — | `jx-statute` |
 | `ws_protected_class` | Protected Classes | ✓ | — | `jx-statute` |
 | `ws_adverse_action_type` | Adverse Action Types | — | — | `jx-statute` |
@@ -151,14 +151,14 @@ All constants are defined in `ws-core.php` before the bootstrap runs.
 | `WS_CACHE_ALL_JURISDICTIONS` | `'ws_all_jurisdictions_cache_'` | Transient key for full jurisdiction list cache |
 | `WS_CACHE_JX_INDEX` | `'ws_jx_index_cache'` | Transient key for jurisdiction index page cache |
 | `WS_CACHE_LEGAL_UPDATES_SITEWIDE` | `'ws_legal_updates_sitewide'` | Transient key for sitewide legal updates cache (up to 100 items) |
-| `WS_REF_PARENT_TYPES` | `['jx-statute', 'jx-citation', 'jx-interpretation']` | CPT slugs that support reference parent relationships |
+| `WS_REF_PARENT_TYPES` | `['jx-statute', 'jx-citation', 'jx-construction']` | CPT slugs that support reference parent relationships |
 | `WS_SOURCE_MATRIX_SEED` | `'matrix_seed'` | Source method: created by matrix seeder |
 | `WS_SOURCE_ai_research` | `'ai_research'` | Source method: created with AI assistance |
 | `WS_SOURCE_BULK_IMPORT` | `'bulk_import'` | Source method: created via bulk import |
 | `WS_SOURCE_FEED_IMPORT` | `'feed_import'` | Source method: created via feed monitor |
 | `WS_SOURCE_HUMAN_CREATED` | `'human_created'` | Source method: created directly by a human editor |
 | `WS_SOURCE_NAME_DIRECT` | `'Direct'` | Source name value for matrix_seed and human_created posts where source and method are the same |
-| `WS_LEGAL_UPDATE_SUMMARY_TYPES` | `['statute','citation','summary','interpretation','regulation','policy']` | Legal update types that appear on public-facing pages; `internal` and `other` are excluded |
+| `WS_LEGAL_UPDATE_SUMMARY_TYPES` | `['statute','citation','summary','construction','regulation','policy']` | Legal update types that appear on public-facing pages; `internal` and `other` are excluded |
 
 ---
 
@@ -188,7 +188,7 @@ All plugin functions carry the `ws_` prefix. No exceptions.
    `_ws_auto_date_created_gmt`, `_ws_auto_last_edited_gmt`.
 4. Content CPT meta keys carry a CPT infix:
    `ws_jx_*`, `ws_agency_*`, `ws_aorg_*`, `ws_legal_update_*`,
-   `ws_jx_interp_*`, `ws_jx_citation_*`, `ws_proc_*`.
+   `ws_jx_construction*`, `ws_jx_citation_*`, `ws_proc_*`.
 5. Data-type suffixes: `_url` (URL string), `_wysiwyg` (rich-text
    content), `_id` (integer foreign key or term ID).
 6. Plural vs. singular: filenames and directories may be plural.

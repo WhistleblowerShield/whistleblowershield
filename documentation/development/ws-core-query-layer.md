@@ -222,8 +222,8 @@ statutes. Fields: `citation_type`, `disclosure_type`, `official_name`,
 `last_reviewed`, `statute_ids`, `ref_materials`, plus `plain`,
 `verify`, `record`.
 
-#### `ws_get_jx_interpretation_data( $jx_term_id )`
-Returns an array of interpretation data arrays. Same federal append
+#### `ws_get_jx_construction_data( $jx_term_id )`
+Returns an array of construction data arrays. Same federal append
 logic. Fields: `court` (resolved to short label via `ws_court_lookup()`),
 `court_name` (free-text when court is `other`), `year`, `favorable`,
 `official_name`, `common_name`, `case_citation`, `url`, `summary`,
@@ -277,12 +277,12 @@ every legal update save.
 
 #### `ws_get_ref_materials( $post_id )`
 Returns reference material rows for a statute, citation, or
-interpretation post. Returns array or `[]`. Used internally by
-statute/citation/interpretation dataset functions.
+construction post. Returns array or `[]`. Used internally by
+statute/citation/construction dataset functions.
 
 #### `ws_get_reference_page_data( $parent_post_id )`
 Returns data for the reference page display. Accepts the parent
-post ID (statute, citation, or interpretation). Returns structured
+post ID (statute, citation, or construction). Returns structured
 data including two-part disclaimer and the trimmed reference list.
 
 ---

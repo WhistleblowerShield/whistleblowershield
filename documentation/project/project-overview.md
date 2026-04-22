@@ -10,7 +10,7 @@ level.
 The platform is built on two foundational ideas:
 
 1. **Legal information is structured data, not prose.** Statutes, citations,
-   interpretations, agencies, procedures, and assist organizations are
+   constructions, agencies, procedures, and assist organizations are
    discrete entities with explicit relationships to each other and to
    jurisdictions. Storing and presenting them as structured records — rather
    than as articles — enables consistency, traceability, and filtering
@@ -58,7 +58,7 @@ Rico, U.S. Virgin Islands), and the federal level.
 - Statutes and regulations (with enforcement details, remedies, burden of
   proof, statute of limitations)
 - Case law citations (with attach-flag curation for summary page highlights)
-- Judicial interpretations (court-specific, statute-linked)
+- Judicial constructions (court-specific, statute-linked)
 - Federal agencies with filing procedures
 - Assist organizations (legal aid, advocacy, law firms, bar programs)
 

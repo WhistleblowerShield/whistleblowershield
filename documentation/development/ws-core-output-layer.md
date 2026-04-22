@@ -82,7 +82,7 @@ Dispatches to one of two paths:
 
 - **`ws_render_jx_curated( $post, $jx_term_id )`** — the standard path.
   Builds the full jurisdiction page from available published datasets:
-  header, summary, statutes, citations, interpretations, agencies,
+  header, summary, statutes, citations, constructions, agencies,
   assist organizations, legal updates. Each section is conditionally
   rendered — if a dataset has no published records, the section is
   omitted entirely. If no sections render, a single
@@ -94,7 +94,7 @@ Dispatches to one of two paths:
   Dispatch hook point is in place.
 
 Section anchors are written into the wrapper divs:
-`id="ws-statutes"`, `id="ws-citations"`, `id="ws-interpretations"`.
+`id="ws-statutes"`, `id="ws-citations"`, `id="ws-constructions"`.
 
 ### `render-agency.php`
 
@@ -125,7 +125,7 @@ Section renderers for jurisdiction page components.
 | `ws_render_plain_english_reviewed_badge( $reviewed, $reviewer_name, $date )` | "Editor Reviewed" trust badge with hover tooltip showing reviewer name and date |
 | `ws_render_jx_summary_footer( $data )` | Summary authorship footer (created/edited dates, sources) |
 | `ws_render_jx_citations( $items, $section_class )` | Citation list with footnote reference pattern |
-| `ws_render_jx_interpretations( $interps )` | Court interpretation blocks with court label, year, favorable flag |
+| `ws_render_jx_constructions( $interps )` | Court construction blocks with court label, year, favorable flag |
 | `ws_render_jx_limitations( $limitations )` | Limitations and ramifications list from summary repeater |
 | `ws_render_statute_procedures( $procedures )` | Compact "Filing Procedures Under This Statute" cross-reference panel |
 
@@ -186,7 +186,7 @@ placed on a non-jurisdiction page.
 | `[ws_jx_statutes]` | *(none)* | Curated statute blocks with two-group local/federal split |
 | `[ws_jx_flag]` | `jx=""` | Flag image with attribution only (no header) |
 | `[ws_jx_citation]` | *(none)* | Curated citation list |
-| `[ws_jx_interpretation]` | *(none)* | Curated interpretation blocks |
+| `[ws_jx_construction]` | *(none)* | Curated construction blocks |
 | `[ws_jx_limitations]` | *(none)* | Limitations and ramifications list |
 
 **Important:** On jurisdiction CPT pages these shortcodes are placed
@@ -277,4 +277,4 @@ hash to the back link so users return to the correct position on the
 parent jurisdiction page.
 
 The small "→ External References" trigger on statute, citation, and
-interpretation blocks links to this page with the appropriate post ID.
+construction blocks links to this page with the appropriate post ID.

@@ -19,104 +19,104 @@
     cursor: default;
 }
 
-#ws_constructions .ws-interp-table {
+#ws_constructions .ws-construction-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 12px;
 }
 
-#ws_constructions .ws-interp-table th,
-#ws_constructions .ws-interp-table td {
+#ws_constructions .ws-construction-table th,
+#ws_constructions .ws-construction-table td {
     padding: 6px 10px;
     border-bottom: 1px solid #e0e0e0;
     text-align: left;
     font-size: 13px;
 }
 
-#ws_constructions .ws-interp-table th {
+#ws_constructions .ws-construction-table th {
     background: #f6f7f7;
     font-weight: 600;
     color: #1d2327;
 }
 
-#ws_constructions .ws-interp-table .ws-favorable-yes {
+#ws_constructions .ws-construction-table .ws-favorable-yes {
     color: #1a7a1a;
     font-weight: 600;
 }
 
-#ws_constructions .ws-interp-table .ws-favorable-no {
+#ws_constructions .ws-construction-table .ws-favorable-no {
     color: #a00;
 }
 
-#ws_constructions .ws-interp-empty {
+#ws_constructions .ws-construction-empty {
     color: #666;
     font-style: italic;
     margin-bottom: 12px;
 }
 
-#ws_constructions .ws-interp-actions {
+#ws_constructions .ws-construction-actions {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-#ws_constructions .ws-interp-add-btn {
+#ws_constructions .ws-construction-add-btn {
     text-decoration: none;
 }
 
-#ws_constructions .ws-interp-add-btn[disabled] {
+#ws_constructions .ws-construction-add-btn[disabled] {
     opacity: .5;
     pointer-events: none;
     cursor: not-allowed;
 }
 
 
-#ws_citations .ws-cite-table {
+#ws_citations .ws-citation-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 12px;
 }
 
-#ws_citations .ws-cite-table th,
-#ws_citations .ws-cite-table td {
+#ws_citations .ws-citation-table th,
+#ws_citations .ws-citation-table td {
     padding: 6px 10px;
     border-bottom: 1px solid #e0e0e0;
     text-align: left;
     font-size: 13px;
 }
 
-#ws_citations .ws-cite-table th {
+#ws_citations .ws-citation-table th {
     background: #f6f7f7;
     font-weight: 600;
     color: #1d2327;
 }
 
-#ws_citations .ws-cite-table .ws-attached-yes {
+#ws_citations .ws-citation-table .ws-attached-yes {
     color: #1a7a1a;
     font-weight: 600;
 }
 
-#ws_citations .ws-cite-table .ws-attached-no {
+#ws_citations .ws-citation-table .ws-attached-no {
     color: #999;
 }
 
-#ws_citations .ws-cite-empty {
+#ws_citations .ws-citation-empty {
     color: #666;
     font-style: italic;
     margin-bottom: 12px;
 }
 
-#ws_citations .ws-cite-actions {
+#ws_citations .ws-citation-actions {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-#ws_citations .ws-cite-add-btn {
+#ws_citations .ws-citation-add-btn {
     text-decoration: none;
 }
 
-#ws_citations .ws-cite-add-btn[disabled] {
+#ws_citations .ws-citation-add-btn[disabled] {
     opacity: .5;
     pointer-events: none;
     cursor: not-allowed;

@@ -21,7 +21,7 @@ thing a new contributor can learn before touching any code.
 Defines what exists and how it is shaped.
 
 Custom Post Types (CPTs) represent the primary content entities —
-jurisdictions, statutes, citations, interpretations, agencies, procedures,
+jurisdictions, statutes, citations, constructions, agencies, procedures,
 assist organizations, legal updates, references, and summaries. Each CPT
 is a distinct data type with its own ACF field group defining its fields.
 
@@ -139,7 +139,7 @@ Query layer functions called:
   ws_get_jx_summary_data()
   ws_get_jx_statute_data()     ← appends US-scoped federal records
   ws_get_jx_citation_data()    ← appends US-scoped federal records
-  ws_get_jx_interpretation_data()
+  ws_get_jx_construction_data()
   ws_get_agency_data()
   ws_get_assist_org_data()
   ws_get_legal_updates_data()
@@ -150,7 +150,7 @@ HTML output returned to WordPress for display
 ```
 
 The federal append (`is_fed` flag) deserves specific mention: statute,
-citation, and interpretation queries automatically include US-scoped
+citation, and construction queries automatically include US-scoped
 records alongside state-scoped records on every state page. Federal law
 applies everywhere. The `is_fed` flag in the return array lets the render
 layer visually distinguish federal records from state records when both
@@ -177,7 +177,7 @@ string `'ws_jurisdiction'` — always use the constant.
 
 ## The Attach-Flag Pattern
 
-Statutes, citations, and interpretations each carry two fields:
+Statutes, citations, and constructions each carry two fields:
 
 - `ws_attach_flag` (boolean) — marks a record as a curated highlight
 - `ws_display_order` (integer) — controls sort order among flagged records

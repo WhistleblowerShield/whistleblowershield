@@ -62,7 +62,7 @@ The `ws-core` plugin is organized into six conceptual layers:
 
 **Data layer** — 10 Custom Post Types, 16 taxonomies, 14 ACF Pro field
 groups. Legal information is structured data: statutes, citations, court
-interpretations, agencies, filing procedures, and assist organizations
+constructions, agencies, filing procedures, and assist organizations
 are discrete entities with explicit relationships, not paragraphs of text.
 
 **Matrix layer** — Idempotent seeders that populate the canonical

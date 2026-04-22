@@ -51,7 +51,7 @@ non-administrators. The hook that writes them is
 
 ## Plain English Fields (`group_plain_english_metadata`)
 
-**Attaches to:** `jx-statute`, `jx-citation`, `jx-interpretation`,
+**Attaches to:** `jx-statute`, `jx-citation`, `jx-construction`,
 `ws-agency`
 
 **Intentionally excluded:**
@@ -72,7 +72,7 @@ Integrity guards enforced by `ws_acf_plain_english_guards()` in
 
 ## Source Verify Fields (`group_source_verify_metadata`)
 
-**Attaches to:** `jx-statute`, `jx-citation`, `jx-interpretation`,
+**Attaches to:** `jx-statute`, `jx-citation`, `jx-construction`,
 `ws-agency`, `ws-ag-procedure`, `ws-assist-org`, `jx-summary`,
 `ws-reference`
 

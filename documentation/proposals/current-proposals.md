@@ -41,7 +41,7 @@ idempotent gates. ACF field names synced to JSON schema keys (v3.14.0).
 
 **Query layer:** All dataset functions for all CPTs. Transient caching
 with correct invalidation. Federal append pattern for statutes,
-citations, and interpretations. Per-agency and per-statute procedure
+citations, and constructions. Per-agency and per-statute procedure
 transients with stash+diff invalidation.
 
 **Assembly layer:** Jurisdiction assembler building full pages from

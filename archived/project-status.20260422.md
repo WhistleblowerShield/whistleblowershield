@@ -3,7 +3,7 @@
 **Last updated:** 2026-04-06
 **Plugin version:** 3.15.0
 **Prompt template version:** v2.0.14
-**NotebookLM Ruleset version:** embed - v1.2.1 addendum - v1.2.6 (undeployed)
+**NotebookLM Ruleset version:** v1.0.8
 **Environment:** Live — behind construction page at whistleblowershield.org
 
 ---

@@ -451,7 +451,7 @@ function ws_render_jx_constructions( $interps ) {
             esc_html( $interp['citation'] ),
         ] );
 
-        $favorable_class = $interp['is_favorable'] ? 'ws-interp-favorable' : 'ws-interp-unfavorable';
+        $favorable_class = $interp['is_favorable'] ? 'ws-construction-favorable' : 'ws-construction-unfavorable';
         $favorable_label = $interp['is_favorable'] ? 'Favorable' : 'Unfavorable';
 
         $ref_btn = '';
@@ -469,23 +469,23 @@ function ws_render_jx_constructions( $interps ) {
                     . ( $interp['is_fed'] ? ' ws-construction-card--fed' : '' );
 
         $card  = '<div class="' . esc_attr( $card_class ) . '">';
-        $card .= '<p class="ws-interp-case-name">' . $name_html . '</p>';
+        $card .= '<p class="ws-construction-case-name">' . $name_html . '</p>';
 
         if ( $interp['common_name'] ) {
-            $card .= '<p class="ws-interp-common-name">'
+            $card .= '<p class="ws-construction-common-name">'
                    . esc_html( $interp['common_name'] ) . '</p>';
         }
 
         if ( $meta_parts ) {
             $favorable_span = '<span class="' . esc_attr( $favorable_class ) . '">'
                             . esc_html( $favorable_label ) . '</span>';
-            $card .= '<p class="ws-interp-meta">'
+            $card .= '<p class="ws-construction-meta">'
                    . implode( ' &bull; ', $meta_parts )
                    . ' &bull; ' . $favorable_span . '</p>';
         }
 
         if ( $interp['summary'] ) {
-            $card .= '<p class="ws-interp-summary">'
+            $card .= '<p class="ws-construction-summary">'
                    . esc_html( $interp['summary'] ) . '</p>';
         }
 

@@ -833,7 +833,7 @@ function ws_get_jx_construction_data( $jx_term_id ) {
         ] );
         $rows = [];
         foreach ( $q->posts as $interp ) {
-            $iid    = $interp->ID;
+            $iid    = $construction->ID;
             $rows[] = [
                 'id'      => $iid,
                 'title'   => get_the_title( $iid ),

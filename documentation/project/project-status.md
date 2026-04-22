@@ -46,10 +46,10 @@ New field: `ws_jx_statute_bop_flag` / `ws_cl_bop_flag`.
 **Admin tools** (`includes/admin/tools/`):
 - `tool-generate-prompt.php` (v3.14.1) — generates AI research prompts
   from live WordPress taxonomy data via `get_terms()`. Four record types:
-  statute, common-law, citation, interpretation. Outputs to
+  statute, common-law, citation, construction. Outputs to
   `wp-content/logs/ws-prompts/[JX]-[N]-[Type]-[timestamp].txt`.
 - `tool-ingest.php` (v3.15.0) — processes validated JSON batches for
-  statute, common-law, citation, and interpretation records. Three-phase pipeline:
+  statute, common-law, citation, and construction records. Three-phase pipeline:
   pre-flight validation → admin confirmation → record processing.
   Four ledger/breadcrumb logs in `wp-content/logs/ws-ingest/`; detailed run logs in `wp-content/logs/ws-ingest/ingested/`.
 
@@ -103,7 +103,7 @@ Key additions since v2.0.8:
 - `fee_shifting` in routinely-empty list
 - `_reconciled_notes` added to schema — NotebookLM only, autostripped
 - `specific_impact` guidance for citations (10-20 words, action-verb first)
-- Court shorthand reference for citations/interpretations
+- Court shorthand reference for citations/constructions
 - `bop_flag` field added
 - Taxonomy tables generated from live WordPress database via `get_terms()`
   (prompt generator) — no hardcoded arrays, approved terms surface

@@ -29,7 +29,7 @@ that shaped the current implementation.
 - `system-architecture.md` — layer overview, data flow, separation of
   concerns, the query-layer contract
 - `legal-system-model.md` — how legal concepts, jurisdictions, statutes,
-  citations, and interpretations are modeled as structured data
+  citations, and constructions are modeled as structured data
 
 ### `/development/`
 Technical reference for the ws-core plugin — the WordPress plugin that
@@ -53,7 +53,7 @@ Standards and guidelines for content creation and maintenance.
 - `editorial-system.md` — writing standards, content structure, the
   plain-language layer, the layered content model
 - `research-and-transparency.md` — source handling, primary vs. secondary
-  sources, interpretation standards, transparency practices
+  sources, construction standards, transparency practices
 
 ### `/product/`
 User-facing design and guidance principles.
@@ -86,7 +86,7 @@ Violations produce fragile, unmaintainable output code.
 the `ws_jurisdiction` taxonomy, not post meta. The USPS code slug (e.g.
 `ca`, `us`, `tx`) is the canonical join key across every content type.
 
-**The attach-flag pattern:** Statutes, citations, and interpretations each
+**The attach-flag pattern:** Statutes, citations, and constructions each
 carry an `attach_flag` boolean. Flagged records are editorially curated
 highlights surfaced on the jurisdiction summary page. The flag does not
 control visibility — unflagged records are fully accessible via filtering.

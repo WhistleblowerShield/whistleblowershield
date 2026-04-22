@@ -21,9 +21,9 @@ shared groups that attach to multiple CPTs via their location rules:
 | Shared Group | Group Key | Attaches To | Purpose |
 |---|---|---|---|
 | Stamp Fields | `group_stamp_metadata` | All 9 content CPTs | Created/edited timestamps and authorship |
-| Plain English Fields | `group_plain_english_metadata` | `jx-statute`, `jx-common-law`, `jx-citation`, `jx-interpretation`, `ws-agency` | Plain language overlay toggle, content, and review stamps |
+| Plain English Fields | `group_plain_english_metadata` | `jx-statute`, `jx-common-law`, `jx-citation`, `jx-construction`, `ws-agency` | Plain language overlay toggle, content, and review stamps |
 | Source Verify Fields | `group_source_verify_metadata` | All content CPTs except `jurisdiction` | Source method, verification status, needs-review flag |
-| Major Edit | `group_major_edit_metadata` | `jx-summary`, `jx-statute`, `jx-citation`, `jx-interpretation`, `ws-ag-procedure` | Flag + describe a major editorial change that triggers a legal update post |
+| Major Edit | `group_major_edit_metadata` | `jx-summary`, `jx-statute`, `jx-citation`, `jx-construction`, `ws-ag-procedure` | Flag + describe a major editorial change that triggers a legal update post |
 
 The shared groups load at `menu_order` 85–90, appearing after CPT-specific
 groups in the admin edit screen. They are never duplicated in individual
@@ -36,7 +36,7 @@ CPT field files.
 **Group key:** `group_stamp_metadata`
 **File:** `acf/acf-stamp-fields.php`
 **Attaches to:** `jx-summary`, `jx-statute`, `jx-citation`,
-`jx-interpretation`, `ws-agency`, `ws-ag-procedure`, `ws-assist-org`,
+`jx-construction`, `ws-agency`, `ws-ag-procedure`, `ws-assist-org`,
 `ws-legal-update`, `ws-reference`
 
 All fields in this group are auto-filled by hook logic and locked
@@ -59,7 +59,7 @@ Hidden audit keys (no ACF field, never shown in UI):
 
 **Group key:** `group_plain_english_metadata`
 **File:** `acf/acf-plain-english-fields.php`
-**Attaches to:** `jx-statute`, `jx-citation`, `jx-interpretation`,
+**Attaches to:** `jx-statute`, `jx-citation`, `jx-construction`,
 `ws-agency`
 
 Note: `jx-summary` and `ws-ag-procedure` are intentionally excluded.
@@ -82,7 +82,7 @@ IS the plain language content. Neither carries this overlay.
 
 **Group key:** `group_source_verify_metadata`
 **File:** `acf/acf-source-verify.php`
-**Attaches to:** `jx-statute`, `jx-citation`, `jx-interpretation`,
+**Attaches to:** `jx-statute`, `jx-citation`, `jx-construction`,
 `ws-agency`, `ws-ag-procedure`, `ws-assist-org`, `jx-summary`,
 `ws-reference`
 
@@ -105,7 +105,7 @@ Verification status and needs-review are editable by editors.
 **Group key:** `group_major_edit_metadata`
 **File:** `acf/acf-major-edit.php`
 **Attaches to:** `jx-summary`, `jx-statute`, `jx-citation`,
-`jx-interpretation`, `ws-ag-procedure`
+`jx-construction`, `ws-ag-procedure`
 
 When `ws_is_major_edit` is toggled on save, a `ws-legal-update` post is
 automatically created with the source post title, type, and description.
@@ -308,41 +308,41 @@ stamp, plain English, source verify, and major edit from shared groups.
 
 ---
 
-## CPT Group: Interpretation
+## CPT Group: construction
 
-**Group key:** `group_jx_interpretation_metadata`
-**File:** `acf/acf-jx-interpretations.php`
-**Attaches to:** `jx-interpretation`
+**Group key:** `group_jx_construction_metadata`
+**File:** `acf/acf-jx-constructions.php`
+**Attaches to:** `jx-construction`
 
 **Tab: Case Identity**
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_jx_interp_court` | select | Court key from the federal or state court matrix; `other` triggers free-text field |
-| `ws_jx_interp_court_name` | text | Free-text court name (conditional on `other` selection) |
-| `ws_jx_interp_year` | number | Year of decision |
-| `ws_jx_interp_favorable` | true_false | Whether outcome favored the whistleblower |
-| `ws_jx_interp_official_name` | text | Official case name |
-| `ws_jx_interp_common_name` | text | Short / common name |
-| `ws_jx_interp_case_citation` | text | Reporter citation |
-| `ws_jx_interp_url` | url | URL to the court opinion |
+| `ws_jx_constructioncourt` | select | Court key from the federal or state court matrix; `other` triggers free-text field |
+| `ws_jx_constructioncourt_name` | text | Free-text court name (conditional on `other` selection) |
+| `ws_jx_constructionyear` | number | Year of decision |
+| `ws_jx_constructionfavorable` | true_false | Whether outcome favored the whistleblower |
+| `ws_jx_constructionofficial_name` | text | Official case name |
+| `ws_jx_constructioncommon_name` | text | Short / common name |
+| `ws_jx_constructioncase_citation` | text | Reporter citation |
+| `ws_jx_constructionurl` | url | URL to the court opinion |
 
 **Tab: Summary**
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_jx_interp_summary` | textarea | Plain-language summary of the holding |
+| `ws_jx_constructionsummary` | textarea | Plain-language summary of the holding |
 | `ws_process_type` | taxonomy | `ws_process_type` terms; `save_terms: 1` |
-| `ws_attach_flag` | true_false | Surface this interpretation on the jurisdiction summary page |
+| `ws_attach_flag` | true_false | Surface this construction on the jurisdiction summary page |
 | `ws_display_order` | number | Sort order among flagged records (conditional on flag) |
-| `ws_jx_interp_last_reviewed` | text | Last verified date `Y-m-d` |
+| `ws_jx_constructionlast_reviewed` | text | Last verified date `Y-m-d` |
 
 **Tab: Relationships**
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_jx_interp_statute_id` | post_object | Parent `jx-statute` post (single, required) |
-| `ws_jx_interp_affected_jx` | taxonomy | `ws_jurisdiction` terms auto-populated from court's `ws_jx_codes`; `save_terms: 0` to avoid taxonomy pollution |
+| `ws_jx_constructionstatute_id` | post_object | Parent `jx-statute` post (single, required) |
+| `ws_jx_constructionaffected_jx` | taxonomy | `ws_jurisdiction` terms auto-populated from court's `ws_jx_codes`; `save_terms: 0` to avoid taxonomy pollution |
 
 **Tab: Reference Materials**
 
@@ -514,7 +514,7 @@ fields DO attach.
 | `ws_legal_update_multi_jurisdiction` | true_false | Affects multiple jurisdictions |
 | `ws_legal_update_date` | date_picker | Date of the legal development |
 | `ws_legal_update_source_url` | url | Primary source URL |
-| `ws_legal_update_type` | select | `statute` / `citation` / `summary` / `interpretation` / `regulation` / `policy` / `internal` / `other` |
+| `ws_legal_update_type` | select | `statute` / `citation` / `summary` / `construction` / `regulation` / `policy` / `internal` / `other` |
 | `ws_legal_update_law_name` | text | Name of the law or case (auto-filled by major edit hook) |
 | `ws_legal_update_summary_wysiwyg` | wysiwyg | Summary of the legal development |
 | `ws_legal_update_effective_date` | date_picker | Effective date of the change |
@@ -569,6 +569,6 @@ and what allows matrix seeders to use `wp_set_object_terms()` directly
 without an ACF save cycle.
 
 Fields that explicitly use `save_terms: 0` do so to prevent taxonomy
-query pollution — `ws_jx_interp_affected_jx` is the notable example,
+query pollution — `ws_jx_constructionaffected_jx` is the notable example,
 where terms are auto-populated from court matrix data and should not
 affect standard `ws_jurisdiction` taxonomy queries.

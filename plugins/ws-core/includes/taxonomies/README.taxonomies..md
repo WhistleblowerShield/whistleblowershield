@@ -10,9 +10,9 @@ Taxonomy registration and seeding for all ws-core taxonomies.
 |---|---|
 | `register-taxonomies.php` | Registers all 17 taxonomies and runs seeders on first admin load |
 | `register-glossary.php` | Registers the `ws_glossary` taxonomy and seeds terms |
-| `taxonomy-statutes.txt` | Taxonomy reference for jx-statute, jx-citation, jx-interpretation, jx-common-law |
+| `taxonomy-statutes.txt` | Taxonomy reference for jx-statute, jx-citation, jx-construction, jx-common-law |
 | `taxonomy-citations.txt` | Taxonomy reference for jx-citation (mirrors statutes) |
-| `taxonomy-interpretations.txt` | Taxonomy reference for jx-interpretation (mirrors statutes) |
+| `taxonomy-constructions.txt` | Taxonomy reference for jx-construction (mirrors statutes) |
 | `taxonomy-agencies.txt` | Taxonomy reference for ws-agency |
 | `taxonomy-aorgs.txt` | Taxonomy reference for ws-assist-org |
 | `taxonomy-tables.txt` | Human-readable flat reference of all taxonomy terms and slugs |

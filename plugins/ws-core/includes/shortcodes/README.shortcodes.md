@@ -13,7 +13,7 @@ plain-language notes on behavior and constraints.
 
 | File | Shortcodes |
 |---|---|
-| `shortcodes-jurisdiction.php` | `[ws_jx_header]`, `[ws_jx_summary]`, `[ws_jx_statutes]`, `[ws_jx_citation]`, `[ws_jx_interpretation]`, `[ws_jx_limitations]` |
+| `shortcodes-jurisdiction.php` | `[ws_jx_header]`, `[ws_jx_summary]`, `[ws_jx_statutes]`, `[ws_jx_citation]`, `[ws_jx_construction]`, `[ws_jx_limitations]` |
 | `shortcodes-general.php` | `[ws_nla_disclaimer_notice]`, `[ws_footer]`, `[ws_legal_updates]`, `[ws_reference_page]`, `[ws_jurisdiction_index]`, `[ws_assist_org_directory]` |
 
 See each file for complete `@param` documentation, attribute
@@ -246,11 +246,11 @@ Returns `array<int,row>`:
 - `has_rebuttable`, `rebuttable_details`
 - `has_bop`, `bop_details`, `bop_flag`
 - `has_reward`, `reward_details`
-- `citation_ids`, `interpretation_ids`
+- `citation_ids`, `construction_ids`
 - `ref_materials`
 - `plain` (payload), `verify` (payload), `record` (payload)
 
-### `ws_get_jx_interpretation_data( $jx_term_id )`
+### `ws_get_jx_construction_data( $jx_term_id )`
 Returns `array<int,row>`:
 
 - `id`, `title`, `url`, `status`, `content`, `order`, `is_fed`

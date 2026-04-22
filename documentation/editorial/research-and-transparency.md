@@ -180,7 +180,7 @@ date. It does not mean the underlying law has not changed since.
 
 ### Primary Source Links
 
-Every statute, citation, and interpretation record provides a direct
+Every statute, citation, and construction record provides a direct
 link to the primary source document. These links open via the reference
 page pattern, which includes an explicit external-link disclaimer.
 The link is labeled so users know it leads to the official source.

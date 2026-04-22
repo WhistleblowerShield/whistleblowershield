@@ -5,7 +5,7 @@ model, editorial workflow, and public-facing output for the platform.
 
 **Stack:** WordPress + ACF Pro
 **Requires:** PHP 8.0+, WordPress 6.0+, ACF Pro
-**Version:** 3.17.0
+**Version:** 3.18.0
 
 Full project documentation is in `/documentation/`. This file covers the
 rules a developer needs open while writing code.
@@ -52,7 +52,7 @@ metaboxes) carry inline comments explaining why.
 | `jx-statute` | Codified statutory whistleblower protections | No |
 | `jx-common-law` | Judicially-recognized common law protections | No |
 | `jx-citation` | Case law citations supporting statute records | No |
-| `jx-interpretation` | Court rulings interpreting specific statutes | No |
+| `jx-construction` | Court rulings interpreting specific statutes | No |
 | `ws-agency` | Enforcement and oversight agencies | Yes |
 | `ws-ag-procedure` | Agency-specific filing procedures | Yes |
 | `ws-assist-org` | Legal aid and advocacy organizations | Yes |
@@ -99,7 +99,7 @@ are always singular.
 ### Shared doctrinal taxonomies
 
 These attach to `jx-statute`, `jx-common-law`, `jx-citation`, and
-`jx-interpretation`. All support `tax_query` filtering.
+`jx-construction`. All support `tax_query` filtering.
 
 | Slug | Type | Notes |
 |---|---|---|
@@ -121,7 +121,7 @@ Five taxonomies support a `has-details` sentinel slug. When selected,
 a companion ACF freetext `_details` field becomes visible on the edit
 screen. The sentinel signals that the record contains nuance beyond what
 the registered slugs capture. Applies to `jx-statute`, `jx-common-law`,
-`jx-citation`, and `jx-interpretation`.
+`jx-citation`, and `jx-construction`.
 
 Companion field mapping:
 ```
@@ -141,7 +141,7 @@ employee_standard   → *_employee_standard_details
 | `ws_language` | `ws-agency`, `ws-assist-org` | `additional` is a system sentinel |
 | `ws_case_stage` | `ws-assist-org` | Phase 2 filter axis |
 | `ws_aorg_type` | `ws-assist-org` | Single-value |
-| `ws_employment_sector` | `jx-statute`, `jx-common-law`, `jx-citation`, `jx-interpretation`,`ws-agency`, `ws-ag-procedure`, `ws-assist-org` | Phase 2 filter axis |
+| `ws_employment_sector` | `jx-statute`, `jx-common-law`, `jx-citation`, `jx-construction`,`ws-agency`, `ws-ag-procedure`, `ws-assist-org` | Phase 2 filter axis |
 | `ws_aorg_cost_model` | `ws-assist-org` | `other` is a system sentinel | |
 | `ws_aorg_service` | `ws-assist-org` | `additional` is a system sentinel |
 | `ws_procedure_type` | `ws-ag-procedure` | 3 stable terms |
@@ -159,7 +159,7 @@ or any other property.
 2. Parent record_types have approved abbreviations: `jurisdiction` -> `jx`,
    `agency` -> `ag`
 3. Normal record_types have approved abbreviations: `assist-org` -> `aorg`,
-   `common-law` -> `comlaw`, `interpretation` -> `interp`. Retired abbreviations:
+   `common-law` -> `comlaw`, `construction` -> `interp`. Retired abbreviations:
    `cite` -> `citation`, `cl` -> `common-law`, `proc` -> `procedure` — do not use
    retired abbreviations, `cl_` -> wrong, `jx_comlaw_` -> right
 4. Group keys include group_(parent-abbrev-where-needed_)unabbreviated-record-type and
@@ -181,7 +181,7 @@ or any other property.
    with underscore prefixed. Example: `_ws_aorg_internal_id`
 4. Content ACF meta names carry a CPT infix:
    `ws_jx_statute*`, `ws_jx_comlaw*` (common-law), `ws_agency_*`, `ws_aorg_*` (assist-org),
-   `ws_legal_update_*`, `ws_jx_interp_*` (interpretation), `ws_jx_citation_*`, `ws_ag_proccedure_*`.
+   `ws_legal_update_*`, `ws_jx_construction*` (construction), `ws_jx_citation_*`, `ws_ag_proccedure_*`.
 5. Meta name infixes and CPT slugs are always singular unless they store
    mutliple values or arrays. When in doubt, use singular.
 6. Meta names that hold dates should end with `_date` or `_gmt` as appropriate.
@@ -261,7 +261,7 @@ value. To re-run a seeder, bump its version string — never delete the option.
 | 3.5.0 | jx-statute ingest alignment; `ws_employer_defense` taxonomy; ACF overhaul |
 | 3.6.0 | Query layer split (helpers/shared/jurisdiction/agencies); render naming rules |
 | 3.7.0 | `ws_employment_sector` taxonomy; deprecated taxonomy cleanup |
-| 3.8.0 | Court matrix split; interpretation system; reference page implementation |
+| 3.8.0 | Court matrix split; construction system; reference page implementation |
 | 3.8.1 | Post-audit pass — PHP 8 fatal fix, output escaping, race conditions |
 | 3.9.0 | `ws-ag-procedure` CPT; agency render pipeline; procedure seeder |
 | 3.10.0 | `ws_procedure_type` taxonomy; source verify for procedures |
@@ -272,4 +272,4 @@ value. To re-run a seeder, bump its version string — never delete the option.
 | 3.14.0 | `tool-ingest.php` added; ACF field names renamed throughout `acf-jx-statutes.php` and `acf-jx-common-law.php` to match JSON schema keys; four ingest log files added to `wp-content/logs/ws-ingest/` |
 | 3.16.0 | Cascade taxonomy filter developed |
 | 3.17.0 | Naming rules extended, refactor applied |
-| 3.18.0 | `ws_employment_sector` taxonomy extended to agencies, procedures, and legal records; `employer_threshold` added to legal records |
+| 3.18.0 | Schema additions: employment sectors + employer threshold fields across legal records, agencies, procedures, query layer, and prompt generator |

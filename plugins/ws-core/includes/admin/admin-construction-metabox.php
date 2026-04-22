@@ -167,9 +167,9 @@ function ws_render_construction_metabox( $post ) {
     // ── Render ────────────────────────────────────────────────────────────
     ?>
     <?php if ( empty( $constructions ) ) : ?>
-        <p class="ws-interp-empty">No court construction records linked to this record yet.</p>
+        <p class="ws-construction-empty">No court construction records linked to this record yet.</p>
     <?php else : ?>
-        <table class="ws-interp-table">
+        <table class="ws-construction-table">
             <thead>
                 <tr>
                     <th>Case Name</th>
@@ -212,16 +212,16 @@ function ws_render_construction_metabox( $post ) {
         </table>
     <?php endif; ?>
 
-    <div class="ws-interp-actions">
+    <div class="ws-construction-actions">
         <?php if ( $is_draft ) : ?>
-            <a class="button ws-interp-add-btn"
+            <a class="button ws-construction-add-btn"
                disabled
                title="Save this record first before adding constructions.">
                 + Add New construction
             </a>
             <span style="color:#666;font-size:12px;">Save this record first to enable this button.</span>
         <?php else : ?>
-            <a class="button button-primary ws-interp-add-btn"
+            <a class="button button-primary ws-construction-add-btn"
                href="<?php echo esc_url( $add_url ); ?>"
                target="_blank">
                 + Add New construction

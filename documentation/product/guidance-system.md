@@ -68,7 +68,7 @@ The platform supports two entry paths simultaneously:
 ### Archive Entry (by jurisdiction)
 
 Organized by jurisdiction, then by content type: summary, statutes,
-citations, interpretations, agencies, assist organizations, legal
+citations, constructions, agencies, assist organizations, legal
 updates. This is the correct model for the data layer and serves
 Daniel well — he knows what he is looking for and navigates directly.
 
@@ -111,7 +111,7 @@ shortcode placement is required in jurisdiction posts.
    local/federal two-group split; statute of limitations,
    enforcement details, burden of proof, remedies
 5. **Citations** — curated case law with local/federal split
-6. **Interpretations** — court-specific statutory interpretations
+6. **constructions** — court-specific statutory constructions
 7. **Agencies** — agencies with whistleblower jurisdiction; links
    to agency pages with full procedure detail
 8. **Assist Organizations** — organizations scoped to this jurisdiction
@@ -125,7 +125,7 @@ placeholder notice is shown. The page never displays empty section
 headings.
 
 Section anchors (`id="ws-statutes"`, `id="ws-citations"`,
-`id="ws-interpretations"`) allow the reference page back-link to return
+`id="ws-constructions"`) allow the reference page back-link to return
 the user to the correct position after viewing external sources.
 
 ---
@@ -156,7 +156,7 @@ immediately how long they have and whether they can file anonymously.
 
 ## The Curated Summary vs. Full Record
 
-Two distinct views exist for statutes, citations, and interpretations:
+Two distinct views exist for statutes, citations, and constructions:
 
 **Curated summary view** (jurisdiction page): Shows only
 attach-flagged records, ordered by `ws_display_order`. Typically

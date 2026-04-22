@@ -32,7 +32,7 @@ problem, not a data model problem.
    every relevant taxonomy axis.
 
 3. **Manual data build — California** — full depth: statutes, citations,
-   interpretations, agencies, procedures, assist orgs. California is the
+   constructions, agencies, procedures, assist orgs. California is the
    stress test — complex, well-documented, lots of case law. Taxonomy
    completeness audit required before cascade testing begins.
 
@@ -371,7 +371,7 @@ fallback. Logging observes it without changing their logic.
     'timestamp'          => gmdate( 'Y-m-d H:i:s' ),
     'jurisdiction'       => 'ca',
     'filter_context'     => [ 'ws_disclosure_type' => [12], 'ws_employment_sector' => [8] ],
-    'result_counts'      => [ 'statutes' => 3, 'common_law' => 1, 'citations' => 1, 'interpretations' => 0 ],
+    'result_counts'      => [ 'statutes' => 3, 'common_law' => 1, 'citations' => 1, 'constructions' => 0 ],
     'fallback_triggered' => false,
     'directory_request'  => false,
 ]
@@ -522,7 +522,7 @@ to Path B. A common law record with no `ws_protected_class` terms is
 invisible to any query filtering on protected class.
 
 **Pre-cascade checklist for California data:**
-Every statute, citation, interpretation, agency, procedure, and assist
+Every statute, citation, construction, agency, procedure, and assist
 org audited for taxonomy coverage on every relevant axis. Gaps documented
 explicitly rather than left as silent omissions.
 

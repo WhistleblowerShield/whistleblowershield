@@ -174,9 +174,9 @@ function ws_render_citation_metabox( $post ) {
     // ── Render ────────────────────────────────────────────────────────────
     ?>
     <?php if ( empty( $citations ) ) : ?>
-        <p class="ws-cite-empty">No citation records linked to this record yet.</p>
+        <p class="ws-citation-empty">No citation records linked to this record yet.</p>
     <?php else : ?>
-        <table class="ws-cite-table">
+        <table class="ws-citation-table">
             <thead>
                 <tr>
                     <th>Official Name</th>
@@ -216,16 +216,16 @@ function ws_render_citation_metabox( $post ) {
         </table>
     <?php endif; ?>
 
-    <div class="ws-cite-actions">
+    <div class="ws-citation-actions">
         <?php if ( $is_draft ) : ?>
-            <a class="button ws-cite-add-btn"
+            <a class="button ws-citation-add-btn"
                disabled
                title="Save this record first before adding citations.">
                 + Add New Citation
             </a>
             <span style="color:#666;font-size:12px;">Save this record first to enable this button.</span>
         <?php else : ?>
-            <a class="button button-primary ws-cite-add-btn"
+            <a class="button button-primary ws-citation-add-btn"
                href="<?php echo esc_url( $add_url ); ?>"
                target="_blank">
                 + Add New Citation

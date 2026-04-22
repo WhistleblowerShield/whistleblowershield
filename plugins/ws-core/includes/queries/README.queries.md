@@ -89,7 +89,7 @@ Per-jurisdiction calls are never cached.
 - Query pass includes defensive normalization for mixed scalar/array/object
     payloads from ACF/meta reads.
 - Dataset mappings were synced to current non-hidden ACF fields for statute,
-    citation, interpretation, common-law, agency, assist-org, and procedures.
+    citation, construction, common-law, agency, assist-org, and procedures.
 - Retired/stale key reads were removed where schema ownership changed.
 
 ---
@@ -97,7 +97,7 @@ Per-jurisdiction calls are never cached.
 ## Federal Append Pattern
 
 `ws_get_jx_statute_data()`, `ws_get_jx_citation_data()`, and
-`ws_get_jx_interpretation_data()` automatically append US-scoped
+`ws_get_jx_construction_data()` automatically append US-scoped
 federal records when the requested jurisdiction is not Federal.
 Each appended record carries `is_fed: true`. The render layer uses
 this flag to split local and federal results into separate sections.
@@ -108,7 +108,7 @@ federal counterpart.
 
 ## The `attach_flag` Gate
 
-The query layer functions for statutes, citations, and interpretations
+The query layer functions for statutes, citations, and constructions
 only return records where `ws_[record]_has_attach_flag = true`. This is the
 curated summary view — editorially selected records for the
 jurisdiction page.
@@ -117,7 +117,7 @@ The current attach flag meta keys are:
 
 - `ws_jx_statute_has_attach_flag`
 - `ws_jx_citation_has_attach_flag`
-- `ws_jx_interp_has_attach_flag`
+- `ws_jx_constructionhas_attach_flag`
 - `ws_jx_comlaw_has_attach_flag`
 
 **This gate applies to the curated path only.** The Phase 2 filtered

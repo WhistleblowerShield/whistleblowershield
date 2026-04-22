@@ -1,6 +1,6 @@
 <?php
 /**
- * cpt-jx-common-law.php
+ * cpt-jx-common-laws.php
  *
  * Registers the Common Law Protection Custom Post Type.
  *

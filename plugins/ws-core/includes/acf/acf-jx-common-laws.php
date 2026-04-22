@@ -1,6 +1,6 @@
 <?php
 /**
- * acf-jx-common-law.php
+ * acf-jx-common-laws.php
  *
  * Registers ACF Pro fields for the `jx-common-law` CPT.
  *

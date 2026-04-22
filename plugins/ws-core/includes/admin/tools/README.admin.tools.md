@@ -8,7 +8,7 @@ human-reviewed pipeline:
 - ingest validated JSON into structured CPT records
 
 This folder currently contains:
-- `tool-generate-prompt.php`
+- `tool-prompt-generator.php`
 - `tool-ingest.php`
 - `tool-taxonomy-term-audit.php`
 
@@ -35,7 +35,7 @@ which reduces remediation load and keeps taxonomy/data drift low.
 
 | File | Role | Writes To |
 |---|---|---|
-| `tool-generate-prompt.php` | Builds prompt templates for statute/common-law/citation/interpretation runs | `wp-content/logs/ws-prompts/` |
+| `tool-prompt-generator.php` | Builds prompt templates for statute/common-law/citation/construction runs | `wp-content/logs/ws-prompts/` |
 | `tool-ingest.php` | Validates and ingests JSON records into ws-core CPTs | `wp-content/logs/ws-ingest/` and `wp-content/logs/ws-ingest/ingested/` |
 | `tool-taxonomy-term-audit.php` | Diffs live `ws_*` taxonomy terms against `register-taxonomies.php` seed declarations | In-page report only |
 
@@ -47,7 +47,7 @@ which reduces remediation load and keeps taxonomy/data drift low.
 
 - Reads live terms with `get_terms()` so prompt taxonomies stay current.
 - Supports all record types: `statute`, `common-law`, `citation`,
-  `interpretation`.
+  `construction`.
 - Merges auto-exclusions with operator-provided exclusions to reduce duplicate
   research output.
 - Emits prompt files with deterministic naming:
@@ -70,7 +70,7 @@ That dramatically lowers invalid term proposals and cleanup work downstream.
   - `jx-statute`
   - `jx-common-law`
   - `jx-citation`
-  - `jx-interpretation`
+  - `jx-construction`
 - Handles deterministic linkage to related agencies/citations.
 - Logs proposed taxonomy terms without auto-inserting them.
 

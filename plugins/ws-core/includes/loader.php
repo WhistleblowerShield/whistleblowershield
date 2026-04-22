@@ -197,7 +197,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	$cpt_files = [
 		'cpt-jurisdictions', 'cpt-jx-summaries', 'cpt-jx-statutes', 'cpt-legal-updates',
 		'cpt-jx-citations', 'cpt-agencies', 'cpt-ag-procedures', 'cpt-assist-orgs',
-		'cpt-jx-constructions', 'cpt-jx-common-law', 'cpt-references',
+		'cpt-jx-constructions', 'cpt-jx-common-laws', 'cpt-references',
 	];
 	foreach ( $cpt_files as $file ) {
 		$path = WS_CORE_PATH . "includes/cpt/{$file}.php";
@@ -400,7 +400,7 @@ if ( is_admin() ) {
     $acf_files = [
         'acf-jurisdictions', 'acf-jx-summaries', 'acf-jx-statutes', 'acf-legal-updates',
         'acf-jx-citations', 'acf-agencies', 'acf-ag-procedures', 'acf-assist-orgs',
-        'acf-jx-constructions', 'acf-jx-common-law', 'acf-references',
+        'acf-jx-constructions', 'acf-jx-common-laws', 'acf-references',
     ];
 
     foreach ( $acf_files as $file ) {

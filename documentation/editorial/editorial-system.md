@@ -155,13 +155,13 @@ ruling, a ruling that limits protection in ways users need to know
 about, or a ruling that extends protection in ways that are
 non-obvious from the statute text.
 
-### Interpretation (`jx-interpretation`)
+### construction (`jx-construction`)
 
 A structured record of how a specific court has interpreted a
 statutory protection. More structured than a general citation — links
 explicitly to a statute and a specific court.
 
-The `ws_jx_interp_favorable` boolean records whether the outcome
+The `ws_jx_constructionfavorable` boolean records whether the outcome
 favored the whistleblower. This is editorial judgment and should
 reflect the practical outcome for the whistleblower, not just the
 technical disposition of the case.
@@ -277,7 +277,7 @@ news coverage) may be used for context and are appropriate in the
 ### Currency
 
 Legal information goes stale. Statutes are amended. Agencies
-restructure. Deadlines change. Court decisions alter interpretations.
+restructure. Deadlines change. Court decisions alter constructions.
 
 The `ws_proc_last_reviewed` and equivalent last-reviewed fields on
 other CPTs record when a record was last verified against its source.

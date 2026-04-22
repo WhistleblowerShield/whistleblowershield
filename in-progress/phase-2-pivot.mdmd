@@ -21,7 +21,7 @@ content coverage continues to mature in parallel.
 ### Why this pivot
 
 - Demand signal exists (non-trivial traffic despite under-construction gate).
-- Directory guidance carries lower legal-interpretation risk than statute-first outputs.
+- Directory guidance carries lower legal-construction risk than statute-first outputs.
 - Filter telemetry can directly guide future data enrichment and taxonomy tuning.
 
 ### Outcome target
@@ -44,7 +44,7 @@ list of assist organizations with graceful fallback when matches are sparse.
 ### Out of scope (for this pivot phase)
 
 - Full jurisdiction-page filtered legal cascade.
-- New legal interpretation layers beyond existing curated paths.
+- New legal construction layers beyond existing curated paths.
 - Launch-readiness claims tied to 57-jurisdiction statute completeness.
 
 ---
