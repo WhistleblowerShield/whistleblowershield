@@ -27,9 +27,9 @@ function ws_prompt_shared_intro_block( string $record_type, int $records = 0 ): 
         $harm       = "A wrong statute of limitations costs someone their right to file. A fabricated citation poisons their attorney's research. These are not research errors — they are final outcomes. ";
         $end        = "This template covers `" . $record_type . "` records ONLY — " . $clarify . " statutory or common-law whistleblower protections that can be referenced in support of legal arguments. Do not produce records for general statutory or common-law protections.\n\n";
     } else {
-        $role       = "This_is_a_fuq'n_error";
-        $harm       = "This_is_also_a_fuq'n_error";
-        $end        = "This_is_yet_another_fuq'n_error";
+        $role       = "This_is_a_fuq\'n_error";
+        $harm       = "This_is_also_a_fuq\'n_error";
+        $end        = "This_is_yet_another_fuq\'n_error";
     }
 
     $block  = "WhistleblowerShield.org Research Prompt - v3.0.0\n\n";
