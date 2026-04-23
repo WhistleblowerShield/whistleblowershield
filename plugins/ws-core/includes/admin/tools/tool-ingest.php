@@ -3360,9 +3360,9 @@ function ws_ingest_process_common_law_record( array $record, array $meta, array 
         if ( ! empty( $matched_ids ) ) {
             $agency_key = ( $jx_slug === 'us' ) ? 'ws_jx_comlaw_federal_agencies' : 'ws_jx_comlaw_local_agencies';
             update_post_meta( $post_id, $agency_key, $matched_ids );
-            $result['log'][] = "$sid: linked " . count( $matched_ids ) . " agency record(s) from enforcement.primary_agency";
+            $result['log'][] = "$did: linked " . count( $matched_ids ) . " agency record(s) from enforcement.primary_agency";
         } else {
-            $result['warnings'][] = "$sid: no ws-agency matches found and no stub was created for enforcement.primary_agency text.";
+            $result['warnings'][] = "$did: no ws-agency matches found and no stub was created for enforcement.primary_agency text.";
         }
 
         $result['agency_breadcrumbs'] = [
@@ -3502,7 +3502,7 @@ function ws_ingest_process_citation_record( array $record, array $meta, array $b
                 break;
             case 'wysiwyg':
                 if ( $value !== '' ) {
-                    update_post_meta( $post_id, $meta_key, esc_html( $value ) );
+                    update_post_meta( $post_id, $meta_key, wp_kses_post( $value ) );
                 }
                 break;
             case 'url':
