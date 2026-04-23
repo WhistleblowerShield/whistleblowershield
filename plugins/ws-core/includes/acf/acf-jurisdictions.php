@@ -35,10 +35,32 @@
  *   ws_jx_flag_source_url         Flag Source URL (url, optional)
  *   ws_jx_flag_license            Flag License (text, optional)
  *
- * Record Management tab:
- *   ws_auto_last_edited_author    Last Editor (user, auto)
- *   ws_auto_last_edited_date      Date Last Edited (text, auto)
+ * //Record Management tab:
+ * //  ws_auto_last_edited_author    Last Editor (user, auto)
+ * //  ws_auto_last_edited_date      Date Last Edited (text, auto)
  *
+ * SHARED WORKFLOW GROUPS
+ * ----------------------
+ *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
+ *   - group_source_verify_metadata (acf-source-verify.php)
+ * 
+ * SHARDED WORKFLOW FIELDS
+ * -----------------------
+ *  - auto-filled on save by ws_acf_write_stamp_fields()
+ *    - ws_auto_last_edited_date            (text, readonly, date of last edit)
+ *    - ws_auto_last_edited_author          (text, readonly, user id of last editor)
+ *    - ws_auto_create_date                 (text, readonly, date authored)
+ *    - ws_auto_create_author               (text, readonly, user id of author)
+ *  - auto-filled on post creation by ws_acf_write_source_method()
+ *    - ws_auto_source_method               (text, readonly, set to method of post creation (e.g. "ai_research", "human_created", "matrix_seeded"))
+ *    - ws_auto_source_name                 (text, readonly, "Direct" when human_created or matrix_seeded, auto-set when ingested to tool or feed name (e.g. NoteBookLM or Inoreader ))
+ *  - auto-set on post creation by ws_acf_write_verification_status() — (conditional on ws_auto_source_name is non-empty AND is not 'Direct')
+ *    - ws_verification_status              (select: unverified, verified, defaults to unverified — set to verified by Authors, Admins required to unverified)
+ *    - ws_needs_review                     (true_false, default true — must be disabled by Admin to enable publishing)
+ *  - auto-filled on save by ws_acf_write_verification_status() when ws_verification_status is true
+ *    - ws_auto_verified_by                (user, readonly, user that verified the post)
+ *    - ws_auto_verified_date              (text, readonly, date of verification)
+ * 
  * AUTO-SELECTION NOTES
  * --------------------
  * Authority and legislature labels are auto-selected on first save from
@@ -302,7 +324,7 @@ function ws_register_acf_jurisdiction_fields() {
             	'wrapper'       => ['width' => '30' ]
 			],
 
-            // ────────────────────────────────────────────────────────────────
+/*             // ────────────────────────────────────────────────────────────────
             // Tab: Record Management
             //
             // Jurisdiction records are seeder-generated — create_author and
@@ -323,9 +345,9 @@ function ws_register_acf_jurisdiction_fields() {
             ],
 
             [
-                'key'          => 'field_auto_last_edited_gmt',
+                'key'          => 'field_auto_last_edited_date_gmt',
                 'label'        => 'Date Last Edited (GMT)',
-                'name'         => '_ws_auto_last_edited_gmt',
+                'name'         => '_ws_auto_last_edited_date_gmt',
                 'type'         => 'text',
                 'readonly'     => 1,
                 'disabled'     => 1,
@@ -348,7 +370,7 @@ function ws_register_acf_jurisdiction_fields() {
                 'type'         => 'text',
                 'readonly'     => 1,
                 'disabled'     => 1,
-            ],
+            ], */
 
         ], // end fields
 

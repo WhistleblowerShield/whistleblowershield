@@ -27,10 +27,11 @@
  * Classification tab:
  *   ws_jx_citation_protected_classes              Protected Class (multi_select, optional)
  *   ws_jx_citation_protected_class_details        Protected Class Details (textarea, optional)
+ *   ws_jx_citation_employment_sectors             Employment Sectors (multi_select, optional)
  *   ws_jx_citation_disclosure_targets             Disclosure Targets (multi_select, optional)
  *   ws_jx_citation_disclosure_target_details      Disclosure Targets Details (textarea, optional)
- *   ws_jx_citation_adverse_actions           Adverse Action Types (multi_select, optional)
- *   ws_jx_citation_adverse_action_details    Adverse Action Details (textarea, optional)
+ *   ws_jx_citation_adverse_actions                Adverse Action (multi_select, optional)
+ *   ws_jx_citation_adverse_action_details         Adverse Action Details (textarea, optional)
  *   ws_jx_citation_process_types                  Process Type (multi_select, optional)
  *   ws_jx_citation_remedies                       Remedies (multi_select, optional)
  *   ws_jx_citation_remedy_details                 Remedies Details (textarea, optional)
@@ -39,6 +40,8 @@
  *   ws_jx_citation_employer_defense_details       Employer Defense Details (textarea, optional)
  *   ws_jx_citation_employee_standards             Employee Standards (multi_select, optional)
  *   ws_jx_citation_employee_standard_details      Employee Standard Details (textarea, optional)
+ *   ws_jx_citation_has_employer_threshold         Has Employer Size Threshold (true_false, optional)
+ *   ws_jx_citation_employer_threshold_details     Employer Threshold Details (textarea, optional, conditional)
  *   ws_jx_citation_last_reviewed                  Last Reviewed (text, optional)
  *
  * Relationships tab:
@@ -50,7 +53,10 @@
  * 
  * Hidden fields:
  *   _ws_jx_citation_id                            Ingest Dedupe Code (text, hidden)
- *
+ *   _ws_jx_citation_stub
+ *   _ws_jx_citation_stub_source
+ *   _ws_jx_citation_stub_source_label
+ *   
  * SHARED WORKFLOW GROUPS
  * ----------------------
  *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
@@ -186,24 +192,22 @@ function ws_register_acf_jx_citations() {
                 'instructions' => 'Shortened or colloquial name for this citation if commonly referenced — e.g., "Lawson". Leave blank if no common name applies.',
                 'required'     => 0,
             ],
+            
+            [
+                'key'          => 'field_jx_citation_id',
+                'label'        => 'Citation ID',
+                'name'         => 'ws_jx_citation_id',
+                'type'         => 'text',
+                'instructions' => 'Unique identifier for this citation.',
+                'required'     => 1,
+            ],
+
             [
                 'key'          => 'field_jx_citation_url',
                 'label'        => 'Source URL',
                 'name'         => 'ws_jx_citation_url',
                 'type'         => 'url',
                 'instructions' => 'Direct link to the source document, case, or statute.',
-            ],
-
-            [
-                'key'          => 'field_jx_citation_summary_wysiwyg',
-                'label'        => 'Citation Summary',
-                'name'         => 'ws_jx_citation_summary_wysiwyg',
-                'type'         => 'wysiwyg',
-                'instructions' => 'Short editorial summary of why this citation matters. This can start from ingest hints and be refined by a human editor.',
-                'tabs'         => 'visual',
-                'toolbar'      => 'basic',
-                'media_upload' => 0,
-                'delay'        => 0,
             ],
 
             [

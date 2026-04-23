@@ -42,7 +42,7 @@ is intentional and must be preserved:
 
 - **`wp_kses_post( $data['content'] )`** — used for ACF WYSIWYG fields
   (e.g. `ws_jurisdiction_summary_wysiwyg`, `ws_plain_english_wysiwyg`,
-  `ws_ag_procedure_walkthrough`). The HTML is already fully formed by the ACF
+  `ws_ag_procedure_walkthrough_wysiwyg`). The HTML is already fully formed by the ACF
   editor. Running `the_content` filters would double-wrap paragraphs,
   expand shortcodes embedded in legal text, and trigger block rendering.
 

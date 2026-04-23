@@ -23,6 +23,7 @@ defined( 'ABSPATH' ) || exit;
  *   ws_jx_statute_disclosure_types               Disclosure Categories (multi_select, optional)
  *   ws_jx_statute_protected_classes              Protected Classes (multi_select, optional)
  *   ws_jx_statute_protected_class_details        Protected Class Details (textarea, optional)
+ *   ws_jx_statute_employment_sectors             Employment Sectors (multi_select, optional)
  *   ws_jx_statute_disclosure_targets             Disclosure Targets (multi_select, optional)
  *   ws_jx_statute_disclosure_target_details      Disclosure Target Details (textarea, optional)
  *   ws_jx_statute_adverse_action_scope           Adverse Action Scope (textarea, optional)
@@ -47,10 +48,13 @@ defined( 'ABSPATH' ) || exit;
  *   ws_jx_statute_fee_shiftings                  Fee Shifting (multi_select, optional)
  *   ws_jx_statute_remedies                       Available remedies (multi_select, optional)
  *   ws_jx_statute_remedy_details                 Remedy Details (textarea, optional)
+ *   ws_jx_statute_primary_agency                 Primary Oversight Agency (post_object, optional)
  *   ws_jx_statute_local_agencies                 Local Agencies (post_object, optional)
  *   ws_jx_statute_federal_agencies               Federal Agencies (post_object, optional)
  *   ws_jx_statute_enforcement_channel            Enforcement Channel Notes (textarea, optional)
- *
+ *   ws_jx_statute_has_employer_threshold         Has Employer Size Threshold (true_false, optional)
+ *   ws_jx_statute_employer_threshold_details     Employer Threshold Details (textarea, optional, conditional)
+ *   
  * Burden of Proof tab:
  *   ws_jx_statute_employee_standards             Employee Standards (multi_select, optional)
  *   ws_jx_statute_employee_standard_details      Employee Standard Details (textarea, optional)
@@ -70,12 +74,17 @@ defined( 'ABSPATH' ) || exit;
  *   ws_jx_statute_url                            Statute URL (url, optional)
  *   ws_jx_statute_url_is_pdf                     Link is PDF? (true_false, optional)
  *   ws_jx_statute_last_reviewed                  Last Verified Date (text, optional)
+ * 
+ * Relationships tab:
+ *   ws_jx_statute_citation_ids                   Related Citations (relationship, optional)
+ *   ws_jx_statute_construction_ids               Related Constructions (relationship, optional)
  *
  * Reference Materials tab:
  *   ws_jx_statute_ref_materials                  Reference Materials (relationship, optional)
  * 
  * Hidden fields:
- *   _ws_jx_citation_id                            Ingest Dedupe Code (text, hidden)
+ *   _ws_jx_statute_id                            Ingest Dedupe Code (text, hidden)
+ *   _ws_auto_source_chain                        Source Chain [role|tool] (array, hidden, created by ingest) — Research Provenance
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------
@@ -227,20 +236,6 @@ function ws_register_acf_jx_statutes() {
             ],
 
             [
-                'key'           => 'field_jx_statute_disclosure_targets',
-                'label'         => 'Disclosure Targets',
-                'name'          => 'ws_jx_statute_disclosure_targets',
-                'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_disclosure_target',
-                'field_type'    => 'multi_select',
-                'instructions'  => 'Who must the disclosure be made to for protection to apply under this statute?',
-                'add_term'      => 0,
-                'save_terms'    => 1,
-                'load_terms'    => 1,
-                'return_format' => 'id',
-            ],
-
-            [
                 'key'           => 'field_jx_statute_employment_sectors',
                 'label'         => 'Employment Sectors',
                 'name'          => 'ws_jx_statute_employment_sectors',
@@ -249,6 +244,20 @@ function ws_register_acf_jx_statutes() {
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Employment sectors this statute explicitly covers. Tag only what the statute text supports.',
                 'required'      => 0,
+                'add_term'      => 0,
+                'save_terms'    => 1,
+                'load_terms'    => 1,
+                'return_format' => 'id',
+            ],
+
+            [
+                'key'           => 'field_jx_statute_disclosure_targets',
+                'label'         => 'Disclosure Targets',
+                'name'          => 'ws_jx_statute_disclosure_targets',
+                'type'          => 'taxonomy',
+                'taxonomy'      => 'ws_disclosure_target',
+                'field_type'    => 'multi_select',
+                'instructions'  => 'Who must the disclosure be made to for protection to apply under this statute?',
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,
@@ -552,6 +561,19 @@ function ws_register_acf_jx_statutes() {
             ],
 
             [
+                'key'           => 'field_jx_statute_primary_agency',
+                'label'         => 'Primary Oversight Agency',
+                'name'          => 'ws_jx_statute_primary_agency',
+                'type'          => 'post_object',
+                'post_type'     => [ 'ws-agency' ],
+                'instructions'  => 'Select the primary agency responsible for overseeing this statute (state, territory, district, tribal, or local bodies).',
+                'multiple'      => 0,
+                'allow_null'    => 1,
+                'ui'            => 1,
+                'return_format' => 'id',
+            ],
+
+            [
                 'key'           => 'field_jx_statute_local_agencies',
                 'label'         => 'Local Agencies',
                 'name'          => 'ws_jx_statute_local_agencies',
@@ -583,7 +605,7 @@ function ws_register_acf_jx_statutes() {
                 'name'         => 'ws_jx_statute_enforcement_channel',
                 'type'         => 'textarea',
                 'rows'         => 3,
-                'instructions' => 'Capture agency/channel nuance not represented by linked agency records (for example, split intake paths, courts, or board-specific routing).',
+                'instructions' => 'Capture agency/channel nuance not represented by linked agency records (e.g., split intake paths, courts, or agency prioritization).',
                 'required'     => 0,
             ],
 
@@ -771,6 +793,43 @@ function ws_register_acf_jx_statutes() {
                 'ui_on_text'    => 'PDF',
                 'ui_off_text'   => 'No',
                 'default_value' => 0,
+            ],
+
+           
+            // ────────────────────────────────────────────────────────────────
+            // Tab: Relationships
+            // ────────────────────────────────────────────────────────────────
+
+            [
+                'key'   => 'field_jx_statute_relationships_tab',
+                'label' => 'Relationships',
+                'type'  => 'tab',
+            ],
+
+            [
+                'key'          => 'field_jx_statute_citation_ids',
+                'label'        => 'Citation IDs',
+                'name'         => 'ws_jx_statute_citation_ids',
+                'type'         => 'relationship',
+                'instructions' => 'Citations that reference this statute.',
+                'post_type'    => [ 'jx-citation' ],
+                'return_format'=> 'id',
+                'allow_null'   => 1,
+                'multiple'     => 1,
+                'elements'     => [],
+            ],
+
+            [
+                'key'          => 'field_jx_statute_construction_ids',
+                'label'        => 'Construction IDs',
+                'name'         => 'ws_jx_statute_construction_ids',
+                'type'         => 'relationship',
+                'instructions' => 'Constructions that reference this statute.',
+                'post_type'    => [ 'jx-construction' ],
+                'return_format'=> 'id',
+                'allow_null'   => 1,
+                'multiple'     => 1,
+                'elements'     => [],
             ],
 
             // ── Last Verified Date ────────────────────────────────────────

@@ -265,7 +265,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	// functions and hooks them to 'init'. Terms are NOT yet available after
 	// this line. Actual term seeding fires on 'admin_init' inside self-gating
 	// closures in register-taxonomies.php — well after this loader completes.
-	// See TAXONOMY TWO-PHASE BEHAVIOUR in the docblock above.
+	// See TAXONOMY TWO-PHASE BEHAVIOR in the docblock above.
 /* 	$taxonomy_files = [
 		'register-taxonomies', 'register-glossary',
 	];

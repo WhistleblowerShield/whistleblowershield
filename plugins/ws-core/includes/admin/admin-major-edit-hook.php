@@ -143,7 +143,7 @@ function ws_acf_log_major_edit( $post_id ) {
 	update_post_meta( $update_id, 'ws_auto_last_edited_date',   $now_local );
 	update_post_meta( $update_id, 'ws_auto_last_edited_author', $user_id   );
     update_post_meta( $update_id, '_ws_auto_create_date_gmt',   $now_gmt   );
-	update_post_meta( $update_id, '_ws_auto_last_edited_gmt',   $now_gmt   );
+	update_post_meta( $update_id, '_ws_auto_last_edited_date_gmt',   $now_gmt   );
 	
 	// Clear major-edit trigger fields only after the legal-update post
 	// and its required metadata were written successfully.

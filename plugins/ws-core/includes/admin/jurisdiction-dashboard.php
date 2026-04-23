@@ -106,7 +106,7 @@ function ws_render_jurisdiction_dashboard() {
             <th>Statutes</th>
             <th>Common Law</th>
             <th>Citations</th>
-            <th>Interp.</th>
+            <th>Constructions</th>
             <th>Updates</th>
             <th>Agencies</th>
             <th>Orgs</th>
@@ -143,9 +143,9 @@ function ws_render_jurisdiction_dashboard() {
         echo ws_jx_dashboard_count_cell( $cite_count, $cite_unpublished );
 
         // ── constructions (count of editorially curated) ────────────────
-        $construction_count = ws_jx_dashboard_count( $term_id, 'jx-construction', true, 'ws_jx_construction_has_attach_flag' );
-        $construction_unpublished = ws_jx_dashboard_unpublished_count( $term_id, 'jx-construction' );
-        echo ws_jx_dashboard_count_cell( $construction_count, $construction_unpublished );
+        $construct_count = ws_jx_dashboard_count( $term_id, 'jx-construction', true, 'ws_jx_construction_has_attach_flag' );
+        $construct_unpublished = ws_jx_dashboard_unpublished_count( $term_id, 'jx-construction' );
+        echo ws_jx_dashboard_count_cell( $construct_count, $construct_unpublished );
 
         // ── Legal Updates (any published for this jurisdiction) ───────────
         $update_count = ws_jx_dashboard_count( $term_id, 'ws-legal-update', false );

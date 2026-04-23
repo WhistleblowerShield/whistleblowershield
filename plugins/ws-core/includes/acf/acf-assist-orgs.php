@@ -46,7 +46,7 @@
  *   ws_aorg_intake_url                     Intake URL (url, optional)
  *   ws_aorg_contact_url                    Contact URL (url, optional)
  *   ws_aorg_phones                         Phone Numbers [type|number] (repeater, optional)
- *   ws_aorg_emails                         Email Addresses [type|email] (repeater, optional)
+ *   ws_aorg_emails                         Email Addresses [type|address] (repeater, optional)
  *   ws_aorg_mailing_address                Mailing Address (textarea, optional, use || to separate multiple)
  *   ws_aorg_has_secure_channel             Secure Contact Channel Available? (true_false, optional)
  *   ws_aorg_secure_contact_url             Secure Contact URL (url, conditional)

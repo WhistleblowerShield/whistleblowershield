@@ -5,7 +5,7 @@
  * Group key: group_source_verify_metadata  (menu_order 95)
  *
  * Attaches to: jx-summary, jx-statute, jx-common-law, jx-citation, jx-construction,
- *              ws-agency, ag-procedure, ws-assist-org, ws-reference
+ *              ws-agency, ag-procedure, ws-assist-org, ws-reference, jurisdiction
  *
  * Fields:
  *   ws_auto_source_method    Locked readonly. One of the WS_SOURCE_* constants.
@@ -63,6 +63,7 @@ function ws_register_source_verify_field_group() {
         // cleanest pattern for multi-CPT attachment.
 
         'location' => [
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jurisdiction'        ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-summary'        ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-statute'        ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-common-law'     ] ],

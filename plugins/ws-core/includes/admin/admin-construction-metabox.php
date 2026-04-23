@@ -130,7 +130,7 @@ function ws_render_construction_metabox( $post ) {
         // ws_rebuild_jx_statute_construction_index() in admin-hooks.php. Reading it
         // here is a single get_post_meta() call; the post__in query that follows
         // is a simple WHERE ID IN (...) sorted by decision year, no meta JOIN.
-        $construction_ids = array_filter( array_map( 'intval', (array) get_post_meta( $post->ID, 'ws_jx_statute_construction_ids', true ) ) );
+        $construct_ids = array_filter( array_map( 'intval', (array) get_post_meta( $post->ID, 'ws_jx_statute_construction_ids', true ) ) );
     } else {
         // Common-law links can be stored from either side:
         // - ws_jx_comlaw_construction_ids on jx-common-law
@@ -150,15 +150,15 @@ function ws_render_construction_metabox( $post ) {
                 'type'    => 'NUMERIC',
             ] ],
         ] );
-        $construction_ids = array_values( array_unique( array_merge( $from_comlaw, array_map( 'intval', (array) $from_construct ) ) ) );
+        $construct_ids = array_values( array_unique( array_merge( $from_comlaw, array_map( 'intval', (array) $from_construct ) ) ) );
     }
 
-    $constructions = empty( $construction_ids ) ? [] : get_posts( [
+    $constructs = empty( $construct_ids ) ? [] : get_posts( [
         'post_type'      => 'jx-construction',
         'post_status'    => 'any',
         'posts_per_page' => -1,
         'fields'         => 'ids',
-        'post__in'       => $construction_ids,
+        'post__in'       => $construct_ids,
         'meta_key'       => 'ws_jx_construction_year',
         'orderby'        => 'meta_value_num',
         'order'          => 'DESC',
@@ -166,7 +166,7 @@ function ws_render_construction_metabox( $post ) {
 
     // ── Render ────────────────────────────────────────────────────────────
     ?>
-    <?php if ( empty( $constructions ) ) : ?>
+    <?php if ( empty( $constructs ) ) : ?>
         <p class="ws-construction-empty">No court construction records linked to this record yet.</p>
     <?php else : ?>
         <table class="ws-construction-table">
@@ -180,19 +180,19 @@ function ws_render_construction_metabox( $post ) {
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ( $constructions as $construction_id ) :
-                    $case_name   = get_the_title( $construction_id );
+                <?php foreach ( $constructs as $construct_id ) :
+                    $case_name   = get_the_title( $construct_id );
                     // Direct meta reads — admin metabox display only; query layer is for front-end shortcode rendering.
-                    $court_key   = get_post_meta( $construction_id, 'ws_jx_construction_court', true );
-                    $year        = get_post_meta( $construction_id, 'ws_jx_construction_year', true );
-                    $favorable   = get_post_meta( $construction_id, 'ws_jx_construction_is_favorable', true );
+                    $court_key   = get_post_meta( $construct_id, 'ws_jx_construction_court', true );
+                    $year        = get_post_meta( $construct_id, 'ws_jx_construction_year', true );
+                    $favorable   = get_post_meta( $construct_id, 'ws_jx_construction_is_favorable', true );
                     if ( $court_key === 'other' ) {
-                        $court_label = esc_html( get_post_meta( $construction_id, 'ws_jx_construction_court_name', true ) ?: 'Other' );
+                        $court_label = esc_html( get_post_meta( $construct_id, 'ws_jx_construction_court_name', true ) ?: 'Other' );
                     } else {
                         $court_entry = ws_court_lookup( $court_key );
                         $court_label = $court_entry ? esc_html( $court_entry['short'] ) : esc_html( $court_key );
                     }
-                    $edit_url    = get_edit_post_link( $construction_id );
+                    $edit_url    = get_edit_post_link( $construct_id );
                 ?>
                 <tr>
                     <td><?php echo esc_html( $case_name ?: '(untitled)' ); ?></td>

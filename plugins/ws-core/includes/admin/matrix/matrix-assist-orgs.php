@@ -66,9 +66,9 @@ defined( 'ABSPATH' ) || exit;
 global $_ws_assist_org_matrix;
 $_ws_assist_org_matrix = [
     [
-        'internal_id' => 'gov-accountability-proj-us',
+        '_ws_aorg_id' => 'us-gov-act-proj',
         'common_name' => 'GAP',
-        'title' => 'Government Accountability Project',
+        'official_name' => 'Government Accountability Project',
         'slug' => 'government-accountability-project',
         'description' => 'Promotes government and corporate accountability by advancing a culture of transparency, providing legal representation to whistleblowers, and advocating for strong whistleblower laws.',
         'ws_aorg_website_url' => 'https://whistleblower.org',
@@ -138,9 +138,9 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        'internal_id' => 'nat-wb-ctr-us',
+        '_ws_aorg_id' => 'nat-wb-ctr-us',
         'common_name' => 'NWC',
-        'title' => 'National Whistleblower Center',
+        'official_name' => 'National Whistleblower Center',
         'slug' => 'national-whistleblower-center',
         'description' => 'Advocates for the rights of whistleblowers, promotes whistleblower protections, and educates the public and policymakers about the importance of whistleblowing.',
         'ws_aorg_website_url' => 'https://www.whistleblowers.org',
@@ -207,9 +207,9 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        'internal_id' => 'wb-aid-us',
+        '_ws_aorg_id' => 'wb-aid-us',
         'common_name' => '',
-        'title' => 'Whistleblower Aid',
+        'official_name' => 'Whistleblower Aid',
         'slug' => 'whistleblower-aid',
         'description' => 'Provides free legal assistance and support to clients who want to safely and legally disclose wrongdoing in the public interest.',
         'ws_aorg_website_url' => 'https://whistlebloweraid.org',
@@ -269,9 +269,9 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        'internal_id' => 'proj-on-gov-oversight-us',
+        '_ws_aorg_id' => 'proj-on-gov-oversight-us',
         'common_name' => 'POGO',
-        'title' => 'Project On Government Oversight',
+        'official_name' => 'Project On Government Oversight',
         'slug' => 'project-on-government-oversight',
         'description' => 'Investigates and exposes waste, corruption, abuse of power, and when the government fails to serve the public interest, including supporting federal whistleblowers.',
         'ws_aorg_website_url' => 'https://www.pogo.org',
@@ -333,9 +333,9 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        'internal_id' => 'anti-fraud-coal-us',
+        '_ws_aorg_id' => 'anti-fraud-coal-us',
         'common_name' => 'TAF',
-        'title' => 'The Anti-Fraud Coalition',
+        'official_name' => 'The Anti-Fraud Coalition',
         'slug' => 'the-anti-fraud-coalition',
         'description' => 'Formerly Taxpayers Against Fraud, the Anti-Fraud Coalition is the leading professional network for attorneys and whistleblowers in False Claims Act and financial fraud cases. Maintains a directory of 400+ qui tam specialists and publishes economic research on whistleblower program effectiveness.',
         'ws_aorg_website_url' => 'https://www.taf.org',
@@ -387,9 +387,9 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        'internal_id' => 'wb-america-us',
+        '_ws_aorg_id' => 'wb-america-us',
         'common_name' => 'WoA',
-        'title' => 'Whistleblowers of America',
+        'official_name' => 'Whistleblowers of America',
         'slug' => 'whistleblowers-of-america',
         'description' => 'Provides peer support, advocacy, and guidance to whistleblowers, with a focus on retaliation response and trauma-informed support.',
         'ws_aorg_website_url' => 'https://www.whistleblowersofamerica.org',
@@ -451,9 +451,9 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        'internal_id' => 'wb-intl-net-us',
+        '_ws_aorg_id' => 'wb-intl-net-us',
         'common_name' => 'WIN',
-        'title' => 'Whistleblowing International Network',
+        'official_name' => 'Whistleblowing International Network',
         'slug' => 'whistleblowing-international-network',
         'description' => 'Global network of civil society organizations supporting whistleblowing, transparency, and accountability, including member groups operating in the United States.',
         'ws_aorg_website_url' => 'https://whistleblowingnetwork.org/Home',
@@ -509,9 +509,9 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        'internal_id' => 'nat-emp-law-proj-us',
+        '_ws_aorg_id' => 'nat-emp-law-proj-us',
         'common_name' => 'NELP',
-        'title' => 'National Employment Law Project',
+        'official_name' => 'National Employment Law Project',
         'slug' => 'national-employment-law-project',
         'description' => 'Champions the rights of low-wage and unemployed workers through research and advocacy, including for workers who face retaliation for reporting violations.',
         'ws_aorg_website_url' => 'https://www.nelp.org',
@@ -569,9 +569,9 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        'internal_id' => 'nat-emp-lawyers-assoc-us',
+        '_ws_aorg_id' => 'nat-emp-lawyers-assoc-us',
         'common_name' => 'NELA',
-        'title' => 'National Employment Lawyers Association',
+        'official_name' => 'National Employment Lawyers Association',
         'slug' => 'national-employment-lawyers-association',
         'description' => 'National professional association of lawyers representing employees in labor, employment, and civil rights disputes. Provides a lawyer finder to connect workers with plaintiff-side employment counsel.',
         'ws_aorg_website_url' => 'https://www.nela.org',
@@ -631,9 +631,9 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        'internal_id' => 'legal-svc-corp-find-legal-aid-us',
+        '_ws_aorg_id' => 'legal-svc-corp-find-legal-aid-us',
         'common_name' => 'LSC',
-        'title' => 'Legal Services Corporation - Find Legal Aid',
+        'official_name' => 'Legal Services Corporation - Find Legal Aid',
         'slug' => 'legal-services-corporation-find-legal-aid',
         'description' => 'National legal aid locator supported by the Legal Services Corporation, helping users find local nonprofit legal aid providers for civil legal issues, including workplace retaliation and employment-related matters.',
         'ws_aorg_website_url' => 'https://www.lsc.gov',
@@ -689,9 +689,9 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        'internal_id' => 'nat-legal-aid-defender-assoc-us',
+        '_ws_aorg_id' => 'nat-legal-aid-defender-assoc-us',
         'common_name' => 'NLADA',
-        'title' => 'National Legal Aid and Defender Association',
+        'official_name' => 'National Legal Aid and Defender Association',
         'slug' => 'national-legal-aid-and-defender-association',
         'description' => 'National association supporting civil legal aid and public defense providers, with resources and member pathways that help users locate legal-aid support channels.',
         'ws_aorg_website_url' => 'https://www.nlada.org',
@@ -747,9 +747,9 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        'internal_id' => 'nat-wb-ctr-att-ref-prog-us',
+        '_ws_aorg_id' => 'nat-wb-ctr-att-ref-prog-us',
         'common_name' => 'NWC Referral',
-        'title' => 'National Whistleblower Center — Attorney Referral Program',
+        'official_name' => 'National Whistleblower Center — Attorney Referral Program',
         'slug' => 'national-whistleblower-center-attorney-referral',
         'description' => 'Referral program connecting whistleblowers with experienced attorneys in False Claims Act, SEC, IRS, and other whistleblower law areas.',
         'ws_aorg_website_url' => 'https://www.whistleblowers.org',
@@ -810,9 +810,9 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        'internal_id' => 'american-bar-assoc-find-legal-help-us',
+        '_ws_aorg_id' => 'american-bar-assoc-find-legal-help-us',
         'common_name' => 'ABA',
-        'title' => 'American Bar Association — Find Legal Help',
+        'official_name' => 'American Bar Association — Find Legal Help',
         'slug' => 'american-bar-association-find-legal-help',
         'description' => 'ABA information portal that directs the public to state and local lawyer referral services and bar-sponsored legal aid programs across the United States.',
         'ws_aorg_website_url' => 'https://www.americanbar.org/groups/legal_services/',
@@ -873,9 +873,9 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        'internal_id' => 'pub-emp-environmental-responsibility-us',
+        '_ws_aorg_id' => 'pub-emp-environmental-responsibility-us',
         'common_name' => 'PEER',
-        'title' => 'Public Employees for Environmental Responsibility',
+        'official_name' => 'Public Employees for Environmental Responsibility',
         'slug' => 'public-employees-for-environmental-responsibility',
         'description' => 'PEER provides free legal and strategic assistance to federal, state, and local government employees who blow the whistle on environmental harm, public health threats, and scientific integrity violations.',
         'ws_aorg_website_url' => 'https://peer.org',
@@ -937,9 +937,9 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        'internal_id' => 'signals-net-us',
+        '_ws_aorg_id' => 'signals-net-us',
         'common_name' => 'TSN',
-        'title' => 'The Signals Network',
+        'official_name' => 'The Signals Network',
         'slug' => 'the-signals-network',
         'description' => 'The Signals Network is a nonprofit that provides holistic support to whistleblowers who share public interest information — including legal assistance, psychological counseling, physical security, and media coordination.',
         'ws_aorg_website_url' => 'https://thesignalsnetwork.org',
@@ -1013,7 +1013,7 @@ $_ws_assist_org_matrix = [
  * @return string
  */
 function ws_matrix_build_assist_org_internal_id( array $org, string $jx_slug = '' ): string {
-    $org_name = trim( (string) ( $org['title'] ?? '' ) );
+    $org_name = trim( (string) ( $org['official_name'] ?? '' ) );
     $homepage = trim( (string) ( $org['ws_aorg_website_url'] ?? '' ) );
     $jx_slug  = strtolower( trim( (string) $jx_slug ) );
 
@@ -1024,7 +1024,7 @@ function ws_matrix_build_assist_org_internal_id( array $org, string $jx_slug = '
 
     $seed = $org_name !== '' ? $org_name : $host;
     if ( $seed === '' ) {
-        $seed = 'assist org';
+        $seed = 'assist-org';
     }
 
     $normalized = strtolower( $seed );
@@ -1044,7 +1044,7 @@ function ws_matrix_build_assist_org_internal_id( array $org, string $jx_slug = '
     $normalized = preg_replace( '/\b(?:and|the|for|of|in|at|to|a|an)\b/u', ' ', $normalized );
 
     // IMPORTANT: Keep this ruleset in sync with
-    // ws_ingest_build_assist_org_internal_id() in tool-ingest.php.
+    // ws_ingest_build_aorg_internal_id() in tool-ingest.php.
     // If these diverge, seeded/internal IDs will drift over time.
     $abbrev_rules = [
         '/\bwhistle[\s\-]*blow(?:er|ers|ing)\b/u' => 'wb',
@@ -1089,6 +1089,7 @@ function ws_matrix_build_assist_org_internal_id( array $org, string $jx_slug = '
         '/\bprojects?\b/u'                           => 'proj',
         '/\binitiatives?\b/u'                        => 'init',
         '/\bresources?\b/u'                          => 'res',
+        '/\baccountability\b/u'                      => 'acct',
     ];
 
     foreach ( $abbrev_rules as $pattern => $replacement ) {
@@ -1129,7 +1130,7 @@ function ws_seed_assist_org_matrix() {
 
         $internal_id = ws_matrix_build_assist_org_internal_id( $org, 'us' );
         if ( $internal_id === '' ) {
-            $internal_id = (string) ( $org['internal_id'] ?? '' );
+            $internal_id = (string) ( $org['_ws_aorg_id'] ?? '' );
         }
 
         $existing = get_page_by_path( $org['slug'], OBJECT, 'ws-assist-org' );
@@ -1144,7 +1145,7 @@ function ws_seed_assist_org_matrix() {
         }
 
         $post_data = [
-            'post_title'   => $org['title'],
+            'post_title'   => $org['official_name'],
             'post_name'    => $org['slug'],
             'post_type'    => 'ws-assist-org',
             'post_status'  => 'publish',
@@ -1169,7 +1170,7 @@ function ws_seed_assist_org_matrix() {
 
         $meta = [
             '_ws_aorg_id'          => $internal_id,
-            'ws_aorg_official_name'        => $org['title']                ?? '',
+            'ws_aorg_official_name'        => $org['official_name']                ?? '',
             'ws_aorg_common_name'          => $org['common_name']          ?? '',
             'ws_aorg_description'          => $org['description']          ?? '',
             'ws_aorg_website_url'          => $org['ws_aorg_website_url']  ?? '',

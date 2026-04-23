@@ -49,19 +49,23 @@
  *
  * Enforcement tab:
  *   ws_jx_comlaw_process_types                     Process Types (multi_select, optional)
- *   ws_jx_comlaw_adverse_actions              Adverse Action Types (multi_select, optional)
- *   ws_jx_comlaw_adverse_action_details       Adverse Action Details (textarea, optional)
+ *   ws_jx_comlaw_adverse_actions                   Adverse Actions (multi_select, optional)
+ *   ws_jx_comlaw_adverse_action_details            Adverse Action Details (textarea, optional)
  *   ws_jx_comlaw_fee_shiftings                     Fee Shifting (multi_select, optional)
  *   ws_jx_comlaw_remedies                          Available Remedies (multi_select, optional)
- *   ws_jx_comlaw_remedy_details                    Remedies Details (textarea, optional)
+ *   ws_jx_comlaw_remedy_details                    Remedy Details (textarea, optional)
  *   ws_jx_comlaw_related_agencies                  Primary Oversight Agencies (post_object, optional)
+ *   ws_jx_comlaw_federal_agencies                  Federal Agencies (post_object, optional)
+ *   ws_jx_comlaw_local_agencies                    Local Agencies (post_object, optional)
+ *   ws_jx_comlaw_enforcement_channel               Enforcement Channel (textarea, optional)
+ * 
  *
  * Burden of Proof tab:
  *   ws_jx_comlaw_has_statutory_preclusion          Statutory Preclusion (true_false, optional)
  *   ws_jx_comlaw_statutory_preclusion_details      Statutory Preclusion Details (textarea, conditional)
- *   ws_jx_comlaw_employee_standards                Employee Standard (multi_select, optional)
+ *   ws_jx_comlaw_employee_standards                Employee Standards (multi_select, optional)
  *   ws_jx_comlaw_employee_standard_details         Employee Standard Details (textarea, optional)
- *   ws_jx_comlaw_employer_defenses                 Employer Defense (multi_select, optional)
+ *   ws_jx_comlaw_employer_defenses                 Employer Defenses (multi_select, optional)
  *   ws_jx_comlaw_employer_defense_details          Employer Defense Details (textarea, optional)
  *   ws_jx_comlaw_has_rebuttable_presumption        Rebuttable Presumption Exists (true_false, optional)
  *   ws_jx_comlaw_rebuttable_presumption_details    Rebuttable Presumption Details (textarea, conditional)
@@ -82,6 +86,7 @@
  * 
  * Hidden fields:
  *   _ws_jx_comlaw_id                               Ingest Dedupe Code (text, hidden)
+ *   _ws_auto_source_chain                          Source Chain [role|tool] (array, hidden, created by ingest) — Research Provenance
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------
@@ -636,16 +641,52 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'           => 'field_jx_comlaw_related_agencies',
-                'label'         => 'Primary Oversight Agencies',
-                'name'          => 'ws_jx_comlaw_related_agencies',
+                'key'           => 'field_jx_comlaw_primary_agency',
+                'label'         => 'Primary Oversight Agency',
+                'name'          => 'ws_jx_comlaw_primary_agency',
                 'type'          => 'post_object',
                 'post_type'     => [ 'ws-agency' ],
-                'instructions'  => 'Select agencies relevant to enforcement or intake under this doctrine, if any.',
+                'instructions'  => 'Select the primary agency responsible for overseeing this doctrine (state, territory, district, tribal, or local bodies).',
+                'multiple'      => 0,
+                'allow_null'    => 1,
+                'ui'            => 1,
+                'return_format' => 'id',
+            ],
+
+            [
+                'key'           => 'field_jx_comlaw_local_agencies',
+                'label'         => 'Local Agencies',
+                'name'          => 'ws_jx_comlaw_local_agencies',
+                'type'          => 'post_object',
+                'post_type'     => [ 'ws-agency' ],
+                'instructions'  => 'Select non-federal agencies that enforce or provide intake for this doctrine (state, territory, district, tribal, or local bodies).',
                 'multiple'      => 1,
                 'allow_null'    => 1,
                 'ui'            => 1,
                 'return_format' => 'id',
+            ],
+
+            [
+                'key'           => 'field_jx_comlaw_federal_agencies',
+                'label'         => 'Federal Agencies',
+                'name'          => 'ws_jx_comlaw_federal_agencies',
+                'type'          => 'post_object',
+                'post_type'     => [ 'ws-agency' ],
+                'instructions'  => 'Select federal agencies that enforce or provide intake for this doctrine.',
+                'multiple'      => 1,
+                'allow_null'    => 1,
+                'ui'            => 1,
+                'return_format' => 'id',
+            ],
+
+            [
+                'key'           => 'field_jx_comlaw_enforcement_channel',
+                'label'         => 'Enforcement Channel Notes',
+                'name'          => 'ws_jx_comlaw_enforcement_channel',
+                'type'          => 'textarea',
+                'rows'          => 3,
+                'instructions'  => 'Capture agency/channel nuance not represented by linked agency records (e.g., split intake paths, courts, or agency prioritization).',
+                
             ],
 
             // ────────────────────────────────────────────────────────────────

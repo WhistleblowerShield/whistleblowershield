@@ -47,7 +47,7 @@ noise.
 Every dataset function returns these standard sub-arrays:
 
 ```
-record  → created_by, created_by_name, created_date,
+author  → created_by, created_by_name, created_date,
           edited_by, edited_by_name, edited_date
 
 plain   → has_content, plain_content, written_by, written_by_name,

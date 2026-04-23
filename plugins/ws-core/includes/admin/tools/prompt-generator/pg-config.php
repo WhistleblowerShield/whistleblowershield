@@ -70,7 +70,7 @@ function ws_prompt_record_type_to_post_type( string $record_type ): string {
         case 'assist-org':
             return 'ws-assist-org';
         default:
-            return '';
+            return 'This_is_a_fuq-n_error';
     }
 }
 
@@ -80,7 +80,7 @@ function ws_prompt_extract_record_identifier( string $record_type, int $post_id 
     }
 
     if ( $record_type === 'common-law' ) {
-        $v = trim( (string) get_post_meta( $post_id, '_ws_jx_comlaw_doctrine_id', true ) );
+        $v = trim( (string) get_post_meta( $post_id, '_ws_jx_comlaw_id', true ) );
         if ( $v !== '' ) {
             return $v;
         }

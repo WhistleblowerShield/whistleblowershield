@@ -58,6 +58,7 @@
  * 
  * Hidden fields:
  *   _ws_jx_construction_id                            Ingest Dedupe Code (text, hidden)
+ *   _ws_auto_source_chain                             Source Chain [role|tool] (array, hidden, created by ingest) — Research Provenance
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------
@@ -234,11 +235,20 @@ function ws_register_acf_jx_construction_s() {
             ],
 
             [
+                'key'          => 'field_jx_construction_id',
+                'label'        => 'Construction ID',
+                'name'         => 'ws_jx_construction_id',
+                'type'         => 'text',
+                'instructions' => 'Unique identifier for this construction.',
+                'required'     => 1,
+            ],
+
+            [
                 'key'          => 'field_jx_construction_url',
                 'label'        => 'Opinion URL',
                 'name'         => 'ws_jx_construction_url',
                 'type'         => 'url',
-                'instructions' => 'Link to the full opinion (CourtListener, Google Scholar, PACER, etc.).',
+                'instructions' => 'Link to the full opinion (CourtListener, PACER, etc.).',
             ],
 
             [
@@ -264,19 +274,6 @@ function ws_register_acf_jx_construction_s() {
                 'key'   => 'field_jx_construction_summary_tab',
                 'label' => 'Summary',
                 'type'  => 'tab',
-            ],
-
-            [
-                'key'          => 'field_jx_construction_summary_wysiwyg',
-                'label'        => 'Summary',
-                'name'         => 'ws_jx_construction_summary_wysiwyg',
-                'type'         => 'wysiwyg',
-                'instructions' => 'Summarize what the court decided in plain-english. Focus on what this ruling means for whistleblowers — not legal procedure. Citation is captured above.',
-                'required'     => 1,
-                'tabs'         => 'visual',
-                'toolbar'      => 'basic',
-                'media_upload' => 0,
-                'delay'        => 0,
             ],
 
             [

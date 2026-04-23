@@ -36,7 +36,7 @@
  *   ws_agency_last_reviewed              Last Verified Date (date_picker, optional)
  * 
  * Hidden fields:
- *   __ws_agency_id                       Reserved: Ingest Dedupe Code (text, hidden)
+ *   _ws_agency_id                       Reserved: Ingest Dedupe Code (text, hidden)
  *
  * SHARED WORKFLOW GROUPS
  * ----------------------

@@ -50,7 +50,7 @@
  * 3.9.0  Initial. Seeds 10 procedures across 9 federal agencies.
  * 3.10.0 ws_procedure_type removed from scalar meta write. Procedure type now
  *        assigned via wp_set_object_terms( 'ws_procedure_type' ). Data array
- *        key ws_procedure_type retained as the slug source — resolved to a taxonomy
+ *        key procedure_types — resolved to a taxonomy
  *        term by the seeder loop rather than written as post meta.
  *
  */
@@ -71,7 +71,7 @@ $_ws_ag_procedure_matrix = [
         'title'               => 'SEC Dodd-Frank Whistleblower Tip Submission',
         'slug'                => 'sec-dodd-frank-tip-submission',
         'agency_slug'         => 'sec-whistleblower-program',
-        'wprocedure_type'        => 'disclosure',
+        'procedure_type'        => 'disclosure',
         'disclosure_types'    => [ 'securities-commodities-fraud' ],
         'entry_point' => 'online',
         'intake_url'  => 'https://www.sec.gov/tcr',
@@ -102,8 +102,8 @@ $_ws_ag_procedure_matrix = [
         'title'               => 'OSHA Whistleblower Retaliation Complaint',
         'slug'                => 'osha-whistleblower-retaliation-complaint',
         'agency_slug'         => 'osha-whistleblower-protection-program',
-        'wprocedure_type'        => 'retaliation',
-        'disclosure_types'    => [ 'retaliation-protection', 'occupational-health-safety', 'securities-commodities-fraud' ],
+        'procedure_type'        => 'retaliation',
+        'disclosure_types'    => [ 'occupational-health-safety', 'securities-commodities-fraud' ],
         'entry_point' => 'online',
         'intake_url'  => 'https://www.osha.gov/workers/file-a-complaint',
         'identity_policy'      => 'identified',
@@ -133,7 +133,7 @@ $_ws_ag_procedure_matrix = [
         'title'               => 'OSC Disclosure of Wrongdoing',
         'slug'                => 'osc-wrongdoing-disclosure',
         'agency_slug'         => 'office-of-special-counsel',
-        'wprocedure_type'        => 'disclosure',
+        'procedure_type'        => 'disclosure',
         'disclosure_types'    => [ 'public-corruption-ethics', 'procurement-spending-fraud' ],
         'entry_point' => 'online',
         'intake_url'  => 'https://osc.gov/Services/Pages/FileDisclosure.aspx',
@@ -163,8 +163,8 @@ $_ws_ag_procedure_matrix = [
         'title'               => 'OSC Prohibited Personnel Practice Complaint',
         'slug'                => 'osc-prohibited-personnel-practice',
         'agency_slug'         => 'office-of-special-counsel',
-        'wprocedure_type'        => 'retaliation',
-        'disclosure_types'    => [ 'retaliation-protection' ],
+        'procedure_type'        => 'retaliation',
+        'disclosure_types'    => [],
         'entry_point' => 'online',
         'intake_url'  => 'https://osc.gov/Services/Pages/FileComplaint.aspx',
         'identity_policy'      => 'confidential',
@@ -194,8 +194,8 @@ $_ws_ag_procedure_matrix = [
         'title'               => 'MSPB Individual Right of Action Appeal',
         'slug'                => 'mspb-individual-right-of-action',
         'agency_slug'         => 'merit-systems-protection-board',
-        'wprocedure_type'        => 'retaliation',
-        'disclosure_types'    => [ 'retaliation-protection' ],
+        'procedure_type'        => 'retaliation',
+        'disclosure_types'    => [],
         'entry_point' => 'online',
         'intake_url'  => 'https://e-appeal.mspb.gov/',
         'identity_policy'      => 'identified',
@@ -224,8 +224,8 @@ $_ws_ag_procedure_matrix = [
         'title'               => 'NLRB Unfair Labor Practice Charge',
         'slug'                => 'nlrb-unfair-labor-practice-charge',
         'agency_slug'         => 'national-labor-relations-board',
-        'wprocedure_type'        => 'both',
-        'disclosure_types'    => [ 'retaliation-protection', 'collective-bargaining' ],
+        'procedure_type'        => 'both',
+        'disclosure_types'    => [ 'collective-bargaining' ],
         'entry_point' => 'online',
         'intake_url'  => 'https://www.nlrb.gov/reports/nlrb-case-activity-statistics/case-filings/file-a-case',
         'identity_policy'      => 'identified',
@@ -252,7 +252,7 @@ $_ws_ag_procedure_matrix = [
         'title'               => 'CFTC Whistleblower Tip Submission',
         'slug'                => 'cftc-whistleblower-tip-submission',
         'agency_slug'         => 'cftc-whistleblower-program',
-        'wprocedure_type'        => 'disclosure',
+        'procedure_type'        => 'disclosure',
         'disclosure_types'    => [ 'securities-commodities-fraud' ],
         'entry_point' => 'online',
         'intake_url'  => 'https://www.whistleblower.gov/tipsubmission',
@@ -281,7 +281,7 @@ $_ws_ag_procedure_matrix = [
         'title'               => 'IRS Whistleblower Award Claim (Form 211)',
         'slug'                => 'irs-form-211-award-claim',
         'agency_slug'         => 'irs-whistleblower-office',
-        'wprocedure_type'        => 'disclosure',
+        'procedure_type'        => 'disclosure',
         'disclosure_types'    => [ 'tax-evasion-fraud' ],
         // Form 211 is mailed to the IRS Whistleblower Office — no online portal.
         'entry_point' => 'mail',
@@ -311,8 +311,8 @@ $_ws_ag_procedure_matrix = [
         'title'               => 'EPA Environmental Whistleblower Retaliation Complaint',
         'slug'                => 'epa-environmental-retaliation-complaint',
         'agency_slug'         => 'epa-whistleblower-protection',
-        'wprocedure_type'        => 'retaliation',
-        'disclosure_types'    => [ 'environmental-protection', 'retaliation-protection' ],
+        'procedure_type'        => 'retaliation',
+        'disclosure_types'    => [ 'environmental-protection',  ],
         // EPA environmental retaliation complaints are filed with and investigated
         // by OSHA on behalf of EPA statutes — the intake portal belongs to OSHA.
         'entry_point' => 'online',
@@ -343,8 +343,8 @@ $_ws_ag_procedure_matrix = [
         'title'               => 'False Claims Act Qui Tam Complaint',
         'slug'                => 'doj-false-claims-act-qui-tam',
         'agency_slug'         => 'doj-false-claims-act',
-        'wprocedure_type'        => 'both',
-        'disclosure_types'    => [ 'procurement-spending-fraud', 'healthcare-medicare-fraud', 'retaliation-protection' ],
+        'procedure_type'        => 'both',
+        'disclosure_types'    => [ 'procurement-spending-fraud', 'healthcare-medicare-fraud',  ],
         // Qui tam complaints are filed in federal district court — not through
         // a government agency intake portal. The intake_url points to DOJ Civil Fraud
         // for initial inquiries; the actual complaint is filed with the court clerk.
@@ -490,7 +490,7 @@ function ws_seed_procedure_matrix() {
         // ── Assign procedure type (taxonomy table) ─────────────────────────
         // ws_procedure_type replaces the former ws_procedure_type meta key.
         // Single-value taxonomy — wp_set_object_terms with append=false
-        // ensures exactly one term is assigned per record.
+        // ensures exactly one term is assigned per record.`
 
         if ( ! empty( $proc['procedure_type'] ) ) {
             wp_set_object_terms( $post_id, $proc['procedure_type'], 'ws_procedure_type', false );

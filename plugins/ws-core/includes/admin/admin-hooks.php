@@ -71,7 +71,7 @@
  *   ws_auto_plain_english_reviewed_by   — WP user ID, written once when plain_reviewed first enabled
  *   ws_auto_plain_english_reviewed_date — local date (Y-m-d), written once when plain_reviewed first enabled
  *   _ws_auto_create_date_gmt           — GMT date (Y-m-d), written once, private/hidden
- *   _ws_auto_last_edited_gmt            — GMT date (Y-m-d), written every save, private/hidden
+ *   _ws_auto_last_edited_date_gmt            — GMT date (Y-m-d), written every save, private/hidden
  *   
  *
  * VERSION
@@ -612,7 +612,7 @@ function ws_acf_write_stamp_fields( $post_id ) {
     // ── Last-edited date-stamps (every save) ──────────────────────────────
 
     update_post_meta( $post_id,  'ws_auto_last_edited_date',      $now_local );
-    update_post_meta( $post_id, '_ws_auto_last_edited_gmt',       $now_gmt );
+    update_post_meta( $post_id, '_ws_auto_last_edited_date_gmt',       $now_gmt );
 
     // ── Last-edited author ────────────────────────────────────────────────
     // Honour admin attribution override; stamp current user in all other cases.
@@ -1743,13 +1743,13 @@ add_action( 'deleted_post', function( $post_id ) {
         ws_rebuild_jx_comlaw_citation_index( $cid );
     }
 
-    $construction_sid = ws_construction_statute_delete_stash( $post_id );
-    if ( $construction_sid ) {
-        ws_rebuild_jx_statute_construction_index( $construction_sid );
+    $construct_sid = ws_construction_statute_delete_stash( $post_id );
+    if ( $construct_sid ) {
+        ws_rebuild_jx_statute_construction_index( $construct_sid );
     }
 
-    $construction_cid = ws_construction_comlaw_delete_stash( $post_id );
-    if ( $construction_cid ) {
-        ws_rebuild_jx_comlaw_construction_index( $construction_cid );
+    $construct_cid = ws_construction_comlaw_delete_stash( $post_id );
+    if ( $construct_cid ) {
+        ws_rebuild_jx_comlaw_construction_index( $construct_cid );
     }
 } );

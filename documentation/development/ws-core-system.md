@@ -196,7 +196,7 @@ All plugin functions carry the `ws_` prefix. No exceptions.
    `ws_auto_plain_english_reviewed_by`.
 3. Private audit-only keys additionally carry a leading underscore per
    the WordPress hidden-meta convention:
-   `_ws_auto_create_date_gmt`, `_ws_auto_last_edited_gmt`.
+   `_ws_auto_create_date_gmt`, `_ws_auto_last_edited_date_gmt`.
 4. Content CPT meta keys carry a CPT infix:
    `ws_jx_statute_*`, `ws_jx_comlaw_*`, `ws_agency_*`, `ws_aorg_*`, `ws_legal_update_*`,
    `ws_jx_construction_*`, `ws_jx_citation_*`, `ws_ag_procedure_*`,`ws_ref_*`.

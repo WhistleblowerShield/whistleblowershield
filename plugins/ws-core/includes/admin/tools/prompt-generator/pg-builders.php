@@ -13,7 +13,7 @@ function ws_generate_assist_org_prompt( array $scope ): string {
     $excludes = (string) ( $scope['exclusion_list'] ?? '' );
     $nationwide_only = ! empty( $scope['nationwide_only'] );
 
-    $out  = ws_prompt_shared_intro_block( 'assist-org' );
+    $out  = ws_prompt_shared_intro_block( 'assist-org', $records );
     $out .= "--------------------------------------------------------------------------------\nTARGET CRITERIA\n\n";
     $out .= "- Include organizations with direct help or fast referral pathways.\n";
     $out .= "- Exclude pure reporting channels and media tip lines without support pathways.\n";
@@ -51,7 +51,7 @@ function ws_generate_legal_prompt( string $record_type, array $scope ): string {
     $notes    = trim( (string) ( $scope['scope_details'] ?? '' ) );
     $excludes = (string) ( $scope['exclusion_list'] ?? '' );
 
-    $out  = ws_prompt_shared_intro_block( $record_type );
+    $out  = ws_prompt_shared_intro_block( $record_type, $records );
     $out .= ws_prompt_shared_policy_block();
     $out .= ws_prompt_meta_block( $record_type );
     $out .= ws_prompt_new_terms_guidance_block();

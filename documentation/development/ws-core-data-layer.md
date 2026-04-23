@@ -18,12 +18,12 @@ document describes what is in those files as of v3.14.0.
 Fifteen field groups are registered. Thirteen are CPT-specific. Two are
 shared groups that attach to multiple CPTs via their location rules:
 
-| Shared Group | Group Key | Attaches To | Purpose |
+| Shared Group | Group Key | Purpose |
 |---|---|---|---|
-| Stamp Fields | `group_stamp_metadata` | All 9 content CPTs | Created/edited timestamps and authorship |
-| Plain English Fields | `group_plain_english_metadata` | `jx-statute`, `jx-common-law`, `jx-citation`, `jx-construction`, `ws-agency` | Plain language overlay toggle, content, and review stamps |
-| Source Verify Fields | `group_source_verify_metadata` | All content CPTs except `jurisdiction` | Source method, verification status, needs-review flag |
-| Major Edit | `group_major_edit_metadata` | `jx-summary`, `jx-statute`, `jx-citation`, `jx-construction`, `ag-procedure` | Flag + describe a major editorial change that triggers a legal update post |
+| Stamp Fields | `group_stamp_metadata` | Created/edited timestamps and authorship |
+| Plain English Fields | `group_plain_english_metadata` | Plain-English overlay toggle, content, and review stamps |
+| Source Verify Fields | `group_source_verify_metadata` | Source method, verification status, needs-review flag |
+| Major Edit | `group_major_edit_metadata` | Flag + describe a major editorial change that triggers a legal update post |
 
 The shared groups load at `menu_order` 85–90, appearing after CPT-specific
 groups in the admin edit screen. They are never duplicated in individual
@@ -35,7 +35,7 @@ CPT field files.
 
 **Group key:** `group_stamp_metadata`
 **File:** `acf/acf-stamp-fields.php`
-**Attaches to:** `jx-summary`, `jx-statute`, `jx-citation`,
+**Attaches to:** `jx-summary`, `jx-statute`, `jx-common-law`, `jx-citation`,
 `jx-construction`, `ws-agency`, `ag-procedure`, `ws-assist-org`,
 `ws-legal-update`, `ws-reference`
 
@@ -46,12 +46,12 @@ change them.
 | Meta Key | Type | Written By | Notes |
 |---|---|---|---|
 | `ws_auto_last_edited_author` | user | Every save | The user who last saved — admin-overridable for attribution |
-| `ws_auto_create_date` | text | First save only | Local site date `Y-m-d`; never overwritten |
 | `ws_auto_last_edited_date` | text | Every save | Local site date `Y-m-d` |
-| `ws_auto_create_author` | user | First save only | The user who created the record |
+| `ws_auto_create_date` | text | First save only | Local site date `Y-m-d`; never overwritten |
+| `ws_auto_create_author` | user | First save only | The user who created the record; never overwritten |
 
 Hidden audit keys (no ACF field, never shown in UI):
-`_ws_auto_create_date_gmt`, `_ws_auto_last_edited_gmt`
+`_ws_auto_create_date_gmt`, `_ws_auto_last_edited_date_gmt`
 
 ---
 
@@ -59,8 +59,8 @@ Hidden audit keys (no ACF field, never shown in UI):
 
 **Group key:** `group_plain_english_metadata`
 **File:** `acf/acf-plain-english-fields.php`
-**Attaches to:** `jx-statute`, `jx-citation`, `jx-construction`,
-`ws-agency`
+**Attaches to:** `jx-statute`, `jx-common-law`,`jx-citation`, `jx-construction`,
+`ws-agency`, `ws-assist-org`
 
 Note: `jx-summary` and `ag-procedure` are intentionally excluded.
 The summary IS the plain-english document. The procedure walkthrough
@@ -82,9 +82,8 @@ IS the plain-english content. Neither carries this overlay.
 
 **Group key:** `group_source_verify_metadata`
 **File:** `acf/acf-source-verify.php`
-**Attaches to:** `jx-statute`, `jx-citation`, `jx-construction`,
-`ws-agency`, `ag-procedure`, `ws-assist-org`, `jx-summary`,
-`ws-reference`
+**Attaches to:**  `jx-summary`,`jx-statute`, `jx-citation`, `jx-construction`,
+`ws-agency`, `ag-procedure`, `ws-assist-org`, `ws-reference`
 
 Source method and name fields are admin-only and locked read-only.
 Verification status and needs-review are editable by editors.
@@ -115,6 +114,7 @@ The toggle resets after the legal update is created.
 |---|---|---|
 | `ws_is_major_edit` | true_false | Triggers legal update creation on save |
 | `ws_major_edit_description` | textarea | Required description of the change (conditional on toggle) |
+| `ws_major_edit_type` | select | Auto-filled, manually overridable |
 
 ---
 
@@ -128,8 +128,8 @@ The toggle resets after the legal update is created.
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_jurisdiction_term_id` | taxonomy | Links this post to its `ws_jurisdiction` term; `save_terms: 1` |
-| `ws_jx_code` | text | USPS code (e.g. `ca`, `us`); retained for legacy display |
+| `ws_jurisdiction_jx` | taxonomy | Links this post to its `ws_jurisdiction` term; `save_terms: 1` |
+| `ws_jx_code` | message | Displays jx_term as USPS code (e.g. `CA`, `US`) |
 | `ws_jurisdiction_class` | select | `state` / `federal` / `territory` / `district` |
 | `ws_jurisdiction_name` | text | Display name used in headings |
 
@@ -159,9 +159,9 @@ The toggle resets after the legal update is created.
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `_ws_auto_last_edited_gmt` | text | Hidden GMT audit timestamp |
 | `ws_auto_last_edited_author` | user | Last editor (jurisdiction uses its own field key) |
 | `ws_auto_last_edited_date` | text | Local date of last edit |
+| `_ws_auto_last_edited_date_gmt` | text | Hidden GMT audit timestamp |
 
 ---
 
@@ -236,10 +236,13 @@ stamp, plain-english, source verify, and major edit from shared groups.
 |---|---|---|
 | `ws_jx_statute_process_types` | taxonomy | `ws_process_type` terms; `save_terms: 1` |
 | `ws_jx_statute_adverse_actions` | taxonomy | `ws_adverse_action` terms; `save_terms: 1` |
+| `ws_jx_statute_adverse_action_details` | textarea | Adverse Action details (conditional) |
 | `ws_jx_statute_fee_shiftings` | taxonomy | `ws_fee_shifting` terms; `save_terms: 1` |
 | `ws_jx_statute_remedies` | taxonomy | `ws_remedy` terms; `save_terms: 1` |
 | `ws_jx_statute_remedy_details` | textarea | Remedy details (conditional) |
-| `ws_jx_statute_related_agencies` | post_object | Links to `ws-agency` posts that enforce this statute |
+| `ws_jx_statute_primary_agency` | post_object | Single-select, links to primary `ws-agency` post that enforce this statute |
+| `ws_jx_statute_state_agencies` | post_object | Multi-select, links to state `ws-agency` posts that enforce this statute |
+| `ws_jx_statute_federal_agencies` | post_object | Multi-select, links to federal `ws-agency` posts that enforce this statute |
 
 **Tab: Burden of Proof**
 

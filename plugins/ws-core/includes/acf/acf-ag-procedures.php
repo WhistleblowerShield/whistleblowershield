@@ -144,7 +144,7 @@ function ws_register_acf_ag_procedures() {
             // navigation box — see ws_ag_procedure_prefill_agency_id() below.
 
             [
-                'key'           => 'filed_ag_procedure_agency_id',
+                'key'           => 'field_ag_procedure_agency_id',
                 'label'         => 'Parent Agency',
                 'name'          => 'ws_ag_procedure_agency_id',
                 'type'          => 'post_object',

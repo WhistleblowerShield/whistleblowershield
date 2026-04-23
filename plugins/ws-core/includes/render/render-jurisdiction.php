@@ -187,9 +187,9 @@ function ws_render_jx_curated( $post, $jx_term_id ) {
 
     // constructions — after citations, before limitations.
     // id="ws-constructions" is the anchor target for the reference page back link.
-    $constructions = do_shortcode( '[ws_jx_construction_]' );
-    if ( $constructions ) {
-        $output      .= '<div id="ws-constructions">' . $constructions . '</div>';
+    $constructs = do_shortcode( '[ws_jx_construction_]' );
+    if ( $constructs ) {
+        $output      .= '<div id="ws-constructions">' . $constructs . '</div>';
         $has_content  = true;
     }
 

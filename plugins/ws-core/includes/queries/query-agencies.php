@@ -169,7 +169,7 @@ function ws_build_agency_procedure_row( $pid ) {
     $agency_id      = (int) get_post_meta( $pid, 'ws_ag_procedure_agency_id', true );
     $agency_url     = $agency_id ? get_permalink( $agency_id ) : '';
     $agency_name    = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_official_name', true ) : '';
-    $agency_common = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_common_name', true ) : '';
+    $agency_common  = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_common_name', true ) : '';
     $agency_mission = $agency_id ? (string) get_post_meta( $agency_id, 'ws_agency_mission', true ) : '';
     $agency_title   = $agency_id ? get_the_title( $agency_id ) : '';
 
@@ -195,15 +195,18 @@ function ws_build_agency_procedure_row( $pid ) {
         'url'              => get_permalink( $pid ),
         'agency_id'        => $agency_id,
         'agency_name'      => $agency_name !== '' ? $agency_name : $agency_title,
+        'agency_common'    => $agency_common,
+        'agency_mission'   => $agency_mission,
         'agency_url'       => $agency_url ? (string) $agency_url : '',
         'type'             => $proc_type,
-        'jurisdiction'     => ( $jx_terms   && ! is_wp_error( $jx_terms   ) ) ? $jx_terms   : [],
+        'jurisdictions'    => ( $jx_terms   && ! is_wp_error( $jx_terms   ) ) ? $jx_terms   : [],
         'jurisdiction_slugs' => $jx_slugs,
         'disclosure_types' => ( $disc_types && ! is_wp_error( $disc_types ) ) ? $disc_types : [],
         'disclosure_type_slugs' => $disc_slugs,
         'employment_sectors' => ws_q_normalize_id_list( get_field( 'ws_ag_procedure_employment_sectors', $pid ) ),
         'statute_ids'      => ws_q_normalize_id_list( get_post_meta( $pid, 'ws_ag_procedure_statute_ids', true ) ),
         'comlaw_ids'       => ws_q_normalize_id_list( get_post_meta( $pid, 'ws_ag_procedure_comlaw_ids', true ) ),
+        'parent_ids'       => ws_q_normalize_id_list( get_post_meta( $pid, '_ws_ag_procedure_parent_ids', true ) ),
         'entry_point'      => get_post_meta( $pid, 'ws_ag_procedure_entry_point',           true ),
         'intake_url'       => get_post_meta( $pid, 'ws_ag_procedure_intake_url',            true ),
         'phone'            => get_post_meta( $pid, 'ws_ag_procedure_phone',                 true ),
@@ -220,7 +223,9 @@ function ws_build_agency_procedure_row( $pid ) {
         'parent_override'  => (bool) get_post_meta( $pid, 'ws_ag_procedure_parent_override',  true ),
         'last_reviewed'    => get_post_meta( $pid, 'ws_ag_procedure_last_reviewed',         true ),
         // Standard authorship stamp sub-array (created_by, edited_by, dates).
+        // Standard source-verified stamp sub-array (source_*, verified_*, needs_review).
         'author'           => ws_build_author_array( $pid ),
+        'verify'           => ws_build_source_verify_array( $pid ),
     ];
 }
 
@@ -470,11 +475,11 @@ add_action( 'save_post_ag-procedure', function( $post_id ) {
     $agency_id = (int) get_post_meta( $post_id, 'ws_ag_procedure_agency_id', true );
 
     if ( $agency_id ) {
-        delete_transient( 'ws_agency_procedures_' . $agency_id );
+        delete_transient( 'ws_agency_procedures_' . $agency_id . '_' );
     }
 
     if ( $old_agency_id && $old_agency_id !== $agency_id ) {
-        delete_transient( 'ws_agency_procedures_' . $old_agency_id );
+        delete_transient( 'ws_agency_procedures_' . $old_agency_id . '_' );
     }
 
 }, 10, 1 );

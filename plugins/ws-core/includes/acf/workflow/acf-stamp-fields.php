@@ -6,11 +6,7 @@
  *
  * Attaches to: jx-summary, jx-statute, jx-common-law, jx-citation, jx-construction,
  *              ws-agency, ag-procedure, ws-assist-org, ws-legal-update,
- *              ws-reference
- *
- * Excluded: jurisdiction — seeder-generated; create authorship not meaningful.
- *           jurisdiction carries its own slim Record Management tab in
- *           acf-jurisdictions.php.
+ *              ws-reference, jurisdiction
  *
  * Fields (all auto-filled, read-only for non-administrators):
  *   ws_auto_last_edited_author  — user who last saved; admin-overridable
@@ -59,8 +55,9 @@ function ws_register_acf_stamp_fields() {
         'active'                => true,
 
         // Attaches to all 10 supported CPTs.
-        // jurisdiction is intentionally excluded — see file header.
+        // 
         'location' => [
+            [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jurisdiction'        ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-summary'        ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-statute'         ] ],
             [ [ 'param' => 'post_type', 'operator' => '==', 'value' => 'jx-common-law'      ] ],

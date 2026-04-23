@@ -176,7 +176,7 @@ or any other property.
 1. All custom meta keys carry a `ws_` prefix. No bare unprefixed keys.
 2. Auto-stamp keys carry the `ws_auto_` prefix (written by hook logic only).
 3. Private audit-only keys additionally carry a leading underscore:
-   `_ws_auto_create_date_gmt`, `_ws_auto_last_edited_gmt`.
+   `_ws_auto_create_date_gmt`, `_ws_auto_last_edited_date_gmt`.
 4. All meta data meant to be hidden/private values fit normal naming rules
    with underscore prefixed. Example: `_ws_aorg_id`
 4. Content ACF meta names carry a CPT infix:

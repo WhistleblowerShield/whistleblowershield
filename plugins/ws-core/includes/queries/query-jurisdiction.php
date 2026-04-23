@@ -702,11 +702,11 @@ function ws_get_jx_citation_data( $jx_term_id ) {
             'post_status'    => 'publish',
             'posts_per_page' => -1,
             'orderby'        => 'meta_value_num',
-            'meta_key'       => 'ws_jx_statute_display_order',
+            'meta_key'       => 'ws_jx_citation_display_order',
             'order'          => 'ASC',
             'no_found_rows'  => true,
             'meta_query'     => [ [
-                'key'     => 'ws_jx_statute_has_attach_flag',
+                'key'     => 'ws_jx_citation_has_attach_flag',
                 'value'   => '1',
                 'compare' => '=',
             ] ],
@@ -737,7 +737,7 @@ function ws_get_jx_citation_data( $jx_term_id ) {
                                    ?: get_post_meta( $cid, 'ws_jx_citation_official_name',             true )
                                    ?: get_the_title( $cid ),
                 'cite_url'        => get_post_meta( $cid, 'ws_jx_citation_url',           true ),
-                'summary'         => get_post_meta( $cid, 'ws_jx_citation_summary_wysiwyg', true ),
+                'summary'         => get_post_meta( $cid, 'ws_plain_english_wysiwyg', true ),
                 'is_pdf'          => (bool) get_post_meta( $cid, 'ws_jx_citation_url_is_pdf', true ),
                 'protected_class' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_protected_classes', $cid ) ),
                 'protected_class_details' => get_post_meta( $cid, 'ws_jx_citation_protected_class_details', true ),
@@ -833,7 +833,7 @@ function ws_get_jx_construction_data( $jx_term_id ) {
         ] );
         $rows = [];
         foreach ( $q->posts as $construct ) {
-            $iid    = $construction->ID;
+            $iid    = $construct->ID;
             $rows[] = [
                 'id'      => $iid,
                 'title'   => get_the_title( $iid ),
@@ -853,7 +853,7 @@ function ws_get_jx_construction_data( $jx_term_id ) {
                                         : ( ( $crt = ws_court_lookup( $_ck ) ) ? $crt['short'] : $_ck ),
                 'year'          => (int) get_post_meta( $iid, 'ws_jx_construction_year',             true ),
                 'is_favorable'  => (bool) get_post_meta( $iid, 'ws_jx_construction_is_favorable', true ),
-                'summary'       => get_post_meta( $iid, 'ws_jx_construction_summary_wysiwyg',          true ),
+                'summary'       => get_post_meta( $iid, 'ws_plain_english_wysiwyg',          true ),
                 'disclosure_type' => ws_q_normalize_id_list( get_field( 'ws_jx_construction_disclosure_types', $iid ) ),
                 'protected_class' => ws_q_normalize_id_list( get_field( 'ws_jx_construction_protected_classes', $iid ) ),
                 'protected_class_details' => get_post_meta( $iid, 'ws_jx_construction_protected_class_details', true ),
