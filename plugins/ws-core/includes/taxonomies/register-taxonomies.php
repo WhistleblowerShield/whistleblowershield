@@ -192,6 +192,42 @@ function ws_register_taxonomies() {
         );
     }
 
+     // ── 4.5 Excluded Class ────────────────────────────────────────────────
+    //
+    // Duplicate of Protected Class.
+
+    if ( ! taxonomy_exists( 'ws_excluded_class' ) ) {
+        register_taxonomy(
+            'ws_excluded_class',
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', ],
+            [
+                'label'             => 'Excluded Classes',
+                'labels'            => [
+                    'name'              => 'Excluded Classes',
+                    'singular_name'     => 'Excluded Class',
+                    'search_items'      => 'Search Excluded Classes',
+                    'all_items'         => 'All Excluded Classes',
+                    'parent_item'       => 'Parent Class',
+                    'parent_item_colon' => 'Parent Class:',
+                    'edit_item'         => 'Edit Excluded Class',
+                    'update_item'       => 'Update Excluded Class',
+                    'add_new_item'      => 'Add New Excluded Class',
+                    'new_item_name'     => 'New Excluded Class Name',
+                    'menu_name'         => 'Excluded Classes',
+                ],
+                    'public'            => false,
+                    'publicly_queryable'=> false,
+                    'hierarchical'      => true,
+                    'show_ui'           => true,
+                    'show_in_rest'      => true,
+                    'show_admin_column' => true,
+                    'rewrite'           => false,
+                    'query_var'         => false,
+                    'capabilities'      => ws_get_taxonomy_caps(),
+            ]
+        );
+    }
+
     // ── 5. Adverse Action Types ───────────────────────────────────────────
     //
     // Renamed from ws_retaliation_forms → ws_adverse_action (3.1.0).
@@ -586,43 +622,6 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 17. Employee Standard ─────────────────────────────────────────────
-    //
-    // New in 3.12.0. Flat taxonomy for the burden-of-proof standard an employee
-    // must meet under a statute. Replaces the freetext employee_standard field.
-    // Multiple values permitted per record.
-    // Terms seeded via ws_seed_employee_standard_taxonomy().
-
-    if ( ! taxonomy_exists( 'ws_employee_standard' ) ) {
-        register_taxonomy(
-            'ws_employee_standard',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
-            [
-                'label'             => 'Employee Burden Standards',
-                'labels'            => [
-                    'name'              => 'Employee Burden Standards',
-                    'singular_name'     => 'Employee Burden Standard',
-                    'search_items'      => 'Search Employee Standards',
-                    'all_items'         => 'All Employee Standards',
-                    'edit_item'         => 'Edit Employee Standard',
-                    'update_item'       => 'Update Employee Standard',
-                    'add_new_item'      => 'Add New Employee Standard',
-                    'new_item_name'     => 'New Employee Standard Name',
-                    'menu_name'         => 'Employee Standards',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
     // ── 16. Procedure Type ────────────────────────────────────────────────
     //
     // New in 3.10.0. Flat taxonomy classifying the purpose of a
@@ -661,6 +660,115 @@ function ws_register_taxonomies() {
             ]
         );
     }
+
+    // ── 17. Employee Standard ─────────────────────────────────────────────
+    //
+    // New in 3.12.0. Flat taxonomy for the burden-of-proof standard an employee
+    // must meet under a statute. Replaces the freetext employee_standard field.
+    // Multiple values permitted per record.
+    // Terms seeded via ws_seed_employee_standard_taxonomy().
+
+    if ( ! taxonomy_exists( 'ws_employee_standard' ) ) {
+        register_taxonomy(
+            'ws_employee_standard',
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
+            [
+                'label'             => 'Employee Burden Standards',
+                'labels'            => [
+                    'name'              => 'Employee Burden Standards',
+                    'singular_name'     => 'Employee Burden Standard',
+                    'search_items'      => 'Search Employee Standards',
+                    'all_items'         => 'All Employee Standards',
+                    'edit_item'         => 'Edit Employee Standard',
+                    'update_item'       => 'Update Employee Standard',
+                    'add_new_item'      => 'Add New Employee Standard',
+                    'new_item_name'     => 'New Employee Standard Name',
+                    'menu_name'         => 'Employee Standards',
+                ],
+                'public'            => false,
+                'publicly_queryable'=> false,
+                'hierarchical'      => false,
+                'show_ui'           => true,
+                'show_in_rest'      => true,
+                'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
+                'capabilities'      => ws_get_taxonomy_caps(),
+            ]
+        );
+    }
+
+    // ── 18. Protection Type ────────────────────────────────────────────────
+    //
+    // Duplicated from Procedure Type
+
+    if ( ! taxonomy_exists( 'ws_protection_type' ) ) {
+        register_taxonomy(
+            'ws_protection_type',
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
+            [
+                'label'             => 'Protection Types',
+                'labels'            => [
+                    'name'              => 'Protection Types',
+                    'singular_name'     => 'Protection Type',
+                    'search_items'      => 'Search Protection Types',
+                    'all_items'         => 'All Protection Types',
+                    'edit_item'         => 'Edit Protection Type',
+                    'update_item'       => 'Update Protection Type',
+                    'add_new_item'      => 'Add New Protection Type',
+                    'new_item_name'     => 'New Protection Type Name',
+                    'menu_name'         => 'Protections',
+                ],
+                'public'            => false,
+                'publicly_queryable'=> false,
+                'hierarchical'      => false,
+                'show_ui'           => true,
+                'show_in_rest'      => true,
+                'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
+                'capabilities'      => ws_get_taxonomy_caps(),
+            ]
+        );
+    }
+
+    // ── 19. Protected Action ────────────────────────────────────────────────
+    //
+    // 
+
+    if ( ! taxonomy_exists( 'ws_protected_action' ) ) {
+        register_taxonomy(
+            'ws_protected_action',
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', ],
+            [
+                'label'             => 'Protected Actions',
+                'labels'            => [
+                    'name'              => 'Protected Actions',
+                    'singular_name'     => 'Protected Action',
+                    'search_items'      => 'Search Protected Actions',
+                    'all_items'         => 'All Protected Actions',
+                    'parent_item'       => 'Parent Action',
+                    'parent_item_colon' => 'Parent Action:',
+                    'edit_item'         => 'Edit Protected Action',
+                    'update_item'       => 'Update Protected Action',
+                    'add_new_item'      => 'Add New Protected Action',
+                    'new_item_name'     => 'New Protected Action Name',
+                    'menu_name'         => 'Protected Actions',
+                ],
+                    'public'            => false,
+                    'publicly_queryable'=> false,
+                    'hierarchical'      => true,
+                    'show_ui'           => true,
+                    'show_in_rest'      => true,
+                    'show_admin_column' => true,
+                    'rewrite'           => false,
+                    'query_var'         => false,
+                    'capabilities'      => ws_get_taxonomy_caps(),
+            ]
+        );
+    }
+
+     
 }
 add_action( 'init', 'ws_register_taxonomies' );
 
@@ -800,13 +908,17 @@ add_action( 'admin_init', function() {
         ws_seed_procedure_type_taxonomy();
         update_option( 'ws_seeded_procedure_type', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_protections_scope' ) !== '1.0.0' ) {
-        ws_seed_protections_scope_taxonomy();
-        update_option( 'ws_seeded_protections_scope', '1.0.0' );
+    if ( get_option( 'ws_seeded_protection_scope' ) !== '1.0.0' ) {
+        ws_seed_protection_scope_taxonomy();
+        update_option( 'ws_seeded_protection_scope', '1.0.0' );
     }
     if ( get_option( 'ws_seeded_employee_standard' ) !== '1.0.0' ) {
         ws_seed_employee_standard_taxonomy();
         update_option( 'ws_seeded_employee_standard', '1.0.0' );
+    }
+    if ( get_option( 'ws_seeded_protected_action' ) !== '1.0.0' ) {
+        ws_seed_protected_action_taxonomy();
+        update_option( 'ws_seeded_protected_action', '1.0.0' );
     }
 
 } );
@@ -881,8 +993,6 @@ function ws_seed_disclosure_type_taxonomy() {
             'name'     => 'General Legal',
             'children' => [
                 'general-wrongdoing'    => 'General Wrongdoing / Violation of Law',
-                'attempted-reporting'   => 'Attempted Reporting',
-                'participation-support' => 'Participation / Support',
             ],
         ],
     ];
@@ -891,6 +1001,7 @@ function ws_seed_disclosure_type_taxonomy() {
 
 /**
  * Seeds ws_process_type with its flat term list.
+ * 
  */
 function ws_seed_process_type_taxonomy() {
     $taxonomy = 'ws_process_type';
@@ -1523,14 +1634,37 @@ function ws_seed_protection_scope_taxonomy() {
 function ws_seed_employee_standard_taxonomy() {
     $taxonomy = 'ws_employee_standard';
     $terms    = [
-        'contributing-factor'    => 'Contributing Factor',
-        'motivating-factor'      => 'Motivating Factor',
-        'substantial-factor'     => 'Substantial Factor',
-        'but-for'                => 'But-For Causation',
-        'preponderance'          => 'Preponderance of the Evidence',
-        'clear-and-convincing'   => 'Clear and Convincing Evidence',
-        'reasonable-belief'      => 'Reasonable Belief Standard',
-        'has-details'            => 'Has Details',
+        'contributing-factor'           => 'Contributing Factor',
+        'motivating-factor'             => 'Motivating Factor',
+        'substantial-factor'            => 'Substantial Factor',
+        'but-for'                       => 'But-For (Burden of Proof)',
+        'preponderance'                 => 'Preponderance of the Evidence',
+        'clear-and-convincing'          => 'Clear and Convincing Evidence',
+        'reasonable-belief'             => 'Reasonable Belief Standard',
+        'causation-but-for'             => 'But-For Causation Standard',
+        'causation-any-consideration'   => 'Any Consideration Causation Standard',
+        'causation-contributing-factor' => 'Contributing Factor Causation Standard',
+        'has-details'                   => 'Has Details',
+    ];
+    foreach ( $terms as $slug => $name ) {
+        if ( ! term_exists( $slug, $taxonomy ) ) {
+            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
+        }
+    }
+}
+
+/**
+ * Seeds ws_protected_action with its flat term list.
+ *
+ */
+function ws_seed_protected_action_taxonomy() {
+    $taxonomy = 'ws_protected_action';
+    $terms    = [
+        'attempted-reporting'     => 'Attempted Reporting',
+        'participation-support'   => 'Participation Support',
+        'refusal-to-participate'  => 'Refusal to Participate',
+        'testifying'              => 'Testifying',
+
     ];
     foreach ( $terms as $slug => $name ) {
         if ( ! term_exists( $slug, $taxonomy ) ) {
