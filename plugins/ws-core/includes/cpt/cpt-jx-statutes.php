@@ -81,7 +81,7 @@ function ws_register_cpt_statutes() {
 
         'supports'   => [ 'title', 'editor', 'revisions' ],
         'taxonomies' => [
-            'ws_protection_type',
+            'ws_protection_scope',
             'ws_disclosure_type',
             'ws_process_type',
             'ws_remedy',
@@ -89,7 +89,7 @@ function ws_register_cpt_statutes() {
             'ws_excluded_class',
             'ws_adverse_action',
             'ws_disclosure_target',
-            'ws_fee_shifting',
+            'ws_fee_shifting_type',
             'ws_employee_standard',
             'ws_employer_defense',
             'ws_protected_action',

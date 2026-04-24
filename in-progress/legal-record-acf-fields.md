@@ -55,6 +55,8 @@ These are the normalized canonical fields that should exist in every legal-recor
 - `sol_value`
 - `sol_unit`
 - `sol_trigger`            — (single-select: `accrual`|`discovery`|`discovery-due-diligence`|`mixed`|`has-details`)
+- `sol_trigger_details`
+- `has_sol_details`
 - `sol_details`
 - `continuing_violation_recognized`
 - `has_tolling`
