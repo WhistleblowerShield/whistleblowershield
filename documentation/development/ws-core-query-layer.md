@@ -318,7 +318,7 @@ invalid, wrong CPT, or not published.
 Returns all published procedures that link a given `jx-statute` or `jx-common-law` post
 via `_ws_ag_procedure_parent_ids`. Used by the parent section renderer to
 surface "Filing Procedures Under This Statute" or "`Common Law Principle" on jurisdiction pages.
-Cached per-statute at `ws_parent_procedures_{$parent_id}_` for 24 hours.
+Cached per-statute at `ws_agency_procedures_{$parent_id}_` for 24 hours.
 Uses two LIKE queries to handle both serialized string and integer
 shapes ACF may write for relationship fields.
 
@@ -335,7 +335,7 @@ All agency/procedure transients are maintained by hooks in
   handles agency changes).
 - **`acf/save_post` (priority 5 stash + priority 25 diff)** — stashes
   old parent IDs before ACF saves; after save, diffs old vs. new and
-  clears `ws_parent_procedures_{id}_` for all affected statute IDs.
+  clears `ws_agency_procedures_{id}_` for all affected statute IDs.
 - **`before_delete_post` / `deleted_post`** — clears both agency and
   all linked statute transients when a procedure is deleted.
 
@@ -350,4 +350,4 @@ All agency/procedure transients are maintained by hooks in
 | `WS_CACHE_JX_INDEX` | 24h | `save_post_jurisdiction`, `delete_post` |
 | `WS_CACHE_LEGAL_UPDATES_SITEWIDE` | 1h | `save_post_ws-legal-update` |
 | `ws_agency_procedures_{agency_id}_` | 24h | `save_post_ag-procedure`, procedure delete |
-| `ws_parent_procedures_{parent_id}_` | 24h | `acf/save_post` stash+diff, procedure delete |
+| `ws_agency_procedures_{parent_id}_` | 24h | `acf/save_post` stash+diff, procedure delete |

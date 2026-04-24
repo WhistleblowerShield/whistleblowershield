@@ -76,7 +76,7 @@ fields that are modeled as multi-value in ACF.
 | `WS_CACHE_JX_INDEX` | 24h | `save_post_jurisdiction`, `delete_post` |
 | `WS_CACHE_LEGAL_UPDATES_SITEWIDE` | 1h | `save_post_ws-legal-update` |
 | `ws_agency_procedures_{agency_id}_` | 24h | procedure save/delete |
-| `ws_parent_procedures_{statute_id}_` | 24h | `acf/save_post` stash+diff, procedure delete |
+| `ws_agency_procedures_{statute_id}_` | 24h | `acf/save_post` stash+diff, procedure delete |
 
 Sitewide legal updates cache stores up to 100 items. Requests ≤ 100
 served via `array_slice()`. Requests > 100 bypass the cache.

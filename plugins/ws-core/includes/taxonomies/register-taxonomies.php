@@ -748,6 +748,10 @@ add_action( 'admin_init', function() {
         ws_seed_protected_class_taxonomy();
         update_option( 'ws_seeded_protected_class', '1.0.0' );
     }
+    if ( get_option( 'ws_seeded_excluded_class' ) !== '1.0.0' ) {
+        ws_seed_excluded_class_taxonomy();
+        update_option( 'ws_seeded_excluded_class', '1.0.0' );
+    }
     if ( get_option( 'ws_seeded_adverse_action' ) !== '1.0.0' ) {
         ws_seed_adverse_action_taxonomy();
         update_option( 'ws_seeded_adverse_action', '1.0.0' );
@@ -768,9 +772,9 @@ add_action( 'admin_init', function() {
         ws_seed_disclosure_target_taxonomy();
         update_option( 'ws_seeded_disclosure_target', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_fee_shifting' ) !== '1.0.0' ) {
-        ws_seed_fee_shifting_taxonomy();
-        update_option( 'ws_seeded_fee_shifting', '1.0.0' );
+    if ( get_option( 'ws_seeded_fee_shifting_type' ) !== '1.0.0' ) {
+        ws_seed_fee_shifting_type_taxonomy();
+        update_option( 'ws_seeded_fee_shifting_type', '1.0.0' );
     }
     if ( get_option( 'ws_seeded_employer_defense' ) !== '1.0.0' ) {
         ws_seed_employer_defense_taxonomy();
@@ -795,6 +799,10 @@ add_action( 'admin_init', function() {
     if ( get_option( 'ws_seeded_procedure_type' ) !== '1.0.0' ) {
         ws_seed_procedure_type_taxonomy();
         update_option( 'ws_seeded_procedure_type', '1.0.0' );
+    }
+    if ( get_option( 'ws_seeded_protections_scope' ) !== '1.0.0' ) {
+        ws_seed_protections_scope_taxonomy();
+        update_option( 'ws_seeded_protections_scope', '1.0.0' );
     }
     if ( get_option( 'ws_seeded_employee_standard' ) !== '1.0.0' ) {
         ws_seed_employee_standard_taxonomy();
@@ -848,8 +856,8 @@ function ws_seed_disclosure_type_taxonomy() {
                 'food-drug-safety'          => 'Food & Drug Safety',
                 'nuclear-energy-safety'     => 'Nuclear & Energy Safety',
                 'transportation-safety'     => 'Transportation & Aviation Safety',
-                'child-abuse-reporting'     =>  'Child Abuse & Exploitation Reporting',
-                'patient-abuse-reporting'   =>  'Patient Abuse & Neglect Reporting',
+                'child-abuse-reporting'     => 'Child Abuse & Exploitation Reporting',
+                'patient-abuse-reporting'   => 'Patient Abuse & Neglect Reporting',
             ],
         ],
         'privacy-data-integrity' => [
@@ -872,7 +880,9 @@ function ws_seed_disclosure_type_taxonomy() {
         'general-legal' => [
             'name'     => 'General Legal',
             'children' => [
-                'general-wrongdoing' => 'General Wrongdoing / Violation of Law',
+                'general-wrongdoing'    => 'General Wrongdoing / Violation of Law',
+                'attempted-reporting'   => 'Attempted Reporting',
+                'participation-support' => 'Participation / Support',
             ],
         ],
     ];
@@ -894,6 +904,9 @@ function ws_seed_process_type_taxonomy() {
         'state-agency-complaint'   => 'State Agency Complaint',
         'congressional-disclosure' => 'Congressional Disclosure',
         'representative-action'    => 'Representative Action',
+        'de-novo-civil'            => 'De Novo Civil Action',
+        'arbitration-compelled'    => 'Arbitration Compelled',
+        'jury-trial-available'     => 'Jury Trial Available',
     ];
     foreach ( $terms as $slug => $name ) {
         if ( ! term_exists( $slug, $taxonomy ) ) {
@@ -912,7 +925,7 @@ function ws_seed_remedy_taxonomy() {
     $terms    = [
         'reinstatement'                   => 'Reinstatement',
         'back-pay'                        => 'Back Pay',
-        'front-pay'                       => 'Front Pay',
+        'front-pay'                       => 'Front Pay (in Lieu of Reinstatement)',
         'double-back-pay'                 => 'Double Back Pay',
         'lost-wages'                      => 'Lost Wages',
         'benefits-restoration'            => 'Benefits Restoration',
@@ -931,6 +944,8 @@ function ws_seed_remedy_taxonomy() {
         'wage-differential'               => 'Wage Differential',
         'liquidated-damages'              => 'Liquidated Damages',
         'consequential-damages'           => 'Consequential / Special Damages',
+        'declaratory-relief'              => 'Declaratory Relief',
+        'has-limits'                      => 'Has Limits/Caps/Standards',
         'has-details'                     => 'Has Details',
     ];
     foreach ( $terms as $slug => $name ) {
@@ -944,6 +959,10 @@ function ws_seed_remedy_taxonomy() {
  * Seeds ws_protected_class with its hierarchical employee type structure.
  * Replaces ws_seed_coverage_scope_taxonomy() for ws_coverage_scope (deprecated).
  * 3.11.0: has-details sentinel added as flat top-level term.
+ * 
+ * @todo - should be sync'd with ws_excluded_class table by hook, with
+ *         never_excluded and never_protected gates when adding terms to
+ *         the respective table.
  */
 function ws_seed_protected_class_taxonomy() {
     $hierarchy = [
@@ -976,9 +995,18 @@ function ws_seed_protected_class_taxonomy() {
         'special-status' => [
             'name'     => 'Special Status',
             'children' => [
-                'job-applicant'        => 'Job Applicant',
-                'former-employee'      => 'Former Employee',
+                'job-applicant'           => 'Job Applicant',
+                'former-employee'         => 'Former Employee',
                 'perceived-whistleblower' => 'Perceived Whistleblower',
+            ],
+        ],
+        'associates-of-whistleblower' => [
+            'name'     => 'Associates of Whistleblower',
+            'children' => [
+                'associates-spouse'           => 'Spouse of Whistleblower',
+                'associates-immediate-family' => 'Immediate Family of Whistleblower',
+                'associates-household-family' => 'Household Family of Whistleblower',
+                'associates-close'            => 'Close Associates of Whistleblower',
             ],
         ],
         'all-sectors' => [
@@ -987,14 +1015,75 @@ function ws_seed_protected_class_taxonomy() {
                 'all-employees'        => 'All Employees',
             ],
         ],
+        'has-details' => [
+            'name'     => 'Has Details',
+            'children' => [],
+        ],
     ];
     ws_bulk_insert_hierarchical( $hierarchy, 'ws_protected_class' );
 
-    // Sentinel term — flat, top-level. Signals a companion freetext field
-    // holds protected class detail beyond available slugs.
-    if ( ! term_exists( 'has-details', 'ws_protected_class' ) ) {
-        wp_insert_term( 'Has Details', 'ws_protected_class', [ 'slug' => 'has-details' ] );
-    }
+}
+/**
+ * Seeds ws_excluded_class with its hierarchical employee type structure.
+ * Duplicate table of ws_protected_class will all-sectors (all-employees)
+ * removed.
+ * 
+ * @todo - should be sync'd with ws_protected_class table by hook, with
+ *         never_excluded and never_protected gates when adding terms to
+ *         the respective table.
+ * 
+ */
+function ws_seed_excluded_class_taxonomy() {
+    $hierarchy = [
+        'public-sector' => [
+            'name'     => 'Public Sector',
+            'children' => [
+                'federal-employee'     => 'Federal Employee',
+                'state-employee'       => 'State Agency Employee',
+                'local-gov-staff'      => 'Local / Municipal Employee',
+                'k12-education-staff'  => 'K-12 / Higher Ed Staff',
+                'military-personnel'   => 'Military Personnel',
+            ],
+        ],
+        'private-sector' => [
+            'name'     => 'Private Sector',
+            'children' => [
+                'corporate-staff'      => 'Corporate / Private Employee',
+                'contractor-gig'       => 'Independent Contractor / Gig',
+                'non-profit-staff'     => 'Non-Profit Employee',
+                'agricultural-worker'  => 'Agricultural Worker',
+            ],
+        ],
+        'healthcare-staff' => [
+            'name'     => 'Healthcare & Medical',
+            'children' => [
+                'clinical-staff'       => 'Clinical (Nurse / Physician)',
+                'medical-student'      => 'Medical Student / Intern / Resident',
+            ],
+        ],
+        'special-status' => [
+            'name'     => 'Special Status',
+            'children' => [
+                'job-applicant'           => 'Job Applicant',
+                'former-employee'         => 'Former Employee',
+                'perceived-whistleblower' => 'Perceived Whistleblower',
+            ],
+        ],
+        'associates-of-whistleblower' => [
+            'name'     => 'Associates of Whistleblower',
+            'children' => [
+                'associates-spouse'           => 'Spouse of Whistleblower',
+                'associates-immediate-family' => 'Immediate Family of Whistleblower',
+                'associates-household-family' => 'Household Family of Whistleblower',
+                'associates-close'            => 'Close Associates of Whistleblower',
+            ],
+        ],
+        'has-details' => [
+            'name'     => 'Has Details',
+            'children' => [],
+        ],
+    ];
+    ws_bulk_insert_hierarchical( $hierarchy, 'ws_excluded_class' );
 
 }
 
@@ -1006,22 +1095,24 @@ function ws_seed_protected_class_taxonomy() {
 function ws_seed_adverse_action_taxonomy() {
     $taxonomy = 'ws_adverse_action';
     $terms    = [
-        'termination'               => 'Termination',
-        'constructive-discharge'    => 'Constructive Discharge',
-        'demotion'                  => 'Demotion',
-        'suspension'                => 'Suspension',
-        'disciplinary-action'       => 'Disciplinary Action',
-        'transfer'                  => 'Transfer',
-        'schedule-change'           => 'Schedule Change',
-        'pay-reduction'             => 'Pay / Benefits Reduction',
-        'harassment'                => 'Harassment',
-        'workplace-isolation'       => 'Workplace Isolation / Ostracism',
-        'blacklisting'              => 'Blacklisting',
-        'security-clearance-action' => 'Security Clearance Action',
-        'contract-non-renewal'      => 'Contract Non-Renewal',
-        'privilege-revocation'      => 'Privilege / Access Revocation',
-        'immigration-threat'        => 'Immigration-Related Threat',
-        'has-details'               => 'Has Details',
+        'termination'                 => 'Termination',
+        'constructive-discharge'      => 'Constructive Discharge',
+        'demotion'                    => 'Demotion',
+        'suspension'                  => 'Suspension',
+        'disciplinary-action'         => 'Disciplinary Action',
+        'transfer'                    => 'Transfer',
+        'schedule-change'             => 'Schedule Change',
+        'pay-reduction'               => 'Pay / Benefits Reduction',
+        'harassment'                  => 'Harassment',
+        'workplace-isolation'         => 'Workplace Isolation / Ostracism',
+        'blacklisting'                => 'Blacklisting',
+        'security-clearance-action'   => 'Security Clearance Action',
+        'contract-non-renewal'        => 'Contract Non-Renewal',
+        'privilege-revocation'        => 'Privilege / Access Revocation',
+        'immigration-threat'          => 'Immigration-Related Threat',
+        'post-employment-retaliation' => 'Post-Employment Retaliation',
+        'threatened-retaliation'      => 'Threatened Retaliation',
+        'has-details'                 => 'Has Details',
     ];
     foreach ( $terms as $slug => $name ) {
         if ( ! term_exists( $slug, $taxonomy ) ) {
@@ -1185,54 +1276,62 @@ function ws_seed_disclosure_target_taxonomy() {
         'external-agency' => [
             'name'     => 'External: Government Agency',
             'children' => [
-                'agency-federal'       => 'Federal Agency',
-                'agency-state'         => 'State Agency',
-                'agency-local'         => 'Local / Municipal Agency',
-                'law-enforcement'      => 'Law Enforcement',
+                'agency-federal'        => 'Federal Agency',
+                'agency-state'          => 'State Agency',
+                'agency-local'          => 'Local / Municipal Agency',
+                'government-oversight'  => 'Government Oversight Office',
+                'ig-federal'            => 'Federal Inspector General',
+                'ig-state'              => 'State Inspector General',
+                'law-enforcement-fed'   => 'Federal Law Enforcement',
+                'law-enforcement-state' => 'State Law Enforcement',
             ],
         ],
         'legislative' => [
             'name'     => 'Legislative Body',
             'children' => [
-                'legislative-federal'  => 'U.S. Congress',
-                'legislative-state'    => 'State Legislature',
+                'legislative-federal'   => 'U.S. Congress',
+                'legislative-state'     => 'State Legislature',
             ],
         ],
         'judicial' => [
             'name'     => 'Judicial / Legal',
             'children' => [
-                'court-filing'         => 'Court Filing',
-                'attorney-counsel'     => 'Personal Attorney / Counsel',
+                'court-filing'          => 'Court Filing',
+                'attorney-counsel'      => 'Personal Attorney / Counsel',
             ],
         ],
         'public' => [
             'name'     => 'Public Disclosure',
             'children' => [
-                'public-media'         => 'Media / Press',
-                'public-nonprofit'     => 'Non-Profit / Advocacy Organization',
+                'public-media'          => 'Media / Press',
+                'public-nonprofit'      => 'Non-Profit / Advocacy Organization',
             ],
+        ],
+        'has-details' => [
+            'name'     => 'Has Details',
+            'children' => [],
         ],
     ];
     ws_bulk_insert_hierarchical( $hierarchy, 'ws_disclosure_target' );
 
-    // Sentinel term — flat, top-level. Signals a companion freetext field
-    // holds disclosure target detail beyond available slugs.
-    if ( ! term_exists( 'has-details', 'ws_disclosure_target' ) ) {
-        wp_insert_term( 'Has Details', 'ws_disclosure_target', [ 'slug' => 'has-details' ] );
-    }
 }
 
 /**
  * Seeds ws_fee_shifting with its flat term list.
  * New in 3.1.0.
  */
-function ws_seed_fee_shifting_taxonomy() {
-    $taxonomy = 'ws_fee_shifting';
+function ws_seed_fee_shifting_type_taxonomy() {
+    $taxonomy = 'ws_fee_shifting_type';
     $terms    = [
-        'unilateral-pro-plaintiff' => 'Unilateral (Pro-Plaintiff)',
-        'bilateral-loser-pays'     => 'Bilateral (Loser Pays)',
-        'discretionary'            => 'Discretionary',
-        'none-american-rule'       => 'None (American Rule)',
+        'none-american-rule'             => 'None (American Rule)',
+        'bilateral-loser-pays'           => 'Bilateral (Loser Pays)',
+        'unilateral-pro-plaintiff'       => 'Unilateral (Pro-Plaintiff)',
+        'unilateral-pro-defendant'       => 'Unilateral (Pro-Defendant)',
+        'prevailing-defendant-bad-faith' => 'Defendant Fees on Bad Faith',
+        'discretionary'                  => 'Discretionary',
+        'mandatory'                      => 'Mandatory',
+        'has-phase-specifics'            => 'Has Phase Specifics',
+        'has-details'                    => 'Has Details',
     ];
     foreach ( $terms as $slug => $name ) {
         if ( ! term_exists( $slug, $taxonomy ) ) {
@@ -1351,7 +1450,9 @@ function ws_seed_employer_defense_taxonomy() {
     $taxonomy = 'ws_employer_defense';
     $terms    = [
         'same-decision-defense'             => 'Same-Decision Defense',
+        'same-decision-clear-convincing'    => 'Same-Decision (Clear and Convincing)',
         'legitimate-non-retaliatory-reason' => 'Legitimate Non-Retaliatory Reason',
+        'after-acquired-evidence'           => 'After-Acquired Evidence (Specific Non-Retaliatory)',
         'good-faith-compliance'             => 'Good-Faith Compliance',
         'statutory-exception-claim'         => 'Statutory Exception Claim',
         'mixed-motive-defense'              => 'Mixed Motive Defense',
@@ -1387,6 +1488,29 @@ function ws_seed_procedure_type_taxonomy() {
             wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
         }
     }
+
+}
+
+/**
+ * Seeds ws_protection_scope with its three flat terms.
+ * Duplicate of ws_procedure_type
+ *
+ *   disclosure  — legal protection for reporting wrongdoing
+ *   retaliation — legal protection from adverse actions after reporting
+ *   both        — legal protection for both disclosure and retaliation
+ */
+function ws_seed_protection_scope_taxonomy() {
+    $taxonomy = 'ws_protection_scope';
+    $terms    = [
+        'disclosure'  => 'Disclosure',
+        'retaliation' => 'Retaliation',
+        'both'        => 'Both',
+    ];
+    foreach ( $terms as $slug => $name ) {
+        if ( ! term_exists( $slug, $taxonomy ) ) {
+            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
+        }
+    }
 }
 
 /**
@@ -1401,6 +1525,7 @@ function ws_seed_employee_standard_taxonomy() {
     $terms    = [
         'contributing-factor'    => 'Contributing Factor',
         'motivating-factor'      => 'Motivating Factor',
+        'substantial-factor'     => 'Substantial Factor',
         'but-for'                => 'But-For Causation',
         'preponderance'          => 'Preponderance of the Evidence',
         'clear-and-convincing'   => 'Clear and Convincing Evidence',

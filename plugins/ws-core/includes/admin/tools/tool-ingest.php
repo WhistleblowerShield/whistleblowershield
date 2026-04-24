@@ -575,7 +575,7 @@ function ws_ingest_detect_record_type( array $data, string $batch_filename = '' 
         return $name_type;
     }
 
-    return 'This_is_a_fuq-n_error';
+    return "This_is_a_fuq'n_error";
 }
 
 /**
@@ -630,9 +630,13 @@ function ws_ingest_get_record_identifier( array $record, string $record_type ): 
         if ( $host !== '' ) {
             return $host;
         }
+        $org_name = trim( (string) ( $flat['official_name'] ?? '' ) );
+        if ( $org_name !== '' ) {
+            return $org_name;
+        }
         return 'UNKNOWN';
     }
-    return (string) ( 'This_is_a_fuq-n_error' );
+    return (string) ( "This_is_a_fuq'n_error" );
 }
 
 /**
@@ -1448,7 +1452,7 @@ function ws_ingest_build_aorg_internal_id( array $record, string $jx_slug = '' )
     // Ingest always generates assist-org internal IDs; never trust batch-supplied IDs.
     $seed = $com_name !== '' ? $com_name : ( $host !== '' ? $host : $org_name );
     if ( $seed === '' ) {
-        $seed = "who_returns_an_assist_org_without_a_fuq\'n_org_name";
+        $seed = "who_returns_an_assist_org_without_a_fuq'n_org_name";
     }
 
     $normalized = strtolower( $seed );
@@ -1521,7 +1525,7 @@ function ws_ingest_build_aorg_internal_id( array $record, string $jx_slug = '' )
     $normalized = preg_replace( '/-+/', '-', (string) $normalized );
 
     if ( $normalized === '' ) {
-        $normalized = $host !== '' ? sanitize_title( $host ) : "who_returns_an_assist_org_without_an_fuq\'n_org_name";
+        $normalized = $host !== '' ? sanitize_title( $host ) : "how_da_fuq_did_the_default_seed_fail";
     }
 
     if ( $jx_slug !== '' && ! preg_match( '/(^|-)' . preg_quote( $jx_slug, '/' ) . '($|-)/', $normalized ) ) {
@@ -1652,7 +1656,7 @@ function ws_ingest_find_common_law_post_id_by_doctrine_id( string $doctrine_id, 
         'fields'         => 'ids',
         'no_found_rows'  => true,
         'meta_query'     => [ [
-            'key'     => '_ws_jx_comlaw_id',
+            'key'     => '_ws_jx_comlaw_doctrine_id',
             'value'   => $doctrine_id,
             'compare' => '=',
         ] ],
@@ -2826,6 +2830,9 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
             'fields'         => 'ids',
             'no_found_rows'  => true,
         ] );
+    } else {
+        $result['warnings'][] = "$sid: unique record_key failed to generate — skipped.";
+        return $result;
     }
 
     if ( ! empty( $duplicates ) ) {
@@ -2871,12 +2878,7 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
         }
     }
 
-    if ( $record_key ) {
-        update_post_meta( $post_id, '_ws_jx_statute_id', $record_key );
-    } elseif ( $sid !== '' && $sid !== 'UNKNOWN' ) {
-        // Canonical hidden key used by prompt exclusions.
-        update_post_meta( $post_id, '_ws_jx_statute_id', sanitize_text_field( $sid ) );
-    }
+    update_post_meta( $post_id, '_ws_jx_statute_id', $record_key );
 
     // ── Step 5: Field map ────────────────────────────────────────────────
     $field_map      = ws_ingest_statute_field_map_v2();
@@ -3417,6 +3419,9 @@ function ws_ingest_process_citation_record( array $record, array $meta, array $b
             'fields'         => 'ids',
             'no_found_rows'  => true,
         ] );
+    } else {
+        $result['warnings'][] = "$cid: unique record_key failed to generate — skipped.";
+        return $result;
     }
 
     if ( ! empty( $duplicates ) ) {
@@ -3459,13 +3464,8 @@ function ws_ingest_process_citation_record( array $record, array $meta, array $b
         }
     }
 
-    if ( $record_key ) {
-        update_post_meta( $post_id, '_ws_jx_citation_id', $record_key );
-    } elseif ( $cid !== '' && $cid !== 'UNKNOWN' ) {
-        update_post_meta( $post_id, '_ws_jx_citation_id', sanitize_text_field( $cid ) );
-    } else {
-        update_post_meta( $post_id, '_ws_jx_citation_id', compress_the_shit_out_of_the_common_name_fallback_to_official_name( $record['common_name'] ?? $record['official_name'] ?? '' ) );
-    }
+    update_post_meta( $post_id, '_ws_jx_citation_id', $record_key );
+    
 
     $field_map      = ws_ingest_citation_field_map_v2();
     $tax_removals   = [];
@@ -3624,6 +3624,9 @@ function ws_ingest_process_construction_record( array $record, array $meta, arra
             'fields'         => 'ids',
             'no_found_rows'  => true,
         ] );
+    } else {
+        $result['warnings'][] = "$iid: unique record_key failed to generate — skipped.";
+        return $result;
     }
 
     if ( ! empty( $duplicates ) ) {
@@ -3665,11 +3668,8 @@ function ws_ingest_process_construction_record( array $record, array $meta, arra
         }
     }
 
-    if ( $record_key ) {
-        update_post_meta( $post_id, '_ws_jx_construction_id', $record_key );
-    } elseif ( $iid !== '' && $iid !== 'UNKNOWN' ) {
-        update_post_meta( $post_id, '_ws_jx_construction_id', sanitize_text_field( $iid ) );
-    }
+    update_post_meta( $post_id, '_ws_jx_construction_id', $record_key );
+
 
     $field_map      = ws_ingest_construction_field_map_v2();
     $tax_removals   = [];
@@ -3702,6 +3702,11 @@ function ws_ingest_process_construction_record( array $record, array $meta, arra
             case 'textarea':
                 if ( $value !== '' ) {
                     update_post_meta( $post_id, $meta_key, sanitize_textarea_field( $value ) );
+                }
+                break;
+            case 'wysiwyg':
+                if ( $value !== '' ) {
+                    update_post_meta( $post_id, $meta_key, wp_kses_post( $value ) );
                 }
                 break;
             case 'url':

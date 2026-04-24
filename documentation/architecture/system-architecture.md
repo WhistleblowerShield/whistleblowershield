@@ -225,6 +225,6 @@ Three transient-based caches reduce database load on high-traffic pages:
   legal update save.
 
 Per-agency procedure transients (`ws_agency_procedures_{id}_`) and per-statute
-procedure transients (`ws_parent_procedures_{id}_`) are managed by the query
+procedure transients (`ws_agency_procedures_{id}_`) are managed by the query
 agencies layer with 24-hour TTL and cache invalidation on procedure save
 or delete.

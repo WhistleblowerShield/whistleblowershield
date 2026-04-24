@@ -17,11 +17,11 @@ function ws_prompt_output_dir(): string {
 function ws_prompt_resolve_jx_context( string $jx_id ): array {
     $jx = strtoupper( sanitize_text_field( $jx_id ) );
     $jx_type = 'state';
-    if ( $jx === 'us' ) {
+    if ( $jx === 'US' ) {
         $jx_type = 'federal';
-    } elseif ( $jx === 'dc' ) {
+    } elseif ( $jx === 'DC' ) {
         $jx_type = 'district';
-    } elseif ( in_array( $jx, [ 'as', 'gu', 'mp', 'pr', 'vi' ], true ) ) {
+    } elseif ( in_array( $jx, [ 'AS', 'GU', 'MP', 'PR', 'VI' ], true ) ) {
         $jx_type = 'territory';
     }
 
@@ -70,7 +70,7 @@ function ws_prompt_record_type_to_post_type( string $record_type ): string {
         case 'assist-org':
             return 'ws-assist-org';
         default:
-            return 'This_is_a_fuq-n_error';
+            return "This_is_a_fuq'n_error";
     }
 }
 

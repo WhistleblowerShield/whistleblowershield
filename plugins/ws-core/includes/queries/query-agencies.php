@@ -62,6 +62,31 @@
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * True when the ID points to a ws-agency post.
+ *
+ * @param  int $post_id
+ * @return bool
+ */
+function ws_is_agency_id( $post_id ) {
+    return ( $post_id > 0 && get_post_type( $post_id ) === 'ws-agency' );
+}
+
+/**
+ * True when the ID points to a legal parent post that can own procedures.
+ *
+ * @param  int $post_id
+ * @return bool
+ */
+function ws_is_legal_parent_id( $post_id ) {
+    if ( $post_id <= 0 ) {
+        return false;
+    }
+
+    $type = get_post_type( $post_id );
+    return in_array( $type, [ 'jx-statute', 'jx-common-law' ], true );
+}
+
 
 // ════════════════════════════════════════════════════════════════════════════
 // ws_get_agency_procedures( $agency_id )
@@ -104,7 +129,7 @@ defined( 'ABSPATH' ) || exit;
 function ws_get_agency_procedures( $agency_id ) {
 
     $agency_id = (int) $agency_id;
-    if ( ! $agency_id ) {
+    if ( ! ws_is_agency_id( $agency_id ) ) {
         return [];
     }
 
@@ -258,7 +283,7 @@ function ws_build_agency_procedure_row( $pid ) {
 //   deadline_days  int     Statutory deadline in calendar days. 0 = none/unknown.
 //   intake_only    bool    True if agency receives and refers only.
 //
-// Result cached per record (ws_record_procedures_{id}_, 24h).
+// Result cached per record (ws_agency_procedures_{id}_, 24h).
 // Invalidated by the acf/save_post stash hooks below.
 //
 /* Returns all published procedures linked to a record.
@@ -270,11 +295,11 @@ function ws_build_agency_procedure_row( $pid ) {
 function ws_get_procedures_for_record( $record_id ) {
 
     $record_id = (int) $record_id;
-    if ( ! $record_id ) {
+    if ( ! ws_is_legal_parent_id( $record_id ) ) {
         return [];
     }
 
-    $cache_key = 'ws_record_procedures_' . $record_id . '_';
+    $cache_key = 'ws_agency_procedures_' . $record_id . '_';
     $cached    = get_transient( $cache_key );
 
     if ( false !== $cached ) {
@@ -414,7 +439,7 @@ function ws_get_agency_data( $jx_term_id ) {
             'phone'                 => get_post_meta( $aid, 'ws_agency_phone', true ),
             'confidentiality_details' => get_post_meta( $aid, 'ws_agency_confidentiality_details', true ),
             'has_anonymous'         => (bool) get_post_meta( $aid, 'ws_agency_accepts_anonymous', true ),
-            'has_reward'            => (bool) get_post_meta( $aid, 'ws_agency_has_reward_', true ),
+            'has_reward'            => (bool) get_post_meta( $aid, 'ws_agency_has_reward', true ),
             'reward_details'        => get_post_meta( $aid, 'ws_agency_reward_details', true ),
             'languages'             => get_field( 'ws_agency_languages', $aid ),
             'additional_languages'  => get_post_meta( $aid, 'ws_agency_additional_languages', true ),
@@ -573,7 +598,7 @@ add_action( 'acf/save_post', function( $post_id ) {
 
     foreach ( $affected as $parent_id ) {
         if ( $parent_id ) {
-            delete_transient( 'ws_parent_procedures_' . $parent_id . '_');
+            delete_transient( 'ws_agency_procedures_' . $parent_id . '_');
         }
     }
 
@@ -605,7 +630,7 @@ add_action( 'deleted_post', function( $post_id ) {
 
     foreach ( $parent_ids as $parent_id ) {
         if ( $parent_id ) {
-            delete_transient( 'ws_parent_procedures_' . $parent_id . '_');
+            delete_transient( 'ws_agency_procedures_' . $parent_id . '_');
         }
     }
 

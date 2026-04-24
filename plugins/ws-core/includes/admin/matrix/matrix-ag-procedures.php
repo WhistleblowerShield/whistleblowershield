@@ -507,7 +507,7 @@ function ws_seed_procedure_matrix() {
                 // Invalidate statute transients so the cross-reference panel
                 // on jurisdiction pages reflects the new links immediately.
                 foreach ( $statute_ids as $sid ) {
-                    delete_transient( 'ws_parent_procedures_' . $sid . '_');
+                    delete_transient( 'ws_agency_procedures_' . $sid . '_');
                 }
             }
         }
