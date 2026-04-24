@@ -237,7 +237,7 @@ stamp, plain-english, source verify, and major edit from shared groups.
 | `ws_jx_statute_process_types` | taxonomy | `ws_process_type` terms; `save_terms: 1` |
 | `ws_jx_statute_adverse_actions` | taxonomy | `ws_adverse_action` terms; `save_terms: 1` |
 | `ws_jx_statute_adverse_action_details` | textarea | Adverse Action details (conditional) |
-| `ws_jx_statute_fee_shiftings` | taxonomy | `ws_fee_shifting` terms; `save_terms: 1` |
+| `ws_jx_statute_fee_shifting_rules` | taxonomy | `ws_fee_shifting_rule` terms; `save_terms: 1` |
 | `ws_jx_statute_remedies` | taxonomy | `ws_remedy` terms; `save_terms: 1` |
 | `ws_jx_statute_remedy_details` | textarea | Remedy details (conditional) |
 | `ws_jx_statute_primary_agency` | post_object | Single-select, links to primary `ws-agency` post that enforce this statute |

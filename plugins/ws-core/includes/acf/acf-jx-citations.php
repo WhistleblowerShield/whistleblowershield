@@ -35,7 +35,7 @@
  *   ws_jx_citation_process_types                  Process Type (multi_select, optional)
  *   ws_jx_citation_remedies                       Remedies (multi_select, optional)
  *   ws_jx_citation_remedy_details                 Remedies Details (textarea, optional)
- *   ws_jx_citation_fee_shiftings                  Fee Shiftings (multi_select, optional)
+ *   ws_jx_citation_fee_shifting                  Fee shifting (multi_select, optional)
  *   ws_jx_citation_employer_defenses              Employer Defenses (multi_select, optional)
  *   ws_jx_citation_employer_defense_details       Employer Defense Details (textarea, optional)
  *   ws_jx_citation_employee_standards             Employee Standards (multi_select, optional)
@@ -413,11 +413,11 @@ function ws_register_acf_jx_citations() {
             ],
 
             [
-                'key'           => 'field_jx_citation_fee_shiftings',
-                'label'         => 'Fee Shiftings',
-                'name'          => 'ws_jx_citation_fee_shiftings',
+                'key'           => 'field_jx_citation_fee_shifting_rules',
+                'label'         => 'Fee Shifting Rules',
+                'name'          => 'ws_jx_citation_fee_shifting_rules',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_fee_shifting',
+                'taxonomy'      => 'ws_fee_shifting_rule',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Fee-shifting outcome or discussion in this citation. Tag only where the cited source explicitly addresses fees. Single value.',
                 'add_term'      => 0,

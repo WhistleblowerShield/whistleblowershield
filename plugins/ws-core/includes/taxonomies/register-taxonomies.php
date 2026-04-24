@@ -13,7 +13,7 @@
  * 2.4.0   ws_coverage_scope, ws_retaliation_forms, ws_language, ws_case_stage added.
  * 3.0.0   ws_jurisdiction registered; all gates migrated to Unified Option-Gate Method.
  * 3.1.0   Taxonomy rename pass: ws_protected_class, ws_adverse_action, ws_remedy,
- *         ws_disclosure_target, ws_fee_shifting_type. ws_bulk_insert_hierarchical() added.
+ *         ws_disclosure_target, ws_fee_shifting_rule. ws_bulk_insert_hierarchical() added.
  * 3.2.0   ws_employer_defense added (jx-statute).
  * 3.3.0   ws_aorg_type added (ws-assist-org).
  * 3.6.0   National Security parent + 3 children added to ws_disclosure_type.
@@ -35,7 +35,7 @@
  *         employee_standard field. Seven terms including has-details sentinel.
  * 3.13.0  jx-common-law added to object_types for all shared doctrinal taxonomies:
  *         ws_disclosure_type, ws_protected_class, ws_disclosure_target,
- *         ws_adverse_action, ws_process_type, ws_remedy, ws_fee_shifting_type,
+ *         ws_adverse_action, ws_process_type, ws_remedy, ws_fee_shifting_rule,
  *         ws_employer_defense, ws_employee_standard, ws_jurisdiction.
  *         jx-citation and jx-construction also added to taxonomies where missing.
  * 3.14.2  ws_disclosure_type and ws_process_type set to non-public.
@@ -407,9 +407,9 @@ function ws_register_taxonomies() {
     // New in 3.1.0. Flat taxonomy describing the fee shifting rule that
     // applies to enforcement of a law.
 
-    if ( ! taxonomy_exists( 'ws_fee_shifting_type' ) ) {
+    if ( ! taxonomy_exists( 'ws_fee_shifting_rule' ) ) {
         register_taxonomy(
-            'ws_fee_shifting_type',
+            'ws_fee_shifting_rule',
             [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
             [
                 'label'             => 'Fee Shifting Rules',
@@ -880,9 +880,9 @@ add_action( 'admin_init', function() {
         ws_seed_disclosure_target_taxonomy();
         update_option( 'ws_seeded_disclosure_target', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_fee_shifting_type' ) !== '1.0.0' ) {
-        ws_seed_fee_shifting_type_taxonomy();
-        update_option( 'ws_seeded_fee_shifting_type', '1.0.0' );
+    if ( get_option( 'ws_seeded_fee_shifting_rule' ) !== '1.0.0' ) {
+        ws_seed_fee_shifting_rule_taxonomy();
+        update_option( 'ws_seeded_fee_shifting_rule', '1.0.0' );
     }
     if ( get_option( 'ws_seeded_employer_defense' ) !== '1.0.0' ) {
         ws_seed_employer_defense_taxonomy();
@@ -1428,11 +1428,11 @@ function ws_seed_disclosure_target_taxonomy() {
 }
 
 /**
- * Seeds ws_fee_shifting_type with its flat term list.
+ * Seeds ws_fee_shifting_rule with its flat term list.
  * New in 3.1.0.
  */
-function ws_seed_fee_shifting_type_taxonomy() {
-    $taxonomy = 'ws_fee_shifting_type';
+function ws_seed_fee_shifting_rule_taxonomy() {
+    $taxonomy = 'ws_fee_shifting_rule';
     $terms    = [
         'none-american-rule'             => 'None (American Rule)',
         'bilateral-loser-pays'           => 'Bilateral (Loser Pays)',

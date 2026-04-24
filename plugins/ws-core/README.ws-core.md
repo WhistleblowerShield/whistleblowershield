@@ -109,7 +109,7 @@ These attach to `jx-statute`, `jx-common-law`, `jx-citation`, and
 | `ws_adverse_action` | flat | 14 terms + `has-details` |
 | `ws_process_type` | flat | 9 terms |
 | `ws_remedy` | flat | 20 terms + `has-details` |
-| `ws_fee_shifting` | flat | 4 terms |
+| `ws_fee_shifting_rule` | flat | 4 terms |
 | `ws_employer_defense` | flat | 6 terms + `has-details` |
 | `ws_employee_standard` | flat | 6 terms + `has-details` |
 | `ws_employment_sector` | flat | 6 terms + includes super slug `all-sectors` |

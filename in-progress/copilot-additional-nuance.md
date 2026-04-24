@@ -9,7 +9,7 @@ Perfect catch! Let me re-evaluate the legal nuances **against the actual taxonom
 - **Adverse actions** (`ws_adverse_action`) — comprehensive retaliation forms  
 - **Employer defenses** (`ws_employer_defense`) — same-decision, LNRR, etc.  
 - **Employee burden standards** (`ws_employee_standard`) — contributing-factor to but-for  
-- **Fee-shifting types** (`ws_fee_shifting_type`) — bilateral, unilateral, discretionary
+- **Fee-shifting types** (`ws_fee_shifting_rule`) — bilateral, unilateral, discretionary
 
 ---
 
@@ -82,7 +82,7 @@ You have `arbitration_waiver_enforceability` (void/limited/enforceable/mixed). B
 ---
 
 #### 8. **Fee Conditionality Beyond Phases** (You have `fee_shifting_phases` — good!)  
-But `ws_fee_shifting_type` doesn't distinguish:  
+But `ws_fee_shifting_rule` doesn't distinguish:  
 - **Fees only if nominal damages** (prevailing party must get >$X)  
 - **Fees capped** (e.g., not to exceed 50% of recovery)  
 - **Fees conditional on settlement** (fee-shifting disappears if case settles vs. judgment)

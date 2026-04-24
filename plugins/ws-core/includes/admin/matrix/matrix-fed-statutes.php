@@ -40,7 +40,7 @@ $_ws_fed_statutes_matrix = [
         'protected_classes'           => [ 'corporate-staff' ],
         'adverse_actions'             => [ 'termination', 'demotion', 'suspension', 'harassment', 'transfer' ],
         'disclosure_targets'          => [ 'agency-federal', 'internal-compliance', 'legislative-federal' ],
-        'fee_shiftings'               => [ 'unilateral-pro-plaintiff' ],
+        'fee_shifting_rules'          => [ 'unilateral-pro-plaintiff' ],
         'employer_defenses'           => [ 'same-decision-defense', 'legitimate-non-retaliatory-reason', 'no-protected-activity' ],
         
     ],
@@ -64,7 +64,7 @@ $_ws_fed_statutes_matrix = [
         'protected_classes'           => [ 'corporate-staff' ],
         'adverse_actions'             => [ 'termination', 'demotion', 'suspension', 'harassment', 'contract-non-renewal' ],
         'disclosure_targets'          => [ 'agency-federal' ],
-        'fee_shiftings'               => [ 'unilateral-pro-plaintiff' ],
+        'fee_shifting_rules'          => [ 'unilateral-pro-plaintiff' ],
         'employer_defenses'           => [ 'same-decision-defense', 'legitimate-non-retaliatory-reason', 'no-protected-activity' ],
         
     ],
@@ -88,7 +88,7 @@ $_ws_fed_statutes_matrix = [
         'protected_classes'           => [ 'corporate-staff', 'contractor-gig', 'federal-employee' ],
         'adverse_actions'             => [ 'termination', 'demotion', 'suspension', 'harassment', 'contract-non-renewal' ],
         'disclosure_targets'          => [ 'court-filing', 'agency-federal' ],
-        'fee_shiftings'               => [ 'unilateral-pro-plaintiff' ],
+        'fee_shifting_rules'          => [ 'unilateral-pro-plaintiff' ],
         'employer_defenses'           => [ 'same-decision-defense', 'legitimate-non-retaliatory-reason', 'no-protected-activity' ],
         
     ],
@@ -112,7 +112,7 @@ $_ws_fed_statutes_matrix = [
         'protected_classes'           => [ 'federal-employee', 'job-applicant' ],
         'adverse_actions'             => [ 'termination', 'demotion', 'suspension', 'transfer', 'security-clearance-action', 'disciplinary-action' ],
         'disclosure_targets'          => [ 'agency-federal', 'legislative-federal', 'internal-compliance' ],
-        'fee_shiftings'               => [ 'unilateral-pro-plaintiff' ],
+        'fee_shifting_rules'          => [ 'unilateral-pro-plaintiff' ],
         'employer_defenses'           => [ 'same-decision-defense', 'no-protected-activity' ],
         
     ],
@@ -136,7 +136,7 @@ $_ws_fed_statutes_matrix = [
         'protected_classes'           => [ 'federal-employee' ],
         'adverse_actions'             => [ 'termination', 'demotion', 'suspension', 'security-clearance-action', 'privilege-revocation' ],
         'disclosure_targets'          => [ 'agency-federal', 'legislative-federal' ],
-        'fee_shiftings'               => [ 'unilateral-pro-plaintiff' ],
+        'fee_shifting_rules'          => [ 'unilateral-pro-plaintiff' ],
         'employer_defenses'           => [ 'same-decision-defense', 'no-protected-activity' ],
         
     ],
@@ -160,7 +160,7 @@ $_ws_fed_statutes_matrix = [
         'protected_classes'           => [ 'corporate-staff' ],
         'adverse_actions'             => [ 'termination', 'demotion', 'suspension', 'harassment', 'disciplinary-action' ],
         'disclosure_targets'          => [ 'agency-federal', 'internal-supervisor', 'internal-compliance' ],
-        'fee_shiftings'               => [ 'unilateral-pro-plaintiff' ],
+        'fee_shifting_rules'          => [ 'unilateral-pro-plaintiff' ],
         'employer_defenses'           => [ 'same-decision-defense', 'legitimate-non-retaliatory-reason', 'no-protected-activity' ],
         
     ],
@@ -184,7 +184,7 @@ $_ws_fed_statutes_matrix = [
         'protected_classes'           => [ 'contractor-gig', 'corporate-staff' ],
         'adverse_actions'             => [ 'termination', 'demotion', 'suspension', 'contract-non-renewal', 'security-clearance-action' ],
         'disclosure_targets'          => [ 'agency-federal', 'legislative-federal', 'law-enforcement' ],
-        'fee_shiftings'               => [ 'unilateral-pro-plaintiff' ],
+        'fee_shifting_rules'          => [ 'unilateral-pro-plaintiff' ],
         'employer_defenses'           => [ 'same-decision-defense', 'legitimate-non-retaliatory-reason', 'no-protected-activity' ],
         
     ],
@@ -290,8 +290,8 @@ function ws_seed_fed_statutes_matrix() {
         }
 
         // ws_fee_shifting
-        if ( ! empty( $statute['fee_shiftings'] ) ) {
-            ws_matrix_assign_terms( $post_id, $statute['fee_shiftings'], 'ws_fee_shifting' );
+        if ( ! empty( $statute['fee_shifting_rules'] ) ) {
+            ws_matrix_assign_terms( $post_id, $statute['fee_shifting_rules'], 'ws_fee_shifting_rule' );
         }
 
         // ws_employer_defense

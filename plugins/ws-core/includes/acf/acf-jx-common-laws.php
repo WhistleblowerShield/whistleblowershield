@@ -51,7 +51,7 @@
  *   ws_jx_comlaw_process_types                     Process Types (multi_select, optional)
  *   ws_jx_comlaw_adverse_actions                   Adverse Actions (multi_select, optional)
  *   ws_jx_comlaw_adverse_action_details            Adverse Action Details (textarea, optional)
- *   ws_jx_comlaw_fee_shiftings                     Fee Shifting (multi_select, optional)
+ *   ws_jx_comlaw_fee_shifting                     Fee Shifting (multi_select, optional)
  *   ws_jx_comlaw_remedies                          Available Remedies (multi_select, optional)
  *   ws_jx_comlaw_remedy_details                    Remedy Details (textarea, optional)
  *   ws_jx_comlaw_related_agencies                  Primary Oversight Agencies (post_object, optional)
@@ -603,11 +603,11 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'           => 'field_jx_comlaw_fee_shiftings',
-                'label'         => 'Fee Shifting',
-                'name'          => 'ws_jx_comlaw_fee_shiftings',
+                'key'           => 'field_jx_comlaw_fee_shifting_rules',
+                'label'         => 'Fee Shifting Rules',
+                'name'          => 'ws_jx_comlaw_fee_shifting_rules',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_fee_shifting',
+                'taxonomy'      => 'ws_fee_shifting_rule',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Select the fee shifting rule that applies under this doctrine.',
                 'add_term'      => 0,

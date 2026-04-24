@@ -8,10 +8,11 @@ Purpose: draft a unified, prefix-free field set for all four legal record types 
 - Booleans use `has_*` or `is_*`.
 - Single-value datapoints use singular nouns.
 - Multi-value arrays use plural nouns.
-- Detail companions use `*_details`.
-- Derived values need hooks on fill
-- Merged arrays need hooks on save
-- `fee_shifting_types` needs hook to catch contradictory terms
+- Detail companions use `*_details`, conditional of trigger bool `has_*` is true.
+- Context companions use `*_context`, conditional of trigger field non-empty.
+- Derived values need hooks on fill.
+- Merged arrays need hooks on save.
+- `fee_shifting_rules` needs hook to catch contradictory terms.
 
 ## Attached Plain-English
 - All four legal record types use plain-english summary system.
@@ -40,6 +41,8 @@ These are the normalized canonical fields that should exist in every legal-recor
 
 ### Classification Tab
 - `protected_activity_standard`    — (single-select: `actual_violation`|`reasonable_belief`|`good_faith`)
+- `reasonable_belief_test`         — (conditional on `protected_activity_standard` is `reasonable_belief`; single-select: `objective_only`|`subjective_only`|`dual_prong`|`has_details`)
+- `reasonable_belief_details`
 - `disclosure_types`
 - `protected_actions`
 - `protected_classes`
@@ -54,8 +57,8 @@ These are the normalized canonical fields that should exist in every legal-recor
 ### Statute of Limitations And Thresholds Tab
 - `sol_value`
 - `sol_unit`
-- `sol_trigger`            — (single-select: `accrual`|`discovery`|`discovery-due-diligence`|`mixed`|`has-details`)
-- `sol_trigger_details`
+- `sol_trigger`            — (single-select: `accrual`|`discovery`|`discovery-due-diligence`|`mixed`)
+- `sol_trigger_context`    — (conditional on `sol_trigger` is non-empty)
 - `has_sol_details`
 - `sol_details`
 - `continuing_violation_recognized`
@@ -64,7 +67,7 @@ These are the normalized canonical fields that should exist in every legal-recor
 - `equitable_tolling_recognized`
 - `has_exhaustion_requirement`
 - `exhaustion_details`
-- `exhaustion_is_jurisdictional`
+- `exhaustion_rule_type`   — (single-select: `jurisdictional`|`claims-processing`|`waivable`|`mixed`)
 - `has_employer_threshold`
 - `threshold_details`
 - `has_amended_claim_recognized`
@@ -76,7 +79,7 @@ These are the normalized canonical fields that should exist in every legal-recor
 - `adverse_action_details`
 - `adverse_action_scope`   — (single-select: `termination-only`|`material-adverse`|`broad-any-adverse-action`|`has-details`)
 - `adverse_action_scope_details`
-- `fee_shifting_types`
+- `fee_shifting_rules`
 - `fee_shifting_details`
 - `fee_shifting_phases`
 - `remedies`
@@ -191,7 +194,7 @@ These fields are additive (or relationship-direction specific) and are not share
 ## Rename Normalization (Current -> Canonical)
 Only listing fields that currently violate the target naming conventions or are inconsistent across legal ACFs.
 
-- `fee_shiftings`              -> `fee_shifting_types` — (taxonomy table `ws_fee_shifting` -> `ws_fee_shifting_type`)
+- `fee_shiftings`              -> `fee_shifting_rules` — (taxonomy table `ws_fee_shifting` -> `ws_fee_shifting_rule`)
 - `has_limit_ambiguous`        -> `has_sol_details`    — (allowed use of `_details` on `has_` conditional name)
 - `limit_details`              -> `sol_details`
 - `has_tolling_details`        -> `has_tolling`

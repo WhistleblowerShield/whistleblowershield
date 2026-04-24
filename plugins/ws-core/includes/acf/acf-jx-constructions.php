@@ -41,7 +41,7 @@
  *   ws_jx_construction_process_types                  Process Type (multi_select, optional)
  *   ws_jx_construction_remedies                       Remedies (multi_select, optional)
  *   ws_jx_construction_remedy_details                 Remedies Details (textarea, optional)
- *   ws_jx_construction_fee_shiftings                  Fee Shifting (multi_select, optional)
+ *   ws_jx_construction_fee_shifting                  Fee Shifting (multi_select, optional)
  *   ws_jx_construction_employer_defenses              Employer Defense (multi_select, optional)
  *   ws_jx_construction_employer_defense_details       Employer Defense Details (textarea, optional)
  *   ws_jx_construction_employee_standards             Employee Standard (multi_select, optional)
@@ -486,11 +486,11 @@ function ws_register_acf_jx_construction_s() {
             ],
 
             [
-                'key'           => 'field_jx_construction_fee_shiftings',
-                'label'         => 'Fee Shifting',
-                'name'          => 'ws_jx_construction_fee_shiftings',
+                'key'           => 'field_jx_construction_fee_shifting_rules',
+                'label'         => 'Fee Shifting Rules',
+                'name'          => 'ws_jx_construction_fee_shifting_rules',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_fee_shifting',
+                'taxonomy'      => 'ws_fee_shifting_rule',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Fee-shifting rule addressed or clarified by this construction. Tag only where the construction explicitly explains fee-shifting applicability or limits. Single value.',
                 'add_term'      => 0,
