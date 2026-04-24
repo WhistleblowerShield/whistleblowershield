@@ -1382,6 +1382,7 @@ function ws_seed_disclosure_target_taxonomy() {
                 'internal-compliance'  => 'Compliance / Ethics Hotline',
                 'internal-legal'       => 'In-House Legal Counsel',
                 'internal-management'  => 'Management (General)',
+                'internal-oversight-body' => 'Internal Oversight Office',
             ],
         ],
         'external-agency' => [
@@ -1390,12 +1391,11 @@ function ws_seed_disclosure_target_taxonomy() {
                 'agency-federal'        => 'Federal Agency',
                 'agency-state'          => 'State Agency',
                 'agency-local'          => 'Local / Municipal Agency',
-                'external-oversight-body' => 'External Oversight Office',
-                'internal-oversight-body' => 'Internal Oversight Office',
                 'ig-federal'            => 'Federal Inspector General',
                 'ig-state'              => 'State Inspector General',
                 'law-enforcement-fed'   => 'Federal Law Enforcement',
                 'law-enforcement-state' => 'State Law Enforcement',
+                'external-oversight-body' => 'External Oversight Office',
             ],
         ],
         'legislative' => [
