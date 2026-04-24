@@ -53,6 +53,9 @@ These are the normalized canonical fields that should exist in every legal-recor
 - `disclosure_targets`
 - `disclosure_target_details`
 - `disclosure_target_type` — (derived from `disclosure_targets`, single-select: `internal`|`external`|`both`)
+- `has_anonymity_protection`
+- `anonymity_details`
+
 
 ### Statute of Limitations And Thresholds Tab
 - `sol_value`
@@ -85,9 +88,11 @@ These are the normalized canonical fields that should exist in every legal-recor
 - `remedies`
 - `remedy_limits`
 - `remedy_details`
+- `has_nda_limits`
+- `nda_limits_details`
 - `private_right_of_action_available`
 - `individual_liability_available`
-- `arbitration_waiver_enforceability` — (single-select: `void`|`limited`|`enforceable`|`mixed`)
+- `contractual_waiver_scope`          — (single-select: `void`|`limited`|`enforceable`|`mixed`|`void-public-policy`|`void-as-to-whistleblowing`|`enforceable-with-exceptions`)
 - `class_action_waiver`               — (single-select: `prohibited`|`permitted-individual-only`|`permitted-collective`|`mixed`)
 - `primary_agency`
 - `primary_agency_is_fed`  — (derived from `primary_agency` jx)
