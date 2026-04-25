@@ -111,7 +111,7 @@ These are the normalized canonical fields that should exist in every legal-recor
 
 ### Burden Of Proof Tab
 - `has_burden_shifting`
-- `burden_shifting_framework`  — (conditional on `has_burden_shifting`; single-select: `McDonnell-Douglas`|`motivating-factor`|`but-for`|`mixed-motive`)
+- `burden_shifting_framework`  — (conditional on `has_burden_shifting`; single-select: `McDonnell-Douglas`|`motivating-factor`|`but-for`|`mixed-motive`|`see-details`)
 - `burden_shifting_details`
 - `employee_standards`
 - `standard_details`
@@ -164,7 +164,7 @@ These fields are additive (or relationship-direction specific) and are not share
 # Classification Tab
 - `doctrine_basis`
 - `public_policy_sources`
-- `other_sources`
+- `source_context`         — (when `public_policy_sources` includes `other`)
 - `recognition_status`     — (single-select: `recognized`|`limited`|`uncertain`|`rejected`|`has-details`)
 - `recognition_details`
 # Statute of Limitations and Thresholds Tab
