@@ -8,8 +8,8 @@ Purpose: draft a unified, prefix-free field set for all four legal record types 
 - Booleans use `has_*` or `is_*`.
 - Single-value datapoints use singular nouns.
 - Multi-value arrays use plural nouns.
-- Detail companions use `*_details`, conditional of trigger bool `has_*` is true.
-- Context companions use `*_context`, conditional of trigger field non-empty.
+- Detail companions use `*_details`, conditional of trigger bool `has_*` is true; `*_details` may have a sister field; no naming convention applies to sister fields.
+- Context companions use `*_context`, conditional of trigger field when specified value, values or any non-empty value depending on trigger requirements.
 - Derived values need hooks on fill.
 - Merged arrays need hooks on save.
 - `fee_shifting_rules` needs hook to catch contradictory terms.
@@ -41,7 +41,7 @@ These are the normalized canonical fields that should exist in every legal-recor
 
 ### Classification Tab
 - `protected_activity_standard`    — (single-select: `actual_violation`|`reasonable_belief`|`good_faith`)
-- `reasonable_belief_test`         — (conditional on `protected_activity_standard` is `reasonable_belief`; single-select: `objective_only`|`subjective_only`|`dual_prong`|`has_details`)
+- `reasonable_belief_context`      — (conditional on `protected_activity_standard` is `reasonable_belief`; single-select: `objective_only`|`subjective_only`|`dual_prong`|`has_details`)
 - `reasonable_belief_details`
 - `disclosure_types`
 - `protected_actions`
@@ -52,7 +52,7 @@ These are the normalized canonical fields that should exist in every legal-recor
 - `employment_sectors`
 - `disclosure_targets`
 - `disclosure_target_details`
-- `disclosure_target_type` — (derived from `disclosure_targets`, single-select: `internal`|`external`|`both`)
+- `disclosure_target_class` — (derived from `disclosure_targets`, single-select: `internal`|`external`|`both`)
 - `has_anonymity_protection`
 - `anonymity_details`
 
@@ -70,18 +70,22 @@ These are the normalized canonical fields that should exist in every legal-recor
 - `equitable_tolling_recognized`
 - `has_exhaustion_requirement`
 - `exhaustion_details`
-- `exhaustion_rule_type`   — (single-select: `jurisdictional`|`claims-processing`|`waivable`|`mixed`)
+- `exhaustion_class`       — (conditional on `has_exhaustion_requirement`; single-select: `jurisdictional`|`claims-processing`|`waivable`|`mixed`)
 - `has_employer_threshold`
 - `threshold_details`
 - `has_amended_claim_recognized`
 - `amended_claim_details`
+- `has_preemption`
+- `preemption_direction`   — (conditional on `has_preemption`; single-select: `federal_preempts_state`|`state_not_preempted`|`partial`|`unclear`) 
+- `preemption_details`
 
 ### Enforcement Tab
 - `process_types`
 - `adverse_actions`
 - `adverse_action_details`
-- `adverse_action_scope`   — (single-select: `termination-only`|`material-adverse`|`broad-any-adverse-action`|`has-details`)
+- `adverse_action_scope`           — (single-select: `termination-only`|`material-adverse`|`broad-any-adverse-action`|`has-details`)
 - `adverse_action_scope_details`
+- `constructive_discharge_context` — (conditional on `adverse_actions` includes `constructive-discharge`)
 - `fee_shifting_rules`
 - `fee_shifting_details`
 - `fee_shifting_phases`
@@ -90,11 +94,13 @@ These are the normalized canonical fields that should exist in every legal-recor
 - `remedy_details`
 - `has_nda_limits`
 - `nda_limits_details`
+- `mixed_motive_remedy_context`       — (conditional on `burden_shifting_framework` includes `mixed-motive`)
 - `private_right_of_action_available`
 - `individual_liability_available`
 - `contractual_waiver_scope`          — (single-select: `void`|`limited`|`enforceable`|`mixed`|`void-public-policy`|`void-as-to-whistleblowing`|`enforceable-with-exceptions`)
-- `contractual_waiver_context`
+- `contractual_waiver_context`        — (conditional on `contractual_waiver_scope` non-empty)
 - `class_action_waiver`               — (single-select: `prohibited`|`permitted-individual-only`|`permitted-collective`|`mixed`)
+- `anticipatory_details`       — (conditional on `adverse_actions` includes `threatened-retaliation`)
 - `primary_agency`
 - `primary_agency_is_fed`      — (derived from `primary_agency` jx)
 - `local_agencies`
@@ -104,7 +110,8 @@ These are the normalized canonical fields that should exist in every legal-recor
 - `proper_defendants`
 
 ### Burden Of Proof Tab
-- `burden_shifting_framework`  — (single-select: `McDonnell-Douglas`|`motivating-factor`|`but-for`|`mixed-motive`|`has-details`)
+- `has_burden_shifting`
+- `burden_shifting_framework`  — (conditional on `has_burden_shifting`; single-select: `McDonnell-Douglas`|`motivating-factor`|`but-for`|`mixed-motive`)
 - `burden_shifting_details`
 - `employee_standards`
 - `standard_details`
@@ -118,8 +125,9 @@ These are the normalized canonical fields that should exist in every legal-recor
 ### Reward Tab
 - `has_reward_available`
 - `reward_details`
-- `reward_discretion_standard` — (single-select: `mandatory`|`discretionary`|`presumptive`|`has-details`)
+- `reward_discretion_standard` — (conditional on `has_reward_available`; single-select: `mandatory`|`discretionary`|`presumptive`|`has-details`)
 - `reward_discretion_details`
+- `relator_share_context`      — (conditional on `process_types` when `qui-tam` is included)
 
 ### Relationships Tab
 - `ref_materials`
@@ -145,7 +153,7 @@ These fields are additive (or relationship-direction specific) and are not share
 - `citation_ids`
 - `construction_ids`
 # Hidden Fields
-- `_precedent_ids`         — (insert after `_related_agencies`; merged array of `citation_ids` and `construction_ids`)
+- `_precedent_ids`             — (insert after `_related_agencies`; merged array of `citation_ids` and `construction_ids`)
 
 ### Statute-Specific
 - none
@@ -175,8 +183,8 @@ These fields are additive (or relationship-direction specific) and are not share
 - `mandate_date`            — (insert after `effective_date`)
 # Classification Tab
 - `scope`                   — (single-select: `favorable`|`adverse`|`neutral`)
-- `extend_taxonomy`         — (when `precedent` scope `favorable` extends `parent` taxonomy, e.g. adds a `protected_class`)
-- `suppress_taxonomy`       — (when `precedent` scope `adverse` removes `parent` taxonomy, e.g. removes a `protected_class`)
+- `extend_taxonomy`         — (when `precedent` `scope` is `favorable` extends `parent` taxonomy, e.g. adds a `protected_class`)
+- `suppress_taxonomy`       — (when `precedent` `scope` is `adverse` removes `parent` taxonomy, e.g. removes a `protected_class`)
 - `has_affected_jx`         — (derived true if `court_is_fed`, manually set to false when single jx affected)
 - `affected_jx`
 # Relationships Tab
@@ -190,7 +198,7 @@ These fields are additive (or relationship-direction specific) and are not share
 
 ### Citation-Specific
 # Identity and Publication Tab
-- `citation_type_rationale` — (insert after `types`)
+- `citation_type_rationale` — (insert after `types`; freetext to explain `types` assigned)
 
 ### Construction-Specific
 # Identity and Publication Tab

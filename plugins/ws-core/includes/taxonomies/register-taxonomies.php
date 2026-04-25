@@ -747,8 +747,8 @@ function ws_register_taxonomies() {
                     'singular_name'     => 'Protected Action',
                     'search_items'      => 'Search Protected Actions',
                     'all_items'         => 'All Protected Actions',
-                   // 'parent_item'       => 'Parent Action',
-                   // 'parent_item_colon' => 'Parent Action:',
+                    'parent_item'       => 'Parent Action',
+                    'parent_item_colon' => 'Parent Action:',
                     'edit_item'         => 'Edit Protected Action',
                     'update_item'       => 'Update Protected Action',
                     'add_new_item'      => 'Add New Protected Action',
@@ -757,7 +757,7 @@ function ws_register_taxonomies() {
                 ],
                     'public'            => false,
                     'publicly_queryable'=> false,
-                    'hierarchical'      => false,
+                    'hierarchical'      => true,
                     'show_ui'           => true,
                     'show_in_rest'      => true,
                     'show_admin_column' => true,
@@ -1178,6 +1178,7 @@ function ws_seed_excluded_class_taxonomy() {
                 'job-applicant'           => 'Job Applicant',
                 'former-employee'         => 'Former Employee',
                 'perceived-whistleblower' => 'Perceived Whistleblower',
+                'qui-tam-relator'         => 'Qui Tam Relator',
             ],
         ],
         'associates-of-whistleblower' => [
@@ -1659,17 +1660,34 @@ function ws_seed_employee_standard_taxonomy() {
  *
  */
 function ws_seed_protected_action_taxonomy() {
-    $taxonomy = 'ws_protected_action';
-    $terms    = [
-        'attempted-reporting'     => 'Attempted Reporting',
-        'participation-support'   => 'Participation Support',
-        'refusal-to-participate'  => 'Refusal to Participate',
-        'testifying'              => 'Testifying',
+   $hierarchy = [
+        'opposition-clause' => [
+            'name'     => 'Opposition Clause',
+            'children' => [
+                'opposing-practice'       => 'Opposing Practice',
+                'internal-objection'      => 'Internal Objection',
+                'refusal-to-participate'  => 'Refusal to Participate',
+            ],
+        ],
+        'participation-clause' => [
+            'name'     => 'Participation Clause',
+            'children' => [
+                'filing-complaint'        => 'Filing Complaint',
+                'testifying'              => 'Testifying',
+                'assisting-whistleblower' => 'Assisting Whistleblower',
+                'participation-support'   => 'Participation Support',
+            ],
+        ],
+        'attempted-reporting' => [
+            'name'     => 'Attempted Reporting',
+            'children' => [],
+        ],
+        'concerted-activity'  => [
+            'name'     => 'Concerted Activity',
+            'children' => [],
+        ],
 
     ];
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
-        }
-    }
+    ws_bulk_insert_hierarchical( $hierarchy, 'ws_protected_action' );
+
 }
