@@ -226,7 +226,7 @@ function ws_register_acf_jx_common_law() {
                 'key'          => 'field_jx_comlaw_public_policy_sources',
                 'label'        => 'Public Policy Sources',
                 'name'         => 'ws_jx_comlaw_public_policy_sources',
-                'type'         => 'checkbox',
+                'type'         => 'multi_select',
                 'instructions' => 'Which sources of law does this jurisdiction accept as establishing a "public policy" for purposes of this doctrine? Check all that apply.',
                 'choices'      => [
                     'constitution'           => 'State Constitution',

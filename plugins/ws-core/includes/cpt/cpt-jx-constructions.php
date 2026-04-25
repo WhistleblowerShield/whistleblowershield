@@ -76,7 +76,9 @@ function ws_register_cpt_jx_construction_() {
             'ws_employee_standard',
             'ws_employer_defense',
             'ws_protected_action',
-            WS_JURISDICTION_TAXONOMY,
+            'ws_causation_standard',
+            'ws_legal_recognition',
+             WS_JURISDICTION_TAXONOMY,
         ],
 
         // ── REST ──────────────────────────────────────────────────────────

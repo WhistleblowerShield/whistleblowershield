@@ -4,7 +4,7 @@
  *
  * @package WhistleblowerShield
  * @since   2.1.0
- * @version 3.14.2
+ * @version 3.15.0
  *
  * VERSION
  * -------
@@ -38,6 +38,15 @@
  *         ws_adverse_action, ws_process_type, ws_remedy, ws_fee_shifting_rule,
  *         ws_employer_defense, ws_employee_standard, ws_jurisdiction.
  *         jx-citation and jx-construction also added to taxonomies where missing.
+ * 3.15.0  ws_legal_recognition added — flat taxonomy replacing *_recognized booleans.
+ *         ws_causation_standard added — flat taxonomy for causation standards,
+ *         split from ws_employee_standard. Causation terms removed from
+ *         ws_employee_standard. ws_adverse_action: retaliatory-litigation,
+ *         hostile-work-environment, retaliatory-investigation added.
+ *         ws_protected_class: intern-volunteer added under special-status.
+ *         qui-tam-relator confirmed in ws_excluded_class (already present).
+ *         ws_remedy: interim-reinstatement, tax-gross-up added.
+ *         ws_employee_standard gate bumped to 1.1.0 (causation terms removed).
  * 3.14.2  ws_disclosure_type and ws_process_type set to non-public.
  *         Both remain visible in wp-admin and available to internal tooling.
  */
@@ -121,7 +130,7 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 3. remedy ───────────────────────────────────────────────────────
+    // ── 3. Remedies ───────────────────────────────────────────────────────
     //
     // Renamed from ws_remedy_type → ws_remedy (3.1.0).
 
@@ -155,7 +164,7 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 4. Protected Class ────────────────────────────────────────────────
+    // ── 4. Protected Classes ────────────────────────────────────────────────
     //
     // Renamed from ws_coverage_scope → ws_protected_class (3.1.0).
     // Converted to hierarchical to support employee type groupings.
@@ -192,9 +201,9 @@ function ws_register_taxonomies() {
         );
     }
 
-     // ── 4.5 Excluded Class ────────────────────────────────────────────────
+     // ── 5. Excluded Classes ────────────────────────────────────────────────
     //
-    // Duplicate of Protected Class.
+    // Duplicate of Protected Classes.
 
     if ( ! taxonomy_exists( 'ws_excluded_class' ) ) {
         register_taxonomy(
@@ -228,7 +237,7 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 5. Adverse Action Types ───────────────────────────────────────────
+    // ── 6. Adverse Actions ───────────────────────────────────────────
     //
     // Renamed from ws_retaliation_forms → ws_adverse_action (3.1.0).
     // Aligns with JSON field name adverse_action; cleaner legal terminology.
@@ -263,7 +272,7 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 6. Languages ──────────────────────────────────────────────────────
+    // ── 7. Languages ──────────────────────────────────────────────────────
 
 
     if ( ! taxonomy_exists( 'ws_language' ) ) {
@@ -296,7 +305,7 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 7. Case Stage ─────────────────────────────────────────────────────
+    // ── 8. Case Stages ─────────────────────────────────────────────────────
 
 
     if ( ! taxonomy_exists( 'ws_case_stage' ) ) {
@@ -329,7 +338,7 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 8. Jurisdiction ───────────────────────────────────────────────────
+    // ── 9. Jurisdictions ───────────────────────────────────────────────────
     //
     // Replaces ws_jx_code post meta as the jurisdiction join mechanism.
     // Private taxonomy — terms are canonical USPS-code slugs (e.g. 'us', 'ca', 'tx').
@@ -365,7 +374,7 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 9. Disclosure Targets ─────────────────────────────────────────────
+    // ── 10. Disclosure Targets ─────────────────────────────────────────────
     //
     // New in 3.1.0. Describes who the disclosure was made to in order for
     // protection to apply. Hierarchical — grouped by reporting channel type.
@@ -402,7 +411,7 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 10. Fee Shifting ──────────────────────────────────────────────────
+    // ── 11. Fee Shifting Rules ──────────────────────────────────────────────────
     //
     // New in 3.1.0. Flat taxonomy describing the fee shifting rule that
     // applies to enforcement of a law.
@@ -437,7 +446,7 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 11. Employer Defense ──────────────────────────────────────────────
+    // ── 12. Employer Defenses ──────────────────────────────────────────────
     //
     // New in 3.2.0. Flat taxonomy describing the defense standard(s) available
     // to the employer under a law.
@@ -472,7 +481,7 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 12. Assist-Org Type ───────────────────────────────────────────────
+    // ── 13. Assist-Org Type ───────────────────────────────────────────────
     //
     // New in 3.3.0. Single-value classification for ws-assist-org records.
     // Drives the public "Get Help" directory filter. Replaces the ws_aorg_type
@@ -508,7 +517,7 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 13. Employment Sector ─────────────────────────────────────────────
+    // ── 14. Employment Sectors ─────────────────────────────────────────────
     //
     // New in 3.7.0. Flat taxonomy classifying the employment sectors served
     // by a ws-assist-org record. Applied to ws-assist-org only.
@@ -545,7 +554,7 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 14. Assist-Org Cost Model ─────────────────────────────────────────
+    // ── 15. Assist-Org Cost Models ─────────────────────────────────────────
     //
     // New in 3.9.0. Flat taxonomy classifying the cost structure of a
     // ws-assist-org record. Applied to ws-assist-org only. Single-value
@@ -583,7 +592,7 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 15. Assist-Org Service ────────────────────────────────────────────
+    // ── 16. Assist-Org Services ────────────────────────────────────────────
     //
     // New in 3.9.0. Flat taxonomy classifying the services offered by a
     // ws-assist-org record. Applied to ws-assist-org only.
@@ -622,7 +631,7 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 16. Procedure Type ────────────────────────────────────────────────
+    // ── 17. Procedure Types ────────────────────────────────────────────────
     //
     // New in 3.10.0. Flat taxonomy classifying the purpose of a
     // ag-procedure record. Applied to ag-procedure only.
@@ -661,7 +670,7 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 17. Employee Standard ─────────────────────────────────────────────
+    // ── 18. Employee Standards ─────────────────────────────────────────────
     //
     // New in 3.12.0. Flat taxonomy for the burden-of-proof standard an employee
     // must meet under a statute. Replaces the freetext employee_standard field.
@@ -698,7 +707,7 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 18. Protection Scope ────────────────────────────────────────────────
+    // ── 19. Protection Scopes ────────────────────────────────────────────────
     //
     // Duplicated from Procedure Type
 
@@ -732,7 +741,7 @@ function ws_register_taxonomies() {
         );
     }
 
-    // ── 19. Protected Action ────────────────────────────────────────────────
+    // ── 20. Protected Actions ────────────────────────────────────────────────
     //
     // 
 
@@ -771,6 +780,88 @@ function ws_register_taxonomies() {
      
 }
 add_action( 'init', 'ws_register_taxonomies' );
+
+
+// ── 21. Legal Recognitions ────────────────────────────────────────────────────
+//
+// New in 3.15.0. Flat taxonomy for judicially-recognized legal doctrines and
+// procedural rules. Presence of a term signals recognition; absence signals
+// the doctrine is not recognized or is silent. Replaces scattered *_recognized
+// ACF boolean fields. Applied to all four legal record CPTs.
+// Terms are seeded via ws_seed_legal_recognition_taxonomy().
+
+add_action( 'init', function() {
+    if ( ! taxonomy_exists( 'ws_legal_recognition' ) ) {
+        register_taxonomy(
+            'ws_legal_recognition',
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
+            [
+                'label'             => 'Legal Recognitions',
+                'labels'            => [
+                    'name'              => 'Legal Recognitions',
+                    'singular_name'     => 'Legal Recognition',
+                    'search_items'      => 'Search Legal Recognitions',
+                    'all_items'         => 'All Legal Recognitions',
+                    'edit_item'         => 'Edit Legal Recognition',
+                    'update_item'       => 'Update Legal Recognition',
+                    'add_new_item'      => 'Add New Legal Recognition',
+                    'new_item_name'     => 'New Legal Recognition Name',
+                    'menu_name'         => 'Legal Recognitions',
+                ],
+                'public'            => false,
+                'publicly_queryable'=> false,
+                'hierarchical'      => false,
+                'show_ui'           => true,
+                'show_in_rest'      => true,
+                'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
+                'capabilities'      => ws_get_taxonomy_caps(),
+            ]
+        );
+    }
+} );
+
+// ── 22. Causation Standards ───────────────────────────────────────────────────
+//
+// New in 3.15.0. Flat taxonomy for retaliation causation standards. Distinct
+// from ws_employee_standard (which covers burden-of-proof/evidentiary weight).
+// Causation = the logical relationship between the disclosure and the adverse
+// action. Burden = the volume/quality of evidence required.
+// Split from ws_employee_standard in 3.15.0.
+// Terms are seeded via ws_seed_causation_standard_taxonomy().
+
+add_action( 'init', function() {
+    if ( ! taxonomy_exists( 'ws_causation_standard' ) ) {
+        register_taxonomy(
+            'ws_causation_standard',
+            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
+            [
+                'label'             => 'Causation Standards',
+                'labels'            => [
+                    'name'              => 'Causation Standards',
+                    'singular_name'     => 'Causation Standard',
+                    'search_items'      => 'Search Causation Standards',
+                    'all_items'         => 'All Causation Standards',
+                    'edit_item'         => 'Edit Causation Standard',
+                    'update_item'       => 'Update Causation Standard',
+                    'add_new_item'      => 'Add New Causation Standard',
+                    'new_item_name'     => 'New Causation Standard Name',
+                    'menu_name'         => 'Causation Standards',
+                ],
+                'public'            => false,
+                'publicly_queryable'=> false,
+                'hierarchical'      => false,
+                'show_ui'           => true,
+                'show_in_rest'      => true,
+                'show_admin_column' => true,
+                'rewrite'           => false,
+                'query_var'         => false,
+                'capabilities'      => ws_get_taxonomy_caps(),
+            ]
+        );
+    }
+} );
 
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -912,13 +1003,33 @@ add_action( 'admin_init', function() {
         ws_seed_protection_scope_taxonomy();
         update_option( 'ws_seeded_protection_scope', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_employee_standard' ) !== '1.0.0' ) {
+    if ( get_option( 'ws_seeded_employee_standard' ) !== '1.1.0' ) {
         ws_seed_employee_standard_taxonomy();
-        update_option( 'ws_seeded_employee_standard', '1.0.0' );
+        update_option( 'ws_seeded_employee_standard', '1.1.0' );
     }
     if ( get_option( 'ws_seeded_protected_action' ) !== '1.0.0' ) {
         ws_seed_protected_action_taxonomy();
         update_option( 'ws_seeded_protected_action', '1.0.0' );
+    }
+    if ( get_option( 'ws_seeded_legal_recognition' ) !== '1.0.0' ) {
+        ws_seed_legal_recognition_taxonomy();
+        update_option( 'ws_seeded_legal_recognition', '1.0.0' );
+    }
+    if ( get_option( 'ws_seeded_causation_standard' ) !== '1.0.0' ) {
+        ws_seed_causation_standard_taxonomy();
+        update_option( 'ws_seeded_causation_standard', '1.0.0' );
+    }
+    if ( get_option( 'ws_seeded_adverse_action' ) !== '1.1.0' ) {
+        ws_seed_adverse_action_taxonomy();
+        update_option( 'ws_seeded_adverse_action', '1.1.0' );
+    }
+    if ( get_option( 'ws_seeded_remedy' ) !== '1.1.0' ) {
+        ws_seed_remedy_taxonomy();
+        update_option( 'ws_seeded_remedy', '1.1.0' );
+    }
+    if ( get_option( 'ws_seeded_protected_class' ) !== '1.1.0' ) {
+        ws_seed_protected_class_taxonomy();
+        update_option( 'ws_seeded_protected_class', '1.1.0' );
     }
 
 } );
@@ -1030,13 +1141,15 @@ function ws_seed_process_type_taxonomy() {
  * Seeds ws_remedy with its flat term list.
  * Replaces ws_seed_remedy_taxonomy() for ws_remedy_type (deprecated).
  * 3.11.0: has-details sentinel added.
+ * 3.15.0: interim-reinstatement, tax-gross-up added.
  */
 function ws_seed_remedy_taxonomy() {
     $taxonomy = 'ws_remedy';
     $terms    = [
         'reinstatement'                   => 'Reinstatement',
+        'interim-reinstatement'           => 'Interim / Preliminary Reinstatement',
         'back-pay'                        => 'Back Pay',
-        'front-pay'                       => 'Front Pay (in Lieu of Reinstatement)',
+        'front-pay'                       => 'Front Pay',
         'double-back-pay'                 => 'Double Back Pay',
         'lost-wages'                      => 'Lost Wages',
         'benefits-restoration'            => 'Benefits Restoration',
@@ -1056,6 +1169,7 @@ function ws_seed_remedy_taxonomy() {
         'liquidated-damages'              => 'Liquidated Damages',
         'consequential-damages'           => 'Consequential / Special Damages',
         'declaratory-relief'              => 'Declaratory Relief',
+        'tax-gross-up'                    => 'Tax Gross-Up',
         'has-limits'                      => 'Has Limits/Caps/Standards',
         'has-details'                     => 'Has Details',
     ];
@@ -1109,6 +1223,8 @@ function ws_seed_protected_class_taxonomy() {
                 'job-applicant'           => 'Job Applicant',
                 'former-employee'         => 'Former Employee',
                 'perceived-whistleblower' => 'Perceived Whistleblower',
+                'intern-volunteer'        => 'Intern / Volunteer',
+                'qui-tam-relator'         => 'Qui Tam Relator',
             ],
         ],
         'associates-of-whistleblower' => [
@@ -1178,6 +1294,7 @@ function ws_seed_excluded_class_taxonomy() {
                 'job-applicant'           => 'Job Applicant',
                 'former-employee'         => 'Former Employee',
                 'perceived-whistleblower' => 'Perceived Whistleblower',
+                'intern-volunteer'        => 'Intern / Volunteer',
                 'qui-tam-relator'         => 'Qui Tam Relator',
             ],
         ],
@@ -1190,6 +1307,7 @@ function ws_seed_excluded_class_taxonomy() {
                 'associates-close'            => 'Close Associates of Whistleblower',
             ],
         ],
+        
         'has-details' => [
             'name'     => 'Has Details',
             'children' => [],
@@ -1203,6 +1321,7 @@ function ws_seed_excluded_class_taxonomy() {
  * Seeds ws_adverse_action with its flat term list.
  * Replaces ws_seed_retaliation_forms_taxonomy() for ws_retaliation_forms (deprecated).
  * 3.11.0: has-details sentinel added.
+ * 3.15.0: retaliatory-litigation, hostile-work-environment, retaliatory-investigation added.
  */
 function ws_seed_adverse_action_taxonomy() {
     $taxonomy = 'ws_adverse_action';
@@ -1216,6 +1335,7 @@ function ws_seed_adverse_action_taxonomy() {
         'schedule-change'             => 'Schedule Change',
         'pay-reduction'               => 'Pay / Benefits Reduction',
         'harassment'                  => 'Harassment',
+        'hostile-work-environment'    => 'Hostile Work Environment',
         'workplace-isolation'         => 'Workplace Isolation / Ostracism',
         'blacklisting'                => 'Blacklisting',
         'security-clearance-action'   => 'Security Clearance Action',
@@ -1224,6 +1344,8 @@ function ws_seed_adverse_action_taxonomy() {
         'immigration-threat'          => 'Immigration-Related Threat',
         'post-employment-retaliation' => 'Post-Employment Retaliation',
         'threatened-retaliation'      => 'Threatened Retaliation',
+        'retaliatory-investigation'   => 'Retaliatory Investigation / Audit',
+        'retaliatory-litigation'      => 'Retaliatory Litigation (SLAPP)',
         'has-details'                 => 'Has Details',
     ];
     foreach ( $terms as $slug => $name ) {
@@ -1293,63 +1415,19 @@ function ws_seed_case_stage_taxonomy() {
 function ws_seed_jurisdiction_taxonomy() {
     $taxonomy = WS_JURISDICTION_TAXONOMY;
     $terms    = [
-        'us' => 'Federal',
-        'dc' => 'District of Columbia',
-        'al' => 'Alabama',
-        'ak' => 'Alaska',
-        'az' => 'Arizona',
-        'ar' => 'Arkansas',
-        'ca' => 'California',
-        'co' => 'Colorado',
-        'ct' => 'Connecticut',
-        'de' => 'Delaware',
-        'fl' => 'Florida',
-        'ga' => 'Georgia',
-        'hi' => 'Hawaii',
-        'id' => 'Idaho',
-        'il' => 'Illinois',
-        'in' => 'Indiana',
-        'ia' => 'Iowa',
-        'ks' => 'Kansas',
-        'ky' => 'Kentucky',
-        'la' => 'Louisiana',
-        'me' => 'Maine',
-        'md' => 'Maryland',
-        'ma' => 'Massachusetts',
-        'mi' => 'Michigan',
-        'mn' => 'Minnesota',
-        'ms' => 'Mississippi',
-        'mo' => 'Missouri',
-        'mt' => 'Montana',
-        'ne' => 'Nebraska',
-        'nv' => 'Nevada',
-        'nh' => 'New Hampshire',
-        'nj' => 'New Jersey',
-        'nm' => 'New Mexico',
-        'ny' => 'New York',
-        'nc' => 'North Carolina',
-        'nd' => 'North Dakota',
-        'oh' => 'Ohio',
-        'ok' => 'Oklahoma',
-        'or' => 'Oregon',
-        'pa' => 'Pennsylvania',
-        'ri' => 'Rhode Island',
-        'sc' => 'South Carolina',
-        'sd' => 'South Dakota',
-        'tn' => 'Tennessee',
-        'tx' => 'Texas',
-        'ut' => 'Utah',
-        'vt' => 'Vermont',
-        'va' => 'Virginia',
-        'wa' => 'Washington',
-        'wv' => 'West Virginia',
-        'wi' => 'Wisconsin',
-        'wy' => 'Wyoming',
-        'as' => 'American Samoa',
-        'gu' => 'Guam',
-        'mp' => 'Northern Mariana Islands',
-        'pr' => 'Puerto Rico',
-        'vi' => 'U.S. Virgin Islands',
+        'us' => 'Federal', 'dc' => 'District of Columbia', 'al' => 'Alabama', 'ak' => 'Alaska',
+        'az' => 'Arizona', 'ar' => 'Arkansas', 'ca' => 'California', 'co' => 'Colorado',
+        'ct' => 'Connecticut', 'de' => 'Delaware', 'fl' => 'Florida', 'ga' => 'Georgia',
+        'hi' => 'Hawaii', 'id' => 'Idaho', 'il' => 'Illinois', 'in' => 'Indiana', 'ia' => 'Iowa',
+        'ks' => 'Kansas', 'ky' => 'Kentucky', 'la' => 'Louisiana' , 'me' => 'Maine' , 'md' => 'Maryland',
+        'ma' => 'Massachusetts', 'mi' => 'Michigan', 'mn' => 'Minnesota', 'ms' => 'Mississippi',
+        'mo' => 'Missouri', 'mt' => 'Montana', 'ne' => 'Nebraska', 'nv' => 'Nevada', 'nh' => 'New Hampshire',
+        'nj' => 'New Jersey', 'nm' => 'New Mexico', 'ny' => 'New York', 'nc' => 'North Carolina',
+        'nd' => 'North Dakota', 'oh' => 'Ohio', 'ok' => 'Oklahoma', 'or' => 'Oregon', 'pa' => 'Pennsylvania',
+        'ri' => 'Rhode Island', 'sc' => 'South Carolina', 'sd' => 'South Dakota', 'tn' => 'Tennessee',
+        'tx' => 'Texas', 'ut' => 'Utah', 'vt' => 'Vermont', 'va' => 'Virginia', 'wa' => 'Washington',
+        'wv' => 'West Virginia', 'wi' => 'Wisconsin', 'wy' => 'Wyoming', 'as' => 'American Samoa',
+        'gu' => 'Guam', 'mp' => 'Northern Mariana Islands', 'pr' => 'Puerto Rico', 'vi' => 'U.S. Virgin Islands',
     ];
     $order = 1;
     foreach ( $terms as $slug => $name ) {
@@ -1630,23 +1708,25 @@ function ws_seed_protection_scope_taxonomy() {
  * Seeds ws_employee_standard with its flat term list.
  *
  * New in 3.12.0. Replaces the freetext employee_standard fields in ACFs.
+ * Covers evidentiary burden-of-proof standards only — the volume/quality of
+ * evidence required. Causation standards (the logical link between disclosure
+ * and adverse action) moved to ws_causation_standard in 3.15.0.
  * has-details sentinel signals a companion ACF freetext field holds a standard
  * not covered by the registered slugs.
+ * 3.15.0: causation-but-for, causation-any-consideration, causation-contributing-factor
+ *         removed and moved to ws_causation_standard.
  */
 function ws_seed_employee_standard_taxonomy() {
     $taxonomy = 'ws_employee_standard';
     $terms    = [
-        'contributing-factor'           => 'Contributing Factor',
-        'motivating-factor'             => 'Motivating Factor',
-        'substantial-factor'            => 'Substantial Factor',
-        'but-for'                       => 'But-For (Burden of Proof)',
-        'preponderance'                 => 'Preponderance of the Evidence',
-        'clear-and-convincing'          => 'Clear and Convincing Evidence',
-        'reasonable-belief'             => 'Reasonable Belief Standard',
-        'causation-but-for'             => 'But-For Causation Standard',
-        'causation-any-consideration'   => 'Any Consideration Causation Standard',
-        'causation-contributing-factor' => 'Contributing Factor Causation Standard',
-        'has-details'                   => 'Has Details',
+        'contributing-factor'  => 'Contributing Factor',
+        'motivating-factor'    => 'Motivating Factor',
+        'substantial-factor'   => 'Substantial Factor',
+        'but-for'              => 'But-For (Burden of Proof)',
+        'preponderance'        => 'Preponderance of the Evidence',
+        'clear-and-convincing' => 'Clear and Convincing Evidence',
+        'reasonable-belief'    => 'Reasonable Belief Standard',
+        'has-details'          => 'Has Details',
     ];
     foreach ( $terms as $slug => $name ) {
         if ( ! term_exists( $slug, $taxonomy ) ) {
@@ -1690,4 +1770,69 @@ function ws_seed_protected_action_taxonomy() {
     ];
     ws_bulk_insert_hierarchical( $hierarchy, 'ws_protected_action' );
 
+}
+
+
+/**
+ * Seeds ws_legal_recognition with its flat term list.
+ *
+ * New in 3.15.0. Replaces scattered *_recognized ACF boolean fields.
+ * Presence of a term signals the doctrine/rule is recognized in this jurisdiction.
+ * Absence signals the doctrine is not recognized or the statute is silent.
+ * Terms that have companion *_context fields are noted below.
+ */
+function ws_seed_legal_recognition_taxonomy() {
+    $taxonomy = 'ws_legal_recognition';
+    $terms    = [
+        // SOL & Procedural
+        'continuing-violation'        => 'Continuing Violation Doctrine',
+        'equitable-tolling'           => 'Equitable Tolling',
+        'amended-claim'               => 'Amended Claim / Relation Back',          // + amended_claim_context
+        // Enforcement & Liability
+        'private-right-of-action'     => 'Private Right of Action',
+        'individual-liability'        => 'Individual Liability',
+        'preliminary-reinstatement'   => 'Preliminary / Interim Reinstatement',
+        'class-action-permitted'      => 'Class / Collective Action Permitted',
+        // Retaliation Doctrines
+        'constructive-discharge'      => 'Constructive Discharge',                 // + constructive_discharge_context
+        'anticipatory-retaliation'    => 'Anticipatory / Threatened Retaliation',  // + anticipatory_retaliation_context
+        'cats-paw-liability'          => 'Cat\'s Paw Liability',                   // + cats_paw_context
+        // Contractual / Confidentiality
+        'contractual-waiver'          => 'Contractual Waiver Addressed',           // + contractual_waiver_scope
+        'anonymity-protection'        => 'Anonymity / Confidentiality Protection', // + anonymity_context
+        'nda-limits'                  => 'NDA / Non-Disparagement Limits',         // + nda_limits_context
+    ];
+    foreach ( $terms as $slug => $name ) {
+        if ( ! term_exists( $slug, $taxonomy ) ) {
+            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
+        }
+    }
+}
+
+/**
+ * Seeds ws_causation_standard with its flat term list.
+ *
+ * New in 3.15.0. Split from ws_employee_standard.
+ * Covers the causal link required between the disclosure and the adverse action.
+ * Distinct from ws_employee_standard which covers evidentiary burden-of-proof
+ * standards (the volume/quality of evidence required).
+ * has-details sentinel signals a companion ACF freetext field holds a standard
+ * not covered by the registered slugs.
+ */
+function ws_seed_causation_standard_taxonomy() {
+    $taxonomy = 'ws_causation_standard';
+    $terms    = [
+        'causation-but-for'             => 'But-For Causation Standard',
+        'causation-any-consideration'   => 'Any Consideration Causation Standard',
+        'causation-contributing-factor' => 'Contributing Factor Causation Standard',
+        'causation-motivating-factor'   => 'Motivating Factor Causation Standard',
+        'causation-substantial-factor'  => 'Substantial Factor Causation Standard',
+        'causation-proximate-cause'     => 'Proximate Cause Standard',
+        'has-details'                   => 'Has Details',
+    ];
+    foreach ( $terms as $slug => $name ) {
+        if ( ! term_exists( $slug, $taxonomy ) ) {
+            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
+        }
+    }
 }
