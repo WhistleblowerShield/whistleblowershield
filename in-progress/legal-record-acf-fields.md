@@ -18,7 +18,7 @@ Create new files with same names as the originals.
 - Booleans use `has_*` (usually when field is a trigger) or `is_*` (used when field is not a trigger).
 - `has_*` is true can trigger `*_details`(freetext(usually)), but can also trigger other fields
    (e.g. `has_some_date` triggers `some_date`).
-- Single-value datapoints use singular nouns. Exception: `liquidated_damages` is single-select but approved usage of plural name.
+- Single-value datapoints use singular nouns.
 - Multi-value datapoints use plural nouns.
 - `*_recognized` — (too long) avoid where possible; use `ws_legal_recognition` taxonomy slug if logical.
 - `*_type` — (too generic) avoid where possible; use `*_class`, `*_scope`, `*_status`, `*_rule`,
@@ -208,9 +208,9 @@ liability → contractual → agencies → immunity/defendants.
 - `remedies`                    — (taxonomy: `ws_remedy`)
 - `remedy_limits`               — (conditional on `remedies` includes `has-limits`)
 - `remedy_details`              — (conditional on `remedies` includes `has-details`)
-- `remedy_liquidated_damages`   — (conditional on `remedies` includes `liquidated-damages`; single-select: `double`|
-                                  `treble`|`2x-back-pay`|`2x-wages-lost`|`statutory-formula`|`up-to-double`|
-                                  `up-to-treble`|`has-details`(approved case of plural used for single-select))
+- `remedy_liquidated_multiplier ` — (conditional on `remedies` includes `liquidated-damages`; single-select:
+                                  `double`|`treble`|`2x-back-pay`|`2x-wages-lost`|`statutory-formula`|
+                                  `up-to-double`|`up-to-treble`|`has-details`)
 - `remedy_liquidated_formula`   — (conditional on `remedy_liquidated_context` includes `statutory-formula`)
 - `remedy_liquidated_details`   — (conditional on `remedy_liquidated_context` includes `has-details`)
 - `mixed_motive_remedy_context` — (conditional on `burden_shifting_framework` includes `mixed-motive`;
@@ -220,7 +220,7 @@ liability → contractual → agencies → immunity/defendants.
 - `criminal_sanction`           — (single-select: `misdemeanor`|`felony`)
 - `civil_action_waiver_scope`   — (single-select: `prohibited`|`permitted-individual-only`|
                                   `permitted-collective`|`anti`|`see-context`)
-- `civil_action_waiver_context` — (conditional on `class_action_waiver_scope` non-empty)
+- `civil_action_waiver_context` — (conditional on `civil_action_waiver_scope` non-empty)
 - `contractual_waiver_scope`    — (sister field to `contractual_waiver_context`; single-select: `void`|`limited`|
                                    `enforceable`|`void-public-policy`|`void-as-to-whistleblowing`|
                                    `enforceable-with-exceptions`|`see-context`)
@@ -389,6 +389,9 @@ construe is covered on precedent records via `extend_taxonomy` and
 - `affected_jx`                — (conditional on `has_affected_jx`; derived from `court` `ws_jx_codes`; manually
                                   set taxonomy: `WS_JURISDICTION_TAXONOMY`, 'load_terms' => 1, 'save_terms' => 0
                                   when `court` is `has-details`)
+#### Enforcement Tab
+- `federal_agencies`           — (insert after `local_agencies`; multi-select: `ws-agency` filtered by jx,
+                                  process and disclosure taxonomies)
 
 #### Relationships Tab
 - `statute_ids`
@@ -400,12 +403,14 @@ construe is covered on precedent records via `extend_taxonomy` and
 - `negative_treatment_class_details`
 - `negative_treatment_details`
 
-#### Relationships Tab (insert after `authority_reference`)
+#### Source / Audit Tab (insert after `authority_reference`)
 - `authority_source`           — (single-select: `constitutional`|`legislative`|`judicial`|`regulatory`|`executive`|
                                   `has-details`)
 - `authority_source_details`
 
 #### Hidden Fields
+- `_primary_agency_is_fed`     — (derived from `primary_agency` jx; auto-fill by hook on save)
+- `_related_agencies`          — (merged array of `local_agencies` and `federal_agencies`; auto-fill by hook on save)
 - `_parent_ids`                — (merged array of `statute_ids` and `comlaw_ids`; auto-fill by hook on save)
 
 ---
