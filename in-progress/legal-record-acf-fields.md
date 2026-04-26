@@ -52,6 +52,9 @@ Create new files with same names as the originals.
   `legal_recognitions`. If `contractual-waiver` is present in `legal_recognitions` with a value set in
   `contractual_waiver_scope`, both should be cleared and `contractual-waiver` removed from `legal_recognitions`
   — `contractual-waiver` is invalid while `civil_action_waiver_scope` is `anti`.
+- Some hooks exist in legacy files, use for reference only. Write new/optimized hooks where logical/possible.
+  Reuse new hooks where ever logical/possible. e.g. Don't write a hook that only applies to statute_ids, and then
+  write a second hook with near-identical code for comlaw_ids, when one hook with get_post_type() logic will suffice.
 
 ### Sentinel Values
 
