@@ -4,25 +4,7 @@
  *
  * @package WhistleblowerShield
  * @since   2.1.0
- * @version 3.16.0
- *
- * VERSION
- * -------
- * 3.16.0  Final nuance pass — multi-agent review:
- *         ws_legal_recognition: 15 new terms added (anti-gag-provision,
- *         third-party-retaliation, catch-all-protection, no-retaliatory-evidence,
- *         trade-secret-immunity, stay-of-disciplinary-action, manager-rule-exclusion,
- *         public-concern-required, employer-knowledge-required, bad-faith-exclusion,
- *         anti-slapp-applies, successor-liability-recognized, extraterritorial-coverage,
- *         confidential-settlement-restriction, internal-only-sufficient).
- *         Gate bumped to 1.1.0.
- *         ws_causation_standard: contributing-factor-but-for-backstop and
- *         substantial-motivating-factor added. Gate bumped to 1.1.0.
- *         ws_adverse_action: retaliatory-discovery added. Gate bumped to 1.2.0.
- *         ws_remedy: neutral-reference, attorney-fees-admin added. Gate bumped to 1.2.0.
- *         ws_protected_action: opposition-clause and participation-clause added as
- *         hierarchical parents; internal-objection, filing-complaint,
- *         assisting-complainant added as child terms. Gate bumped to 1.1.0.
+ * @version 3.15.0
  *
  * VERSION
  * -------
@@ -1025,25 +1007,25 @@ add_action( 'admin_init', function() {
         ws_seed_employee_standard_taxonomy();
         update_option( 'ws_seeded_employee_standard', '1.1.0' );
     }
-    if ( get_option( 'ws_seeded_protected_action' ) !== '1.1.0' ) {
+    if ( get_option( 'ws_seeded_protected_action' ) !== '1.0.0' ) {
         ws_seed_protected_action_taxonomy();
-        update_option( 'ws_seeded_protected_action', '1.1.0' );
+        update_option( 'ws_seeded_protected_action', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_legal_recognition' ) !== '1.1.0' ) {
+    if ( get_option( 'ws_seeded_legal_recognition' ) !== '1.0.0' ) {
         ws_seed_legal_recognition_taxonomy();
-        update_option( 'ws_seeded_legal_recognition', '1.1.0' );
+        update_option( 'ws_seeded_legal_recognition', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_causation_standard' ) !== '1.1.0' ) {
+    if ( get_option( 'ws_seeded_causation_standard' ) !== '1.0.0' ) {
         ws_seed_causation_standard_taxonomy();
-        update_option( 'ws_seeded_causation_standard', '1.1.0' );
+        update_option( 'ws_seeded_causation_standard', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_adverse_action' ) !== '1.2.0' ) {
+    if ( get_option( 'ws_seeded_adverse_action' ) !== '1.1.0' ) {
         ws_seed_adverse_action_taxonomy();
-        update_option( 'ws_seeded_adverse_action', '1.2.0' );
+        update_option( 'ws_seeded_adverse_action', '1.1.0' );
     }
-    if ( get_option( 'ws_seeded_remedy' ) !== '1.2.0' ) {
+    if ( get_option( 'ws_seeded_remedy' ) !== '1.1.0' ) {
         ws_seed_remedy_taxonomy();
-        update_option( 'ws_seeded_remedy', '1.2.0' );
+        update_option( 'ws_seeded_remedy', '1.1.0' );
     }
     if ( get_option( 'ws_seeded_protected_class' ) !== '1.1.0' ) {
         ws_seed_protected_class_taxonomy();
@@ -1185,8 +1167,6 @@ function ws_seed_remedy_taxonomy() {
         'bounty-qui-tam-award'            => 'Bounty / Qui Tam Award',
         'whistleblower-fund-award'        => 'Whistleblower Fund Award',
         'non-monetary-relief'             => 'Non-Monetary Relief',
-        'neutral-reference'               => 'Neutral / Corrected Reference',
-        'attorney-fees-admin'             => 'Attorney Fees (Administrative Phase)',
         'wage-differential'               => 'Wage Differential',
         'liquidated-damages'              => 'Liquidated Damages',
         'consequential-damages'           => 'Consequential / Special Damages',
@@ -1371,7 +1351,6 @@ function ws_seed_adverse_action_taxonomy() {
         'threatened-retaliation'      => 'Threatened Retaliation',
         'retaliatory-investigation'   => 'Retaliatory Investigation / Audit',
         'retaliatory-litigation'      => 'Retaliatory Litigation (SLAPP)',
-        'retaliatory-discovery'       => 'Retaliatory Discovery (Litigation Harassment)',
         'has-details'                 => 'Has Details',
     ];
     foreach ( $terms as $slug => $name ) {
@@ -1765,18 +1744,8 @@ function ws_seed_employee_standard_taxonomy() {
 }
 
 /**
- * Seeds ws_protected_action with its hierarchical term structure.
+ * Seeds ws_protected_action with its flat term list.
  *
- * Two parent clauses per Title VII §704(a) and state analogs:
- * - Opposition Clause: opposing, resisting, or refusing; typically requires
- *   good-faith reasonable belief.
- * - Participation Clause: participating in proceedings or investigations;
- *   typically broader protection; good-faith requirement may not apply.
- *
- * 3.16.0: Hierarchy confirmed. opposition-clause, participation-clause, and
- *         child terms (opposing-practice, internal-objection, refusal-to-participate,
- *         filing-complaint, testifying, assisting-whistleblower, participation-support)
- *         already present. Gate bumped to 1.1.0 — re-seeding confirms structure.
  */
 function ws_seed_protected_action_taxonomy() {
    $hierarchy = [
@@ -1836,45 +1805,31 @@ function ws_seed_protected_action_taxonomy() {
 function ws_seed_legal_recognition_taxonomy() {
     $taxonomy = 'ws_legal_recognition';
     $terms    = [
-        // Effective Date
-        'retroactive-date'                  => 'Retroactive Date Specified',                        // + retro_context + retro_date
-        // Classification
-        'protected-action'                  => 'Protected Action Specified',                        // + protected_actions + protected_action_standard + protected_action_source
-        'excluded-class'                    => 'Excluded Class Specified',                          // + excluded_classes
-        'anonymity-protection'              => 'Anonymity / Confidentiality Protection Recognized', // + anonymity_context
-        'catch-all-protection'              => 'Catch-All Protection Clause Present',               // (no companion)
-        'internal-only-sufficient'          => 'Internal-Only Disclosure Sufficient',               // (no companion)
-        'bad-faith-exclusion'               => 'Bad Faith / Knowingly False Exclusion Applies',     // + bad_faith_context
-        'manager-rule-exclusion'            => 'Manager Rule / Duty Speech Exclusion Applies',      // + manager_rule_context
-        'public-concern-required'           => 'Public Concern Requirement Applies',                // + public_concern_context
-        'trade-secret-immunity'             => 'Trade Secret Immunity Recognized',                  // (no companion)
-        // SOL & Procedural
-        'statutory-tolling'                 => 'Statutory Tolling Specified',                       // + statutory_tolling_context
-        'equitable-tolling'                 => 'Equitable Tolling Recognized',                      // + equitable_tolling_context
-        'amended-claim'                     => 'Amended Claim / Relation Back Recognized',          // + amended_claim_context
-        'exhaustion-required'               => 'Exhaustion Required',                               // + exhaustion_context
-        'pre-filing-notice'                 => 'Pre-Filing Notice Required',                        // + filing_notice_context
-        'statutory-preclusion'              => 'Statutory Preclusion Applies',                      // + preclusion_context
-        // Enforcement & Liability
-        'private-right-of-action'           => 'Private Right of Action Available',                 // + private_roa_context
-        'cats-paw-liability'                => 'Cat\'s Paw Liability Recognized',                   // + cats_paw_context
-        'contractual-waiver'                => 'Contractual Waiver Recognized',                     // + contractual_waiver_context + contractual_waiver_scope
-        'nda-limits'                        => 'NDA / Non-Disparagement Limitations Recognized',    // + nda_limits_context
-        'confidential-settlement-restriction' => 'Confidential Settlement Restriction Applies',     // + settlement_restriction_context
-        'anti-gag-provision'                => 'Anti-Gag Provision Recognized',                     // + anti_gag_context
-        'no-retaliatory-evidence'           => 'Retaliatory Evidence Barred',                       // + no_retaliatory_evidence_context
-        'stay-of-disciplinary-action'       => 'Stay of Disciplinary Action Available',             // + stay_context
-        'anti-slapp-applies'                => 'Anti-SLAPP Protection Applies',                     // + anti_slapp_context
-        'employer-knowledge-required'       => 'Employer Knowledge Element Required',               // + employer_knowledge_context
-        'third-party-retaliation'           => 'Third-Party Retaliation Prohibited',                // + third_party_retaliation_context
-        'successor-liability-recognized'    => 'Successor Employer Liability Recognized',           // + successor_liability_context
-        'extraterritorial-coverage'         => 'Extraterritorial Coverage Recognized',              // + extraterritorial_context
-        'jury-trial'                        => 'Jury Trial Available',                              // + jury_trial_context + jury_trial_scope
-        // Without Context
-        'continuing-violation'              => 'Continuing Violation Doctrine Recognized',
-        'individual-liability'              => 'Individual Liability Available',
-        'class-action'                      => 'Class / Collective Action Permitted',
-        'preliminary-reinstatement'         => 'Preliminary / Interim Reinstatement Available',     // + preliminary_reinstatement_context
+        // Date with Context
+        'retroactive-date'            => 'Retroactive Date Specified',                         // + retro_context + retro_date
+        // Classification with Context
+        'protected-action'            => 'Protected Action Specified',                         // + protected_actions + protected_action_standard + protected_action_source
+        'excluded-class'              => 'Excluded Class Specified',                           // + excluded_classes
+        'anonymity-protection'        => 'Anonymity / Confidentiality Protection Recognized',  // + anonymity_context
+        // Statute of Limitation & Procedural with Context
+        'statutory-tolling'           => 'Statutory Tolling Specified',                        // + statutory_tolling_context
+        'equitable-tolling'           => 'Equitable Tolling Recognized',                       // + equitable_tolling_context
+        'amended-claim'               => 'Amended Claim / Relation Back Recognized',           // + amended_claim_context
+        'exhaustion-required'         => 'Exhaustion Required',                                // + exhaustion_context
+        'pre-filing-notice'           => 'Pre-Filing Notice Required',                         // + filing_notice_context
+        'statutory-preclusion'        => 'Statutory Preclusion Applies',                       // + preclusion_context
+        // Enforcement & Remedies with Context
+        'private-right-of-action'     => 'Private Right of Action Available',                  // + private_roa_context
+        'cats-paw-liability'          => 'Cat\'s Paw Liability Recognized',                    // + cats_paw_context
+        'contractual-waiver'          => 'Contractual Waiver Recognized',                      // + contractual_waiver_context + contractual_waiver_scope
+        'nda-limits'                  => 'NDA / Non-Disparagement Limitations Recognized',     // + nda_limits_context
+        'jury-trial'                  => 'Jury Trial Available',                               // + jury_trial_context + jury_trial_scope
+        // Without Context Triggered
+        'continuing-violation'        => 'Continuing Violation Doctrine Recognized',           // - Relates to SOL
+        'individual-liability'        => 'Individual Liability Available',                     // - Relates to Enforcement
+        'class-action'                => 'Class / Collective Action Permitted',                // - Relates to Enforcement
+        'preliminary-reinstatement'   => 'Preliminary / Interim Reinstatement Available',      // - Relates to Remedies
+        
     ];
     foreach ( $terms as $slug => $name ) {
         if ( ! term_exists( $slug, $taxonomy ) ) {
@@ -1892,21 +1847,17 @@ function ws_seed_legal_recognition_taxonomy() {
  * standards (the volume/quality of evidence required).
  * has-details sentinel signals a companion ACF freetext field holds a standard
  * not covered by the registered slugs.
- *
- * 3.16.0: contributing-factor-but-for-backstop and substantial-motivating-factor added.
  */
 function ws_seed_causation_standard_taxonomy() {
     $taxonomy = 'ws_causation_standard';
     $terms    = [
-        'causation-but-for'                     => 'But-For Causation Standard',
-        'causation-any-consideration'           => 'Any Consideration Causation Standard',
-        'causation-contributing-factor'         => 'Contributing Factor Causation Standard',
-        'contributing-factor-but-for-backstop'  => 'Contributing Factor (But-For Backstop)',
-        'causation-motivating-factor'           => 'Motivating Factor Causation Standard',
-        'substantial-motivating-factor'         => 'Substantial Motivating Factor Standard',
-        'causation-substantial-factor'          => 'Substantial Factor Causation Standard',
-        'causation-proximate-cause'             => 'Proximate Cause Standard',
-        'has-details'                           => 'Has Details',
+        'causation-but-for'             => 'But-For Causation Standard',
+        'causation-any-consideration'   => 'Any Consideration Causation Standard',
+        'causation-contributing-factor' => 'Contributing Factor Causation Standard',
+        'causation-motivating-factor'   => 'Motivating Factor Causation Standard',
+        'causation-substantial-factor'  => 'Substantial Factor Causation Standard',
+        'causation-proximate-cause'     => 'Proximate Cause Standard',
+        'has-details'                   => 'Has Details',
     ];
     foreach ( $terms as $slug => $name ) {
         if ( ! term_exists( $slug, $taxonomy ) ) {

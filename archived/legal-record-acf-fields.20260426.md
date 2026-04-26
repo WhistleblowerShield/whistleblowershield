@@ -18,7 +18,7 @@ Create new files with same names as the originals.
 - Booleans use `has_*` (usually when field is a trigger) or `is_*` (used when field is not a trigger).
 - `has_*` is true can trigger `*_details`(freetext(usually)), but can also trigger other fields
    (e.g. `has_some_date` triggers `some_date`).
-- Single-value datapoints use singular nouns. Exception: `liquidated_damages` is single-select but approved usage of plural name.
+- Single-value datapoints use singular nouns.
 - Multi-value datapoints use plural nouns.
 - `*_recognized` — (too long) avoid where possible; use `ws_legal_recognition` taxonomy slug if logical.
 - `*_type` — (too generic) avoid where possible; use `*_class`, `*_scope`, `*_status`, `*_rule`,
@@ -111,8 +111,8 @@ Field order reflects logical editorial workflow within each tab.
 - `has_effective_date`         — (only when `effective_date` differs from `date`)
 - `effective_date`
 - `effective_year`             — (derived from `effective_date` if present, `date` if not)
-- `retro_context`              — (conditional on `retroactive-date` in `legal_recognitions`)
 - `retro_date`                 — (sister field to `retro_context`)
+- `retro_context`              — (conditional on `retroactive-date` in `legal_recognitions`)
 
 ---
 
@@ -141,18 +141,12 @@ legal recognitions → derived flags.
 - `employment_sectors`             — (taxonomy: `ws_employment_sector`)
 - `disclosure_targets`             — (taxonomy: `ws_disclosure_target`)
 - `disclosure_target_details`      
-- `disclosure_channel_scope`       — (single-select: `approved-channel-only`|`mandatory-internal-first`|`any-channel`|`has-details`)
+- `disclosure_channel_scope`       — (single-select: `approved-channel-only`|`any-channel`|`has-details`)
 - `disclosure_channel_details`
-- `manager_rule_context`           — (conditional on `manager-rule-exclusion` in `legal_recognitions`)
-- `public_concern_context`         — (conditional on `public-concern-required` in `legal_recognitions`)
-- `bad_faith_context`              — (conditional on `bad-faith-exclusion` in `legal_recognitions`)
 - `adverse_action_scope`           — (single-select: `termination-only`|`material-adverse`|
                                       `broad-any-adverse-action`|`see-context`)
 - `adverse_action_scope_context`   — (conditional on `adverse_action_scope` non-empty)
 - `anonymity_context`              — (conditional on `anonymity-protection` in `legal_recognitions`)
-- `has_malicious_reporting_sanctions`
-- `malicious_reporting_details`
-- `is_evidence_collection_protected`
 
 ---
 
@@ -163,8 +157,7 @@ Fields ordered: core SOL → modifiers → exhaustion → thresholds → preempt
 - `sol_value`                  — (integer)
 - `sol_unit`                   — (single-select: `days`|`weeks`|`months`|`years`)
 - `sol_trigger`                — (single-select: `filing-of-complaint`|`accrual`|`discovery-actual`|
-                                  `discovery-constructive`|`discovery-notice`|
-                                  `conclusion-of-admin-process`|`see-context`)
+                                  `discovery-constructive`|`discovery-notice`|`see-context`)
 - `sol_trigger_context`        — (conditional on `sol_trigger` non-empty)
 - `has_sol_details`
 - `sol_details`
@@ -191,8 +184,6 @@ Fields ordered: core SOL → modifiers → exhaustion → thresholds → preempt
 - `threshold_unit`             — (sister field to `threshold_details`; single-select: `employees`|`contractors`|
                                   `workers`|`fte`)
 - `threshold_details`
-- `has_cure_period`
-- `cure_period_details`
 - `has_preemption`
 - `preemption_direction`       — (sister field to `preemption_details`; single-select: `federal_preempts_state`|
                                   `state_not_preempted`|`partial`|`see-details`)
@@ -214,43 +205,27 @@ liability → contractual → agencies → immunity/defendants.
 - `fee_shifting_rules`          — (taxonomy: `ws_fee_shifting_rule`)
 - `fee_shifting_phases`         — (conditional on `fee_shifting_rules` includes `has-phases`)
 - `fee_shifting_details`        — (conditional on `fee_shifting_rules` includes `has-details`)
-- `fee_shifting_asymmetry`      — (single-select: `one-way-plaintiff`|`one-way-defendant-frivolous`|
-                                   `two-way`|`american-rule`|`has-details`)
-- `fee_shifting_asymmetry_details`
 - `remedies`                    — (taxonomy: `ws_remedy`)
 - `remedy_limits`               — (conditional on `remedies` includes `has-limits`)
 - `remedy_details`              — (conditional on `remedies` includes `has-details`)
-- `remedy_liquidated_damages`   — (conditional on `remedies` includes `liquidated-damages`; single-select: `double`|
-                                  `treble`|`2x-back-pay`|`2x-wages-lost`|`statutory-formula`|`statutory-daily-fine`|`up-to-double`|
-                                  `up-to-treble`|`has-details`(approved case of plural used for single-select))
+- `remedy_liquidated_multiplier ` — (conditional on `remedies` includes `liquidated-damages`; single-select:
+                                  `double`|`treble`|`2x-back-pay`|`2x-wages-lost`|`statutory-formula`|
+                                  `up-to-double`|`up-to-treble`|`has-details`)
 - `remedy_liquidated_formula`   — (conditional on `remedy_liquidated_context` includes `statutory-formula`)
 - `remedy_liquidated_details`   — (conditional on `remedy_liquidated_context` includes `has-details`)
-- `preliminary_reinstatement_context` — (conditional on `preliminary-reinstatement` in `legal_recognitions`;
-                                   document mandatory vs. discretionary standard, bond requirement,
-                                   and whether reinstatement applies during administrative phase only
-                                   or full pendency of case)
 - `mixed_motive_remedy_context` — (conditional on `burden_shifting_framework` includes `mixed-motive`;
                                    see [Cross-Tab Conditional below])
 - `private_roa_context`         — (conditional on `private-right-of-action` in `legal_recognitions`)
 - `cats_paw_context`            — (conditional on `cats-paw-liability` in `legal_recognitions`)
-- `criminal_sanctions`          — (multi-select: `misdemeanor`|`felony`)
+- `criminal_sanction`           — (single-select: `misdemeanor`|`felony`)
 - `civil_action_waiver_scope`   — (single-select: `prohibited`|`permitted-individual-only`|
                                   `permitted-collective`|`anti`|`see-context`)
-- `civil_action_waiver_context` — (conditional on `class_action_waiver_scope` non-empty)
+- `civil_action_waiver_context` — (conditional on `civil_action_waiver_scope` non-empty)
 - `contractual_waiver_scope`    — (sister field to `contractual_waiver_context`; single-select: `void`|`limited`|
                                    `enforceable`|`void-public-policy`|`void-as-to-whistleblowing`|
                                    `enforceable-with-exceptions`|`see-context`)
 - `contractual_waiver_context`  — (conditional on `contractual_waiver_scope` non-empty)
 - `nda_limits_context`          — (conditional on `nda-limits` in `legal_recognitions`)
-- `anti_gag_context`            — (conditional on `anti-gag-provision` in `legal_recognitions`)
-- `no_retaliatory_evidence_context` — (conditional on `no-retaliatory-evidence` in `legal_recognitions`)
-- `stay_context`                — (conditional on `stay-of-disciplinary-action` in `legal_recognitions`)
-- `anti_slapp_context`          — (conditional on `anti-slapp-applies` in `legal_recognitions`)
-- `employer_knowledge_context`  — (conditional on `employer-knowledge-required` in `legal_recognitions`)
-- `settlement_restriction_context` — (conditional on `confidential-settlement-restriction` in `legal_recognitions`)
-- `third_party_retaliation_context` — (conditional on `third-party-retaliation` in `legal_recognitions`)
-- `successor_liability_context` — (conditional on `successor-liability-recognized` in `legal_recognitions`)
-- `extraterritorial_context`    — (conditional on `extraterritorial-coverage` in `legal_recognitions`)
 - `jury_trial_scope`            — (sister field to `jury_trial_context`; single-select: `all-claims`|`damages-only`|
                                    `liability-only`|`see-details`)
 - `jury_trial_context`          — (conditional on `jury-trial` in `legal_recognitions`)
@@ -260,13 +235,10 @@ liability → contractual → agencies → immunity/defendants.
 - `enforcement_channel`         — (freetext; priority of enforcement agencies, with any enforcement requirements)
 - `sovereign_immunity_limits`   — (multi-select: `not-waived`|`partially-waived`|`fully-waived`|`cap-applies`|
                                   `conditions-apply`|`has-details`)
-- `sovereign_immunity_scope`    — (sister field to `sovereign_immunity_details`; single-select:
-                                  `state-only`|`instrumentalities-included`|
-                                  `political-subdivisions-included`|`all`|`see-details`)
 - `sovereign_immunity_details`
 - `proper_defendants`           — (multi-select: `employer-entity-only`|`individual-supervisors`|
-                                  `government-agency-only`|`contractors-included`|`successor-employer`|
-                                  `joint-employer`|`scope-of-employment-required`|`has-details`)
+                                  `government-agency-only`|`contractors-included`|`scope-of-employment-required`|
+                                  `has-details`)
 - `proper_defendant_details`
 
 ---
@@ -285,16 +257,7 @@ employer defenses → rebuttable presumption → detail overflow.
 - `employee_standards`         — (taxonomy: `ws_employee_standard`; evidentiary burden only)
 - `standard_details`
 - `causation_standards`        — (taxonomy: `ws_causation_standard`; causal link standard)
-- `causation_standard_details`  — (conditional on `causation_standards` non-empty; document hybrid
-                                   or judicially modified standards, circuit splits, and backstop
-                                   limitations not captured by taxonomy terms alone)
-- `causation_application`      — (multi-select: `liability`|`damages`|`both`|`has-details`;
-                                   use when causation standard applies differently to liability
-                                   phase vs. damages phase within the same record)
-- `causation_application_details`
-- `employer_awareness_requirement` — (single-select: `actual-knowledge`|`constructive-knowledge`|
-                                   `inferred-knowledge`|`no-requirement`|`has-details`)
-- `employer_awareness_details`
+- `causation_standard_details`
 - `has_temporal_presumption`
 - `presumption_window_value`   — (sister field to `presumption_window_details`)
 - `presumption_window_unit`    — (sister field to `presumption_window_details`; single-select: `days`|`weeks`|
@@ -426,6 +389,9 @@ construe is covered on precedent records via `extend_taxonomy` and
 - `affected_jx`                — (conditional on `has_affected_jx`; derived from `court` `ws_jx_codes`; manually
                                   set taxonomy: `WS_JURISDICTION_TAXONOMY`, 'load_terms' => 1, 'save_terms' => 0
                                   when `court` is `has-details`)
+#### Enforcement Tab
+- `federal_agencies`           — (insert after `local_agencies`; multi-select: `ws-agency` filtered by jx,
+                                  process and disclosure taxonomies)
 
 #### Relationships Tab
 - `statute_ids`
@@ -441,11 +407,10 @@ construe is covered on precedent records via `extend_taxonomy` and
 - `authority_source`           — (single-select: `constitutional`|`legislative`|`judicial`|`regulatory`|`executive`|
                                   `has-details`)
 - `authority_source_details`
-- `review_standard`            — (single-select: `de-novo`|`substantial-evidence`|`arbitrary-capricious`|
-                                  `abuse-of-discretion`|`has-details`)
-- `review_standard_details`
 
 #### Hidden Fields
+- `_primary_agency_is_fed`     — (derived from `primary_agency` jx; auto-fill by hook on save)
+- `_related_agencies`          — (merged array of `local_agencies` and `federal_agencies`; auto-fill by hook on save)
 - `_parent_ids`                — (merged array of `statute_ids` and `comlaw_ids`; auto-fill by hook on save)
 
 ---
@@ -572,28 +537,11 @@ Companion fields noted in parentheses are triggered by slug presence in `legal_r
 'contractual-waiver'            → 'contractual_waiver_context' → 'contractual_waiver_scope'
 'nda-limits'                    → 'nda_limits_context'
 'jury-trial'                    → 'jury_trial_context' → 'jury_trial_scope'
-// Classification
-'catch-all-protection'           (no companion needed)
-'internal-only-sufficient'       (no companion needed)
-'trade-secret-immunity'          (no companion needed)
-'bad-faith-exclusion'           → 'bad_faith_context'
-'manager-rule-exclusion'        → 'manager_rule_context'
-'public-concern-required'       → 'public_concern_context'
-// Enforcement
-'anti-gag-provision'            → 'anti_gag_context'
-'no-retaliatory-evidence'       → 'no_retaliatory_evidence_context'
-'stay-of-disciplinary-action'   → 'stay_context'
-'anti-slapp-applies'            → 'anti_slapp_context'
-'employer-knowledge-required'   → 'employer_knowledge_context'
-'confidential-settlement-restriction' → 'settlement_restriction_context'
-'third-party-retaliation'       → 'third_party_retaliation_context'
-'successor-liability-recognized' → 'successor_liability_context'
-'extraterritorial-coverage'     → 'extraterritorial_context'
-'preliminary-reinstatement'     → 'preliminary_reinstatement_context'
 // Without Context
 'continuing-violation'           (no companion needed)
 'individual-liability'           (no companion needed)
 'class-action'                   (no companion needed)
+'preliminary-reinstatement'      (no companion needed)
 
 ```
 
