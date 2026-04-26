@@ -1117,6 +1117,7 @@ function ws_seed_disclosure_type_taxonomy() {
 function ws_seed_process_type_taxonomy() {
     $taxonomy = 'ws_process_type';
     $terms    = [
+        'pre-suit-notice'          => 'Pre-Suit Notice',
         'administrative-complaint' => 'Administrative Complaint',
         'civil-lawsuit'            => 'Civil Lawsuit',
         'qui-tam'                  => 'Qui Tam (False Claims)',
@@ -1128,7 +1129,6 @@ function ws_seed_process_type_taxonomy() {
         'representative-action'    => 'Representative Action',
         'de-novo-civil'            => 'De Novo Civil Action',
         'arbitration-compelled'    => 'Arbitration Compelled',
-        'jury-trial-available'     => 'Jury Trial Available',
     ];
     foreach ( $terms as $slug => $name ) {
         if ( ! term_exists( $slug, $taxonomy ) ) {
@@ -1150,6 +1150,7 @@ function ws_seed_remedy_taxonomy() {
         'interim-reinstatement'           => 'Interim / Preliminary Reinstatement',
         'back-pay'                        => 'Back Pay',
         'front-pay'                       => 'Front Pay',
+        'front-pay-in-lieu'               => 'Front Pay in Lieu of Reinstatement',
         'double-back-pay'                 => 'Double Back Pay',
         'lost-wages'                      => 'Lost Wages',
         'benefits-restoration'            => 'Benefits Restoration',
@@ -1162,9 +1163,10 @@ function ws_seed_remedy_taxonomy() {
         'litigation-costs'                => 'Litigation Costs',
         'injunctive-relief'               => 'Injunctive Relief',
         'cease-and-desist'                => 'Cease and Desist Order',
-        'license-suspension'              => 'License Suspension',
         'expungement-of-personnel-record' => 'Expungement of Personnel Record',
         'bounty-qui-tam-award'            => 'Bounty / Qui Tam Award',
+        'whistleblower-fund-award'        => 'Whistleblower Fund Award',
+        'non-monetary-relief'             => 'Non-Monetary Relief',
         'wage-differential'               => 'Wage Differential',
         'liquidated-damages'              => 'Liquidated Damages',
         'consequential-damages'           => 'Consequential / Special Damages',
@@ -1333,16 +1335,19 @@ function ws_seed_adverse_action_taxonomy() {
         'disciplinary-action'         => 'Disciplinary Action',
         'transfer'                    => 'Transfer',
         'schedule-change'             => 'Schedule Change',
+        'benefit-denial'              => 'Benefit Denial',
         'pay-reduction'               => 'Pay / Benefits Reduction',
         'harassment'                  => 'Harassment',
         'hostile-work-environment'    => 'Hostile Work Environment',
         'workplace-isolation'         => 'Workplace Isolation / Ostracism',
+        'post-employment-retaliation' => 'Post-Employment Retaliation',
         'blacklisting'                => 'Blacklisting',
+        'negative-reference'          => 'Negative Reference',
         'security-clearance-action'   => 'Security Clearance Action',
         'contract-non-renewal'        => 'Contract Non-Renewal',
+        'professional-license-action' => 'Professional License Action',
         'privilege-revocation'        => 'Privilege / Access Revocation',
         'immigration-threat'          => 'Immigration-Related Threat',
-        'post-employment-retaliation' => 'Post-Employment Retaliation',
         'threatened-retaliation'      => 'Threatened Retaliation',
         'retaliatory-investigation'   => 'Retaliatory Investigation / Audit',
         'retaliatory-litigation'      => 'Retaliatory Litigation (SLAPP)',
@@ -1456,24 +1461,24 @@ function ws_seed_disclosure_target_taxonomy() {
         'internal' => [
             'name'     => 'Internal',
             'children' => [
-                'internal-supervisor'  => 'Supervisor / Manager',
-                'internal-hr'          => 'Human Resources',
-                'internal-compliance'  => 'Compliance / Ethics Hotline',
-                'internal-legal'       => 'In-House Legal Counsel',
-                'internal-management'  => 'Management (General)',
+                'internal-supervisor'     => 'Supervisor / Manager',
+                'internal-hr'             => 'Human Resources',
+                'internal-compliance'     => 'Compliance / Ethics Hotline',
+                'internal-legal'          => 'In-House Legal Counsel',
+                'internal-management'     => 'Management (General)',
                 'internal-oversight-body' => 'Internal Oversight Office',
             ],
         ],
         'external-agency' => [
             'name'     => 'External: Government Agency',
             'children' => [
-                'agency-federal'        => 'Federal Agency',
-                'agency-state'          => 'State Agency',
-                'agency-local'          => 'Local / Municipal Agency',
-                'ig-federal'            => 'Federal Inspector General',
-                'ig-state'              => 'State Inspector General',
-                'law-enforcement-fed'   => 'Federal Law Enforcement',
-                'law-enforcement-state' => 'State Law Enforcement',
+                'agency-federal'          => 'Federal Agency',
+                'agency-state'            => 'State Agency',
+                'agency-local'            => 'Local / Municipal Agency',
+                'ig-federal'              => 'Federal Inspector General',
+                'ig-state'                => 'State Inspector General',
+                'law-enforcement-fed'     => 'Federal Law Enforcement',
+                'law-enforcement-state'   => 'State Law Enforcement',
                 'external-oversight-body' => 'External Oversight Office',
             ],
         ],
@@ -1496,6 +1501,7 @@ function ws_seed_disclosure_target_taxonomy() {
             'children' => [
                 'public-media'          => 'Media / Press',
                 'public-nonprofit'      => 'Non-Profit / Advocacy Organization',
+                'public-social-media'   => 'Social Media',
             ],
         ],
         'has-details' => [
@@ -1640,14 +1646,16 @@ function ws_seed_aorg_service_taxonomy() {
 function ws_seed_employer_defense_taxonomy() {
     $taxonomy = 'ws_employer_defense';
     $terms    = [
+        'mixed-motive-defense'              => 'Mixed Motive Defense',
         'same-decision-defense'             => 'Same-Decision Defense',
         'same-decision-clear-convincing'    => 'Same-Decision (Clear and Convincing)',
         'legitimate-non-retaliatory-reason' => 'Legitimate Non-Retaliatory Reason',
         'after-acquired-evidence'           => 'After-Acquired Evidence (Specific Non-Retaliatory)',
         'good-faith-compliance'             => 'Good-Faith Compliance',
+        'independent-contractor-defense'    => 'Independent Contractor Defense',
         'statutory-exception-claim'         => 'Statutory Exception Claim',
-        'mixed-motive-defense'              => 'Mixed Motive Defense',
         'no-protected-activity'             => 'Disclosure was not Protected',
+        'no-jurisdiction'                   => 'Disclosure out of Scope (No Jurisdiction)',
         'has-details'                       => 'Has Details',
     ];
     foreach ( $terms as $slug => $name ) {
@@ -1782,42 +1790,46 @@ function ws_seed_protected_action_taxonomy() {
  * Terms that have companion *_context fields are noted below.
  * 
  * Used for bool-state values of Legal Recognitions where true when:
- *  - Recognized
- *  - Specified
- *  - Permitted
- *  - Available
- *  - Required
- * 
+ *  - Specified   — explicit editorial enumeration
+ *  - Recognized  — judicial doctrines courts have acknowledged
+ *  - Required    — mandatory procedural obligations
+ *  - Applies     — statutory conditions that operate by force of law
+ *  - Available   — procedural/remedy mechanisms
+ *  - Permitted   — rights that can be exercised
+ *  
  * Recognized Retaliation Doctrines — REMOVED:
- *  - 'constructive-discharge'   — true when present in adverse_actions
- *  - 'anticipatory-retaliation' — true when present in adverse_actions
+ *  - 'constructive-discharge'   — "Recognized" is true when present in adverse_actions
+ *  - 'anticipatory-retaliation' — "Recognized" is true when present in adverse_actions
  * 
  */
 function ws_seed_legal_recognition_taxonomy() {
     $taxonomy = 'ws_legal_recognition';
     $terms    = [
-        // Dates Specified
-        'retroactive-dated'           => 'Retroactive Dated Specified',                        // + retro_context + retro_date
-        // Classification
+        // Date with Context
+        'retroactive-date'            => 'Retroactive Date Specified',                         // + retro_context + retro_date
+        // Classification with Context
+        'protected-action'            => 'Protected Action Specified',                         // + protected_actions + protected_action_standard + protected_action_source
         'excluded-class'              => 'Excluded Class Specified',                           // + excluded_classes
-        'protected-action'            => 'Protected Action Specified',                         // + protected_actions + protected_action_standard
-        // SOL & Procedural
-        'statutory-tolling'           => 'Statutory Tolling Specified',                        // + statutory_tolling_context
-        'continuing-violation'        => 'Continuing Violation Doctrine Recognized',
-        'equitable-tolling'           => 'Equitable Tolling Recognized',                       // + equitable_tolling_context
-        'pre-filing-notice'           => 'Pre-Filing Notice Required',                         // + pre_filing_notice_context
-        'amended-claim'               => 'Amended Claim / Relation Back Recognized',           // + amended_claim_context
-        // Enforcement & Liability
-        'private-right-of-action'     => 'Private Right of Action Available',
-        'individual-liability'        => 'Individual Liability Available',
-        'preliminary-reinstatement'   => 'Preliminary / Interim Reinstatement Available',
-        'class-action'                => 'Class / Collective Action Permitted',
-        // Retaliation Doctrines
-        'cats-paw-liability'          => 'Cat\'s Paw Liability Recognized',                    // + cats_paw_context
-        // Contractual / Confidentiality
-        'contractual-waiver'          => 'Contractual Waiver Recognized',                      // + contractual_waiver_scope
         'anonymity-protection'        => 'Anonymity / Confidentiality Protection Recognized',  // + anonymity_context
+        // Statute of Limitation & Procedural with Context
+        'statutory-tolling'           => 'Statutory Tolling Specified',                        // + statutory_tolling_context
+        'equitable-tolling'           => 'Equitable Tolling Recognized',                       // + equitable_tolling_context
+        'amended-claim'               => 'Amended Claim / Relation Back Recognized',           // + amended_claim_context
+        'exhaustion-required'         => 'Exhaustion Required',                                // + exhaustion_context
+        'pre-filing-notice'           => 'Pre-Filing Notice Required',                         // + filing_notice_context
+        'statutory-preclusion'        => 'Statutory Preclusion Applies',                       // + preclusion_context
+        // Enforcement & Remedies with Context
+        'private-right-of-action'     => 'Private Right of Action Available',                  // + private_roa_context
+        'cats-paw-liability'          => 'Cat\'s Paw Liability Recognized',                    // + cats_paw_context
+        'contractual-waiver'          => 'Contractual Waiver Recognized',                      // + contractual_waiver_context + contractual_waiver_scope
         'nda-limits'                  => 'NDA / Non-Disparagement Limitations Recognized',     // + nda_limits_context
+        'jury-trial'                  => 'Jury Trial Available',                               // + jury_trial_context + jury_trial_scope
+        // Without Context Triggered
+        'continuing-violation'        => 'Continuing Violation Doctrine Recognized',           // - Relates to SOL
+        'individual-liability'        => 'Individual Liability Available',                     // - Relates to Enforcement
+        'class-action'                => 'Class / Collective Action Permitted',                // - Relates to Enforcement
+        'preliminary-reinstatement'   => 'Preliminary / Interim Reinstatement Available',      // - Relates to Remedies
+        
     ];
     foreach ( $terms as $slug => $name ) {
         if ( ! term_exists( $slug, $taxonomy ) ) {
