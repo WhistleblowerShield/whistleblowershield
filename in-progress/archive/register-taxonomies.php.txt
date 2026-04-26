@@ -1844,7 +1844,7 @@ function ws_seed_legal_recognition_taxonomy() {
         'retroactive-date'                    => 'Retroactive Date Specified',                          // + retro_context + retro_date
         // Classifications                                                                              // ───── # Classifications Tab ───────────────────────────────────────────────
         // = NOTE = `legal_recognitions` appears at top of Classifications Tab                          // =>>> NOTE =>>> `legal_recognitions` appears at top of Classifications Tab
-        'protected-action'                    => 'Protected Action Specified',                          // + protected_action_context  + protected_actions + protected_action_standard + protected_action_source
+        'protected-action'                    => 'Protected Action Specified',                          // + protected_actions_context + protected_actions + protected_action_standard + protected_action_source
         'excluded-class'                      => 'Excluded Class Specified',                            // + excluded_class_context    + excluded_classes
         'manager-rule-exclusion'              => 'Manager Rule / Duty Speech Exclusion Applies',        // + manager_rule_context
         'public-concern-required'             => 'Public Concern Requirement Applies',                  // + public_concern_context
@@ -1866,7 +1866,7 @@ function ws_seed_legal_recognition_taxonomy() {
         'preliminary-reinstatement'           => 'Preliminary / Interim Reinstatement Available',       // + preliminary_reinstatement_context
         // Waiver & Scope                                                                               // ───── # Waiver & Scope Tab ────────────────────────────────────────────────
         'contractual-waiver'                  => 'Contractual Waiver Recognized',                       // =>>> NOTE =>>> invalid term if 'civil_action_waiver_scope' is set to 'anti'. // + contractual_waiver_context + contractual_waiver_scope
-        'nda-limitations'                      => 'NDA / Non-Disparagement Limitations Recognized',     // + nda_limits_context
+        'nda-limitations'                          => 'NDA / Non-Disparagement Limitations Recognized', // + nda_limits_context
         'anti-gag-provision'                  => 'Anti-Gag Provision Recognized',                       // + anti_gag_context
         'no-retaliatory-evidence'             => 'Retaliatory Evidence Barred',                         // + no_retaliatory_evidence_context
         'stay-of-disciplinary-action'         => 'Stay of Disciplinary Action Available',               // + stay_context

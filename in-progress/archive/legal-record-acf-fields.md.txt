@@ -632,7 +632,7 @@ Sister fields cannot appear without the triggered sibling being revealed.
 // ── Effective Date Tab ──────────────────────────────────────────────────────
 'retroactive-date'                    → 'retro_context' + 'retro_date'
 // ── Classifications Tab ─────────────────────────────────────────────────────
-'protected-action'                    → 'protected_action_context'  + 'protected_actions' + 'protected_action_standard'
+'protected-action'                    → 'protected_actions_context' + 'protected_actions' + 'protected_action_standard'
                                                                     + 'protected_action_source'
 'excluded-class'                      → 'excluded_class_context'    + 'excluded_classes'
 'manager-rule-exclusion'              → 'manager_rule_context'
@@ -659,7 +659,7 @@ Sister fields cannot appear without the triggered sibling being revealed.
 'anti-gag-provision'                  → 'anti_gag_context'
 'no-retaliatory-evidence'             → 'no_retaliatory_evidence_context'
 'stay-of-disciplinary-action'         → 'stay_context'
-'anti-slapp-protection'               → 'anti_slapp_context'
+'anti-slapp'                          → 'anti_slapp_context'
 'confidential-settlement-restriction' → 'settlement_restriction_context'
 'successor-liability'                 → 'successor_liability_context'
 'extraterritorial-coverage'           → 'extraterritorial_context'
