@@ -4,41 +4,61 @@ Purpose: draft a unified, prefix-free field set for all four legal record types
 (`statute`, `common_law`, `citation`, `construction`) as the first step toward a
 2-pipeline ingest rewrite (`legal-records`, `assist-org-records`).
 
+Notes: Do not update existing files. Rename existing files with .txt appended.
+Create new files with same names as the originals.
+
 ---
 
 ## Naming Rules Applied
 
 - No CPT infix or storage prefix in this draft (no `ws_jx_*`).
-- `snake_case` only.
-- Booleans use `has_*` or `is_*`.
+- CPT infix use relevant prefixes: `ws_jx_statute_*`, `ws_jx_comlaw_*`, `ws_jx_citation_*`, `ws_jx_construction_*`.
+- Meta names are `snake_case` only.
+- Choice keys are `kebab-case` only.
+- Booleans use `has_*` (usually when field is a trigger) or `is_*` (used when field is not a trigger).
+- `has_*` is true can trigger `*_details`(freetext(usually)), but can also trigger other fields
+   (e.g. `has_some_date` triggers `some_date`).
 - Single-value datapoints use singular nouns.
-- Multi-value arrays use plural nouns.
-- `*_recognized` — avoid entirely; use `ws_legal_recognition` taxonomy slug instead.
-- `*_type` — avoid; use `*_class`, `*_scope`, `*_status`, `*_rule`, `*_framework`,
-  `*_weight`, or `*_standard` depending on context.
-- `*_details` — freetext companion, conditional on `has_*` is true.
-  `*_details` may have a sister field; no naming convention applies to sister fields.
-- `*_framework` — select companion (sister field), triggered by `has_*` boolean.
-- `*_context` — freetext companion, conditional on trigger field when specified
-  value, values, or any non-empty value depending on trigger requirements.
-  Never triggered by `has_*` — that pattern uses `*_details`.
-- `*_class` — preferred over `*_type` for derived select companions.
+- Multi-value datapoints use plural nouns.
+- `*_recognized` — (too long) avoid where possible; use `ws_legal_recognition` taxonomy slug if logical.
+- `*_type` — (too generic) avoid where possible; use `*_class`, `*_scope`, `*_status`, `*_rule`,
+  `*_framework`, `*_weight`, or `*_standard` depending on context. `*_type` is acceptable where logical.
+- `*_details` — freetext(usually) companion, conditional on `has_*` bool true, or `has-details` sentinel
+   present in trigger choice/taxonomy field.
+  `*_details` may have a sister field; no naming convention applies to sister fields, apply logical name
+   using context.
+- `*_context` — freetext(usually) companion, conditional on trigger field when specified
+   value, values, or any non-empty value is present, defined by trigger requirements.
 - `*_limits` — preferred over `*_limitations`.
-- Derived values need hooks on fill.
-- Merged arrays need hooks on save.
+- Derived values need hooks on fill or update.
+- Merged values (usually hidden) need hooks on save.
 - `fee_shifting_rules` needs hook to catch contradictory terms.
+- `sovereign_immunity_limits` needs hook to catch contradictory terms.
+- `primary_agency` needs hook to auto-fill on first added `ws-agency`, if non-empty. Manual override select needs
+   hook to filter choices to attached `ws-agency` posts.
+   Hook should set 'default_value' key to: "Attach one 'ws-agency' first".
+- `primary_agency_is_fed` needs hook to auto-fill true if `primary_agency` jx is 'us'.
+- `local_agencies` needs hook to filter to only jx applicable `ws-agency` choices, and exclude federal agencies.
+- `federal_agencies` needs hook to filter to only federal agencies.
+- Some suffixes define data-shape (e.g. `*_url`, `*_date`, `*_email`, etc.). Do not use data-shape suffixes
+  otherwise.
 
 ### Sentinel Values
 
-- `has-details` — sentinel in taxonomy arrays; triggers `*_details` companion
-   via `has_*` boolean pattern.
-- `has-limits` — sentinel in `ws_remedy`; triggers `remedy_limits` companion field.
-- `has-phase-specifics` — sentinel in `ws_fee_shifting_rule`; triggers
-  `fee_shifting_phases` companion field.
-- `see-details` — used in place of `has-details` value in ACF select/multi-select fields
-   where `*_details` has already been triggered.
-- `see-context` — used in place of `has-details` value in ACF select/multi-select fields
-   where `*_context` has already been triggered.
+- `has-details` —  use sentinel where logical in choice/taxonomy fields to trigger `*_details` companion,
+  `has_*` boolean not required.
+- `has-details` — should be used to replace `other`, `unclear` or `mixed` when `*_details` can capture nuance.
+- `has-limits`  — sentinel in `ws_remedy` triggers `remedy_limits` companion.
+- `has-phases`  — sentinel in `ws_fee_shifting_rule` triggers `fee_shifting_phases` companion.
+- `see-details` — used in place of `has-details` value in choice fields where `*_details` has already been triggered.
+- `see-context` — used in place of `has-details` value in choice fields where `*_context` has already been triggered.
+
+## Inline Field Descriptions
+
+- All fields are 'freetext' or defined by naming convention:
+  `has_*`, `is_*` are bool, `*_type`, `*_class`, etc. are select, and so on. Unless specified otherwise or obvious.
+- All taxonomy fields are 'multi_select' unless specified otherwise, and use specified to taxonomy.
+- All taxonomy fields are "'load_terms' => 1", "'save_terms' => 1", unless specified otherwise.
 
 ---
 
@@ -57,11 +77,11 @@ Field order reflects logical editorial workflow within each tab.
 
 ### Identity And Publishing Tab
 
-- `jurisdiction`
+- `jurisdiction`               — (single-select taxonomy: `WS_JURISDICTION_TAXONOMY`)
 - `official_name`
 - `common_name`
-- `citation`                   — statute citation / case name (shared slot)
-- `protection_scope`           — (taxonomy: `ws_protection_scope`, dupe of `ws_procedure_type`)
+- `citation`                   — (statute citation / precedent case / case name (shared slot))
+- `protection_scope`           — (single-select taxonomy: `ws_protection_scope`)
 - `general_description`        — (brief; reserve full summary for `plain_english_wysiwyg`)
 - `has_attach_flag`
 - `display_order`
@@ -70,13 +90,12 @@ Field order reflects logical editorial workflow within each tab.
 
 ### Effective Date Tab
 
-- `date`                       — enacted / ruling / decision date (shared slot)
-- `effective_year`             — (derived from `date`; hook fills when `effective_date` absent)
+- `date`                       — (enacted / ruling / decision date (shared slot))
 - `has_effective_date`         — (only when `effective_date` differs from `date`)
 - `effective_date`             — (conditional on `has_effective_date`)
-- `has_retro_date`             — (only when legal record defines a retroactive start date)
-- `retro_date`                 — (conditional on `has_retro_date`)
-- `retro_details`              — (conditional on `has_retro_date`)
+- `effective_year`             — (derived from `effective_date` if present, `date` if not)
+- `retro_date`                 — (sister field to `retro_context`)
+- `retro_context`              — (conditional on `retroactive-date-defined` in `legal_recognitions`)
 
 ---
 
@@ -85,21 +104,24 @@ Field order reflects logical editorial workflow within each tab.
 Fields ordered: activity standard → disclosure → classes → sectors → targets →
 legal recognitions → derived flags.
 
-- `protected_activity_standard`    — (single-select: `actual_violation`|`reasonable_belief`|`good_faith`)
+- `legal_recognitions`             — (taxonomy: `ws_legal_recognition`; replaces all `*_recognized` booleans,
+                                      and others; See [Slug-to-Companion Map] below.)
+- `protected_action_standard`      — (conditional on `protected-action-specified` in `legal_recognitions`;
+                                      single-select: `actual_violation`|`reasonable_belief`|`good_faith`)
 - `reasonable_belief_context`      — (conditional on `protected_activity_standard` is `reasonable_belief`;
                                       single-select: `objective_only`|`subjective_only`|`dual_prong`|`has-details`)
-- `reasonable_belief_details`      — (sister field; conditional on `reasonable_belief_context` is `has-details`)
+- `reasonable_belief_details`
+- `protected_actions`              — (conditional on `protected-action-specified` in `legal_recognitions`;
+                                      taxonomy: `ws_protected_action`)
 - `disclosure_types`               — (taxonomy: `ws_disclosure_type`)
-- `protected_actions`              — (taxonomy: `ws_protected_action`)
 - `protected_classes`              — (taxonomy: `ws_protected_class`)
-- `protected_class_details`        — (conditional on `protected_classes` includes `has-details`)
-- `excluded_classes`               — (taxonomy: `ws_excluded_class`; when legal record specifies an exclusion)
-- `excluded_class_details`         — (conditional on `excluded_classes` includes `has-details`)
+- `protected_class_details`
+- `excluded_classes`               — (conditional on `excluded-class-specified` in `legal_recognitions`;
+                                      taxonomy: `ws_excluded_class`)
+- `excluded_class_details`
 - `employment_sectors`             — (taxonomy: `ws_employment_sector`)
 - `disclosure_targets`             — (taxonomy: `ws_disclosure_target`)
-- `disclosure_target_details`      — (conditional on `disclosure_targets` includes `has-details`)
-- `legal_recognitions`             — (taxonomy: `ws_legal_recognition`; replaces all *_recognized booleans.
-                                      See `ws_legal_recognition` slug-to-companion map below.)
+- `disclosure_target_details`
 - `adverse_action_scope`           — (single-select: `termination-only`|`material-adverse`|
                                       `broad-any-adverse-action`|`see-context`)
 - `adverse_action_scope_context`   — (conditional on `adverse_action_scope` non-empty)
@@ -111,28 +133,29 @@ legal recognitions → derived flags.
 
 Fields ordered: core SOL → modifiers → exhaustion → thresholds → preemption.
 
-- `sol_value`
-- `sol_unit`
+- `sol_value`                  — (integer)
+- `sol_unit`                   — (single-select: `days`|`weeks`|`months`|`years`)
 - `sol_trigger`                — (single-select: `accrual`|`discovery-actual`|
-                                  `discovery-constructive`|`discovery-notice`|`mixed`)
+                                  `discovery-constructive`|`discovery-notice`|`see-context`)
 - `sol_trigger_context`        — (conditional on `sol_trigger` non-empty)
 - `has_sol_details`
 - `sol_details`
-- `has_tolling`
-- `tolling_details`
+- `statutory_tolling_context`  — (conditional on `statutory-tolling` in `legal_recognitions`)
+- `equitable_tolling_context`  — (conditional on `equitable-tolling` in `legal_recognitions`)
 - `amended_claim_context`      — (conditional on `amended-claim` in `legal_recognitions`)
-- `has_exhaustion_requirement`
-- `exhaustion_details`
-- `exhaustion_class`           — (sister field; conditional on `has_exhaustion_requirement`;
-                                  single-select: `jurisdictional`|`claims-processing`|`waivable`|`mixed`)
-- `has_pre_filing_notice`
-- `pre_filing_notice_details`
+- `exhaustion_class`           — (sister field to `exhaustion_context`; single-select: `jurisdictional`|
+                                  `claims-processing`|`waivable`|`see-context`)
+- `exhaustion_context`         — (conditional on `exhaustion-required` in `legal_recognitions`)
+- `pre_filing_notice_context`  — (conditional on `pre-filing-notice-required` in `legal_recognitions`)
 - `has_employer_threshold`
+- `threshold_compare`          — (sister field to `threshold_details`; single-select: `gte`|`lte`|`gt`|`lt`|`eq`)
+- `threshold_value`            — (sister field to `threshold_details`; integer)
+- `threshold_unit`             — (sister field to `threshold_details`; single-select: `employees`|`contractors`|
+                                  `workers`|`fte`)
 - `threshold_details`
 - `has_preemption`
-- `preemption_direction`       — (sister field; conditional on `has_preemption`;
-                                  single-select: `federal_preempts_state`|`state_not_preempted`|
-                                  `partial`|`unclear`)
+- `preemption_direction`       — (sister field to `preemption_details`; single-select: `federal_preempts_state`|
+                                  `state_not_preempted`|`partial`|`see-details`)
 - `preemption_details`
 
 ---
@@ -148,16 +171,18 @@ liability → contractual → agencies → immunity/defendants.
 - `constructive_discharge_context`   — (conditional on `adverse_actions` includes `constructive-discharge`)
 - `anticipatory_retaliation_context` — (conditional on `adverse_actions` includes `threatened-retaliation`)
 - `fee_shifting_rules`         — (taxonomy: `ws_fee_shifting_rule`)
+- `fee_shifting_phases`        — (conditional on `fee_shifting_rules` includes `has-phases`)
 - `fee_shifting_details`       — (conditional on `fee_shifting_rules` includes `has-details`)
-- `fee_shifting_phases`        — (conditional on `fee_shifting_rules` includes `has-phase-specifics`)
 - `remedies`                   — (taxonomy: `ws_remedy`)
 - `remedy_limits`              — (conditional on `remedies` includes `has-limits`)
 - `remedy_details`             — (conditional on `remedies` includes `has-details`)
-- `mixed_motive_remedy_context` — (conditional on `burden_shifting_framework` includes `mixed-motive`)
+- `mixed_motive_remedy_context` — (conditional on `burden_shifting_framework` includes `mixed-motive`;
+                                   see [Cross-Tab Conditional below])
 - `cats_paw_context`           — (conditional on `cats-paw-liability` in `legal_recognitions`)
 - `criminal_sanction`          — (single-select: `misdemeanor`|`felony`)
-- `class_action_waiver`        — (single-select: `prohibited`|`permitted-individual-only`|
-                                  `permitted-collective`|`mixed`)
+- `class_action_waiver_scope`  — (single-select: `prohibited`|`permitted-individual-only`|
+                                  `permitted-collective`|`see-context`)
+- `contractual_waiver_context` — (conditional on `contractual_waiver_scope` non-empty)
 - `contractual_waiver_scope`   — (conditional on `contractual-waiver` in `legal_recognitions`;
                                   single-select: `void`|`limited`|`enforceable`|`mixed`|
                                   `void-public-policy`|`void-as-to-whistleblowing`|
@@ -167,8 +192,10 @@ liability → contractual → agencies → immunity/defendants.
 - `primary_agency`
 - `local_agencies`
 - `enforcement_channel`        — (priority of enforcement agencies, with any enforcement nuance)
-- `sovereign_immunity_limits`
-- `proper_defendants`
+- `sovereign_immunity_limits`  — (multi-select: `not-waived`|`partially-waived`|`fully-waived`|`cap-applies`|`conditions-apply`|`has-details`)
+- `sovereign_immunity_details`
+- `proper_defendants`          — (multi-select: `employer-entity-only`|`individual-supervisors`|`government-agency-only`|`contractors-included`|`scope-of-employment-required`|`has-details`)
+- `proper_defendant_details`
 
 ---
 
@@ -180,19 +207,20 @@ employer defenses → rebuttable presumption → detail overflow.
 - `has_burden_shifting`
 - `burden_shifting_framework`  — (sister field; conditional on `has_burden_shifting`;
                                   single-select: `McDonnell-Douglas`|`motivating-factor`|
-                                  `but-for`|`mixed-motive`|`see-context`)
-- `burden_shifting_details`    — (conditional on `has_burden_shifting`)
+                                  `but-for`|`mixed-motive`|`see-context`; see [Cross-Tab Conditional] below)
+- `burden_shifting_details`
 - `burden_shifting_context`    — (conditional on `burden_shifting_framework` non-empty)
 - `employee_standards`         — (taxonomy: `ws_employee_standard`; evidentiary burden only)
-- `standard_details`           — (conditional on `employee_standards` includes `has-details`)
+- `standard_details`
 - `causation_standards`        — (taxonomy: `ws_causation_standard`; causal link standard)
-- `causation_standard_details` — (conditional on `causation_standards` includes `has-details`)
+- `causation_standard_details`
 - `has_temporal_presumption`
 - `presumption_window_value`   — (sister field; conditional on `has_temporal_presumption`)
 - `presumption_window_unit`    — (sister field; conditional on `has_temporal_presumption`;
-                                  single-select: `days`|`weeks`|`months`)
+                                  single-select: `days`|`weeks`|`months`|`years`)
+- `presumption_window_details`
 - `employer_defenses`          — (taxonomy: `ws_employer_defense`)
-- `defense_details`            — (conditional on `employer_defenses` includes `has-details`)
+- `defense_details`
 - `has_rebuttable_presumption`
 - `rebuttable_details`
 - `has_bop_details`
@@ -338,6 +366,26 @@ construe is covered on precedent records via `extend_taxonomy` and
 
 ---
 
+### Cross-Tab Conditional: mixed-motive → mixed_motive_remedy_context
+
+When `burden_shifting_framework` (Burden Of Proof tab) includes `mixed-motive`,
+the field `mixed_motive_remedy_context` (Enforcement tab) becomes relevant.
+ACF conditional logic cannot surface this cross-tab dependency natively.
+
+Implementation: register an `acf/save_post` hook (or `admin_notices` hooked to
+`current_screen`) that detects `mixed-motive` in `burden_shifting_framework` and
+emits a dismissible admin notice directing the editor to the Enforcement tab:
+
+> "Mixed-motive framework selected — please complete the 'Mixed Motive Remedy
+> Context' field on the Enforcement tab."
+
+Notice should fire on the edit screen for all four legal record CPTs.
+Dismiss state does not need to persist — the notice should reappear on each
+save as long as `mixed-motive` is present and `mixed_motive_remedy_context`
+is empty.
+
+---
+
 ## Rename Normalization (Current → Canonical)
 
 Only fields that currently violate target naming conventions or are inconsistent
@@ -389,7 +437,7 @@ across legal ACFs.
 
 ---
 
-## ws_legal_recognition — Slug-to-Companion Map
+## Slug-to-Companion Map (ws_legal_recognition taxonomy)
 
 Presence = recognized. Absence = not recognized or statute silent.
 Companion fields noted in parentheses are triggered by slug presence in `legal_recognitions`.

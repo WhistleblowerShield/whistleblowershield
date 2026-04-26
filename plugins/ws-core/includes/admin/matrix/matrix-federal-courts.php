@@ -17,7 +17,7 @@ global $_ws_federal_court_matrix;
 
 $_ws_federal_court_matrix = [
 
-    // ── 0. Other (edge case — court not in matrix) ────────────────────────
+    // ── 0. Other - Has Details (edge case — court not in matrix) ──────────
     //
     // Selecting this entry reveals ws_jx_construction_court_name (free text field).
     // ws_jx_codes = '__manual__' signals the save hook to skip auto-population
@@ -25,8 +25,8 @@ $_ws_federal_court_matrix = [
     // level = 99 ensures this entry sorts last in the select list.
 
     'other' => [
-        'name'        => 'Other (specify below)',
-        'short'       => 'Other',
+        'name'        => 'Other - Has Details',
+        'short'       => 'has-details',
         'type'        => 'other',
         'ws_jx_codes' => '__manual__',
         'circuit'     => null,

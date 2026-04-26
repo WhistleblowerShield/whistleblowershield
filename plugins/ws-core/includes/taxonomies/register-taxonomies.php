@@ -1521,7 +1521,7 @@ function ws_seed_fee_shifting_rule_taxonomy() {
         'prevailing-defendant-bad-faith' => 'Defendant Fees on Bad Faith',
         'discretionary'                  => 'Discretionary',
         'mandatory'                      => 'Mandatory',
-        'has-phase-specifics'            => 'Has Phase Specifics',
+        'has-phases'                     => 'Has Phase Specifics',
         'has-details'                    => 'Has Details',
     ];
     foreach ( $terms as $slug => $name ) {
@@ -1593,7 +1593,7 @@ function ws_seed_aorg_cost_model_taxonomy() {
         'sliding-scale'   => 'Sliding Scale Fee',
         'contingency'     => 'Contingency Fee',
         'fee-for-service' => 'Fee for Service',
-        'unclear'         => 'Unclear',
+        'unclear'         => 'Model Unclear',
     ];
     foreach ( $terms as $slug => $name ) {
         if ( ! term_exists( $slug, $taxonomy ) ) {
@@ -1780,27 +1780,44 @@ function ws_seed_protected_action_taxonomy() {
  * Presence of a term signals the doctrine/rule is recognized in this jurisdiction.
  * Absence signals the doctrine is not recognized or the statute is silent.
  * Terms that have companion *_context fields are noted below.
+ * 
+ * Used for bool-state values of Legal Recognitions where true when:
+ *  - Recognized
+ *  - Specified
+ *  - Permitted
+ *  - Available
+ *  - Required
+ * 
+ * Recognized Retaliation Doctrines — REMOVED:
+ *  - 'constructive-discharge'   — true when present in adverse_actions
+ *  - 'anticipatory-retaliation' — true when present in adverse_actions
+ * 
  */
 function ws_seed_legal_recognition_taxonomy() {
     $taxonomy = 'ws_legal_recognition';
     $terms    = [
+        // Dates Specified
+        'retroactive-dated'           => 'Retroactive Dated Specified',                        // + retro_context + retro_date
+        // Classification
+        'excluded-class'              => 'Excluded Class Specified',                           // + excluded_classes
+        'protected-action'            => 'Protected Action Specified',                         // + protected_actions + protected_action_standard
         // SOL & Procedural
-        'continuing-violation'        => 'Continuing Violation Doctrine',
-        'equitable-tolling'           => 'Equitable Tolling',
-        'amended-claim'               => 'Amended Claim / Relation Back',          // + amended_claim_context
+        'statutory-tolling'           => 'Statutory Tolling Specified',                        // + statutory_tolling_context
+        'continuing-violation'        => 'Continuing Violation Doctrine Recognized',
+        'equitable-tolling'           => 'Equitable Tolling Recognized',                       // + equitable_tolling_context
+        'pre-filing-notice'           => 'Pre-Filing Notice Required',                         // + pre_filing_notice_context
+        'amended-claim'               => 'Amended Claim / Relation Back Recognized',           // + amended_claim_context
         // Enforcement & Liability
-        'private-right-of-action'     => 'Private Right of Action',
-        'individual-liability'        => 'Individual Liability',
-        'preliminary-reinstatement'   => 'Preliminary / Interim Reinstatement',
-        'class-action-permitted'      => 'Class / Collective Action Permitted',
+        'private-right-of-action'     => 'Private Right of Action Available',
+        'individual-liability'        => 'Individual Liability Available',
+        'preliminary-reinstatement'   => 'Preliminary / Interim Reinstatement Available',
+        'class-action'                => 'Class / Collective Action Permitted',
         // Retaliation Doctrines
-        'constructive-discharge'      => 'Constructive Discharge',                 // + constructive_discharge_context
-        'anticipatory-retaliation'    => 'Anticipatory / Threatened Retaliation',  // + anticipatory_retaliation_context
-        'cats-paw-liability'          => 'Cat\'s Paw Liability',                   // + cats_paw_context
+        'cats-paw-liability'          => 'Cat\'s Paw Liability Recognized',                    // + cats_paw_context
         // Contractual / Confidentiality
-        'contractual-waiver'          => 'Contractual Waiver Addressed',           // + contractual_waiver_scope
-        'anonymity-protection'        => 'Anonymity / Confidentiality Protection', // + anonymity_context
-        'nda-limits'                  => 'NDA / Non-Disparagement Limits',         // + nda_limits_context
+        'contractual-waiver'          => 'Contractual Waiver Recognized',                      // + contractual_waiver_scope
+        'anonymity-protection'        => 'Anonymity / Confidentiality Protection Recognized',  // + anonymity_context
+        'nda-limits'                  => 'NDA / Non-Disparagement Limitations Recognized',     // + nda_limits_context
     ];
     foreach ( $terms as $slug => $name ) {
         if ( ! term_exists( $slug, $taxonomy ) ) {

@@ -782,7 +782,7 @@ function ws_jx_construction_load_court_choices( $field ) {
 // ACF renders the statute pre-selected. On saved posts, or when no URL
 // parameter is present, we return $value unchanged.
 
-add_filter( 'acf/load_value/key=field_jx_construction_statute_id', 'ws_construction_prefill_statute_id', 5, 3 );
+add_filter( 'acf/load_value/key=field_jx_construction_statute_id', 'ws_jx_construction_prefill_statute_id', 5, 3 );
 
 function ws_construction_prefill_statute_id( $value, $post_id, $field ) {
 
@@ -812,7 +812,7 @@ function ws_construction_prefill_statute_id( $value, $post_id, $field ) {
 // comlaw_id is passed as a URL param. acf/load_value returns it as the
 // field's live value so ACF renders the doctrine pre-selected.
 
-add_filter( 'acf/load_value/key=field_jx_construction_comlaw_id', 'ws_construction_prefill_comlaw_id', 5, 3 );
+add_filter( 'acf/load_value/key=field_jx_construction_comlaw_id', 'ws_jx_construction_prefill_comlaw_id', 5, 3 );
 
 function ws_construction_prefill_comlaw_id( $value, $post_id, $field ) {
 
@@ -872,7 +872,8 @@ function ws_jx_construction_auto_populate_affected_jx( $post_id ) {
         return;
     }
 
-    // SCOTUS: null = all jurisdictions. Store empty to signal bind-all.
+    
+        // SCOTUS: null = all jurisdictions. Store empty to signal bind-all.
     if ( $jx_codes === null ) {
         update_post_meta( $post_id, 'ws_jx_construction_affected_jx', [] );
         return;
@@ -887,5 +888,6 @@ function ws_jx_construction_auto_populate_affected_jx( $post_id ) {
         }
     }
 
+    update_post_meta( $post_id, 'ws_jx_construction_has_affected_jx', true );
     update_post_meta( $post_id, 'ws_jx_construction_affected_jx', $term_ids );
 }

@@ -69,5 +69,3 @@ were updated in the same pass.
 | `*_has_reward` | `*_reward_available` | statute, common-law |
 | `*_url_is_pdf` | `*_url_is_pdf` | statute only |
 
-New field added: `ws_jx_statute_bop_flag` / `ws_comlaw_bop_flag` — short
-signal phrase for non-standard burden shifts (text, 120 char max).

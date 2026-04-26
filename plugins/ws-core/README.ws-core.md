@@ -135,16 +135,16 @@ employee_standards   → *_employee_standard_details
 
 ### Other taxonomies
 
-| Slug | Attaches To | Notes |
+| Slug | Attaches To | Notes | Constant |
 |---|---|---|
-| `ws_jurisdiction` | All content CPTs | Canonical join key. USPS slug. |
-| `ws_language` | `ws-agency`, `ws-assist-org` | `additional` is a system sentinel |
-| `ws_case_stage` | `ws-assist-org` | Phase 2 filter axis |
-| `ws_aorg_type` | `ws-assist-org` | Single-value |
-| `ws_employment_sector` | `jx-statute`, `jx-common-law`, `jx-citation`, `jx-construction`,`ws-agency`, `ag-procedure`, `ws-assist-org` | Phase 2 filter axis |
-| `ws_aorg_cost_model` | `ws-assist-org` | `other` is a system sentinel | |
-| `ws_aorg_service` | `ws-assist-org` | `additional` is a system sentinel |
-| `ws_procedure_type` | `ag-procedure` | 3 stable terms |
+| `ws_jurisdiction` | All content CPTs | Canonical join key. USPS slug. | `WS_JURISDICTION_TAXONOMY` |
+| `ws_language` | `ws-agency`, `ws-assist-org` | `additional` is a system sentinel ||
+| `ws_case_stage` | `ws-assist-org` | Phase 2 filter axis ||
+| `ws_aorg_type` | `ws-assist-org` | Single-value ||
+| `ws_employment_sector` | `jx-statute`, `jx-common-law`, `jx-citation`, `jx-construction`,`ws-agency`, `ag-procedure`, `ws-assist-org` | Phase 2 filter axis ||
+| `ws_aorg_cost_model` | `ws-assist-org` | `unclear` is a system sentinel | ||
+| `ws_aorg_service` | `ws-assist-org` | `additional` is a system sentinel ||
+| `ws_procedure_type` | `ag-procedure` | Single-value; 3 stable terms ||
 
 ---
 
@@ -181,9 +181,9 @@ or any other property.
    with underscore prefixed. Example: `_ws_aorg_id`
 4. Content ACF meta names carry a CPT infix:
    `ws_jx_statute*`, `ws_jx_comlaw*` (common-law), `ws_agency_*`, `ws_aorg_*` (assist-org),
-   `ws_legal_update_*`, `ws_jx_construction_*` (construction), `ws_jx_citation_*`, `ws_ag_proccedure_*`.
+   `ws_legal_update_*`, `ws_jx_construction_*` (construction), `ws_jx_citation_*`, `ws_ag_procedure_*`.
 5. Meta name infixes and CPT slugs are always singular unless they store
-   mutliple values or arrays. When in doubt, use singular.
+   multiple values or arrays. When in doubt, use singular.
 6. Meta names that hold dates should end with `_date` or `_gmt` as appropriate.
    Never end a meta name with `_date` if it stores any other value.
 7. Meta names that hold URLs should end with `_url` and have a companion
