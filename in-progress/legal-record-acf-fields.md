@@ -228,7 +228,9 @@ Fields ordered: adverse actions → recognitions → sanctions
 - `anticipatory_retaliation_context`  — (conditional on `adverse_actions` includes `threatened-retaliation`)
 - `cats_paw_context`               — (conditional on `cats-paw-liability` in `legal_recognitions`)
 - `third_party_retaliation_context`   — (conditional on `third-party-retaliation` in `legal_recognitions`)
-- `criminal_sanctions`             — (multi-select: `misdemeanor`|`felony`)
+- `criminal_sanctions`             — (repeater: [`sanction_conduct` — (single-select: `retaliation`|`disclosure`|
+      ├── `sanction_conduct`          `false-report`|`obstruction`|`other`)], [`sanction_level` — (single-select:
+      └── `sanction_level`            `misdemeanor`|`felony`)])
 
 ### Process & Remedies Tab
 
