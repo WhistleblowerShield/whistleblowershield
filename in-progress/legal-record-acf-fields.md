@@ -484,17 +484,20 @@ that are definitionally inapplicable to court decisions:
 
 - `mandate_date`
 
-#### Classification Tab
+#### Classification Tab (insert after `legal_recognitions`)
 
 - `scope`                          — (single-select: `favorable`|`adverse`|`neutral`)
-- `extend_taxonomy`                — (when `scope` is `favorable`; extends parent taxonomy)
-- `suppress_taxonomy`              — (when `scope` is `adverse`; removes parent taxonomy term)
+- `extend_taxonomy`                — (conditional on `scope` is `favorable`; repeater;
+                                      each row: taxonomy slug + term slug being added to parent's coverage)
+- `suppress_taxonomy`              — (conditional on `scope` is `adverse`; repeater;
+                                      each row: taxonomy slug + term slug being removed from parent's coverage)
 - `has_affected_jx`                — (derived from `court` `ws_jx_codes`; manually set false when single jx
-                                      is same as precedent `jurisdiction`; manually set if true when `court`
-                                      is `has-details`)
+                                      is same as precedent `jurisdiction`; manually set if true when
+                                      `court`-`has-details` and covers multiple jx)
 - `affected_jx`                    — (conditional on `has_affected_jx`; derived from `court` `ws_jx_codes`;
                                       manually set taxonomy: `WS_JURISDICTION_TAXONOMY`, 'load_terms' => 1,
-                                     'save_terms' => 0, when `court` is `has-details`)
+                                      'save_terms' => 0, once `has_affected_jx` is true to apply affected jx
+                                       by `court`-`has-details` known jx)
 
 #### Relationships Tab
 
