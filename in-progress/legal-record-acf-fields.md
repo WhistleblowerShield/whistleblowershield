@@ -18,12 +18,11 @@ Create new files with same names as the originals.
 - Booleans use `has_*` (usually when field is a trigger) or `is_*` (used when field is not a trigger).
 - `has_*` is true can trigger `*_details`(freetext(usually)), but can also trigger other fields
    (e.g. `has_some_date` triggers `some_date`).
-- Single-value datapoints use singular nouns.
+- Single-value datapoints use singular nouns. Exception: `liquidated_damages` is single-select but approved usage of plural name.
 - Multi-value datapoints use plural nouns.
 - `*_recognized` — (too long) avoid where possible; use `ws_legal_recognition` taxonomy slug if logical.
 - `*_type` — (too generic) avoid where possible; use `*_class`, `*_scope`, `*_status`, `*_rule`,
   `*_framework`, `*_weight`, or `*_standard` depending on context. `*_type` is acceptable where logical.
-  `*_scope` and is commonly used to hold multiple values and is special-case to pluralization rule.
 - `*_details` — freetext(usually) companion, conditional on `has_*` bool true, or `has-details` sentinel
    present in trigger choice/taxonomy field. Any sister field inherits the conditional behavior from `*_details`.
   `*_details` may have a sister field; no naming convention applies to sister fields, apply logical name
@@ -49,7 +48,7 @@ Create new files with same names as the originals.
    Hook should set 'instructions' key to: "Override `primary_agency` with any currently attached local or
    federal agency", if non-empty.
 - `local_agencies` needs hook to filter to only jx applicable `ws-agency` choices, and exclude federal agencies;
-   stub: future_filter to use `ws_disclosure_type` and `ws_disclosure_target` taxonomies.
+   stub: future_filter to use `ws_process_type` and both `ws_disclosure_*` taxonomies.
 - `federal_agencies` needs hook to filter to only federal agencies; stub: future_filter to use `disclosure_type`
    and `disclosure_target` taxonomies.
 - `civil_action_waiver_scope` override of `contractual_waiver_scope`: if `civil_action_waiver_scope` is set to
@@ -98,7 +97,7 @@ Field order reflects logical editorial workflow within each tab.
 - `jurisdiction`               — (single-select taxonomy: `WS_JURISDICTION_TAXONOMY`)
 - `official_name`
 - `common_name`
-- `citation`                   — (statute citation / precedent case / case name (shared slot))
+- `citation`                   — (freetext; statute citation / precedent case / case name (shared slot))
 - `protection_scope`           — (single-select taxonomy: `ws_protection_scope`)
 - `general_description`        — (brief; reserve full summary for `plain_english_wysiwyg`)
 - `has_attach_flag`
@@ -209,9 +208,9 @@ liability → contractual → agencies → immunity/defendants.
 - `remedies`                    — (taxonomy: `ws_remedy`)
 - `remedy_limits`               — (conditional on `remedies` includes `has-limits`)
 - `remedy_details`              — (conditional on `remedies` includes `has-details`)
-- `remedy_liquidated_context`   — (conditional on `remedies` includes `liquidated-damages`; single-select: `double`|
+- `remedy_liquidated_damages`   — (conditional on `remedies` includes `liquidated-damages`; single-select: `double`|
                                   `treble`|`2x-back-pay`|`2x-wages-lost`|`statutory-formula`|`up-to-double`|
-                                  `up-to-treble`|`has-details`(approved case of `*_context` used for select field))
+                                  `up-to-treble`|`has-details`(approved case of plural used for single-select))
 - `remedy_liquidated_formula`   — (conditional on `remedy_liquidated_context` includes `statutory-formula`)
 - `remedy_liquidated_details`   — (conditional on `remedy_liquidated_context` includes `has-details`)
 - `mixed_motive_remedy_context` — (conditional on `burden_shifting_framework` includes `mixed-motive`;
@@ -231,9 +230,9 @@ liability → contractual → agencies → immunity/defendants.
                                    `liability-only`|`see-details`)
 - `jury_trial_context`          — (conditional on `jury-trial` in `legal_recognitions`)
 - `primary_agency`              — (auto-fill by hook when first `ws-agency` added and value is empty)
-- `local_agencies`              — (multi-select: `ws-agency` filtered by jx and disclosure taxonomies)
+- `local_agencies`              — (multi-select: `ws-agency` filtered by jx, process and disclosure taxonomies)
 - `enforcement_priority`        — (single-select: `agency-first`|`court-first`|`either`|`sequential`)
-- `enforcement_channel`         — (priority of enforcement agencies, with any enforcement details)
+- `enforcement_channel`         — (freetext; priority of enforcement agencies, with any enforcement requirements)
 - `sovereign_immunity_limits`   — (multi-select: `not-waived`|`partially-waived`|`fully-waived`|`cap-applies`|
                                   `conditions-apply`|`has-details`)
 - `sovereign_immunity_details`
@@ -287,15 +286,15 @@ employer defenses → rebuttable presumption → detail overflow.
 
 ### Relationships Tab
 
-- `ref_materials`
-- `overruled_by_id`            — (post object; replaces `superseded_by`)
+- `ref_materials`              — (post object; `ws-reference`)
+- `overruled_by_id`            — (post object; legal-record['post_id']; replaces `superseded_by`)
 
 ---
 
 ### Source / Audit Tab
 
-- `last_reviewed`              — (manually updated when record reviewed for accuracy)
-- `url`                        — statute / precedent URL (shared slot)
+- `last_reviewed_date`         — (manually updated when record reviewed for accuracy)
+- `url`                        — (url field; statute / precedent / case law URL (shared slot))
 - `url_is_pdf`
 - `authority_reference`        — (freetext; holds the official legislative history citation or regulatory
                                   citation (CFR, Federal Register,etc.))
@@ -304,7 +303,7 @@ employer defenses → rebuttable presumption → detail overflow.
 
 ### Hidden Fields (no tab; prefixed with underscore)
 
-- `_id`                        — (generated by ingest tool or matrix seeder)
+- `_id`                        — (freetext; generated by ingest tool or matrix seeder)
 - `_disclosure_target_class`   — (derived from `disclosure_targets`; auto-fill by hook an save; single-select:
                                   `internal`|`external`|`both`)
 
@@ -338,8 +337,8 @@ construe is covered on precedent records via `extend_taxonomy` and
 ### Statute-Specific
 
 #### Enforcement Tab
-- `federal_agencies`           — (insert after `local_agencies`; multi-select: `ws-agency` filtered by jx and
-                                  disclosure taxonomies)
+- `federal_agencies`           — (insert after `local_agencies`; multi-select: `ws-agency` filtered by jx,
+                                  process and disclosure taxonomies)
 
 #### Hidden Fields
 - `_primary_agency_is_fed`     — (derived from `primary_agency` jx; auto-fill by hook on save)
@@ -350,10 +349,11 @@ construe is covered on precedent records via `extend_taxonomy` and
 ### Common-Law-Specific
 
 #### Identity and Publishing Tab (insert after `citation`)
-- `precedent_common`           — (common name for precedent case held in `citation`)
+- `precedent_common`           — (freetext; common name for precedent case held in `citation`)
 
 #### Classification Tab (insert after `excluded_class_details`)
-- `doctrine_basis`             — (the legal basis for the doctrine; reserve full summary for `plain_english_wysiwyg`)
+- `doctrine_basis`             — (freetext; the legal basis for the doctrine; reserve full summary for
+                                  `plain_english_wysiwyg`)
 - `public_policy_sources`      — (multi-select: `constitution`|`statute`|`administrative-rule`|`case-law`|
                                   `federal-law`|`has-details`)
 - `source_details`
