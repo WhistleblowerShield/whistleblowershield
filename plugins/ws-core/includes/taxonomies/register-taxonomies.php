@@ -1820,13 +1820,17 @@ function ws_seed_protected_action_taxonomy() {
  * Absence signals the doctrine is not recognized or the statute is silent.
  * Terms that have companion *_context fields are noted below.
  * 
- * Used for bool-state values of Legal Recognitions where true when:
- *  - Specified   — explicit editorial enumeration
- *  - Recognized  — judicial doctrines courts have acknowledged
- *  - Required    — mandatory procedural obligations
- *  - Applies     — statutory conditions that operate by force of law
- *  - Available   — procedural/remedy mechanisms
- *  - Permitted   — rights that can be exercised
+* Used for bool-state values of Legal Recognitions where true when:
+ *  - Specified   — statute explicitly names or enumerates something
+ *  - Recognized  — judicial doctrine courts have affirmatively acknowledged
+ *  - Required    — mandatory obligation; non-compliance typically defeats the claim
+ *  - Applies     — statutory condition that operates by force of law when triggered
+ *  - Available   — mechanism or remedy that may be invoked but is not automatic
+ *  - Permitted   — right expressly allowed; cannot be waived or procedurally blocked
+ *  - Barred      — doctrine, action, or evidence explicitly excluded by law or rule
+ *  - Prohibited  — conduct expressly forbidden; violation triggers statutory liability
+ *  - Present     — clause or provision exists without implying judicial affirmation
+ *  - Sufficient  — condition independently meets the threshold for protection to attach
  *  
  * Recognized Retaliation Doctrines — REMOVED:
  *  - 'constructive-discharge'   — "Recognized" is true when present in adverse_actions
@@ -1836,45 +1840,49 @@ function ws_seed_protected_action_taxonomy() {
 function ws_seed_legal_recognition_taxonomy() {
     $taxonomy = 'ws_legal_recognition';
     $terms    = [
-        // Effective Date
-        'retroactive-date'                  => 'Retroactive Date Specified',                        // + retro_context + retro_date
-        // Classification
-        'protected-action'                  => 'Protected Action Specified',                        // + protected_actions + protected_action_standard + protected_action_source
-        'excluded-class'                    => 'Excluded Class Specified',                          // + excluded_classes
-        'anonymity-protection'              => 'Anonymity / Confidentiality Protection Recognized', // + anonymity_context
-        'catch-all-protection'              => 'Catch-All Protection Clause Present',               // (no companion)
-        'internal-only-sufficient'          => 'Internal-Only Disclosure Sufficient',               // (no companion)
-        'bad-faith-exclusion'               => 'Bad Faith / Knowingly False Exclusion Applies',     // + bad_faith_context
-        'manager-rule-exclusion'            => 'Manager Rule / Duty Speech Exclusion Applies',      // + manager_rule_context
-        'public-concern-required'           => 'Public Concern Requirement Applies',                // + public_concern_context
-        'trade-secret-immunity'             => 'Trade Secret Immunity Recognized',                  // (no companion)
-        // SOL & Procedural
-        'statutory-tolling'                 => 'Statutory Tolling Specified',                       // + statutory_tolling_context
-        'equitable-tolling'                 => 'Equitable Tolling Recognized',                      // + equitable_tolling_context
-        'amended-claim'                     => 'Amended Claim / Relation Back Recognized',          // + amended_claim_context
-        'exhaustion-required'               => 'Exhaustion Required',                               // + exhaustion_context
-        'pre-filing-notice'                 => 'Pre-Filing Notice Required',                        // + filing_notice_context
-        'statutory-preclusion'              => 'Statutory Preclusion Applies',                      // + preclusion_context
-        // Enforcement & Liability
-        'private-right-of-action'           => 'Private Right of Action Available',                 // + private_roa_context
-        'cats-paw-liability'                => 'Cat\'s Paw Liability Recognized',                   // + cats_paw_context
-        'contractual-waiver'                => 'Contractual Waiver Recognized',                     // + contractual_waiver_context + contractual_waiver_scope
-        'nda-limits'                        => 'NDA / Non-Disparagement Limitations Recognized',    // + nda_limits_context
-        'confidential-settlement-restriction' => 'Confidential Settlement Restriction Applies',     // + settlement_restriction_context
-        'anti-gag-provision'                => 'Anti-Gag Provision Recognized',                     // + anti_gag_context
-        'no-retaliatory-evidence'           => 'Retaliatory Evidence Barred',                       // + no_retaliatory_evidence_context
-        'stay-of-disciplinary-action'       => 'Stay of Disciplinary Action Available',             // + stay_context
-        'anti-slapp-applies'                => 'Anti-SLAPP Protection Applies',                     // + anti_slapp_context
-        'employer-knowledge-required'       => 'Employer Knowledge Element Required',               // + employer_knowledge_context
-        'third-party-retaliation'           => 'Third-Party Retaliation Prohibited',                // + third_party_retaliation_context
-        'successor-liability-recognized'    => 'Successor Employer Liability Recognized',           // + successor_liability_context
-        'extraterritorial-coverage'         => 'Extraterritorial Coverage Recognized',              // + extraterritorial_context
-        'jury-trial'                        => 'Jury Trial Available',                              // + jury_trial_context + jury_trial_scope
-        // Without Context
-        'continuing-violation'              => 'Continuing Violation Doctrine Recognized',
-        'individual-liability'              => 'Individual Liability Available',
-        'class-action'                      => 'Class / Collective Action Permitted',
-        'preliminary-reinstatement'         => 'Preliminary / Interim Reinstatement Available',     // + preliminary_reinstatement_context
+        // Effective Date                                                                               // ───── # Effective Date Tab ────────────────────────────────────────────────
+        'retroactive-date'                    => 'Retroactive Date Specified',                          // + retro_context + retro_date
+        // Classifications                                                                              // ───── # Classifications Tab ───────────────────────────────────────────────
+        // = NOTE = `legal_recognitions` appears at top of Classifications Tab                          // =>>> NOTE =>>> `legal_recognitions` appears at top of Classifications Tab
+        'protected-action'                    => 'Protected Action Specified',                          // + protected_actions_context + protected_actions + protected_action_standard + protected_action_source
+        'excluded-class'                      => 'Excluded Class Specified',                            // + excluded_class_context    + excluded_classes
+        'manager-rule-exclusion'              => 'Manager Rule / Duty Speech Exclusion Applies',        // + manager_rule_context
+        'public-concern-required'             => 'Public Concern Requirement Applies',                  // + public_concern_context
+        'bad-faith-exclusion'                 => 'Bad Faith / Knowingly False Exclusion Applies',       // + bad_faith_context
+        'anonymity-protection'                => 'Anonymity / Confidentiality Protection Recognized',   // + anonymity_context
+        // Statute of Limitations & Procedural                                                          // ───── # Statute of Limitations And Thresholds Tab ─────────────────────────
+        'statutory-tolling'                   => 'Statutory Tolling Specified',                         // + statutory_tolling_context
+        'equitable-tolling'                   => 'Equitable Tolling Recognized',                        // + equitable_tolling_context
+        'amended-claim'                       => 'Amended Claim / Relation Back Recognized',            // + amended_claim_context
+        'exhaustion-required'                 => 'Exhaustion Required',                                 // + exhaustion_context
+        'pre-filing-notice'                   => 'Pre-Filing Notice Required',                          // + filing_notice_context
+        'statutory-preclusion'                => 'Statutory Preclusion Applies',                        // + preclusion_context
+        // Retaliation                                                                                  // ───── # Retaliation Tab ───────────────────────────────────────────────────
+        'cats-paw-liability'                  => 'Cat\'s Paw Liability Recognized',                     // + cats_paw_context
+        'third-party-retaliation'             => 'Third-Party Retaliation Prohibited',                  // + third_party_retaliation_context
+        // Process & Remedies                                                                           // ───── # Process & Remedies Tab ────────────────────────────────────────────
+        'private-right-of-action'             => 'Private Right of Action Available',                   // + private_roa_context
+        'jury-trial'                          => 'Jury Trial Available',                                // =>>> NOTE =>>> invalid term without 'private-right-of-action' also present.  // + jury_trial_context + jury_trial_scope
+        'preliminary-reinstatement'           => 'Preliminary / Interim Reinstatement Available',       // + preliminary_reinstatement_context
+        // Waiver & Scope                                                                               // ───── # Waiver & Scope Tab ────────────────────────────────────────────────
+        'contractual-waiver'                  => 'Contractual Waiver Recognized',                       // =>>> NOTE =>>> invalid term if 'civil_action_waiver_scope' is set to 'anti'. // + contractual_waiver_context + contractual_waiver_scope
+        'nda-limitations'                          => 'NDA / Non-Disparagement Limitations Recognized', // + nda_limits_context
+        'anti-gag-provision'                  => 'Anti-Gag Provision Recognized',                       // + anti_gag_context
+        'no-retaliatory-evidence'             => 'Retaliatory Evidence Barred',                         // + no_retaliatory_evidence_context
+        'stay-of-disciplinary-action'         => 'Stay of Disciplinary Action Available',               // + stay_context
+        'anti-slapp-protection'               => 'Anti-SLAPP Protection Applies',                       // + anti_slapp_protection_context
+        'confidential-settlement-restriction' => 'Confidential Settlement Restriction Applies',         // + settlement_restriction_context
+        'successor-liability'                 => 'Successor Employer Liability Recognized',             // + successor_liability_context
+        'extraterritorial-coverage'           => 'Extraterritorial Coverage Recognized',                // + extraterritorial_context
+        'employer-knowledge'                  => 'Employer Knowledge Element Required',                 // + employer_knowledge_context
+        // Without Context                                                                              // ───── # Without Context (no Tab) ──────────────────────────────────────────
+        'catch-all-protection'                => 'Catch-All Protection Clause Present',                 // (no companion)
+        'internal-only-sufficient'            => 'Internal-Only Disclosure Sufficient',                 // (no companion)
+        'trade-secret-immunity'               => 'Trade Secret Immunity Recognized',                    // (no companion)
+        'continuing-violation'                => 'Continuing Violation Doctrine Recognized',            // (no companion)
+        'individual-liability'                => 'Individual Liability Available',                      // (no companion)
+        'class-action'                        => 'Class / Collective Action Permitted',                 // (no companion)
+
     ];
     foreach ( $terms as $slug => $name ) {
         if ( ! term_exists( $slug, $taxonomy ) ) {
