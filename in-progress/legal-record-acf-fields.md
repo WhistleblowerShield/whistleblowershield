@@ -23,12 +23,14 @@ Create new files with same names as the originals.
 - `*_recognized` — (too long) avoid where possible; use `ws_legal_recognition` taxonomy slug if logical.
 - `*_type` — (too generic) avoid where possible; use `*_class`, `*_scope`, `*_status`, `*_rule`,
   `*_framework`, `*_weight`, or `*_standard` depending on context. `*_type` is acceptable where logical.
+  `*_scope` is commonly used to hold multiple values and is special-case to pluralization rule.
 - `*_details` — freetext(usually) companion, conditional on `has_*` bool true, or `has-details` sentinel
    present in trigger choice/taxonomy field. Any sister field inherits the conditional behavior from `*_details`.
   `*_details` may have a sister field; no naming convention applies to sister fields, apply logical name
    using context. Sister fields may not appear without a sibling `*_details` field. 
 - `*_context` — freetext(usually) companion, conditional on trigger field when specified
-   value, values, or any non-empty value is present, defined by trigger requirements.
+   value, values(not used), or any non-empty value is present, defined by trigger requirements. `*_context` may
+   have sister fields similar to `*_details`.
 - `*_limits` — preferred over `*_limitations`.
 - Some suffixes define data-shape (e.g. `*_url`, `*_date`, `*_email`, etc.). Do not use data-shape suffixes
   otherwise.
@@ -100,10 +102,10 @@ Field order reflects logical editorial workflow within each tab.
 
 - `date`                       — (enacted / ruling / decision date (shared slot))
 - `has_effective_date`         — (only when `effective_date` differs from `date`)
-- `effective_date`             — (conditional on `has_effective_date`)
+- `effective_date`
 - `effective_year`             — (derived from `effective_date` if present, `date` if not)
 - `retro_date`                 — (sister field to `retro_context`)
-- `retro_context`              — (conditional on `retroactive-date-defined` in `legal_recognitions`)
+- `retro_context`              — (conditional on `retroactive-date` in `legal_recognitions`)
 
 ---
 
