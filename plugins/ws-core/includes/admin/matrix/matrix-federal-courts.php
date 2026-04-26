@@ -39,7 +39,7 @@ $_ws_federal_court_matrix = [
         'name'        => 'Supreme Court of the United States',
         'short'       => 'SCOTUS',
         'type'        => 'scotus',
-        'ws_jx_codes' => null,  // null = appears on all jurisdictions
+        'ws_jx_codes' => [ 'us' ],  // 'us' = applies to all jurisdictions
         'circuit'     => null,
         'level'       => 1,
     ],

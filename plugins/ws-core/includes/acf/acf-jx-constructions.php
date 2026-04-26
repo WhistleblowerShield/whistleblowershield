@@ -844,8 +844,8 @@ function ws_construction_prefill_comlaw_id( $value, $post_id, $field ) {
 // $_ws_federal_court_matrix and $_ws_state_court_matrix), and resolves
 // ws_jx_codes to ws_jurisdiction taxonomy term IDs.
 //
-// SCOTUS (ws_jx_codes = null): writes an empty array. The query/render layer
-// treats empty affected_jx + SCOTUS court as "all jurisdictions" — avoids
+// SCOTUS (ws_jx_codes = us): writes an empty array. The query/render layer
+// treats empty affected_jx + SCOTUS court as "us" — avoids
 // storing all 60+ term IDs in meta unnecessarily.
 //
 // Recomputes on every save so the value stays in sync if the court is changed.
@@ -873,11 +873,11 @@ function ws_jx_construction_auto_populate_affected_jx( $post_id ) {
     }
 
     
-        // SCOTUS: null = all jurisdictions. Store empty to signal bind-all.
-    if ( $jx_codes === null ) {
-        update_post_meta( $post_id, 'ws_jx_construction_affected_jx', [] );
-        return;
-    }
+    //     // SCOTUS: null = all jurisdictions. Store empty to signal bind-all.
+    // if ( $jx_codes === 'us' ) {
+    //     update_post_meta( $post_id, 'ws_jx_construction_affected_jx', [] );
+    //     return;
+    // }
 
     // Resolve each USPS code to a ws_jurisdiction term ID.
     $term_ids = [];
@@ -887,7 +887,10 @@ function ws_jx_construction_auto_populate_affected_jx( $post_id ) {
             $term_ids[] = $term->term_id;
         }
     }
-
-    update_post_meta( $post_id, 'ws_jx_construction_has_affected_jx', true );
-    update_post_meta( $post_id, 'ws_jx_construction_affected_jx', $term_ids );
+    if( count($term_ids) > 1 ) {
+        update_post_meta( $post_id, 'ws_jx_construction_has_affected_jx', true );
+        update_post_meta( $post_id, 'ws_jx_construction_affected_jx', array_map( 'intval', $term_ids ) );
+    } else { update_post_meta( $post_id, 'ws_jx_construction_has_affected_jx', false );
+             delete_post_meta( $post_id, 'ws_jx_construction_affected_jx' );
+    }
 }

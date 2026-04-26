@@ -355,13 +355,14 @@ construe is covered on precedent records via `extend_taxonomy` and
 ### Precedent-Record Common Fields (citation + construction)
 
 #### Identity and Publishing Tab
-- `types`                      — (citation: multi-select; construction: single-select;
-                                  field_key and field_name differ by singular/plural)
+- `types`                      — (citation `types`: multi-select: `case_law`|`statute`|`regulatory`|`secondary`;
+                                  construction `type`: single-select: `case_law`|`statute`|`regulatory`|`secondary`;
+                                  NOTE: field_key and field_name differ by singular/plural)
 - `status`                     — (single-select: `published`|`unpublished`|`memorandum`|`vacated`)
 - `binding_scope`              — (single-select: `binding`|`persuasive`|`mixed`|`distinguished`|`overruled`)
 - `court`
 - `court_name`                 — (conditional on `court` is `other`)
-- `court_is_fed`               — (derived from `court` jx; manually set when `court` is `other`)
+- `court_is_fed`               — (derived from `court` `ws_jx_codes`; manually set when `court` is `other`)
 
 #### Effective Date Tab (insert after `effective_year`)
 - `mandate_date`
@@ -370,8 +371,9 @@ construe is covered on precedent records via `extend_taxonomy` and
 - `scope`                      — (single-select: `favorable`|`adverse`|`neutral`)
 - `extend_taxonomy`            — (when `scope` is `favorable`; extends parent taxonomy)
 - `suppress_taxonomy`          — (when `scope` is `adverse`; removes parent taxonomy term)
-- `has_affected_jx`            — (derived true if `court_is_fed`; manually set false when single jx)
-- `affected_jx`                — (conditional on `has_affected_jx`)
+- `has_affected_jx`            — (derived from `court` `ws_jx_codes`; manually set false when single jx)
+- `affected_jx`                — (conditional on `has_affected_jx`; derived from `court` `ws_jx_codes`; manually
+                                  set when `court` is `other`)
 
 #### Relationships Tab
 - `statute_ids`
@@ -414,13 +416,13 @@ Only fields that currently violate target naming conventions or are inconsistent
 across legal ACFs.
 
 - `fee_shiftings`                  → `fee_shifting_rules` →
- (taxonomy table `ws_fee_shifting` → `ws_fee_shifting_rule`)
+   (taxonomy table `ws_fee_shifting` → `ws_fee_shifting_rule`)
 - `has_limit_ambiguous`            → `has_sol_details`
 - `limit_details`                  → `sol_details`
 - `has_tolling_details`            → `has_tolling`
 - `has_exhaustion_required`        → `has_exhaustion_requirement`
 - `exhaustion_required_details`    → `exhaustion_details`
-- `exhaustion_is_jurisdictional`   → `exhaustion_class` (sister field to `exhaustion_details`)
+- `exhaustion_is_jurisdictional`   → `exhaustion_class` (now sister field to `exhaustion_details`)
 - `rebuttable_presumption_details` → `rebuttable_details`
 - `statutory_preclusion_details`   → `preclusion_details`
 - `employee_standard_details`      → `standard_details`
@@ -436,16 +438,17 @@ across legal ACFs.
   `construction_url_is_pdf` (shared slot) → `url_is_pdf`
 - `superseded_by`                  → `overruled_by_id` (post object)
 - `has_constructive_discharge_recognized` → dropped; slug `constructive-discharge`
-  in `ws_legal_recognition` + `constructive_discharge_context` replaces it
+   in `ws_legal_recognition` + `constructive_discharge_context` replaces it
 - `has_anticipatory_retaliation_recognized` → dropped; slug `anticipatory-retaliation`
-  in `ws_legal_recognition` + `anticipatory_retaliation_context` replaces it
+   in `ws_legal_recognition` + `anticipatory_retaliation_context` replaces it
 - `continuing_violation_recognized` → dropped; slug `continuing-violation` in
   `ws_legal_recognition` replaces it (no companion needed)
 - `equitable_tolling_recognized`   → dropped; slug `equitable-tolling` in
   `ws_legal_recognition` replaces it (no companion needed)
-- `has_amended_claim_recognized`   → slug `amended-claim` in `ws_legal_recognition` + `amended_claim_context` companion display
+- `has_amended_claim_recognized`   → slug `amended-claim` in `ws_legal_recognition`
+   + `amended_claim_context` companion display
 - `arbitration_waiver_enforceability` → `contractual_waiver_scope`
-  (expanded to cover NDAs and non-disparagement agreements)
+   (expanded to cover NDAs and non-disparagement agreements)
 - `contractual-waiver` in `legal_recognitions` + `contractual_waiver_context` companion display + `contractual_waiver_scope` + sister 
 - `disclosure_target_type`         → `_disclosure_target_class` (derived, hidden)
 - `exhaustion_type`                → `exhaustion_class`
