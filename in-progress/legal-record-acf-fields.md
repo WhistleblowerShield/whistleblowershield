@@ -23,7 +23,7 @@ Create new files with same names as the originals.
 - `*_recognized` — (too long) avoid where possible; use `ws_legal_recognition` taxonomy slug if logical.
 - `*_type` — (too generic) avoid where possible; use `*_class`, `*_scope`, `*_status`, `*_rule`,
   `*_framework`, `*_weight`, or `*_standard` depending on context. `*_type` is acceptable where logical.
-  `*_scope` is commonly used to hold multiple values and is special-case to pluralization rule.
+  `*_scope` and is commonly used to hold multiple values and is special-case to pluralization rule.
 - `*_details` — freetext(usually) companion, conditional on `has_*` bool true, or `has-details` sentinel
    present in trigger choice/taxonomy field. Any sister field inherits the conditional behavior from `*_details`.
   `*_details` may have a sister field; no naming convention applies to sister fields, apply logical name
@@ -37,16 +37,21 @@ Create new files with same names as the originals.
 
 ### Needed Hooks
 
-- Derived values need hooks on fill or update.
-- Merged values (usually hidden) need hooks on save.
+- Derived values need auto-fill by hook on fill or update.
+- Merged values (usually hidden) need auto-fill by hook on save.
+- Derived choices for select fields need filter hook on load and fill. e.g. `courts` on precedent records
+  filter/fill when `jurisdiction` is populated or updated.
 - `fee_shifting_rules` needs hook to catch contradictory terms.
 - `sovereign_immunity_limits` needs hook to catch contradictory terms.
-- `primary_agency` needs hook to auto-fill on first added `ws-agency`, if non-empty. Manual override select needs
+- `primary_agency` needs hook as auto-fill on first added `ws-agency`, if empty. Manual override select needs
    hook to filter choices to attached `ws-agency` posts.
-   Hook should set 'default_value' key to: "Attach one 'ws-agency' first".
-- `primary_agency_is_fed` needs hook to auto-fill true if `primary_agency` jx is 'us'.
-- `local_agencies` needs hook to filter to only jx applicable `ws-agency` choices, and exclude federal agencies.
-- `federal_agencies` needs hook to filter to only federal agencies.
+   Hook should set 'instructions' key to: "Attach one `ws-agency` to local or federal first", if empty.
+   Hook should set 'instructions' key to: "Override `primary_agency` with any currently attached local or
+   federal agency", if non-empty.
+- `local_agencies` needs hook to filter to only jx applicable `ws-agency` choices, and exclude federal agencies;
+   stub: future_filter to use `ws_disclosure_type` and `ws_disclosure_target` taxonomies.
+- `federal_agencies` needs hook to filter to only federal agencies; stub: future_filter to use `disclosure_type`
+   and `disclosure_target` taxonomies.
 - `civil_action_waiver_scope` override of `contractual_waiver_scope`: if `civil_action_waiver_scope` is set to
   `anti`, the value represents a statutory preclusion of all waivers. A hook monitors both values and terms in
   `legal_recognitions`. If `contractual-waiver` is present in `legal_recognitions` with a value set in
@@ -119,21 +124,20 @@ legal recognitions → derived flags.
 
 - `legal_recognitions`             — (taxonomy: `ws_legal_recognition`; replaces all `*_recognized` booleans,
                                       and others; See [Slug-to-Companion Map] below.)
-- `protected_action_standard`      — (sister field to `protected_actions`; single-select: `actual_violation`|
+- `protected_action_standard`      — (sister field to `protected_action_context`; single-select: `actual_violation`|
                                       `reasonable_belief`|`good_faith`)
 - `reasonable_belief_context`      — (conditional on `protected_activity_standard` is `reasonable_belief`;
                                       single-select: `objective_only`|`subjective_only`|`dual_prong`|`has-details`)
 - `reasonable_belief_details`
-- `protected_action_source`        — (sister field to `protected_actions`; multi-select: `constitutional`|
-                                      `statutory`|`judicial`|`regulatory`|`executive`|`has-details`)
-- `protected_action_source_details`
-- `protected_actions`              — (conditional on `protected-action` in `legal_recognitions`;
-                                      taxonomy: `ws_protected_action`)
+- `protected_action_source`        — (sister field to `protected_action_context`; multi-select: `constitutional`|
+                                      `statutory`|`judicial`|`regulatory`|`executive`|`see-context`)
+- `protected_actions`              — (sister field to `protected_action_context`; taxonomy: `ws_protected_action`)
+- `protected_action_context`
 - `disclosure_types`               — (taxonomy: `ws_disclosure_type`)
 - `protected_classes`              — (taxonomy: `ws_protected_class`)
 - `protected_class_details`
-- `excluded_classes`               — (conditional on `excluded-class` in `legal_recognitions`;
-                                      taxonomy: `ws_excluded_class`)
+- `excluded_classes`               — (sister field to `excluded_class_context`; taxonomy: `ws_excluded_class`)
+- `excluded_class_context`         — (conditional on `excluded-class` in `legal_recognitions`)
 - `excluded_class_details`
 - `employment_sectors`             — (taxonomy: `ws_employment_sector`)
 - `disclosure_targets`             — (taxonomy: `ws_disclosure_target`)
@@ -172,9 +176,9 @@ Fields ordered: core SOL → modifiers → exhaustion → thresholds → preempt
 - `exhaustion_class`           — (sister field to `exhaustion_context`; single-select: `jurisdictional`|
                                   `claims-processing`|`waivable`|`see-context`)
 - `exhaustion_context`         — (conditional on `exhaustion-required` in `legal_recognitions`)
-- `pre_filing_notice_target`   — (sister field to `pre_filing_notice_context`; single-select: `employer`|`agency`|
+- `filing_notice_target`       — (sister field to `filing_notice_context`; single-select: `employer`|`agency`|
                                   `attorney-general`|`labor-board`|`see-context`)
-- `pre_filing_notice_context`  — (conditional on `pre-filing-notice` in `legal_recognitions`)
+- `filing_notice_context`      — (conditional on `pre-filing-notice` in `legal_recognitions`)
 - `has_employer_threshold`
 - `threshold_compare`          — (sister field to `threshold_details`; single-select: `gte`|`lte`|`gt`|`lt`|`eq`)
 - `threshold_value`            — (sister field to `threshold_details`; integer)
@@ -207,7 +211,7 @@ liability → contractual → agencies → immunity/defendants.
 - `remedy_details`              — (conditional on `remedies` includes `has-details`)
 - `remedy_liquidated_context`   — (conditional on `remedies` includes `liquidated-damages`; single-select: `double`|
                                   `treble`|`2x-back-pay`|`2x-wages-lost`|`statutory-formula`|`up-to-double`|
-                                  `up-to-treble`|`has-details`)
+                                  `up-to-treble`|`has-details`(approved case of `*_context` used for select field))
 - `remedy_liquidated_formula`   — (conditional on `remedy_liquidated_context` includes `statutory-formula`)
 - `remedy_liquidated_details`   — (conditional on `remedy_liquidated_context` includes `has-details`)
 - `mixed_motive_remedy_context` — (conditional on `burden_shifting_framework` includes `mixed-motive`;
@@ -226,8 +230,8 @@ liability → contractual → agencies → immunity/defendants.
 - `jury_trial_scope`            — (sister field to `jury_trial_context`; single-select: `all-claims`|`damages-only`|
                                    `liability-only`|`see-details`)
 - `jury_trial_context`          — (conditional on `jury-trial` in `legal_recognitions`)
-- `primary_agency`
-- `local_agencies`
+- `primary_agency`              — (auto-fill by hook when first `ws-agency` added and value is empty)
+- `local_agencies`              — (multi-select: `ws-agency` filtered by jx and disclosure taxonomies)
 - `enforcement_priority`        — (single-select: `agency-first`|`court-first`|`either`|`sequential`)
 - `enforcement_channel`         — (priority of enforcement agencies, with any enforcement details)
 - `sovereign_immunity_limits`   — (multi-select: `not-waived`|`partially-waived`|`fully-waived`|`cap-applies`|
@@ -246,9 +250,9 @@ Fields ordered: framework → employee standards → causation → temporal pres
 employer defenses → rebuttable presumption → detail overflow.
 
 - `has_burden_shifting`
-- `burden_shifting_framework`  — (sister field; conditional on `has_burden_shifting`;
-                                  single-select: `McDonnell-Douglas`|`motivating-factor`|
-                                  `but-for`|`mixed-motive`|`see-context`; see [Cross-Tab Conditional] below)
+- `burden_shifting_framework`  — (sister field to `burden_shifting_details`; single-select: `McDonnell-Douglas`|
+                                  `motivating-factor`|`but-for`|`mixed-motive`|`see-context`;
+                                  see [Cross-Tab Conditional] below)
 - `burden_shifting_details`
 - `burden_shifting_context`    — (conditional on `burden_shifting_framework` non-empty)
 - `employee_standards`         — (taxonomy: `ws_employee_standard`; evidentiary burden only)
@@ -301,8 +305,8 @@ employer defenses → rebuttable presumption → detail overflow.
 ### Hidden Fields (no tab; prefixed with underscore)
 
 - `_id`                        — (generated by ingest tool or matrix seeder)
-- `_disclosure_target_class`   — (derived from `disclosure_targets`; hook fills;
-                                  single-select: `internal`|`external`|`both`)
+- `_disclosure_target_class`   — (derived from `disclosure_targets`; auto-fill by hook an save; single-select:
+                                  `internal`|`external`|`both`)
 
 ---
 
@@ -317,28 +321,29 @@ construe is covered on precedent records via `extend_taxonomy` and
 `suppress_taxonomy` — precedents do not duplicate individual substantive fields.
 
 #### Enforcement Tab (insert after `anticipatory_retaliation_context`)
-- `election_of_remedies_rule`      — (multi-select ACF: `administrative-bars-civil`|
-                                      `state-bars-federal`|`remedy-exclusivity`|
-                                      `first-filed-controls`|`no-election-required`|`see-context`)
-- `election_of_remedies_context`   — (conditional on `election_of_remedies_rule` non-empty)
+- `election_of_remedies_rules`     — (multi-select: `administrative-bars-civil`|`state-bars-federal`|
+                                      `remedy-exclusivity`|`first-filed-controls`|`no-election-required`|
+                                      `see-context`)
+- `election_of_remedies_context`   — (conditional on `election_of_remedies_rules` non-empty)
 
 #### Relationships Tab
 - `citation_ids`
 - `construction_ids`
 
 #### Hidden Fields
-- `_precedent_ids`             — (merged array of `citation_ids` and `construction_ids`; hook fills)
+- `_precedent_ids`             — (merged array of `citation_ids` and `construction_ids`; auto-fill by hook on save)
 
 ---
 
 ### Statute-Specific
 
 #### Enforcement Tab
-- `federal_agencies`           — (insert after `local_agencies`)
+- `federal_agencies`           — (insert after `local_agencies`; multi-select: `ws-agency` filtered by jx and
+                                  disclosure taxonomies)
 
 #### Hidden Fields
-- `_primary_agency_is_fed`     — (derived from `primary_agency` jx; hook fills)
-- `_related_agencies`          — (merged array of `local_agencies` and `federal_agencies`; hook fills)
+- `_primary_agency_is_fed`     — (derived from `primary_agency` jx; auto-fill by hook on save)
+- `_related_agencies`          — (merged array of `local_agencies` and `federal_agencies`; auto-fill by hook on save)
 
 ---
 
@@ -349,8 +354,9 @@ construe is covered on precedent records via `extend_taxonomy` and
 
 #### Classification Tab (insert after `excluded_class_details`)
 - `doctrine_basis`             — (the legal basis for the doctrine; reserve full summary for `plain_english_wysiwyg`)
-- `public_policy_sources`      — (multi-select; sources of public policy)
-- `source_context`             — (conditional on `public_policy_sources` includes `other`)
+- `public_policy_sources`      — (multi-select: `constitution`|`statute`|`administrative-rule`|`case-law`|
+                                  `federal-law`|`has-details`)
+- `source_details`
 - `recognition_status`         — (single-select: `recognized`|`limited`|`uncertain`|
                                   `rejected`|`abrogated`|`has-details`)
 - `recognition_details`        — (conditional on `recognition_status` is `has-details`)
@@ -365,9 +371,11 @@ construe is covered on precedent records via `extend_taxonomy` and
                                   NOTE: field_key and field_name differ by singular/plural)
 - `status`                     — (single-select: `published`|`unpublished`|`memorandum`|`vacated`)
 - `binding_scope`              — (single-select: `binding`|`persuasive`|`mixed`|`distinguished`|`overruled`)
-- `court`
-- `court_name`                 — (conditional on `court` is `other`)
-- `court_is_fed`               — (derived from `court` `ws_jx_codes`; manually set when `court` is `other`)
+- `court`                      — (single-select: populate choices by hook on load/fill filter by jx)
+- `court_details`              — (conditional on `court` is `has-details`)
+- `court_jx`                   — (sister field to `court_details`; taxonomy: `WS_JURISDICTION_TAXONOMY`,
+                                  'load_terms' => 1, 'save_terms' => 0)
+- `court_is_fed`               — (derived from `court` `ws_jx_codes`; manually set when `court` is `has-details`)
 
 #### Effective Date Tab (insert after `effective_year`)
 - `mandate_date`
@@ -376,9 +384,11 @@ construe is covered on precedent records via `extend_taxonomy` and
 - `scope`                      — (single-select: `favorable`|`adverse`|`neutral`)
 - `extend_taxonomy`            — (when `scope` is `favorable`; extends parent taxonomy)
 - `suppress_taxonomy`          — (when `scope` is `adverse`; removes parent taxonomy term)
-- `has_affected_jx`            — (derived from `court` `ws_jx_codes`; manually set false when single jx)
+- `has_affected_jx`            — (derived from `court` `ws_jx_codes`; manually set false when single jx is same as
+                                  precedent `jurisdiction`; manually set true when `court` is `has-details`)
 - `affected_jx`                — (conditional on `has_affected_jx`; derived from `court` `ws_jx_codes`; manually
-                                  set when `court` is `other`)
+                                  set taxonomy: `WS_JURISDICTION_TAXONOMY`, 'load_terms' => 1, 'save_terms' => 0
+                                  when `court` is `has-details`)
 
 #### Relationships Tab
 - `statute_ids`
@@ -391,12 +401,12 @@ construe is covered on precedent records via `extend_taxonomy` and
 - `negative_treatment_details`
 
 #### Relationships Tab (insert after `authority_reference`)
-- `authority_source`       — (single-select: `constitutional`|`legislative`|`judicial`|`regulatory`|`executive`|
-                              `has-details`)
+- `authority_source`           — (single-select: `constitutional`|`legislative`|`judicial`|`regulatory`|`executive`|
+                                  `has-details`)
 - `authority_source_details`
 
 #### Hidden Fields
-- `_parent_ids`                — (merged array of `statute_ids` and `comlaw_ids`; hook fills)
+- `_parent_ids`                — (merged array of `statute_ids` and `comlaw_ids`; auto-fill by hook on save)
 
 ---
 
@@ -410,7 +420,10 @@ construe is covered on precedent records via `extend_taxonomy` and
 ### Construction-Specific
 
 #### Identity and Publishing Tab
-- `is_en_banc`                 — (boolean; defaults true; when false triggers `panel_composition_details`)
+- `is_en_banc`                 — (defaults true; when false triggers `panel_composition_details`)
+- `panel_composition_class`    — (sister field to `panel_composition_details`; single-select: `three-judge`|
+                                  `five-judge`|`seven-judge`|`nine-judge`|`expanded-panel`|`single-judge`|
+                                  `see-details`)
 - `panel_composition_details`  — (conditional on `is_en_banc` is false)
 
 ---
@@ -420,8 +433,7 @@ construe is covered on precedent records via `extend_taxonomy` and
 Only fields that currently violate target naming conventions or are inconsistent
 across legal ACFs.
 
-- `fee_shiftings`                  → `fee_shifting_rules` →
-   (taxonomy table `ws_fee_shifting` → `ws_fee_shifting_rule`)
+- `fee_shiftings`                  → `fee_shifting_rules` → (taxonomy table `ws_fee_shifting` → `ws_fee_shifting_rule`)
 - `has_limit_ambiguous`            → `has_sol_details`
 - `limit_details`                  → `sol_details`
 - `has_tolling_details`            → `has_tolling`
@@ -504,8 +516,8 @@ Companion fields noted in parentheses are triggered by slug presence in `legal_r
 // Effective Dates Tab
 'retroactive-date'              → 'retro_context' + 'retro_date'
 // Classification Tab
-'excluded-class'                → 'excluded_classes'
-'protected-action'              → 'protected_actions' + 'protected_action_standard' + 'protected_action_source'
+'excluded-class'                → 'excluded_class_context' + 'excluded_classes'
+'protected-action'              → 'protected_actions_context' + 'protected_actions' + 'protected_action_standard' + 'protected_action_source'
 'anonymity-protection'          → 'anonymity_context'
 // Statute of Limitations Tab
 'statutory-tolling'             → 'statutory_tolling_context'
