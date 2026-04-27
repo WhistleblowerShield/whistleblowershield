@@ -1037,10 +1037,6 @@ add_action( 'admin_init', function() {
         ws_seed_causation_standard_taxonomy();
         update_option( 'ws_seeded_causation_standard', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_adverse_action' ) !== '1.0.0' ) {
-        ws_seed_adverse_action_taxonomy();
-        update_option( 'ws_seeded_adverse_action', '1.0.0' );
-    }
 
 } );
 
@@ -1765,10 +1761,6 @@ function ws_seed_employee_standard_taxonomy() {
  * - Participation Clause: participating in proceedings or investigations;
  *   typically broader protection; good-faith requirement may not apply.
  *
- * 3.16.0: Hierarchy confirmed. opposition-clause, participation-clause, and
- *         child terms (opposing-practice, internal-objection, refusal-to-participate,
- *         filing-complaint, testifying, assisting-whistleblower, participation-support)
- *         already present. Gate bumped to 1.0.0 — re-seeding confirms structure.
  */
 function ws_seed_protected_action_taxonomy() {
    $hierarchy = [
