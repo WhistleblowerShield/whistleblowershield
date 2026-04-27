@@ -254,8 +254,8 @@ Fields ordered: process → fee shifting → remedies → enforcement
 - `remedy_liquidated_multiplier`   — (conditional on `remedies` includes `liquidated-damages`; single-select:
                                       `double`|`treble`|`2x-back-pay`|`2x-wages-lost`|`statutory-formula`|
                                       `statutory-daily-fine`|`up-to-double`|`up-to-treble`|`has-details`)
-- `remedy_liquidated_formula`      — (conditional on `remedy_liquidated_context` includes `statutory-formula`)
-- `remedy_liquidated_details`      — (conditional on `remedy_liquidated_context` includes `has-details`)
+- `remedy_liquidated_formula`      — (conditional on `remedy_liquidated_multiplier` includes `statutory-formula`)
+- `remedy_liquidated_details`      — (conditional on `remedy_liquidated_multiplier` includes `has-details`)
 - `mixed_motive_remedy_context`    — (conditional on `burden_shifting_framework` includes `mixed-motive`;
                                       see [Cross-Tab Conditional below])
 - `preliminary_reinstatement_context`  — (conditional on `preliminary-reinstatement` in `legal_recognitions`;
@@ -274,7 +274,7 @@ Fields ordered: contractual → recognitions → immunity → defendants.
 
 - `civil_action_waiver_scope`      — (single-select: `prohibited`|`permitted-individual-only`|
                                       `permitted-collective`|`anti`|`see-context`)
-- `civil_action_waiver_context`    — (conditional on `class_action_waiver_scope` non-empty)
+- `civil_action_waiver_context`    — (conditional on `civil_action_waiver_scope` non-empty)
 - `contractual_waiver_scope`       — (sister field to `contractual_waiver_context`; single-select: `void`|
                                       `limited`|`enforceable`|`void-public-policy`|`void-as-to-whistleblowing`|
                                       `enforceable-with-exceptions`|`see-context`)
@@ -286,9 +286,9 @@ Fields ordered: contractual → recognitions → immunity → defendants.
 - `stay_context`                   — (conditional on `stay-of-disciplinary-action` in `legal_recognitions`)
 - `anti_slapp_protection_context`  — (conditional on `anti-slapp-protection` in `legal_recognitions`)
 - `settlement_restriction_context`   — (conditional on `confidential-settlement-restriction` in `legal_recognitions`)
-- `successor_liability_context`    — (conditional on `successor-liability-recognized` in `legal_recognitions`)
+- `successor_liability_context`    — (conditional on `successor-liability` in `legal_recognitions`)
 - `extraterritorial_context`       — (conditional on `extraterritorial-coverage` in `legal_recognitions`)
-- `employer_knowledge_context`     — (conditional on `employer-knowledge-required` in `legal_recognitions`)
+- `employer_knowledge_context`     — (conditional on `employer-knowledge` in `legal_recognitions`)
 - `sovereign_immunity_limits`      — (multi-select: `not-waived`|`partially-waived`|`fully-waived`|`cap-applies`|
                                       `conditions-apply`|`has-details`)
 - `sovereign_immunity_scope`       — (sister field to `sovereign_immunity_details`; single-select:
@@ -556,7 +556,7 @@ across legal ACFs.
 - `ws_fee_shifting`                 → `ws_fee_shifting_rule` (taxonomy table) 
 - `has_limit_ambiguous`             → `has_sol_details`
 - `limit_details`                   → `sol_details`
-- `has_tolling_details`             → `has_tolling`
+- `has_tolling_details`             → `has_tolling`                 → `(statutory|equitable)-tolling` in `legal_recognitions`
 - `has_exhaustion_required`         → `has_exhaustion_requirement`  → `exhaustion-required` in `legal_recognitions`
 - `exhaustion_required_details`     → `exhaustion_details`
 - `exhaustion_is_jurisdictional`    → `exhaustion_class`  → (sister field to `exhaustion_details`)

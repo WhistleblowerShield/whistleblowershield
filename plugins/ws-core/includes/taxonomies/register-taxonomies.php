@@ -13,7 +13,7 @@
  *         third-party-retaliation, catch-all-protection, no-retaliatory-evidence,
  *         trade-secret-immunity, stay-of-disciplinary-action, manager-rule-exclusion,
  *         public-concern-required, employer-knowledge-required, bad-faith-exclusion,
- *         anti-slapp-applies, successor-liability-recognized, extraterritorial-coverage,
+ *         anti-slapp-protection, successor-liability-recognized, extraterritorial-coverage,
  *         confidential-settlement-restriction, internal-only-sufficient).
  *         Gate bumped to 1.1.0.
  *         ws_causation_standard: contributing-factor-but-for-backstop and
@@ -1037,17 +1037,9 @@ add_action( 'admin_init', function() {
         ws_seed_causation_standard_taxonomy();
         update_option( 'ws_seeded_causation_standard', '1.1.0' );
     }
-    if ( get_option( 'ws_seeded_adverse_action' ) !== '1.2.0' ) {
+    if ( get_option( 'ws_seeded_adverse_action' ) !== '1.0.0' ) {
         ws_seed_adverse_action_taxonomy();
-        update_option( 'ws_seeded_adverse_action', '1.2.0' );
-    }
-    if ( get_option( 'ws_seeded_remedy' ) !== '1.2.0' ) {
-        ws_seed_remedy_taxonomy();
-        update_option( 'ws_seeded_remedy', '1.2.0' );
-    }
-    if ( get_option( 'ws_seeded_protected_class' ) !== '1.1.0' ) {
-        ws_seed_protected_class_taxonomy();
-        update_option( 'ws_seeded_protected_class', '1.1.0' );
+        update_option( 'ws_seeded_adverse_action', '1.0.0' );
     }
 
 } );
