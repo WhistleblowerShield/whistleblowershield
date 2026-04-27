@@ -15,14 +15,14 @@
  *         public-concern-required, employer-knowledge-required, bad-faith-exclusion,
  *         anti-slapp-protection, successor-liability-recognized, extraterritorial-coverage,
  *         confidential-settlement-restriction, internal-only-sufficient).
- *         Gate bumped to 1.1.0.
+ *         Gate bumped to 1.0.0.
  *         ws_causation_standard: contributing-factor-but-for-backstop and
- *         substantial-motivating-factor added. Gate bumped to 1.1.0.
+ *         substantial-motivating-factor added. Gate bumped to 1.0.0.
  *         ws_adverse_action: retaliatory-discovery added. Gate bumped to 1.2.0.
  *         ws_remedy: neutral-reference, attorney-fees-admin added. Gate bumped to 1.2.0.
  *         ws_protected_action: opposition-clause and participation-clause added as
  *         hierarchical parents; internal-objection, filing-complaint,
- *         assisting-complainant added as child terms. Gate bumped to 1.1.0.
+ *         assisting-complainant added as child terms. Gate bumped to 1.0.0.
  *
  * VERSION
  * -------
@@ -42,7 +42,7 @@
  * 3.11.0  has-details sentinel term added to ws_adverse_action, ws_remedy,
  *         ws_disclosure_target, ws_protected_class, ws_employer_defense. Signals
  *         that a companion ACF freetext field holds detail beyond available slugs.
- *         Gate versions bumped to 1.1.0 for affected seeders.
+ *         Gate versions bumped to 1.0.0 for affected seeders.
  * 3.12.0  ws_employee_standard added
  * 3.14.1  all-sectors added to ws_protected_class as parent; all-employees added as child.
  *          internal-management added to ws_disclosure_target under internal parent.
@@ -64,7 +64,7 @@
  *         ws_protected_class: intern-volunteer added under special-status.
  *         qui-tam-relator confirmed in ws_excluded_class (already present).
  *         ws_remedy: interim-reinstatement, tax-gross-up added.
- *         ws_employee_standard gate bumped to 1.1.0 (causation terms removed).
+ *         ws_employee_standard gate bumped to 1.0.0 (causation terms removed).
  * 3.14.2  ws_disclosure_type and ws_process_type set to non-public.
  *         Both remain visible in wp-admin and available to internal tooling.
  */
@@ -943,7 +943,7 @@ function ws_bulk_insert_hierarchical( array $hierarchy, string $taxonomy ) {
 // No grouped gates — each taxonomy has its own independent gate.
 //
 // Gate version bump pattern: to re-seed a taxonomy after a term change,
-// increment the version string (e.g. '1.0.0' → '1.1.0') in both the
+// increment the version string (e.g. '1.0.0' → '1.0.0') in both the
 // gate check and the update_option() call below.
 // ════════════════════════════════════════════════════════════════════════════
 
@@ -1021,21 +1021,21 @@ add_action( 'admin_init', function() {
         ws_seed_protection_scope_taxonomy();
         update_option( 'ws_seeded_protection_scope', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_employee_standard' ) !== '1.1.0' ) {
+    if ( get_option( 'ws_seeded_employee_standard' ) !== '1.0.0' ) {
         ws_seed_employee_standard_taxonomy();
-        update_option( 'ws_seeded_employee_standard', '1.1.0' );
+        update_option( 'ws_seeded_employee_standard', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_protected_action' ) !== '1.1.0' ) {
+    if ( get_option( 'ws_seeded_protected_action' ) !== '1.0.0' ) {
         ws_seed_protected_action_taxonomy();
-        update_option( 'ws_seeded_protected_action', '1.1.0' );
+        update_option( 'ws_seeded_protected_action', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_legal_recognition' ) !== '1.1.0' ) {
+    if ( get_option( 'ws_seeded_legal_recognition' ) !== '1.0.0' ) {
         ws_seed_legal_recognition_taxonomy();
-        update_option( 'ws_seeded_legal_recognition', '1.1.0' );
+        update_option( 'ws_seeded_legal_recognition', '1.0.0' );
     }
-    if ( get_option( 'ws_seeded_causation_standard' ) !== '1.1.0' ) {
+    if ( get_option( 'ws_seeded_causation_standard' ) !== '1.0.0' ) {
         ws_seed_causation_standard_taxonomy();
-        update_option( 'ws_seeded_causation_standard', '1.1.0' );
+        update_option( 'ws_seeded_causation_standard', '1.0.0' );
     }
     if ( get_option( 'ws_seeded_adverse_action' ) !== '1.0.0' ) {
         ws_seed_adverse_action_taxonomy();
@@ -1768,7 +1768,7 @@ function ws_seed_employee_standard_taxonomy() {
  * 3.16.0: Hierarchy confirmed. opposition-clause, participation-clause, and
  *         child terms (opposing-practice, internal-objection, refusal-to-participate,
  *         filing-complaint, testifying, assisting-whistleblower, participation-support)
- *         already present. Gate bumped to 1.1.0 — re-seeding confirms structure.
+ *         already present. Gate bumped to 1.0.0 — re-seeding confirms structure.
  */
 function ws_seed_protected_action_taxonomy() {
    $hierarchy = [
