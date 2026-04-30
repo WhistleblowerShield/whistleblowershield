@@ -4,142 +4,379 @@ defined( 'ABSPATH' ) || exit;
 /**
  * acf-jx-statutes.php
  *
- * Registers ACF Pro fields for the `jx-statute` CPT.
+ * Canonical ACF field registry for the `jx-statute` CPT.
  *
- * PURPOSE
- * -------
- * Provides structured metadata for individual statutes, enabling granular
- * queries for deadlines, enforcement agencies, burden of proof standards,
- * and misconduct categories.
+ * This file intentionally treats field definitions as the source of truth.
+ * ACF registration and future prompt generation are both built from the same
+ * compact args table.
  *
- * GROUP: group_jx_statute_metadata
+ * Legacy baseline: acf-jx-statutes.legacy.20260429.php. The Antigravity
+ * first-pass file is retained only as a comparison artifact.
  *
- * FIELD SUMMARY
- * -------------
- * Legal Basis tab:
- *   ws_jx_statute_official_name                  Official Name (text, required)
- *   ws_jx_statute_citation                       Official Statute Citation (text, optional)
- *   ws_jx_statute_common_name                    Common Name (text, optional)
- *   ws_jx_statute_protected_disclosures               Disclosure Categories (multi_select, optional)
- *   ws_jx_statute_protected_classes              Protected Classes (multi_select, optional)
- *   ws_jx_statute_protected_class_details        Protected Class Details (textarea, optional)
- *   ws_jx_statute_employment_sectors             Employment Sectors (multi_select, optional)
- *   ws_jx_statute_disclosure_targets             Disclosure Targets (multi_select, optional)
- *   ws_jx_statute_disclosure_target_details      Disclosure Target Details (textarea, optional)
- *   ws_jx_statute_adverse_action_scope           Adverse Action Scope (textarea, optional)
- *   ws_jx_statute_has_attach_flag                Attach to Jurisdiction Page (true_false, optional)
- *   ws_jx_statute_display_order                  Display Order (number, conditional)
- *
- * Statute of Limitations & Deadlines tab:
- *   ws_jx_statute_sol_value                      Filing Window Value (number, optional)
- *   ws_jx_statute_sol_unit                       Time Unit (select, optional)
- *   ws_jx_statute_sol_trigger                    Deadline Trigger (select, optional)
- *   ws_jx_statute_has_limit_ambiguous            SOL Has Supplementary Detail (true_false, optional)
- *   ws_jx_statute_limit_details                  SOL Details (textarea, conditional)
- *   ws_jx_statute_has_tolling_details            Has Tolling Provisions (true_false, optional)
- *   ws_jx_statute_tolling_details                Tolling & Extension Details (textarea, conditional)
- *   ws_jx_statute_has_exhaustion_required        Exhaustion Required? (true_false, optional)
- *   ws_jx_statute_exhaustion_details             Exhaustion Procedure & Deadline (textarea, conditional)
- *
- * Enforcement tab:
- *   ws_jx_statute_process_types                  Process Types (multi_select, optional)
- *   ws_jx_statute_adverse_actions                Adverse Actions(multi_select, optional)
- *   ws_jx_statute_adverse_action_details         Adverse Action Details (textarea, optional)
- *   ws_jx_statute_fee_shifting                  Fee Shifting (multi_select, optional)
- *   ws_jx_statute_remedies                       Available remedies (multi_select, optional)
- *   ws_jx_statute_remedy_details                 Remedy Details (textarea, optional)
- *   ws_jx_statute_primary_agency                 Primary Oversight Agency (post_object, optional)
- *   ws_jx_statute_local_agencies                 Local Agencies (post_object, optional)
- *   ws_jx_statute_federal_agencies               Federal Agencies (post_object, optional)
- *   ws_jx_statute_enforcement_channel            Enforcement Channel Notes (textarea, optional)
- *   ws_jx_statute_has_employer_threshold         Has Employer Size Threshold (true_false, optional)
- *   ws_jx_statute_employer_threshold_details     Employer Threshold Details (textarea, optional, conditional)
- *   
- * Burden of Proof tab:
- *   ws_jx_statute_employee_standards             Employee Standards (multi_select, optional)
- *   ws_jx_statute_employee_standard_details      Employee Standard Details (textarea, optional)
- *   ws_jx_statute_employer_defenses              Employer Defenses (multi_select, optional)
- *   ws_jx_statute_employer_defense_details       Employer Defense Details (textarea, optional)
- *   ws_jx_statute_has_rebuttable_presumption     Rebuttable Presumption Exists (true_false, optional)
- *   ws_jx_statute_rebuttable_presumption         Rebuttable Presumption Details (textarea, conditional)
- *   ws_jx_statute_has_bop_details                BOP Has Supplementary Details (true_false, optional)
- *   ws_jx_statute_bop_details                    BOP Details (textarea, conditional)
- *   ws_jx_statute_bop_flag                       BOP Flag (text, optional)
- *
- * Reward tab:
- *   ws_jx_statute_has_reward_available           Reward Available (true_false, optional)
- *   ws_jx_statute_reward_details                 Reward Details (textarea, conditional)
- *
- * Links tab:
- *   ws_jx_statute_url                            Statute URL (url, optional)
- *   ws_jx_statute_url_is_pdf                     Link is PDF? (true_false, optional)
- *   ws_jx_statute_last_reviewed                  Last Verified Date (text, optional)
- * 
- * Relationships tab:
- *   ws_jx_statute_citation_ids                   Related Citations (relationship, optional)
- *   ws_jx_statute_construction_ids               Related Constructions (relationship, optional)
- *
- * Reference Materials tab:
- *   ws_jx_statute_ref_materials                  Reference Materials (relationship, optional)
- * 
- * Hidden fields:
- *   _ws_jx_statute_id                            Ingest Dedupe Code (text, hidden)
- *   _ws_auto_source_chain                        Source Chain [role|tool] (array, hidden, created by ingest) — Research Provenance
- *
- * SHARED WORKFLOW GROUPS
- * ----------------------
- *   - group_stamp_metadata (acf-stamp-fields.php, menu_order 90)
- *   - group_plain_english_metadata (acf-plain-english-fields.php, menu_order 85)
- *   - group_source_verify_metadata (acf-source-verify.php)
- *   - group_major_edit_metadata (acf-major-edit.php, menu_order 99)
- * 
- * SHARDED WORKFLOW FIELDS
- * -----------------------
- *  - auto-filled on save by ws_acf_write_stamp_fields()
- *    - ws_auto_last_edited_date            (text, readonly, date of last edit)
- *    - ws_auto_last_edited_author          (text, readonly, user id of last editor)
- *    - ws_auto_create_date                 (text, readonly, date authored)
- *    - ws_auto_create_author               (text, readonly, user id of author)
- *  - auto-checked on save by ws_acf_write_plain_english()
- *    - ws_has_plain_english                (true_false, defaults to false, enable to expose wysiwyg summary field)
- *    - ws_plain_english_wysiwyg            (wysiwyg, summary of legal record, conditional on ws_has_plain_english)
- *    - ws_plain_english_reviewed           (true_false, defaults to false, must be enabled by Admin to enable summary render)
- *  - auto-filled on save by ws_acf_write_plain_english() when ws_plain_english_wysiwyg is non-empty
- *    - ws_auto_plain_english_by            (user, readonly, user id when summary was last edited)
- *    - ws_auto_plain_english_date          (text, readonly, date of last edit to summary)
- *  - auto-filled on save by ws_acf_write_plain_english() when ws_plain_english_reviewed is true
- *    - ws_auto_plain_english_reviewed_by   (user, readonly, user id of Admin who approved summary)
- *    - ws_auto_plain_english_reviewed_date (text, readonly, date summary was approved)
- *  - auto-filled on post creation by ws_acf_write_source_method()
- *    - ws_auto_source_method               (text, readonly, set to method of post creation (e.g. "ai_research", "human_created", "matrix_seeded"))
- *    - ws_auto_source_name                 (text, readonly, "Direct" when human_created or matrix_seeded, auto-set when ingested to tool or feed name (e.g. NoteBookLM or Inoreader ))
- *  - auto-set on post creation by ws_acf_write_verification_status() — (conditional on ws_auto_source_name is non-empty AND is not 'Direct')
- *    - ws_verification_status              (select: unverified, verified, defaults to unverified — set to verified by Authors, Admins required to unverified)
- *    - ws_needs_review                     (true_false, default true — must be disabled by Admin to enable publishing)
- *  - auto-filled on save by ws_acf_write_verification_status() when ws_verification_status is true
- *    - ws_auto_verified_by                (user, readonly, user that verified the post)
- *    - ws_auto_verified_date              (text, readonly, date of verification)
- *  - auto-checked on save by ws_acf_write_major_edit() ws_is_major_edit true triggers legal-update post creation
- *    - ws_is_major_edit                   (true_false, set to true when manual edit warrants legal-update post)
- *    - ws_major_edit_description          (textarea, required when ws_is_major_edit is true, description of the edit for legal-update seed summary)
- *    - ws_major_edit_update_type          (select, required when ws_is_major_edit is true, legal-update type  — auto derives from source; override if necessary)
- * 
+ * Prompt group values:
+ *   0 = do not attach to prompt
+ *   1 = essential
+ *   2 = expected
+ *   3 = expected-if-found
+ *   4 = conditional
+ *   5 = optional
  *
  * @package    WhistleblowerShield
  * @since      2.0.0
- * @version    3.17.0
- * @author     Whistleblower Shield
- * @link       https://whistleblowershield.org
- * @copyright  Copyright (c) Whistleblower Shield
- *
+ * @version    4.0.0-draft
+ * 
  */
 
 add_action( 'acf/init', 'ws_register_acf_jx_statutes' );
+add_action( 'admin_init', 'ws_init_jx_statute_acf_fields' );
 
+/**
+ * Build and expose the canonical statute field table for admin tooling.
+ * 
+ */
+function ws_init_jx_statute_acf_fields() {
+    global $_ws_jx_statute_acf_fields;
+
+    $_ws_jx_statute_acf_fields = ws_get_jx_statute_acf_fields();
+}
+
+/**
+ * Return canonical, prefix-free statute ACF args.
+ *
+ * Field `name` values are stored without the `ws_jx_statute_` CPT infix.
+ * `ws_build_acf_field()` applies storage names and field keys at registration.
+ * 
+ */
+function ws_get_jx_statute_acf_tabs(): array {
+    return [
+        'identity' => [
+            'label'  => 'Identity & Publishing',
+            'fields' => [
+                [ 'name' => 'jurisdiction', 'label' => 'Jurisdiction', 'type' => 'taxonomy', 'taxonomy' => WS_JURISDICTION_TAXONOMY, 'field_type' => 'select', 'required' => 1, 'group' => 1 ],
+                [ 'name' => 'official_name', 'required' => 1, 'group' => 1 ],
+                [ 'name' => 'common_name', 'json_key' => 'title', 'group' => 5 ],
+                [ 'name' => 'citation', 'json_key' => 'official_citation', 'label' => 'Citation', 'required' => 1, 'group' => 1 ],
+                [ 'name' => 'protection_scope', 'type' => 'taxonomy', 'taxonomy' => 'ws_protection_scope', 'field_type' => 'select', 'group' => 2 ],
+                [ 'name' => 'general_description', 'type' => 'textarea', 'rows' => 4, 'group' => 2 ],
+                [ 'name' => 'has_attach_flag', 'group' => 0 ],
+                [ 'name' => 'display_order', 'type' => 'number', 'group' => 0, 'conditional' => [ 'field' => 'has_attach_flag', 'operator' => '==', 'value' => '1' ] ],
+            ],
+        ],
+
+        'effective_date' => [
+            'label'  => 'Effective Date',
+            'fields' => [
+                [ 'name' => 'date', 'json_key' => 'enacted_date', 'type' => 'date_picker', 'group' => 2 ],
+                [ 'name' => 'has_effective_date', 'group' => 0 ],
+                [ 'name' => 'effective_date', 'type' => 'date_picker', 'group' => 4, 'conditional' => [ 'field' => 'has_effective_date', 'operator' => '==', 'value' => '1' ] ],
+                [ 'name' => 'effective_year', 'type' => 'number', 'group' => 0, 'readonly' => 1 ],
+                [ 'name' => 'retro_date', 'type' => 'date_picker', 'group' => 4, 'sister' => 'retro_context' ],
+                [ 'name' => 'retro_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'retroactive-date' ] ],
+            ],
+        ],
+
+        'classifications' => [
+            'label'  => 'Classifications',
+            'fields' => [
+                [ 'name' => 'legal_recognitions', 'type' => 'taxonomy', 'taxonomy' => 'ws_legal_recognition', 'group' => 2 ],
+                [ 'name' => 'manager_rule_exclusion_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'manager-rule-exclusion' ] ],
+                [ 'name' => 'public_concern_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'public-concern-required' ] ],
+                [ 'name' => 'bad_faith_exclusion_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'bad-faith-exclusion' ] ],
+                [ 'name' => 'anonymity_protection_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'anonymity-protection' ] ],
+                [ 'name' => 'malicious_reporting_sanctions', 'type' => 'repeater', 'group' => 4, 'sub_fields' => [
+                    [ 'name' => 'sanction_conduct', 'type' => 'select', 'choices' => [ 'knowingly-false', 'reckless-disregard', 'bad-faith-motive', 'see-context' ] ],
+                    [ 'name' => 'sanction_penalty', 'type' => 'select', 'choices' => [ 'civil-fine', 'remedy-forfeiture', 'attorney-fee-shift', 'misdemeanor', 'felony', 'see-context' ] ],
+                ], 'sister' => 'malicious_reporting_context' ],
+                [ 'name' => 'malicious_reporting_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'malicious-reporting-sanctions' ] ],
+                [ 'name' => 'protected_action_standard', 'type' => 'select', 'choices' => [ 'per-se-protected', 'actual-violation', 'reasonable-belief', 'good-faith' ], 'group' => 4, 'sister' => 'protected_action_context' ],
+                [ 'name' => 'reasonable_belief_scope', 'type' => 'select', 'choices' => [ 'objective-only', 'subjective-only', 'dual-prong', 'see-context' ], 'group' => 4, 'sister' => 'reasonable_belief_context' ],
+                [ 'name' => 'reasonable_belief_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'protected_action_standard', 'operator' => '==', 'value' => 'reasonable-belief' ] ],
+                [ 'name' => 'protected_action_source', 'type' => 'select', 'multiple' => 1, 'choices' => [ 'constitutional', 'statutory', 'judicial', 'regulatory', 'executive', 'see-context' ], 'group' => 4, 'sister' => 'protected_action_context' ],
+                [ 'name' => 'protected_actions', 'json_key' => 'protected_activities', 'type' => 'taxonomy', 'taxonomy' => 'ws_protected_action', 'group' => 4, 'sister' => 'protected_action_context' ],
+                [ 'name' => 'protected_action_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'protected-action' ] ],
+                [ 'name' => 'protected_disclosures', 'type' => 'taxonomy', 'taxonomy' => 'ws_protected_disclosure', 'group' => 2 ],
+                [ 'name' => 'protected_classes', 'type' => 'taxonomy', 'taxonomy' => 'ws_protected_class', 'group' => 2 ],
+                [ 'name' => 'former_employee_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'protected_classes', 'taxonomy' => 'ws_protected_class', 'slug' => 'former-employee' ] ],
+                [ 'name' => 'protected_class_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'protected_classes', 'taxonomy' => 'ws_protected_class', 'slug' => 'has-details' ] ],
+                [ 'name' => 'excluded_classes', 'type' => 'taxonomy', 'taxonomy' => 'ws_excluded_class', 'group' => 4, 'sister' => 'excluded_class_context' ],
+                [ 'name' => 'excluded_class_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'excluded-class' ] ],
+                [ 'name' => 'excluded_class_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'excluded_classes', 'taxonomy' => 'ws_excluded_class', 'slug' => 'has-details' ] ],
+                [ 'name' => 'employment_sectors', 'json_key' => 'covered_sector', 'type' => 'taxonomy', 'taxonomy' => 'ws_employment_sector', 'group' => 2 ],
+                [ 'name' => 'disclosure_targets', 'type' => 'taxonomy', 'taxonomy' => 'ws_disclosure_target', 'group' => 2 ],
+                [ 'name' => 'disclosure_channel_scope', 'type' => 'select', 'choices' => [ 'any-channel', 'approved-channel-only', 'mandatory-internal-first', 'see-context' ], 'group' => 4, 'sister' => 'disclosure_channel_context' ],
+                [ 'name' => 'disclosure_format', 'type' => 'select', 'choices' => [ 'written-only', 'oral-permitted', 'either', 'has-details' ], 'group' => 4, 'sister' => 'disclosure_channel_context' ],
+                [ 'name' => 'disclosure_format_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'disclosure_format', 'operator' => '==', 'value' => 'has-details' ] ],
+                [ 'name' => 'disclosure_channel_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'protected_disclosures', 'taxonomy' => 'ws_protected_disclosure', 'slug' => 'has-channel-requirement' ] ],
+                [ 'name' => 'ic_channel_sequence_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'protected_disclosures', 'taxonomy' => 'ws_protected_disclosure', 'slug' => 'ic-channel-required' ] ],
+                [ 'name' => 'disclosure_target_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'disclosure_targets', 'taxonomy' => 'ws_disclosure_target', 'slug' => 'has-details' ] ],
+            ],
+        ],
+
+        'sol' => [
+            'label'  => 'Statute of Limitations & Thresholds',
+            'fields' => [
+                [ 'name' => 'sol_value', 'json_key' => 'statute_of_limitations', 'type' => 'number', 'group' => 2 ],
+                [ 'name' => 'sol_unit', 'json_key' => 'limit_unit', 'type' => 'select', 'choices' => [ 'days', 'weeks', 'months', 'years' ], 'group' => 2 ],
+                [ 'name' => 'sol_trigger', 'json_key' => 'limit_trigger', 'type' => 'select', 'choices' => [ 'filing-of-complaint', 'accrual', 'discovery-actual', 'discovery-constructive', 'discovery-notice', 'conclusion-of-admin-process', 'see-context' ], 'group' => 2 ],
+                [ 'name' => 'sol_trigger_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'sol_trigger', 'operator' => '!=empty' ] ],
+                [ 'name' => 'sol_trigger_event', 'type' => 'select', 'choices' => [ 'notice-of-action', 'occurrence-of-action', 'discovery-of-harm', 'constructive-discharge-accrual' ], 'group' => 3 ],
+                [ 'name' => 'has_sol_details', 'json_key' => 'limit_ambiguous', 'group' => 0 ],
+                [ 'name' => 'sol_details', 'json_key' => 'limit_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_sol_details', 'operator' => '==', 'value' => '1' ] ],
+                [ 'name' => 'sop_value', 'type' => 'number', 'group' => 4, 'sister' => 'statute_of_repose_context' ],
+                [ 'name' => 'sop_unit', 'type' => 'select', 'choices' => [ 'days', 'weeks', 'months', 'years' ], 'group' => 4, 'sister' => 'statute_of_repose_context' ],
+                [ 'name' => 'is_sop_tolling_available', 'group' => 4, 'sister' => 'statute_of_repose_context' ],
+                [ 'name' => 'statute_of_repose_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'statute-of-repose' ] ],
+                [ 'name' => 'statutory_tolling_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'statutory-tolling' ] ],
+                [ 'name' => 'equitable_tolling_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'equitable-tolling' ] ],
+                [ 'name' => 'cba_preemption_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'cba-grievance-preemption' ] ],
+                [ 'name' => 'amended_claim_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'amended-claim' ] ],
+                [ 'name' => 'exhaustion_required_class', 'type' => 'select', 'choices' => [ 'jurisdictional', 'claims-processing', 'waivable', 'see-context' ], 'group' => 4, 'sister' => 'exhaustion_required_context' ],
+                [ 'name' => 'exhaustion_required_context', 'json_key' => 'exhaustion_pathway', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'exhaustion-required' ] ],
+                [ 'name' => 'filing_notice_value', 'type' => 'number', 'group' => 4, 'sister' => 'filing_notice_context' ],
+                [ 'name' => 'filing_notice_unit', 'type' => 'select', 'choices' => [ 'days', 'weeks', 'months', 'years' ], 'group' => 4, 'sister' => 'filing_notice_context' ],
+                [ 'name' => 'filing_notice_target', 'type' => 'select', 'choices' => [ 'employer', 'agency', 'attorney-general', 'labor-board', 'see-context' ], 'group' => 4, 'sister' => 'filing_notice_context' ],
+                [ 'name' => 'filing_notice_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'pre-filing-notice' ] ],
+                [ 'name' => 'has_employer_threshold', 'group' => 0 ],
+                [ 'name' => 'threshold_compare', 'type' => 'select', 'choices' => [ 'gte', 'lte', 'gt', 'lt', 'eq' ], 'group' => 4, 'sister' => 'employer_threshold_details' ],
+                [ 'name' => 'threshold_value', 'type' => 'number', 'group' => 4, 'sister' => 'employer_threshold_details' ],
+                [ 'name' => 'threshold_unit', 'type' => 'select', 'choices' => [ 'employees', 'contractors', 'workers', 'fte' ], 'group' => 4, 'sister' => 'employer_threshold_details' ],
+                [ 'name' => 'employer_threshold_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_employer_threshold', 'operator' => '==', 'value' => '1' ] ],
+                [ 'name' => 'has_cure_period', 'group' => 0 ],
+                [ 'name' => 'cure_period_value', 'type' => 'number', 'group' => 4, 'sister' => 'cure_period_details' ],
+                [ 'name' => 'cure_period_unit', 'type' => 'select', 'choices' => [ 'days', 'weeks', 'months', 'years' ], 'group' => 4, 'sister' => 'cure_period_details' ],
+                [ 'name' => 'cure_period_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_cure_period', 'operator' => '==', 'value' => '1' ] ],
+                [ 'name' => 'has_preemption', 'group' => 0 ],
+                [ 'name' => 'preemption_direction', 'type' => 'select', 'choices' => [ 'federal-preempts-state', 'state-not-preempted', 'partial', 'see-details' ], 'group' => 4, 'sister' => 'preemption_details' ],
+                [ 'name' => 'preemption_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_preemption', 'operator' => '==', 'value' => '1' ] ],
+            ],
+        ],
+
+        'retaliation' => [
+            'label'  => 'Retaliation',
+            'fields' => [
+                [ 'name' => 'adverse_actions', 'type' => 'taxonomy', 'taxonomy' => 'ws_adverse_action', 'group' => 2 ],
+                [ 'name' => 'adverse_action_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'adverse_actions', 'taxonomy' => 'ws_adverse_action', 'slug' => 'has-details' ] ],
+                [ 'name' => 'adverse_action_scope', 'type' => 'select', 'choices' => [ 'termination-only', 'material-adverse', 'broad-any-adverse-action', 'see-context' ], 'group' => 2 ],
+                [ 'name' => 'adverse_action_scope_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'adverse_action_scope', 'operator' => '!=empty' ] ],
+                [ 'name' => 'constructive_discharge_standard', 'type' => 'select', 'choices' => [ 'objective-intolerability', 'intent-required', 'dual-prong', 'see-context' ], 'group' => 4, 'sister' => 'constructive_discharge_context' ],
+                [ 'name' => 'constructive_discharge_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'adverse_actions', 'taxonomy' => 'ws_adverse_action', 'slug' => 'constructive-discharge' ] ],
+                [ 'name' => 'is_evidence_collection_protected', 'group' => 3 ],
+                [ 'name' => 'anticipatory_retaliation_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'adverse_actions', 'taxonomy' => 'ws_adverse_action', 'slug' => 'anticipatory-retaliation' ] ],
+                [ 'name' => 'cats_paw_liability_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'cats-paw-liability' ] ],
+                [ 'name' => 'is_cats_paw_liability_extended', 'group' => 4, 'sister' => 'cats_paw_liability_context' ],
+                [ 'name' => 'third_party_retaliation_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'third-party-retaliation' ] ],
+                [ 'name' => 'criminal_sanctions', 'type' => 'repeater', 'group' => 4, 'sub_fields' => [
+                    [ 'name' => 'sanction_conduct', 'type' => 'select', 'choices' => [ 'retaliation', 'disclosure', 'false-report', 'obstruction', 'see-context' ] ],
+                    [ 'name' => 'sanction_level', 'type' => 'select', 'choices' => [ 'misdemeanor', 'felony', 'see-context' ] ],
+                ], 'sister' => 'criminal_sanctions_context' ],
+                [ 'name' => 'criminal_sanctions_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'criminal-sanctions' ] ],
+                [ 'name' => 'has_blacklisting_protection', 'group' => 0 ],
+                [ 'name' => 'blacklisting_protection_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_blacklisting_protection', 'operator' => '==', 'value' => '1' ] ],
+            ],
+        ],
+
+        'process_remedies' => [
+            'label'  => 'Process & Remedies',
+            'fields' => [
+                [ 'name' => 'process_types', 'type' => 'taxonomy', 'taxonomy' => 'ws_process_type', 'group' => 2 ],
+                [ 'name' => 'primary_agency', 'type' => 'post_object', 'post_type' => [ 'ws-agency' ], 'multiple' => 0, 'group' => 3 ],
+                [ 'name' => 'local_agencies', 'type' => 'post_object', 'post_type' => [ 'ws-agency' ], 'multiple' => 1, 'group' => 3 ],
+                [ 'name' => 'federal_agencies', 'type' => 'post_object', 'post_type' => [ 'ws-agency' ], 'multiple' => 1, 'group' => 3 ],
+                [ 'name' => 'enforcement_priority', 'type' => 'select', 'choices' => [ 'agency-first', 'court-first', 'either', 'sequential' ], 'group' => 2 ],
+                [ 'name' => 'enforcement_channel', 'type' => 'textarea', 'rows' => 3, 'group' => 2 ],
+                [ 'name' => 'private_roa_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'private-right-of-action' ] ],
+                [ 'name' => 'jury_trial_scope', 'type' => 'select', 'choices' => [ 'all-claims', 'damages-only', 'liability-only', 'see-context' ], 'group' => 4, 'sister' => 'jury_trial_context' ],
+                [ 'name' => 'jury_trial_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'jury-trial' ] ],
+                [ 'name' => 'fee_shifting_rules', 'type' => 'taxonomy', 'taxonomy' => 'ws_fee_shifting_rule', 'group' => 2 ],
+                [ 'name' => 'fee_shifting_rule_phases', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'fee_shifting_rules', 'taxonomy' => 'ws_fee_shifting_rule', 'slug' => 'has-phases' ] ],
+                [ 'name' => 'fee_shifting_rule_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'fee_shifting_rules', 'taxonomy' => 'ws_fee_shifting_rule', 'slug' => 'has-details' ] ],
+                [ 'name' => 'fee_shifting_asymmetry', 'type' => 'select', 'choices' => [ 'one-way-plaintiff', 'one-way-defendant-frivolous', 'two-way', 'american-rule', 'has-details' ], 'group' => 2 ],
+                [ 'name' => 'fee_shifting_asymmetry_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'fee_shifting_asymmetry', 'operator' => '==', 'value' => 'has-details' ] ],
+                [ 'name' => 'remedies', 'json_key' => 'available_remedies', 'type' => 'taxonomy', 'taxonomy' => 'ws_remedy', 'group' => 2 ],
+                [ 'name' => 'remedy_limits', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'remedies', 'taxonomy' => 'ws_remedy', 'slug' => 'has-limits' ] ],
+                [ 'name' => 'remedy_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'remedies', 'taxonomy' => 'ws_remedy', 'slug' => 'has-details' ] ],
+                [ 'name' => 'remedy_liquidated_multiplier', 'type' => 'select', 'choices' => [ 'double', 'treble', '2x-back-pay', '2x-wages-lost', 'statutory-formula', 'statutory-daily-fine', 'up-to-double', 'up-to-treble', 'has-details' ], 'group' => 4, 'conditional' => [ 'field' => 'remedies', 'taxonomy' => 'ws_remedy', 'slug' => 'liquidated-damages' ] ],
+                [ 'name' => 'remedy_liquidated_formula', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'remedy_liquidated_multiplier', 'operator' => '==', 'value' => 'statutory-formula' ] ],
+                [ 'name' => 'remedy_liquidated_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'remedy_liquidated_multiplier', 'operator' => '==', 'value' => 'has-details' ] ],
+                [ 'name' => 'mitigation_required', 'type' => 'select', 'choices' => [ 'yes-statutory', 'yes-common-law', 'no', 'has-details' ], 'group' => 2 ],
+                [ 'name' => 'mitigation_required_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'mitigation_required', 'operator' => '==', 'value' => 'has-details' ] ],
+                [ 'name' => 'preliminary_reinstatement_standard', 'type' => 'select', 'choices' => [ 'mandatory', 'discretionary', 'has-details' ], 'group' => 4, 'sister' => 'preliminary_reinstatement_context' ],
+                [ 'name' => 'reinstatement_standard_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'preliminary_reinstatement_standard', 'operator' => '==', 'value' => 'has-details' ] ],
+                [ 'name' => 'preliminary_reinstatement_scope', 'type' => 'select', 'choices' => [ 'admin-phase', 'full-pendency', 'both' ], 'group' => 4, 'sister' => 'preliminary_reinstatement_context' ],
+                [ 'name' => 'preliminary_reinstatement_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'preliminary-reinstatement' ] ],
+                [ 'name' => 'mixed_motive_remedy_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'burden_shifting_framework', 'operator' => '==', 'value' => 'mixed-motive' ] ],
+                [ 'name' => 'election_of_remedies_rules', 'type' => 'select', 'multiple' => 1, 'choices' => [ 'administrative-bars-civil', 'state-bars-federal', 'remedy-exclusivity', 'first-filed-controls', 'no-election-required', 'see-context' ], 'group' => 2 ],
+                [ 'name' => 'election_of_remedies_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'election_of_remedies_rules', 'operator' => '!=empty' ] ],
+            ],
+        ],
+
+        'waiver_scope' => [
+            'label'  => 'Waiver & Scope',
+            'fields' => [
+                [ 'name' => 'civil_action_waiver_scope', 'type' => 'select', 'choices' => [ 'prohibited', 'permitted-individual-only', 'permitted-collective', 'anti', 'see-context' ], 'group' => 2 ],
+                [ 'name' => 'civil_action_waiver_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'civil_action_waiver_scope', 'operator' => '!=empty' ] ],
+                [ 'name' => 'contractual_waiver_scope', 'type' => 'select', 'choices' => [ 'void', 'limited', 'enforceable', 'void-public-policy', 'void-as-to-whistleblowing', 'enforceable-with-exceptions', 'see-context' ], 'group' => 4, 'sister' => 'contractual_waiver_context' ],
+                [ 'name' => 'contractual_waiver_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'contractual-waiver' ] ],
+                [ 'name' => 'waiver_of_collateral_claims_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'waiver-of-collateral-claims' ] ],
+                [ 'name' => 'proper_defendants', 'type' => 'select', 'multiple' => 1, 'choices' => [ 'employer-entity-only', 'individual-supervisors', 'government-agency-only', 'contractors-included', 'successor-employer', 'joint-employer', 'staffing-agency', 'scope-of-employment-required', 'has-details' ], 'group' => 2 ],
+                [ 'name' => 'proper_defendant_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'proper_defendants', 'operator' => '==', 'value' => 'has-details' ] ],
+                [ 'name' => 'joint_employer_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'relation' => 'OR', 'rules' => [
+                    [ 'field' => 'proper_defendants', 'operator' => '==', 'value' => 'joint-employer' ],
+                    [ 'field' => 'proper_defendants', 'operator' => '==', 'value' => 'staffing-agency' ],
+                ] ] ],
+                [ 'name' => 'individual_liability_scope', 'type' => 'select', 'multiple' => 1, 'choices' => [ 'supervisor', 'coworker', 'officer-director', 'any-individual', 'has-details' ], 'group' => 4, 'sister' => 'individual_liability_context' ],
+                [ 'name' => 'individual_liability_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'individual-liability' ] ],
+                [ 'name' => 'sovereign_immunity_limits', 'type' => 'select', 'multiple' => 1, 'choices' => [ 'not-waived', 'partially-waived', 'fully-waived', 'cap-applies', 'conditions-apply', 'has-details' ], 'group' => 2 ],
+                [ 'name' => 'sovereign_immunity_scope', 'type' => 'select', 'choices' => [ 'state-only', 'instrumentalities-included', 'political-subdivisions-included', 'all', 'see-details' ], 'group' => 4, 'sister' => 'sovereign_immunity_limits_details' ],
+                [ 'name' => 'sovereign_immunity_waiver', 'type' => 'select', 'choices' => [ 'explicit-waiver', 'implied-waiver', 'none', 'not-applicable' ], 'group' => 4, 'sister' => 'sovereign_immunity_limits_details' ],
+                [ 'name' => 'sovereign_immunity_limits_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'sovereign_immunity_limits', 'operator' => '==', 'value' => 'has-details' ] ],
+                [ 'name' => 'nda_limits_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'nda-limitations' ] ],
+                [ 'name' => 'anti_gag_provision_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'anti-gag-provision' ] ],
+                [ 'name' => 'no_retaliatory_evidence_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'no-retaliatory-evidence' ] ],
+                [ 'name' => 'stay_of_discipline_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'stay-of-disciplinary-action' ] ],
+                [ 'name' => 'anti_slapp_protection_scope', 'type' => 'select', 'choices' => [ 'motion-to-strike', 'discovery-stay', 'fee-shift-on-motion', 'full-procedural', 'see-context' ], 'group' => 4, 'sister' => 'anti_slapp_protection_context' ],
+                [ 'name' => 'anti_slapp_protection_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'anti-slapp-protection' ] ],
+                [ 'name' => 'discovery_protection_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'discovery-protection' ] ],
+                [ 'name' => 'settlement_restriction_scope', 'type' => 'select', 'choices' => [ 'amount-only', 'facts', 'full-prohibition', 'agency-notification', 'see-context' ], 'group' => 4, 'sister' => 'settlement_restriction_context' ],
+                [ 'name' => 'settlement_restriction_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'confidential-settlement-restriction' ] ],
+                [ 'name' => 'successor_liability_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'successor-liability' ] ],
+                [ 'name' => 'extraterritorial_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'extraterritorial-coverage' ] ],
+            ],
+        ],
+
+        'bop' => [
+            'label'  => 'Burden Of Proof',
+            'fields' => [
+                [ 'name' => 'has_burden_shifting', 'group' => 0 ],
+                [ 'name' => 'burden_shifting_framework', 'type' => 'select', 'choices' => [ 'mcdonnell-douglas', 'motivating-factor', 'but-for', 'mixed-motive', 'see-context' ], 'choice_labels' => [ 'mcdonnell-douglas' => 'McDonnell Douglas' ], 'group' => 2, 'sister' => 'burden_shifting_details' ],
+                [ 'name' => 'burden_shifting_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'burden_shifting_framework', 'operator' => '!=empty' ] ],
+                [ 'name' => 'burden_shifting_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'burden_shifting_framework', 'operator' => '!=empty' ] ],
+                [ 'name' => 'employee_standards', 'type' => 'taxonomy', 'taxonomy' => 'ws_employee_standard', 'group' => 2 ],
+                [ 'name' => 'employee_standard_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'employee_standards', 'taxonomy' => 'ws_employee_standard', 'slug' => 'has-details' ] ],
+                [ 'name' => 'causation_standards', 'type' => 'taxonomy', 'taxonomy' => 'ws_causation_standard', 'group' => 2 ],
+                [ 'name' => 'causation_application', 'type' => 'select', 'multiple' => 1, 'choices' => [ 'liability', 'damages', 'both', 'has-details' ], 'group' => 4, 'sister' => 'causation_standard_context' ],
+                [ 'name' => 'causation_application_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'causation_application', 'operator' => '==', 'value' => 'has-details' ] ],
+                [ 'name' => 'causation_standard_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'causation_standards', 'operator' => '!=empty' ] ],
+                [ 'name' => 'employer_knowledge_scope', 'type' => 'select', 'choices' => [ 'actual-knowledge', 'constructive-knowledge', 'inferred-knowledge', 'imputed-knowledge', 'has-details' ], 'group' => 4, 'sister' => 'employer_knowledge_context' ],
+                [ 'name' => 'employer_knowledge_scope_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'employer_knowledge_scope', 'operator' => '==', 'value' => 'has-details' ] ],
+                [ 'name' => 'employer_knowledge_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'employer-knowledge' ] ],
+                [ 'name' => 'employer_defenses', 'type' => 'taxonomy', 'taxonomy' => 'ws_employer_defense', 'group' => 2 ],
+                [ 'name' => 'employer_defense_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'employer_defenses', 'taxonomy' => 'ws_employer_defense', 'slug' => 'has-details' ] ],
+                [ 'name' => 'has_rebuttable_presumption', 'group' => 0 ],
+                [ 'name' => 'rebuttable_presumption_details', 'json_key' => 'rebuttable_presumption', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_rebuttable_presumption', 'operator' => '==', 'value' => '1' ] ],
+                [ 'name' => 'has_temporal_presumption', 'group' => 0 ],
+                [ 'name' => 'presumption_window_value', 'type' => 'number', 'group' => 4, 'sister' => 'temporal_presumption_details' ],
+                [ 'name' => 'presumption_window_unit', 'type' => 'select', 'choices' => [ 'days', 'weeks', 'months', 'years' ], 'group' => 4, 'sister' => 'temporal_presumption_details' ],
+                [ 'name' => 'presumption_effect', 'type' => 'select', 'choices' => [ 'shifts-burden', 'creates-inference', 'rebuttable-presumption', 'has-details' ], 'group' => 4, 'sister' => 'temporal_presumption_details' ],
+                [ 'name' => 'presumption_effect_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'presumption_effect', 'operator' => '==', 'value' => 'has-details' ] ],
+                [ 'name' => 'temporal_presumption_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_temporal_presumption', 'operator' => '==', 'value' => '1' ] ],
+                [ 'name' => 'has_bop_details', 'group' => 0 ],
+                [ 'name' => 'bop_details', 'json_key' => 'burden_of_proof_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_bop_details', 'operator' => '==', 'value' => '1' ] ],
+            ],
+        ],
+
+        'reward' => [
+            'label'  => 'Reward',
+            'fields' => [
+                [ 'name' => 'has_reward', 'json_key' => 'has_reward_available', 'group' => 0 ],
+                [ 'name' => 'reward_discretion_standard', 'type' => 'select', 'choices' => [ 'mandatory', 'discretionary', 'presumptive', 'formula-based', 'has-details' ], 'group' => 4, 'sister' => 'reward_details' ],
+                [ 'name' => 'reward_discretion_formula', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'reward_discretion_standard', 'operator' => '==', 'value' => 'formula-based' ] ],
+                [ 'name' => 'reward_discretion_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'reward_discretion_standard', 'operator' => '==', 'value' => 'has-details' ] ],
+                [ 'name' => 'reward_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_reward', 'operator' => '==', 'value' => '1' ] ],
+                [ 'name' => 'qui_tam_government_share', 'group' => 4, 'sister' => 'qui_tam_share_context' ],
+                [ 'name' => 'qui_tam_relator_share', 'group' => 4, 'sister' => 'qui_tam_share_context' ],
+                [ 'name' => 'qui_tam_reduction_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'sister' => 'qui_tam_share_context' ],
+                [ 'name' => 'qui_tam_share_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'process_types', 'taxonomy' => 'ws_process_type', 'slug' => 'qui-tam' ] ],
+                [ 'name' => 'has_first_to_file_bar', 'group' => 0 ],
+                [ 'name' => 'first_to_file_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_first_to_file_bar', 'operator' => '==', 'value' => '1' ] ],
+                [ 'name' => 'has_public_disclosure_bar', 'group' => 0 ],
+                [ 'name' => 'public_disclosure_bar_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_public_disclosure_bar', 'operator' => '==', 'value' => '1' ] ],
+            ],
+        ],
+
+        'relationships' => [
+            'label'  => 'Relationships',
+            'fields' => [
+                [ 'name' => 'ref_materials', 'type' => 'post_object', 'post_type' => [ 'ws-reference' ], 'multiple' => 1, 'return_format' => 'object', 'group' => 5 ],
+                [ 'name' => 'citation_ids', 'type' => 'relationship', 'post_type' => [ 'jx-citation' ], 'group' => 0 ],
+                [ 'name' => 'construction_ids', 'type' => 'relationship', 'post_type' => [ 'jx-construction' ], 'group' => 0 ],
+                [ 'name' => 'overruled_by_id', 'type' => 'post_object', 'post_type' => [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ], 'multiple' => 0, 'group' => 0 ],
+            ],
+        ],
+
+        'source_audit' => [
+            'label'  => 'Source / Audit',
+            'fields' => [
+                [ 'name' => 'last_reviewed_date', 'type' => 'date_picker', 'group' => 0 ],
+                [ 'name' => 'url', 'json_key' => 'statute_url', 'type' => 'url', 'group' => 2 ],
+                [ 'name' => 'url_is_pdf', 'group' => 3 ],
+                [ 'name' => 'authority_reference', 'type' => 'textarea', 'rows' => 3, 'group' => 3 ],
+            ],
+        ],
+
+        'hidden' => [
+            'label'  => 'Hidden',
+            'fields' => [
+                [ 'name' => '_id', 'group' => 0 ],
+                [ 'name' => '_disclosure_target_class', 'type' => 'select', 'choices' => [ 'internal', 'external', 'both' ], 'group' => 0 ],
+                [ 'name' => '_precedent_ids', 'type' => 'relationship', 'post_type' => [ 'jx-citation', 'jx-construction' ], 'group' => 0 ],
+                [ 'name' => '_primary_agency_is_fed', 'group' => 0 ],
+                [ 'name' => '_related_agencies', 'type' => 'post_object', 'post_type' => [ 'ws-agency' ], 'multiple' => 1, 'group' => 0 ],
+            ],
+        ],
+    ];
+}
+
+/**
+ * Return the statute ACF table with field-level metadata normalized.
+ *
+ * The raw table is grouped by tab for human readability. This pass stores the
+ * tab key on each field so the same field args can drive ACF registration,
+ * ingest mapping, and prompt JSON grouping without recomputing context later.
+ * 
+ */
+function ws_get_jx_statute_acf_fields(): array {
+    $tabs = ws_get_jx_statute_acf_tabs();
+
+    foreach ( $tabs as $tab_key => &$tab ) {
+        foreach ( $tab['fields'] as &$field ) {
+            $field['tab']          = $field['tab'] ?? $tab_key;
+            $field['json_key']     = $field['name'];
+            $field['json_path']    = $field['json_path'] ?? $field['tab'] . '.' . $field['json_key'];
+            $field['prompt_group'] = (int) ( $field['group'] ?? 0 );
+        }
+        unset( $field );
+    }
+    unset( $tab );
+
+    return $tabs;
+}
+
+/**
+ * Register the statute ACF group from the canonical field table.
+ * 
+ */
 function ws_register_acf_jx_statutes() {
-
     if ( ! function_exists( 'acf_add_local_field_group' ) ) {
         return;
+    }
+
+    $fields = [];
+    $tabs   = ws_get_jx_statute_acf_fields();
+
+    foreach ( $tabs as $tab_key => $tab ) {
+        if ( 'hidden' !== $tab_key ) {
+            $fields[] = [
+                'key'       => "field_jx_statute_{$tab_key}_tab",
+                'label'     => $tab['label'],
+                'type'      => 'tab',
+                'placement' => 'top',
+            ];
+        }
+
+        foreach ( $tab['fields'] as $field_args ) {
+            $fields[] = ws_build_acf_field( $field_args, $tab_key, 'statute' );
+        }
     }
 
     acf_add_local_field_group( [
@@ -151,784 +388,342 @@ function ws_register_acf_jx_statutes() {
         'label_placement'       => 'top',
         'instruction_placement' => 'label',
         'active'                => true,
-
-        'location' => [ [ [
+        'location'              => [ [ [
             'param'    => 'post_type',
             'operator' => '==',
             'value'    => 'jx-statute',
         ] ] ],
-
-        'fields' => [
-
-            // ────────────────────────────────────────────────────────────────
-            // Tab: Legal Basis
-            // ────────────────────────────────────────────────────────────────
-
-            [
-                'key'   => 'field_jx_statute_legal_basis_tab',
-                'label' => 'Legal Basis',
-                'type'  => 'tab',
-            ],
-
-            [
-                'key'          => 'field_jx_statute_official_name',
-                'label'        => 'Official Name',
-                'name'         => 'ws_jx_statute_official_name',
-                'type'         => 'text',
-                'instructions' => 'Use standard legal notation, e.g., "California Labor Code § 1102.5" or "5 U.S.C. § 2302".',
-                'required'     => 1,
-            ],
-
-            [
-                'key'          => 'field_jx_statute_citation',
-                'label'        => 'Official Statute Citation',
-                'name'         => 'ws_jx_statute_citation',
-                'type'         => 'text',
-                'instructions' => 'Short-form legal citation, e.g., "Cal. Lab. Code § 1102.5" or "42 U.S.C. § 5851".',
-                'required'     => 0,
-            ],
-
-            [
-                'key'          => 'field_jx_statute_common_name',
-                'label'        => 'Common Name',
-                'name'         => 'ws_jx_statute_common_name',
-                'type'         => 'text',
-                'instructions' => 'Informal or widely-used name for this statute, if one exists — e.g., "Sarbanes-Oxley" or "False Claims Act". Leave blank if no common name applies.',
-                'required'     => 0,
-            ],
-
-            [
-                'key'           => 'field_jx_statute_protected_disclosures',
-                'label'         => 'Disclosure Categories',
-                'name'          => 'ws_jx_statute_protected_disclosures',
-                'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_protected_disclosure',
-                'field_type'    => 'multi_select',
-                'instructions'  => 'Classify the types of misconduct this law protects.',
-                'add_term'      => 0,
-                'save_terms'    => 1,
-                'load_terms'    => 1,
-                'return_format' => 'id',
-            ],
-
-            [
-                'key'           => 'field_jx_statute_protected_classes',
-                'label'         => 'Protected Class',
-                'name'          => 'ws_jx_statute_protected_classes',
-                'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_protected_class',
-                'field_type'    => 'multi_select',
-                'instructions'  => 'Select the employee types or worker classifications protected by this statute.',
-                'add_term'      => 0,
-                'save_terms'    => 1,
-                'load_terms'    => 1,
-                'return_format' => 'id',
-            ],
-
-            [
-                'key'          => 'field_jx_statute_protected_class_details',
-                'label'        => 'Protected Class Details',
-                'name'         => 'ws_jx_statute_protected_class_details',
-                'type'         => 'textarea',
-                'rows'         => 3,
-                'instructions' => 'Describe nuance in the covered worker classifications — e.g., eligibility thresholds, exclusions, or statutory language distinguishing coverage.',
-                // conditional_logic set dynamically — see ws_jx_statute_details_conditional()
-            ],
-
-            [
-                'key'           => 'field_jx_statute_employment_sectors',
-                'label'         => 'Employment Sectors',
-                'name'          => 'ws_jx_statute_employment_sectors',
-                'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_employment_sector',
-                'field_type'    => 'multi_select',
-                'instructions'  => 'Employment sectors this statute explicitly covers. Tag only what the statute text supports.',
-                'required'      => 0,
-                'add_term'      => 0,
-                'save_terms'    => 1,
-                'load_terms'    => 1,
-                'return_format' => 'id',
-            ],
-
-            [
-                'key'           => 'field_jx_statute_disclosure_targets',
-                'label'         => 'Disclosure Targets',
-                'name'          => 'ws_jx_statute_disclosure_targets',
-                'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_disclosure_target',
-                'field_type'    => 'multi_select',
-                'instructions'  => 'Who must the disclosure be made to for protection to apply under this statute?',
-                'add_term'      => 0,
-                'save_terms'    => 1,
-                'load_terms'    => 1,
-                'return_format' => 'id',
-            ],
-
-            [
-                'key'          => 'field_jx_statute_disclosure_target_details',
-                'label'        => 'Disclosure Targets Details',
-                'name'         => 'ws_jx_statute_disclosure_target_details',
-                'type'         => 'textarea',
-                'rows'         => 3,
-                'instructions' => 'Describe any conditions, ordering requirements, or statutory language that affects which reporting channels qualify for protection.',
-                // conditional_logic set dynamically — see ws_jx_statute_details_conditional()
-            ],
-
-            [
-                'key'          => 'field_jx_statute_adverse_action_scope',
-                'label'        => 'Adverse Action Scope',
-                'name'         => 'ws_jx_statute_adverse_action_scope',
-                'type'         => 'textarea',
-                'rows'         => 3,
-                'instructions' => 'Describe the specific workplace actions this statute considers adverse, where the taxonomy terms do not fully capture the statutory scope or nuance.',
-                'required'     => 0,
-            ],
-
-            [
-                'key'           => 'field_jx_statute_has_attach_flag',
-                'label'         => 'Attach to Jurisdiction Page',
-                'name'          => 'ws_jx_statute_has_attach_flag',
-                'type'          => 'true_false',
-                'instructions'  => 'Enable to include this statute in the rendered statutes section on the jurisdiction page. Disable to store for reference only.',
-                'ui'            => 1,
-                'ui_on_text'    => 'Attached',
-                'ui_off_text'   => 'Unattached',
-                'default_value' => 0,
-            ],
-
-            [
-                'key'               => 'field_jx_statute_display_order',
-                'label'             => 'Display Order',
-                'name'              => 'ws_jx_statute_display_order',
-                'type'              => 'number',
-                'instructions'      => 'Set the order in which this statute appears on the jurisdiction page. Lower numbers appear first.',
-                'min'               => 1,
-                'step'              => 1,
-                'conditional_logic' => [ [ [
-                    'field'    => 'field_jx_statute_has_attach_flag',
-                    'operator' => '==',
-                    'value'    => '1',
-                ] ] ],
-            ],
-
-            // ────────────────────────────────────────────────────────────────
-            // Tab: Statute of Limitations
-            // ────────────────────────────────────────────────────────────────
-
-            [
-                'key'   => 'field_jx_statute_sol_deadlines_tab',
-                'label' => 'Statute of Limitations & Deadlines',
-                'type'  => 'tab',
-            ],
-
-            [
-                'key'          => 'field_jx_statute_sol_value',
-                'label'        => 'Filing Window Value',
-                'name'         => 'ws_jx_statute_sol_value',
-                'type'         => 'number',
-                'instructions' => 'The numeric count for the deadline.',
-                'min'          => 1,
-                'step'         => 1,
-                'wrapper'      => [ 'width' => '30' ],
-            ],
-
-            [
-                'key'           => 'field_jx_statute_sol_unit',
-                'label'         => 'Time Unit',
-                'name'          => 'ws_jx_statute_sol_unit',
-                'type'          => 'select',
-                'choices'       => [
-                    'days'   => 'Days',
-                    'months' => 'Months',
-                    'years'  => 'Years',
-                ],
-                'default_value' => 'days',
-                'allow_null'    => 0,
-                'ui'            => 1,
-                'return_format' => 'value',
-                'wrapper'       => [ 'width' => '30' ],
-            ],
-
-            [
-                'key'           => 'field_jx_statute_sol_trigger',
-                'label'         => 'Deadline Trigger',
-                'name'          => 'ws_jx_statute_sol_trigger',
-                'type'          => 'select',
-                'instructions'  => 'When does the clock start ticking?',
-                'choices'       => [
-                    'adverse_action' => 'Date of Adverse Action',
-                    'discovery'      => 'Date of Discovery',
-                    'violation'      => 'Date of Violation',
-                ],
-                'allow_null'    => 1,
-                'ui'            => 1,
-                'return_format' => 'value',
-                'wrapper'       => [ 'width' => '40' ],
-            ],
-
-            [
-                'key'           => 'field_jx_statute_has_limit_ambiguous',
-                'label'         => 'SOL Has Supplementary Detail',
-                'name'          => 'ws_jx_statute_has_limit_ambiguous',
-                'type'          => 'true_false',
-                'instructions'  => 'Enable to add a detail note — e.g., the deadline is derived from a general civil procedure statute rather than stated in this law.',
-                'ui'            => 1,
-                'ui_on_text'    => 'Yes',
-                'ui_off_text'   => 'No',
-                'default_value' => 0,
-            ],
-
-            [
-                'key'               => 'field_jx_statute_limit_details',
-                'label'             => 'SOL Details',
-                'name'              => 'ws_jx_statute_limit_details',
-                'type'              => 'textarea',
-                'rows'              => 3,
-                'instructions'      => 'Describe anything a reviewer should know about this deadline — derivation source, dual-period situations, or other nuance.',
-                'conditional_logic' => [ [ [
-                    'field'    => 'field_jx_statute_has_limit_ambiguous',
-                    'operator' => '==',
-                    'value'    => '1',
-                ] ] ],
-            ],
-
-            [
-                'key'           => 'field_jx_statute_has_tolling_details',
-                'label'         => 'Tolling Provisions Exist',
-                'name'          => 'ws_jx_statute_has_tolling_details',
-                'type'          => 'true_false',
-                'instructions'  => 'Enable if this statute has identified tolling or extension conditions.',
-                'ui'            => 1,
-                'ui_on_text'    => 'Yes',
-                'ui_off_text'   => 'No',
-                'default_value' => 0,
-            ],
-
-            [
-                'key'               => 'field_jx_statute_tolling_details',
-                'label'             => 'Tolling & Extension Details',
-                'name'              => 'ws_jx_statute_tolling_details',
-                'type'              => 'textarea',
-                'rows'              => 3,
-                'instructions'      => 'Describe specific conditions that pause or extend the statutory clock.',
-                'conditional_logic' => [ [ [
-                    'field'    => 'field_jx_statute_has_tolling_details',
-                    'operator' => '==',
-                    'value'    => '1',
-                ] ] ],
-            ],
-
-            [
-                'key'           => 'field_jx_statute_has_exhaustion_required',
-                'label'         => 'Exhaustion Required?',
-                'name'          => 'ws_jx_statute_has_exhaustion_required',
-                'type'          => 'true_false',
-                'instructions'  => 'Must the whistleblower file with an agency before going to court?',
-                'ui'            => 1,
-                'ui_on_text'    => 'Yes',
-                'ui_off_text'   => 'No',
-                'default_value' => 0,
-                'wrapper'       => [ 'width' => '30' ],
-            ],
-
-            [
-                'key'               => 'field_jx_statute_exhaustion_details',
-                'label'             => 'Exhaustion Procedure & Deadline',
-                'name'              => 'ws_jx_statute_exhaustion_details',
-                'type'              => 'textarea',
-                'rows'              => 3,
-                'instructions'      => 'Describe the agency filing deadline (e.g., 90 days to OSHA).',
-                'required'          => 1,
-                'conditional_logic' => [ [ [
-                    'field'    => 'field_jx_statute_has_exhaustion_required',
-                    'operator' => '==',
-                    'value'    => '1',
-                ] ] ],
-                'wrapper'           => [ 'width' => '70' ],
-            ],
-
-            [
-                'key'           => 'field_jx_statute_has_employer_threshold',
-                'label'         => 'Employer Size Threshold',
-                'name'          => 'ws_jx_statute_has_employer_threshold',
-                'type'          => 'true_false',
-                'instructions'  => 'Enable when the statute restricts coverage based on employer size (e.g. "employers with 15 or more employees").',
-                'ui'            => 1,
-                'ui_on_text'    => 'Yes',
-                'ui_off_text'   => 'No',
-                'default_value' => 0,
-            ],
-
-            [
-                'key'               => 'field_jx_statute_employer_threshold_details',
-                'label'             => 'Employer Threshold Details',
-                'name'              => 'ws_jx_statute_employer_threshold_details',
-                'type'              => 'textarea',
-                'instructions'      => 'Describe the employer size requirement as stated in the statute. Include the threshold number and whether it is a minimum or maximum.',
-                'required'          => 0,
-                'rows'              => 3,
-                'conditional_logic' => [ [ [
-                    'field'    => 'field_jx_statute_has_employer_threshold',
-                    'operator' => '==',
-                    'value'    => '1',
-                ] ] ],
-            ],
-
-            // ────────────────────────────────────────────────────────────────
-            // Tab: Enforcement
-            // ────────────────────────────────────────────────────────────────
-
-            [
-                'key'   => 'field_jx_statute_enforcement_tab',
-                'label' => 'Enforcement',
-                'type'  => 'tab',
-            ],
-
-            [
-                'key'           => 'field_jx_statute_process_types',
-                'label'         => 'Process Types',
-                'name'          => 'ws_jx_statute_process_types',
-                'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_process_type',
-                'field_type'    => 'multi_select',
-                'instructions'  => 'Which whistleblower process areas does this statute address?',
-                'add_term'      => 0,
-                'save_terms'    => 1,
-                'load_terms'    => 1,
-                'return_format' => 'id',
-            ],
-
-            [
-                'key'           => 'field_jx_statute_adverse_actions',
-                'label'         => 'Adverse Action Types',
-                'name'          => 'ws_jx_statute_adverse_actions',
-                'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_adverse_action',
-                'field_type'    => 'multi_select',
-                'instructions'  => 'Select the adverse actions covered by this statute.',
-                'add_term'      => 0,
-                'save_terms'    => 1,
-                'load_terms'    => 1,
-                'return_format' => 'id',
-            ],
-
-            [
-                'key'          => 'field_jx_statute_adverse_action_details',
-                'label'        => 'Adverse Action Details',
-                'name'         => 'ws_jx_statute_adverse_action_details',
-                'type'         => 'textarea',
-                'rows'         => 3,
-                'instructions' => 'Describe any statutory language, broad catch-all provisions, or nuance that the taxonomy terms do not fully capture.',
-                // conditional_logic set dynamically — see ws_jx_statute_details_conditional()
-            ],
-
-            [
-                'key'           => 'field_jx_statute_fee_shifting_rules',
-                'label'         => 'Fee Shifting Rules',
-                'name'          => 'ws_jx_statute_fee_shifting_rules',
-                'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_fee_shifting_rule',
-                'field_type'    => 'multi_select',
-                'instructions'  => 'Select the fee shifting rule that applies to this statute.',
-                'add_term'      => 0,
-                'save_terms'    => 1,
-                'load_terms'    => 1,
-                'return_format' => 'id',
-            ],
-
-            [
-                'key'           => 'field_jx_statute_remedies',
-                'label'         => 'Available remedies',
-                'name'          => 'ws_jx_statute_remedies',
-                'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_remedy',
-                'field_type'    => 'multi_select',
-                'instructions'  => 'What can a whistleblower recover under this specific law?',
-                'add_term'      => 0,
-                'save_terms'    => 1,
-                'load_terms'    => 1,
-                'return_format' => 'id',
-            ],
-
-            [
-                'key'          => 'field_jx_statute_remedy_details',
-                'label'        => 'Remedy Details',
-                'name'         => 'ws_jx_statute_remedy_details',
-                'type'         => 'textarea',
-                'rows'         => 3,
-                'instructions' => 'Describe caps, eligibility conditions, aggregation rules, or other nuance affecting available remedy.',
-                // conditional_logic set dynamically — see ws_jx_statute_details_conditional()
-            ],
-
-            [
-                'key'           => 'field_jx_statute_primary_agency',
-                'label'         => 'Primary Oversight Agency',
-                'name'          => 'ws_jx_statute_primary_agency',
-                'type'          => 'post_object',
-                'post_type'     => [ 'ws-agency' ],
-                'instructions'  => 'Select the primary agency responsible for overseeing this statute (state, territory, district, tribal, or local bodies).',
-                'multiple'      => 0,
-                'allow_null'    => 1,
-                'ui'            => 1,
-                'return_format' => 'id',
-            ],
-
-            [
-                'key'           => 'field_jx_statute_local_agencies',
-                'label'         => 'Local Agencies',
-                'name'          => 'ws_jx_statute_local_agencies',
-                'type'          => 'post_object',
-                'post_type'     => [ 'ws-agency' ],
-                'instructions'  => 'Select non-federal agencies that enforce or provide intake for this statute (state, territory, district, tribal, or local bodies).',
-                'multiple'      => 1,
-                'allow_null'    => 1,
-                'ui'            => 1,
-                'return_format' => 'id',
-            ],
-
-            [
-                'key'           => 'field_jx_statute_federal_agencies',
-                'label'         => 'Federal Agencies',
-                'name'          => 'ws_jx_statute_federal_agencies',
-                'type'          => 'post_object',
-                'post_type'     => [ 'ws-agency' ],
-                'instructions'  => 'Select federal agencies that enforce or provide intake for this statute.',
-                'multiple'      => 1,
-                'allow_null'    => 1,
-                'ui'            => 1,
-                'return_format' => 'id',
-            ],
-
-            [
-                'key'          => 'field_jx_statute_enforcement_channel',
-                'label'        => 'Enforcement Channel Notes',
-                'name'         => 'ws_jx_statute_enforcement_channel',
-                'type'         => 'textarea',
-                'rows'         => 3,
-                'instructions' => 'Capture agency/channel nuance not represented by linked agency records (e.g., split intake paths, courts, or agency prioritization).',
-                'required'     => 0,
-            ],
-
-            // ────────────────────────────────────────────────────────────────
-            // Tab: Burden of Proof
-            // ────────────────────────────────────────────────────────────────
-
-            [
-                'key'   => 'field_jx_statute_bop_tab',
-                'label' => 'Burden of Proof',
-                'type'  => 'tab',
-            ],
-
-            [
-                'key'           => 'field_jx_statute_employee_standards',
-                'label'         => 'Employee Standard',
-                'name'          => 'ws_jx_statute_employee_standards',
-                'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_employee_standard',
-                'field_type'    => 'multi_select',
-                'instructions'  => 'What standard must the whistleblower meet to succeed? Tag all that explicitly apply. Omit if no standard is named in the statute — do not infer.',
-                'add_term'      => 0,
-                'save_terms'    => 1,
-                'load_terms'    => 1,
-                'return_format' => 'id',
-            ],
-
-            [
-                'key'          => 'field_jx_statute_employee_standard_details',
-                'label'        => 'Employee Standard Details',
-                'name'         => 'ws_jx_statute_employee_standard_details',
-                'type'         => 'textarea',
-                'rows'         => 3,
-                'instructions' => 'Describe the split standard, burden shift, or other nuance — e.g., different standards applying to different claim types under this statute.',
-                // conditional_logic set dynamically — see ws_jx_statute_details_conditional()
-            ],
-
-            [
-                'key'           => 'field_jx_statute_employer_defenses',
-                'label'         => 'Employer Defense',
-                'name'          => 'ws_jx_statute_employer_defenses',
-                'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_employer_defense',
-                'field_type'    => 'multi_select',
-                'instructions'  => 'Select the defense standard(s) available to the employer under this statute.',
-                'add_term'      => 0,
-                'save_terms'    => 1,
-                'load_terms'    => 1,
-                'return_format' => 'id',
-            ],
-
-            [
-                'key'          => 'field_jx_statute_employer_defense_details',
-                'label'        => 'Employer Defense Details',
-                'name'         => 'ws_jx_statute_employer_defense_details',
-                'type'         => 'textarea',
-                'rows'         => 3,
-                'instructions' => 'Describe the specific defense standard — e.g., the evidentiary burden required, statutory language, or any procedural conditions attached to the defense.',
-                // conditional_logic set dynamically — see ws_jx_statute_details_conditional()
-            ],
-
-            [
-                'key'           => 'field_jx_statute_has_rebuttable_presumption',
-                'label'         => 'Rebuttable Presumption Exists',
-                'name'          => 'ws_jx_statute_has_rebuttable_presumption',
-                'type'          => 'true_false',
-                'instructions'  => 'Enable if this statute creates a rebuttable presumption in favour of the whistleblower.',
-                'ui'            => 1,
-                'ui_on_text'    => 'Yes',
-                'ui_off_text'   => 'No',
-                'default_value' => 0,
-            ],
-
-            [
-                'key'               => 'field_jx_statute_rebuttable_presumption',
-                'label'             => 'Rebuttable Presumption Details',
-                'name'              => 'ws_jx_statute_rebuttable_presumption',
-                'type'              => 'textarea',
-                'rows'              => 3,
-                'instructions'      => 'Describe the presumption and what the employer must do to rebut it.',
-                'conditional_logic' => [ [ [
-                    'field'    => 'field_jx_statute_has_rebuttable_presumption',
-                    'operator' => '==',
-                    'value'    => '1',
-                ] ] ],
-            ],
-
-            [
-                'key'           => 'field_jx_statute_has_bop_details',
-                'label'         => 'BOP Has Supplementary Detail',
-                'name'          => 'ws_jx_statute_has_bop_details',
-                'type'          => 'true_false',
-                'instructions'  => 'Enable to add a note about a non-standard or otherwise notable burden of proof situation for this statute.',
-                'ui'            => 1,
-                'ui_on_text'    => 'Yes',
-                'ui_off_text'   => 'No',
-                'default_value' => 0,
-            ],
-
-            [
-                'key'               => 'field_jx_statute_bop_details',
-                'label'             => 'BOP Details',
-                'name'              => 'ws_jx_statute_bop_details',
-                'type'              => 'textarea',
-                'rows'              => 3,
-                'instructions'      => 'Describe the notable burden of proof situation — e.g., a burden shift, a split standard, or statutory language that modifies the general standard.',
-                'conditional_logic' => [ [ [
-                    'field'    => 'field_jx_statute_has_bop_details',
-                    'operator' => '==',
-                    'value'    => '1',
-                ] ] ],
-            ],
-
-
-            [
-                'key'          => 'field_jx_statute_bop_flag',
-                'label'        => 'BOP Flag',
-                'name'         => 'ws_jx_statute_bop_flag',
-                'type'         => 'text',
-                'instructions' => 'Short signal phrase identifying a non-standard burden shift. Use a compact hyphenated phrase, e.g. "contributing-factor-shift", "90-day rebuttable presumption", "AIR21 burden-shifting framework". Not a full sentence.',
-                'maxlength'    => 120,
-            ],
-
-            // ────────────────────────────────────────────────────────────────
-            // Tab: Reward
-            // ────────────────────────────────────────────────────────────────
-
-            [
-                'key'   => 'field_jx_statute_reward_tab',
-                'label' => 'Reward',
-                'type'  => 'tab',
-            ],
-
-            [
-                'key'           => 'field_jx_statute_has_reward_available',
-                'label'         => 'Reward Available',
-                'name'          => 'ws_jx_statute_has_reward_available',
-                'type'          => 'true_false',
-                'instructions'  => 'Enable if this statute provides a monetary reward or bounty to the whistleblower (distinct from compensatory remedy).',
-                'ui'            => 1,
-                'ui_on_text'    => 'Yes',
-                'ui_off_text'   => 'No',
-                'default_value' => 0,
-            ],
-
-            [
-                'key'               => 'field_jx_statute_reward_details',
-                'label'             => 'Reward Details',
-                'name'              => 'ws_jx_statute_reward_details',
-                'type'              => 'textarea',
-                'rows'              => 3,
-                'instructions'      => 'Describe the reward structure — e.g., percentage of collected sanctions, eligibility conditions, administering agency.',
-                'conditional_logic' => [ [ [
-                    'field'    => 'field_jx_statute_has_reward_available',
-                    'operator' => '==',
-                    'value'    => '1',
-                ] ] ],
-            ],
-
-            // ────────────────────────────────────────────────────────────────
-            // Tab: Links
-            // ────────────────────────────────────────────────────────────────
-
-            [
-                'key'   => 'field_jx_statute_links_tab',
-                'label' => 'Links',
-                'type'  => 'tab',
-            ],
-
-            [
-                'key'          => 'field_jx_statute_url',
-                'label'        => 'Statute URL',
-                'name'         => 'ws_jx_statute_url',
-                'type'         => 'url',
-                'instructions' => 'Link to the official legislature source or best available approved source for this statute.',
-            ],
-
-            [
-                'key'           => 'field_jx_statute_url_is_pdf',
-                'label'         => 'Link is PDF?',
-                'name'          => 'ws_jx_statute_url_is_pdf',
-                'type'          => 'true_false',
-                'instructions'  => 'Enable if the statute URL links directly to a PDF document.',
-                'ui'            => 1,
-                'ui_on_text'    => 'PDF',
-                'ui_off_text'   => 'No',
-                'default_value' => 0,
-            ],
-
-           
-            // ────────────────────────────────────────────────────────────────
-            // Tab: Relationships
-            // ────────────────────────────────────────────────────────────────
-
-            [
-                'key'   => 'field_jx_statute_relationships_tab',
-                'label' => 'Relationships',
-                'type'  => 'tab',
-            ],
-
-            [
-                'key'          => 'field_jx_statute_citation_ids',
-                'label'        => 'Citation IDs',
-                'name'         => 'ws_jx_statute_citation_ids',
-                'type'         => 'relationship',
-                'instructions' => 'Citations that reference this statute.',
-                'post_type'    => [ 'jx-citation' ],
-                'return_format'=> 'id',
-                'allow_null'   => 1,
-                'multiple'     => 1,
-                'elements'     => [],
-            ],
-
-            [
-                'key'          => 'field_jx_statute_construction_ids',
-                'label'        => 'Construction IDs',
-                'name'         => 'ws_jx_statute_construction_ids',
-                'type'         => 'relationship',
-                'instructions' => 'Constructions that reference this statute.',
-                'post_type'    => [ 'jx-construction' ],
-                'return_format'=> 'id',
-                'allow_null'   => 1,
-                'multiple'     => 1,
-                'elements'     => [],
-            ],
-
-            // ── Last Verified Date ────────────────────────────────────────
-            //
-            // Content-owned field — not a stamp. Editable by editors to
-            // signal when the statute record was last meaningfully reviewed
-            // for accuracy. Rendered inside the Links tab.
-
-            [
-                'key'          => 'field_jx_statute_last_reviewed',
-                'label'        => 'Last Verified Date',
-                'name'         => 'ws_jx_statute_last_reviewed',
-                'type'         => 'text',
-                'instructions' => 'Update this date each time the statute record is meaningfully revised.',
-            ],
-
-            // Authorship & Review tab removed — registered centrally in
-            // acf-stamp-fields.php (group_stamp_metadata, menu_order 90).
-
-            // Plain-English tab removed — registered centrally in
-            // acf-plain-english-fields.php (group_plain_english_metadata, menu_order 85).
-
-            // ── Tab: Reference Materials ───────────────────────────────────
-            //
-            // Links this statute to ws-reference records for researchers and
-            // legal professionals. Not rendered on jurisdiction pages.
-            // Only approved references display publicly via [ws_reference_page].
-
-            [
-                'key'   => 'field_jx_statute_ref_materials_tab',
-                'label' => 'Reference Materials',
-                'type'  => 'tab',
-            ],
-
-            [
-                'key'           => 'field_jx_statute_ref_materials',
-                'label'         => 'Reference Materials',
-                'name'          => 'ws_jx_statute_ref_materials',
-                'type'          => 'relationship',
-                'post_type'     => [ 'ws-reference' ],
-                'filters'       => [ 'search' ],
-                'instructions'  => 'Attach external reference materials relevant to this record. Only approved references will display publicly. These are for researchers and legal professionals — not for primary users seeking guidance.',
-                'min'           => 0,
-                'max'           => 0,
-                'return_format' => 'object',
-            ],
-
-        ],
+        'fields'                => $fields,
     ] );
+}
 
-} // end ws_register_acf_jx_statutes
+/**
+ * Build one ACF local field array from compact canonical args.
+ * 
+ */
+function ws_build_acf_field( array $args, string $tab, string $group ): array {
+    $name       = $args['name'];
+    $type       = $args['type'] ?? ws_infer_acf_field_type( $name );
+    $field_name = str_starts_with( $name, '_' ) ? "_ws_jx_{$group}" . $name : "ws_jx_{$group}_{$name}";
+    $field_key  = str_starts_with( $name, '_' ) ? "field_jx_{$group}" . $name : "field_jx_{$group}_{$name}";
 
-
-// Field locking, auto-fill today, and stamp fields are handled centrally
-// in admin-hooks.php via ws_acf_lock_for_non_admins(), ws_acf_autofill_today(),
-// and ws_acf_write_stamp_fields().
-
-
-// ── Conditional logic: taxonomy sentinel-gated details fields ─────────────────
-//
-// ACF conditional logic cannot reference taxonomy term IDs at registration time
-// because term IDs are assigned at seed runtime, not at code registration time.
-//
-// The following detail textareas are shown when the companion trigger field
-// includes sentinel slug 'has-details':
-// - ws_jx_statute_protected_classes
-// - ws_jx_statute_disclosure_targets
-// - ws_jx_statute_adverse_actions
-// - ws_jx_statute_remedies
-// - ws_jx_statute_employee_standards
-// - ws_jx_statute_employer_defenses
-
-add_filter( 'acf/load_field', 'ws_jx_statute_details_conditional' );
-
-function ws_jx_statute_details_conditional( $field ) {
-
-    // Map: details field key => [ taxonomy slug, trigger field key ]
-    static $map = [
-        'field_jx_statute_protected_class_details'    => [ 'ws_protected_class',      'field_jx_statute_protected_classes' ],
-        'field_jx_statute_disclosure_target_details'  => [ 'ws_disclosure_target',    'field_jx_statute_disclosure_targets' ],
-        'field_jx_statute_adverse_action_details'     => [ 'ws_adverse_action',       'field_jx_statute_adverse_actions' ],
-        'field_jx_statute_remedy_details'             => [ 'ws_remedy',               'field_jx_statute_remedies' ],
-        'field_jx_statute_employee_standard_details'  => [ 'ws_employee_standard',    'field_jx_statute_employee_standards' ],
-        'field_jx_statute_employer_defense_details'   => [ 'ws_employer_defense',     'field_jx_statute_employer_defenses' ],
+    $field = [
+        'key'      => $field_key,
+        'label'    => $args['label'] ?? ws_label_from_field_name( $name ),
+        'name'     => $field_name,
+        'type'     => $type,
+        'required' => (int) ( $args['required'] ?? 0 ),
     ];
 
-    if ( ! isset( $map[ $field['key'] ] ) ) {
+    if ( ! empty( $args['instructions'] ) ) {
+        $field['instructions'] = $args['instructions'];
+    }
+
+    if ( isset( $args['readonly'] ) ) {
+        $field['readonly'] = (int) $args['readonly'];
+    }
+
+    if ( 'textarea' === $type ) {
+        $field['rows'] = (int) ( $args['rows'] ?? 3 );
+    }
+
+    if ( 'number' === $type ) {
+        $field['step'] = $args['step'] ?? 1;
+    }
+
+    if ( 'true_false' === $type ) {
+        $field['ui']            = 1;
+        $field['ui_on_text']    = $args['ui_on_text'] ?? 'Yes';
+        $field['ui_off_text']   = $args['ui_off_text'] ?? 'No';
+        $field['default_value'] = (int) ( $args['default_value'] ?? 0 );
+    }
+
+    if ( 'select' === $type ) {
+        $field['choices']       = ws_acf_choices( $args['choices'] ?? [], $args['choice_labels'] ?? [] );
+        $field['allow_null']    = $args['allow_null'] ?? 1;
+        $field['ui']            = 1;
+        $field['multiple']      = (int) ( $args['multiple'] ?? 0 );
+        $field['return_format'] = 'value';
+    }
+
+    if ( 'taxonomy' === $type ) {
+        $field['taxonomy']      = $args['taxonomy'];
+        $field['field_type']    = $args['field_type'] ?? 'multi_select';
+        $field['add_term']      = 0;
+        $field['save_terms']    = $args['save_terms'] ?? 1;
+        $field['load_terms']    = $args['load_terms'] ?? 1;
+        $field['return_format'] = $args['return_format'] ?? 'id';
+    }
+
+    if ( in_array( $type, [ 'post_object', 'relationship' ], true ) ) {
+        $field['post_type']     = $args['post_type'] ?? [];
+        $field['allow_null']    = $args['allow_null'] ?? 1;
+        $field['multiple']      = (int) ( $args['multiple'] ?? 1 );
+        $field['return_format'] = $args['return_format'] ?? 'id';
+        $field['ui']            = 1;
+        if ( 'relationship' === $type ) {
+            $field['filters']  = $args['filters'] ?? [ 'search' ];
+            $field['elements'] = $args['elements'] ?? [];
+        }
+    }
+
+    if ( 'repeater' === $type ) {
+        $field['layout']     = $args['layout'] ?? 'row';
+        $field['button_label'] = $args['button_label'] ?? 'Add Row';
+        $field['sub_fields'] = [];
+        foreach ( $args['sub_fields'] ?? [] as $sub_args ) {
+            $field['sub_fields'][] = ws_build_acf_sub_field( $sub_args, $field_key );
+        }
+    }
+
+    if ( ! empty( $args['conditional'] ) && empty( $args['conditional']['taxonomy'] ) ) {
+        $field['conditional_logic'] = ws_build_acf_conditional_logic( $args['conditional'], $group );
+    }
+
+    return $field;
+}
+
+/**
+ * Build a repeater sub-field. Sub-fields do not get CPT storage prefixes.
+ * 
+ */
+function ws_build_acf_sub_field( array $args, string $parent_key ): array {
+    $name = $args['name'];
+    $type = $args['type'] ?? ws_infer_acf_field_type( $name );
+
+    $field = [
+        'key'      => "{$parent_key}_{$name}",
+        'label'    => $args['label'] ?? ws_label_from_field_name( $name ),
+        'name'     => $name,
+        'type'     => $type,
+        'required' => (int) ( $args['required'] ?? 0 ),
+    ];
+
+    if ( 'select' === $type ) {
+        $field['choices']       = ws_acf_choices( $args['choices'] ?? [], $args['choice_labels'] ?? [] );
+        $field['allow_null']    = 1;
+        $field['ui']            = 1;
+        $field['return_format'] = 'value';
+    }
+
+    return $field;
+}
+
+/**
+ * Infer field type from naming rules.
+ * 
+ */
+function ws_infer_acf_field_type( string $name ): string {
+    if ( str_starts_with( $name, 'has_' ) || str_starts_with( $name, 'is_' ) || str_contains( $name, '_is_' ) ) {
+        return 'true_false';
+    }
+
+    if ( str_ends_with( $name, '_url' ) ) {
+        return 'url';
+    }
+
+    if ( str_ends_with( $name, '_date' ) ) {
+        return 'date_picker';
+    }
+
+    if ( str_ends_with( $name, '_value' ) || str_ends_with( $name, '_year' ) || str_ends_with( $name, '_order' ) ) {
+        return 'number';
+    }
+
+    if ( str_ends_with( $name, '_compare' ) || str_ends_with( $name, '_direction' ) ) {
+        return 'select';
+    }
+
+    if ( str_ends_with( $name, '_details' ) || str_ends_with( $name, '_context' ) || str_contains( $name, 'description' ) || str_contains( $name, 'reference' ) ) {
+        return 'textarea';
+    }
+
+    return 'text';
+}
+
+/**
+ * Convert compact choice lists into ACF choice arrays.
+ * 
+ */
+function ws_acf_choices( array $choices, array $choice_labels = [] ): array {
+    $acf_choices = [];
+
+    foreach ( $choices as $key => $label ) {
+        if ( is_int( $key ) ) {
+            $key   = $label;
+            $label = $choice_labels[ $key ] ?? ucwords( str_replace( '-', ' ', (string) $label ) );
+        } elseif ( isset( $choice_labels[ $key ] ) ) {
+            $label = $choice_labels[ $key ];
+        }
+        $acf_choices[ (string) $key ] = (string) $label;
+    }
+
+    return $acf_choices;
+}
+
+/**
+ * Human label from canonical field name.
+ * 
+ */
+function ws_label_from_field_name( string $name ): string {
+    $name = ltrim( $name, '_' );
+    $name = str_replace( [ '_', 'bop', 'sol', 'sop', 'roa', 'cba', 'nda', 'slapp', 'ic' ], [ ' ', 'BOP', 'SOL', 'SOP', 'ROA', 'CBA', 'NDA', 'SLAPP', 'IC' ], $name );
+
+    return ucwords( $name );
+}
+
+/**
+ * Build ACF conditional logic for non-taxonomy conditions.
+ * 
+ */
+function ws_build_acf_conditional_logic( array $conditional, string $group ): array {
+    if ( ! empty( $conditional['rules'] ) ) {
+        $logic = [];
+        foreach ( $conditional['rules'] as $rule ) {
+            $logic[] = [
+                ws_build_acf_conditional_rule( $rule, $group ),
+            ];
+        }
+
+        return 'AND' === strtoupper( $conditional['relation'] ?? 'OR' )
+            ? [ array_column( $logic, 0 ) ]
+            : $logic;
+    }
+
+    return [ [ ws_build_acf_conditional_rule( $conditional, $group ) ] ];
+}
+
+function ws_build_acf_conditional_rule( array $conditional, string $group ): array {
+    $field = $conditional['field'];
+    $key   = str_starts_with( $field, '_' ) ? "field_jx_{$group}{$field}" : "field_jx_{$group}_{$field}";
+
+    return [
+        'field'    => $key,
+        'operator' => $conditional['operator'] ?? '==',
+        'value'    => (string) ( $conditional['value'] ?? '' ),
+    ];
+}
+
+/**
+ * Return compact prompt-ready package for statute research generation.
+ * 
+ */
+function ws_get_jx_statute_prompt_package(): array {
+    $tabs          = ws_get_jx_statute_acf_fields();
+    $fields        = [];
+    $fields_by_tab = [];
+
+    foreach ( $tabs as $tab_key => $tab ) {
+        foreach ( $tab['fields'] as $field ) {
+            $prompt_group = (int) ( $field['prompt_group'] ?? 0 );
+            if ( 0 === $prompt_group ) {
+                continue;
+            }
+
+            $prompt_field = [
+                'name'          => $field['name'],
+                'json_path'     => $field['json_path'],
+                'json_key'      => $field['json_key'] ?? null,
+                'tab'           => $field['tab'],
+                'tab_label'     => $tab['label'],
+                'group'         => $prompt_group,
+                'type'          => $field['type'] ?? ws_infer_acf_field_type( $field['name'] ),
+                'taxonomy'      => $field['taxonomy'] ?? null,
+                'choices'       => $field['choices'] ?? null,
+                'required'      => (int) ( $field['required'] ?? 0 ),
+                'conditional'   => $field['conditional'] ?? null,
+                'legal_prompt'  => $field['legal_prompt'] ?? ws_build_jx_statute_prompt_instruction( $field ),
+            ];
+
+            $fields[] = $prompt_field;
+            $fields_by_tab[ $field['tab'] ][] = $prompt_field;
+        }
+    }
+
+    return [
+        'package'       => 'jx-statute',
+        'post_type'     => 'jx-statute',
+        'field_prefix'  => 'ws_jx_statute_',
+        'prompt_groups' => [
+            1 => 'essential',
+            2 => 'expected',
+            3 => 'expected-if-found',
+            4 => 'conditional',
+            5 => 'optional',
+        ],
+        'fields'        => $fields,
+        'fields_by_tab' => $fields_by_tab,
+    ];
+}
+
+/**
+ * Build a simple default prompt instruction from field args.
+ * 
+ */
+function ws_build_jx_statute_prompt_instruction( array $field ): string {
+    $name = $field['json_key'] ?? $field['name'];
+    $type = $field['type'] ?? ws_infer_acf_field_type( $name );
+
+    if ( 'taxonomy' === $type ) {
+        return "{$name} - array of {$field['taxonomy']} term slugs.";
+    }
+
+    if ( ! empty( $field['choices'] ) ) {
+        return "{$name} - " . ( ! empty( $field['multiple'] ) ? 'array' : 'select' ) . ' of: ' . implode( ', ', $field['choices'] ) . '.';
+    }
+
+    if ( ! empty( $field['conditional'] ) ) {
+        return "{$name} - conditional field; include only when triggered.";
+    }
+
+    return "{$name} - {$type}.";
+}
+
+/**
+ * Apply taxonomy-sentinel conditional logic once term IDs exist.
+ * 
+ */
+add_filter( 'acf/load_field', 'ws_jx_statute_apply_taxonomy_conditionals' );
+
+function ws_jx_statute_apply_taxonomy_conditionals( $field ) {
+    static $map = null;
+
+    if ( null === $map ) {
+        $map = [];
+        foreach ( ws_get_jx_statute_acf_fields() as $tab ) {
+            foreach ( $tab['fields'] as $args ) {
+                if ( empty( $args['conditional']['taxonomy'] ) ) {
+                    continue;
+                }
+
+                $target_key = str_starts_with( $args['name'], '_' )
+                    ? 'field_jx_statute' . $args['name']
+                    : 'field_jx_statute_' . $args['name'];
+
+                $trigger = $args['conditional']['field'];
+                $map[ $target_key ] = [
+                    'taxonomy'    => $args['conditional']['taxonomy'],
+                    'slug'        => $args['conditional']['slug'],
+                    'trigger_key' => str_starts_with( $trigger, '_' )
+                        ? 'field_jx_statute' . $trigger
+                        : 'field_jx_statute_' . $trigger,
+                ];
+            }
+        }
+    }
+
+    if ( empty( $map[ $field['key'] ] ) ) {
         return $field;
     }
 
-    [ $taxonomy, $trigger_key ] = $map[ $field['key'] ];
-
-    $term = get_term_by( 'slug', 'has-details', $taxonomy );
+    $rule = $map[ $field['key'] ];
+    $term = get_term_by( 'slug', $rule['slug'], $rule['taxonomy'] );
     if ( ! $term || is_wp_error( $term ) ) {
         return $field;
     }
 
     $field['conditional_logic'] = [ [ [
-        'field'    => $trigger_key,
+        'field'    => $rule['trigger_key'],
         'operator' => '==',
         'value'    => (string) $term->term_id,
     ] ] ];
@@ -936,34 +731,46 @@ function ws_jx_statute_details_conditional( $field ) {
     return $field;
 }
 
-
 add_filter( 'acf/prepare_field/name=ws_jx_statute_local_agencies', 'ws_jx_statute_prepare_local_agencies_field' );
 add_filter( 'acf/fields/post_object/query/name=ws_jx_statute_local_agencies', 'ws_jx_statute_local_agencies_query', 10, 3 );
 add_filter( 'acf/fields/post_object/query/name=ws_jx_statute_federal_agencies', 'ws_jx_statute_federal_agencies_query', 10, 3 );
 
 /**
- * Resolve the first ws_jurisdiction term assigned to the given statute post.
+ * Resolve the first jurisdiction term for a legal record post.
+ *
+ * Local helper for now; shape is intentionally generic enough to lift into a
+ * shared helper file for all legal ACFs later.
+ * 
  */
-function ws_jx_statute_get_term_for_post( $post_id ) {
+function ws_jx_legal_get_post_jurisdiction_term( $post_id ) {
+    static $cache = [];
+
     $post_id = (int) $post_id;
     if ( ! $post_id ) {
         return null;
     }
 
-    $terms = wp_get_post_terms( $post_id, WS_JURISDICTION_TAXONOMY );
-    if ( is_wp_error( $terms ) || empty( $terms ) ) {
-        return null;
+    if ( array_key_exists( $post_id, $cache ) ) {
+        return $cache[ $post_id ];
     }
 
-    return $terms[0];
+    $terms = wp_get_post_terms( $post_id, WS_JURISDICTION_TAXONOMY );
+    if ( is_wp_error( $terms ) || empty( $terms ) ) {
+        $cache[ $post_id ] = null;
+        return $cache[ $post_id ];
+    }
+
+    $cache[ $post_id ] = $terms[0];
+    return $cache[ $post_id ];
 }
 
-/**
- * Hide local agencies when the statute jurisdiction is US/federal scope.
- */
+function ws_jx_statute_get_term_for_post( $post_id ) {
+    return ws_jx_legal_get_post_jurisdiction_term( $post_id );
+}
+
 function ws_jx_statute_prepare_local_agencies_field( $field ) {
     $post_id = (int) ( $_GET['post'] ?? 0 );
-    $term    = ws_jx_statute_get_term_for_post( $post_id );
+    $term    = ws_jx_legal_get_post_jurisdiction_term( $post_id );
 
     if ( $term && strtolower( (string) $term->slug ) === 'us' ) {
         return false;
@@ -972,36 +779,36 @@ function ws_jx_statute_prepare_local_agencies_field( $field ) {
     return $field;
 }
 
-/**
- * Scope state agency chooser to the statute's assigned jurisdiction term.
- */
-function ws_jx_statute_local_agencies_query( $args, $field, $post_id ) {
-    $term = ws_jx_statute_get_term_for_post( $post_id );
+function ws_jx_legal_agency_query_for_jurisdiction( array $args, $jurisdiction ): array {
+    $args['post_type'] = [ 'ws-agency' ];
 
-    if ( $term && strtolower( (string) $term->slug ) !== 'us' ) {
+    if ( $jurisdiction instanceof WP_Term ) {
         $args['tax_query'] = [ [
             'taxonomy' => WS_JURISDICTION_TAXONOMY,
             'field'    => 'term_id',
-            'terms'    => [ (int) $term->term_id ],
+            'terms'    => [ (int) $jurisdiction->term_id ],
         ] ];
     }
 
     return $args;
 }
 
-/**
- * Scope federal agency chooser to the US jurisdiction term.
- */
-function ws_jx_statute_federal_agencies_query( $args, $field, $post_id ) {
-    $us_term = get_term_by( 'slug', 'us', WS_JURISDICTION_TAXONOMY );
+function ws_jx_statute_local_agencies_query( $args, $field, $post_id ) {
+    $term = ws_jx_legal_get_post_jurisdiction_term( $post_id );
 
-    if ( $us_term && ! is_wp_error( $us_term ) ) {
-        $args['tax_query'] = [ [
-            'taxonomy' => WS_JURISDICTION_TAXONOMY,
-            'field'    => 'term_id',
-            'terms'    => [ (int) $us_term->term_id ],
-        ] ];
+    if ( ! $term || strtolower( (string) $term->slug ) === 'us' ) {
+        return $args;
     }
 
-    return $args;
+    return ws_jx_legal_agency_query_for_jurisdiction( $args, $term );
+}
+
+function ws_jx_statute_federal_agencies_query( $args, $field, $post_id ) {
+    static $us_term = null;
+
+    if ( null === $us_term ) {
+        $us_term = get_term_by( 'slug', 'us', WS_JURISDICTION_TAXONOMY ) ?: false;
+    }
+
+    return ws_jx_legal_agency_query_for_jurisdiction( $args, $us_term instanceof WP_Term ? $us_term : null );
 }

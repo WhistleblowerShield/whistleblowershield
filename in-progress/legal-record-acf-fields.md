@@ -684,6 +684,7 @@ Fields ordered: contractual → recognitions → immunity → defendants.
 - `contractual_waiver_context`     — (conditional on `civil_action_waiver_scope` NOT `anti` AND
                                       `contractual-waiver` in `legal_recognitions`)
 - `waiver_of_collateral_claims_context`  — (conditional on `waiver-of-collateral-claims` in `legal_recognitions`)
+- `class_action_waiver_context`    — (conditional on `class-action-waiver` in `legal_recognitions`)
 - `proper_defendants`              — (multi-select: `employer-entity-only`|`individual-supervisors`|
                                       `government-agency-only`|`contractors-included`|`successor-employer`|
                                       `joint-employer`|`staffing-agency`|`scope-of-employment-required`|
@@ -757,6 +758,10 @@ rebuttable presumption  → temporal presumption → detail overflow
                                       `shifts-burden`|`creates-inference`|`rebuttable-presumption`|`has-details`)
 - `presumption_effect_details`
 - `temporal_presumption_details`
+- `temporal_proximity_value`       — (sister field to `temporal_proximity_context`)
+- `temporal_proximity_unit`        — (sister field to `temporal_proximity_context`; select: `days`|`weeks`|
+                                      `months`|`years`)
+- `temporal_proximity_context`     — (conditional on `temporal-proximity-sufficient` in `legal_recognitions`)
 - `has_bop_details`
 - `bop_details`
 
@@ -1080,58 +1085,60 @@ Sister fields can (and usually do) appear before sibling.
 
 ```
 // ── Effective Date Tab ──────────────────────────────────────────────────────
-'retroactive-date'                    → 'retro_context'                     + 'retro_date'                       // Specified
+'retroactive-date'                    → 'retro_context'                         + 'retro_date'                       // Specified
 // ── Tab ─────────────────────────────────────────────────────
-'manager-rule-exclusion'              → 'manager_rule_exclusion_context'                                         // Applies
-'public-concern-required'             → 'public_concern_context'                                                 // Applies
-'bad-faith-exclusion'                 → 'bad_faith_exclusion_context'                                            // Applies
-'malicious-reporting-sanctions'       → 'malicious_reporting_context'       + 'malicious_reporting_sanctions'    // Applies
-'anonymity-protection'                → 'anonymity_protection_context'                                           // Recognized
-'protected-action'                    → 'protected_action_context'          + 'protected_actions' + 'protected_action_standard'
-                                                                            + 'protected_action_source'          // Specified
-'excluded-class'                      → 'excluded_class_context'            + 'excluded_classes'                 // Specified
+'manager-rule-exclusion'              → 'manager_rule_exclusion_context'                                             // Applies
+'public-concern-required'             → 'public_concern_context'                                                     // Applies
+'bad-faith-exclusion'                 → 'bad_faith_exclusion_context'                                                // Applies
+'malicious-reporting-sanctions'       → 'malicious_reporting_context'           + 'malicious_reporting_sanctions'    // Applies
+'anonymity-protection'                → 'anonymity_protection_context'                                               // Recognized
+'protected-action'                    → 'protected_action_context'              + 'protected_actions' + 'protected_action_standard'
+                                                                                + 'protected_action_source'          // Specified
+'excluded-class'                      → 'excluded_class_context'                + 'excluded_classes'                 // Specified
 // ── Statute of Limitations Tab ──────────────────────────────────────────────
-'statute-of-repose'                   → 'statute_of_repose_context'         + 'sop_value' + 'sop_unit'
-                                                                            + 'is_sop_tolling_available'         // Specified
-'statutory-tolling'                   → 'statutory_tolling_context'                                              // Specified
-'equitable-tolling'                   → 'equitable_tolling_context'                                              // Recognized
-'cba-grievance-preemption'            → 'cba_preemption_context'                                                 // Applies
-'amended-claim'                       → 'amended_claim_context'                                                  // Recognized
-'exhaustion-required'                 → 'exhaustion_required_context'       + 'exhaustion_required_class'        // Required
-'pre-filing-notice'                   → 'filing_notice_context'             + 'filing_notice_target' + 'filing_notice_value'
-                                                                            + 'filing_notice_unit'               // Required
-'statutory-preclusion'                → 'statutory_preclusion_context'                                           // Applies
+'statute-of-repose'                   → 'statute_of_repose_context'             + 'sop_value' + 'sop_unit'
+                                                                                + 'is_sop_tolling_available'         // Specified
+'statutory-tolling'                   → 'statutory_tolling_context'                                                  // Specified
+'equitable-tolling'                   → 'equitable_tolling_context'                                                  // Recognized
+'cba-grievance-preemption'            → 'cba_preemption_context'                                                     // Applies
+'amended-claim'                       → 'amended_claim_context'                                                      // Recognized
+'exhaustion-required'                 → 'exhaustion_required_context'           + 'exhaustion_required_class'        // Required
+'pre-filing-notice'                   → 'filing_notice_context'                 + 'filing_notice_target' + 'filing_notice_value'
+                                                                                + 'filing_notice_unit'               // Required
+'statutory-preclusion'                → 'statutory_preclusion_context'                                               // Applies
 // ── Retaliation Tab ─────────────────────────────────────────────────────────
-'cats-paw-liability'                  → 'cats_paw_liability_context'        + 'is_cats_paw_liability_extended'   // Recognized
-'third-party-retaliation'             → 'third_party_retaliation_context'                                        // Prohibited
-'criminal-sanctions'                  → 'criminal_sanctions_context'        + 'criminal_sanctions'               // Specified
+'cats-paw-liability'                  → 'cats_paw_liability_context'            + 'is_cats_paw_liability_extended'   // Recognized
+'third-party-retaliation'             → 'third_party_retaliation_context'                                            // Prohibited
+'criminal-sanctions'                  → 'criminal_sanctions_context'            + 'criminal_sanctions'               // Specified
 // ── Process & Remedies Tab ──────────────────────────────────────────────────
-'private-right-of-action'             → 'private_roa_context'                                                    // Available
-'jury-trial'                          → 'jury_trial_context'                + 'jury_trial_scope'                 // Available
-'preliminary-reinstatement'           → 'preliminary_reinstatement_context' + 'preliminary_reinstatement_standard' + 'reinstatement_standard_details'
-                                                                            + 'preliminary_reinstatement_scope'  // Available
+'private-right-of-action'             → 'private_roa_context'                                                        // Available
+'jury-trial'                          → 'jury_trial_context'                    + 'jury_trial_scope'                 // Available
+'preliminary-reinstatement'           → 'preliminary_reinstatement_context'     + 'preliminary_reinstatement_standard' + 'reinstatement_standard_details'
+                                                                                + 'preliminary_reinstatement_scope'  // Available
 // ── Waiver & Scope Tab ──────────────────────────────────────────────────────                                  
-'contractual-waiver'                  → 'contractual_waiver_context'        + 'contractual_waiver_scope'         // Recognized
-'waiver-of-collateral-claims'         → 'waiver_of_collateral_claims_context'                                    // Applies
-'nda-limitations'                     → 'nda_limits_context'                                                     // Recognized
-'anti-gag-provision'                  → 'anti_gag_provision_context'                                             // Recognized
-'no-retaliatory-evidence'             → 'no_retaliatory_evidence_context'                                        // Barred
-'stay-of-disciplinary-action'         → 'stay_of_discipline_context'                                             // Available
-'anti-slapp-protection'               → 'anti_slapp_protection_context'     + 'anti_slapp_protection_scope'      // Applies
-'discovery-protection'                → 'discovery_protection_context'                                           // Applies
-'confidential-settlement-restriction' → 'settlement_restriction_context'    + 'settlement_restriction_scope'     // Applies
-'individual-liability'                → 'individual_liability_context'      + 'individual_liability_scope'       // Available
-'successor-liability'                 → 'successor_liability_context'                                            // Recognized
-'extraterritorial-coverage'           → 'extraterritorial_context'                                               // Recognized
+'contractual-waiver'                  → 'contractual_waiver_context'            + 'contractual_waiver_scope'         // Recognized
+'waiver-of-collateral-claims'         → 'waiver_of_collateral_claims_context'                                        // Applies
+'class-action-waiver'                 → 'class_action_waiver_context'                                                // Recognized
+'nda-limitations'                     → 'nda_limits_context'                                                         // Recognized
+'anti-gag-provision'                  → 'anti_gag_provision_context'                                                 // Recognized
+'no-retaliatory-evidence'             → 'no_retaliatory_evidence_context'                                            // Barred
+'stay-of-disciplinary-action'         → 'stay_of_discipline_context'                                                 // Available
+'anti-slapp-protection'               → 'anti_slapp_protection_context'         + 'anti_slapp_protection_scope'      // Applies
+'discovery-protection'                → 'discovery_protection_context'                                               // Applies
+'confidential-settlement-restriction' → 'settlement_restriction_context'        + 'settlement_restriction_scope'     // Applies
+'individual-liability'                → 'individual_liability_context'          + 'individual_liability_scope'       // Available
+'successor-liability'                 → 'successor_liability_context'                                                // Recognized
+'extraterritorial-coverage'           → 'extraterritorial_context'                                                   // Recognized
 // ── Burden of Proof Tab ─────────────────────────────────────────────────────
-'employer-knowledge'                  → 'employer_knowledge_context'        + 'employer_knowledge_scope'         // Required
+'employer-knowledge'                  → 'employer_knowledge_context'            + 'employer_knowledge_scope'         // Required
+'temporal-proximity-sufficient'       → 'temporal_proximity_sufficient_context' + 'temporal_proximity_value'
+                                                                                + 'temporal_proximity_unit'          // Recognized
 // ── Without Context (no tab) ────────────────────────────────────────────────
 'catch-all-protection'                  — (no companion needed)   // Present
 'internal-only-disclosure'              — (no companion needed)   // Sufficient
 'trade-secret-immunity'                 — (no companion needed)   // Recognized
-'continuing-violation-doctrine'                  — (no companion needed)   // Recognized
+'continuing-violation-doctrine'         — (no companion needed)   // Recognized
 'prospective-whistleblower-protection'  — (no companion needed)   // Available
-'temporal-proximity-sufficient'         — (no companion needed)   // Recognized
 'sovereign-immunity-waiver'             — (no companion needed)   // Recognized
 'class-action'                          — (no companion needed)   // Permitted
 

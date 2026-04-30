@@ -309,6 +309,7 @@ $_ws_taxonomy_registry = [
             'workplace-isolation'          => 'Workplace Isolation / Ostracism',
             'post-employment-retaliation'  => 'Post-Employment Retaliation',
             'blacklisting'                 => 'Blacklisting',
+            'continued-blacklisting'       => 'Continued Blacklisting',
             'negative-reference'           => 'Negative Reference',
             'security-clearance-action'    => 'Security Clearance Action',
             'contract-non-renewal'         => 'Contract Non-Renewal',
@@ -813,6 +814,7 @@ $_ws_taxonomy_registry = [
             // Waiver & Scope                                                                                 // ───── # Waiver & Scope Tab ────────────────────────────────────────────────
             'contractual-waiver'                    => 'Contractual Waiver Recognized',                       //  =>>> NOTE  =>>> invalid term if 'civil_action_waiver_scope' is set to 'anti'. // + contractual_waiver_context + contractual_waiver_scope
             'waiver-of-collateral-claims'           => 'Waiver of Collateral Claims Applies',                 // + waiver_of_collateral_claims_context
+            'class-action-waiver'                   => 'Class Action Waiver Recognized',                                 // + class_action_waiver_context
             'individual-liability'                  => 'Individual Liability Available',                      // + individual_liability_context + individual_liability_scope
             'nda-limitations'                       => 'NDA / Non-Disparagement Limitations Recognized',      // + nda_limits_context
             'anti-gag-provision'                    => 'Anti-Gag Provision Recognized',                       // + anti_gag_provision_context
@@ -825,6 +827,7 @@ $_ws_taxonomy_registry = [
             'extraterritorial-coverage'             => 'Extraterritorial Coverage Recognized',                // + extraterritorial_context
             // Burden of Proof                                                                                // ───── # Burden of Proof Tab ───────────────────────────────────────────────
             'employer-knowledge'                    => 'Employer Knowledge Element Required',                 // + employer_knowledge_context
+            'temporal-proximity-sufficient'         => 'Temporal Proximity Sufficient Context Recognized',     // + temporal_proximity_sufficient_context + temporal_proximity_value + temporal_proximity_unit
             // Without Context                                                                                // ───── # Without Context (no Tab) ──────────────────────────────────────────
             'catch-all-protection'                  => 'Catch-All Protection Clause Present',                 // (no companion)
             'internal-only-disclosure'              => 'Internal-Only Disclosure Sufficient',                 // (no companion)
