@@ -109,7 +109,7 @@ are multi-select are always plural.
 | Slug | Label | Hierarchical | Public | Applied To |
 |---|---|---|---|---|
 | `ws_jurisdiction` | Jurisdictions | — | — | All content CPTs | multi-select |
-| `ws_disclosure_type` | Disclosure Categories | ✓ | ✓ | `jx-statute`, `jx-citation`, `ws-agency`, `ag-procedure`, `ws-assist-org` | multi-select |
+| `ws_protected_disclosure` | Disclosure Categories | ✓ | ✓ | `jx-statute`, `jx-citation`, `ws-agency`, `ag-procedure`, `ws-assist-org` | multi-select |
 | `ws_process_type` | Process Types | — | ✓ | `jx-statute`, `ws-agency`, `ws-assist-org`, `jx-construction` | multi-select |
 | `ws_remedy` | Remedies | — | — | `jx-statute` | multi-select |
 | `ws_protected_class` | Protected Classes | ✓ | — | `jx-statute` | multi-select |
@@ -131,7 +131,7 @@ USPS codes (`us`, `ca`, `tx`, `dc`, `pr`, etc.). Terms are seeded by
 `WS_JURISDICTION_TAXONOMY` constant — never hardcode the string
 `'ws_jurisdiction'`.
 
-**Hierarchical taxonomies:** `ws_disclosure_type` has six parent
+**Hierarchical taxonomies:** `ws_protected_disclosure` has six parent
 categories with ~30 child terms covering the main areas of whistleblower
 law (workplace, financial, government accountability, public health,
 privacy, national security). `ws_protected_class` and

@@ -98,7 +98,7 @@ function ws_q_build_assist_org_row( $oid ) {
     $oid  = (int) $oid;
     $tax_jx                = ws_q_taxonomy_payload( $oid, WS_JURISDICTION_TAXONOMY );
     $tax_aorg_type         = ws_q_taxonomy_payload( $oid, 'ws_aorg_type' );
-    $tax_disclosure_type   = ws_q_taxonomy_payload( $oid, 'ws_disclosure_type' );
+    $tax_protected_disclosure   = ws_q_taxonomy_payload( $oid, 'ws_protected_disclosure' );
     $tax_disclosure_target = ws_q_taxonomy_payload( $oid, 'ws_disclosure_target' );
     $tax_protected_class   = ws_q_taxonomy_payload( $oid, 'ws_protected_class' );
     $tax_case_stage        = ws_q_taxonomy_payload( $oid, 'ws_case_stage' );
@@ -132,14 +132,14 @@ function ws_q_build_assist_org_row( $oid ) {
         'has_limited_scope'    => (bool) get_post_meta( $oid, 'ws_aorg_has_limited_scope',       true ),
         'community_scope'      => (string) get_post_meta( $oid, 'ws_aorg_community_scope',            true ),
         // Forward-facing taxonomy values (slugs), with labels alongside.
-        'disclosure_types'     => $tax_disclosure_type['slugs'],
-        'disclosure_type_labels' => $tax_disclosure_type['names'],
-        'disclosure_targets'   => $tax_disclosure_target['slugs'],
-        'disclosure_target_labels' => $tax_disclosure_target['names'],
-        'disclosure_target_details' => (string) get_post_meta( $oid, 'ws_aorg_disclosure_target_details', true ),
-        'protected_classes'    => $tax_protected_class['slugs'],
-        'protected_class_labels' => $tax_protected_class['names'],
-        'protected_class_details' => (string) get_post_meta( $oid, 'ws_aorg_protected_class_details', true ),
+        'protected_disclosures'        => $tax_protected_disclosure['slugs'],
+        'protected_disclosure_labels'  => $tax_protected_disclosure['names'],
+        'disclosure_targets'           => $tax_disclosure_target['slugs'],
+        'disclosure_target_labels'     => $tax_disclosure_target['names'],
+        'disclosure_target_details'    => (string) get_post_meta( $oid, 'ws_aorg_disclosure_target_details', true ),
+        'protected_classes'        => $tax_protected_class['slugs'],
+        'protected_class_labels'   => $tax_protected_class['names'],
+        'protected_class_details'  => (string) get_post_meta( $oid, 'ws_aorg_protected_class_details', true ),
         'case_stages'          => $tax_case_stage['slugs'],
         'case_stage_labels'    => $tax_case_stage['names'],
         'case_stage_details'   => (string) get_post_meta( $oid, 'ws_aorg_case_stage_details', true ),
@@ -178,21 +178,21 @@ function ws_q_build_assist_org_row( $oid ) {
         'jurisdiction_labels'  => $tax_jx['names'],
         'has_extended_profile' => ! empty( $plain['is_reviewed'] ),
         'taxonomies' => [
-            'jurisdiction'       => $tax_jx,
-            'aorg_type'          => $tax_aorg_type,
-            'disclosure_types'   => $tax_disclosure_type,
-            'disclosure_targets' => $tax_disclosure_target,
-            'protected_classes'  => $tax_protected_class,
-            'case_stages'        => $tax_case_stage,
-            'process_types'      => $tax_process_type,
-            'aorg_services'      => $tax_services,
-            'employment_sectors' => $tax_employment,
-            'languages'          => $tax_languages,
-            'cost_models'        => $tax_cost_model,
+            'jurisdiction'           => $tax_jx,
+            'aorg_type'              => $tax_aorg_type,
+            'protected_disclosures'  => $tax_protected_disclosure,
+            'disclosure_targets'     => $tax_disclosure_target,
+            'protected_classes'      => $tax_protected_class,
+            'case_stages'            => $tax_case_stage,
+            'process_types'          => $tax_process_type,
+            'aorg_services'          => $tax_services,
+            'employment_sectors'     => $tax_employment,
+            'languages'              => $tax_languages,
+            'cost_models'            => $tax_cost_model,
         ],
-        'plain'  => $plain,
-        'verify' => ws_build_source_verify_array( $oid ),
-        'author' => ws_build_author_array( $oid ),
+        'plain'   => $plain,
+        'verify'  => ws_build_source_verify_array( $oid ),
+        'author'  => ws_build_author_array( $oid ),
     ];
 }
 
@@ -280,10 +280,10 @@ function ws_get_nationwide_assist_org_data( $filters = [] ) {
     }
 
     // Phase 2: concern filter — routed to correct taxonomy by context resolver.
-    // $filters['concern_tax'] is either 'ws_disclosure_type' or
+    // $filters['concern_tax'] is either 'ws_protected_disclosure' or
     // 'ws_adverse_action' depending on the user's stage selection.
     if ( ! empty( $filters['concern'] ) && ! empty( $filters['concern_tax'] ) ) {
-        $allowed_concern_taxonomies = [ 'ws_disclosure_type', 'ws_adverse_action' ];
+        $allowed_concern_taxonomies = [ 'ws_protected_disclosure', 'ws_adverse_action' ];
         $concern_tax = sanitize_key( $filters['concern_tax'] );
         if ( in_array( $concern_tax, $allowed_concern_taxonomies, true ) ) {
             $query_args['tax_query'][] = [

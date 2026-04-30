@@ -89,7 +89,7 @@ function ws_register_cpt_assist_org() {
         // ── Taxonomies ────────────────────────────────────────────────────
 
         'taxonomies' => [
-            'ws_disclosure_type',
+            'ws_protected_disclosure',
             'ws_process_type',
             'ws_disclosure_target',
             'ws_case_stage',

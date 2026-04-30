@@ -59,7 +59,7 @@ function ws_prompt_render_slug_columns( array $terms ): string {
 
 function ws_prompt_taxonomy_descriptions(): array {
     return [
-        'ws_disclosure_type'      => 'Subject matter of disclosure',
+        'ws_protected_disclosure' => 'Subject matter of disclosure',
         'ws_protected_class'      => 'Worker classifications served',
         'ws_disclosure_target'    => 'Who the disclosure may be made to',
         'ws_process_type'         => 'Procedural routes navigated',
@@ -80,13 +80,13 @@ function ws_prompt_taxonomy_descriptions(): array {
 function ws_prompt_taxonomies_for_record_type( string $record_type ): array {
     switch ( $record_type ) {
         case 'assist-org':
-            return [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_target', 'ws_process_type', 'ws_case_stage', 'ws_language', 'ws_aorg_type', 'ws_employment_sector', 'ws_aorg_cost_model', 'ws_aorg_service' ];
+            return [ 'ws_protected_disclosure', 'ws_protected_class', 'ws_disclosure_target', 'ws_process_type', 'ws_case_stage', 'ws_language', 'ws_aorg_type', 'ws_employment_sector', 'ws_aorg_cost_model', 'ws_aorg_service' ];
         case 'statute':
         case 'common-law':
-            return [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_target', 'ws_employment_sector', 'ws_adverse_action', 'ws_process_type', 'ws_remedy', 'ws_fee_shifting_rule', 'ws_employer_defense', 'ws_employee_standard' ];
+            return [ 'ws_protected_disclosure', 'ws_protected_class', 'ws_disclosure_target', 'ws_employment_sector', 'ws_adverse_action', 'ws_process_type', 'ws_remedy', 'ws_fee_shifting_rule', 'ws_employer_defense', 'ws_employee_standard' ];
         case 'citation':
         case 'construction':
-            return [ 'ws_disclosure_type', 'ws_protected_class', 'ws_disclosure_target', 'ws_employment_sector', 'ws_adverse_action', 'ws_process_type', 'ws_remedy', 'ws_employer_defense', 'ws_employee_standard' ];
+            return [ 'ws_protected_disclosure', 'ws_protected_class', 'ws_disclosure_target', 'ws_employment_sector', 'ws_adverse_action', 'ws_process_type', 'ws_remedy', 'ws_employer_defense', 'ws_employee_standard' ];
         default:
             return [];
     }

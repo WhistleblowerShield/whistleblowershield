@@ -29,7 +29,7 @@
  *   ws_aorg_has_limited_scope              Community / Local Scope (true_false, conditional)
  *   ws_aorg_jurisdictions                  Jurisdictions Served (multi_select, optional)
  *   ws_aorg_community_scope                Community Scope (textarea, conditional)
- *   ws_aorg_disclosure_types               Misconduct Categories Handled (multi_select, required)
+ *   ws_aorg_protected_disclosures               Misconduct Categories Handled (multi_select, required)
  *   ws_aorg_disclosure_targets             Disclosure Targets Supported (multi_select, optional)
  *   ws_aorg_disclosure_target_details      Disclosure Targets Details (textarea, optional)
  *   ws_aorg_case_stages                    Case Stage (multi_select, optional)
@@ -366,11 +366,11 @@ function ws_register_acf_assist_org() {
             ],
 
             [
-                'key'           => 'field_aorg_disclosure_types',
+                'key'           => 'field_aorg_protected_disclosures',
                 'label'         => 'Misconduct Categories Handled',
-                'name'          => 'ws_aorg_disclosure_types',
+                'name'          => 'ws_aorg_protected_disclosures',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_disclosure_type',
+                'taxonomy'      => 'ws_protected_disclosure',
                 'instructions'  => 'Select all types of misconduct this organization has experience assisting with.',
                 'required'      => 1,
                 'field_type'    => 'multi_select',

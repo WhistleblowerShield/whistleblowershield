@@ -31,7 +31,7 @@
  *   ws_jx_construction_display_order                  Display Order (number, conditional)
  *
  * Classification tab:
- *   ws_jx_construction_disclosure_types               Disclosure Category (multi_select, optional)
+ *   ws_jx_construction_protected_disclosures               Disclosure Category (multi_select, optional)
  *   ws_jx_construction_protected_classes              Protected Class (multi_select, optional)
  *   ws_jx_construction_protected_class_details        Protected Class Details (textarea, optional)
  *   ws_jx_construction_disclosure_targets             Disclosure Targets (multi_select, optional)
@@ -320,11 +320,11 @@ function ws_register_acf_jx_construction_s() {
             ],
 
             [
-                'key'           => 'field_jx_construction_disclosure_types',
+                'key'           => 'field_jx_construction_protected_disclosures',
                 'label'         => 'Disclosure Category',
-                'name'          => 'ws_jx_construction_disclosure_types',
+                'name'          => 'ws_jx_construction_protected_disclosures',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_disclosure_type',
+                'taxonomy'      => 'ws_protected_disclosure',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Subject matter addressed or clarified by this construction. Tag only what the construction genuinely explains or narrows.',
                 'add_term'      => 0,

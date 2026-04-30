@@ -68,7 +68,7 @@ Returns `array<int,agency>`:
 - `id`, `title`, `url`, `status`
 - `code`, `name`, `logo`
 - `acronym`, `mission`,
-- `disclosure_type`, `disclosure_targets`, `process_type`, `jurisdictions`
+- `protected_disclosure`, `disclosure_targets`, `process_type`, `jurisdictions`
 - `website_url`, `reporting_url`, `phone`
 - `confidentiality_details`, `has_anonymous`
 - `has_reward`, `reward_details`
@@ -84,7 +84,7 @@ Returns one normalized agency procedure row (or `[]` if not found):
 - `acronym`, `mission`,
 - `type`
 - `jurisdiction`, `jurisdiction_slugs`
-- `disclosure_types`, `disclosure_type_slugs`
+- `protected_disclosures`, `protected_disclosure_slugs`
 - `statute_ids`, `comlaw_ids`
 - `entry_point`, `intake_url`, `phone`, `identity_policy`
 - `intake_only`, `deadline_days`, `clock_start`
@@ -127,7 +127,7 @@ Returns one complete assist-org row:
 - `logo`
 - `nationwide_flag`, `federal_only`
 - `has_limited_scope`, `community_scope`
-- `disclosure_types`, `disclosure_type_labels`
+- `protected_disclosures`, `protected_disclosure_labels`
 - `disclosure_targets`, `disclosure_target_labels`, `disclosure_target_details`
 - `protected_class`, `protected_class_labels`, `protected_class_details`
 - `case_stages`, `case_stage_labels`, `case_stage_details`
@@ -204,7 +204,7 @@ Returns:
 Returns `array<int,row>`:
 
 - `id`, `title`, `url`, `status`, `content`, `is_fed`
-- `types`, `disclosure_type`
+- `types`, `protected_disclosure`
 - `official_name`, `common_name`, `label`
 - `cite_url`, `summary`, `is_pdf`
 - `protected_class`, `protected_class_details`
@@ -228,7 +228,7 @@ Returns `array<int,row>`:
 - `precedent_url`, `precedent_url_is_pdf`
 - `public_policy_sources`, `other_sources`
 - `doctrine_basis`, `recognition_status`
-- `disclosure_type`
+- `protected_disclosure`
 - `protected_class`, `protected_class_details`
 - `disclosure_targets`, `disclosure_target_details`
 - `adverse_action_scope`, `attach_flag`
@@ -259,7 +259,7 @@ Returns `array<int,row>`:
 - `opinion_url`, `opinion_url_is_pdf`
 - `court`, `year`, `is_favorable`
 - `summary`
-- `disclosure_type`
+- `protected_disclosure`
 - `protected_class`, `protected_class_details`
 - `disclosure_targets`, `disclosure_target_details`
 - `adverse_action`, `adverse_action_details`
@@ -279,7 +279,7 @@ Returns `array<int,row>`:
 
 - `id`, `title`, `url`, `status`, `content`, `order`, `is_fed`
 - `official_name`, `citation`, `common_name`
-- `disclosure_type`
+- `protected_disclosure`
 - `protected_class`, `protected_class_details`
 - `disclosure_targets`, `disclosure_target_details`
 - `adverse_action_scope`, `attach_flag`

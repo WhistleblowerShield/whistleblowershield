@@ -116,7 +116,7 @@ $_ws_assist_org_matrix = [
         ],
         'protected_classes' => [ 'has-details' ],
         'protected_class_details' => 'Serves federal employees, private sector/corporate staff, and nonprofit employees; broad coverage implied but not exhaustively listed by class',
-        'disclosure_types' => [
+        'protected_disclosures' => [
             'public-corruption-ethics',
             'procurement-spending-fraud',
             'environmental-protection',
@@ -185,7 +185,7 @@ $_ws_assist_org_matrix = [
         ],
         'protected_classes' => [ 'has-details' ],
         'protected_class_details' => 'Broad support across all sectors; assists whistleblowers worldwide with US focus',
-        'disclosure_types' => [
+        'protected_disclosures' => [
             'securities-commodities-fraud',
             'tax-evasion-fraud',
             'public-corruption-ethics',
@@ -247,7 +247,7 @@ $_ws_assist_org_matrix = [
         ],
         'protected_classes' => [ 'has-details' ],
         'protected_class_details' => 'Government employees and private-sector/corporate staff; broad whistleblower support without narrow class restrictions stated',
-        'disclosure_types' => [
+        'protected_disclosures' => [
             'public-corruption-ethics',
             'classified-information',
             'intelligence-community',
@@ -317,7 +317,7 @@ $_ws_assist_org_matrix = [
         ],
         'protected_classes' => [ 'has-details' ],
         'protected_class_details' => 'Primarily federal employees and military/defense-related personnel',
-        'disclosure_types' => [
+        'protected_disclosures' => [
             'public-corruption-ethics',
             'procurement-spending-fraud',
             'military-defense-reporting',
@@ -369,7 +369,7 @@ $_ws_assist_org_matrix = [
         ],
         'protected_classes' => [ 'has-details' ],
         'protected_class_details' => 'Broad across sectors for False Claims Act/whistleblower cases',
-        'disclosure_types' => [
+        'protected_disclosures' => [
             'securities-commodities-fraud',
             'healthcare-medicare-fraud',
             'procurement-spending-fraud',
@@ -435,7 +435,7 @@ $_ws_assist_org_matrix = [
         ],
         'protected_classes' => [ 'has-details' ],
         'protected_class_details' => 'All whistleblowers who have faced retaliation',
-        'disclosure_types' => [
+        'protected_disclosures' => [
             'general-wrongdoing',
             'occupational-health-safety',
         ],
@@ -492,7 +492,7 @@ $_ws_assist_org_matrix = [
         ],
         'protected_classes'       => [ 'has-details' ],
         'protected_class_details' => 'WIN is an org-to-org network; it does not serve individual whistleblowers directly. Member organizations collectively serve whistleblowers across all worker classes and sectors worldwide.',
-        'disclosure_types' => [
+        'protected_disclosures' => [
             'public-corruption-ethics',
             'election-integrity',
             'environmental-protection',
@@ -555,7 +555,7 @@ $_ws_assist_org_matrix = [
         ],
         'protected_classes'       => [ 'corporate-staff', 'contractor-gig', 'agricultural-worker', 'has-details' ],
         'protected_class_details' => 'Focused on low-wage, immigrant, contingent, and unemployed workers in private-sector and gig/temp arrangements; has-details reflects emphasis on economically vulnerable subsets rather than all corporate-staff broadly.',
-        'disclosure_types' => [
+        'protected_disclosures' => [
             'wage-hour-violations',
             'occupational-health-safety',
         ],
@@ -614,7 +614,7 @@ $_ws_assist_org_matrix = [
         ],
         'protected_classes'       => [ 'all-employees' ],
         'protected_class_details' => 'Plaintiff-side attorneys in NELA\'s network represent all worker classifications in employment, wage theft, retaliation, discrimination, and civil rights matters nationwide.',
-        'disclosure_types' => [
+        'protected_disclosures' => [
             'wage-hour-violations',
             'occupational-health-safety',
             'public-corruption-ethics',
@@ -671,7 +671,7 @@ $_ws_assist_org_matrix = [
         ],
         'protected_classes'       => [ 'all-employees', 'has-details' ],
         'protected_class_details' => 'Income-eligible individuals at or below 125% of Federal Poverty Guidelines (2026: $19,950/individual, $41,250/family of 4). Covers all employment classifications meeting income threshold — veterans, seniors, agricultural workers, gig/contract workers included.',
-        'disclosure_types' => [
+        'protected_disclosures' => [
             'wage-hour-violations',
             'occupational-health-safety',
             'public-corruption-ethics',
@@ -730,7 +730,7 @@ $_ws_assist_org_matrix = [
         ],
         'protected_classes'       => [ 'all-employees', 'agricultural-worker', 'has-details' ],
         'protected_class_details' => 'Low-income individuals across all worker classifications; dedicated sections for farmworkers and low-income Latinos; also serves seniors, persons with disabilities, and undocumented persons. Income constraint applies — services flow through member legal aid grantees, not NLADA directly.',
-        'disclosure_types' => [
+        'protected_disclosures' => [
             'wage-hour-violations',
             'occupational-health-safety',
             'public-corruption-ethics',
@@ -792,7 +792,7 @@ $_ws_assist_org_matrix = [
         ],
         'protected_classes'       => [ 'federal-employee', 'corporate-staff', 'contractor-gig' ],
         'protected_class_details' => 'Government and private sector whistleblowers; cases reviewed under WPA (federal employees), Sarbanes-Oxley and Dodd-Frank (corporate), qui tam, and numerous federal and state laws. The referral itself is free; downstream attorney representation terms are set independently.',
-        'disclosure_types' => [
+        'protected_disclosures' => [
             'securities-commodities-fraud',
             'tax-evasion-fraud',
             'public-corruption-ethics',
@@ -855,7 +855,7 @@ $_ws_assist_org_matrix = [
         ],
         'protected_classes'       => [ 'all-employees' ],
         'protected_class_details' => 'All individuals regardless of employment classification or income; connects to state bar lawyer referral services in all 50 states. Note: ABA Free Legal Answers (sister program) is income-restricted for civil matters — the Find Legal Help directory entry point is unrestricted.',
-        'disclosure_types' => [
+        'protected_disclosures' => [
             'wage-hour-violations',
             'occupational-health-safety',
             'securities-commodities-fraud',
@@ -921,7 +921,7 @@ $_ws_assist_org_matrix = [
         ],
         'protected_classes' => [ 'has-details' ],
         'protected_class_details' => 'Public/government employees (federal, state, local)',
-        'disclosure_types' => [
+        'protected_disclosures' => [
             'environmental-protection',
             'occupational-health-safety',
         ],
@@ -983,7 +983,7 @@ $_ws_assist_org_matrix = [
         ],
         'protected_classes' => [ 'has-details' ],
         'protected_class_details' => 'Broad support for whistleblowers across sectors; no narrow employee class restrictions listed',
-        'disclosure_types' => [
+        'protected_disclosures' => [
             'general-wrongdoing',
             'public-corruption-ethics',
             'healthcare-medicare-fraud',
@@ -1264,9 +1264,9 @@ function ws_seed_assist_org_matrix() {
             ws_matrix_assign_terms( $post_id, $org['cost_models'], 'ws_aorg_cost_model' );
         }
 
-        // Disclosure types (array of slugs — must match ws_disclosure_type seeder).
-        if ( ! empty( $org['disclosure_types'] ) ) {
-            ws_matrix_assign_terms( $post_id, $org['disclosure_types'], 'ws_disclosure_type' );
+        // Protected disclosures (array of slugs — must match ws_protected_disclosure seeder).
+        if ( ! empty( $org['protected_disclosures'] ) ) {
+            ws_matrix_assign_terms( $post_id, $org['protected_disclosures'], 'ws_protected_disclosure' );
         }
 
         // Optional disclosure targets (array of slugs).

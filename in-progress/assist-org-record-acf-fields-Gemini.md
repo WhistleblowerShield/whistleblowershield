@@ -58,7 +58,7 @@ This schema is designed to capture everything from multi-national legal giants t
 ### Tab 3: Procedural Pipeline
 *Focus: Where in the legal "meat-grinder" do they help?*
 
-* **`disclosure_types`** / **`disclosure_targets`** (Taxonomies)
+* **`protected_disclosures`** / **`disclosure_targets`** (Taxonomies)
 * **`process_types`** (Taxonomy: `ws_process_type`)
 * **`case_stages`** (Taxonomy: `ws_case_stage`)
 * **`service_tiers`** (Taxonomy: `ws_service_tier`)

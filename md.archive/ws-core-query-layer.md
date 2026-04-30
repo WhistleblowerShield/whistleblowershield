@@ -199,14 +199,14 @@ US-scoped federal statutes when the jurisdiction is not Federal.
 Each item has `is_fed: true` for appended federal records.
 
 Returns all fields from the statute ACF group: `official_name`,
-`citation`, `common_name`, `disclosure_type`, `protected_classes`,
+`citation`, `common_name`, `protected_disclosure`, `protected_classes`,
 `protected_class_details`, `disclosure_targets`, ``disclosure_target_details_`,
 `adverse_action_scope`, `attach_flag`, `order`,
 `sol_value`, `sol_unit`, `sol_trigger`, `has_sol_details`,
 `sol_details`, `has_tolling_details`, `tolling_details`,
 `has_exhaustion`, `exhaustion_details`, `process_types`,
-`adverse_actions`, `adverse_action_deatils`, `fee_shifting`, `remedies`,
- `remedy_deatils`,`related_agencies`, `employee_standards`, 
+`adverse_actions`, `adverse_action_details`, `fee_shifting`, `remedies`,
+ `remedy_details`,`related_agencies`, `employee_standards`, 
 `employee_standard_details`, `employer_defenses`, `employer_defense_details`,
 `has_rebuttable_details`, `rebuttable_details`, `has_bop_details`,
 `bop_details`, `has_reward`, `reward_details`, `statute_url`,
@@ -219,7 +219,7 @@ by this function — they are accessible via their own archive.
 
 #### `ws_get_jx_citation_data( $jx_term_id )`
 Returns an array of citation data arrays. Same federal append logic as
-statutes. Fields: `citation_type`, `disclosure_type`, `official_name`,
+statutes. Fields: `citation_type`, `protected_disclosure`, `official_name`,
 `common_name`, `url`, `url_is_pdf`, `attach_flag`, `order`,
 `last_reviewed`, `statute_ids`, `ref_materials`, plus `plain`,
 `verify`, `author`.
@@ -242,7 +242,7 @@ Returns an array of agency data arrays for the jurisdiction. Fields:
 #### `ws_get_assist_org_data( $jx_term_id )`
 Returns an array of assist organization data arrays scoped to the
 jurisdiction. Fields: `internal_id`, `org_type`, `description`,
-`logo`, `serves_nationwide`, `disclosure_types`, `services`,
+`logo`, `serves_nationwide`, `protected_disclosures`, `services`,
 `additional_services`, `employment_sectors`, `case_stages`, `website`,
 `phone`, `email`, `address`, `languages`, `additional_languages`,
 `cost_model`, `income_limit`, `income_limit_details`, `accepts_anonymous`,
@@ -301,7 +301,7 @@ procedure save or delete.
 
 Each row: `id`, `title`, `url`, `agency_id`, `agency_name`,
 `agency_url`, `type` (procedure type slug), `jurisdiction`,
-`disclosure_types`, `entry_point`, `intake_url`, `phone`,
+`protected_disclosures`, `entry_point`, `intake_url`, `phone`,
 `identity_policy`, `intake_only`, `deadline_days`, `clock_start`,
 `has_prereqs`, `prereq_details`, `walkthrough`, `exclusivity_details`,
 `last_reviewed`, `author`.

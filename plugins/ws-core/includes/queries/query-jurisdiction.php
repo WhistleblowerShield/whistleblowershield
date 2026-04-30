@@ -537,26 +537,26 @@ function ws_get_jx_statute_data( $jx_term_id ) {
         foreach ( $q->posts as $statute ) {
             $sid    = $statute->ID;
             $rows[] = [
-                'id'      => $sid,
-                'title'   => get_the_title( $sid ),
-                'url'     => get_permalink( $sid ),
-                'status'  => get_post_status( $sid ),
-                'content' => get_post_field( 'post_content', $sid ),
-                'order'   => (int) get_post_meta( $sid, 'ws_jx_statute_display_order', true ),
-                'is_fed'  => $is_fed,
+                'id'       => $sid,
+                'title'    => get_the_title( $sid ),
+                'url'      => get_permalink( $sid ),
+                'status'   => get_post_status( $sid ),
+                'content'  => get_post_field( 'post_content', $sid ),
+                'order'    => (int) get_post_meta( $sid, 'ws_jx_statute_display_order', true ),
+                'is_fed'   => $is_fed,
 
                 // ── Legal Basis ───────────────────────────────────────────
-                'official_name'        => get_post_meta( $sid, 'ws_jx_statute_official_name',       true ),
-                'citation'             => get_post_meta( $sid, 'ws_jx_statute_citation',             true ),
-                'common_name'          => get_post_meta( $sid, 'ws_jx_statute_common_name',          true ),
-                'disclosure_type'      => ws_q_normalize_id_list( get_field( 'ws_jx_statute_disclosure_types',      $sid ) ),
-                'protected_class'      => ws_q_normalize_id_list( get_field( 'ws_jx_statute_protected_classes',      $sid ) ),
-                'protected_class_details' => get_post_meta( $sid, 'ws_jx_statute_protected_class_details', true ),
-                'disclosure_targets'   => ws_q_normalize_id_list( get_field( 'ws_jx_statute_disclosure_targets',   $sid ) ),
-                'disclosure_target_details' => get_post_meta( $sid, 'ws_jx_statute_disclosure_target_details', true ),
-                'employment_sectors'      => ws_q_normalize_id_list( get_field( 'ws_jx_statute_employment_sectors', $sid ) ),
-                'adverse_action_scope' => get_post_meta( $sid, 'ws_jx_statute_adverse_action_scope', true ),
-                'attach_flag'          => (bool) get_post_meta( $sid, 'ws_jx_statute_has_attach_flag',              true ),
+                'official_name'              => get_post_meta( $sid, 'ws_jx_statute_official_name',       true ),
+                'citation'                   => get_post_meta( $sid, 'ws_jx_statute_citation',             true ),
+                'common_name'                => get_post_meta( $sid, 'ws_jx_statute_common_name',          true ),
+                'protected_disclosure'       => ws_q_normalize_id_list( get_field( 'ws_jx_statute_protected_disclosures',      $sid ) ),
+                'protected_class'            => ws_q_normalize_id_list( get_field( 'ws_jx_statute_protected_classes',      $sid ) ),
+                'protected_class_details'    => get_post_meta( $sid, 'ws_jx_statute_protected_class_details', true ),
+                'disclosure_targets'         => ws_q_normalize_id_list( get_field( 'ws_jx_statute_disclosure_targets',   $sid ) ),
+                'disclosure_target_details'  => get_post_meta( $sid, 'ws_jx_statute_disclosure_target_details', true ),
+                'employment_sectors'         => ws_q_normalize_id_list( get_field( 'ws_jx_statute_employment_sectors', $sid ) ),
+                'adverse_action_scope'       => get_post_meta( $sid, 'ws_jx_statute_adverse_action_scope', true ),
+                'attach_flag'                => (bool) get_post_meta( $sid, 'ws_jx_statute_has_attach_flag',              true ),
 
                 // ── Statute of Limitations ────────────────────────────────
                 'sol_value'           => get_post_meta( $sid, 'ws_jx_statute_sol_value',           true ),
@@ -568,50 +568,50 @@ function ws_get_jx_statute_data( $jx_term_id ) {
                 'tolling_details'     => get_post_meta( $sid, 'ws_jx_statute_tolling_details',     true ),
                 'has_exhaustion'      => (bool) get_post_meta( $sid, 'ws_jx_statute_has_exhaustion_required',      true ),
                 'exhaustion_details'  => get_post_meta( $sid, 'ws_jx_statute_exhaustion_details',  true ),
-                'has_employer_threshold'     => (bool) get_post_meta( $sid, 'ws_jx_statute_has_employer_threshold', true ),
-                'employer_threshold_details' => get_post_meta( $sid, 'ws_jx_statute_employer_threshold_details', true ),
+                'has_employer_threshold'      => (bool) get_post_meta( $sid, 'ws_jx_statute_has_employer_threshold', true ),
+                'employer_threshold_details'  => get_post_meta( $sid, 'ws_jx_statute_employer_threshold_details', true ),
 
                 // ── Enforcement ───────────────────────────────────────────
-                'process_type'         => ws_q_normalize_id_list( get_field( 'ws_jx_statute_process_types',          $sid ) ),
-                'adverse_action'       => ws_q_normalize_id_list( get_field( 'ws_jx_statute_adverse_actions',        $sid ) ),
-                'adverse_action_details' => get_post_meta( $sid, 'ws_jx_statute_adverse_action_details', true ),
-                'fee_shifting_rules'         => ws_q_normalize_id_list( get_field( 'ws_jx_statute_fee_shifting_rules',          $sid ) ),
-                'remedies'             => ws_q_normalize_id_list( get_field( 'ws_jx_statute_remedies',              $sid ) ),
-                'remedy_details'     => get_post_meta( $sid, 'ws_jx_statute_remedy_details', true ),
-                'local_agencies'       => ws_q_normalize_id_list( get_field( 'ws_jx_statute_local_agencies',        $sid ) ),
-                'federal_agencies'     => ws_q_normalize_id_list( get_field( 'ws_jx_statute_federal_agencies',      $sid ) ),
-                'enforcement_channel'  => get_post_meta( $sid, 'ws_jx_statute_enforcement_channel', true ),
-                'citation_ids'         => ws_q_normalize_id_list( get_post_meta( $sid, 'ws_jx_statute_citation_ids', true ) ),
-                'construction_ids'         => ws_q_normalize_id_list( get_post_meta( $sid, 'ws_jx_statute_construction_ids', true ) ),
+                'process_type'            => ws_q_normalize_id_list( get_field( 'ws_jx_statute_process_types',          $sid ) ),
+                'adverse_action'          => ws_q_normalize_id_list( get_field( 'ws_jx_statute_adverse_actions',        $sid ) ),
+                'adverse_action_details'  => get_post_meta( $sid, 'ws_jx_statute_adverse_action_details', true ),
+                'fee_shifting_rules'      => ws_q_normalize_id_list( get_field( 'ws_jx_statute_fee_shifting_rules',          $sid ) ),
+                'remedies'                => ws_q_normalize_id_list( get_field( 'ws_jx_statute_remedies',              $sid ) ),
+                'remedy_details'          => get_post_meta( $sid, 'ws_jx_statute_remedy_details', true ),
+                'local_agencies'          => ws_q_normalize_id_list( get_field( 'ws_jx_statute_local_agencies',        $sid ) ),
+                'federal_agencies'        => ws_q_normalize_id_list( get_field( 'ws_jx_statute_federal_agencies',      $sid ) ),
+                'enforcement_channel'     => get_post_meta( $sid, 'ws_jx_statute_enforcement_channel', true ),
+                'citation_ids'            => ws_q_normalize_id_list( get_post_meta( $sid, 'ws_jx_statute_citation_ids', true ) ),
+                'construction_ids'        => ws_q_normalize_id_list( get_post_meta( $sid, 'ws_jx_statute_construction_ids', true ) ),
 
                 // ── Burden of Proof ───────────────────────────────────────
-                'employee_standard'        => ws_q_normalize_id_list( get_field( 'ws_jx_statute_employee_standards', $sid ) ),
-                'employee_standard_details' => get_post_meta( $sid, 'ws_jx_statute_employee_standard_details', true ),
-                'employer_defense'         => ws_q_normalize_id_list( get_field( 'ws_jx_statute_employer_defenses', $sid ) ),
-                'employer_defense_details' => get_post_meta( $sid, 'ws_jx_statute_employer_defense_details', true ),
-                'has_rebuttable'           => (bool) get_post_meta( $sid, 'ws_jx_statute_has_rebuttable_presumption', true ),
-                'rebuttable_details'       => get_post_meta( $sid, 'ws_jx_statute_rebuttable_presumption',       true ),
-                'has_bop'                  => (bool) get_post_meta( $sid, 'ws_jx_statute_has_bop_details',   true ),
-                'bop_details'              => get_post_meta( $sid, 'ws_jx_statute_bop_details',              true ),
-                'bop_flag'                 => get_post_meta( $sid, 'ws_jx_statute_bop_flag', true ),
+                'employee_standard'          => ws_q_normalize_id_list( get_field( 'ws_jx_statute_employee_standards', $sid ) ),
+                'employee_standard_details'  => get_post_meta( $sid, 'ws_jx_statute_employee_standard_details', true ),
+                'employer_defense'           => ws_q_normalize_id_list( get_field( 'ws_jx_statute_employer_defenses', $sid ) ),
+                'employer_defense_details'   => get_post_meta( $sid, 'ws_jx_statute_employer_defense_details', true ),
+                'has_rebuttable'             => (bool) get_post_meta( $sid, 'ws_jx_statute_has_rebuttable_presumption', true ),
+                'rebuttable_details'         => get_post_meta( $sid, 'ws_jx_statute_rebuttable_presumption',       true ),
+                'has_bop'                    => (bool) get_post_meta( $sid, 'ws_jx_statute_has_bop_details',   true ),
+                'bop_details'                => get_post_meta( $sid, 'ws_jx_statute_bop_details',              true ),
+                'bop_flag'                   => get_post_meta( $sid, 'ws_jx_statute_bop_flag', true ),
 
                 // ── Reward ────────────────────────────────────────────────
-                'has_reward'     => (bool) get_post_meta( $sid, 'ws_jx_statute_has_reward_available',     true ),
-                'reward_details' => get_post_meta( $sid, 'ws_jx_statute_reward_details', true ),
+                'has_reward'      => (bool) get_post_meta( $sid, 'ws_jx_statute_has_reward_available',     true ),
+                'reward_details'  => get_post_meta( $sid, 'ws_jx_statute_reward_details', true ),
 
                 // ── Links ─────────────────────────────────────────────────
-                'statute_url' => get_post_meta( $sid, 'ws_jx_statute_url',        true ),
-                'url_is_pdf'  => (bool) get_post_meta( $sid, 'ws_jx_statute_url_is_pdf', true ),
+                'statute_url'  => get_post_meta( $sid, 'ws_jx_statute_url',        true ),
+                'url_is_pdf'   => (bool) get_post_meta( $sid, 'ws_jx_statute_url_is_pdf', true ),
 
-                'last_reviewed' => get_post_meta( $sid, 'ws_jx_statute_last_reviewed', true ),
-                'ref_materials' => ws_get_ref_materials( $sid ),
+                'last_reviewed'  => get_post_meta( $sid, 'ws_jx_statute_last_reviewed', true ),
+                'ref_materials'  => ws_get_ref_materials( $sid ),
 
                 // plain-english fields
-                'plain'  => ws_build_plain_english_array( $sid ),
+                'plain'   => ws_build_plain_english_array( $sid ),
                 // Source & verification
-                'verify' => ws_build_source_verify_array( $sid ),
+                'verify'  => ws_build_source_verify_array( $sid ),
                 // Record management
-                'author' => ws_build_author_array( $sid ),
+                'author'  => ws_build_author_array( $sid ),
             ];
         }
         return $rows;
@@ -730,7 +730,7 @@ function ws_get_jx_citation_data( $jx_term_id ) {
                 'is_fed'  => $is_fed,
                 // Citation-specific fields
                 'types'           => $type_list,
-                'disclosure_type' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_disclosure_types', $cid ) ),
+                'protected_disclosure' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_protected_disclosures', $cid ) ),
                 'official_name'   => get_post_meta( $cid, 'ws_jx_citation_official_name',           true ),
                 'common_name'     => get_post_meta( $cid, 'ws_jx_citation_common_name',             true ),
                 'label'           => get_post_meta( $cid, 'ws_jx_citation_common_name',           true )
@@ -854,7 +854,7 @@ function ws_get_jx_construction_data( $jx_term_id ) {
                 'year'          => (int) get_post_meta( $iid, 'ws_jx_construction_year',             true ),
                 'is_favorable'  => (bool) get_post_meta( $iid, 'ws_jx_construction_is_favorable', true ),
                 'summary'       => get_post_meta( $iid, 'ws_plain_english_wysiwyg',          true ),
-                'disclosure_type' => ws_q_normalize_id_list( get_field( 'ws_jx_construction_disclosure_types', $iid ) ),
+                'protected_disclosure' => ws_q_normalize_id_list( get_field( 'ws_jx_construction_protected_disclosures', $iid ) ),
                 'protected_class' => ws_q_normalize_id_list( get_field( 'ws_jx_construction_protected_classes', $iid ) ),
                 'protected_class_details' => get_post_meta( $iid, 'ws_jx_construction_protected_class_details', true ),
                 'disclosure_targets' => ws_q_normalize_id_list( get_field( 'ws_jx_construction_disclosure_targets', $iid ) ),
@@ -1143,14 +1143,14 @@ function ws_get_jx_common_law_data( $jx_term_id ) {
                 'other_sources'          => get_post_meta( $rid, 'ws_jx_comlaw_other_sources',           true ),
                 'doctrine_basis'         => get_post_meta( $rid, 'ws_jx_comlaw_doctrine_basis_wysiwyg',          true ),
                 'recognition_status'     => get_post_meta( $rid, 'ws_jx_comlaw_recognition_status_wysiwyg',      true ),
-                'disclosure_type'      => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_disclosure_types',      $rid ) ),
-                'protected_class'      => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_protected_classes',      $rid ) ),
-                'protected_class_details' => get_post_meta( $rid, 'ws_jx_comlaw_protected_class_details', true ),
-                'disclosure_targets'   => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_disclosure_targets',   $rid ) ),
-                'disclosure_target_details' => get_post_meta( $rid, 'ws_jx_comlaw_disclosure_target_details', true ),
-                'employment_sectors'      => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_employment_sectors', $rid ) ),
-                'adverse_action_scope' => get_post_meta( $rid, 'ws_jx_comlaw_adverse_action_scope',  true ),
-                'attach_flag'          => (bool) get_post_meta( $rid, 'ws_jx_comlaw_has_attach_flag',        true ),
+                'protected_disclosure'       => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_protected_disclosures',      $rid ) ),
+                'protected_class'            => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_protected_classes',      $rid ) ),
+                'protected_class_details'    => get_post_meta( $rid, 'ws_jx_comlaw_protected_class_details', true ),
+                'disclosure_targets'         => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_disclosure_targets',   $rid ) ),
+                'disclosure_target_details'  => get_post_meta( $rid, 'ws_jx_comlaw_disclosure_target_details', true ),
+                'employment_sectors'         => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_employment_sectors', $rid ) ),
+                'adverse_action_scope'       => get_post_meta( $rid, 'ws_jx_comlaw_adverse_action_scope',  true ),
+                'attach_flag'                => (bool) get_post_meta( $rid, 'ws_jx_comlaw_has_attach_flag',        true ),
 
                 // ── Statute of Limitations ────────────────────────────────
                 'sol_value'           => get_post_meta( $rid, 'ws_jx_comlaw_sol_value',           true ),
@@ -1162,23 +1162,23 @@ function ws_get_jx_common_law_data( $jx_term_id ) {
                 'tolling_details'     => get_post_meta( $rid, 'ws_jx_comlaw_tolling_details',     true ),
                 'has_exhaustion'      => (bool) get_post_meta( $rid, 'ws_jx_comlaw_has_exhaustion_required',      true ),
                 'exhaustion_details'  => get_post_meta( $rid, 'ws_jx_comlaw_exhaustion_details',  true ),
-                'has_employer_threshold'     => (bool) get_post_meta( $rid, 'ws_jx_comlaw_has_employer_threshold', true ),
-                'employer_threshold_details' => get_post_meta( $rid, 'ws_jx_comlaw_employer_threshold_details', true ),
+                'has_employer_threshold'      => (bool) get_post_meta( $rid, 'ws_jx_comlaw_has_employer_threshold', true ),
+                'employer_threshold_details'  => get_post_meta( $rid, 'ws_jx_comlaw_employer_threshold_details', true ),
 
                 // ── Enforcement ───────────────────────────────────────────
                 'process_type'     => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_process_types',     $rid ) ),
                 'adverse_action'   => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_adverse_actions',   $rid ) ),
-                'adverse_action_details' => get_post_meta( $rid, 'ws_jx_comlaw_adverse_action_details', true ),
-                'fee_shifting_rules'     => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_fee_shifting_rules',     $rid ) ),
-                'remedies'         => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_remedies',         $rid ) ),
-                'remedy_details' => get_post_meta( $rid, 'ws_jx_comlaw_remedy_details', true ),
-                'related_agencies' => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_related_agencies', $rid ) ),
+                'adverse_action_details'  => get_post_meta( $rid, 'ws_jx_comlaw_adverse_action_details', true ),
+                'fee_shifting_rules'      => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_fee_shifting_rules',     $rid ) ),
+                'remedies'                => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_remedies',         $rid ) ),
+                'remedy_details'          => get_post_meta( $rid, 'ws_jx_comlaw_remedy_details', true ),
+                'related_agencies'        => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_related_agencies', $rid ) ),
 
                 // ── Burden of Proof ───────────────────────────────────────
-                'has_preclusion'         => (bool) get_post_meta( $rid, 'ws_jx_comlaw_has_statutory_preclusion',         true ),
-                'statutory_preclusion_details' => get_post_meta( $rid, 'ws_jx_comlaw_statutory_preclusion_details', true ),
-                'employee_standard'        => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_employee_standards',        $rid ) ),
-                'employee_standard_details' => get_post_meta( $rid, 'ws_jx_comlaw_employee_standard_details', true ),
+                'has_preclusion'                => (bool) get_post_meta( $rid, 'ws_jx_comlaw_has_statutory_preclusion',         true ),
+                'statutory_preclusion_details'  => get_post_meta( $rid, 'ws_jx_comlaw_statutory_preclusion_details', true ),
+                'employee_standard'             => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_employee_standards',        $rid ) ),
+                'employee_standard_details'     => get_post_meta( $rid, 'ws_jx_comlaw_employee_standard_details', true ),
                 'employer_defense'         => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_employer_defenses',         $rid ) ),
                 'employer_defense_details' => get_post_meta( $rid, 'ws_jx_comlaw_employer_defense_details', true ),
                 'has_rebuttable'           => (bool) get_post_meta( $rid, 'ws_jx_comlaw_has_rebuttable_presumption', true ),
@@ -1188,16 +1188,16 @@ function ws_get_jx_common_law_data( $jx_term_id ) {
                 'bop_flag'                 => get_post_meta( $rid, 'ws_jx_comlaw_bop_flag', true ),
 
                 // ── Reward ────────────────────────────────────────────────
-                'has_reward'     => (bool) get_post_meta( $rid, 'ws_jx_comlaw_has_reward_available',     true ),
-                'reward_details' => get_post_meta( $rid, 'ws_jx_comlaw_reward_details', true ),
-                'citation_ids'   => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_citation_ids', $rid ) ),
-                'construction_ids'     => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_construction_ids', $rid ) ),
-                'ref_materials'  => ws_get_ref_materials( $rid ),
+                'has_reward'         => (bool) get_post_meta( $rid, 'ws_jx_comlaw_has_reward_available',     true ),
+                'reward_details'     => get_post_meta( $rid, 'ws_jx_comlaw_reward_details', true ),
+                'citation_ids'       => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_citation_ids', $rid ) ),
+                'construction_ids'   => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_construction_ids', $rid ) ),
+                'ref_materials'      => ws_get_ref_materials( $rid ),
 
                 // Record management
-                'plain'  => ws_build_plain_english_array( $rid ),
-                'verify' => ws_build_source_verify_array( $rid ),
-                'author' => ws_build_author_array( $rid ),
+                'plain'   => ws_build_plain_english_array( $rid ),
+                'verify'  => ws_build_source_verify_array( $rid ),
+                'author'  => ws_build_author_array( $rid ),
             ];
         }
         return $rows;

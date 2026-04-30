@@ -126,8 +126,8 @@ the procedure can be published.
 
 **Two severity levels:**
 
-**Hard mismatch** — a linked statute has zero `ws_disclosure_type`
-term intersection with the procedure's own disclosure types:
+**Hard mismatch** — a linked statute has zero `ws_protected_disclosure`
+term intersection with the procedure's own protected disclosures:
 - Sets `ws_ag_procedure_stat_flagged = 1`
 - Writes mismatch detail JSON to `ws_ag_procedure_stat_flag_detail`
 - Demotes post status to `draft`
@@ -135,7 +135,7 @@ term intersection with the procedure's own disclosure types:
   attempts (quick edit, bulk edit, REST, programmatic) until resolved
 
 **Broad-scope advisory** (soft, no demotion) — procedure has no
-disclosure types set AND has statute links:
+protected disclosures set AND has statute links:
 - Sets `ws_ag_procedure_stat_broad_scope = 1`
 - Admin notice surfaces the advisory on the edit screen
 - No publish block
@@ -147,7 +147,7 @@ publish to proceed. After save, the hook writes an append-only override
 audit log to `ws_ag_procedure_parent_override_log`, clears the mismatch flag,
 and resets the override field to 0.
 
-**Note on skipped statutes:** Statutes with no `ws_disclosure_type`
+**Note on skipped statutes:** Statutes with no `ws_protected_disclosure`
 terms assigned are skipped by the hard-mismatch check. The data problem
 is on the statute side, not the procedure side — flagging here would
 point the editor in the wrong direction. Use the jurisdiction dashboard

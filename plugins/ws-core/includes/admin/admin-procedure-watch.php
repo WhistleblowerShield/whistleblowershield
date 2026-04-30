@@ -8,18 +8,18 @@
  *
  * DETECTION LOGIC
  * ---------------
- * Hard mismatch: linked jx-statute or jx-common-law has zero ws_disclosure_type term intersection
- * with this procedure's ws_ag_procedure_disclosure_types.
+ * Hard mismatch: linked jx-statute or jx-common-law has zero ws_protected_disclosure term intersection
+ * with this procedure's ws_ag_procedure_protected_disclosures.
  *   → sets ws_ag_procedure_parent_flagged = 1
  *   → demotes published post to draft
  *   → publish gate blocks all subsequent publish attempts
  *
- * Broad-scope advisory (soft — no demotion): procedure has no disclosure types
+ * Broad-scope advisory (soft — no demotion): procedure has no protected disclosures
  * set AND has statute/common-law links. Links cannot be automatically verified.
  *   → sets ws_ag_procedure_parent_broad_scope = 1
  *   → admin notice only
  *
- * Linked records with no ws_disclosure_type terms assigned are skipped — the data
+ * Linked records with no ws_protected_disclosure terms assigned are skipped — the data
  * problem is on the linked-record side, not the procedure side.
  *
  * ADMIN OVERRIDE FLOW
@@ -46,7 +46,7 @@ defined( 'ABSPATH' ) || exit;
 // Detection + Demotion
 //
 // Runs after ACF writes all fields (priority 10). Reads the new parent IDs
-// and disclosure types from post meta and checks for hard mismatches.
+// and protected disclosures from post meta and checks for hard mismatches.
 // ════════════════════════════════════════════════════════════════════════════
 
 add_action( 'acf/save_post', 'ws_ag_procedure_check_parent_links', 20 );
@@ -101,7 +101,7 @@ function ws_ag_procedure_check_parent_links( $post_id ) {
         return;
     }
 
-    // ── Read linked authority IDs and procedure disclosure types ───────────
+    // ── Read linked authority IDs and procedure protected disclosures ───────────
     // Direct meta and taxonomy reads — acf/save_post context; validation logic that
     // runs during a save cannot route through the query layer's frontend read functions.
 
@@ -118,12 +118,12 @@ function ws_ag_procedure_check_parent_links( $post_id ) {
         return;
     }
 
-    $procedure_disc_types = wp_get_object_terms( $post_id, 'ws_disclosure_type', [ 'fields' => 'ids' ] );
+    $procedure_disc_types = wp_get_object_terms( $post_id, 'ws_protected_disclosure', [ 'fields' => 'ids' ] );
     if ( is_wp_error( $procedure_disc_types ) ) {
         $procedure_disc_types = [];
     }
 
-    // ── Broad-scope advisory: no disclosure types + linked authorities ─────
+    // ── Broad-scope advisory: no protected disclosures + linked authorities ─────
     //
     // The auto-scoping hook in acf-ag-procedures.php had no taxonomy scope
     // to filter by — the picker showed everything. Any authority links made
@@ -137,7 +137,7 @@ function ws_ag_procedure_check_parent_links( $post_id ) {
 
     // ── Hard mismatch check: disclosure-type intersection per linked record ─
     //
-    // Skip linked records with no ws_disclosure_type terms — the incomplete data
+    // Skip linked records with no ws_protected_disclosure terms — the incomplete data
     // is a linked-record-side concern. Flagging the procedure for a record's
     // missing taxonomy data misdirects the editor.
 
@@ -147,10 +147,10 @@ function ws_ag_procedure_check_parent_links( $post_id ) {
 
         if ( ! $statute_id ) continue;
 
-        $statute_disc_types = wp_get_object_terms( $statute_id, 'ws_disclosure_type', [ 'fields' => 'ids' ] );
+        $statute_disc_types = wp_get_object_terms( $statute_id, 'ws_protected_disclosure', [ 'fields' => 'ids' ] );
 
         if ( is_wp_error( $statute_disc_types ) || empty( $statute_disc_types ) ) {
-            continue; // Skip: linked record has no disclosure types — data incomplete on linked-record side.
+            continue; // Skip: linked record has no protected disclosures — data incomplete on linked-record side.
         }
 
         if ( ! empty( $procedure_disc_types ) ) {
@@ -163,7 +163,7 @@ function ws_ag_procedure_check_parent_links( $post_id ) {
                     'parent_type'   => 'statute',
                     'parent_id'     => $statute_id,
                     'parent_title'  => get_the_title( $statute_id ),
-                    'reason'        => 'disclosure_type_mismatch',
+                    'reason'        => 'protected_disclosure_mismatch',
                 ];
             }
         }
@@ -173,10 +173,10 @@ function ws_ag_procedure_check_parent_links( $post_id ) {
 
         if ( ! $comlaw_id ) continue;
 
-        $comlaw_disc_types = wp_get_object_terms( $comlaw_id, 'ws_disclosure_type', [ 'fields' => 'ids' ] );
+        $comlaw_disc_types = wp_get_object_terms( $comlaw_id, 'ws_protected_disclosure', [ 'fields' => 'ids' ] );
 
         if ( is_wp_error( $comlaw_disc_types ) || empty( $comlaw_disc_types ) ) {
-            continue; // Skip: linked record has no disclosure types — data incomplete on linked-record side.
+            continue; // Skip: linked record has no protected disclosures — data incomplete on linked-record side.
         }
 
         if ( ! empty( $procedure_disc_types ) ) {
@@ -189,7 +189,7 @@ function ws_ag_procedure_check_parent_links( $post_id ) {
                     'parent_type'  => 'common_law',
                     'parent_id'    => $comlaw_id,
                     'parent_title' => get_the_title( $comlaw_id ),
-                    'reason'       => 'disclosure_type_mismatch',
+                    'reason'       => 'protected_disclosure_mismatch',
                 ];
             }
         }
@@ -326,7 +326,7 @@ function ws_ag_procedure_conflict_admin_notice() {
     if ( $flagged && ! empty( $mismatches ) ) {
         echo '<div class="notice notice-error">';
         echo '<p><strong>Authority Link Issue — This Procedure Is Saved as a Draft</strong></p>';
-        echo '<p>The following linked authorities do not share a disclosure type with this procedure. ';
+        echo '<p>The following linked authorities do not share a protected disclosure with this procedure. ';
         echo 'Publishing is blocked until the issues are resolved or an administrator overrides.</p>';
         echo '<ul>';
         foreach ( $mismatches as $m ) {
@@ -335,15 +335,15 @@ function ws_ag_procedure_conflict_admin_notice() {
             $parent_title = ! empty( $m['parent_title'] ) ? $m['parent_title'] : ( $m['statute_title'] ?? '' );
             $record_label = ( 'common_law' === $parent_type ) ? 'Common Law' : 'Statute';
             $safe_title   = $parent_title ? esc_html( $parent_title ) : $record_label . ' ID ' . $parent_id;
-            echo '<li><strong>' . esc_html( $record_label ) . ':</strong> <strong>' . $safe_title . '</strong> — disclosure type does not intersect with this procedure\'s categories.</li>';
+            echo '<li><strong>' . esc_html( $record_label ) . ':</strong> <strong>' . $safe_title . '</strong> — protected disclosure does not intersect with this procedure\'s categories.</li>';
         }
         echo '</ul>';
 
         if ( $is_admin ) {
-            echo '<p>To resolve: fix the linked record\'s or procedure\'s disclosure type taxonomy, then re-save. '
+            echo '<p>To resolve: fix the linked record\'s or procedure\'s protected disclosure taxonomy, then re-save. '
                . 'Alternatively, use the <strong>Admin Review</strong> tab to override if this link is intentionally unconventional.</p>';
         } else {
-            echo '<p>To resolve: update the linked record\'s or procedure\'s disclosure type category, then re-save. '
+            echo '<p>To resolve: update the linked record\'s or procedure\'s protected disclosure category, then re-save. '
                . 'Contact an administrator if the link is correct but the taxonomy data needs adjustment.</p>';
         }
 
@@ -355,7 +355,7 @@ function ws_ag_procedure_conflict_admin_notice() {
     if ( $broad ) {
         echo '<div class="notice notice-warning">';
         echo '<p><strong>Authority Links — Scope Advisory</strong></p>';
-        echo '<p>This procedure has no Disclosure Types set. Authority pickers may show broad/unfiltered results ';
+        echo '<p>This procedure has no Protected Disclosures set. Authority pickers may show broad/unfiltered results ';
         echo 'when links were selected — automatic verification is not possible. ';
         echo 'Please confirm each linked authority is specifically applicable to this procedure.</p>';
         echo '</div>';

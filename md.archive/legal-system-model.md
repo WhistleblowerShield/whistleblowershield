@@ -23,7 +23,7 @@ and case law constructions that vary by:
 - **Employment sector** — federal employees, private sector employees,
   military contractors, and healthcare workers are often covered by
   different laws
-- **Disclosure type** — reporting securities fraud is governed by different
+- **Protected disclosure** — reporting securities fraud is governed by different
   law than reporting workplace safety violations
 - **Timing** — a person considering coming forward has different legal
   needs than a person already facing retaliation
@@ -104,7 +104,7 @@ or investigate retaliation complaints. Agencies are the "who do I contact"
 answer on the platform.
 
 An agency record captures the agency's mission, contact information,
-reporting URLs, hotlines, languages supported, and the disclosure types
+reporting URLs, hotlines, languages supported, and the protected disclosures
 it handles. Agencies carry the `ws_jurisdiction` taxonomy term indicating
 where they have authority.
 
@@ -142,7 +142,7 @@ help me?" as distinct from "what do I do next?"
 
 An assist organization record captures the organization's type, cost
 model, services offered, employment sectors served, languages supported,
-disclosure types covered, case stages served, contact information, and
+protected disclosures covered, case stages served, contact information, and
 jurisdiction scope. Nationwide organizations carry the `is_nationwide`
 flag and are surfaced on all jurisdiction pages regardless of their
 taxonomy term assignment.
@@ -219,7 +219,7 @@ publicly traded companies. The False Claims Act § 3730(h) is a different
 implementation of the same concept.
 
 This distinction is expressed through the taxonomy system:
-`ws_disclosure_type` classifies what a record covers in conceptual terms.
+`ws_protected_disclosure` classifies what a record covers in conceptual terms.
 The statute record itself describes the specific law. A user can filter by
 concept without needing to know which statute implements it — the taxonomy
 handles that mapping.

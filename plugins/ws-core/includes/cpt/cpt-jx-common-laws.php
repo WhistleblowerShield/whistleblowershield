@@ -92,7 +92,7 @@ function ws_register_cpt_common_law() {
         'supports'   => [ 'title', 'editor', 'revisions' ],
         'taxonomies' => [
             'ws_protection_scope',
-            'ws_disclosure_type',
+            'ws_protected_disclosure',
             'ws_process_type',
             'ws_remedy',
             'ws_protected_class',

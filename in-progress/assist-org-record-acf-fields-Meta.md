@@ -4,7 +4,7 @@
 
 This proposal throws away every field name, tab, and meta key from `acf-assist-orgs.php`. It keeps the taxonomy *pattern* from the legal-record draft, steals its naming discipline, then bends it on purpose for assist orgs.
 
-We keep: `ws_jurisdiction`, `ws_disclosure_type`, `ws_process_type`, `ws_case_stage`, `ws_language`, `ws_employment_sector`. Everything else gets rebuilt.
+We keep: `ws_jurisdiction`, `ws_protected_disclosure`, `ws_process_type`, `ws_case_stage`, `ws_language`, `ws_employment_sector`. Everything else gets rebuilt.
 
 ---
 
@@ -75,7 +75,7 @@ We follow the legal-record draft rules, then break two:
 ### Tab: Whistleblower Fit
 - `whistleblower_focus_level` — integer 0-3 (0=unclear, 3=broad)
 - `whistleblower_focus_context`
-- `disclosure_types` — taxonomy ws_disclosure_type, multi
+- `protected_disclosures` — taxonomy ws_protected_disclosure, multi
 - `worker_statuses` — taxonomy ws_worker_status, multi
 - `employment_sectors` — taxonomy ws_employment_sector, multi
 - `case_stages` — taxonomy ws_case_stage, multi

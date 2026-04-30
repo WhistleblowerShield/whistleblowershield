@@ -1,897 +1,945 @@
 <?php
-/**
- * register-taxonomies.php — Registers all ws-core taxonomies and seeds initial terms.
- *
- * @package WhistleblowerShield
- * @since   2.1.0
- * @version 3.16.0
- *
- * VERSION
- * -------
- * 3.16.0  Final nuance pass — multi-agent review:
- *         ws_legal_recognition: 15 new terms added (anti-gag-provision,
- *         third-party-retaliation, catch-all-protection, no-retaliatory-evidence,
- *         trade-secret-immunity, stay-of-disciplinary-action, manager-rule-exclusion,
- *         public-concern-required, employer-knowledge-required, bad-faith-exclusion,
- *         anti-slapp-protection, successor-liability-recognized, extraterritorial-coverage,
- *         confidential-settlement-restriction, internal-only-sufficient).
- *         Gate bumped to 1.0.0.
- *         ws_causation_standard: contributing-factor-but-for-backstop and
- *         substantial-motivating-factor added. Gate bumped to 1.0.0.
- *         ws_adverse_action: retaliatory-discovery added. Gate bumped to 1.2.0.
- *         ws_remedy: neutral-reference, attorney-fees-admin added. Gate bumped to 1.2.0.
- *         ws_protected_action: opposition-clause and participation-clause added as
- *         hierarchical parents; internal-objection, filing-complaint,
- *         assisting-complainant added as child terms. Gate bumped to 1.0.0.
- *
- * VERSION
- * -------
- * 2.1.0   Initial: ws_disclosure_type.
- * 2.3.1   ws_process_type added.
- * 2.4.0   ws_coverage_scope, ws_retaliation_forms, ws_language, ws_case_stage added.
- * 3.0.0   ws_jurisdiction registered; all gates migrated to Unified Option-Gate Method.
- * 3.1.0   Taxonomy rename pass: ws_protected_class, ws_adverse_action, ws_remedy,
- *         ws_disclosure_target, ws_fee_shifting_rule. ws_bulk_insert_hierarchical() added.
- * 3.2.0   ws_employer_defense added (jx-statute).
- * 3.3.0   ws_aorg_type added (ws-assist-org).
- * 3.6.0   National Security parent + 3 children added to ws_disclosure_type.
- * 3.7.0   ws_employment_sector added. Deprecated taxonomies removed.
- * 3.8.1   ws_seed_disclosure_taxonomy() refactored to ws_bulk_insert_hierarchical().
- * 3.9.0   ag-procedure added to ws_jurisdiction and ws_disclosure_type object_types.
- * 3.10.0  ws_procedure_type added (ag-procedure). Replaces ws_proc_type ACF select.
- * 3.11.0  has-details sentinel term added to ws_adverse_action, ws_remedy,
- *         ws_disclosure_target, ws_protected_class, ws_employer_defense. Signals
- *         that a companion ACF freetext field holds detail beyond available slugs.
- *         Gate versions bumped to 1.0.0 for affected seeders.
- * 3.12.0  ws_employee_standard added
- * 3.14.1  all-sectors added to ws_protected_class as parent; all-employees added as child.
- *          internal-management added to ws_disclosure_target under internal parent.
- *          general-legal parent + general-wrongdoing child added to ws_disclosure_type.
- * 3.14.2  retaliation-protection and wrongful-termination removed from ws_disclosure_type
- *          (workplace-employment children). These are adverse action types, not disclosure
- *          types. Disclosure gate bumped to 1.2.0. (jx-statute). Flat taxonomy replacing freetext
- *         employee_standard field. Seven terms including has-details sentinel.
- * 3.13.0  jx-common-law added to object_types for all shared doctrinal taxonomies:
- *         ws_disclosure_type, ws_protected_class, ws_disclosure_target,
- *         ws_adverse_action, ws_process_type, ws_remedy, ws_fee_shifting_rule,
- *         ws_employer_defense, ws_employee_standard, ws_jurisdiction.
- *         jx-citation and jx-construction also added to taxonomies where missing.
- * 3.15.0  ws_legal_recognition added — flat taxonomy replacing *_recognized booleans.
- *         ws_causation_standard added — flat taxonomy for causation standards,
- *         split from ws_employee_standard. Causation terms removed from
- *         ws_employee_standard. ws_adverse_action: retaliatory-litigation,
- *         hostile-work-environment, retaliatory-investigation added.
- *         ws_protected_class: intern-volunteer added under special-status.
- *         qui-tam-relator confirmed in ws_excluded_class (already present).
- *         ws_remedy: interim-reinstatement, tax-gross-up added.
- *         ws_employee_standard gate bumped to 1.0.0 (causation terms removed).
- * 3.14.2  ws_disclosure_type and ws_process_type set to non-public.
- *         Both remain visible in wp-admin and available to internal tooling.
- */
-
-defined( 'ABSPATH' ) || exit;
-
-
-// ════════════════════════════════════════════════════════════════════════════
-// TAXONOMY REGISTRATION
-// ════════════════════════════════════════════════════════════════════════════
 
 /**
- * Register all taxonomies for the WhistleblowerShield Core.
+ * register-taxonomies.php — WhistleblowerShield Taxonomy Registry
+ *
+ * Single source of truth for all 22 ws-core taxonomies. $ws_taxonomy_registry (global
+ * array) drives registration, seeding, and LLM prompt generation from one place.
+ *
+ * Registration: ws_register_all_taxonomies() on init. Capabilities via ws_get_taxonomy_caps().
+ * Seeding:      ws_seed_all_taxonomies() on admin_init, version-gated per taxonomy via
+ *               ws_seeded_{slug} option key. Bump seed_version to trigger re-seed.
+ * Term format:  'slug' => 'Label'           (flat or child of active parent)
+ *               'slug' => ['Label', 1]      (top-level parent; next terms become children)
+ * Sentinels:    has-details-parent / has-details — signals a companion ACF freetext field
+ *               holds detail beyond available slugs.
+ * Record keys:  'record' => ['legal', 'assist'] — marks which LLM record types use this
+ *               taxonomy. Drives ws_get_taxonomies_for_record('legal'|'assist'), which
+ *               returns taxonomy slug + labels + configured prompt string per entry.
+ *
+ * Two-phase registration (taxonomy before CPTs, object_type binding after):
+ * see TAXONOMY TWO-PHASE BEHAVIOR in loader.php. Do not collapse.
+ *
+ * @package       WhistleblowerShield
+ * @since         2.1.0
+ * @version       3.20.0
+ * @author        Whistleblower Shield
+ * @link          https://whistleblowershield.org
+ * @copyright     Copyright (c) 2026 Whistleblower Shield
+ *
  */
-function ws_register_taxonomies() {
+defined('ABSPATH') || exit;
 
-    // ── 1. Disclosure Categories ──────────────────────────────────────────
-    //
+require_once WS_CORE_PATH . 'includes/admin/matrix/matrix-jurisdictions.php';
 
-    if ( ! taxonomy_exists( 'ws_disclosure_type' ) ) {
-        register_taxonomy(
-            'ws_disclosure_type',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-agency', 'ag-procedure', 'ws-assist-org' ],
-            [
-                'label'             => 'Disclosure Categories',
-                'labels'            => [
-                    'name'              => 'Disclosure Categories',
-                    'singular_name'     => 'Disclosure Category',
-                    'search_items'      => 'Search Categories',
-                    'all_items'         => 'All Categories',
-                    'parent_item'       => 'Parent Category',
-                    'parent_item_colon' => 'Parent Category:',
-                    'edit_item'         => 'Edit Category',
-                    'update_item'       => 'Update Category',
-                    'add_new_item'      => 'Add New Category',
-                    'new_item_name'     => 'New Disclosure Category Name',
-                    'menu_name'         => 'Disclosures',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => true,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
+$_ws_taxonomy_registry = [
+
+// —— 1. Disclosure Categories ———————————————————————————————————————————————
+/**
+ * Assigns ws_protected_disclosure with its hierarchical term structure.
+ *
+ *
+ * @todo legal_prompt, assist_prompt — set instruction strings.
+ * 
+ */
+    'ws_protected_disclosure'  => [
+        'cpts'                     => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-agency', 'ag-procedure', 'ws-assist-org'],
+        'plural'                   => 'Disclosure Categories',
+        'singular'                 => 'Disclosure Category',
+        'menu_name'                => 'Disclosures',
+        'hierarchical'             => true,
+        'seed_version'             => '1.0.0',
+        'record'                   => ['legal', 'assist'],
+        'legal_prompt'             => '',
+        'assist_prompt'            => '',
+        'terms'                    => [
+            'workplace-employment'       => ['Workplace & Employment', 1],
+                'wage-hour-violations'           => 'Wage & Hour Violations',
+                'occupational-health-safety'     => 'Occupational Health & Safety',
+                'collective-bargaining'          => 'Collective Bargaining Rights',
+            'financial-corporate'        => ['Financial & Corporate', 1],
+                'securities-commodities-fraud'   => 'Securities & Commodities Fraud',
+                'consumer-financial-protection'  => 'Consumer Financial Protection',
+                'banking-aml-compliance'         => 'Banking & AML Compliance',
+                'shareholder-rights'             => 'Shareholder Rights',
+                'tax-evasion-fraud'              => 'Tax Evasion & Fraud',
+            'government-accountability'  => ['Government Accountability', 1],
+                'procurement-spending-fraud'     => 'Procurement & Spending Fraud',
+                'public-corruption-ethics'       => 'Public Corruption & Ethics',
+                'election-integrity'             => 'Election Integrity',
+                'military-defense-reporting'     => 'Military & Defense Reporting',
+                'mismanagement-of-funds'         => 'Mismanagement of Public Funds',
+            'public-health-safety'       => ['Public Health & Safety', 1],
+                'healthcare-medicare-fraud'      => 'Healthcare & Medicare Fraud',
+                'environmental-protection'       => 'Environmental Protection',
+                'food-drug-safety'               => 'Food & Drug Safety',
+                'nuclear-energy-safety'          => 'Nuclear & Energy Safety',
+                'transportation-safety'          => 'Transportation & Aviation Safety',
+                'child-abuse-reporting'          => 'Child Abuse & Exploitation Reporting',
+                'patient-abuse-reporting'        => 'Patient Abuse & Neglect Reporting',
+            'privacy-data-integrity'     => ['Privacy & Data Integrity', 1],
+                'cybersecurity-disclosure'       => 'Cybersecurity Disclosure',
+                'hipaa-patient-privacy'          => 'HIPAA & Patient Privacy',
+                'consumer-data-protection'       => 'Consumer Data Protection',
+                'education-privacy-ferpa'        => 'Education Privacy (FERPA)',
+            'national-security'          => ['National Security', 1],
+                'intelligence-community'         => 'Intelligence Community Reporting',
+                'classified-information'         => 'Classified Information Disclosures',
+                'ic-channel-required'            => 'IC Mandatory Channel Required',
+                'export-sanctions-compliance'    => 'Export Controls & Sanctions Compliance',
+            'general-legal'              => ['General Legal', 1],
+                'general-wrongdoing'             => 'General Wrongdoing / Violation of Law',
+            'has-details-parent'         => ['Has Details', 1],
+                'has-channel-requirement'        => 'Has Channel Requirement',
+       ]
+    ],
+
+// —— 2. Process Types ———————————————————————————————————————————————————————
+/**
+ * Assigns ws_process_type with its flat term structure.
+ *
+ * @todo legal_prompt, assist_prompt — set instruction strings.
+ * 
+ */
+    'ws_process_type'  => [
+        'cpts'             => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-agency', 'ws-assist-org'],
+        'plural'           => 'Process Types',
+        'singular'         => 'Process Type',
+        'menu_name'        => 'Processes',
+        'seed_version'     => '1.0.0',
+        'record'           => ['legal', 'assist'],
+        'legal_prompt'     => '',
+        'assist_prompt'    => '',
+        'terms'            => [
+            'pre-suit-notice'          => 'Pre-Suit Notice',
+            'administrative-complaint' => 'Administrative Complaint',
+            'civil-lawsuit'            => 'Civil Lawsuit',
+            'qui-tam'                  => 'Qui Tam (False Claims)',
+            'internal-disclosure'      => 'Internal Disclosure',
+            'regulatory-tip'           => 'Regulatory Tip',
+            'criminal-referral'        => 'Criminal Referral',
+            'state-agency-complaint'   => 'State Agency Complaint',
+            'congressional-disclosure' => 'Congressional Disclosure',
+            'representative-action'    => 'Representative Action',
+            'de-novo-civil'            => 'De Novo Civil Action',
+            'arbitration-compelled'    => 'Arbitration Compelled',
+        ]
+    ],
+
+// —— 3. Remedies ————————————————————————————————————————————————————————————
+/**
+ * Assigns ws_remedy with its flat term structure.
+ *
+ * @todo legal_prompt — set instruction string.
+ * 
+ */
+    'ws_remedy'     => [
+        'cpts'          => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction'],
+        'plural'        => 'Remedies',
+        'singular'      => 'Remedy',
+        'seed_version'  => '1.0.0',
+        'record'        => ['legal'],
+        'legal_prompt'  => '',
+        'terms'         => [
+            'reinstatement'             => 'Reinstatement',
+            'interim-reinstatement'     => 'Interim / Preliminary Reinstatement',
+            'interim-relief'            => 'Interim Relief',
+            'back-pay'                  => 'Back Pay',
+            'interest-on-backpay'       => 'Interest on Back Pay',
+            'front-pay'                 => 'Front Pay',
+            'front-pay-in-lieu'         => 'Front Pay in Lieu of Reinstatement',
+            'double-back-pay'           => 'Double Back Pay',
+            'lost-wages'                => 'Lost Wages',
+            'benefits-restoration'      => 'Benefits Restoration',
+            'compensatory-damages'      => 'Compensatory Damages',
+            'emotional-distress-damages' => 'Emotional Distress Damages',
+            'punitive-damages'          => 'Punitive Damages',
+            'treble-damages'            => 'Treble Damages',
+            'civil-penalty'             => 'Civil Penalty',
+            'civil-penalties'           => 'Civil Penalties (Aggregate)',
+            'attorney-fees'             => 'Attorney Fees',
+            'litigation-costs'          => 'Litigation Costs',
+            'injunctive-relief'         => 'Injunctive Relief',
+            'cease-and-desist'          => 'Cease and Desist Order',
+            'expungement-of-personnel-record' => 'Expungement of Personnel Record',
+            'bounty-qui-tam-award'      => 'Bounty / Qui Tam Award',
+            'whistleblower-fund-award'  => 'Whistleblower Fund Award',
+            'non-monetary-relief'       => 'Non-Monetary Relief',
+            'neutral-reference'         => 'Neutral / Corrected Reference',
+            'attorney-fees-admin'       => 'Attorney Fees (Administrative Phase)',
+            'wage-differential'         => 'Wage Differential',
+            'liquidated-damages'        => 'Liquidated Damages',
+            'consequential-damages'     => 'Consequential / Special Damages',
+            'declaratory-relief'        => 'Declaratory Relief',
+            'tax-gross-up'              => 'Tax Gross-Up',
+            'has-limits'                => 'Has Limits/Caps/Standards',
+            'has-details'               => 'Has Details',
+        ]
+    ],
+
+// —— 4. Protected Classes ———————————————————————————————————————————————————
+/**
+ * Assigns ws_protected_class with its hierarchical term structure.
+ *
+ * @todo - should be sync'd with ws_excluded_class table by hook, with
+ *         never_excluded and never_protected gates when adding terms to
+ *         the respective table.
+ * @todo legal_prompt, assist_prompt — set instruction strings.
+ * 
+ */
+    'ws_protected_class'  => [
+        'cpts'                => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-assist-org'],
+        'plural'              => 'Protected Classes',
+        'singular'            => 'Protected Class',
+        'hierarchical'        => true,
+        'seed_version'        => '1.0.0',
+        'record'              => ['legal', 'assist'],
+        'legal_prompt'        => '',
+        'assist_prompt'       => '',
+        'terms'               => [
+            'public-sector'                => ['Public Sector', 1],
+                'federal-employee'               => 'Federal Employee',
+                'state-employee'                 => 'State Agency Employee',
+                'local-gov-staff'                => 'Local / Municipal Employee',
+                'k12-education-staff'            => 'K-12 / Higher Ed Staff',
+                'military-personnel'             => 'Military Personnel',
+            'private-sector'               => ['Private Sector', 1],
+                'corporate-staff'                => 'Corporate / Private Employee',
+                'contractor-gig'                 => 'Independent Contractor / Gig',
+                'non-profit-staff'               => 'Non-Profit Employee',
+                'agricultural-worker'            => 'Agricultural Worker',
+            'healthcare-staff'             => ['Healthcare & Medical', 1],
+                'clinical-staff'                 => 'Clinical (Nurse / Physician)',
+                'medical-student'                => 'Medical Student / Intern / Resident',
+            'special-status'               => ['Special Status', 1],
+                'job-applicant'                  => 'Job Applicant',
+                'former-employee'                => 'Former Employee',
+                'perceived-whistleblower'        => 'Perceived Whistleblower',
+                'intern-volunteer'               => 'Intern / Volunteer',
+                'qui-tam-relator'                => 'Qui Tam Relator',
+            'associates-of-whistleblower'  => ['Associates of Whistleblower', 1],
+                'associates-spouse'              => 'Spouse of Whistleblower',
+                'associates-immediate-family'    => 'Immediate Family of Whistleblower',
+                'associates-household-family'    => 'Household Family of Whistleblower',
+                'associates-close'               => 'Close Associates of Whistleblower',
+            'all-sectors'                  => ['All Sectors', 1],
+                'all-employees'                  => 'All Employees',
+            'has-details-parent'           => ['Has Details', 1],
+                'has-details'                    => 'Has Details',
+        ]
+    ],
+
+// —— 5. Excluded Classes ————————————————————————————————————————————————————
+/**
+ * Assigns ws_excluded_class with its hierarchical term structure.
+ *
+ * Duplicate table of ws_protected_class with all-sectors (all-employees) removed.
+ *
+ * @todo - should be sync'd with ws_protected_class table by hook, with
+ *         never_excluded and never_protected gates when adding terms to
+ *         the respective table.
+ *
+ */
+    'ws_excluded_class'  => [
+        'cpts'               => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction'],
+        'plural'             => 'Excluded Classes',
+        'singular'           => 'Excluded Class',
+        'hierarchical'       => true,
+        'seed_version'       => '1.0.0',
+        'record'             => [],
+        'terms'              => [
+            'public-sector'                => ['Public Sector', 1],
+                'federal-employee'               => 'Federal Employee',
+                'state-employee'                 => 'State Agency Employee',
+                'local-gov-staff'                => 'Local / Municipal Employee',
+                'k12-education-staff'            => 'K-12 / Higher Ed Staff',
+                'military-personnel'             => 'Military Personnel',
+            'private-sector'               => ['Private Sector', 1],
+                'corporate-staff'                => 'Corporate / Private Employee',
+                'contractor-gig'                 => 'Independent Contractor / Gig',
+                'non-profit-staff'               => 'Non-Profit Employee',
+                'agricultural-worker'            => 'Agricultural Worker',
+            'healthcare-staff'             => ['Healthcare & Medical', 1],
+                'clinical-staff'                 => 'Clinical (Nurse / Physician)',
+                'medical-student'                => 'Medical Student / Intern / Resident',
+            'special-status'               => ['Special Status', 1],
+                'job-applicant'                  => 'Job Applicant',
+                'former-employee'                => 'Former Employee',
+                'perceived-whistleblower'        => 'Perceived Whistleblower',
+                'intern-volunteer'               => 'Intern / Volunteer',
+                'qui-tam-relator'                => 'Qui Tam Relator',
+            'associates-of-whistleblower'  => ['Associates of Whistleblower', 1],
+                'associates-spouse'              => 'Spouse of Whistleblower',
+                'associates-immediate-family'    => 'Immediate Family of Whistleblower',
+                'associates-household-family'    => 'Household Family of Whistleblower',
+                'associates-close'               => 'Close Associates of Whistleblower',
+            'has-details-parent'           => ['Has Details', 1],
+                'has-details'                    => 'Has Details',
+        ]
+    ],
+
+// —— 6. Adverse Actions —————————————————————————————————————————————————————
+/**
+ * Assigns ws_adverse_action with its flat term structure.
+ *
+ * @todo legal_prompt — set instruction string.
+ * 
+ */
+    'ws_adverse_action'  => [
+        'cpts'               => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction'],
+        'plural'             => 'Adverse Action Types',
+        'singular'           => 'Adverse Action Type',
+        'menu_name'          => 'Adverse Actions',
+        'seed_version'       => '1.0.0',
+        'record'             => ['legal'],
+        'legal_prompt'       => '',
+        'terms'              => [
+            'termination'                  => 'Termination',
+            'constructive-discharge'       => 'Constructive Discharge',
+            'demotion'                     => 'Demotion',
+            'suspension'                   => 'Suspension',
+            'disciplinary-action'          => 'Disciplinary Action',
+            'transfer'                     => 'Transfer',
+            'schedule-change'              => 'Schedule Change',
+            'benefit-denial'               => 'Benefit Denial',
+            'benefit-clawback'             => 'Benefit Clawback / Retroactive Revocation',
+            'pay-reduction'                => 'Pay / Benefits Reduction',
+            'harassment'                   => 'Harassment',
+            'hostile-work-environment'     => 'Hostile Work Environment',
+            'workplace-isolation'          => 'Workplace Isolation / Ostracism',
+            'post-employment-retaliation'  => 'Post-Employment Retaliation',
+            'blacklisting'                 => 'Blacklisting',
+            'negative-reference'           => 'Negative Reference',
+            'security-clearance-action'    => 'Security Clearance Action',
+            'contract-non-renewal'         => 'Contract Non-Renewal',
+            'professional-license-action'  => 'Professional License Action',
+            'privilege-revocation'         => 'Privilege / Access Revocation',
+            'immigration-threat'           => 'Immigration-Related Threat',
+            'anticipatory-retaliation'     => 'Anticipatory Retaliation',
+            'threatened-retaliation'       => 'Threatened Retaliation',
+            'retaliatory-investigation'    => 'Retaliatory Investigation / Audit',
+            'retaliatory-litigation'       => 'Retaliatory Litigation (SLAPP)',
+            'retaliatory-discovery'        => 'Retaliatory Discovery (Litigation Harassment)',
+            'has-details'                  => 'Has Details',
+        ]
+    ],
+
+// —— 7. Languages ———————————————————————————————————————————————————————————
+/**
+ * Assigns ws_language with its flat term structure.
+ *
+ * 'additional' is a functional flag — auto-assigned when ws_agency_additional_languages
+ * or ws_aorg_additional_languages text fields contain a value.
+ *
+ * @todo assist_prompt — set instruction string.
+ * 
+ */
+    'ws_language'  => [
+        'cpts'           => ['ws-agency', 'ws-assist-org'],
+        'plural'         => 'Languages',
+        'singular'       => 'Language',
+        'seed_version'   => '1.0.0',
+        'record'         => ['assist'],
+        'assist_prompt'  => '',
+        'terms'          => [
+            'english'        => 'English',
+            'spanish'        => 'Spanish',
+            'mandarin'       => 'Mandarin',
+            'cantonese'      => 'Cantonese',
+            'french'         => 'French',
+            'portuguese'     => 'Portuguese',
+            'vietnamese'     => 'Vietnamese',
+            'tagalog'        => 'Tagalog',
+            'korean'         => 'Korean',
+            'arabic'         => 'Arabic',
+            'hindi'          => 'Hindi',
+            'russian'        => 'Russian',
+            'haitian-creole' => 'Haitian Creole',
+            'polish'         => 'Polish',
+            'japanese'       => 'Japanese',
+            'additional'     => 'Additional',
+        ]
+    ],
+
+// —— 8. Case Stages —————————————————————————————————————————————————————————
+/**
+ * Assigns ws_case_stage with its flat term structure.
+ *
+ * @todo assist_prompt — set instruction string.
+ * 
+ */
+    'ws_case_stage'  => [
+        'cpts'           => ['ws-assist-org'],
+        'plural'         => 'Case Stages',
+        'singular'       => 'Case Stage',
+        'seed_version'   => '1.0.0',
+        'record'         => ['assist'],
+        'assist_prompt'  => '',
+        'terms'          => [
+            'pre-report'          => 'Pre-Report',
+            'post-report'         => 'Post-Report',
+            'retaliation-active'  => 'Retaliation Active',
+            'litigation'          => 'Litigation',
+            'has-details'         => 'Has Details',
+        ]
+    ],
+
+// —— 9. Jurisdictions ———————————————————————————————————————————————————————
+/**
+ * Assigns ws_jurisdiction with its flat term structure.
+ *
+ * Seed terms are derived from the canonical jurisdiction matrix:
+ * matrix key -> taxonomy slug, title -> taxonomy label.
+ *
+ * @todo legal_prompt, assist_prompt — set instruction strings.
+ * 
+ */
+    'ws_jurisdiction'  => [
+        'cpts'             => ['jurisdiction', 'jx-statute', 'jx-summary', 'jx-citation', 'jx-construction', 'jx-common-law', 'ws-agency', 'ag-procedure', 'ws-assist-org'],
+        'plural'           => 'Jurisdictions',
+        'singular'         => 'Jurisdiction',
+        'seed_version'     => '1.0.0',
+        'record'           => ['legal', 'assist'],
+        'legal_prompt'     => '',
+        'assist_prompt'    => '',
+        'order'            => 1,
+        'terms'            => ws_jurisdiction_matrix_taxonomy_terms(),
+    ],
+
+// —— 10. Disclosure Targets —————————————————————————————————————————————————
+/**
+ * Assigns ws_disclosure_target with its hierarchical term structure.
+ *
+ * Describes who received the disclosure for protection to apply.
+ *
+ * @todo legal_prompt, assist_prompt — set instruction strings.
+ * 
+ */
+    'ws_disclosure_target'  => [
+        'cpts'                  => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-assist-org'],
+        'plural'                => 'Disclosure Targets',
+        'singular'              => 'Disclosure Target',
+        'hierarchical'          => true,
+        'seed_version'          => '1.0.0',
+        'record'                => ['legal', 'assist'],
+        'legal_prompt'          => '',
+        'assist_prompt'         => '',
+        'terms'                 => [
+            'internal'              => ['Internal', 1],
+                'internal-supervisor'      => 'Supervisor / Manager',
+                'internal-hr'              => 'Human Resources',
+                'internal-compliance'      => 'Compliance / Ethics Hotline',
+                'internal-legal'           => 'In-House Legal Counsel',
+                'internal-management'      => 'Management (General)',
+                'internal-oversight-body'  => 'Internal Oversight Office',
+            'external-agency'       => ['External: Government Agency', 1],
+                'agency-federal'           => 'Federal Agency',
+                'agency-state'             => 'State Agency',
+                'agency-local'             => 'Local / Municipal Agency',
+                'ig-federal'               => 'Federal Inspector General',
+                'ig-state'                 => 'State Inspector General',
+                'law-enforcement-fed'      => 'Federal Law Enforcement',
+                'law-enforcement-state'    => 'State Law Enforcement',
+                'external-oversight-body'  => 'External Oversight Office',
+            'legislative'           => ['Legislative Body', 1],
+                'legislative-federal'      => 'U.S. Congress',
+                'legislative-state'        => 'State Legislature',
+            'judicial'              => ['Judicial / Legal', 1],
+                'court-filing'             => 'Court Filing',
+                'attorney-counsel'         => 'Personal Attorney / Counsel',
+            'public'                => ['Public Disclosure', 1],
+                'public-media'             => 'Media / Press',
+                'public-nonprofit'         => 'Non-Profit / Advocacy Organization',
+                'public-social-media'      => 'Social Media',
+            'has-details-parent'    => ['Has Details', 1],
+                'has-details'             => 'Has Details',
+        ]
+    ],
+
+// —— 11. Fee Shifting Rules —————————————————————————————————————————————————
+/**
+ * Assigns ws_fee_shifting_rule with its flat term structure.
+ *
+ * @todo legal_prompt — set instruction string.
+ * 
+ */
+    'ws_fee_shifting_rule'  => [
+        'cpts'                  => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction'],
+        'plural'                => 'Fee Shifting Rules',
+        'singular'              => 'Fee Shifting Rule',
+        'menu_name'             => 'Fee Shifting',
+        'seed_version'          => '1.0.0',
+        'record'                => ['legal'],
+        'legal_prompt'          => '',
+        'terms'                 => [
+            'none-american-rule'              => 'None (American Rule)',
+            'bilateral-loser-pays'            => 'Bilateral (Loser Pays)',
+            'unilateral-pro-plaintiff'        => 'Unilateral (Pro-Plaintiff)',
+            'unilateral-pro-defendant'        => 'Unilateral (Pro-Defendant)',
+            'prevailing-defendant-bad-faith'  => 'Defendant Fees on Bad Faith',
+            'discretionary'                   => 'Discretionary',
+            'mandatory'                       => 'Mandatory',
+            'has-phases'                      => 'Has Phase Specifics',
+            'has-details'                     => 'Has Details',
+        ]
+    ],
+
+// —— 12. Employer Defenses ——————————————————————————————————————————————————
+/**
+ * Assigns ws_employer_defense with its flat term structure.
+ *
+ * @todo legal_prompt — set instruction string.
+ * 
+ */
+    'ws_employer_defense'  => [
+        'cpts'                  => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction'],
+        'plural'                => 'Employer Defense Standards',
+        'singular'              => 'Employer Defense Standard',
+        'menu_name'             => 'Employer Defenses',
+        'seed_version'          => '1.0.0',
+        'record'                => ['legal'],
+        'legal_prompt'          => '',
+        'terms'                 => [
+            'mixed-motive-defense'               => 'Mixed Motive Defense',
+            'same-decision-defense'              => 'Same-Decision Defense',
+            'same-decision-clear-convincing'     => 'Same-Decision (Clear and Convincing)',
+            'legitimate-non-retaliatory-reason'  => 'Legitimate Non-Retaliatory Reason',
+            'after-acquired-evidence'            => 'After-Acquired Evidence (Specific Non-Retaliatory)',
+            'good-faith-compliance'              => 'Good-Faith Compliance',
+            'independent-contractor-defense'     => 'Independent Contractor Defense',
+            'statutory-exception-claim'          => 'Statutory Exception Claim',
+            'no-protected-activity'              => 'Disclosure was not Protected',
+            'no-jurisdiction'                    => 'Disclosure out of Scope (No Jurisdiction)',
+            'has-details'                        => 'Has Details',
+        ]
+    ],
+
+// —— 13. Organization Types —————————————————————————————————————————————————
+/**
+ * Assigns ws_aorg_type with its flat term structure.
+ *
+ * 'oversight-office' acts as the term for "Government Oversight Office"
+ * (more legible to laypeople than 'ombudsman').
+ *
+ * @todo assist_prompt — set instruction string.
+ * 
+ */
+    'ws_aorg_type'  => [
+        'cpts'           => ['ws-assist-org'],
+        'plural'         => 'Organization Types',
+        'singular'       => 'Organization Type',
+        'menu_name'      => 'Org Types',
+        'seed_version'   => '1.0.0',
+        'record'         => ['assist'],
+        'assist_prompt'  => '',
+        'terms'          => [
+            'nonprofit'         => 'Nonprofit Organization',
+            'legal-aid'         => 'Legal Aid Clinic',
+            'law-firm'          => 'Law Firm',
+            'bar-program'       => 'Bar Association Program',
+            'advocacy'          => 'Advocacy Organization',
+            'oversight-office'  => 'Government Oversight Office',
+            'union'             => 'Labor Union',
+            'mixed'             => 'Mixed Organization Type',
+        ]
+    ],
+
+// —— 14. Employment Sectors —————————————————————————————————————————————————
+/**
+ * Assigns ws_employment_sector with its flat term structure.
+ *
+ * 'all-sectors' is used for organizations that serve all worker types.
+ *
+ * @todo legal_prompt, assist_prompt — set instruction strings.
+ * 
+ */
+    'ws_employment_sector'  => [
+        'cpts'                  => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-agency', 'ag-procedure', 'ws-assist-org'],
+        'plural'                => 'Employment Sectors',
+        'singular'              => 'Employment Sector',
+        'seed_version'          => '1.0.0',
+        'record'                => ['legal', 'assist'],
+        'legal_prompt'          => '',
+        'assist_prompt'         => '',
+        'terms'                 => [
+            'healthcare-worker'      => 'Healthcare Worker',
+            'federal-employee'       => 'Federal Government Employee',
+            'state-local-employee'   => 'State & Local Government Employee',
+            'private-sector'         => 'Private Sector Employee',
+            'public-sector'          => 'Public Sector Employee',
+            'military-defense'       => 'Military & Defense Contractors',
+            'government-contractor'  => 'Government Contractor',
+            'nonprofit-ngo'          => 'Nonprofit & NGO Employee',
+            'all-sectors'            => 'All Employment Sectors',
+        ]
+    ],
+
+// —— 15. Cost Models ————————————————————————————————————————————————————————
+/**
+ * Assigns ws_aorg_cost_model with its flat term structure.
+ *
+ * @todo assist_prompt — set instruction string.
+ * 
+ */
+    'ws_aorg_cost_model'  => [
+        'cpts'                => ['ws-assist-org'],
+        'plural'              => 'Cost Structures',
+        'singular'            => 'Cost Structure',
+        'menu_name'           => 'Cost Models',
+        'seed_version'        => '1.0.0',
+        'record'              => ['assist'],
+        'assist_prompt'       => '',
+        'terms'               => [
+            'free'                => 'Free of Charge',
+            'pro-bono'            => 'Pro Bono',
+            'sliding-scale'       => 'Sliding Scale Fee',
+            'contingency'         => 'Contingency Fee',
+            'fee-for-service'     => 'Fee for Service',
+            'unclear'             => 'Model Unclear',
+        ]
+    ],
+
+// —— 16. Organization Services ——————————————————————————————————————————————
+/**
+ * Assigns ws_aorg_service with its flat term structure.
+ *
+ * 'additional' is the sentinel term for free-text overflow.
+ *
+ * @todo assist_prompt — set instruction string.
+ * 
+ */
+    'ws_aorg_service'   => [
+        'cpts'              => ['ws-assist-org'],
+        'plural'            => 'Provided Services',
+        'singular'          => 'Provided Service',
+        'menu_name'         => 'Services',
+        'seed_version'      => '1.0.0',
+        'record'            => ['assist'],
+        'assist_prompt'     => '',
+        'terms'             => [
+            'legal-rep'         => 'Full Legal Representation',
+            'consultation'      => 'Legal Consultation / Advice',
+            'referral'          => 'Intake & Referral',
+            'doc-review'        => 'Document Review',
+            'hotline'           => 'Whistleblower Hotline',
+            'retaliation'       => 'Retaliation Defense',
+            'financial'         => 'Financial Assistance',
+            'advocacy'          => 'Policy Advocacy',
+            'media'             => 'Media & Communications Support',
+            'mental-health'     => 'Mental Health Support',
+            'peer-support'      => 'Peer Support',
+            'secure-drop'       => 'SecureDrop Intake',
+            'additional'        => 'Additional Services',
+            'unclear'           => 'Services Unclear',
+        ]
+    ],
+
+// —— 17. Procedure Types ————————————————————————————————————————————————————
+/**
+ * Assigns ws_procedure_type with its flat term structure.
+ *
+ * These three terms are stable — the set is not expected to grow.
+ * - disclosure: procedure for reporting wrongdoing to the agency
+ * - retaliation: procedure for filing a complaint after adverse action
+ * - both: single procedure that covers both disclosure and retaliation
+ *
+ */
+    'ws_procedure_type'  => [
+        'cpts'               => ['ag-procedure'],
+        'plural'             => 'Procedure Types',
+        'singular'           => 'Procedure Type',
+        'menu_name'          => 'Procedures',
+        'seed_version'       => '1.0.0',
+        'record'             => [],
+        'terms'              => [
+            'disclosure'         => 'Disclosure',
+            'retaliation'        => 'Retaliation',
+            'both'               => 'Both',
+        ]
+    ],
+
+// —— 18. Employee Burden Standards ——————————————————————————————————————————
+/**
+ * Assigns ws_employee_standard with its flat term structure.
+ *
+ * Covers evidentiary burden-of-proof standards only — the volume/quality of
+ * evidence required. Causation standards (the logical link between disclosure
+ * and adverse action) are in ws_causation_standard.
+ * The has-details sentinel signals a companion ACF freetext field holds a standard
+ * not covered by the registered slugs.
+ *
+ * @todo legal_prompt — set instruction string.
+ * 
+ */
+    'ws_employee_standard'  => [
+        'cpts'                  => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction'],
+        'plural'                => 'Employee Burden Standards',
+        'singular'              => 'Employee Burden Standard',
+        'menu_name'             => 'Employee Standards',
+        'seed_version'          => '1.0.0',
+        'record'                => ['legal'],
+        'legal_prompt'          => '',
+        'terms'                 => [
+            'contributing-factor'   => 'Contributing Factor',
+            'motivating-factor'     => 'Motivating Factor',
+            'substantial-factor'    => 'Substantial Factor',
+            'but-for'               => 'But-For (Burden of Proof)',
+            'preponderance'         => 'Preponderance of the Evidence',
+            'clear-and-convincing'  => 'Clear and Convincing Evidence',
+            'reasonable-belief'     => 'Reasonable Belief Standard',
+            'has-details'           => 'Has Details',
+        ]
+    ],
+
+// —— 19. Protection Scopes ——————————————————————————————————————————————————
+/**
+ * Assigns ws_protection_scope with its flat term structure.
+ *
+ * Editorial classification only; mirrors ws_process_type scope for display purposes.
+ * - disclosure:  legal protection for reporting wrongdoing
+ * - retaliation: legal protection from adverse actions after reporting
+ * - both:        legal protection for both disclosure and retaliation
+ *
+ */
+    'ws_protection_scope'  => [
+        'cpts'                 => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction'],
+        'plural'               => 'Protection Scope Types',
+        'singular'             => 'Protection Scope Type',
+        'menu_name'            => 'Protections',
+        'seed_version'         => '1.0.0',
+        'record'               => [],
+        'terms'                => [
+            'disclosure'           => 'Disclosure',
+            'retaliation'          => 'Retaliation',
+            'both'                 => 'Both',
+        ]
+    ],
+
+// —— 20. Protected Actions ——————————————————————————————————————————————————
+/**
+ * Assigns ws_protected_action with its hierarchical term structure.
+ *
+ * Two parent clauses per Title VII §704(a) and state analogs:
+ * - Opposition Clause: opposing, resisting, or refusing; typically requires
+ *   good-faith reasonable belief.
+ * - Participation Clause: participating in proceedings or investigations;
+ *   typically broader protection; good-faith requirement may not apply.
+ *
+ * @todo legal_prompt — set instruction string.
+ * 
+ */
+    'ws_protected_action'  => [
+        'cpts'                 => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction'],
+        'plural'               => 'Protected Actions',
+        'singular'             => 'Protected Action',
+        'hierarchical'         => true,
+        'seed_version'         => '1.0.0',
+        'record'               => ['legal'],
+        'legal_prompt'         => '',
+        'terms'                => [
+            'opposition-clause'    => ['Opposition Clause', 1],
+                'opposing-practice'       => 'Opposing Practice',
+                'internal-objection'      => 'Internal Objection',
+                'refusal-to-participate'  => 'Refusal to Participate',
+                'refusal-to-violate-law'  => 'Refusal to Violate Law',
+            'participation-clause' => ['Participation Clause', 1],
+                'filing-complaint'        => 'Filing Complaint',
+                'testifying'              => 'Testifying',
+                'assisting-whistleblower' => 'Assisting Whistleblower',
+                'cooperation-with-investigation' => 'Cooperation with Investigation',
+                'participation-support'   => 'Participation Support',
+            'attempted-reporting'  => ['Attempted Reporting', 1],
+                'attempted-reporting'     => 'Attempted Reporting',
+            'concerted-activity'   => ['Concerted Activity', 1],
+                'concerted-activity'      => 'Concerted Activity',
+        ]
+    ],
+
+// —— 21. Legal Recognitions —————————————————————————————————————————————————
+/**
+ * Assigns ws_legal_recognition with its flat term structure.
+ *
+ * Presence of a term signals the doctrine/rule is recognized in this jurisdiction.
+ * Absence signals the doctrine is not recognized or the statute is silent.
+ *
+ * Used for bool-state values of Legal Recognitions where true when:
+ * - Specified   — statute explicitly names or enumerates something
+ * - Recognized  — judicial doctrine courts have affirmatively acknowledged
+ * - Required    — mandatory obligation; non-compliance typically defeats the claim
+ * - Applies     — statutory condition that operates by force of law when triggered
+ * - Available   — mechanism or remedy that may be invoked but is not automatic
+ * - Permitted   — right expressly allowed; cannot be waived or procedurally blocked
+ * - Barred      — doctrine, action, or evidence explicitly excluded by law or rule
+ * - Prohibited  — conduct expressly forbidden; violation triggers statutory liability
+ * - Present     — clause or provision exists without implying judicial affirmation
+ * - Sufficient  — condition independently meets the threshold for protection to attach
+ *
+ */
+    'ws_legal_recognition'  => [
+        'cpts'                  => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction'],
+        'plural'                => 'Legal Recognitions',
+        'singular'              => 'Legal Recognition',
+        'seed_version'          => '1.0.0',
+        'record'                => [],
+        'terms'                 => [
+            // Effective Date                                                                                 // ───── # Effective Date Tab ────────────────────────────────────────────────
+            'retroactive-date'                      => 'Retroactive Date Specified',                          // + retro_context + retro_date
+            // Classifications                                                                                // ───── # Classifications Tab ───────────────────────────────────────────────
+            // = NOTE = `legal_recognitions` appears at top of Classifications Tab                            //  =>>> NOTE  =>>> `legal_recognitions` appears at top of Classifications Tab
+            'manager-rule-exclusion'                => 'Manager Rule / Duty Speech Exclusion Applies',        // + manager_rule_exclusion_context
+            'public-concern-required'               => 'Public Concern Requirement Applies',                  // + public_concern_context
+            'bad-faith-exclusion'                   => 'Bad Faith / Knowingly False Exclusion Applies',       // + bad_faith_exclusion_context
+            'anonymity-protection'                  => 'Anonymity / Confidentiality Protection Recognized',   // + anonymity_protection_context
+            'malicious-reporting-sanctions'         => 'Malicious Reporting Sanctions Specified',             // + malicious_reporting_context + malicious_reporting_sanctions
+            'protected-action'                      => 'Protected Action Specified',                          // + protected_action_context  + protected_actions + protected_action_standard + protected_action_source
+            'excluded-class'                        => 'Excluded Class Specified',                            // + excluded_class_context    + excluded_classes
+            // Statute of Limitations & Procedural                                                            // ───── # Statute of Limitations And Thresholds Tab ─────────────────────────
+            'statute-of-repose'                     => 'Statute of Repose Specified',                         // + statute_of_repose_context + sop_value + sop_unit + is_sop_tolling_available
+            'statutory-tolling'                     => 'Statutory Tolling Specified',                         // + statutory_tolling_context
+            'equitable-tolling'                     => 'Equitable Tolling Recognized',                        // + equitable_tolling_context
+            'cba-grievance-preemption'              => 'CBA Grievance Preemption Applies',                    // + cba_preemption_context
+            'amended-claim'                         => 'Amended Claim / Relation Back Recognized',            // + amended_claim_context
+            'exhaustion-required'                   => 'Exhaustion Required',                                 // + exhaustion_required_context + exhaustion_required_class
+            'pre-filing-notice'                     => 'Pre-Filing Notice Required',                          // + filing_notice_context + filing_notice_target + filing_notice_value + filing_notice_unit
+            'statutory-preclusion'                  => 'Statutory Preclusion Applies',                        // + statutory_preclusion_context // only present in common law records
+            // Retaliation                                                                                    // ───── # Retaliation Tab ───────────────────────────────────────────────────
+            'cats-paw-liability'                    => 'Cat\'s Paw Liability Recognized',                     // + cats_paw_liability_context
+            'third-party-retaliation'               => 'Third-Party Retaliation Prohibited',                  // + third_party_retaliation_context
+            'criminal-sanctions'                    => 'Criminal Sanctions Specified',                        // + criminal_sanctions_context + criminal_sanctions
+            // Process & Remedies                                                                             // ───── # Process & Remedies Tab ────────────────────────────────────────────
+            'private-right-of-action'               => 'Private Right of Action Available',                   // + private_roa_context
+            'jury-trial'                            => 'Jury Trial Available',                                //  =>>> NOTE  =>>> invalid term without 'private-right-of-action' also present.  // + jury_trial_context + jury_trial_scope
+            'preliminary-reinstatement'             => 'Preliminary / Interim Reinstatement Available',       // + preliminary_reinstatement_context
+            // Waiver & Scope                                                                                 // ───── # Waiver & Scope Tab ────────────────────────────────────────────────
+            'contractual-waiver'                    => 'Contractual Waiver Recognized',                       //  =>>> NOTE  =>>> invalid term if 'civil_action_waiver_scope' is set to 'anti'. // + contractual_waiver_context + contractual_waiver_scope
+            'waiver-of-collateral-claims'           => 'Waiver of Collateral Claims Applies',                 // + waiver_of_collateral_claims_context
+            'individual-liability'                  => 'Individual Liability Available',                      // + individual_liability_context + individual_liability_scope
+            'nda-limitations'                       => 'NDA / Non-Disparagement Limitations Recognized',      // + nda_limits_context
+            'anti-gag-provision'                    => 'Anti-Gag Provision Recognized',                       // + anti_gag_provision_context
+            'no-retaliatory-evidence'               => 'Retaliatory Evidence Barred',                         // + no_retaliatory_evidence_context
+            'stay-of-disciplinary-action'           => 'Stay of Disciplinary Action Available',               // + stay_of_discipline_context
+            'anti-slapp-protection'                 => 'Anti-SLAPP Protection Applies',                       // + anti_slapp_protection_context + anti_slapp_protection_scope
+            'discovery-protection'                  => 'Discovery Protection / Anti-Harassment Recognized',   // + discovery_protection_context
+            'confidential-settlement-restriction'   => 'Confidential Settlement Restriction Applies',         // + settlement_restriction_context + settlement_restriction_scope
+            'successor-liability'                   => 'Successor Employer Liability Recognized',             // + successor_liability_context
+            'extraterritorial-coverage'             => 'Extraterritorial Coverage Recognized',                // + extraterritorial_context
+            // Burden of Proof                                                                                // ───── # Burden of Proof Tab ───────────────────────────────────────────────
+            'employer-knowledge'                    => 'Employer Knowledge Element Required',                 // + employer_knowledge_context
+            // Without Context                                                                                // ───── # Without Context (no Tab) ──────────────────────────────────────────
+            'catch-all-protection'                  => 'Catch-All Protection Clause Present',                 // (no companion)
+            'internal-only-disclosure'              => 'Internal-Only Disclosure Sufficient',                 // (no companion)
+            'trade-secret-immunity'                 => 'Trade Secret Immunity Recognized',                    // (no companion)
+            'continuing-violation-doctrine'         => 'Continuing Violation Doctrine Recognized',            // (no companion)
+            'prospective-whistleblower-protection'  => 'Prospective Whistleblower Protection Recognized',     // (no companion)
+            'temporal-proximity-sufficient'         => 'Temporal Proximity Sufficient for Causation',         // (no companion)
+            'sovereign-immunity-waiver'             => 'Sovereign Immunity Waiver Recognized',                // (no companion)
+            'class-action'                          => 'Class / Collective Action Permitted',                 // (no companion)
+        ]
+    ],
+
+// —— 22. Causation Standards ————————————————————————————————————————————————
+/**
+ * Assigns ws_causation_standard with its flat term structure.
+ *
+ * Covers the causal link required between the disclosure and the adverse action.
+ * Distinct from ws_employee_standard which covers evidentiary burden-of-proof
+ * standards (the volume/quality of evidence required).
+ * The has-details sentinel signals a companion ACF freetext field holds a standard
+ * not covered by the registered slugs.
+ *
+ */
+    'ws_causation_standard'  => [
+        'cpts'                   => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction'],
+        'plural'                 => 'Causation Standards',
+        'singular'               => 'Causation Standard',
+        'seed_version'           => '1.0.0',
+        'record'                 => [],
+        'terms'                  => [
+            'causation-but-for'                     => 'But-For Causation Standard',
+            'causation-any-consideration'           => 'Any Consideration Causation Standard',
+            'causation-contributing-factor'         => 'Contributing Factor Causation Standard',
+            'contributing-factor-but-for-backstop'  => 'Contributing Factor (But-For Backstop)',
+            'causation-motivating-factor'           => 'Motivating Factor Causation Standard',
+            'substantial-motivating-factor'         => 'Substantial Motivating Factor Standard',
+            'causation-substantial-factor'          => 'Substantial Factor Causation Standard',
+            'causation-proximate-cause'             => 'Proximate Cause Standard',
+            'has-details'                           => 'Has Details',
+        ]
+    ],
+];
+
+// ════════════════════════════════════════════════════════════════════════════
+// REGISTER TAXONOMIES
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Registers all taxonomies defined in ws_taxonomy_registry.
+ *
+ * Hooked to 'init'.
+ * @return void
+ *
+ */
+function ws_register_all_taxonomies()
+{
+    global $ws_taxonomy_registry;
+
+    $default_caps = ws_get_taxonomy_caps();
+
+    foreach ($ws_taxonomy_registry as $slug => $config) {
+        if (taxonomy_exists($slug)) {
+            continue;
+        }
+
+        $plural       = $config['plural'];
+        $singular     = $config['singular'];
+        $name         = $config['name'] ?? $plural;
+        $menu_name    = $config['menu_name'] ?? $plural;
+        $hierarchical = $config['hierarchical'] ?? false;
+
+        $labels = [
+            'name'              => $name,
+            'singular_name'     => $singular,
+            'search_items'      => 'Search ' . $plural,
+            'all_items'         => 'All ' . $plural,
+            'edit_item'         => 'Edit ' . $singular,
+            'update_item'       => 'Update ' . $singular,
+            'add_new_item'      => 'Add New ' . $singular,
+            'new_item_name'     => 'New ' . $singular . ' Name',
+            'menu_name'         => $menu_name,
+        ];
+
+        if ($hierarchical) {
+            $labels['parent_item']       = 'Parent ' . $singular;
+            $labels['parent_item_colon'] = 'Parent ' . $singular . ':';
+        }
+
+        $args = [
+            'label'               => $name,
+            'labels'              => $labels,
+            'public'              => $config['public'] ?? false,
+            'publicly_queryable'  => $config['publicly_queryable'] ?? false,
+            'hierarchical'        => $hierarchical,
+            'show_ui'             => $config['show_ui'] ?? true,
+            'show_in_rest'        => $config['show_in_rest'] ?? true,
+            'show_admin_column'   => $config['show_admin_column'] ?? true,
+            'rewrite'             => $config['rewrite'] ?? false,
+            'query_var'           => $config['query_var'] ?? false,
+            'capabilities'        => $config['capabilities'] ?? $default_caps,
+        ];
+
+        register_taxonomy($slug, $config['cpts'], $args);
     }
-
-    // ── 2. Process Types ──────────────────────────────────────────────────
-
-    if ( ! taxonomy_exists( 'ws_process_type' ) ) {
-        register_taxonomy(
-            'ws_process_type',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-agency', 'ws-assist-org' ],
-            [
-                'label'             => 'Process Types',
-                'labels'            => [
-                    'name'              => 'Process Types',
-                    'singular_name'     => 'Process Type',
-                    'search_items'      => 'Search Process Types',
-                    'all_items'         => 'All Process Types',
-                    'edit_item'         => 'Edit Process Type',
-                    'update_item'       => 'Update Process Type',
-                    'add_new_item'      => 'Add New Process Type',
-                    'new_item_name'     => 'New Process Type Name',
-                    'menu_name'         => 'Processes',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-    // ── 3. Remedies ───────────────────────────────────────────────────────
-    //
-    // Renamed from ws_remedy_type → ws_remedy (3.1.0).
-
-    if ( ! taxonomy_exists( 'ws_remedy' ) ) {
-        register_taxonomy(
-            'ws_remedy',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
-            [
-                'label'             => 'Remedies',
-                'labels'            => [
-                    'name'              => 'Remedies',
-                    'singular_name'     => 'Remedy',
-                    'search_items'      => 'Search Remedies',
-                    'all_items'         => 'All Remedies',
-                    'edit_item'         => 'Edit Remedy',
-                    'update_item'       => 'Update Remedy',
-                    'add_new_item'      => 'Add New Remedy',
-                    'new_item_name'     => 'New Remedy Name',
-                    'menu_name'         => 'Remedies',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-    // ── 4. Protected Classes ────────────────────────────────────────────────
-    //
-    // Renamed from ws_coverage_scope → ws_protected_class (3.1.0).
-    // Converted to hierarchical to support employee type groupings.
-
-    if ( ! taxonomy_exists( 'ws_protected_class' ) ) {
-        register_taxonomy(
-            'ws_protected_class',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-assist-org' ],
-            [
-                'label'             => 'Protected Classes',
-                'labels'            => [
-                    'name'              => 'Protected Classes',
-                    'singular_name'     => 'Protected Class',
-                    'search_items'      => 'Search Protected Classes',
-                    'all_items'         => 'All Protected Classes',
-                    'parent_item'       => 'Parent Class',
-                    'parent_item_colon' => 'Parent Class:',
-                    'edit_item'         => 'Edit Protected Class',
-                    'update_item'       => 'Update Protected Class',
-                    'add_new_item'      => 'Add New Protected Class',
-                    'new_item_name'     => 'New Protected Class Name',
-                    'menu_name'         => 'Protected Classes',
-                ],
-                    'public'            => false,
-                    'publicly_queryable'=> false,
-                    'hierarchical'      => true,
-                    'show_ui'           => true,
-                    'show_in_rest'      => true,
-                    'show_admin_column' => true,
-                    'rewrite'           => false,
-                    'query_var'         => false,
-                    'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-     // ── 5. Excluded Classes ────────────────────────────────────────────────
-    //
-    // Duplicate of Protected Classes.
-
-    if ( ! taxonomy_exists( 'ws_excluded_class' ) ) {
-        register_taxonomy(
-            'ws_excluded_class',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', ],
-            [
-                'label'             => 'Excluded Classes',
-                'labels'            => [
-                    'name'              => 'Excluded Classes',
-                    'singular_name'     => 'Excluded Class',
-                    'search_items'      => 'Search Excluded Classes',
-                    'all_items'         => 'All Excluded Classes',
-                    'parent_item'       => 'Parent Class',
-                    'parent_item_colon' => 'Parent Class:',
-                    'edit_item'         => 'Edit Excluded Class',
-                    'update_item'       => 'Update Excluded Class',
-                    'add_new_item'      => 'Add New Excluded Class',
-                    'new_item_name'     => 'New Excluded Class Name',
-                    'menu_name'         => 'Excluded Classes',
-                ],
-                    'public'            => false,
-                    'publicly_queryable'=> false,
-                    'hierarchical'      => true,
-                    'show_ui'           => true,
-                    'show_in_rest'      => true,
-                    'show_admin_column' => true,
-                    'rewrite'           => false,
-                    'query_var'         => false,
-                    'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-    // ── 6. Adverse Actions ───────────────────────────────────────────
-    //
-    // Renamed from ws_retaliation_forms → ws_adverse_action (3.1.0).
-    // Aligns with JSON field name adverse_action; cleaner legal terminology.
-
-    if ( ! taxonomy_exists( 'ws_adverse_action' ) ) {
-        register_taxonomy(
-            'ws_adverse_action',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
-            [
-                'label'             => 'Adverse Action Types',
-                'labels'            => [
-                    'name'              => 'Adverse Action Types',
-                    'singular_name'     => 'Adverse Action Type',
-                    'search_items'      => 'Search Adverse Action Types',
-                    'all_items'         => 'All Adverse Action Types',
-                    'edit_item'         => 'Edit Adverse Action Type',
-                    'update_item'       => 'Update Adverse Action Type',
-                    'add_new_item'      => 'Add New Adverse Action Type',
-                    'new_item_name'     => 'New Adverse Action Type Name',
-                    'menu_name'         => 'Adverse Actions',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-    // ── 7. Languages ──────────────────────────────────────────────────────
-
-
-    if ( ! taxonomy_exists( 'ws_language' ) ) {
-        register_taxonomy(
-            'ws_language',
-            [ 'ws-agency', 'ws-assist-org' ],
-            [
-                'label'             => 'Languages',
-                'labels'            => [
-                    'name'              => 'Languages',
-                    'singular_name'     => 'Language',
-                    'search_items'      => 'Search Languages',
-                    'all_items'         => 'All Languages',
-                    'edit_item'         => 'Edit Language',
-                    'update_item'       => 'Update Language',
-                    'add_new_item'      => 'Add New Language',
-                    'new_item_name'     => 'New Language Name',
-                    'menu_name'         => 'Languages',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-    // ── 8. Case Stages ─────────────────────────────────────────────────────
-
-
-    if ( ! taxonomy_exists( 'ws_case_stage' ) ) {
-        register_taxonomy(
-            'ws_case_stage',
-            [ 'ws-assist-org' ],
-            [
-                'label'             => 'Case Stages',
-                'labels'            => [
-                    'name'              => 'Case Stages',
-                    'singular_name'     => 'Case Stage',
-                    'search_items'      => 'Search Case Stages',
-                    'all_items'         => 'All Case Stages',
-                    'edit_item'         => 'Edit Case Stage',
-                    'update_item'       => 'Update Case Stage',
-                    'add_new_item'      => 'Add New Case Stage',
-                    'new_item_name'     => 'New Case Stage Name',
-                    'menu_name'         => 'Case Stages',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-    // ── 9. Jurisdictions ───────────────────────────────────────────────────
-    //
-    // Replaces ws_jx_code post meta as the jurisdiction join mechanism.
-    // Private taxonomy — terms are canonical USPS-code slugs (e.g. 'us', 'ca', 'tx').
-    // Terms are seeded by matrix-jurisdiction.php via ws_seeded_jurisdiction_taxonomy gate.
-
-    if ( ! taxonomy_exists( WS_JURISDICTION_TAXONOMY ) ) {
-        register_taxonomy(
-            WS_JURISDICTION_TAXONOMY,
-            [ 'jurisdiction', 'jx-statute', 'jx-summary', 'jx-citation', 'jx-construction', 'jx-common-law', 'ws-agency', 'ag-procedure', 'ws-assist-org' ],
-            [
-                'label'             => 'Jurisdictions',
-                'labels'            => [
-                    'name'              => 'Jurisdictions',
-                    'singular_name'     => 'Jurisdiction',
-                    'search_items'      => 'Search Jurisdictions',
-                    'all_items'         => 'All Jurisdictions',
-                    'edit_item'         => 'Edit Jurisdiction',
-                    'update_item'       => 'Update Jurisdiction',
-                    'add_new_item'      => 'Add New Jurisdiction',
-                    'new_item_name'     => 'New Jurisdiction Name',
-                    'menu_name'         => 'Jurisdictions',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-    // ── 10. Disclosure Targets ─────────────────────────────────────────────
-    //
-    // New in 3.1.0. Describes who the disclosure was made to in order for
-    // protection to apply. Hierarchical — grouped by reporting channel type.
-
-    if ( ! taxonomy_exists( 'ws_disclosure_target' ) ) {
-        register_taxonomy(
-            'ws_disclosure_target',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-assist-org' ],
-            [
-                'label'             => 'Disclosure Targets',
-                'labels'            => [
-                    'name'              => 'Disclosure Targets',
-                    'singular_name'     => 'Disclosure Target',
-                    'search_items'      => 'Search Disclosure Targets',
-                    'all_items'         => 'All Disclosure Targets',
-                    'parent_item'       => 'Parent Target',
-                    'parent_item_colon' => 'Parent Target:',
-                    'edit_item'         => 'Edit Disclosure Target',
-                    'update_item'       => 'Update Disclosure Target',
-                    'add_new_item'      => 'Add New Disclosure Target',
-                    'new_item_name'     => 'New Disclosure Target Name',
-                    'menu_name'         => 'Disclosure Targets',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => true,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-    // ── 11. Fee Shifting Rules ──────────────────────────────────────────────────
-    //
-    // New in 3.1.0. Flat taxonomy describing the fee shifting rule that
-    // applies to enforcement of a law.
-
-    if ( ! taxonomy_exists( 'ws_fee_shifting_rule' ) ) {
-        register_taxonomy(
-            'ws_fee_shifting_rule',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
-            [
-                'label'             => 'Fee Shifting Rules',
-                'labels'            => [
-                    'name'              => 'Fee Shifting Rules',
-                    'singular_name'     => 'Fee Shifting Rule',
-                    'search_items'      => 'Search Fee Shifting Rules',
-                    'all_items'         => 'All Fee Shifting Rules',
-                    'edit_item'         => 'Edit Fee Shifting Rule',
-                    'update_item'       => 'Update Fee Shifting Rule',
-                    'add_new_item'      => 'Add New Fee Shifting Rule',
-                    'new_item_name'     => 'New Fee Shifting Rule Name',
-                    'menu_name'         => 'Fee Shifting',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-    // ── 12. Employer Defenses ──────────────────────────────────────────────
-    //
-    // New in 3.2.0. Flat taxonomy describing the defense standard(s) available
-    // to the employer under a law.
-
-    if ( ! taxonomy_exists( 'ws_employer_defense' ) ) {
-        register_taxonomy(
-            'ws_employer_defense',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
-            [
-                'label'             => 'Employer Defense Standards',
-                'labels'            => [
-                    'name'          => 'Employer Defense Standards',
-                    'singular_name' => 'Employer Defense Standard',
-                    'search_items'  => 'Search Employer Defense Standards',
-                    'all_items'     => 'All Employer Defense Standards',
-                    'edit_item'     => 'Edit Employer Defense Standard',
-                    'update_item'   => 'Update Employer Defense Standard',
-                    'add_new_item'  => 'Add New Employer Defense Standard',
-                    'new_item_name' => 'New Employer Defense Standard Name',
-                    'menu_name'     => 'Employer Defenses',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-    // ── 13. Assist-Org Type ───────────────────────────────────────────────
-    //
-    // New in 3.3.0. Single-value classification for ws-assist-org records.
-    // Drives the public "Get Help" directory filter. Replaces the ws_aorg_type
-    // ACF select field. Terms are seeded via ws_seed_aorg_type_taxonomy().
-
-    if ( ! taxonomy_exists( 'ws_aorg_type' ) ) {
-        register_taxonomy(
-            'ws_aorg_type',
-            [ 'ws-assist-org' ],
-            [
-                'label'             => 'Organization Types',
-                'labels'            => [
-                    'name'              => 'Organization Types',
-                    'singular_name'     => 'Organization Type',
-                    'search_items'      => 'Search Organization Types',
-                    'all_items'         => 'All Organization Types',
-                    'edit_item'         => 'Edit Organization Type',
-                    'update_item'       => 'Update Organization Type',
-                    'add_new_item'      => 'Add New Organization Type',
-                    'new_item_name'     => 'New Organization Type',
-                    'menu_name'         => 'Org Types',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-    // ── 14. Employment Sectors ─────────────────────────────────────────────
-    //
-    // New in 3.7.0. Flat taxonomy classifying the employment sectors served
-    // by a ws-assist-org record. Applied to ws-assist-org only.
-    // Replaces ws_aorg_employment_sectors ACF checkbox field — enables
-    // tax_query filtering for Phase 2 filter panel.
-
-    if ( ! taxonomy_exists( 'ws_employment_sector' ) ) {
-        register_taxonomy(
-            'ws_employment_sector',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', 'ws-agency', 'ag-procedure', 'ws-assist-org' ],
-            [
-                'label'             => 'Employment Sectors',
-                'labels'            => [
-                    'name'              => 'Employment Sectors',
-                    'singular_name'     => 'Employment Sector',
-                    'search_items'      => 'Search Employment Sectors',
-                    'all_items'         => 'All Employment Sectors',
-                    'edit_item'         => 'Edit Employment Sector',
-                    'update_item'       => 'Update Employment Sector',
-                    'add_new_item'      => 'Add New Employment Sector',
-                    'new_item_name'     => 'New Employment Sector Name',
-                    'menu_name'         => 'Employment Sectors',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-    // ── 15. Assist-Org Cost Models ─────────────────────────────────────────
-    //
-    // New in 3.9.0. Flat taxonomy classifying the cost structure of a
-    // ws-assist-org record. Applied to ws-assist-org only. Single-value
-    // (equivalent to the former select field).
-    // Replaces ws_aorg_cost_model ACF select field — enables tax_query
-    // filtering for Phase 2 filter panel.
-
-    if ( ! taxonomy_exists( 'ws_aorg_cost_model' ) ) {
-        register_taxonomy(
-            'ws_aorg_cost_model',
-            [ 'ws-assist-org' ],
-            [
-                'label'             => 'Cost Structures',
-                'labels'            => [
-                    'name'              => 'Cost Structures',
-                    'singular_name'     => 'Cost Structure',
-                    'search_items'      => 'Search Cost Structures',
-                    'all_items'         => 'All Cost Structures',
-                    'edit_item'         => 'Edit Cost Structure',
-                    'update_item'       => 'Update Cost Structure',
-                    'add_new_item'      => 'Add New Cost Structure',
-                    'new_item_name'     => 'New Cost Structure Name',
-                    'menu_name'         => 'Cost Models',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-    // ── 16. Assist-Org Services ────────────────────────────────────────────
-    //
-    // New in 3.9.0. Flat taxonomy classifying the services offered by a
-    // ws-assist-org record. Applied to ws-assist-org only.
-    // Replaces ws_aorg_services ACF checkbox field — enables tax_query
-    // filtering for Phase 2 filter panel.
-    // 'additional' sentinel term auto-assigned when ws_aorg_additional_services
-    // companion field is non-empty (mirrors ws_language pattern).
-
-    if ( ! taxonomy_exists( 'ws_aorg_service' ) ) {
-        register_taxonomy(
-            'ws_aorg_service',
-            [ 'ws-assist-org' ],
-            [
-                'label'             => 'Provided Services',
-                'labels'            => [
-                    'name'              => 'Provided Services',
-                    'singular_name'     => 'Provided Service',
-                    'search_items'      => 'Search Services',
-                    'all_items'         => 'All Services',
-                    'edit_item'         => 'Edit Service',
-                    'update_item'       => 'Update Service',
-                    'add_new_item'      => 'Add New Service',
-                    'new_item_name'     => 'New Service Name',
-                    'menu_name'         => 'Services',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-    // ── 17. Procedure Types ────────────────────────────────────────────────
-    //
-    // New in 3.10.0. Flat taxonomy classifying the purpose of a
-    // ag-procedure record. Applied to ag-procedure only.
-    // Three stable terms: disclosure, retaliation, both.
-    // Replaces ws_proc_type ACF select field — enables tax_query filtering
-    // in the Phase 2 filter cascade. Single-value per record (radio UI).
-    // Terms are seeded via ws_seed_proc_type_taxonomy().
-
-    if ( ! taxonomy_exists( 'ws_procedure_type' ) ) {
-        register_taxonomy(
-            'ws_procedure_type',
-            [ 'ag-procedure' ],
-            [
-                'label'             => 'Procedure Types',
-                'labels'            => [
-                    'name'              => 'Procedure Types',
-                    'singular_name'     => 'Procedure Type',
-                    'search_items'      => 'Search Procedure Types',
-                    'all_items'         => 'All Procedure Types',
-                    'edit_item'         => 'Edit Procedure Type',
-                    'update_item'       => 'Update Procedure Type',
-                    'add_new_item'      => 'Add New Procedure Type',
-                    'new_item_name'     => 'New Procedure Type Name',
-                    'menu_name'         => 'Procedures',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-    // ── 18. Employee Standards ─────────────────────────────────────────────
-    //
-    // New in 3.12.0. Flat taxonomy for the burden-of-proof standard an employee
-    // must meet under a statute. Replaces the freetext employee_standard field.
-    // Multiple values permitted per record.
-    // Terms seeded via ws_seed_employee_standard_taxonomy().
-
-    if ( ! taxonomy_exists( 'ws_employee_standard' ) ) {
-        register_taxonomy(
-            'ws_employee_standard',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
-            [
-                'label'             => 'Employee Burden Standards',
-                'labels'            => [
-                    'name'              => 'Employee Burden Standards',
-                    'singular_name'     => 'Employee Burden Standard',
-                    'search_items'      => 'Search Employee Standards',
-                    'all_items'         => 'All Employee Standards',
-                    'edit_item'         => 'Edit Employee Standard',
-                    'update_item'       => 'Update Employee Standard',
-                    'add_new_item'      => 'Add New Employee Standard',
-                    'new_item_name'     => 'New Employee Standard Name',
-                    'menu_name'         => 'Employee Standards',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-    // ── 19. Protection Scopes ────────────────────────────────────────────────
-    //
-    // Duplicated from Procedure Type
-
-    if ( ! taxonomy_exists( 'ws_protection_scope' ) ) {
-        register_taxonomy(
-            'ws_protection_scope',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
-            [
-                'label'             => 'Protection Scope Types',
-                'labels'            => [
-                    'name'              => 'Protection Scope Types',
-                    'singular_name'     => 'Protection Scope Type',
-                    'search_items'      => 'Search Protection Scope Types',
-                    'all_items'         => 'All Protection Scope Types',
-                    'edit_item'         => 'Edit Protection Scope Type',
-                    'update_item'       => 'Update Protection Scope Type',
-                    'add_new_item'      => 'Add New Protection Scope Type',
-                    'new_item_name'     => 'New Protection Scope Type Name',
-                    'menu_name'         => 'Protections',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-    // ── 20. Protected Actions ────────────────────────────────────────────────
-    //
-    // 
-
-    if ( ! taxonomy_exists( 'ws_protected_action' ) ) {
-        register_taxonomy(
-            'ws_protected_action',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction', ],
-            [
-                'label'             => 'Protected Actions',
-                'labels'            => [
-                    'name'              => 'Protected Actions',
-                    'singular_name'     => 'Protected Action',
-                    'search_items'      => 'Search Protected Actions',
-                    'all_items'         => 'All Protected Actions',
-                    'parent_item'       => 'Parent Action',
-                    'parent_item_colon' => 'Parent Action:',
-                    'edit_item'         => 'Edit Protected Action',
-                    'update_item'       => 'Update Protected Action',
-                    'add_new_item'      => 'Add New Protected Action',
-                    'new_item_name'     => 'New Protected Action Name',
-                    'menu_name'         => 'Protected Actions',
-                ],
-                    'public'            => false,
-                    'publicly_queryable'=> false,
-                    'hierarchical'      => true,
-                    'show_ui'           => true,
-                    'show_in_rest'      => true,
-                    'show_admin_column' => true,
-                    'rewrite'           => false,
-                    'query_var'         => false,
-                    'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-
-     
 }
-add_action( 'init', 'ws_register_taxonomies' );
-
-
-// ── 21. Legal Recognitions ────────────────────────────────────────────────────
-//
-// New in 3.15.0. Flat taxonomy for judicially-recognized legal doctrines and
-// procedural rules. Presence of a term signals recognition; absence signals
-// the doctrine is not recognized or is silent. Replaces scattered *_recognized
-// ACF boolean fields. Applied to all four legal record CPTs.
-// Terms are seeded via ws_seed_legal_recognition_taxonomy().
-
-add_action( 'init', function() {
-    if ( ! taxonomy_exists( 'ws_legal_recognition' ) ) {
-        register_taxonomy(
-            'ws_legal_recognition',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
-            [
-                'label'             => 'Legal Recognitions',
-                'labels'            => [
-                    'name'              => 'Legal Recognitions',
-                    'singular_name'     => 'Legal Recognition',
-                    'search_items'      => 'Search Legal Recognitions',
-                    'all_items'         => 'All Legal Recognitions',
-                    'edit_item'         => 'Edit Legal Recognition',
-                    'update_item'       => 'Update Legal Recognition',
-                    'add_new_item'      => 'Add New Legal Recognition',
-                    'new_item_name'     => 'New Legal Recognition Name',
-                    'menu_name'         => 'Legal Recognitions',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-} );
-
-// ── 22. Causation Standards ───────────────────────────────────────────────────
-//
-// New in 3.15.0. Flat taxonomy for retaliation causation standards. Distinct
-// from ws_employee_standard (which covers burden-of-proof/evidentiary weight).
-// Causation = the logical relationship between the disclosure and the adverse
-// action. Burden = the volume/quality of evidence required.
-// Split from ws_employee_standard in 3.15.0.
-// Terms are seeded via ws_seed_causation_standard_taxonomy().
-
-add_action( 'init', function() {
-    if ( ! taxonomy_exists( 'ws_causation_standard' ) ) {
-        register_taxonomy(
-            'ws_causation_standard',
-            [ 'jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction' ],
-            [
-                'label'             => 'Causation Standards',
-                'labels'            => [
-                    'name'              => 'Causation Standards',
-                    'singular_name'     => 'Causation Standard',
-                    'search_items'      => 'Search Causation Standards',
-                    'all_items'         => 'All Causation Standards',
-                    'edit_item'         => 'Edit Causation Standard',
-                    'update_item'       => 'Update Causation Standard',
-                    'add_new_item'      => 'Add New Causation Standard',
-                    'new_item_name'     => 'New Causation Standard Name',
-                    'menu_name'         => 'Causation Standards',
-                ],
-                'public'            => false,
-                'publicly_queryable'=> false,
-                'hierarchical'      => false,
-                'show_ui'           => true,
-                'show_in_rest'      => true,
-                'show_admin_column' => true,
-                'rewrite'           => false,
-                'query_var'         => false,
-                'capabilities'      => ws_get_taxonomy_caps(),
-            ]
-        );
-    }
-} );
-
-
-// ════════════════════════════════════════════════════════════════════════════
-// SHARED HELPERS
-// ════════════════════════════════════════════════════════════════════════════
+add_action('init', 'ws_register_all_taxonomies');
 
 /**
- * Helper: Taxonomy Capability Mapping
+ * Get/Set taxonomy capabilities.
  *
- * Restricts management to Administrators; allows assignment for other roles.
+ * @return array Array of capabilities for taxonomy operations.
+ *
  */
-function ws_get_taxonomy_caps() {
+function ws_get_taxonomy_caps()
+{
     return [
         'manage_terms' => 'manage_options',
         'edit_terms'   => 'manage_options',
@@ -900,1009 +948,216 @@ function ws_get_taxonomy_caps() {
     ];
 }
 
+// ════════════════════════════════════════════════════════════════════════════
+// REGISTRY QUERY HELPERS
+// ════════════════════════════════════════════════════════════════════════════
+
 /**
- * Helper: Hierarchical Term Seeder
+ * Returns all taxonomy registry entries that serve the given record type.
  *
- * Inserts a parent/child term structure into a taxonomy. Skips terms
- * that already exist. Used by seeding functions for hierarchical taxonomies.
+ * Scans the global $ws_taxonomy_registry and collects every taxonomy whose
+ * 'record' array contains $record_type. Each result carries the taxonomy slug,
+ * human-readable labels, and the pre-configured prompt string for that type —
+ * ready for use by admin LLM prompt-generation tooling.
  *
- * @param array  $hierarchy  Associative array: parent_slug => [ 'name' => '', 'children' => [] ]
- * @param string $taxonomy   Taxonomy slug.
+ * Usage:
+ *   $legal_tables  = ws_get_taxonomies_for_record( 'legal' );
+ *   $assist_tables = ws_get_taxonomies_for_record( 'assist' );
+ *
+ * Each entry in the returned array:
+ *   [
+ *     'taxonomy' => 'ws_employment_sector',       // taxonomy slug
+ *     'plural'   => 'Employment Sectors',         // human-readable plural
+ *     'singular' => 'Employment Sector',          // human-readable singular
+ *     'prompt'   => 'Sectors protected by...',   // prompt string (may be '')
+ *   ]
+ *
+ * @param  string  $record_type  Either 'legal' or 'assist'.
+ * @return array[] Indexed array of taxonomy descriptor arrays.
+ * 
  */
-function ws_bulk_insert_hierarchical( array $hierarchy, string $taxonomy ) {
-    foreach ( $hierarchy as $parent_slug => $data ) {
-        $existing_parent = term_exists( $parent_slug, $taxonomy );
-        if ( ! $existing_parent ) {
-            $parent = wp_insert_term( $data['name'], $taxonomy, [ 'slug' => $parent_slug ] );
-        } else {
-            $parent = is_array( $existing_parent )
-                ? $existing_parent
-                : [ 'term_id' => $existing_parent ];
-        }
-        if ( is_wp_error( $parent ) || empty( $data['children'] ) ) {
+function ws_get_taxonomies_for_record(string $record_type): array
+{
+    global $ws_taxonomy_registry;
+
+    if (!in_array($record_type, ['legal', 'assist'], true)) {
+        wp_die("This is a FuQ'n Error! ws_get_taxonomies_for_record() called with invalid type: '{$record_type}'. Expected 'legal' or 'assist'.");
+    }
+
+    $prompt_key = $record_type . '_prompt'; // resolves to 'legal_prompt' or 'assist_prompt'
+    $result     = [];
+
+    foreach ($ws_taxonomy_registry as $slug => $config) {
+
+        if (! in_array($record_type, $config['record'] ?? [], true)) {
             continue;
         }
-        $parent_id = (int) $parent['term_id'];
-        foreach ( $data['children'] as $child_slug => $child_name ) {
-            if ( ! term_exists( $child_slug, $taxonomy ) ) {
-                wp_insert_term( $child_name, $taxonomy, [
-                    'slug'   => $child_slug,
-                    'parent' => $parent_id,
-                ] );
+
+        $result[] = [
+            'taxonomy' => $slug,
+            'plural'   => $config['plural'],
+            'singular' => $config['singular'],
+            'prompt'   => $config[ $prompt_key ] ?? '',
+        ];
+    }
+
+    return $result;
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// SEEDING
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Iterates through the taxonomy registry to seed terms conditionally.
+ *
+ * - Generates a version gate key (e.g., 'ws_seeded_protected_disclosure').
+ * - Checks against the 'seed_version' defined in the registry.
+ * - If the version has bumped (or is unseeded), it delegates to ws_seed_taxonomy().
+ * - Collects any WP_Error messages and outputs an admin_notice reflecting
+ *   either a clean success or directing the admin to the PHP error log.
+ *
+ * Hooked to 'admin_init'.
+ * @return void
+ *
+ */
+
+function ws_seed_all_taxonomies()
+{
+    global $ws_taxonomy_registry;
+
+    $ran_seeder = false;
+    $all_errors = [];
+
+    foreach ($ws_taxonomy_registry as $slug => $config) {
+        if (! empty($config['terms'])) {
+            // Strict configuration check: Taxonomies must be snake_case
+            if (strpos($slug, '-') !== false) {
+                trigger_error("WS Core: Taxonomy slug '{$slug}' contains a hyphen — must be snake_case.", E_USER_ERROR);
+                continue;
+            }
+
+            // Auto-generate gate key: ws_protected_disclosure -> ws_seeded_protected_disclosure
+            $gate = 'ws_seeded_' . substr($slug, 3);
+            if (empty($config['seed_version'])) {
+                wp_die("This is a FuQ'n Error! Taxonomy '{$slug}' is missing 'seed_version' in the registry.");
+            }
+            $version = $config['seed_version'];
+
+            if (get_option($gate) !== $version) {
+                $ran_seeder = true;
+                $errors = ws_seed_taxonomy($slug, $config['terms'], $gate, $version, ! empty($config['order']));
+                if (! empty($errors)) {
+                    array_push($all_errors, ...$errors);
+                }
             }
         }
     }
-}
 
-
-// ════════════════════════════════════════════════════════════════════════════
-// SEEDING EXECUTION GATES
-//
-// Each seeder is individually gated using the Unified Option-Gate Method.
-// Key format: ws_seeded_{seeder_slug} / version string: '1.0.0'
-// No grouped gates — each taxonomy has its own independent gate.
-//
-// Gate version bump pattern: to re-seed a taxonomy after a term change,
-// increment the version string (e.g. '1.0.0' → '1.0.0') in both the
-// gate check and the update_option() call below.
-// ════════════════════════════════════════════════════════════════════════════
-
-add_action( 'admin_init', function() {
-
-    if ( get_option( 'ws_seeded_disclosure_type' ) !== '1.0.0' ) {
-        ws_seed_disclosure_type_taxonomy();
-        update_option( 'ws_seeded_disclosure_type', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_process_type' ) !== '1.0.0' ) {
-        ws_seed_process_type_taxonomy();
-        update_option( 'ws_seeded_process_type', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_remedy' ) !== '1.0.0' ) {
-        ws_seed_remedy_taxonomy();
-        update_option( 'ws_seeded_remedy', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_protected_class' ) !== '1.0.0' ) {
-        ws_seed_protected_class_taxonomy();
-        update_option( 'ws_seeded_protected_class', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_excluded_class' ) !== '1.0.0' ) {
-        ws_seed_excluded_class_taxonomy();
-        update_option( 'ws_seeded_excluded_class', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_adverse_action' ) !== '1.0.0' ) {
-        ws_seed_adverse_action_taxonomy();
-        update_option( 'ws_seeded_adverse_action', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_language' ) !== '1.0.0' ) {
-        ws_seed_language_taxonomy();
-        update_option( 'ws_seeded_language', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_case_stage' ) !== '1.0.0' ) {
-        ws_seed_case_stage_taxonomy();
-        update_option( 'ws_seeded_case_stage', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_jurisdiction' ) !== '1.0.0' ) {
-        ws_seed_jurisdiction_taxonomy();
-        update_option( 'ws_seeded_jurisdiction', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_disclosure_target' ) !== '1.0.0' ) {
-        ws_seed_disclosure_target_taxonomy();
-        update_option( 'ws_seeded_disclosure_target', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_fee_shifting_rule' ) !== '1.0.0' ) {
-        ws_seed_fee_shifting_rule_taxonomy();
-        update_option( 'ws_seeded_fee_shifting_rule', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_employer_defense' ) !== '1.0.0' ) {
-        ws_seed_employer_defense_taxonomy();
-        update_option( 'ws_seeded_employer_defense', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_aorg_type' ) !== '1.0.0' ) {
-        ws_seed_aorg_type_taxonomy();
-        update_option( 'ws_seeded_aorg_type', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_employment_sector' ) !== '1.0.0' ) {
-        ws_seed_employment_sector_taxonomy();
-        update_option( 'ws_seeded_employment_sector', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_aorg_service' ) !== '1.0.0' ) {
-        ws_seed_aorg_service_taxonomy();
-        update_option( 'ws_seeded_aorg_service', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_aorg_cost_model' ) !== '1.0.0' ) {
-        ws_seed_aorg_cost_model_taxonomy();
-        update_option( 'ws_seeded_aorg_cost_model', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_procedure_type' ) !== '1.0.0' ) {
-        ws_seed_procedure_type_taxonomy();
-        update_option( 'ws_seeded_procedure_type', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_protection_scope' ) !== '1.0.0' ) {
-        ws_seed_protection_scope_taxonomy();
-        update_option( 'ws_seeded_protection_scope', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_employee_standard' ) !== '1.0.0' ) {
-        ws_seed_employee_standard_taxonomy();
-        update_option( 'ws_seeded_employee_standard', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_protected_action' ) !== '1.0.0' ) {
-        ws_seed_protected_action_taxonomy();
-        update_option( 'ws_seeded_protected_action', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_legal_recognition' ) !== '1.0.0' ) {
-        ws_seed_legal_recognition_taxonomy();
-        update_option( 'ws_seeded_legal_recognition', '1.0.0' );
-    }
-    if ( get_option( 'ws_seeded_causation_standard' ) !== '1.0.0' ) {
-        ws_seed_causation_standard_taxonomy();
-        update_option( 'ws_seeded_causation_standard', '1.0.0' );
-    }
-
-} );
-
-
-// ════════════════════════════════════════════════════════════════════════════
-// SEEDING FUNCTIONS
-// ════════════════════════════════════════════════════════════════════════════
-
-/**
- * Seeds ws_disclosure_type with its hierarchical structure.
- */
-function ws_seed_disclosure_type_taxonomy() {
-    $hierarchy = [
-        'workplace-employment' => [
-            'name'     => 'Workplace & Employment',
-            'children' => [
-                'wage-hour-violations'       => 'Wage & Hour Violations',
-                'occupational-health-safety' => 'Occupational Health & Safety',
-                'collective-bargaining'      => 'Collective Bargaining Rights',
-            ],
-        ],
-        'financial-corporate' => [
-            'name'     => 'Financial & Corporate',
-            'children' => [
-                'securities-commodities-fraud'  => 'Securities & Commodities Fraud',
-                'consumer-financial-protection' => 'Consumer Financial Protection',
-                'banking-aml-compliance'        => 'Banking & AML Compliance',
-                'shareholder-rights'            => 'Shareholder Rights',
-                'tax-evasion-fraud'             => 'Tax Evasion & Fraud',
-            ],
-        ],
-        'government-accountability' => [
-            'name'     => 'Government Accountability',
-            'children' => [
-                'procurement-spending-fraud' => 'Procurement & Spending Fraud',
-                'public-corruption-ethics'   => 'Public Corruption & Ethics',
-                'election-integrity'         => 'Election Integrity',
-                'military-defense-reporting' => 'Military & Defense Reporting',
-            ],
-        ],
-        'public-health-safety' => [
-            'name'     => 'Public Health & Safety',
-            'children' => [
-                'healthcare-medicare-fraud' => 'Healthcare & Medicare Fraud',
-                'environmental-protection'  => 'Environmental Protection',
-                'food-drug-safety'          => 'Food & Drug Safety',
-                'nuclear-energy-safety'     => 'Nuclear & Energy Safety',
-                'transportation-safety'     => 'Transportation & Aviation Safety',
-                'child-abuse-reporting'     => 'Child Abuse & Exploitation Reporting',
-                'patient-abuse-reporting'   => 'Patient Abuse & Neglect Reporting',
-            ],
-        ],
-        'privacy-data-integrity' => [
-            'name'     => 'Privacy & Data Integrity',
-            'children' => [
-                'cybersecurity-disclosure'  => 'Cybersecurity Disclosure',
-                'hipaa-patient-privacy'     => 'HIPAA & Patient Privacy',
-                'consumer-data-protection'  => 'Consumer Data Protection',
-                'education-privacy-ferpa'   => 'Education Privacy (FERPA)',
-            ],
-        ],
-        'national-security' => [
-            'name'     => 'National Security',
-            'children' => [
-                'intelligence-community'       => 'Intelligence Community Reporting',
-                'classified-information'       => 'Classified Information Disclosures',
-                'export-sanctions-compliance'  => 'Export Controls & Sanctions Compliance',
-            ],
-        ],
-        'general-legal' => [
-            'name'     => 'General Legal',
-            'children' => [
-                'general-wrongdoing'    => 'General Wrongdoing / Violation of Law',
-            ],
-        ],
-    ];
-    ws_bulk_insert_hierarchical( $hierarchy, 'ws_disclosure_type' );
-}
-
-/**
- * Seeds ws_process_type with its flat term list.
- * 
- */
-function ws_seed_process_type_taxonomy() {
-    $taxonomy = 'ws_process_type';
-    $terms    = [
-        'pre-suit-notice'          => 'Pre-Suit Notice',
-        'administrative-complaint' => 'Administrative Complaint',
-        'civil-lawsuit'            => 'Civil Lawsuit',
-        'qui-tam'                  => 'Qui Tam (False Claims)',
-        'internal-disclosure'      => 'Internal Disclosure',
-        'regulatory-tip'           => 'Regulatory Tip',
-        'criminal-referral'        => 'Criminal Referral',
-        'state-agency-complaint'   => 'State Agency Complaint',
-        'congressional-disclosure' => 'Congressional Disclosure',
-        'representative-action'    => 'Representative Action',
-        'de-novo-civil'            => 'De Novo Civil Action',
-        'arbitration-compelled'    => 'Arbitration Compelled',
-    ];
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
+    if ($ran_seeder) {
+        if (empty($all_errors)) {
+            add_action('admin_notices', function () {
+                echo '<div class="notice notice-success is-dismissible"><p>WS Core: Taxonomy tables were updated cleanly. No errors reported.</p></div>';
+            });
+        } else {
+            foreach ($all_errors as $err) {
+                error_log('WS Core Error: ' . $err);
+            }
+            add_action('admin_notices', function () {
+                echo '<div class="notice notice-error is-dismissible"><p>WS Core: Taxonomy tables were updated, but errors were reported! See PHP error_log.</p></div>';
+            });
         }
     }
 }
+add_action('admin_init', 'ws_seed_all_taxonomies');
 
 /**
- * Seeds ws_remedy with its flat term list.
- * Replaces ws_seed_remedy_taxonomy() for ws_remedy_type (deprecated).
- * 3.11.0: has-details sentinel added.
- * 3.15.0: interim-reinstatement, tax-gross-up added.
+ * Dynamically seeds terms for a single taxonomy using stateful hierarchical parsing.
+ *
+ * Array $terms format:
+ * - 'slug' => 'Term Label' (Child of the current active parent, or top-level if no active parent)
+ * - 'slug' => ['Term Label', 1] (Sets this term as top-level, and makes it the active parent for subsequent terms)
+ *
+ * @param string $taxonomy     The taxonomy slug.
+ * @param array  $terms        The terms to seed.
+ * @param string $option_label The DB option key for gating.
+ * @param string $version      The version string for gating.
+ * @param bool   $ordered      When true, sets display_order term meta (1-based, incremental).
+ * @return array               Array of error messages, if any.
+ *
  */
-function ws_seed_remedy_taxonomy() {
-    $taxonomy = 'ws_remedy';
-    $terms    = [
-        'reinstatement'                   => 'Reinstatement',
-        'interim-reinstatement'           => 'Interim / Preliminary Reinstatement',
-        'back-pay'                        => 'Back Pay',
-        'front-pay'                       => 'Front Pay',
-        'front-pay-in-lieu'               => 'Front Pay in Lieu of Reinstatement',
-        'double-back-pay'                 => 'Double Back Pay',
-        'lost-wages'                      => 'Lost Wages',
-        'benefits-restoration'            => 'Benefits Restoration',
-        'compensatory-damages'            => 'Compensatory Damages',
-        'punitive-damages'                => 'Punitive Damages',
-        'treble-damages'                  => 'Treble Damages',
-        'civil-penalty'                   => 'Civil Penalty',
-        'civil-penalties'                 => 'Civil Penalties (Aggregate)',
-        'attorney-fees'                   => 'Attorney Fees',
-        'litigation-costs'                => 'Litigation Costs',
-        'injunctive-relief'               => 'Injunctive Relief',
-        'cease-and-desist'                => 'Cease and Desist Order',
-        'expungement-of-personnel-record' => 'Expungement of Personnel Record',
-        'bounty-qui-tam-award'            => 'Bounty / Qui Tam Award',
-        'whistleblower-fund-award'        => 'Whistleblower Fund Award',
-        'non-monetary-relief'             => 'Non-Monetary Relief',
-        'neutral-reference'               => 'Neutral / Corrected Reference',
-        'attorney-fees-admin'             => 'Attorney Fees (Administrative Phase)',
-        'wage-differential'               => 'Wage Differential',
-        'liquidated-damages'              => 'Liquidated Damages',
-        'consequential-damages'           => 'Consequential / Special Damages',
-        'declaratory-relief'              => 'Declaratory Relief',
-        'tax-gross-up'                    => 'Tax Gross-Up',
-        'has-limits'                      => 'Has Limits/Caps/Standards',
-        'has-details'                     => 'Has Details',
-    ];
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
-        }
+
+function ws_seed_taxonomy($taxonomy, $terms, $option_label, $version = '1.0.0', $ordered = false)
+{
+    if (empty($taxonomy) || !is_string($taxonomy)) {
+        wp_die("This is a FuQ'n Error! ws_seed_taxonomy() called with an invalid \$taxonomy argument.");
     }
-}
-
-/**
- * Seeds ws_protected_class with its hierarchical employee type structure.
- * Replaces ws_seed_coverage_scope_taxonomy() for ws_coverage_scope (deprecated).
- * 3.11.0: has-details sentinel added as flat top-level term.
- * 
- * @todo - should be sync'd with ws_excluded_class table by hook, with
- *         never_excluded and never_protected gates when adding terms to
- *         the respective table.
- */
-function ws_seed_protected_class_taxonomy() {
-    $hierarchy = [
-        'public-sector' => [
-            'name'     => 'Public Sector',
-            'children' => [
-                'federal-employee'     => 'Federal Employee',
-                'state-employee'       => 'State Agency Employee',
-                'local-gov-staff'      => 'Local / Municipal Employee',
-                'k12-education-staff'  => 'K-12 / Higher Ed Staff',
-                'military-personnel'   => 'Military Personnel',
-            ],
-        ],
-        'private-sector' => [
-            'name'     => 'Private Sector',
-            'children' => [
-                'corporate-staff'      => 'Corporate / Private Employee',
-                'contractor-gig'       => 'Independent Contractor / Gig',
-                'non-profit-staff'     => 'Non-Profit Employee',
-                'agricultural-worker'  => 'Agricultural Worker',
-            ],
-        ],
-        'healthcare-staff' => [
-            'name'     => 'Healthcare & Medical',
-            'children' => [
-                'clinical-staff'       => 'Clinical (Nurse / Physician)',
-                'medical-student'      => 'Medical Student / Intern / Resident',
-            ],
-        ],
-        'special-status' => [
-            'name'     => 'Special Status',
-            'children' => [
-                'job-applicant'           => 'Job Applicant',
-                'former-employee'         => 'Former Employee',
-                'perceived-whistleblower' => 'Perceived Whistleblower',
-                'intern-volunteer'        => 'Intern / Volunteer',
-                'qui-tam-relator'         => 'Qui Tam Relator',
-            ],
-        ],
-        'associates-of-whistleblower' => [
-            'name'     => 'Associates of Whistleblower',
-            'children' => [
-                'associates-spouse'           => 'Spouse of Whistleblower',
-                'associates-immediate-family' => 'Immediate Family of Whistleblower',
-                'associates-household-family' => 'Household Family of Whistleblower',
-                'associates-close'            => 'Close Associates of Whistleblower',
-            ],
-        ],
-        'all-sectors' => [
-            'name'     => 'All Sectors',
-            'children' => [
-                'all-employees'        => 'All Employees',
-            ],
-        ],
-        'has-details' => [
-            'name'     => 'Has Details',
-            'children' => [],
-        ],
-    ];
-    ws_bulk_insert_hierarchical( $hierarchy, 'ws_protected_class' );
-
-}
-/**
- * Seeds ws_excluded_class with its hierarchical employee type structure.
- * Duplicate table of ws_protected_class will all-sectors (all-employees)
- * removed.
- * 
- * @todo - should be sync'd with ws_protected_class table by hook, with
- *         never_excluded and never_protected gates when adding terms to
- *         the respective table.
- * 
- */
-function ws_seed_excluded_class_taxonomy() {
-    $hierarchy = [
-        'public-sector' => [
-            'name'     => 'Public Sector',
-            'children' => [
-                'federal-employee'     => 'Federal Employee',
-                'state-employee'       => 'State Agency Employee',
-                'local-gov-staff'      => 'Local / Municipal Employee',
-                'k12-education-staff'  => 'K-12 / Higher Ed Staff',
-                'military-personnel'   => 'Military Personnel',
-            ],
-        ],
-        'private-sector' => [
-            'name'     => 'Private Sector',
-            'children' => [
-                'corporate-staff'      => 'Corporate / Private Employee',
-                'contractor-gig'       => 'Independent Contractor / Gig',
-                'non-profit-staff'     => 'Non-Profit Employee',
-                'agricultural-worker'  => 'Agricultural Worker',
-            ],
-        ],
-        'healthcare-staff' => [
-            'name'     => 'Healthcare & Medical',
-            'children' => [
-                'clinical-staff'       => 'Clinical (Nurse / Physician)',
-                'medical-student'      => 'Medical Student / Intern / Resident',
-            ],
-        ],
-        'special-status' => [
-            'name'     => 'Special Status',
-            'children' => [
-                'job-applicant'           => 'Job Applicant',
-                'former-employee'         => 'Former Employee',
-                'perceived-whistleblower' => 'Perceived Whistleblower',
-                'intern-volunteer'        => 'Intern / Volunteer',
-                'qui-tam-relator'         => 'Qui Tam Relator',
-            ],
-        ],
-        'associates-of-whistleblower' => [
-            'name'     => 'Associates of Whistleblower',
-            'children' => [
-                'associates-spouse'           => 'Spouse of Whistleblower',
-                'associates-immediate-family' => 'Immediate Family of Whistleblower',
-                'associates-household-family' => 'Household Family of Whistleblower',
-                'associates-close'            => 'Close Associates of Whistleblower',
-            ],
-        ],
-        
-        'has-details' => [
-            'name'     => 'Has Details',
-            'children' => [],
-        ],
-    ];
-    ws_bulk_insert_hierarchical( $hierarchy, 'ws_excluded_class' );
-
-}
-
-/**
- * Seeds ws_adverse_action with its flat term list.
- * Replaces ws_seed_retaliation_forms_taxonomy() for ws_retaliation_forms (deprecated).
- * 3.11.0: has-details sentinel added.
- * 3.15.0: retaliatory-litigation, hostile-work-environment, retaliatory-investigation added.
- */
-function ws_seed_adverse_action_taxonomy() {
-    $taxonomy = 'ws_adverse_action';
-    $terms    = [
-        'termination'                 => 'Termination',
-        'constructive-discharge'      => 'Constructive Discharge',
-        'demotion'                    => 'Demotion',
-        'suspension'                  => 'Suspension',
-        'disciplinary-action'         => 'Disciplinary Action',
-        'transfer'                    => 'Transfer',
-        'schedule-change'             => 'Schedule Change',
-        'benefit-denial'              => 'Benefit Denial',
-        'pay-reduction'               => 'Pay / Benefits Reduction',
-        'harassment'                  => 'Harassment',
-        'hostile-work-environment'    => 'Hostile Work Environment',
-        'workplace-isolation'         => 'Workplace Isolation / Ostracism',
-        'post-employment-retaliation' => 'Post-Employment Retaliation',
-        'blacklisting'                => 'Blacklisting',
-        'negative-reference'          => 'Negative Reference',
-        'security-clearance-action'   => 'Security Clearance Action',
-        'contract-non-renewal'        => 'Contract Non-Renewal',
-        'professional-license-action' => 'Professional License Action',
-        'privilege-revocation'        => 'Privilege / Access Revocation',
-        'immigration-threat'          => 'Immigration-Related Threat',
-        'threatened-retaliation'      => 'Threatened Retaliation',
-        'retaliatory-investigation'   => 'Retaliatory Investigation / Audit',
-        'retaliatory-litigation'      => 'Retaliatory Litigation (SLAPP)',
-        'retaliatory-discovery'       => 'Retaliatory Discovery (Litigation Harassment)',
-        'has-details'                 => 'Has Details',
-    ];
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
-        }
+    if (!is_array($terms) || empty($terms)) {
+        wp_die("This is a FuQ'n Error! ws_seed_taxonomy() called with invalid \$terms for '{$taxonomy}'.");
     }
-}
-
-/**
- * Seeds ws_language terms.
- * 'additional' is a functional flag — auto-assigned when ws_agency_additional_languages
- * or ws_aorg_additional_languages text fields contain a value.
- */
-function ws_seed_language_taxonomy() {
-    $taxonomy = 'ws_language';
-    $terms    = [
-        'english'        => 'English',
-        'spanish'        => 'Spanish',
-        'mandarin'       => 'Mandarin',
-        'cantonese'      => 'Cantonese',
-        'french'         => 'French',
-        'portuguese'     => 'Portuguese',
-        'vietnamese'     => 'Vietnamese',
-        'tagalog'        => 'Tagalog',
-        'korean'         => 'Korean',
-        'arabic'         => 'Arabic',
-        'hindi'          => 'Hindi',
-        'russian'        => 'Russian',
-        'haitian-creole' => 'Haitian Creole',
-        'polish'         => 'Polish',
-        'japanese'       => 'Japanese',
-        'additional'     => 'Additional',
-    ];
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
-        }
+    if (empty($option_label) || !is_string($option_label)) {
+        wp_die("This is a FuQ'n Error! ws_seed_taxonomy() called with an invalid \$option_label for '{$taxonomy}'.");
     }
-}
 
-/**
- * Seeds ws_case_stage terms.
- */
-function ws_seed_case_stage_taxonomy() {
-    $taxonomy = 'ws_case_stage';
-    $terms    = [
-        'pre-report'         => 'Pre-Report',
-        'post-report'        => 'Post-Report',
-        'retaliation-active' => 'Retaliation Active',
-        'litigation'         => 'Litigation',
-        'has-details'        => 'Has Details',
-    ];
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
+    $errors = [];
+    $current_parent_id = 0; // Stateful tracker for the active parent (resets per taxonomy loop)
+    $display_order     = 0;
+
+    foreach ($terms as $slug => $data) {
+        $is_parent = false;
+        $name = $data;
+
+        if (is_array($data)) {
+            $name = $data[0];
+            if (array_key_exists(1, $data)) {
+                if ($data[1] === 1) {
+                    $is_parent = true;
+                    $current_parent_id = 0; // Ensure the parent itself is inserted at the top-level root
+                } else {
+                    $invalid_val = var_export($data[1], true);
+                    wp_die("Taxonomy seeding error in '{$taxonomy}': Invalid flag {$invalid_val} for term '{$slug}'. Only integer 1 is permitted.");
+                }
+            }
         }
-    }
-}
 
-/**
- * Seeds ws_jurisdiction taxonomy with canonical USPS codes.
- * Special case: 'us' => 'Federal' (not 'Us' or 'United States').
- * Includes DC and the five U.S. territories.
- * Display order: Federal first, DC second, states alphabetical, territories alphabetical.
- */
-function ws_seed_jurisdiction_taxonomy() {
-    $taxonomy = WS_JURISDICTION_TAXONOMY;
-    $terms    = [
-        'us' => 'Federal', 'dc' => 'District of Columbia', 'al' => 'Alabama', 'ak' => 'Alaska',
-        'az' => 'Arizona', 'ar' => 'Arkansas', 'ca' => 'California', 'co' => 'Colorado',
-        'ct' => 'Connecticut', 'de' => 'Delaware', 'fl' => 'Florida', 'ga' => 'Georgia',
-        'hi' => 'Hawaii', 'id' => 'Idaho', 'il' => 'Illinois', 'in' => 'Indiana', 'ia' => 'Iowa',
-        'ks' => 'Kansas', 'ky' => 'Kentucky', 'la' => 'Louisiana' , 'me' => 'Maine' , 'md' => 'Maryland',
-        'ma' => 'Massachusetts', 'mi' => 'Michigan', 'mn' => 'Minnesota', 'ms' => 'Mississippi',
-        'mo' => 'Missouri', 'mt' => 'Montana', 'ne' => 'Nebraska', 'nv' => 'Nevada', 'nh' => 'New Hampshire',
-        'nj' => 'New Jersey', 'nm' => 'New Mexico', 'ny' => 'New York', 'nc' => 'North Carolina',
-        'nd' => 'North Dakota', 'oh' => 'Ohio', 'ok' => 'Oklahoma', 'or' => 'Oregon', 'pa' => 'Pennsylvania',
-        'ri' => 'Rhode Island', 'sc' => 'South Carolina', 'sd' => 'South Dakota', 'tn' => 'Tennessee',
-        'tx' => 'Texas', 'ut' => 'Utah', 'vt' => 'Vermont', 'va' => 'Virginia', 'wa' => 'Washington',
-        'wv' => 'West Virginia', 'wi' => 'Wisconsin', 'wy' => 'Wyoming', 'as' => 'American Samoa',
-        'gu' => 'Guam', 'mp' => 'Northern Mariana Islands', 'pr' => 'Puerto Rico', 'vi' => 'U.S. Virgin Islands',
-    ];
-    $order = 1;
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            $result = wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
-            if ( ! is_wp_error( $result ) ) {
-                update_term_meta( $result['term_id'], 'display_order', $order );
+        // Determine the parent ID for this specific term
+        $target_parent_id = (! $is_parent && $current_parent_id > 0) ? $current_parent_id : 0;
+
+        $args     = [ 'slug' => $slug, 'parent' => $target_parent_id ];
+        $term_obj = get_term_by('slug', $slug, $taxonomy); // single DB call replaces term_exists() + get_term()
+        $term_id  = 0;
+
+        if (! $term_obj) {
+            $result = wp_insert_term($name, $taxonomy, $args);
+            if (is_wp_error($result)) {
+                $errors[] = "Failed to insert term '{$slug}' in '{$taxonomy}': " . $result->get_error_message();
+            } else {
+                $term_id = $result['term_id'];
             }
         } else {
-            $existing = get_term_by( 'slug', $slug, $taxonomy );
-            if ( $existing ) {
-                update_term_meta( $existing->term_id, 'display_order', $order );
+            $term_id = $term_obj->term_id;
+
+            // Skip DB write and cache invalidation if nothing actually changed
+            if ($term_obj->name !== $name || (int) $term_obj->parent !== $target_parent_id) {
+                $update_result = wp_update_term($term_id, $taxonomy, [ 'name' => $name, 'parent' => $target_parent_id ]);
+                if (is_wp_error($update_result)) {
+                    $errors[] = "Failed to update term '{$slug}' in '{$taxonomy}': " . $update_result->get_error_message();
+                }
             }
         }
-        $order++;
-    }
-}
 
-/**
- * Seeds ws_disclosure_target with its hierarchical recipient structure.
- * New in 3.1.0. Describes who received the disclosure for protection to apply.
- * 3.11.0: has-details sentinel added as flat top-level term.
- */
-function ws_seed_disclosure_target_taxonomy() {
-    $hierarchy = [
-        'internal' => [
-            'name'     => 'Internal',
-            'children' => [
-                'internal-supervisor'     => 'Supervisor / Manager',
-                'internal-hr'             => 'Human Resources',
-                'internal-compliance'     => 'Compliance / Ethics Hotline',
-                'internal-legal'          => 'In-House Legal Counsel',
-                'internal-management'     => 'Management (General)',
-                'internal-oversight-body' => 'Internal Oversight Office',
-            ],
-        ],
-        'external-agency' => [
-            'name'     => 'External: Government Agency',
-            'children' => [
-                'agency-federal'          => 'Federal Agency',
-                'agency-state'            => 'State Agency',
-                'agency-local'            => 'Local / Municipal Agency',
-                'ig-federal'              => 'Federal Inspector General',
-                'ig-state'                => 'State Inspector General',
-                'law-enforcement-fed'     => 'Federal Law Enforcement',
-                'law-enforcement-state'   => 'State Law Enforcement',
-                'external-oversight-body' => 'External Oversight Office',
-            ],
-        ],
-        'legislative' => [
-            'name'     => 'Legislative Body',
-            'children' => [
-                'legislative-federal'   => 'U.S. Congress',
-                'legislative-state'     => 'State Legislature',
-            ],
-        ],
-        'judicial' => [
-            'name'     => 'Judicial / Legal',
-            'children' => [
-                'court-filing'          => 'Court Filing',
-                'attorney-counsel'      => 'Personal Attorney / Counsel',
-            ],
-        ],
-        'public' => [
-            'name'     => 'Public Disclosure',
-            'children' => [
-                'public-media'          => 'Media / Press',
-                'public-nonprofit'      => 'Non-Profit / Advocacy Organization',
-                'public-social-media'   => 'Social Media',
-            ],
-        ],
-        'has-details' => [
-            'name'     => 'Has Details',
-            'children' => [],
-        ],
-    ];
-    ws_bulk_insert_hierarchical( $hierarchy, 'ws_disclosure_target' );
-
-}
-
-/**
- * Seeds ws_fee_shifting_rule with its flat term list.
- * New in 3.1.0.
- */
-function ws_seed_fee_shifting_rule_taxonomy() {
-    $taxonomy = 'ws_fee_shifting_rule';
-    $terms    = [
-        'none-american-rule'             => 'None (American Rule)',
-        'bilateral-loser-pays'           => 'Bilateral (Loser Pays)',
-        'unilateral-pro-plaintiff'       => 'Unilateral (Pro-Plaintiff)',
-        'unilateral-pro-defendant'       => 'Unilateral (Pro-Defendant)',
-        'prevailing-defendant-bad-faith' => 'Defendant Fees on Bad Faith',
-        'discretionary'                  => 'Discretionary',
-        'mandatory'                      => 'Mandatory',
-        'has-phases'                     => 'Has Phase Specifics',
-        'has-details'                    => 'Has Details',
-    ];
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
+        // Write display_order term meta when the registry entry requests ordered output
+        if ($ordered && $term_id > 0) {
+            update_term_meta($term_id, 'display_order', ++$display_order);
         }
-    }
-}
 
-
-/**
- * Seeds ws_aorg_type with organization type terms.
- *
- * New in 3.3.0. Replaces the ws_aorg_type ACF select field.
- * 'oversight-office' replaces the opaque 'ombudsman' label used in the
- * prior select — "Government Oversight Office" is legible to laypeople.
- */
-function ws_seed_aorg_type_taxonomy() {
-    $taxonomy = 'ws_aorg_type';
-    $terms    = [
-        'nonprofit'        => 'Nonprofit Organization',
-        'legal-aid'        => 'Legal Aid Clinic',
-        'law-firm'         => 'Law Firm',
-        'bar-program'      => 'Bar Association Program',
-        'advocacy'         => 'Advocacy Organization',
-        'oversight-office' => 'Government Oversight Office',
-        'union'            => 'Labor Union',
-        'mixed'            => 'Mixed Organization Type',
-    ];
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
-        }
-    }
-}
-
-/**
- * Seeds ws_employment_sector with flat sector terms.
- *
- * New in 3.7.0. Replaces ws_aorg_employment_sectors ACF checkbox.
- * 'all-sectors' is used for organizations that serve all worker types.
- */
-function ws_seed_employment_sector_taxonomy() {
-    $taxonomy = 'ws_employment_sector';
-    $terms    = [
-        'federal-employee'     => 'Federal Government Employee',
-        'state-local-employee' => 'State & Local Government Employee',
-        'private-sector'       => 'Private Sector Employee',
-        'military-defense'     => 'Military & Defense Contractors',
-        'nonprofit-ngo'        => 'Nonprofit & NGO Employee',
-        'all-sectors'          => 'All Employment Sectors',
-    ];
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
-        }
-    }
-}
-
-/**
- * Seeds ws_aorg_cost_model with flat cost structure terms.
- * New in 3.9.0. Replaces ws_aorg_cost_model ACF select field.
- */
-function ws_seed_aorg_cost_model_taxonomy() {
-    $taxonomy = 'ws_aorg_cost_model';
-    $terms    = [
-        'free'            => 'Free of Charge',
-        'pro-bono'        => 'Pro Bono',
-        'sliding-scale'   => 'Sliding Scale Fee',
-        'contingency'     => 'Contingency Fee',
-        'fee-for-service' => 'Fee for Service',
-        'unclear'         => 'Model Unclear',
-    ];
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
-        }
-    }
-}
-
-/**
- * Seeds ws_aorg_service with flat service terms.
- * New in 3.9.0. Replaces ws_aorg_services ACF checkbox.
- * 'additional' is the sentinel term for free-text overflow.
- */
-function ws_seed_aorg_service_taxonomy() {
-    $taxonomy = 'ws_aorg_service';
-    $terms    = [
-        'legal-rep'     => 'Full Legal Representation',
-        'consultation'  => 'Legal Consultation / Advice',
-        'referral'      => 'Intake & Referral',
-        'doc-review'    => 'Document Review',
-        'hotline'       => 'Whistleblower Hotline',
-        'retaliation'   => 'Retaliation Defense',
-        'financial'     => 'Financial Assistance',
-        'advocacy'      => 'Policy Advocacy',
-        'media'         => 'Media & Communications Support',
-        'mental-health' => 'Mental Health Support',
-        'peer-support'  => 'Peer Support',
-        'secure-drop'   => 'SecureDrop Intake',
-        'additional'    => 'Additional Services',
-        'unclear'       => 'Services Unclear',
-    ];
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
-        }
-    }
-}
-
-/**
- * Seeds ws_employer_defense with its flat term structure.
- * New in 3.2.0.
- * 3.11.0: has-details sentinel added.
- */
-function ws_seed_employer_defense_taxonomy() {
-    $taxonomy = 'ws_employer_defense';
-    $terms    = [
-        'mixed-motive-defense'              => 'Mixed Motive Defense',
-        'same-decision-defense'             => 'Same-Decision Defense',
-        'same-decision-clear-convincing'    => 'Same-Decision (Clear and Convincing)',
-        'legitimate-non-retaliatory-reason' => 'Legitimate Non-Retaliatory Reason',
-        'after-acquired-evidence'           => 'After-Acquired Evidence (Specific Non-Retaliatory)',
-        'good-faith-compliance'             => 'Good-Faith Compliance',
-        'independent-contractor-defense'    => 'Independent Contractor Defense',
-        'statutory-exception-claim'         => 'Statutory Exception Claim',
-        'no-protected-activity'             => 'Disclosure was not Protected',
-        'no-jurisdiction'                   => 'Disclosure out of Scope (No Jurisdiction)',
-        'has-details'                       => 'Has Details',
-    ];
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
-        }
-    }
-}
-
-/**
- * Seeds ws_procedure_type with its three flat terms.
- *
- * New in 3.10.0. Replaces the ws_proc_type ACF select field on ag-procedure.
- * These three terms are stable — the set is not expected to grow.
- *
- *   disclosure  — procedure for reporting wrongdoing to the agency
- *   retaliation — procedure for filing a complaint after adverse action
- *   both        — single procedure that covers both disclosure and retaliation
- */
-function ws_seed_procedure_type_taxonomy() {
-    $taxonomy = 'ws_procedure_type';
-    $terms    = [
-        'disclosure'  => 'Disclosure',
-        'retaliation' => 'Retaliation',
-        'both'        => 'Both',
-    ];
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
+        // If this term was flagged as a parent, set it as the active parent for subsequent terms
+        if ($is_parent && $term_id > 0) {
+            $current_parent_id = $term_id;
         }
     }
 
-}
+    update_option($option_label, $version);
 
-/**
- * Seeds ws_protection_scope with its three flat terms.
- * Duplicate of ws_procedure_type
- *
- *   disclosure  — legal protection for reporting wrongdoing
- *   retaliation — legal protection from adverse actions after reporting
- *   both        — legal protection for both disclosure and retaliation
- */
-function ws_seed_protection_scope_taxonomy() {
-    $taxonomy = 'ws_protection_scope';
-    $terms    = [
-        'disclosure'  => 'Disclosure',
-        'retaliation' => 'Retaliation',
-        'both'        => 'Both',
-    ];
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
-        }
-    }
-}
-
-/**
- * Seeds ws_employee_standard with its flat term list.
- *
- * New in 3.12.0. Replaces the freetext employee_standard fields in ACFs.
- * Covers evidentiary burden-of-proof standards only — the volume/quality of
- * evidence required. Causation standards (the logical link between disclosure
- * and adverse action) moved to ws_causation_standard in 3.15.0.
- * has-details sentinel signals a companion ACF freetext field holds a standard
- * not covered by the registered slugs.
- * 3.15.0: causation-but-for, causation-any-consideration, causation-contributing-factor
- *         removed and moved to ws_causation_standard.
- */
-function ws_seed_employee_standard_taxonomy() {
-    $taxonomy = 'ws_employee_standard';
-    $terms    = [
-        'contributing-factor'  => 'Contributing Factor',
-        'motivating-factor'    => 'Motivating Factor',
-        'substantial-factor'   => 'Substantial Factor',
-        'but-for'              => 'But-For (Burden of Proof)',
-        'preponderance'        => 'Preponderance of the Evidence',
-        'clear-and-convincing' => 'Clear and Convincing Evidence',
-        'reasonable-belief'    => 'Reasonable Belief Standard',
-        'has-details'          => 'Has Details',
-    ];
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
-        }
-    }
-}
-
-/**
- * Seeds ws_protected_action with its hierarchical term structure.
- *
- * Two parent clauses per Title VII §704(a) and state analogs:
- * - Opposition Clause: opposing, resisting, or refusing; typically requires
- *   good-faith reasonable belief.
- * - Participation Clause: participating in proceedings or investigations;
- *   typically broader protection; good-faith requirement may not apply.
- *
- */
-function ws_seed_protected_action_taxonomy() {
-   $hierarchy = [
-        'opposition-clause' => [
-            'name'     => 'Opposition Clause',
-            'children' => [
-                'opposing-practice'       => 'Opposing Practice',
-                'internal-objection'      => 'Internal Objection',
-                'refusal-to-participate'  => 'Refusal to Participate',
-            ],
-        ],
-        'participation-clause' => [
-            'name'     => 'Participation Clause',
-            'children' => [
-                'filing-complaint'        => 'Filing Complaint',
-                'testifying'              => 'Testifying',
-                'assisting-whistleblower' => 'Assisting Whistleblower',
-                'participation-support'   => 'Participation Support',
-            ],
-        ],
-        'attempted-reporting' => [
-            'name'     => 'Attempted Reporting',
-            'children' => [],
-        ],
-        'concerted-activity'  => [
-            'name'     => 'Concerted Activity',
-            'children' => [],
-        ],
-
-    ];
-    ws_bulk_insert_hierarchical( $hierarchy, 'ws_protected_action' );
-
-}
-
-
-/**
- * Seeds ws_legal_recognition with its flat term list.
- *
- * New in 3.15.0. Replaces scattered *_recognized ACF boolean fields.
- * Presence of a term signals the doctrine/rule is recognized in this jurisdiction.
- * Absence signals the doctrine is not recognized or the statute is silent.
- * Terms that have companion *_context fields are noted below.
- * 
-* Used for bool-state values of Legal Recognitions where true when:
- *  - Specified   — statute explicitly names or enumerates something
- *  - Recognized  — judicial doctrine courts have affirmatively acknowledged
- *  - Required    — mandatory obligation; non-compliance typically defeats the claim
- *  - Applies     — statutory condition that operates by force of law when triggered
- *  - Available   — mechanism or remedy that may be invoked but is not automatic
- *  - Permitted   — right expressly allowed; cannot be waived or procedurally blocked
- *  - Barred      — doctrine, action, or evidence explicitly excluded by law or rule
- *  - Prohibited  — conduct expressly forbidden; violation triggers statutory liability
- *  - Present     — clause or provision exists without implying judicial affirmation
- *  - Sufficient  — condition independently meets the threshold for protection to attach
- *  
- * Recognized Retaliation Doctrines — REMOVED:
- *  - 'constructive-discharge'   — "Recognized" is true when present in adverse_actions
- *  - 'anticipatory-retaliation' — "Recognized" is true when present in adverse_actions
- * 
- */
-function ws_seed_legal_recognition_taxonomy() {
-    $taxonomy = 'ws_legal_recognition';
-    $terms    = [
-        // Effective Date                                                                               // ───── # Effective Date Tab ────────────────────────────────────────────────
-        'retroactive-date'                    => 'Retroactive Date Specified',                          // + retro_context + retro_date
-        // Classifications                                                                              // ───── # Classifications Tab ───────────────────────────────────────────────
-        // = NOTE = `legal_recognitions` appears at top of Classifications Tab                          // =>>> NOTE =>>> `legal_recognitions` appears at top of Classifications Tab
-        'protected-action'                    => 'Protected Action Specified',                          // + protected_action_context  + protected_actions + protected_action_standard + protected_action_source
-        'excluded-class'                      => 'Excluded Class Specified',                            // + excluded_class_context    + excluded_classes
-        'manager-rule-exclusion'              => 'Manager Rule / Duty Speech Exclusion Applies',        // + manager_rule_context
-        'public-concern-required'             => 'Public Concern Requirement Applies',                  // + public_concern_context
-        'bad-faith-exclusion'                 => 'Bad Faith / Knowingly False Exclusion Applies',       // + bad_faith_context
-        'anonymity-protection'                => 'Anonymity / Confidentiality Protection Recognized',   // + anonymity_context
-        // Statute of Limitations & Procedural                                                          // ───── # Statute of Limitations And Thresholds Tab ─────────────────────────
-        'statutory-tolling'                   => 'Statutory Tolling Specified',                         // + statutory_tolling_context
-        'equitable-tolling'                   => 'Equitable Tolling Recognized',                        // + equitable_tolling_context
-        'amended-claim'                       => 'Amended Claim / Relation Back Recognized',            // + amended_claim_context
-        'exhaustion-required'                 => 'Exhaustion Required',                                 // + exhaustion_context
-        'pre-filing-notice'                   => 'Pre-Filing Notice Required',                          // + filing_notice_context
-        'statutory-preclusion'                => 'Statutory Preclusion Applies',                        // + preclusion_context
-        // Retaliation                                                                                  // ───── # Retaliation Tab ───────────────────────────────────────────────────
-        'cats-paw-liability'                  => 'Cat\'s Paw Liability Recognized',                     // + cats_paw_context
-        'third-party-retaliation'             => 'Third-Party Retaliation Prohibited',                  // + third_party_retaliation_context
-        // Process & Remedies                                                                           // ───── # Process & Remedies Tab ────────────────────────────────────────────
-        'private-right-of-action'             => 'Private Right of Action Available',                   // + private_roa_context
-        'jury-trial'                          => 'Jury Trial Available',                                // =>>> NOTE =>>> invalid term without 'private-right-of-action' also present.  // + jury_trial_context + jury_trial_scope
-        'preliminary-reinstatement'           => 'Preliminary / Interim Reinstatement Available',       // + preliminary_reinstatement_context
-        // Waiver & Scope                                                                               // ───── # Waiver & Scope Tab ────────────────────────────────────────────────
-        'contractual-waiver'                  => 'Contractual Waiver Recognized',                       // =>>> NOTE =>>> invalid term if 'civil_action_waiver_scope' is set to 'anti'. // + contractual_waiver_context + contractual_waiver_scope
-        'nda-limitations'                      => 'NDA / Non-Disparagement Limitations Recognized',     // + nda_limits_context
-        'anti-gag-provision'                  => 'Anti-Gag Provision Recognized',                       // + anti_gag_context
-        'no-retaliatory-evidence'             => 'Retaliatory Evidence Barred',                         // + no_retaliatory_evidence_context
-        'stay-of-disciplinary-action'         => 'Stay of Disciplinary Action Available',               // + stay_context
-        'anti-slapp-protection'               => 'Anti-SLAPP Protection Applies',                       // + anti_slapp_protection_context
-        'confidential-settlement-restriction' => 'Confidential Settlement Restriction Applies',         // + settlement_restriction_context
-        'successor-liability'                 => 'Successor Employer Liability Recognized',             // + successor_liability_context
-        'extraterritorial-coverage'           => 'Extraterritorial Coverage Recognized',                // + extraterritorial_context
-        'employer-knowledge'                  => 'Employer Knowledge Element Required',                 // + employer_knowledge_context
-        // Without Context                                                                              // ───── # Without Context (no Tab) ──────────────────────────────────────────
-        'catch-all-protection'                => 'Catch-All Protection Clause Present',                 // (no companion)
-        'internal-only-sufficient'            => 'Internal-Only Disclosure Sufficient',                 // (no companion)
-        'trade-secret-immunity'               => 'Trade Secret Immunity Recognized',                    // (no companion)
-        'continuing-violation'                => 'Continuing Violation Doctrine Recognized',            // (no companion)
-        'individual-liability'                => 'Individual Liability Available',                      // (no companion)
-        'class-action'                        => 'Class / Collective Action Permitted',                 // (no companion)
-
-    ];
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
-        }
-    }
-}
-
-/**
- * Seeds ws_causation_standard with its flat term list.
- *
- * New in 3.15.0. Split from ws_employee_standard.
- * Covers the causal link required between the disclosure and the adverse action.
- * Distinct from ws_employee_standard which covers evidentiary burden-of-proof
- * standards (the volume/quality of evidence required).
- * has-details sentinel signals a companion ACF freetext field holds a standard
- * not covered by the registered slugs.
- *
- * 3.16.0: contributing-factor-but-for-backstop and substantial-motivating-factor added.
- */
-function ws_seed_causation_standard_taxonomy() {
-    $taxonomy = 'ws_causation_standard';
-    $terms    = [
-        'causation-but-for'                     => 'But-For Causation Standard',
-        'causation-any-consideration'           => 'Any Consideration Causation Standard',
-        'causation-contributing-factor'         => 'Contributing Factor Causation Standard',
-        'contributing-factor-but-for-backstop'  => 'Contributing Factor (But-For Backstop)',
-        'causation-motivating-factor'           => 'Motivating Factor Causation Standard',
-        'substantial-motivating-factor'         => 'Substantial Motivating Factor Standard',
-        'causation-substantial-factor'          => 'Substantial Factor Causation Standard',
-        'causation-proximate-cause'             => 'Proximate Cause Standard',
-        'has-details'                           => 'Has Details',
-    ];
-    foreach ( $terms as $slug => $name ) {
-        if ( ! term_exists( $slug, $taxonomy ) ) {
-            wp_insert_term( $name, $taxonomy, [ 'slug' => $slug ] );
-        }
-    }
+    return $errors;
 }

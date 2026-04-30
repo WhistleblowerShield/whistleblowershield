@@ -35,7 +35,7 @@ $_ws_fed_statutes_matrix = [
         'display_order'               => 10,
         'post_content'                => 'Protects employees of publicly traded companies who report securities fraud, mail fraud, wire fraud, bank fraud, or violations of SEC rules. Enforced by OSHA.',
         'process_types'               => [ 'administrative-complaint', 'civil-lawsuit' ],
-        'disclosure_types'            => [ 'securities-commodities-fraud', 'retaliation-protection' ],
+        'protected_disclosures'            => [ 'securities-commodities-fraud', 'retaliation-protection' ],
         'remedies'                    => [ 'reinstatement', 'back-pay', 'compensatory-damages', 'attorney-fees', 'litigation-costs' ],
         'protected_classes'           => [ 'corporate-staff' ],
         'adverse_actions'             => [ 'termination', 'demotion', 'suspension', 'harassment', 'transfer' ],
@@ -59,7 +59,7 @@ $_ws_fed_statutes_matrix = [
         'display_order'               => 20,
         'post_content'                => 'Provides anti-retaliation protections and monetary awards (10–30% of sanctions over $1M) for reporting violations of federal securities laws directly to the SEC.',
         'process_types'               => [ 'civil-lawsuit', 'regulatory-tip' ],
-        'disclosure_types'            => [ 'securities-commodities-fraud', 'retaliation-protection' ],
+        'protected_disclosures'            => [ 'securities-commodities-fraud', 'retaliation-protection' ],
         'remedies'                    => [ 'reinstatement', 'back-pay', 'double-back-pay', 'compensatory-damages', 'attorney-fees', 'bounty-qui-tam-award' ],
         'protected_classes'           => [ 'corporate-staff' ],
         'adverse_actions'             => [ 'termination', 'demotion', 'suspension', 'harassment', 'contract-non-renewal' ],
@@ -83,7 +83,7 @@ $_ws_fed_statutes_matrix = [
         'display_order'               => 30,
         'post_content'                => 'Allows private citizens (relators) to file qui tam lawsuits on behalf of the government against those who defraud federal programs. Relators receive 15–30% of recovered funds.',
         'process_types'               => [ 'qui-tam', 'civil-lawsuit' ],
-        'disclosure_types'            => [ 'procurement-spending-fraud', 'healthcare-medicare-fraud', 'retaliation-protection' ],
+        'protected_disclosures'            => [ 'procurement-spending-fraud', 'healthcare-medicare-fraud', 'retaliation-protection' ],
         'remedies'                    => [ 'reinstatement', 'back-pay', 'double-back-pay', 'compensatory-damages', 'attorney-fees', 'litigation-costs', 'bounty-qui-tam-award' ],
         'protected_classes'           => [ 'corporate-staff', 'contractor-gig', 'federal-employee' ],
         'adverse_actions'             => [ 'termination', 'demotion', 'suspension', 'harassment', 'contract-non-renewal' ],
@@ -107,7 +107,7 @@ $_ws_fed_statutes_matrix = [
         'display_order'               => 40,
         'post_content'                => 'Protects federal employees and applicants who disclose government waste, fraud, abuse, or law violations. Enforced by the Office of Special Counsel (OSC) and the Merit Systems Protection Board (MSPB).',
         'process_types'               => [ 'administrative-complaint', 'civil-lawsuit' ],
-        'disclosure_types'            => [ 'procurement-spending-fraud', 'public-corruption-ethics', 'retaliation-protection' ],
+        'protected_disclosures'            => [ 'procurement-spending-fraud', 'public-corruption-ethics', 'retaliation-protection' ],
         'remedies'                    => [ 'reinstatement', 'back-pay', 'compensatory-damages', 'attorney-fees', 'expungement-of-personnel-record' ],
         'protected_classes'           => [ 'federal-employee', 'job-applicant' ],
         'adverse_actions'             => [ 'termination', 'demotion', 'suspension', 'transfer', 'security-clearance-action', 'disciplinary-action' ],
@@ -131,7 +131,7 @@ $_ws_fed_statutes_matrix = [
         'display_order'               => 50,
         'post_content'                => 'Expands WPA protections to cover disclosures of classified information to Congress, disclosures made in the ordinary course of duties, and protections for employees of the TSA.',
         'process_types'               => [ 'administrative-complaint', 'civil-lawsuit', 'congressional-disclosure' ],
-        'disclosure_types'            => [ 'public-corruption-ethics', 'military-defense-reporting', 'retaliation-protection' ],
+        'protected_disclosures'            => [ 'public-corruption-ethics', 'military-defense-reporting', 'retaliation-protection' ],
         'remedies'                    => [ 'reinstatement', 'back-pay', 'compensatory-damages', 'attorney-fees', 'expungement-of-personnel-record' ],
         'protected_classes'           => [ 'federal-employee' ],
         'adverse_actions'             => [ 'termination', 'demotion', 'suspension', 'security-clearance-action', 'privilege-revocation' ],
@@ -155,7 +155,7 @@ $_ws_fed_statutes_matrix = [
         'display_order'               => 60,
         'post_content'                => 'Protects private-sector employees who report workplace safety violations or participate in OSHA proceedings from retaliation.',
         'process_types'               => [ 'administrative-complaint' ],
-        'disclosure_types'            => [ 'occupational-health-safety', 'retaliation-protection' ],
+        'protected_disclosures'            => [ 'occupational-health-safety', 'retaliation-protection' ],
         'remedies'                    => [ 'reinstatement', 'back-pay', 'compensatory-damages', 'attorney-fees' ],
         'protected_classes'           => [ 'corporate-staff' ],
         'adverse_actions'             => [ 'termination', 'demotion', 'suspension', 'harassment', 'disciplinary-action' ],
@@ -179,7 +179,7 @@ $_ws_fed_statutes_matrix = [
         'display_order'               => 70,
         'post_content'                => 'Protects employees of defense contractors, subcontractors, grantees, and personal services contractors who disclose fraud, waste, abuse, or violations related to defense contracts.',
         'process_types'               => [ 'administrative-complaint', 'civil-lawsuit' ],
-        'disclosure_types'            => [ 'procurement-spending-fraud', 'military-defense-reporting', 'retaliation-protection' ],
+        'protected_disclosures'            => [ 'procurement-spending-fraud', 'military-defense-reporting', 'retaliation-protection' ],
         'remedies'                    => [ 'reinstatement', 'back-pay', 'compensatory-damages', 'attorney-fees', 'litigation-costs' ],
         'protected_classes'           => [ 'contractor-gig', 'corporate-staff' ],
         'adverse_actions'             => [ 'termination', 'demotion', 'suspension', 'contract-non-renewal', 'security-clearance-action' ],
@@ -264,9 +264,9 @@ function ws_seed_fed_statutes_matrix() {
             ws_matrix_assign_terms( $post_id, $statute['process_types'], 'ws_process_type' );
         }
 
-        // ws_disclosure_type
-        if ( ! empty( $statute['disclosure_types'] ) ) {
-            ws_matrix_assign_terms( $post_id, $statute['disclosure_types'], 'ws_disclosure_type' );
+        // ws_protected_disclosure
+        if ( ! empty( $statute['protected_disclosures'] ) ) {
+            ws_matrix_assign_terms( $post_id, $statute['protected_disclosures'], 'ws_protected_disclosure' );
         }
 
         // ws_remedy

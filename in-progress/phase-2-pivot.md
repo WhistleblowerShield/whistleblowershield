@@ -69,8 +69,8 @@ list of assist organizations with graceful fallback when matches are sparse.
 - Doing research
 
 2. Concern/event axis:
-- Pre-disclosure branch maps to `ws_disclosure_type`
-- Post-retaliation branch maps to `ws_adverse_action_type` (+ optional `ws_disclosure_type`)
+- Pre-disclosure branch maps to `ws_protected_disclosure`
+- Post-retaliation branch maps to `ws_adverse_action_type` (+ optional `ws_protected_disclosure`)
 
 3. Employment context (`ws_employment_sector`):
 - Federal / state-local / private / nonprofit / military-defense / not sure
@@ -130,7 +130,7 @@ list of assist organizations with graceful fallback when matches are sparse.
 1. `ws-assist-org` records have required core fields populated.
 2. Core taxonomy assignments are present:
 - `ws_case_stage`
-- `ws_disclosure_type` (or `ws_adverse_action_type` where applicable)
+- `ws_protected_disclosure` (or `ws_adverse_action_type` where applicable)
 - `ws_employment_sector`
 - Optional: `ws_disclosure_target`
 

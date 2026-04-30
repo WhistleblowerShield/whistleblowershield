@@ -208,7 +208,7 @@ stamp, plain-english, source verify, and major edit from shared groups.
 | `ws_jx_statute_official_name` | text | Official statute name |
 | `ws_jx_statute_citation` | text | Official citation (e.g. `29 U.S.C. § 660(c)`) |
 | `ws_jx_statute_common_name` | text | Common or short name |
-| `ws_jx_statute_disclosure_types` | taxonomy | `ws_disclosure_type` terms; `save_terms: 1` |
+| `ws_jx_statute_protected_disclosures` | taxonomy | `ws_protected_disclosure` terms; `save_terms: 1` |
 | `ws_jx_statute_protected_classes` | taxonomy | `ws_protected_class` terms; `save_terms: 1` |
 | `ws_jx_statute_protected_class_details` | textarea | Protected class details (conditional) |
 | `ws_jx_statute_disclosure_targets` | taxonomy | `ws_disclosure_target` terms; `save_terms: 1` |
@@ -291,7 +291,7 @@ stamp, plain-english, source verify, and major edit from shared groups.
 | Meta Key | Type | Notes |
 |---|---|---|
 | `ws_jx_citation_type` | select | Case law type (`federal_circuit` / `federal_district` / `state` / `administrative` / `supreme_court`) |
-| `ws_jx_citation_disclosure_types` | taxonomy | `ws_disclosure_type` terms; `save_terms: 1` |
+| `ws_jx_citation_protected_disclosures` | taxonomy | `ws_protected_disclosure` terms; `save_terms: 1` |
 | `ws_jx_citation_official_name` | text | Official case name |
 | `ws_jx_citation_common_name` | text | Short / common name |
 | `ws_jx_citation_url` | url | Source URL (court opinion or database) |
@@ -374,7 +374,7 @@ stamp, plain-english, source verify, and major edit from shared groups.
 | `ws_agency_common_name` | text | Widely recognized common agency name or acronym |
 | `ws_agency_logo` | image | Agency logo (WordPress media library) |
 | `ws_agency_jurisdictions` *(taxonomy field)* | taxonomy | Jurisdiction scope; `save_terms: 1` |
-| `ws_agency_disclosure_types` | taxonomy | `ws_disclosure_type` terms; `save_terms: 1` |
+| `ws_agency_protected_disclosures` | taxonomy | `ws_protected_disclosure` terms; `save_terms: 1` |
 | `ws_agency_process_types` | taxonomy | `ws_process_type` terms; `save_terms: 1` |
 
 **Tab: Contact & Reporting**
@@ -411,8 +411,8 @@ fields DO attach.
 | `ws_ag_procedure_agency_id` | post_object | Parent `ws-agency` post; pre-filled from `?agency_id=` URL param on new posts |
 | `ws_procedure_type` | taxonomy | `ws_procedure_type` terms; radio UI; `save_terms: 1` |
 | `ws_jurisdictions` *(taxonomy field)* | taxonomy | Jurisdiction scope; `save_terms: 1` |
-| `ws_ag_procedure_disclosure_types` | taxonomy | `ws_disclosure_type` terms; `save_terms: 1` |
-| `ws_ag_procedure_statute_ids` | relationship | Related `jx-statute` posts; auto-scoped to matching jurisdiction and disclosure types |
+| `ws_ag_procedure_protected_disclosures` | taxonomy | `ws_protected_disclosure` terms; `save_terms: 1` |
+| `ws_ag_procedure_statute_ids` | relationship | Related `jx-statute` posts; auto-scoped to matching jurisdiction and protected disclosures |
 | `ws_ag_procedure_comlaw_ids` | relationship | Related `jx-common-law` posts; auto-scoped to matching jurisdiction |
 | `_ws_ag_procedure_parent_ids` | relationship | (Internal) Merged array of related `jx-statute` and `jx-common-law` posts |
 
@@ -474,7 +474,7 @@ fields DO attach.
 |---|---|---|
 | `ws_aorg_serves_nationwide` | true_false | Serves all 57 jurisdictions — enables nationwide overlay |
 | `ws_jurisdictions` *(taxonomy field)* | taxonomy | Specific jurisdictions served; `save_terms: 1` |
-| `ws_aorg_disclosure_types` | taxonomy | `ws_disclosure_type` terms; `save_terms: 1` |
+| `ws_aorg_protected_disclosures` | taxonomy | `ws_protected_disclosure` terms; `save_terms: 1` |
 | `ws_aorg_services` | taxonomy | `ws_aorg_service` terms; `save_terms: 1` |
 | `ws_aorg_additional_services` | textarea | Free-text overflow; auto-assigns `additional` service term |
 | `ws_aorg_employment_sectors` | taxonomy | `ws_employment_sector` terms; `save_terms: 1` |

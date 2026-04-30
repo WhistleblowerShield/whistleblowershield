@@ -147,7 +147,7 @@ These are edge-case fields — most records will be empty. Include them anyway.
 
 ### Disclosure Scope
 
-- `ws_aorg_disclosure_types`        — (taxonomy: `ws_disclosure_type`, multi_select, required;
+- `ws_aorg_protected_disclosures`   — (taxonomy: `ws_protected_disclosure`, multi_select, required;
                                        all misconduct categories this org has experience with)
 - `ws_aorg_disclosure_targets`      — (taxonomy: `ws_disclosure_target`, multi_select, optional;
                                        reporting channels the org can help navigate)
@@ -656,7 +656,7 @@ Organized by tab for easy implementation reference.
 | `ws_aorg_nationality_focus` | text | conditional | ISO codes |
 | `ws_aorg_immigration_status_scope` | multi-select | no | status eligibility |
 | `ws_aorg_immigration_status_details` | textarea | conditional | |
-| `ws_aorg_disclosure_types` | taxonomy | yes | `ws_disclosure_type` |
+| `ws_aorg_protected_disclosures` | taxonomy | yes | `ws_protected_disclosure` |
 | `ws_aorg_disclosure_targets` | taxonomy | no | `ws_disclosure_target` |
 | `ws_aorg_disclosure_target_details` | textarea | conditional | |
 | `ws_aorg_protected_classes` | taxonomy | no | `ws_protected_class` |

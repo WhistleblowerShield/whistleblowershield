@@ -16,7 +16,7 @@
  * -------------
  * Content tab:
  *   ws_jx_citation_types                          Citation Types (select, required)
- *   ws_jx_citation_disclosure_types               Disclosure Categories (multi_select, optional)
+ *   ws_jx_citation_protected_disclosures               Disclosure Categories (multi_select, optional)
  *   ws_jx_citation_official_name                  Official Name (text, required)
  *   ws_jx_citation_common_name                    Common Name (text, optional)
  *   ws_jx_citation_url                            Source URL (url, optional)
@@ -163,11 +163,11 @@ function ws_register_acf_jx_citations() {
                 'ui'            => 1,
             ],
 			[
-				'key'           => 'field_jx_citation_disclosure_types',
+				'key'           => 'field_jx_citation_protected_disclosures',
 				'label'         => 'Disclosure Categories',
-				'name'          => 'ws_jx_citation_disclosure_types',
+				'name'          => 'ws_jx_citation_protected_disclosures',
 				'type'          => 'taxonomy',
-				'taxonomy'      => 'ws_disclosure_type',
+				'taxonomy'      => 'ws_protected_disclosure',
 				'field_type'    => 'multi_select', // Use multi-select for multiple categories
 				'add_term'      => 0,
 				'save_terms'    => 1,

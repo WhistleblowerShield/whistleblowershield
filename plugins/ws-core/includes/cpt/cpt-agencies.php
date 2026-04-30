@@ -63,7 +63,7 @@ function ws_register_cpt_agencies() {
 
         // -- Taxonomies ----------------------------------------------------
         
-        'taxonomies'          => [ 'ws_disclosure_type' ],
+        'taxonomies'          => [ 'ws_protected_disclosure' ],
     ];
 
     register_post_type( 'ws-agency', $args );

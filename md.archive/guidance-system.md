@@ -232,6 +232,6 @@ procedures, deadlines, and legal help.
 The dispatch hook point (`ws_render_jx_filtered()`) and the
 `$filter_context` parameter are already in place in
 `render-jurisdiction.php`. The taxonomy infrastructure (`ws_case_stage`,
-`ws_disclosure_type`, `ws_process_type`) is already seeded and in use
+`ws_protected_disclosure`, `ws_process_type`) is already seeded and in use
 on assist organizations and statutes. Phase 2 is a rendering and
 navigation problem, not a data model problem.

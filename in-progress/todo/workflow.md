@@ -98,7 +98,7 @@ A fabricated URL is not.
 ## Taxonomy Discipline
 
 All legal data is classified against a controlled taxonomy of seven tables
-covering disclosure types, protected classes, disclosure targets, adverse action
+covering protected disclosures, protected classes, disclosure targets, adverse action
 types, process types, remedies, and fee shifting. Models may only use registered
 term slugs in record arrays. When a concept does not fit an existing slug, models
 are instructed to propose a new term rather than approximate with an existing one

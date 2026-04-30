@@ -674,7 +674,7 @@ function ws_ingest_allowed_record_keys( string $record_type ): array {
             'ruling_date',
             'specific_impact',
             'favorable',
-            'disclosure_types',
+            'protected_disclosures',
             'protected_classes',
             'protected_class_details',
             'disclosure_targets',
@@ -709,7 +709,7 @@ function ws_ingest_allowed_record_keys( string $record_type ): array {
             'ruling_date',
             'specific_impact',
             'favorable',
-            'disclosure_types',
+            'protected_disclosures',
             'protected_classes',
             'protected_class_details',
             'disclosure_targets',
@@ -1050,7 +1050,7 @@ function ws_ingest_statute_field_map_v2(): array {
         'official_name'                          => [ 'ws_jx_statute_official_name',            'text'     ],
         'common_name'                            => [ 'ws_jx_statute_common_name',               'text'     ],
         'legal_basis.statute_citation'           => [ 'ws_jx_statute_citation',                 'text'     ],
-        'legal_basis.disclosure_types'           => [ 'ws_jx_statute_disclosure_types',          'tax', 'ws_disclosure_type'     ],
+        'legal_basis.protected_disclosures'      => [ 'ws_jx_statute_protected_disclosures',          'tax', 'ws_protected_disclosure'     ],
         'legal_basis.protected_class'            => [ 'ws_jx_statute_protected_classes',          'tax', 'ws_protected_class'     ],
         'legal_basis.protected_class_details'    => [ 'ws_jx_statute_protected_class_details',  'textarea' ],
         'legal_basis.disclosure_targets'         => [ 'ws_jx_statute_disclosure_targets',       'tax', 'ws_disclosure_target'  ],
@@ -1058,53 +1058,52 @@ function ws_ingest_statute_field_map_v2(): array {
         'legal_basis.adverse_action_scope'       => [ 'ws_jx_statute_adverse_action_scope',     'textarea' ],
 
         // ── SOL ───────────────────────────────────────────────────────────
-        'statute_of_limitations.limit_value'       => [ 'ws_jx_statute_sol_value',          'number'  ],
-        'statute_of_limitations.limit_unit'        => [ 'ws_jx_statute_sol_unit',           'text'    ],
-        'statute_of_limitations.limit_ambiguous'   => [ 'ws_jx_statute_has_limit_ambiguous',    'bool'    ],
-        'statute_of_limitations.limit_details'     => [ 'ws_jx_statute_limit_details',      'textarea'],
-        'statute_of_limitations.trigger'           => [ 'ws_jx_statute_sol_trigger',        'text'    ],
-        'statute_of_limitations.exhaustion_required' => [ 'ws_jx_statute_has_exhaustion_required', 'bool' ],
-        'statute_of_limitations.exhaustion_details'  => [ 'ws_jx_statute_exhaustion_details',  'textarea'],
-        'statute_of_limitations.tolling_details'       => [ 'ws_jx_statute_tolling_details',      'textarea'],
+        'statute_of_limitations.limit_value'          => [ 'ws_jx_statute_sol_value',          'number'  ],
+        'statute_of_limitations.limit_unit'           => [ 'ws_jx_statute_sol_unit',           'text'    ],
+        'statute_of_limitations.limit_ambiguous'      => [ 'ws_jx_statute_has_limit_ambiguous',    'bool'    ],
+        'statute_of_limitations.limit_details'        => [ 'ws_jx_statute_limit_details',      'textarea'],
+        'statute_of_limitations.trigger'              => [ 'ws_jx_statute_sol_trigger',        'text'    ],
+        'statute_of_limitations.exhaustion_required'  => [ 'ws_jx_statute_has_exhaustion_required', 'bool' ],
+        'statute_of_limitations.exhaustion_details'   => [ 'ws_jx_statute_exhaustion_details',  'textarea'],
+        'statute_of_limitations.tolling_details'      => [ 'ws_jx_statute_tolling_details',      'textarea'],
         // has_tolling_details derived: set to 1 when tolling_details is present
 
         // ── Enforcement ───────────────────────────────────────────────────
         'enforcement.process_types'          => [ 'ws_jx_statute_process_types',      'tax', 'ws_process_type'         ],
         'enforcement.adverse_actions'        => [ 'ws_jx_statute_adverse_actions',    'tax', 'ws_adverse_action'  ],
         'enforcement.adverse_action_details' => [ 'ws_jx_statute_adverse_action_details', 'textarea' ],
-        'enforcement.fee_shifting_rules'          => [ 'ws_jx_statute_fee_shifting_rules',      'tax', 'ws_fee_shifting_rule'          ],
+        'enforcement.fee_shifting_rules'     => [ 'ws_jx_statute_fee_shifting_rules',      'tax', 'ws_fee_shifting_rule'          ],
         'enforcement.remedies'               => [ 'ws_jx_statute_remedies',          'tax', 'ws_remedy'              ],
         'enforcement.remedy_details'         => [ 'ws_jx_statute_remedy_details',  'textarea' ],
         'enforcement.primary_agency'         => [ 'ws_jx_statute_enforcement_channel', 'textarea' ],
 
         // ── Burden of Proof ───────────────────────────────────────────────
         'burden_of_proof.employee_standards'         => [ 'ws_jx_statute_employee_standards',         'tax', 'ws_employee_standard' ],
-        'burden_of_proof.employee_standard_details' => [ 'ws_jx_statute_employee_standard_details',  'textarea' ],
+        'burden_of_proof.employee_standard_details'  => [ 'ws_jx_statute_employee_standard_details',  'textarea' ],
         'burden_of_proof.employer_defenses'          => [ 'ws_jx_statute_employer_defenses',           'tax', 'ws_employer_defense'  ],
-        'burden_of_proof.employer_defense_details'  => [ 'ws_jx_statute_employer_defense_details',   'textarea' ],
-        'burden_of_proof.rebuttable_presumption'    => [ 'ws_jx_statute_rebuttable_presumption',     'textarea' ],
+        'burden_of_proof.employer_defense_details'   => [ 'ws_jx_statute_employer_defense_details',   'textarea' ],
+        'burden_of_proof.rebuttable_presumption'     => [ 'ws_jx_statute_rebuttable_presumption',     'textarea' ],
         // has_rebuttable_presumption derived: set to 1 when rebuttable_presumption present
-        'burden_of_proof.burden_of_proof_details'   => [ 'ws_jx_statute_bop_details',   'textarea' ],
+        'burden_of_proof.burden_of_proof_details'    => [ 'ws_jx_statute_bop_details',   'textarea' ],
         // has_bop_details derived: set to 1 when burden_of_proof_details present
-        'burden_of_proof.burden_of_proof_flag'      => [ 'ws_jx_statute_bop_flag',                  'text'     ],
+        'burden_of_proof.burden_of_proof_flag'       => [ 'ws_jx_statute_bop_flag',                  'text'     ],
 
         // ── Reward ────────────────────────────────────────────────────────
-        'reward.available'      => [ 'ws_jx_statute_has_reward_available', 'bool'     ],
-        'reward.reward_details' => [ 'ws_jx_statute_reward_details',   'textarea' ],
+        'reward.available'       => [ 'ws_jx_statute_has_reward_available', 'bool'     ],
+        'reward.reward_details'  => [ 'ws_jx_statute_reward_details',   'textarea' ],
 
         // ── Links ─────────────────────────────────────────────────────────
-        'statute_url' => [ 'ws_jx_statute_url',    'url'  ],
-        'url_is_pdf'  => [ 'ws_jx_statute_url_is_pdf', 'bool' ],
-        'is_official' => [ null, 'omit' ], // advisory
-        'url_source'  => [ null, 'omit' ], // advisory
+        'statute_url'  => [ 'ws_jx_statute_url',    'url'  ],
+        'url_is_pdf'   => [ 'ws_jx_statute_url_is_pdf', 'bool' ],
+        'is_official'  => [ null, 'omit' ], // advisory
+        'url_source'   => [ null, 'omit' ], // advisory
 
         // ── Auto-stripped ──────────────────────────────────────────────────
-        '_review_notes'     => [ null, 'omit' ],
-        '_reconciled_notes' => [ null, 'omit' ],
+        '_review_notes'       => [ null, 'omit' ],
 
         // ── Citations ─────────────────────────────────────────────────────
-        'citations.attached_citations' => [ null, 'omit' ], // handled in stub pass (jx-citation)
-        'citations.citation_count'     => [ null, 'omit' ], // advisory
+        'citations.attached_citations'  => [ null, 'omit' ], // handled in stub pass (jx-citation)
+        'citations.citation_count'      => [ null, 'omit' ], // advisory
     ];
 }
 
@@ -1117,58 +1116,58 @@ function ws_ingest_common_law_field_map_v2(): array {
         'doctrine_name'                           => [ 'ws_jx_comlaw_doctrine_name',                'text'     ],
         'doctrine_id'                             => [ 'ws_jx_comlaw_doctrine_id',                  'text'     ],
         'common_name'                             => [ 'ws_jx_comlaw_common_name',                  'text'     ],
-        'precedent_url'                     => [ 'ws_jx_comlaw_precedent_url',                'url'      ],
-        'precedent_url_is_pdf'              => [ 'ws_jx_comlaw_precedent_url_is_pdf',         'bool'     ],
+        'precedent_url'                           => [ 'ws_jx_comlaw_precedent_url',                'url'      ],
+        'precedent_url_is_pdf'                    => [ 'ws_jx_comlaw_precedent_url_is_pdf',         'bool'     ],
         'legal_basis.public_policy_sources'       => [ 'ws_jx_comlaw_public_policy_sources',        'array'    ],
         'legal_basis.other_sources'               => [ 'ws_jx_comlaw_other_sources',                'text'     ],
         'legal_basis.doctrine_basis'              => [ 'ws_jx_comlaw_doctrine_basis',               'textarea' ],
         'legal_basis.recognition_status'          => [ 'ws_jx_comlaw_recognition_status',           'textarea' ],
-        'legal_basis.disclosure_types'            => [ 'ws_jx_comlaw_disclosure_types',              'tax', 'ws_disclosure_type'    ],
-        'legal_basis.protected_classes'             => [ 'ws_jx_comlaw_protected_classes',              'tax', 'ws_protected_class'    ],
+        'legal_basis.protected_disclosures'       => [ 'ws_jx_comlaw_protected_disclosures',              'tax', 'ws_protected_disclosure'    ],
+        'legal_basis.protected_classes'           => [ 'ws_jx_comlaw_protected_classes',              'tax', 'ws_protected_class'    ],
         'legal_basis.protected_class_details'     => [ 'ws_jx_comlaw_protected_class_details',      'textarea' ],
         'legal_basis.disclosure_targets'          => [ 'ws_jx_comlaw_disclosure_targets',           'tax', 'ws_disclosure_target' ],
-        'legal_basis.disclosure_target_details'  => [ 'ws_jx_comlaw_disclosure_target_details',   'textarea' ],
+        'legal_basis.disclosure_target_details'   => [ 'ws_jx_comlaw_disclosure_target_details',   'textarea' ],
         'legal_basis.adverse_action_scope'        => [ 'ws_jx_comlaw_adverse_action_scope',         'textarea' ],
 
         // ── SOL ───────────────────────────────────────────────────────────
-        'statute_of_limitations.limit_value'       => [ 'ws_jx_comlaw_sol_value',               'number'   ],
-        'statute_of_limitations.limit_unit'        => [ 'ws_jx_comlaw_sol_unit',                'text'     ],
-        'statute_of_limitations.limit_ambiguous'   => [ 'ws_jx_comlaw_has_limit_ambiguous',         'bool'     ],
-        'statute_of_limitations.limit_details'     => [ 'ws_jx_comlaw_limit_details',           'textarea' ],
-        'statute_of_limitations.trigger'           => [ 'ws_jx_comlaw_sol_trigger',             'text'     ],
-        'statute_of_limitations.exhaustion_required' => [ 'ws_jx_comlaw_has_exhaustion_required',   'bool'     ],
-        'statute_of_limitations.exhaustion_details'  => [ 'ws_jx_comlaw_exhaustion_details',    'textarea' ],
-        'statute_of_limitations.tolling_details'     => [ 'ws_jx_comlaw_tolling_details',           'textarea' ],
+        'statute_of_limitations.limit_value'          => [ 'ws_jx_comlaw_sol_value',               'number'   ],
+        'statute_of_limitations.limit_unit'           => [ 'ws_jx_comlaw_sol_unit',                'text'     ],
+        'statute_of_limitations.limit_ambiguous'      => [ 'ws_jx_comlaw_has_limit_ambiguous',         'bool'     ],
+        'statute_of_limitations.limit_details'        => [ 'ws_jx_comlaw_limit_details',           'textarea' ],
+        'statute_of_limitations.trigger'              => [ 'ws_jx_comlaw_sol_trigger',             'text'     ],
+        'statute_of_limitations.exhaustion_required'  => [ 'ws_jx_comlaw_has_exhaustion_required',   'bool'     ],
+        'statute_of_limitations.exhaustion_details'   => [ 'ws_jx_comlaw_exhaustion_details',    'textarea' ],
+        'statute_of_limitations.tolling_details'      => [ 'ws_jx_comlaw_tolling_details',           'textarea' ],
 
         // ── Enforcement ───────────────────────────────────────────────────
         'enforcement.process_types'           => [ 'ws_jx_comlaw_process_types',          'tax', 'ws_process_type'         ],
         'enforcement.adverse_actions'         => [ 'ws_jx_comlaw_adverse_actions',        'tax', 'ws_adverse_action' ],
-        'enforcement.adverse_action_details' => [ 'ws_jx_comlaw_adverse_action_details', 'textarea' ],
-        'enforcement.fee_shifting_rules'           => [ 'ws_jx_comlaw_fee_shifting_rules',          'tax', 'ws_fee_shifting_rule'         ],
-        'enforcement.remedies'               => [ 'ws_jx_comlaw_remedies',              'tax', 'ws_remedy'             ],
-        'enforcement.remedy_details'       => [ 'ws_jx_comlaw_remedy_details',      'textarea' ],
-        'enforcement.primary_agency'         => [ null, 'omit' ],
+        'enforcement.adverse_action_details'  => [ 'ws_jx_comlaw_adverse_action_details', 'textarea' ],
+        'enforcement.fee_shifting_rules'      => [ 'ws_jx_comlaw_fee_shifting_rules',          'tax', 'ws_fee_shifting_rule'         ],
+        'enforcement.remedies'                => [ 'ws_jx_comlaw_remedies',              'tax', 'ws_remedy'             ],
+        'enforcement.remedy_details'          => [ 'ws_jx_comlaw_remedy_details',      'textarea' ],
+        'enforcement.primary_agency'          => [ null, 'omit' ],
 
         // ── Burden of Proof ───────────────────────────────────────────────
-        'burden_of_proof.statutory_preclusion'         => [ 'ws_jx_comlaw_statutory_preclusion',         'bool'     ],
-        'burden_of_proof.statutory_preclusion_details' => [ 'ws_jx_comlaw_statutory_preclusion_details', 'textarea' ],
+        'burden_of_proof.statutory_preclusion'          => [ 'ws_jx_comlaw_statutory_preclusion',         'bool'     ],
+        'burden_of_proof.statutory_preclusion_details'  => [ 'ws_jx_comlaw_statutory_preclusion_details', 'textarea' ],
         'burden_of_proof.employee_standards'            => [ 'ws_jx_comlaw_employee_standards',             'tax', 'ws_employee_standard' ],
-        'burden_of_proof.employee_standard_details'    => [ 'ws_jx_comlaw_employee_standard_details',     'textarea' ],
+        'burden_of_proof.employee_standard_details'     => [ 'ws_jx_comlaw_employee_standard_details',     'textarea' ],
         'burden_of_proof.employer_defenses'             => [ 'ws_jx_comlaw_employer_defenses',              'tax', 'ws_employer_defense'  ],
-        'burden_of_proof.employer_defense_details'     => [ 'ws_jx_comlaw_employer_defense_details',      'textarea' ],
-        'burden_of_proof.rebuttable_presumption'       => [ 'ws_jx_comlaw_rebuttable_presumption',        'textarea' ],
-        'burden_of_proof.burden_of_proof_details'      => [ 'ws_jx_comlaw_bop_details',       'textarea' ],
-        'burden_of_proof.burden_of_proof_flag'         => [ 'ws_jx_comlaw_bop_flag',                      'text'     ],
+        'burden_of_proof.employer_defense_details'      => [ 'ws_jx_comlaw_employer_defense_details',      'textarea' ],
+        'burden_of_proof.rebuttable_presumption'        => [ 'ws_jx_comlaw_rebuttable_presumption',        'textarea' ],
+        'burden_of_proof.burden_of_proof_details'       => [ 'ws_jx_comlaw_bop_details',       'textarea' ],
+        'burden_of_proof.burden_of_proof_flag'          => [ 'ws_jx_comlaw_bop_flag',                      'text'     ],
 
         // ── Reward ────────────────────────────────────────────────────────
-        'reward.available'      => [ 'ws_jx_comlaw_reward_available', 'bool'     ],
-        'reward.reward_details' => [ 'ws_jx_comlaw_reward_details',   'textarea' ],
+        'reward.available'       => [ 'ws_jx_comlaw_reward_available', 'bool'     ],
+        'reward.reward_details'  => [ 'ws_jx_comlaw_reward_details',   'textarea' ],
 
         // ── Auto-stripped / advisory ───────────────────────────────────────
-        '_review_notes'              => [ null, 'omit' ],
-        '_reconciled_notes'          => [ null, 'omit' ],
-        'citations.attached_citations' => [ null, 'omit' ],
-        'citations.citation_count'     => [ null, 'omit' ],
+        '_review_notes'                 => [ null, 'omit' ],
+        '_reconciled_notes'             => [ null, 'omit' ],
+        'citations.attached_citations'  => [ null, 'omit' ],
+        'citations.citation_count'      => [ null, 'omit' ],
     ];
 }
 
@@ -1184,7 +1183,7 @@ function ws_ingest_citation_field_map_v2(): array {
         'citation_url_is_pdf'        => [ 'ws_jx_citation_url_is_pdf',                'bool'     ],
         'specific_impact'            => [ 'ws_plain_english_wysiwyg',                 'wysiwyg'  ],
         // ── Taxonomy classification ─────────────────────────────────────
-        'disclosure_types'           => [ 'ws_jx_citation_disclosure_types',          'tax', 'ws_disclosure_type'    ],
+        'protected_disclosures'      => [ 'ws_jx_citation_protected_disclosures',          'tax', 'ws_protected_disclosure'    ],
         'protected_classes'          => [ 'ws_jx_citation_protected_classes',         'tax', 'ws_protected_class'    ],
         'protected_class_details'    => [ 'ws_jx_citation_protected_class_details',   'textarea' ],
         'disclosure_targets'         => [ 'ws_jx_citation_disclosure_targets',        'tax', 'ws_disclosure_target' ],
@@ -1229,7 +1228,7 @@ function ws_ingest_construction_field_map_v2(): array {
         'court_name'                 => [ 'ws_jx_construction_court_name',                'text'     ],
 
         // ── Taxonomy classification ─────────────────────────────────────
-        'disclosure_types'           => [ 'ws_jx_construction_disclosure_types',           'tax', 'ws_disclosure_type'    ],
+        'protected_disclosures'           => [ 'ws_jx_construction_protected_disclosures',           'tax', 'ws_protected_disclosure'    ],
         'protected_classes'            => [ 'ws_jx_construction_protected_classes',           'tax', 'ws_protected_class'    ],
         'protected_class_details'    => [ 'ws_jx_construction_protected_class_details',   'textarea' ],
         'disclosure_targets'         => [ 'ws_jx_construction_disclosure_targets',        'tax', 'ws_disclosure_target' ],
@@ -1290,17 +1289,17 @@ function ws_ingest_assist_org_field_map_v2(): array {
         'case_stage_details'        => [ 'ws_aorg_case_stage_details',          'textarea' ],        
         
         // ── Taxonomies ───────────────────────────────────────────────────
-        'disclosure_types'          => [ 'ws_aorg_disclosure_types',       'tax', 'ws_disclosure_type'    ],
-        'protected_classes'         => [ 'ws_aorg_protected_classes',      'tax', 'ws_protected_class'    ],
-        'disclosure_targets'        => [ 'ws_aorg_disclosure_targets',     'tax', 'ws_disclosure_target'  ],
-        'supported_languages'       => [ 'ws_aorg_languages',              'tax', 'ws_language'           ],
-        'assistance_type'           => [ 'ws_aorg_type',                   'tax', 'ws_aorg_type'          ],
-        'employment_sectors'        => [ 'ws_aorg_employment_sectors',     'tax', 'ws_employment_sector'  ],
+        'protected_disclosures'     => [ 'ws_aorg_protected_disclosures',  'tax', 'ws_protected_disclosure' ],
+        'protected_classes'         => [ 'ws_aorg_protected_classes',      'tax', 'ws_protected_class'      ],
+        'disclosure_targets'        => [ 'ws_aorg_disclosure_targets',     'tax', 'ws_disclosure_target'    ],
+        'supported_languages'       => [ 'ws_aorg_languages',              'tax', 'ws_language'             ],
+        'assistance_type'           => [ 'ws_aorg_type',                   'tax', 'ws_aorg_type'            ],
+        'employment_sectors'        => [ 'ws_aorg_employment_sectors',     'tax', 'ws_employment_sector'    ],
         // Plural meta key is intentional (array of selected terms); taxonomy slug remains singular.
-        'cost_models'               => [ 'ws_aorg_cost_models',            'tax', 'ws_aorg_cost_model'    ],
-        'provided_services'         => [ 'ws_aorg_services',               'tax', 'ws_aorg_service'       ],
-        'process_types'             => [ 'ws_aorg_process_types',          'tax', 'ws_process_type'       ],
-        'case_stages'               => [ 'ws_aorg_case_stages',            'tax', 'ws_case_stage'         ],
+        'cost_models'               => [ 'ws_aorg_cost_models',            'tax', 'ws_aorg_cost_model'      ],
+        'provided_services'         => [ 'ws_aorg_services',               'tax', 'ws_aorg_service'         ],
+        'process_types'             => [ 'ws_aorg_process_types',          'tax', 'ws_process_type'         ],
+        'case_stages'               => [ 'ws_aorg_case_stages',            'tax', 'ws_case_stage'           ],
 
 
         // ── Advisory / omitted ───────────────────────────────────────────

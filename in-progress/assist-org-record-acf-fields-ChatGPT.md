@@ -198,8 +198,8 @@ Fields ordered: service fit → legal issue fit → worker fit → stage fit.
 - `service_environment_details`
 - `case_stages` — taxonomy: `ws_case_stage`
 - `case_stage_details`
-- `disclosure_types` — taxonomy: `ws_disclosure_type`
-- `disclosure_type_details`
+- `protected_disclosures` — taxonomy: `ws_protected_disclosure`
+- `protected_disclosure_details`
 - `protected_classes` — taxonomy: `ws_protected_class`
 - `protected_class_details`
 - `employment_sectors` — taxonomy: `ws_employment_sector`
@@ -823,7 +823,7 @@ Recommended terms:
 Retain use of:
 
 - `WS_JURISDICTION_TAXONOMY`
-- `ws_disclosure_type`
+- `ws_protected_disclosure`
 - `ws_protected_class`
 - `ws_disclosure_target`
 - `ws_process_type`
@@ -902,7 +902,7 @@ Consider adding:
 | `ws_aorg_has_limited_scope` | `service_area_scope` / `eligibility_status` | Bool is too blunt. |
 | `ws_aorg_jurisdictions` | `jurisdictions` | Keep taxonomy. |
 | `ws_aorg_community_scope` | `best_fit_summary` / `eligibility_details` | Split into service fit and eligibility. |
-| `ws_aorg_disclosure_types` | `disclosure_types` | Keep shared taxonomy. |
+| `ws_aorg_protected_disclosures` | `protected_disclosures` | Keep shared taxonomy. |
 | `ws_aorg_disclosure_targets` | `disclosure_targets` | Keep shared taxonomy. |
 | `ws_aorg_disclosure_target_details` | `disclosure_target_details` | Keep. |
 | `ws_aorg_case_stages` | `case_stages` | Keep taxonomy, expand terms. |
@@ -989,7 +989,7 @@ Implement next:
 
 - `assistance_model`
 - `case_stages` expanded terms
-- `disclosure_types`
+- `protected_disclosures`
 - `protected_classes`
 - `employment_sectors`
 - `process_types`

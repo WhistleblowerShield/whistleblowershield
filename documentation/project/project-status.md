@@ -118,7 +118,7 @@ Key additions since initial ruleset:
 - `_RECONCILED_NOTES` per-record audit log (autostripped at ingest)
 - `verified_via` domain-name-only for agent-supplied URLs
 - `has-details` sentinel valid taxonomy list — explicitly excludes
-  `ws_disclosure_type` and `ws_process_type`
+  `ws_protected_disclosure` and `ws_process_type`
 - Ruleset trimmed to ~7,700 chars — explanatory prose removed,
   rules-only format
 
@@ -160,7 +160,7 @@ Wage Theft Act, SAFE Act, Workers' Comp Retaliation, PEOSH, ISRA.
 Ingested. Posts #1710–1716.
 
 **Massachusetts (JX-MA):** 7 statute records. Ingested. Posts #1717–1723.
-Three records had `has-details` in `disclosure_types` (invalid) — stripped
+Three records had `has-details` in `protected_disclosures` (invalid) — stripped
 by ingest tool and logged.
 
 **California (JX-CA):** 22 statute records in NotebookLM remediation.

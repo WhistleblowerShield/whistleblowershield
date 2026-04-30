@@ -72,7 +72,7 @@ $_ws_ag_procedure_matrix = [
         'slug'                => 'sec-dodd-frank-tip-submission',
         'agency_slug'         => 'sec-whistleblower-program',
         'procedure_type'        => 'disclosure',
-        'disclosure_types'    => [ 'securities-commodities-fraud' ],
+        'protected_disclosures'    => [ 'securities-commodities-fraud' ],
         'entry_point' => 'online',
         'intake_url'  => 'https://www.sec.gov/tcr',
         // Anonymous is correct: Dodd-Frank Rule 21F-9 expressly permits anonymous
@@ -103,7 +103,7 @@ $_ws_ag_procedure_matrix = [
         'slug'                => 'osha-whistleblower-retaliation-complaint',
         'agency_slug'         => 'osha-whistleblower-protection-program',
         'procedure_type'        => 'retaliation',
-        'disclosure_types'    => [ 'occupational-health-safety', 'securities-commodities-fraud' ],
+        'protected_disclosures'    => [ 'occupational-health-safety', 'securities-commodities-fraud' ],
         'entry_point' => 'online',
         'intake_url'  => 'https://www.osha.gov/workers/file-a-complaint',
         'identity_policy'      => 'identified',
@@ -134,7 +134,7 @@ $_ws_ag_procedure_matrix = [
         'slug'                => 'osc-wrongdoing-disclosure',
         'agency_slug'         => 'office-of-special-counsel',
         'procedure_type'        => 'disclosure',
-        'disclosure_types'    => [ 'public-corruption-ethics', 'procurement-spending-fraud' ],
+        'protected_disclosures'    => [ 'public-corruption-ethics', 'procurement-spending-fraud' ],
         'entry_point' => 'online',
         'intake_url'  => 'https://osc.gov/Services/Pages/FileDisclosure.aspx',
         'identity_policy'      => 'confidential',
@@ -164,7 +164,7 @@ $_ws_ag_procedure_matrix = [
         'slug'                => 'osc-prohibited-personnel-practice',
         'agency_slug'         => 'office-of-special-counsel',
         'procedure_type'        => 'retaliation',
-        'disclosure_types'    => [],
+        'protected_disclosures'    => [],
         'entry_point' => 'online',
         'intake_url'  => 'https://osc.gov/Services/Pages/FileComplaint.aspx',
         'identity_policy'      => 'confidential',
@@ -195,7 +195,7 @@ $_ws_ag_procedure_matrix = [
         'slug'                => 'mspb-individual-right-of-action',
         'agency_slug'         => 'merit-systems-protection-board',
         'procedure_type'        => 'retaliation',
-        'disclosure_types'    => [],
+        'protected_disclosures'    => [],
         'entry_point' => 'online',
         'intake_url'  => 'https://e-appeal.mspb.gov/',
         'identity_policy'      => 'identified',
@@ -225,7 +225,7 @@ $_ws_ag_procedure_matrix = [
         'slug'                => 'nlrb-unfair-labor-practice-charge',
         'agency_slug'         => 'national-labor-relations-board',
         'procedure_type'        => 'both',
-        'disclosure_types'    => [ 'collective-bargaining' ],
+        'protected_disclosures'    => [ 'collective-bargaining' ],
         'entry_point' => 'online',
         'intake_url'  => 'https://www.nlrb.gov/reports/nlrb-case-activity-statistics/case-filings/file-a-case',
         'identity_policy'      => 'identified',
@@ -253,7 +253,7 @@ $_ws_ag_procedure_matrix = [
         'slug'                => 'cftc-whistleblower-tip-submission',
         'agency_slug'         => 'cftc-whistleblower-program',
         'procedure_type'        => 'disclosure',
-        'disclosure_types'    => [ 'securities-commodities-fraud' ],
+        'protected_disclosures'    => [ 'securities-commodities-fraud' ],
         'entry_point' => 'online',
         'intake_url'  => 'https://www.whistleblower.gov/tipsubmission',
         // CFTC Rule 165.7 expressly allows anonymous submissions through an attorney.
@@ -282,7 +282,7 @@ $_ws_ag_procedure_matrix = [
         'slug'                => 'irs-form-211-award-claim',
         'agency_slug'         => 'irs-whistleblower-office',
         'procedure_type'        => 'disclosure',
-        'disclosure_types'    => [ 'tax-evasion-fraud' ],
+        'protected_disclosures'    => [ 'tax-evasion-fraud' ],
         // Form 211 is mailed to the IRS Whistleblower Office — no online portal.
         'entry_point' => 'mail',
         'intake_url'  => 'https://www.irs.gov/pub/irs-pdf/f211.pdf',
@@ -312,7 +312,7 @@ $_ws_ag_procedure_matrix = [
         'slug'                => 'epa-environmental-retaliation-complaint',
         'agency_slug'         => 'epa-whistleblower-protection',
         'procedure_type'        => 'retaliation',
-        'disclosure_types'    => [ 'environmental-protection',  ],
+        'protected_disclosures'    => [ 'environmental-protection',  ],
         // EPA environmental retaliation complaints are filed with and investigated
         // by OSHA on behalf of EPA statutes — the intake portal belongs to OSHA.
         'entry_point' => 'online',
@@ -344,7 +344,7 @@ $_ws_ag_procedure_matrix = [
         'slug'                => 'doj-false-claims-act-qui-tam',
         'agency_slug'         => 'doj-false-claims-act',
         'procedure_type'        => 'both',
-        'disclosure_types'    => [ 'procurement-spending-fraud', 'healthcare-medicare-fraud',  ],
+        'protected_disclosures'    => [ 'procurement-spending-fraud', 'healthcare-medicare-fraud',  ],
         // Qui tam complaints are filed in federal district court — not through
         // a government agency intake portal. The intake_url points to DOJ Civil Fraud
         // for initial inquiries; the actual complaint is filed with the court clerk.
@@ -481,10 +481,10 @@ function ws_seed_procedure_matrix() {
 
         wp_set_object_terms( $post_id, [ $us_term_id ], WS_JURISDICTION_TAXONOMY );
 
-        // ── Assign disclosure types (taxonomy table) ───────────────────────
+        // ── Assign protected disclosures (taxonomy table) ───────────────────────
 
-        if ( ! empty( $proc['disclosure_types'] ) ) {
-            ws_matrix_assign_terms( $post_id, $proc['disclosure_types'], 'ws_disclosure_type' );
+        if ( ! empty( $proc['protected_disclosures'] ) ) {
+            ws_matrix_assign_terms( $post_id, $proc['protected_disclosures'], 'ws_protected_disclosure' );
         }
 
         // ── Assign procedure type (taxonomy table) ─────────────────────────

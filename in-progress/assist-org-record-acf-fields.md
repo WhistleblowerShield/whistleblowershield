@@ -110,7 +110,7 @@ ever sees this record.
 
 #### Service Taxonomy
 
-- `disclosure_types`         — (taxonomy: `ws_disclosure_type`; multi-select; all applicable
+- `protected_disclosures`    — (taxonomy: `ws_protected_disclosure`; multi-select; all applicable
                                misconduct categories this org has experience assisting with)
 - `protected_actions`        — (OPTIONAL; taxonomy: `ws_protected_action`; multi-select;
                                specific protected activity types this org supports)
@@ -306,7 +306,7 @@ Only legacy fields that violate target naming conventions or are redundant.
 - `ws_aorg_has_limited_scope`        → `has_limited_scope`
 - `ws_aorg_jurisdictions`            → `jurisdictions`
 - `ws_aorg_community_scope`          → `community_scope`
-- `ws_aorg_disclosure_types`         → `disclosure_types`
+- `ws_aorg_protected_disclosures`    → `protected_disclosures`
 - `ws_aorg_disclosure_targets`       → `disclosure_targets`
 - `ws_aorg_disclosure_target_details`→ `disclosure_target_details`
 - `ws_aorg_case_stages`              → `case_stages`
@@ -426,7 +426,7 @@ identity.homepage_url_date   → website_url_date
 identity.general_description → general_description
 
 scope.nationwide_example     → nationwide_example
-scope.disclosure_types       → disclosure_types
+scope.protected_disclosures  → protected_disclosures
 scope.protected_classes      → protected_classes
 scope.protected_class_details→ protected_class_details
 scope.languages_supported    → languages

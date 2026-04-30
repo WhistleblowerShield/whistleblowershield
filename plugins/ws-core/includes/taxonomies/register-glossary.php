@@ -1,109 +1,29 @@
 <?php
 /**
- * register-glossary.php
+ * register-glossary.php — WhistleblowerShield Glossary System
  *
- * WhistleblowerShield Glossary System
+ * Registers ws_glossary (private, non-hierarchical, CPT-unattached), seeds initial
+ * terms, caches the lookup in ws_glossary_cache_ (24h transient, auto-invalidated),
+ * and provides the ws_glossary_scan filter for shortcode tooltip injection.
  *
- * PURPOSE
- * -------
- * Registers the ws_glossary taxonomy, provides a transient-cached term
- * registry, and exposes a ws_glossary_scan filter that shortcodes opt into
- * by passing their rendered HTML through it.
+ * Term structure: name (canonical) | description (tooltip) | ws_glossary_aliases meta
+ * (pipe-delimited). Aliases and canonical terms sorted longest-first at cache build.
  *
- * Matching terms are wrapped in:
- *   <span class="ws-term-highlight" data-tooltip="[definition]">[term]</span>
- *
- * TAXONOMY
- * --------
- * ws_glossary — private, non-hierarchical, no public archive.
- * Each term is one glossary entry:
- *   name        — canonical term (e.g. "qui tam")
- *   description — tooltip definition text
- *   term_meta   — ws_glossary_aliases (pipe-delimited alias string)
- *
- * SCANNER BEHAVIOR
- * ----------------
- * - Scans raw text nodes only — never injects inside existing HTML tags.
- * - Skips text nodes inside: <a>, <span>, <abbr>, <button>, <script>, <style>, <code>, <pre>.
- * - Matches are case-insensitive, whole-word only.
- * - Aliases and canonical terms are sorted longest-first so multi-word
- *   phrases match before shorter substrings (e.g. "qui tam lawsuit"
- *   before "qui tam").
- * - First occurrence per content block only — each term is matched once
- *   per ws_glossary_scan() call, never twice in the same HTML string.
- *
- * TRANSIENT
- * ---------
- * ws_glossary_cache_ — stores the full flat lookup array.
- * Invalidated on created_ws_glossary, edited_ws_glossary, and delete_ws_glossary hooks.
- * TTL: 24 hours as a safety net.
- *
- * INTEGRATION
- * -----------
- * Shortcodes opt in by applying the filter to their rendered HTML:
+ * Scanner: DOMDocument text-node walker. Case-insensitive, whole-word. Skips <a>,
+ * <span>, <abbr>, <button>, <script>, <style>, <code>, <pre>, <h1>–<h3>. First
+ * match per term per scan pass only. No global the_content hook — opt-in only:
  *
  *   $html = apply_filters( 'ws_glossary_scan', $html );
  *
- * No global the_content filter — only explicitly opted-in content
- * is scanned.
+ * Output: <span class="ws-term-highlight" data-tooltip="[def]">[term]</span>
  *
- * @package    WhistleblowerShield
- * @since      3.2.0
- * @version    3.10.7
- * @author     Whistleblower Shield
- * @link       https://whistleblowershield.org
- * @copyright  Copyright (c) Whistleblower Shield
- *
- * VERSION
- * -------
- * 3.2.0  Initial release.
- * 3.2.1  Added ws_seed_glossary_taxonomy() with admin_init option-gate.
- *        Fixed: taxonomy_exists() guard added. ws_get_taxonomy_caps() used
- *        for capabilities. libxml error state saved and restored.
- *        Docblock corrected: <code> and <pre> added to skip-tags list.
- *        add_action placement moved to after function definition.
- * 3.8.1  try/catch/finally block in ws_apply_glossary_tooltips() normalized
- *        to consistent single-tab indentation. Misaligned closing brace on
- *        the early-return if(!$body) guard corrected.
- * 3.10.0 Three terms added: whistleblower, internal-reporting, compliance-program.
- *        Seven definitions rewritten for plain-english clarity — away from
- *        legal-test framing toward the whistleblower's perspective:
- *        qui-tam, false-claims-act, original-source, retaliation,
- *        contributing-factor, back-pay, treble-damages.
- * 3.10.1 h1, h2, h3 added to skip_tags — tooltips in headings look awkward.
- *        ws_apply_glossary_tooltips(): inner term-match loop refactored to
- *        match against $plain (the original escaped text node) only — never
- *        against the accumulating $fragment_html. Previous approach allowed
- *        terms present in an already-injected data-tooltip attribute value
- *        (e.g. "retaliation" inside the protected-disclosure definition) to
- *        be matched by a subsequent regex pass and double-injected into the
- *        attribute itself, corrupting the output. Fix: collect all matches
- *        from $plain first via preg_match, then apply spans in a second pass.
- * 3.10.2 Scanner hardening/perf pass:
- *        - Precompute match entries once per scan to avoid rebuilding regex
- *          and span fragments per text node.
- *        - Match against escaped term text (not raw term) so aliases with
- *          apostrophes/special chars still match escaped node content.
- *        - Added mb-safe lowercase helper for stable case-insensitive keys.
- * 3.10.3 Matching semantics hardening:
- *        - Replaced sequential per-term preg_replace calls with one combined
- *          preg_replace_callback pass over original text to prevent any chance
- *          of matching inside previously injected markup.
- *        - Switched from \b boundaries to unicode-aware lookaround boundaries
- *          for cleaner behavior around punctuation and hyphenated phrases.
- * 3.10.4 Debug instrumentation:
- *        - Added callback-accurate scanner debug summary and matched-term list.
- *        - Debug output is enabled by default and sent via error_log.
- * 3.10.5 Debug output routing:
- *        - Debug output now writes to wp-content/logs/glossary-scan.log
- *          instead of the shared debug.log stream.
- * 3.10.6 Optional log rotation scaffold:
- *        - Added size-based glossary log rotation helper.
- *        - Rotation call is intentionally commented out for high-volume
- *          population/debug phases.
- * 3.10.7 Operator toggles:
- *        - Added easy true/false flags for scanner debug and log rotation.
- *        - Debug and rotation behavior now follow those flags.
+ * @package       WhistleblowerShield
+ * @since         3.2.0
+ * @version       3.20.0
+ * @author        Whistleblower Shield
+ * @link          https://whistleblowershield.org
+ * @copyright     Copyright (c) 2026 Whistleblower Shield
+ * 
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -118,6 +38,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * Private and non-public — no archive page, no frontend URL.
  * Unattached to any post type — admin-side term management only.
+ * 
  */
 function ws_register_glossary_taxonomy() {
     if ( taxonomy_exists( 'ws_glossary' ) ) {
@@ -164,6 +85,7 @@ add_action( 'admin_menu', 'ws_glossary_admin_menu' );
 
 /**
  * Adds the Glossary taxonomy edit page to the Tools menu.
+ * 
  */
 function ws_glossary_admin_menu() {
     add_management_page(
@@ -188,6 +110,7 @@ add_action( 'acf/init', 'ws_register_glossary_acf_fields' );
 
 /**
  * Registers the ACF field group for the ws_glossary taxonomy term.
+ * 
  */
 function ws_register_glossary_acf_fields() {
 
@@ -235,6 +158,7 @@ function ws_register_glossary_acf_fields() {
  * Returns the glossary lookup array, building and caching it if needed.
  *
  * @return array  Flat [ term_string => definition ] lookup, longest-first.
+ * 
  */
 function ws_get_glossary_lookup() {
 
@@ -275,13 +199,9 @@ function ws_get_glossary_lookup() {
         // Aliases from term meta.
         $aliases_raw = get_term_meta( $term->term_id, 'ws_glossary_aliases', true );
         if ( ! empty( $aliases_raw ) ) {
-            $aliases = array_filter(
-                array_map( 'trim', explode( '|', $aliases_raw ) )
-            );
+            $aliases = array_filter( array_map( 'trim', explode( '|', $aliases_raw ) ) );
             foreach ( $aliases as $alias ) {
-                if ( ! empty( $alias ) ) {
-                    $lookup[ $alias ] = $definition;
-                }
+                $lookup[ $alias ] = $definition;
             }
         }
     }
@@ -301,6 +221,7 @@ add_action( 'delete_ws_glossary',  'ws_glossary_invalidate_cache' );
 
 /**
  * Deletes the glossary transient cache.
+ * 
  */
 function ws_glossary_invalidate_cache() {
     delete_transient( 'ws_glossary_cache_' );
@@ -338,6 +259,7 @@ if ( ! defined( 'WS_GLOSSARY_SCAN_LOG_ROTATE' ) ) {
  *
  * @param  string $html  Raw HTML string from a shortcode render.
  * @return string        HTML with tooltip spans injected.
+ * 
  */
 function ws_apply_glossary_tooltips( $html ) {
 
@@ -359,6 +281,7 @@ function ws_apply_glossary_tooltips( $html ) {
         $entries[ $term_lower ] = [
             'term_escaped' => $term_escaped,
             'tooltip'      => esc_attr( $definition ),
+            'pattern'      => ws_glossary_term_pattern( $term_escaped ), // precomputed once per scan pass
         ];
     }
 
@@ -373,7 +296,7 @@ function ws_apply_glossary_tooltips( $html ) {
     // Keyed by lowercase term string — first match wins.
     $matched = [];
 
-    $debug = ws_glossary_debug_enabled();
+    $debug = (bool) WS_GLOSSARY_SCAN_DEBUG;
     $scan_stats = [
         'nodes_total'        => 0,
         'nodes_non_empty'    => 0,
@@ -448,7 +371,7 @@ function ws_apply_glossary_tooltips( $html ) {
 				}
 
 				// Test against $plain — the unmodified original text only.
-                preg_match( ws_glossary_term_pattern( $entry['term_escaped'] ), $plain, $m );
+                preg_match( $entry['pattern'], $plain, $m );
 				if ( empty( $m ) ) {
 					continue;
 				}
@@ -611,6 +534,7 @@ function ws_apply_glossary_tooltips( $html ) {
  * @param  DOMNode $node        Node to walk.
  * @param  array   $skip_tags   Lowercase tag names to skip entirely.
  * @param  array   &$text_nodes Accumulator for collected DOMText nodes.
+ * 
  */
 function ws_glossary_collect_text_nodes( DOMNode $node, array $skip_tags, array &$text_nodes ) {
 
@@ -655,6 +579,7 @@ add_action( 'admin_init', function() {
  *
  * Each entry creates a term (name + description) and optionally sets the
  * ws_glossary_aliases term meta for pipe-delimited alias matching.
+ * 
  */
 function ws_seed_glossary_taxonomy() {
     $taxonomy = 'ws_glossary';
@@ -819,13 +744,14 @@ function ws_seed_glossary_taxonomy() {
  *
  * @param  string $value Input string.
  * @return string
+ * 
  */
 function ws_glossary_lower( $value ) {
-    if ( function_exists( 'mb_strtolower' ) ) {
-        return mb_strtolower( (string) $value, 'UTF-8' );
+    static $has_mb = null;
+    if ( $has_mb === null ) {
+        $has_mb = function_exists( 'mb_strtolower' );
     }
-
-    return strtolower( (string) $value );
+    return $has_mb ? mb_strtolower( (string) $value, 'UTF-8' ) : strtolower( (string) $value );
 }
 
 /**
@@ -833,26 +759,18 @@ function ws_glossary_lower( $value ) {
  *
  * @param  string $term_escaped HTML-escaped glossary term.
  * @return string
+ * 
  */
 function ws_glossary_term_pattern( $term_escaped ) {
     return '/(?<![\\p{L}\\p{N}_])(' . preg_quote( $term_escaped, '/' ) . ')(?![\\p{L}\\p{N}_])/iu';
 }
 
-/**
- * Glossary scanner debug toggle.
- *
- * Enabled by default for active scanner diagnostics.
- *
- * @return bool
- */
-function ws_glossary_debug_enabled() {
-    return (bool) WS_GLOSSARY_SCAN_DEBUG;
-}
 
 /**
  * Writes glossary scanner debug output to wp-content/logs/glossary-scan.log.
  *
  * @param string $message Debug message.
+ * 
  */
 function ws_glossary_debug_log( $message ) {
     $prefix = '[ws-core][glossary-debug]';
@@ -885,6 +803,7 @@ function ws_glossary_debug_log( $message ) {
  *
  * @param string $log_file Path to glossary log file.
  * @param int    $max_bytes Maximum file size before rotation.
+ * 
  */
 function ws_glossary_maybe_rotate_log( $log_file, $max_bytes ) {
     if ( empty( $log_file ) || ! is_string( $log_file ) ) {

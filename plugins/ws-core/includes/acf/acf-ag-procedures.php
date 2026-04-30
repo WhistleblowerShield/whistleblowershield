@@ -19,7 +19,7 @@
  *   ws_ag_procedure_name                     Procedure Name (text, required)
  *   ws_ag_procedure_type                     Procedure Type (radio, required)
  *   ws_ag_procedure_jurisdictions            Jurisdiction(s) (multi_select, optional)
- *   ws_ag_procedure_disclosure_types         Disclosure Types Covered (multi_select, optional)
+ *   ws_ag_procedure_protected_disclosures         Protected Disclosures Covered (multi_select, optional)
  *   ws_ag_procedure_statute_ids              Related Statutes (relationship, optional)
  *   ws_ag_procedure_comlaw_ids               Related Common Laws (relationship, optional)
  *
@@ -202,11 +202,11 @@ function ws_register_acf_ag_procedures() {
                 'allow_null'    => 1,
             ],
             [
-                'key'           => 'field_ag_procedure_disclosure_types',
-                'label'         => 'Disclosure Types Covered',
-                'name'          => 'ws_ag_procedure_disclosure_types',
+                'key'           => 'field_ag_procedure_protected_disclosures',
+                'label'         => 'Protected Disclosures Covered',
+                'name'          => 'ws_ag_procedure_protected_disclosures',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_disclosure_type',
+                'taxonomy'      => 'ws_protected_disclosure',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Which disclosure categories this specific procedure accepts. May be narrower than the parent agency\'s overall disclosure categories.',
                 'add_term'      => 0,
@@ -223,7 +223,7 @@ function ws_register_acf_ag_procedures() {
             // ws_ag_procedure_scope_parent_picker() (below) — it pre-filters to
             // statutes matching this procedure's jurisdiction and disclosure
             // types so the editor sees a relevant subset. Manual taxonomy
-            // filter UI (jurisdiction + disclosure type) is also available
+            // filter UI (jurisdiction + protected disclosure) is also available
             // in the picker for edge cases.
             //
             // Statute links are validated on save by admin-procedure-watch.php:
@@ -237,14 +237,14 @@ function ws_register_acf_ag_procedures() {
                 'label'        => 'Related Statutes',
                 'name'         => 'ws_ag_procedure_statute_ids', // merges on post_save with common law IDs in _ws_ag_procedure_parent_ids
                 'type'         => 'relationship',
-                'instructions' => 'Statutes this procedure specifically operates under. The picker is pre-filtered by this procedure\'s jurisdiction and disclosure types. Use the taxonomy dropdowns to refine further if needed.',
+                'instructions' => 'Statutes this procedure specifically operates under. The picker is pre-filtered by this procedure\'s jurisdiction and protected disclosures. Use the taxonomy dropdowns to refine further if needed.',
                 'post_type'    => [ 'jx-statute' ],
                 // 'search' provides a text box; 'taxonomy' adds dropdown filters
-                // for ws_jurisdiction and ws_disclosure_type so editors can
+                // for ws_jurisdiction and ws_protected_disclosure so editors can
                 // narrow the list before selecting. Auto-scoping (see hook below)
                 // applies the procedure\'s own taxonomy scope automatically.
                 'filters'      => [ 'search', 'taxonomy' ],
-                'taxonomy'     => [ WS_JURISDICTION_TAXONOMY, 'ws_disclosure_type' ],
+                'taxonomy'     => [ WS_JURISDICTION_TAXONOMY, 'ws_protected_disclosure' ],
                 'min'          => 0,
                 'max'          => 0,
                 'return_format'=> 'id',
@@ -260,7 +260,7 @@ function ws_register_acf_ag_procedures() {
             // ws_ag_procedure_scope_parent_picker() (below) — it pre-filters to
             // common law entries matching this procedure's jurisdiction and disclosure
             // types so the editor sees a relevant subset. Manual taxonomy
-            // filter UI (jurisdiction + disclosure type) is also available
+            // filter UI (jurisdiction + protected disclosure) is also available
             // in the picker for edge cases.
             //
             // Common Law links are validated on save by admin-procedure-watch.php:
@@ -274,14 +274,14 @@ function ws_register_acf_ag_procedures() {
                 'label'        => 'Related Common Law',
                 'name'         => 'ws_ag_procedure_comlaw_ids', // merges on post_save with statute IDs in _ws_ag_procedure_parent_ids
                 'type'         => 'relationship',
-                'instructions' => 'Common Law entries this procedure specifically operates under. The picker is pre-filtered by this procedure\'s jurisdiction and disclosure types. Use the taxonomy dropdowns to refine further if needed.',
+                'instructions' => 'Common Law entries this procedure specifically operates under. The picker is pre-filtered by this procedure\'s jurisdiction and protected disclosures. Use the taxonomy dropdowns to refine further if needed.',
                 'post_type'    => [ 'jx-common-law' ],
                 // 'search' provides a text box; 'taxonomy' adds dropdown filters
-                // for ws_jurisdiction and ws_disclosure_type so editors can
+                // for ws_jurisdiction and ws_protected_disclosure so editors can
                 // narrow the list before selecting. Auto-scoping (see hook below)
                 // applies the procedure\'s own taxonomy scope automatically.
                 'filters'      => [ 'search', 'taxonomy' ],
-                'taxonomy'     => [ WS_JURISDICTION_TAXONOMY, 'ws_disclosure_type' ],
+                'taxonomy'     => [ WS_JURISDICTION_TAXONOMY, 'ws_protected_disclosure' ],
                 'min'          => 0,
                 'max'          => 0,
                 'return_format'=> 'id',
@@ -525,12 +525,12 @@ function ws_register_acf_ag_procedures() {
 // Before the field_ag_procedure_statute_ids and field_ag_procedure_comlaw_ids
 // relationship pickers render their results, this hook narrows the query to
 // statutes and common-law entries that share the procedure's own
-// jurisdiction AND disclosure type scope. The editor sees only relevant
+// jurisdiction AND protected disclosure scope. The editor sees only relevant
 // statutes or common-law entries without needing to manually apply filters first.
 //
 // Falls back to the full list (plus the manual filter UI) when:
 //   — The procedure is a new auto-draft (no taxonomy terms saved yet).
-//   — The procedure has no jurisdiction or disclosure types assigned.
+//   — The procedure has no jurisdiction or protected disclosures assigned.
 //
 // Note: the hook fires via AJAX when the editor interacts with the picker,
 // so $post_id is the procedure post ID with its current saved taxonomy state.
@@ -555,7 +555,7 @@ function ws_ag_procedure_scope_parent_ids( $args, $field, $post_id ) {
     }
 
     $jx_terms   = wp_get_post_terms( $post_id, WS_JURISDICTION_TAXONOMY,  [ 'fields' => 'ids' ] );
-    $disc_types = wp_get_object_terms( $post_id, 'ws_disclosure_type',    [ 'fields' => 'ids' ] );
+    $disc_types = wp_get_object_terms( $post_id, 'ws_protected_disclosure',    [ 'fields' => 'ids' ] );
 
     $tax_query  = [ 'relation' => 'AND' ];
     $has_filter = false;
@@ -571,7 +571,7 @@ function ws_ag_procedure_scope_parent_ids( $args, $field, $post_id ) {
 
     if ( ! empty( $disc_types ) && ! is_wp_error( $disc_types ) ) {
         $tax_query[] = [
-            'taxonomy' => 'ws_disclosure_type',
+            'taxonomy' => 'ws_protected_disclosure',
             'field'    => 'term_id',
             'terms'    => $disc_types,
         ];

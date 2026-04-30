@@ -258,7 +258,7 @@ function ws_render_jx_curated( $post, $jx_term_id ) {
 // Implementation notes (Phase 2):
 //   - $filter_context is an array of resolved taxonomy term IDs built from
 //     the plain-english question panel ($_GET params on page load).
-//     Example: [ 'ws_industry' => [12, 47], 'ws_disclosure_type' => [8] ]
+//     Example: [ 'ws_industry' => [12, 47], 'ws_protected_disclosure' => [8] ]
 //   - Output includes statutes, citations, constructions, limitations, and
 //     ws-assist-org records matched by the filter context. ws-assist-org and
 //     ws-agency records are not on the curated page — they appear here only.

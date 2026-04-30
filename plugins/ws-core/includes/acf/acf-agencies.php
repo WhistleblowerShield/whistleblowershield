@@ -19,7 +19,7 @@
  *   ws_agency_official_name              Full Agency Official Name (text, required)
  *   ws_agency_logo                       Agency Logo (image, optional)
  *   ws_agency_jurisdictions              Jurisdiction(s) (multi_select, optional)
- *   ws_agency_disclosure_types           Disclosure Categories (multi_select, optional)
+ *   ws_agency_protected_disclosures           Disclosure Categories (multi_select, optional)
  *   ws_agency_disclosure_targets         Reporting Target Classifications (multi_select, optional)
  *   ws_agency_process_types              Process Types Handled (multi_select, optional)
  *
@@ -200,11 +200,11 @@ function ws_register_acf_agencies() {
                 'allow_null'    => 1,
             ],
             [
-                'key'           => 'field_agency_disclosure_types',
+                'key'           => 'field_agency_protected_disclosures',
                 'label'         => 'Disclosure Categories',
-                'name'          => 'ws_agency_disclosure_types',
+                'name'          => 'ws_agency_protected_disclosures',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_disclosure_type',
+                'taxonomy'      => 'ws_protected_disclosure',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Subject matter areas this agency accepts or oversees. Use all that apply.',
                 'add_term'      => 0,

@@ -126,7 +126,7 @@ function ws_render_jx_status_column( $column, $post_id ) {
 
 
 // ════════════════════════════════════════════════════════════════════════════
-// jx-statute columns: Jurisdiction, Attach, Disclosure Type
+// jx-statute columns: Jurisdiction, Attach, Protected Disclosure
 // ════════════════════════════════════════════════════════════════════════════
 
 add_filter( 'manage_jx-statute_posts_columns', 'ws_add_statute_columns' );
@@ -137,7 +137,7 @@ function ws_add_statute_columns( $columns ) {
         if ( $key === 'title' ) {
             $new['ws_jx']            = 'Jurisdiction';
             $new['ws_attach']        = 'Attached';
-            $new['ws_disclosure']    = 'Disclosure Type';
+            $new['ws_disclosure']    = 'Protected Disclosure';
         }
     }
     return $new;
@@ -158,7 +158,7 @@ function ws_render_statute_column( $column, $post_id ) {
         echo $flag ? '<span class="dashicons dashicons-yes" style="color:#46b450;"></span>'
                    : '<span class="dashicons dashicons-minus" style="color:#999;"></span>';
     } elseif ( $column === 'ws_disclosure' ) {
-        $terms = get_the_terms( $post_id, 'ws_disclosure_type' );
+        $terms = get_the_terms( $post_id, 'ws_protected_disclosure' );
         if ( $terms && ! is_wp_error( $terms ) ) {
             echo esc_html( implode( ', ', wp_list_pluck( $terms, 'name' ) ) );
         } else {
@@ -168,7 +168,7 @@ function ws_render_statute_column( $column, $post_id ) {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// jx-common-law columns: Jurisdiction, Attach, Disclosure Type
+// jx-common-law columns: Jurisdiction, Attach, Protected Disclosure
 // ════════════════════════════════════════════════════════════════════════════
 
 add_filter( 'manage_jx-common-law_posts_columns', 'ws_add_common_law_columns' );
@@ -179,7 +179,7 @@ function ws_add_common_law_columns( $columns ) {
         if ( $key === 'title' ) {
             $new['ws_jx']         = 'Jurisdiction';
             $new['ws_attach']     = 'Attached';
-            $new['ws_disclosure'] = 'Disclosure Type';
+            $new['ws_disclosure'] = 'Protected Disclosure';
         }
     }
     return $new;
@@ -200,7 +200,7 @@ function ws_render_common_law_column( $column, $post_id ) {
         echo $flag ? '<span class="dashicons dashicons-yes" style="color:#46b450;"></span>'
                    : '<span class="dashicons dashicons-minus" style="color:#999;"></span>';
     } elseif ( $column === 'ws_disclosure' ) {
-        $terms = get_the_terms( $post_id, 'ws_disclosure_type' );
+        $terms = get_the_terms( $post_id, 'ws_protected_disclosure' );
         if ( $terms && ! is_wp_error( $terms ) ) {
             echo esc_html( implode( ', ', wp_list_pluck( $terms, 'name' ) ) );
         } else {
@@ -393,7 +393,7 @@ function ws_render_agency_column( $column, $post_id ) {
 
 
 // ════════════════════════════════════════════════════════════════════════════
-// ag-procedure columns: Agency, Type, Disclosure Types, Deadline
+// ag-procedure columns: Agency, Type, Protected Disclosures, Deadline
 // ════════════════════════════════════════════════════════════════════════════
 
 add_filter( 'manage_ag-procedure_posts_columns', 'ws_add_procedure_columns' );
@@ -404,7 +404,7 @@ function ws_add_procedure_columns( $columns ) {
         if ( $key === 'title' ) {
             $new['proc_agency']              = 'Agency';
             $new['proc_type']                = 'Type';
-            $new['proc_disclosure_types']    = 'Disclosure Types';
+            $new['proc_protected_disclosures']    = 'Protected Disclosures';
             $new['proc_deadline']            = 'Deadline';
         }
     }
@@ -434,8 +434,8 @@ function ws_render_procedure_column( $column, $post_id ) {
             'both'        => 'Both',
         ];
         echo esc_html( $labels[ $slug ] ?? '—' );
-    } elseif ( $column === 'proc_disclosure_types' ) {
-        $terms = get_the_terms( $post_id, 'ws_disclosure_type' );
+    } elseif ( $column === 'proc_protected_disclosures' ) {
+        $terms = get_the_terms( $post_id, 'ws_protected_disclosure' );
         if ( $terms && ! is_wp_error( $terms ) ) {
             echo esc_html( implode( ', ', wp_list_pluck( $terms, 'name' ) ) );
         } else {

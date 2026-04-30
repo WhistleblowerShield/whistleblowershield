@@ -65,7 +65,7 @@ function ws_register_cpt_jx_construction_() {
         'supports'            => [ 'title', 'revisions' ],
         'taxonomies' => [
             'ws_protection_scope',
-            'ws_disclosure_type',
+            'ws_protected_disclosure',
             'ws_process_type',
             'ws_remedy',
             'ws_protected_class',

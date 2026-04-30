@@ -87,7 +87,7 @@ server-side filter resolution.
   Currently returns `''`.
 - The Phase 2 dispatch block in `ws_handle_jurisdiction_render()` is
   commented out, waiting for `ws_resolve_filter_context()`.
-- All taxonomies needed for filtering (`ws_disclosure_type`,
+- All taxonomies needed for filtering (`ws_protected_disclosure`,
   `ws_employment_sector`, `ws_case_stage`, `ws_process_type`,
   `ws_procedure_type`) are registered, seeded, and in use on records.
 - `ws_get_nationwide_assist_org_data( $filters )` already accepts
@@ -170,7 +170,7 @@ should be addressed in a subsequent iteration:
 **Jurisdiction comparison view**
 A cross-jurisdictional comparison capability would serve Daniel
 (the researcher persona) directly — the ability to compare how two
-or more states handle a specific disclosure type or remedy. The data
+or more states handle a specific protected disclosure or remedy. The data
 model supports this entirely. It requires a new page template and
 query, not architectural changes.
 

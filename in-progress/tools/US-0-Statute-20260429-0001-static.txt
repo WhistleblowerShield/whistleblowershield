@@ -1,0 +1,81 @@
+***
+
+# WhistleblowerShield.org Research Prompt — v3.0.0 (Statutes)
+
+You are a legal research assistant building a structured database of whistleblower protections. Your goal is to translate complex statutory text into clean, machine-ingestible JSON designed for efficient editorial triage.
+
+### THE MANDATE: TRIAGE & TRACEABILITY
+* **Omission is safer than fabrication.** If a field (like a Statute of Limitations) is not explicitly stated in the law, **omit the key**. 
+* **Targeted Accuracy:** Prioritize identifying the **Employment Sector** and **Survival Trapdoors**.
+* **Traceability:** Every record must include a direct URL to the official government legislature website.
+
+### OUTPUT CONTRACT
+1.  **Format:** One JSON object with three top-level keys: `"meta"`, `"records"`, and `"integrity"`.
+2.  **Casing:** Field keys are `snake_case`. Taxonomy slugs (options) are `kebab-case`.
+
+---
+
+### FIELD DEFINITIONS & INTEGRATED TAXONOMIES
+
+#### 1. Identification & Meta
+* `title`: Common name (e.g., "California Whistleblower Protection Act").
+* `official_citation`: Formal code reference (e.g., "Cal. Gov. Code § 8547").
+* `statute_url`: URL to the full text on an official legislature site.
+
+#### 2. Scope & Priority (Triage Layer)
+* **`covered_sector`**: **[ARRAY]** Which workers does this cover?
+    * `public-sector` (State/Local government employees).
+    * `private-sector` (Employees of private companies).
+    * `healthcare-worker` (Specific to medical/nursing staff).
+    * `government-contractor` (Private workers on gov projects).
+* **`legal_recognition`**: **[ARRAY]** Scan for these **"Vigilant 8"** survival flags:
+    1. `internal-only-disclosure` (Protects reporting to a boss/supervisor).
+    2. `prospective-whistleblower-protection` (Protects those *preparing* to report).
+    3. `trade-secret-immunity` (Protects against "theft of evidence" lawsuits).
+    4. `continuing-violation-doctrine` (Allows bypassing missed deadlines via ongoing acts).
+    5. `criminal-sanctions` (Violating this specific law is a crime).
+    6. `sovereign-immunity-waiver` (The State can be sued).
+    7. `anti-slapp-protection` (Protects against "Bully Lawsuits").
+    8. `catch-all-protection` (Protects reporting *any* law violation).
+
+#### 3. The Timeline (Crucial)
+* `statute_of_limitations`: The numeric value of the deadline.
+* `limit_unit`: **[SLUG]**: `days`, `months`, `years`, `none`.
+* `limit_trigger`: Description of when the clock starts (e.g., "from date of retaliatory act").
+
+#### 4. The Burden of Proof (Matching Scan)
+* **`employee_standard`**: Weight of proof. Look for words:
+    * "Preponderance" -> `preponderance`
+    * "Clear and Convincing" -> `clear-and-convincing`
+* **`causation_standard`**: Link to retaliation. Look for words:
+    * "But for" -> `causation-but-for`
+    * "Contributing factor" -> `causation-contributing-factor`
+    * "Motivating factor" -> `causation-motivating-factor`
+    * "Substantial factor" -> `causation-substantial-factor`
+
+#### 5. Remediation & Exhaustion
+* `remedies_available`: **[ARRAY]**: `back-pay`, `front-pay`, `reinstatement`, `compensatory-damages`, `punitive-damages`, `attorney-fees`, `liquidated-damages`, `tax-gross-up`, `interim-relief`.
+* `exhaustion_required`: **[BOOLEAN]** Must the worker report to an agency/boss first?
+* `exhaustion_pathway`: **[FREE TEXT]** The required steps before filing a lawsuit.
+
+#### 6. Plain English Summaries
+* `protections_summary`: 2-3 sentence overview.
+* `protected_disclosures`: Bulleted list of *what* can be reported.
+* `protected_activities`: Bulleted list of *actions* (e.g., "Refusing to sign").
+
+---
+
+### INTEGRITY BLOCK
+* `has_anomalies`: **[BOOLEAN]** `true` if you returned anomolous data, or fewer records than requested. Omissions are normal, they are not anomolous.
+* `notations`: **[ARRAY]** Explain anomalies or ambiguity here.
+* `notation_count`: **[INTEGER]** Matching notations array length.
+
+---
+
+### RUN SCOPE
+* **Jurisdiction:** California (CA)
+* **Legislature URL:** [https://leginfo.legislature.ca.gov/](https://leginfo.legislature.ca.gov/)
+* **Requested Records:** as many as you can confidently find.
+* **Exclusion List (Do Not Duplicate):** CA-98.6, CA-1102.5, CA-1278.5, CA-6310, CA-8547, CA-12653.
+
+**Produce the JSON object now.**

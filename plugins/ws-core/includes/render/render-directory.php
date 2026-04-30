@@ -138,7 +138,7 @@ function ws_render_directory_page( array $targeted, array $nationwide, array $co
  *
  * Filter axes rendered (all optional — absence = "not sure" = broadest match):
  *   1. Situation stage (ws_case_stage)
- *   2. Concern (ws_disclosure_type or ws_adverse_action, routed by stage)
+ *   2. Concern (ws_protected_disclosure or ws_adverse_action, routed by stage)
  *   3. Employment sector (ws_employment_sector)
  *   4. Disclosure target — optional, shown as "optional refinement"
  *
@@ -198,7 +198,7 @@ function ws_render_directory_taxonomy_guide( array $context ): string {
             <?php // ── Concern ──────────────────────────────────────────────── ?>
             <?php
             // Show concern options appropriate to the selected stage.
-            // Pre-report / research / null → disclosure types
+            // Pre-report / research / null → protected disclosures
             // Retaliation / litigation → adverse action types
             $show_adverse = in_array( $context['stage'], [ 'retaliation-active', 'litigation' ], true );
 
@@ -212,7 +212,7 @@ function ws_render_directory_taxonomy_guide( array $context ): string {
 
             $concern_options = $show_adverse
                 ? ws_filter_get_adverse_action_options()
-                : ws_filter_get_disclosure_type_options();
+                : ws_filter_get_protected_disclosure_options();
             ?>
             <fieldset class="ws-filter-group" id="ws-filter-concern">
                 <legend class="ws-filter-group__label">
@@ -480,11 +480,11 @@ function ws_filter_can_narrow( array $context ): bool {
 // ════════════════════════════════════════════════════════════════════════════
 
 /**
- * Returns plain-english disclosure type options for the concern fieldset.
+ * Returns plain-english protected disclosure options for the concern fieldset.
  *
  * @return array slug => label
  */
-function ws_filter_get_disclosure_type_options(): array {
+function ws_filter_get_protected_disclosure_options(): array {
     return [
         'general-wrongdoing'            => 'General wrongdoing or law violation',
         'public-corruption-ethics'      => 'Government corruption or ethics violation',

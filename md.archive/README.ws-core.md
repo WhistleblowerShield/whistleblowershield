@@ -103,7 +103,7 @@ These attach to `jx-statute`, `jx-common-law`, `jx-citation`, and
 
 | Slug | Type | Notes |
 |---|---|---|
-| `ws_disclosure_type` | hierarchical | 6 parents, 26 children |
+| `ws_protected_disclosure` | hierarchical | 6 parents, 26 children |
 | `ws_protected_class` | hierarchical | 4 parents, 12 children + `has-details` + super slug `all-employees` |
 | `ws_disclosure_target` | hierarchical | 5 parents, 13 children + `has-details` |
 | `ws_adverse_action` | flat | 14 terms + `has-details` |

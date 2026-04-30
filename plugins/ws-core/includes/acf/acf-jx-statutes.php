@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
  *   ws_jx_statute_official_name                  Official Name (text, required)
  *   ws_jx_statute_citation                       Official Statute Citation (text, optional)
  *   ws_jx_statute_common_name                    Common Name (text, optional)
- *   ws_jx_statute_disclosure_types               Disclosure Categories (multi_select, optional)
+ *   ws_jx_statute_protected_disclosures               Disclosure Categories (multi_select, optional)
  *   ws_jx_statute_protected_classes              Protected Classes (multi_select, optional)
  *   ws_jx_statute_protected_class_details        Protected Class Details (textarea, optional)
  *   ws_jx_statute_employment_sectors             Employment Sectors (multi_select, optional)
@@ -198,11 +198,11 @@ function ws_register_acf_jx_statutes() {
             ],
 
             [
-                'key'           => 'field_jx_statute_disclosure_types',
+                'key'           => 'field_jx_statute_protected_disclosures',
                 'label'         => 'Disclosure Categories',
-                'name'          => 'ws_jx_statute_disclosure_types',
+                'name'          => 'ws_jx_statute_protected_disclosures',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_disclosure_type',
+                'taxonomy'      => 'ws_protected_disclosure',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Classify the types of misconduct this law protects.',
                 'add_term'      => 0,

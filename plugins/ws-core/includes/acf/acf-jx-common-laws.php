@@ -27,7 +27,7 @@
  *   ws_jx_comlaw_other_sources                     Other Sources Detail (text, conditional)
  *   ws_jx_comlaw_doctrine_basis_wysiwyg            Doctrine Basis (wysiwyg, required)
  *   ws_jx_comlaw_recognition_status_wysiwyg        Recognition Status (wysiwyg, required)
- *   ws_jx_comlaw_disclosure_types                  Disclosure Categories (multi_select, optional)
+ *   ws_jx_comlaw_protected_disclosures                  Disclosure Categories (multi_select, optional)
  *   ws_jx_comlaw_protected_classes                 Protected Class (multi_select, optional)
  *   ws_jx_comlaw_protected_class_details           Protected Class Details (textarea, optional)
  *   ws_jx_comlaw_disclosure_targets                Disclosure Targets (multi_select, optional)
@@ -278,11 +278,11 @@ function ws_register_acf_jx_common_law() {
             ],
 
             [
-                'key'           => 'field_jx_comlaw_disclosure_types',
+                'key'           => 'field_jx_comlaw_protected_disclosures',
                 'label'         => 'Disclosure Categories',
-                'name'          => 'ws_jx_comlaw_disclosure_types',
+                'name'          => 'ws_jx_comlaw_protected_disclosures',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_disclosure_type',
+                'taxonomy'      => 'ws_protected_disclosure',
                 'field_type'    => 'multi_select',
                 'instructions'  => 'Classify the types of misconduct this doctrine protects disclosures of.',
                 'add_term'      => 0,

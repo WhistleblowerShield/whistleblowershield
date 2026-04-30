@@ -61,7 +61,7 @@ function ws_register_cpt_ag_procedures() {
 
         // -- Taxonomies ----------------------------------------------------
 
-        'taxonomies'          => [ 'ws_disclosure_type' ],
+        'taxonomies'          => [ 'ws_protected_disclosure' ],
     ];
 
     register_post_type( 'ag-procedure', $args );

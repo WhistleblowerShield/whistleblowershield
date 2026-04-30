@@ -27,7 +27,7 @@
  * Procedures are linked to their parent agency via the ws_ag_procedure_agency_id
  * post meta key (ACF post_object field, stores integer post ID).
  *
- * Taxonomy fields (jurisdiction, disclosure_types, procedure_type) use
+ * Taxonomy fields (jurisdiction, protected_disclosures, procedure_type) use
  * save_terms=1 in ACF, so their values are read via wp_get_post_terms() /
  * wp_get_object_terms(), not get_post_meta(). Simple scalar fields use
  * get_post_meta() directly. ws_procedure_type is single-value — the query
@@ -41,7 +41,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.9.0
- * @version 3.10.1
+ * @version    3.10.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -100,25 +100,25 @@ function ws_is_legal_parent_id( $post_id ) {
 // query layer free of display logic.
 //
 // Return shape per row:
-//   id               int     Procedure post ID.
-//   title            string  Procedure post title.
-//   url              string  Permalink to the individual procedure post.
-//   type             string  'disclosure' | 'retaliation' | 'both'
-//   jurisdiction     array   WP_Term[] from ws_jurisdiction taxonomy.
-//   disclosure_types array   WP_Term[] from ws_disclosure_type taxonomy.
-//   entry_point      string  How the filer initiates: online/mail/phone/in_person/multi
-//   intake_url       string  Direct link to the intake form/portal for this procedure.
-//   phone            string  Specific phone number for this procedure (may differ from agency).
-//   identity_policy  string  'anonymous' | 'confidential' | 'identified' | 'varies'
-//   intake_only      bool    True if agency receives and refers only — does not investigate.
-//   deadline_days    int     Statutory deadline in calendar days. 0 = none/unknown.
-//   clock_start      string  'adverse_action' | 'knowledge' | 'last_act' | 'varies' | ''
-//   has_prereqs      bool    True if prerequisites must be satisfied before filing.
-//   prereq_details      string  Description of prerequisite conditions (when has_prereqs).
-//   walkthrough      string  Raw HTML from WYSIWYG field. Sanitize with wp_kses_post() before output.
-//   exclusivity_details string  Mutual exclusivity warning text. Plain text.
-//   last_reviewed    string  Y-m-d date. Empty if not yet verified.
-//   record           array   ws_build_author_array() sub-array (authorship stamps).
+//   id                     int     Procedure post ID.
+//   title                  string  Procedure post title.
+//   url                    string  Permalink to the individual procedure post.
+//   type                   string  'disclosure' | 'retaliation' | 'both'
+//   jurisdiction           array   WP_Term[] from ws_jurisdiction taxonomy.
+//   protected_disclosures  array   WP_Term[] from ws_protected_disclosure taxonomy.
+//   entry_point            string  How the filer initiates: online/mail/phone/in_person/multi
+//   intake_url             string  Direct link to the intake form/portal for this procedure.
+//   phone                  string  Specific phone number for this procedure (may differ from agency).
+//   identity_policy        string  'anonymous' | 'confidential' | 'identified' | 'varies'
+//   intake_only            bool    True if agency receives and refers only — does not investigate.
+//   deadline_days          int     Statutory deadline in calendar days. 0 = none/unknown.
+//   clock_start            string  'adverse_action' | 'knowledge' | 'last_act' | 'varies' | ''
+//   has_prereqs            bool    True if prerequisites must be satisfied before filing.
+//   prereq_details         string  Description of prerequisite conditions (when has_prereqs).
+//   walkthrough            string  Raw HTML from WYSIWYG field. Sanitize with wp_kses_post() before output.
+//   exclusivity_details    string  Mutual exclusivity warning text. Plain text.
+//   last_reviewed          string  Y-m-d date. Empty if not yet verified.
+//   record                 array   ws_build_author_array() sub-array (authorship stamps).
 //
 /**
  * Returns all published procedures for a single agency.
@@ -202,7 +202,7 @@ function ws_build_agency_procedure_row( $pid ) {
     // not get_post_meta(). is_wp_error() guard handles unregistered taxonomies
     // or posts with no terms assigned.
     $jx_terms    = wp_get_post_terms( $pid, WS_JURISDICTION_TAXONOMY );
-    $disc_types  = wp_get_object_terms( $pid, 'ws_disclosure_type' );
+    $disc_types  = wp_get_object_terms( $pid, 'ws_protected_disclosure' );
     $jx_slugs    = ( ! is_wp_error( $jx_terms ) && is_array( $jx_terms ) ) ? array_values( array_unique( array_map( function( $t ) { return (string) $t->slug; }, $jx_terms ) ) ) : [];
     $disc_slugs  = ( ! is_wp_error( $disc_types ) && is_array( $disc_types ) ) ? array_values( array_unique( array_map( function( $t ) { return (string) $t->slug; }, $disc_types ) ) ) : [];
 
@@ -226,8 +226,8 @@ function ws_build_agency_procedure_row( $pid ) {
         'type'             => $proc_type,
         'jurisdictions'    => ( $jx_terms   && ! is_wp_error( $jx_terms   ) ) ? $jx_terms   : [],
         'jurisdiction_slugs' => $jx_slugs,
-        'disclosure_types' => ( $disc_types && ! is_wp_error( $disc_types ) ) ? $disc_types : [],
-        'disclosure_type_slugs' => $disc_slugs,
+        'protected_disclosures' => ( $disc_types && ! is_wp_error( $disc_types ) ) ? $disc_types : [],
+        'protected_disclosure_slugs' => $disc_slugs,
         'employment_sectors' => ws_q_normalize_id_list( get_field( 'ws_ag_procedure_employment_sectors', $pid ) ),
         'statute_ids'      => ws_q_normalize_id_list( get_post_meta( $pid, 'ws_ag_procedure_statute_ids', true ) ),
         'comlaw_ids'       => ws_q_normalize_id_list( get_post_meta( $pid, 'ws_ag_procedure_comlaw_ids', true ) ),
@@ -427,9 +427,9 @@ function ws_get_agency_data( $jx_term_id ) {
             'code'                  => get_post_meta( $aid, '_ws_agency_id', true ),
             'name'                  => get_post_meta( $aid, 'ws_agency_official_name', true ),
             'logo'                  => get_field( 'ws_agency_logo', $aid ),
-            'common'               => get_post_meta( $aid, 'ws_agency_common_name',           true ),
+            'common'                => get_post_meta( $aid, 'ws_agency_common_name',           true ),
             'mission'               => get_post_meta( $aid, 'ws_agency_mission',           true ),
-            'disclosure_type'       => ws_q_normalize_id_list( get_field( 'ws_agency_disclosure_types', $aid ) ),
+            'protected_disclosure'  => ws_q_normalize_id_list( get_field( 'ws_agency_protected_disclosures', $aid ) ),
             'disclosure_targets'    => ws_q_normalize_id_list( get_field( 'ws_agency_disclosure_targets', $aid ) ),
             'employment_sectors'    => ws_q_normalize_id_list( get_field( 'ws_agency_employment_sectors', $aid ) ),
             'process_type'          => ws_q_normalize_id_list( get_field( 'ws_agency_process_types', $aid ) ),
@@ -437,7 +437,7 @@ function ws_get_agency_data( $jx_term_id ) {
             'website_url'           => get_post_meta( $aid, 'ws_agency_url', true ),
             'reporting_url'         => get_post_meta( $aid, 'ws_agency_reporting_url', true ),
             'phone'                 => get_post_meta( $aid, 'ws_agency_phone', true ),
-            'confidentiality_details' => get_post_meta( $aid, 'ws_agency_confidentiality_details', true ),
+            'confidentiality_details'  => get_post_meta( $aid, 'ws_agency_confidentiality_details', true ),
             'has_anonymous'         => (bool) get_post_meta( $aid, 'ws_agency_accepts_anonymous', true ),
             'has_reward'            => (bool) get_post_meta( $aid, 'ws_agency_has_reward', true ),
             'reward_details'        => get_post_meta( $aid, 'ws_agency_reward_details', true ),

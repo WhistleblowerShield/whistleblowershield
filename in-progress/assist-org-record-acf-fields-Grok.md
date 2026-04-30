@@ -39,7 +39,7 @@ Keep existing from `register-taxonomies.php.txt`; propose additions/new terms be
 **New Taxonomy: ws_aorg_capacity_signal** (for ranking/filtering sustainability):
 - `staffed-attorneys`, `volunteer-network`, `grant-funded`, `donor-supported`, `low-capacity`, `high-volume-intake`, `training-provider`, `has-details`.
 
-**ws_disclosure_type**, **ws_protected_class**, **ws_disclosure_target**, **ws_process_type**, **ws_employment_sector**, **ws_case_stage**, **ws_language** — expand with sector-specific or edge terms (e.g., `apparel-industry` under employment_sectors if needed; `french` already covered; add `indigenous-languages` or `asl` as needed via `additional`).
+**ws_protected_disclosure**, **ws_protected_class**, **ws_disclosure_target**, **ws_process_type**, **ws_employment_sector**, **ws_case_stage**, **ws_language** — expand with sector-specific or edge terms (e.g., `apparel-industry` under employment_sectors if needed; `french` already covered; add `indigenous-languages` or `asl` as needed via `additional`).
 
 **ws_aorg_cost_model** — add `grant-funded-assistance`, `crowdfunded`, `no-cost-for-whistleblowers`.
 
@@ -74,7 +74,7 @@ Keep existing from `register-taxonomies.php.txt`; propose additions/new terms be
 - `jurisdictions` (taxonomy: WS_JURISDICTION_TAXONOMY; conditional on !nationwide).
 - `has_limited_scope` (true_false) → `community_scope` (textarea; e.g., "Utah apparel sector safe spaces").
 - `whistleblower_scope` (number 0-3) → `whistleblower_scope_details` (textarea; required for 0-1).
-- `disclosure_types` (taxonomy).
+- `protected_disclosures` (taxonomy).
 - `disclosure_targets` (taxonomy) → `disclosure_target_details` (if has-details).
 - `protected_classes` (taxonomy) → `protected_class_details` (sister; e.g., "apparel workers facing unique harassment").
 - `employment_sectors` (taxonomy; add edge like "clothing-optional communities" via has-details or new term).

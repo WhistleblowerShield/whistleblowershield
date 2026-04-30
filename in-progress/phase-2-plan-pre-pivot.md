@@ -186,11 +186,11 @@ These are not the same thing and must never be conflated.
 | Question | User sees | Underlying taxonomy |
 |---|---|---|
 | Q1 | Situation | `ws_case_stage` |
-| Q2A | What you're concerned about | `ws_disclosure_type` |
+| Q2A | What you're concerned about | `ws_protected_disclosure` |
 | Q2B | What happened to you | `ws_adverse_action_type` |
 | Q3 | Kind of organization | `ws_employment_sector` |
 | Q4A | Internal vs. external reporting | `ws_disclosure_target` (simplified) |
-| Q4B | What you reported | `ws_disclosure_type` |
+| Q4B | What you reported | `ws_protected_disclosure` |
 | Q5 | What's most helpful right now | Presentation priority hint — not a taxonomy filter |
 
 ### Q1 — The primary split (no "not sure" option)
@@ -296,7 +296,7 @@ Same Q1/Q2/Q3 question sequence. Independent implementation.
 Results: nationwide assist organizations only.
 No statutes. No procedures. This is "Get Help" not "Know Your Rights."
 
-Filtered by situation context, disclosure type or adverse action,
+Filtered by situation context, protected disclosure or adverse action,
 and employment sector. Same taxonomy terms, different dataset scope.
 
 Fallback: "No organizations match all your criteria"
@@ -310,10 +310,10 @@ Fallback: "No organizations match all your criteria"
 | Question | Effect |
 |---|---|
 | Q1 | Not available — must choose a path |
-| Q2 | Omit disclosure_type / adverse_action — broader results |
+| Q2 | Omit protected_disclosure / adverse_action — broader results |
 | Q3 | Omit employment_sector — broader results |
 | Q4 | Omit disclosure_targets — broader results |
-| Q4B "Prefer not to say" | Omit disclosure_type from retaliation filter |
+| Q4B "Prefer not to say" | Omit protected_disclosure from retaliation filter |
 | Q5 | Default results ordering |
 
 ---
@@ -370,7 +370,7 @@ fallback. Logging observes it without changing their logic.
 [
     'timestamp'          => gmdate( 'Y-m-d H:i:s' ),
     'jurisdiction'       => 'ca',
-    'filter_context'     => [ 'ws_disclosure_type' => [12], 'ws_employment_sector' => [8] ],
+    'filter_context'     => [ 'ws_protected_disclosure' => [12], 'ws_employment_sector' => [8] ],
     'result_counts'      => [ 'statutes' => 3, 'common_law' => 1, 'citations' => 1, 'constructions' => 0 ],
     'fallback_triggered' => false,
     'directory_request'  => false,
@@ -516,7 +516,7 @@ Org outreach responses provide social proof before launch.
 ## Data Build Discipline
 
 Taxonomy completeness is the data build requirement — not just field
-completeness. A statute with no `ws_disclosure_type` terms is invisible
+completeness. A statute with no `ws_protected_disclosure` terms is invisible
 to Path A entirely. A procedure with no taxonomy coverage is invisible
 to Path B. A common law record with no `ws_protected_class` terms is
 invisible to any query filtering on protected class.

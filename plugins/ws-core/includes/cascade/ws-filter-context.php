@@ -23,7 +23,7 @@
  * [
  *   'stage'          => string|null   // validated ws_case_stage slug or null
  *   'concern'        => string|null   // validated concern slug or null
- *   'concern_tax'    => string|null   // 'ws_disclosure_type' | 'ws_adverse_action' | null
+ *   'concern_tax'    => string|null   // 'ws_protected_disclosure' | 'ws_adverse_action' | null
  *   'sector'         => string|null   // validated ws_employment_sector slug or null
  *   'target'         => string|null   // validated ws_disclosure_target slug or null
  *   'has_filters'    => bool          // true if any axis has a value
@@ -88,9 +88,9 @@ function ws_resolve_filter_context( bool $log_request = true ): array {
     $target  = ws_filter_validate( $raw[ WS_FILTER_PARAM_TARGET  ], WS_FILTER_PARAM_TARGET  );
 
     // ── 3. Route concern to correct taxonomy ─────────────────────────────
-    // Pre-report / research / null → ws_disclosure_type
+    // Pre-report / research / null → ws_protected_disclosure
     // Retaliation-active / litigation → ws_adverse_action
-    // Post-report → ws_disclosure_type (could be either; default to disclosure)
+    // Post-report → ws_protected_disclosure (could be either; default to disclosure)
     $concern_tax = null;
     if ( $concern !== null ) {
         $concern_tax = ws_filter_resolve_concern_taxonomy( $concern, $stage );
@@ -162,7 +162,7 @@ function ws_filter_validate( string $value, string $param ): ?string {
  * Routes a concern slug to the correct taxonomy based on stage.
  *
  * ws_adverse_action slugs are only meaningful in retaliation/litigation
- * stages. All other stages use ws_disclosure_type.
+ * stages. All other stages use ws_protected_disclosure.
  *
  * @param string      $concern Validated concern slug.
  * @param string|null $stage   Validated stage slug or null.
@@ -178,7 +178,7 @@ function ws_filter_resolve_concern_taxonomy( string $concern, ?string $stage ): 
         }
     }
 
-    return 'ws_disclosure_type';
+    return 'ws_protected_disclosure';
 }
 
 
@@ -189,7 +189,7 @@ function ws_filter_resolve_concern_taxonomy( string $concern, ?string $stage ): 
 /**
  * Returns true if the given slug belongs to ws_adverse_action.
  *
- * Used by the concern taxonomy router to distinguish disclosure type slugs
+ * Used by the concern taxonomy router to distinguish protected disclosure slugs
  * from adverse action type slugs in the shared concern param.
  *
  * @param string $slug Concern slug to check.
@@ -246,7 +246,7 @@ function ws_filter_score_org( array $org, array $context, bool $targeted = false
             [ 'fields' => 'slugs' ]
         );
         if ( ! is_wp_error( $org_terms ) && in_array( $context['concern'], (array) $org_terms, true ) ) {
-            $score += (int) ( $w['disclosure_type_match'] ?? 8 );
+            $score += (int) ( $w['protected_disclosure_match'] ?? 8 );
         }
     }
 
