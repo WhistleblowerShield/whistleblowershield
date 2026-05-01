@@ -807,7 +807,7 @@ $_ws_taxonomy_registry = [
             'malicious-reporting-sanctions'         => 'Malicious Reporting Sanctions Specified',             // + malicious_reporting_context    + malicious_reporting_sanctions
             'protected-action'                      => 'Protected Action Specified',                          // + protected_action_context       + protected_actions + protected_action_standard + protected_action_source
             'excluded-class'                        => 'Excluded Class Specified',                            // + excluded_class_context         + excluded_classes
-            'garcetti-exception'                    => 'Garcetti / Official-Duties Exclusion Applies',        // + garcetti_exception_context
+            'garcetti-exception'                    => 'Garcetti / Official-Duties Exclusion Applies',        // =>>> NOTE  =>>> invalid term unless one 'public-sector' child-slug is in 'employment_sectors'. // + garcetti_exception_context
             // Statute of Limitations & Thresholds                                                            // ───── # Statute of Limitations & Thresholds Tab ─────────────────────────
             'statute-of-repose'                     => 'Statute of Repose Specified',                         // + statute_of_repose_context      + sop_value + sop_unit + is_sop_tolling_available
             'statutory-tolling'                     => 'Statutory Tolling Specified',                         // + statutory_tolling_context
@@ -817,10 +817,6 @@ $_ws_taxonomy_registry = [
             'exhaustion-required'                   => 'Exhaustion Required',                                 // + exhaustion_required_context    + exhaustion_required_class
             'pre-filing-notice'                     => 'Pre-Filing Notice Required',                          // + filing_notice_context          + filing_notice_target + filing_notice_value + filing_notice_unit
             'statutory-preclusion'                  => 'Statutory Preclusion Applies',                        // + statutory_preclusion_context   // only present in common law records
-            'savings-clause'                        => 'Savings Clause Preserves State Law',                  // + savings_clause_context
-            'agency-inaction-triggers-suit'         => 'Agency Inaction Triggers De Novo Civil Right',        // sister to process_pathway (bool)
-            'federal-concurrent-enforcement'        => 'Federal/State Concurrent Enforcement Applies',        // signals interaction_details
-            'state-floor-exceeds-federal'           => 'State Floor Exceeds Federal Minimum',                 // signals interaction_details
             // Retaliation                                                                                    // ───── # Retaliation Tab ───────────────────────────────────────────────────
             'cats-paw-liability'                    => 'Cat\'s Paw Liability Recognized',                     // + cats_paw_liability_context
             'third-party-retaliation'               => 'Third-Party Retaliation Prohibited',                  // + third_party_retaliation_context
@@ -828,7 +824,7 @@ $_ws_taxonomy_registry = [
             // Process and Remedies                                                                           // ───── # Process & Remedies Tab ───────────────────────────────────────────────────
             `process-pathway`                       => 'Process Pathway Specified',                           // + process_pathway_context        + process_pathway_scope
             'private-right-of-action'               => 'Private Right of Action Available',                   // + private_roa_context
-            'jury-trial'                            => 'Jury Trial Available',                                //  =>>> NOTE  =>>> invalid term unless 'private-right-of-action' is also present. // + jury_trial_context + jury_trial_scope
+            'jury-trial'                            => 'Jury Trial Available',                                // =>>> NOTE  =>>> invalid term unless 'private-right-of-action' is also present. // + jury_trial_context + jury_trial_scope
             'equitable-interest-award'              => 'Equitable Interest Provision Available',              // + interest_provision_context     + interest_provision_scope
             'mitigation-required'                   => 'Mitigation Requirement Specified',                    // + mitigation_required_context    + mitigation_required_scope
             'mitigation-exception'                  => 'Mitigation Exception Recognized',                     //  =>>> NOTE  =>>> invalid term unless 'mitigation-required' is also present.     // + mitigation_exception_context

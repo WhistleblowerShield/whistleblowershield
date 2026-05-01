@@ -160,6 +160,9 @@ monitoring is required. When cross-field monitoring also requires cross-tab moni
 - `exhaustion-required` — invalid when `process_pathway_scope` is `direct-court`.
    * When `direct-court` is set: remove `exhaustion-required`, clear `exhaustion_required_context`, and clear any
      sister fields.
+- `garcetti-exception` — invalid unless one `public-sector` child-slug is present in `employment_sectors`.
+   * When no child-slug is present: remove `garcetti-exception` from `legal_recognitions`, clear
+     `garcetti_exception_context`, and clear any sister fields.
 
 ### Agency Filtering
 
@@ -362,8 +365,6 @@ classes → sectors → targets → recognitions
                                       `statutory`|`judicial`|`regulatory`|`executive`|`see-context`)
 - `protected_actions`              — (sister field to `protected_action_context`; taxonomy: `ws_protected_action`)
 - `protected_action_context`       — (conditional on `protected-action` in `legal_recognitions`)
-- `garcetti_exception_context`     — (conditional on `employment_sectors` includes `public-sector` OR
-                                      `manager-rule-exclusion` in `legal_recognitions`)
 - `protected_disclosures`          — (taxonomy: `ws_protected_disclosure`)
 - `protected_classes`              — (taxonomy: `ws_protected_class`)
 - `former_employee_context`        — (conditional on `former-employee` in `protected_classes`)
@@ -372,6 +373,8 @@ classes → sectors → targets → recognitions
 - `excluded_class_context`         — (conditional on `excluded-class` in `legal_recognitions`)
 - `excluded_class_details`
 - `employment_sectors`             — (taxonomy: `ws_employment_sector`)
+- `garcetti_exception_context`     — (conditional on `garcetti-exception` in `legal_recognitions` AND any 
+                                      `public-sector` child-slug in `employment_sectors`)
 - `disclosure_targets`             — (taxonomy: `ws_disclosure_target`)
 - `disclosure_channel_scope`       — (sister field of `disclosure_channel_context`; select: `any-channel`|
                                       `approved-channel-only`|`mandatory-internal-first`|`see-context`)
@@ -432,12 +435,13 @@ Fields ordered: core SOL → modifiers → exhaustion → pathways → threshold
 - `cure_period_unit`               — (sister field to `cure_period_details`; select: `days`|`weeks`|`months`|
                                       `years`)
 - `cure_period_details`
-- `federal_state_interaction`      — (renamed from `preemption_direction`; select: `express-preemption`|
-                                      `savings-clause-preserves-state`|`concurrent-enforcement`|
-                                      `field-preemption`|`state-exceeds-federal-floor`|`see-context`)
+- `federal_state_interaction`      — (select: `express-preemption`|`savings-clause-preserves-state`|
+                                      `concurrent-enforcement`|`field-preemption`|`state-exceeds-federal-floor`|
+                                      `has-details`)
 - `savings_clause_context`         — (conditional on `federal_state_interaction` is
-                                      `savings-clause-preserves-state` OR `savings-clause` in `legal_recognitions`)
-- `interaction_details`            — (conditional on `federal_state_interaction` is non-empty)
+                                      `savings-clause-preserves-state`)
+- `federal_state_interaction_context`  — (conditional on `federal_state_interaction` is non-empty)
+- `federal_state_interaction_details`
 
 ---
 
