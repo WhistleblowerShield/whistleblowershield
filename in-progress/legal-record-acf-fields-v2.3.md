@@ -381,11 +381,11 @@ classes → sectors → targets → recognitions
 - `bad_faith_exclusion_context`    — (conditional on `bad-faith-exclusion` in `legal_recognitions`)
 - `anonymity_protection_context`   — (conditional on `anonymity-protection` in `legal_recognitions`)
 - `malicious_reporting_sanctions`  — (sister field to `malicious_reporting_context`; repeater:
-      ├── `sanction_conduct`             [multi-select: `knowingly-false`|`reckless-disregard`|`bad-faith-motive`|
+      ├── `conduct_sanctioned`           [multi-select: `knowingly-false`|`reckless-disregard`|`bad-faith-motive`|
       │                                   `see-context`],
       ├── `sanction_penalty`             [multi-select: `civil-fine`|`remedy-forfeiture`|`attorney-fee-shift`|
       │                                    `felony`|`misdemeanor`|`see-context`])
-      └── `sanction_context`       — (conditional on `sanction_conduct` is non-empty)
+      └── `conduct_context`        — (conditional on `conduct_sanctioned` is non-empty)
 - `malicious_reporting_context`    — (conditional on `malicious-reporting-sanctions` in `legal_recognitions`)
 - `protected_action_standard`      — (sister field to `protected_action_context`; multi-select: `per-se-protected`|
                                       `actual-violation`|`reasonable-belief`|`good-faith`)
@@ -555,9 +555,8 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
        ├── `applies_to`                  [select: `single-claim`|`per-plaintiff`|`per-incident`|`aggregate-action`|
        │                                  `see-context`],
        └── `cap_context`                [conditional on `remedy_cap` is non-empty])
-- `has_blacklisting_extended`      — (conditional on `blacklisting` in `adverse_actions`; true when
+- `is_blacklisting_extended`      — (conditional on `blacklisting` in `adverse_actions`; true when
                                       future-employers are also specified)
-- `blacklisting_extended_details`
 - `remedy_details`
 - `remedy_liquidated_multiplier`   — (conditional on `liquidated-damages` in `remedies`; select:
                                       `double`|`treble`|`2x-back-pay`|`2x-wages-lost`|`statutory-formula`|
@@ -588,12 +587,11 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
 Fields ordered: framework → employee standards → causation → employer defenses →
 rebuttable presumption → temporal presumption → detail overflow
 
-- `has_burden_shifting`
-- `burden_shifting_framework`      — (sister field to `burden_shifting_details`; select: `mcdonnell-douglas`|
-                                      `motivating-factor`|`but-for`|`mixed-motive`|`see-context`;
-                                      see [Cross-Tab Conditional and Monitoring] below)
-- `burden_shifting_context`        — (conditional on `burden_shifting_framework` is non-empty)
-- `burden_shifting_details`
+- `burden_shifting_framework`      — (sister field to `burden_shifting_context`; select: `mcdonnell-douglas`|
+                                      `motivating-factor`|`but-for`|`mixed-motive`|`has-details`;
+                                       see [Cross-Tab Conditional and Monitoring] below)
+- `burden_shifting_context`        — (conditional on `burden-shifting` in `legal_recognitions`)
+- `burden_shifting_details`        — (conditional on `burden_shifting_framework` is `has-details`)
 - `same_decision_standard`         — (sister field to `same_decision_context`; select: `preponderance`|
                                       `clear-and-convincing`|`see-context`)
 - `same_decision_context`          — (conditional on `employer_defenses` includes `same-decision-defense`)
@@ -1092,6 +1090,7 @@ Sister fields can have additional conditionals, use AND / OR / NOT after sibling
                                                                                 + 'preliminary_reinstatement_scope'  // Available
 
 // ── Burden of Proof Tab ───────────────────────────────────────────────────────────────
+'burden-shifting-framework'           → 'burden_shifting_context'               + 'burden_shifting_framework'
 'causation-dual-standard'             → 'causation_dual_standard_context'                                            // Applies
 'employer-knowledge'                  → 'employer_knowledge_context'            + 'employer_knowledge_scope'         // Required
 'temporal-proximity-sufficient'       → 'temporal_proximity_context'            + 'temporal_proximity_value'

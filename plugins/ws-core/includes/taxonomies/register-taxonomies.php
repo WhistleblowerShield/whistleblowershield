@@ -797,6 +797,7 @@ $_ws_taxonomy_registry = [
             'mitigation-exception'                  => 'Mitigation Exception Recognized',                     //  =>>> NOTE  =>>> invalid term unless 'mitigation-required' is also present.     // + mitigation_exception_context
             'preliminary-reinstatement'             => 'Preliminary / Interim Reinstatement Available',       // + preliminary_reinstatement_context + reinstatement_standard + reinstatement_standard_details + preliminary_reinstatement_scope
             // Burden of Proof                                                                                // ───── # Burden of Proof Tab ───────────────────────────────────────────────
+            'burden-shifting-framework'             => 'Burden Shifting Framework Specified',                 // + burden_shifting_context        + burden_shifting_framework
             'causation-dual-standard'               => 'Causation Dual Standard (Liability vs Damages Differ)', // + causation_dual_standard_context
             'employer-knowledge'                    => 'Employer Knowledge Element Required',                 // + employer_knowledge_context     + employer_knowledge_scope
             'temporal-proximity-sufficient'         => 'Temporal Proximity Sufficient for Causation',         // + temporal_proximity_context     + temporal_proximity_value + temporal_proximity_unit
