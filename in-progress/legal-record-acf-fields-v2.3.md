@@ -163,6 +163,8 @@ monitoring is required. When cross-field monitoring also requires cross-tab moni
 - `garcetti-exception` — invalid unless one `public-sector` child-slug is present in `employment_sectors`.
    * When no child-slug is present: remove `garcetti-exception` from `legal_recognitions`, clear
      `garcetti_exception_context`, and clear any sister fields.
+- `has-phases` — invalid when selecting taxonomy term for repeater child [`fee_shifting_rule`].
+   * When `fee_shifting_rule_phases` has already been conditionally revealed as repeater.
 
 ### Agency Filtering
 
@@ -491,20 +493,26 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
 - `jury_trial_context`             — (conditional on `private-right-of-action` AND `jury-trial` in
                                       `legal_recognitions`)
 - `fee_shifting_rules`             — (taxonomy: `ws_fee_shifting_rule`)
-- `fee_shifting_rule_phases`       — (conditional on `fee_shifting_rules` includes `has-phases`)
-- `fee_shifting_rule_details`
-- `fee_shifting_asymmetry`         — (select: `one-way-plaintiff`|`one-way-defendant-frivolous`|
-                                      `two-way`|`american-rule`|`has-details`)
+- `fee_shifting_rule_phases`       — (conditional on `fee_shifting_rules` includes `has-phases`; repeater:
+      ├── `phase`                        [select: `administrative`|`investigative`|`litigation`|`appeal`|
+      │                                   `has-details`],
+      ├── `fee_shifting_rule`            [single-select taxonomy: `ws_fee_shifting_rule`; hook excludes 
+      │                                   `has-phases` sentinel],
+      └── `phase_details`                [conditional on `phase` is `has-details`])
+- `fee_shifting_asymmetry`         — (conditional on `fee_shifting_rules` includes `has-asymmetry`; select:
+                                      `one-way-plaintiff`|`one-way-defendant-frivolous`|`two-way`|`american-rule`|
+                                      `has-details`)
 - `fee_shifting_asymmetry_details`
 - `remedies`                       — (taxonomy: `ws_remedy`)
 - `remedy_limits`                  — (conditional on `remedies` includes `has-limits`)
 - `remedy_caps`                    — (sister field to `remedy_limits`; repeater:
-       ├── `cap_scope`                   [select: `emotional-distress`|`punitive`|`compensatory`|`aggregate`|
-       │                                  `employer-size-tiered`]
-       ├── `employer_tier`               [e.g., "none, "15-14", "100+"]
-       ├── `max_amount`                  [e.g., "300000", "uncapped"; ]
-       └── `applies_to`                  [select: `single-claim`|`per-plaintiff`|`per-incident`|`aggregate-action`|
-                                          `see-context`])
+       ├── `cap_remedy`                  [select: `emotional-distress`|`punitive`|`compensatory`|`aggregate`|
+       │                                  `employer-size-tiered`],
+       ├── `employer_tier`               [conditional on `cap_remedy` is `employer-size-tiered`, e.g. "15-14", "100+"],
+       ├── `max_amount`                  [e.g., "300000", "uncapped"],
+       ├── `applies_to`                  [select: `single-claim`|`per-plaintiff`|`per-incident`|`aggregate-action`|
+       │                                  `has-details`],
+       └── `application_details`         [conditional on `applies_to` is `has-details`])
 - `remedy_caps_context`            — (sister field to `remedy_limits`)
 - `has_blacklisting_extended`      — (conditional on`blacklisting` in `adverse_actions`; true when future-employers
                                       are also specified)
@@ -634,17 +642,18 @@ Fields ordered: contractual → recognitions → immunity → defendants.
 - `individual_liability_scope`     — (sister of `individual_liability_context`; multi-select: `supervisor`|
                                       `coworker`|`officer-director`|`any-individual`|`has-details`)
 - `individual_liability_context`   — (conditional on `individual-liability` in `legal_recognitions`)
-- `sovereign_immunity_limits`      — (multi-select: `not-waived`|`partially-waived`|`fully-waived`|`cap-applies`|
-                                      `conditions-apply`|`has-details`)
-- `sovereign_immunity_scope`       — (sister field to `sovereign_immunity_limits_details`; select:
+- `sovereign_immunity_status`      — (sister field of `sovereign_immunity_context`; taxonomy:
+                                      `ws_sovereign_immunity_status`)
+- `sovereign_immunity_scope`       — (sister field to `sovereign_immunity_status_details`; select:
                                       `state-only`|`instrumentalities-included`|`political-subdivisions-included`|
                                       `all`|`see-details`)
-- `sovereign_immunity_waiver`      — (sister field to `sovereign_immunity_limits_details`; select:
+- `sovereign_immunity_waiver`      — (sister field to `sovereign_immunity_status_details`; select:
                                       `explicit-waiver`|`implied-waiver`|`none`|`not-applicable`)
-- `sovereign_immunity_limits_details`
+- `sovereign_immunity_status_details`
+- `sovereign_immunity_context`     — (conditional on `sovereign-immunity-status` in `legal_recognitions`)
 - `nda_limits_context`             — (conditional on `nda-limitations` in `legal_recognitions`)
 - `anti_gag_provision_context`     — (conditional on `anti-gag-provision` in `legal_recognitions`)
-- `no_retaliatory_evidence_context`      — (conditional on `no-retaliatory-evidence` in `legal_recognitions`)
+- `no_retaliatory_evidence_context`  — (conditional on `no-retaliatory-evidence` in `legal_recognitions`)
 - `stay_of_discipline_context`     — (conditional on `stay-of-disciplinary-action` in `legal_recognitions`)
 - `anti_slapp_protection_scope`    — (sister field to `anti_slapp_protection_context`; select:
                                       `motion-to-strike`|`discovery-stay`|`fee-shift-on-motion`|

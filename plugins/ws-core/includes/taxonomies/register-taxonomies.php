@@ -496,6 +496,7 @@ $_ws_taxonomy_registry = [
             'discretionary'                   => 'Discretionary',
             'mandatory'                       => 'Mandatory',
             'has-phases'                      => 'Has Phase Specifics',
+            'has-asymmetry'                   => 'Has Asymmetry Specifics',
             'has-details'                     => 'Has Details',
         ]
     ],
@@ -837,6 +838,7 @@ $_ws_taxonomy_registry = [
             'waiver-of-collateral-claims'           => 'Waiver of Collateral Claims Applies',                 // + waiver_of_collateral_claims_context
             'class-action-waiver'                   => 'Class Action Waiver Recognized',                      // + class_action_waiver_context
             'individual-liability'                  => 'Individual Liability Available',                      // + individual_liability_context   + individual_liability_scope
+            'sovereign-immunity-status'             => 'Sovereign Immunity Status Specified',                 // + sovereign_immunity_context     + sovereign_immunity_status
             'nda-limitations'                       => 'NDA / Non-Disparagement Limitations Recognized',      // + nda_limits_context
             'anti-gag-provision'                    => 'Anti-Gag Provision Recognized',                       // + anti_gag_provision_context
             'no-retaliatory-evidence'               => 'Retaliatory Evidence Barred',                         // + no_retaliatory_evidence_context
@@ -914,6 +916,7 @@ $_ws_taxonomy_registry = [
             'partially-waived'              => 'Partially Waived (Conditions Apply)',
             'fully-waived'                  => 'Fully Waived (Private Action Permitted)',
             'cap-applies'                   => 'Damages Cap Applies',
+            'conditions-apply'              => 'Conditions Apply',
             'tort-claims-act-gate'          => 'FTCA / State TCA Gateway Required',
             'has-details'                   => 'Has Details',
         ]
