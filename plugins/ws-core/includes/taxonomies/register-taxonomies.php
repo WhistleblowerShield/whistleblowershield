@@ -3,7 +3,7 @@
 /**
  * register-taxonomies.php — WhistleblowerShield Taxonomy Registry
  *
- * Single source of truth for all 24 ws-core taxonomies. $_ws_taxonomy_registry (global
+ * Single source of truth for all 22 ws-core taxonomies. $_ws_taxonomy_registry (global
  * array) drives registration, seeding, and LLM prompt generation from one place.
  * 
  * ws_jurisdiction taxonomy table use canonical table array in matrix-jurisdictions.php.
@@ -465,36 +465,7 @@ $_ws_taxonomy_registry = [
         ]
     ],
 
-// —— 11. Fee Shifting Rules —————————————————————————————————————————————————
-/**
- * Assigns ws_fee_shifting_rule with its flat term structure.
- *
- * @todo legal_prompt — set instruction string.
- * 
- */
-    'ws_fee_shifting_rule'  => [
-        'cpts'                  => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction'],
-        'plural'                => 'Fee Shifting Rules',
-        'singular'              => 'Fee Shifting Rule',
-        'menu_name'             => 'Fee Shifting',
-        'seed_version'          => '1.0.0',
-        'record'                => ['legal'],
-        'legal_prompt'          => '',
-        'terms'                 => [
-            'none-american-rule'              => 'None (American Rule)',
-            'bilateral-loser-pays'            => 'Bilateral (Loser Pays)',
-            'unilateral-pro-plaintiff'        => 'Unilateral (Pro-Plaintiff)',
-            'unilateral-pro-defendant'        => 'Unilateral (Pro-Defendant)',
-            'prevailing-defendant-bad-faith'  => 'Defendant Fees on Bad Faith',
-            'discretionary'                   => 'Discretionary',
-            'mandatory'                       => 'Mandatory',
-            'has-phases'                      => 'Has Phase Specifics',
-            'has-asymmetry'                   => 'Has Asymmetry Specifics',
-            'has-details'                     => 'Has Details',
-        ]
-    ],
-
-// —— 12. Employer Defenses ——————————————————————————————————————————————————
+// —— 11. Employer Defenses ——————————————————————————————————————————————————
 /**
  * Assigns ws_employer_defense with its flat term structure.
  *
@@ -522,7 +493,7 @@ $_ws_taxonomy_registry = [
         ]
     ],
 
-// —— 13. Organization Types —————————————————————————————————————————————————
+// —— 12. Organization Types —————————————————————————————————————————————————
 /**
  * Assigns ws_aorg_type with its flat term structure.
  *
@@ -552,7 +523,7 @@ $_ws_taxonomy_registry = [
         ]
     ],
 
-// —— 14. Employment Sectors —————————————————————————————————————————————————
+// —— 13. Employment Sectors —————————————————————————————————————————————————
 /**
  * Assigns ws_employment_sector with its flat term structure.
  *
@@ -582,7 +553,7 @@ $_ws_taxonomy_registry = [
         ]
     ],
 
-// —— 15. Cost Models ————————————————————————————————————————————————————————
+// —— 14. Cost Models ————————————————————————————————————————————————————————
 /**
  * Assigns ws_aorg_cost_model with its flat term structure.
  *
@@ -607,7 +578,7 @@ $_ws_taxonomy_registry = [
         ]
     ],
 
-// —— 16. Organization Services ——————————————————————————————————————————————
+// —— 15. Organization Services ——————————————————————————————————————————————
 /**
  * Assigns ws_aorg_service with its flat term structure.
  *
@@ -642,7 +613,7 @@ $_ws_taxonomy_registry = [
         ]
     ],
 
-// —— 17. Procedure Types ————————————————————————————————————————————————————
+// —— 16. Procedure Types ————————————————————————————————————————————————————
 /**
  * Assigns ws_procedure_type with its flat term structure.
  *
@@ -666,7 +637,7 @@ $_ws_taxonomy_registry = [
         ]
     ],
 
-// —— 18. Employee Burden Standards ——————————————————————————————————————————
+// —— 17. Employee Burden Standards ——————————————————————————————————————————
 /**
  * Assigns ws_employee_standard with its flat term structure.
  *
@@ -697,7 +668,7 @@ $_ws_taxonomy_registry = [
         ]
     ],
 
-// —— 19. Protection Scopes ——————————————————————————————————————————————————
+// —— 18. Protection Scopes ——————————————————————————————————————————————————
 /**
  * Assigns ws_protection_scope with its flat term structure.
  *
@@ -723,7 +694,7 @@ $_ws_taxonomy_registry = [
         ]
     ],
 
-// —— 20. Protected Actions ——————————————————————————————————————————————————
+// —— 19. Protected Actions ——————————————————————————————————————————————————
 /**
  * Assigns ws_protected_action with its hierarchical term structure.
  *
@@ -763,7 +734,7 @@ $_ws_taxonomy_registry = [
         ]
     ],
 
-// —— 21. Legal Recognitions —————————————————————————————————————————————————
+// —— 20. Legal Recognitions —————————————————————————————————————————————————
 /**
  * Assigns ws_legal_recognition with its flat term structure.
  *
@@ -795,38 +766,38 @@ $_ws_taxonomy_registry = [
             // Classification                                                                                 // ───── # Classification Tab ────────────────────────────────────────────────
             // = NOTE = 'legal_recognitions' appears at top of Classification Tab                             // =>>> NOTE  =>>> 'legal_recognitions' appears at top of Classification Tab
             'manager-rule-exclusion'                => 'Manager Rule / Duty Speech Exclusion Applies',        // + manager_rule_exclusion_context
-            'public-concern-required'               => 'Public Concern Requirement Applies',                  // + public_concern_context
+            'public-concern-required'               => 'Public Concern Requirement Applies',                  // + public_concern_required_context
             'bad-faith-exclusion'                   => 'Bad Faith / Knowingly False Exclusion Applies',       // + bad_faith_exclusion_context
             'anonymity-protection'                  => 'Anonymity / Confidentiality Protection Recognized',   // + anonymity_protection_context
             'malicious-reporting-sanctions'         => 'Malicious Reporting Sanctions Specified',             // + malicious_reporting_context    + malicious_reporting_sanctions
             'protected-action'                      => 'Protected Action Specified',                          // + protected_action_context       + protected_actions + protected_action_standard + protected_action_source
             'excluded-class'                        => 'Excluded Class Specified',                            // + excluded_class_context         + excluded_classes
-            'garcetti-exception'                    => 'Garcetti / Official-Duties Exclusion Applies',        // =>>> NOTE  =>>> invalid term unless one 'public-sector' child-slug is in 'employment_sectors'. // + garcetti_exception_context
+            'garcetti-exception'                    => 'Garcetti / Official-Duties Exclusion Applies',        // =>>> NOTE  =>>> invalid term unless 'public-sector' is in 'employment_sectors'. // + garcetti_exception_context
             // Statute of Limitations & Thresholds                                                            // ───── # Statute of Limitations & Thresholds Tab ─────────────────────────
             'statute-of-repose'                     => 'Statute of Repose Specified',                         // + statute_of_repose_context      + sop_value + sop_unit + is_sop_tolling_available
             'statutory-tolling'                     => 'Statutory Tolling Specified',                         // + statutory_tolling_context
             'equitable-tolling'                     => 'Equitable Tolling Recognized',                        // + equitable_tolling_context
             'cba-grievance-preemption'              => 'CBA Grievance Preemption Applies',                    // + cba_preemption_context
             'amended-claim'                         => 'Amended Claim / Relation Back Recognized',            // + amended_claim_context
-            'exhaustion-required'                   => 'Exhaustion Required',                                 // + exhaustion_required_context    + exhaustion_required_class
+            'exhaustion-required'                   => 'Exhaustion Required',                                 // + exhaustion_required_context    + exhaustion_required_scope
             'pre-filing-notice'                     => 'Pre-Filing Notice Required',                          // + filing_notice_context          + filing_notice_target + filing_notice_value + filing_notice_unit
             'statutory-preclusion'                  => 'Statutory Preclusion Applies',                        // + statutory_preclusion_context   // only present in common law records
             // Retaliation                                                                                    // ───── # Retaliation Tab ───────────────────────────────────────────────────
-            'evidence-preservation'                 => 'Evidence Preservation Required',                      // + evidence_preservation_context  + preservation_timeline_value + preservation_timeline_unit + preservation_requirement_scope
-            'cats-paw-liability'                    => 'Cat\'s Paw Liability Recognized',                     // + cats_paw_liability_context
+            'evidence-preservation'                 => 'Evidence Preservation Required',                      // + evidence_preservation_context  + preservation_deadline_value + preservation_deadline_unit + preservation_requirement_scope
+            'cats-paw-liability'                    => 'Cat\'s Paw Liability Recognized',                     // + cats_paw_liability_context     + is_cats_paw_liability_extended
             'third-party-retaliation'               => 'Third-Party Retaliation Prohibited',                  // + third_party_retaliation_context
             'criminal-sanctions'                    => 'Criminal Sanctions Specified',                        // + criminal_sanctions_context     + criminal_sanctions
             // Processes and Remedies                                                                         // ───── # Processes & Remedies Tab ───────────────────────────────────────────────────
-            'process-pathway'                       => 'Process Pathway Specified',                           // + process_pathway_context        + process_pathway_scope
+            'process-pathway'                       => 'Process Pathway Specified',                           // + process_pathway_context        + process_pathway_scope + is_agency_inaction_trigger
             'private-right-of-action'               => 'Private Right of Action Available',                   // + private_roa_context
             'jury-trial'                            => 'Jury Trial Available',                                // =>>> NOTE  =>>> invalid term unless 'private-right-of-action' is also present. // + jury_trial_context + jury_trial_scope
-            'civil-review-standard'                 => 'Civil Review Standard Specified',                     // + review_standard_context        + review_standard_scope
-            'causation-dual-standard'               => 'Causation Dual Standard (Liability vs Damages Differ)',  // + causation_dual_standard_context
+            'civil-review-standard'                 => 'Civil Review Standard Specified',                     // + review_standard_context        + review_standard_scope + review_standard_details
             'equitable-interest-award'              => 'Equitable Interest Provision Available',              // + interest_provision_context     + interest_provision_scope
             'mitigation-required'                   => 'Mitigation Requirement Specified',                    // + mitigation_required_context    + mitigation_required_scope
             'mitigation-exception'                  => 'Mitigation Exception Recognized',                     //  =>>> NOTE  =>>> invalid term unless 'mitigation-required' is also present.     // + mitigation_exception_context
-            'preliminary-reinstatement'             => 'Preliminary / Interim Reinstatement Available',       // + preliminary_reinstatement_context
+            'preliminary-reinstatement'             => 'Preliminary / Interim Reinstatement Available',       // + preliminary_reinstatement_context + reinstatement_standard + reinstatement_standard_details + preliminary_reinstatement_scope
             // Burden of Proof                                                                                // ───── # Burden of Proof Tab ───────────────────────────────────────────────
+            'causation-dual-standard'               => 'Causation Dual Standard (Liability vs Damages Differ)', // + causation_dual_standard_context
             'employer-knowledge'                    => 'Employer Knowledge Element Required',                 // + employer_knowledge_context     + employer_knowledge_scope
             'temporal-proximity-sufficient'         => 'Temporal Proximity Sufficient for Causation',         // + temporal_proximity_context     + temporal_proximity_value + temporal_proximity_unit
             // Waiver & Scope                                                                                 // ───── # Waiver & Scope Tab ────────────────────────────────────────────────
@@ -834,7 +805,7 @@ $_ws_taxonomy_registry = [
             'waiver-of-collateral-claims'           => 'Waiver of Collateral Claims Applies',                 // + waiver_of_collateral_claims_context
             'class-action-waiver'                   => 'Class Action Waiver Recognized',                      // + class_action_waiver_context
             'individual-liability'                  => 'Individual Liability Available',                      // + individual_liability_context   + individual_liability_scope
-            'sovereign-immunity-status'             => 'Sovereign Immunity Status Specified',                 // + sovereign_immunity_context     + sovereign_immunity_status
+            'sovereign-immunity-status'             => 'Sovereign Immunity Status Specified',                 // + sovereign_immunity_context     + sovereign_immunity_statuses + sovereign_immunity_scope + sovereign_immunity_waiver + sovereign_immunity_status_details
             'nda-limitations'                       => 'NDA / Non-Disparagement Limitations Recognized',      // + nda_limits_context
             'anti-gag-provision'                    => 'Anti-Gag Provision Recognized',                       // + anti_gag_provision_context
             'no-retaliatory-evidence'               => 'Retaliatory Evidence Barred',                         // + no_retaliatory_evidence_context
@@ -857,7 +828,7 @@ $_ws_taxonomy_registry = [
         ]
     ],
 
-// —— 22. Causation Standards ————————————————————————————————————————————————
+// —— 21. Causation Standards ————————————————————————————————————————————————
 /**
  * Assigns ws_causation_standard with its flat term structure.
  *
@@ -887,7 +858,7 @@ $_ws_taxonomy_registry = [
         ]
     ],
 
-// —— 23. Sovereign Immunity Status ——————————————————————————————————————————
+// —— 22. Sovereign Immunity Status ——————————————————————————————————————————
 /**
  * Assigns ws_sovereign_immunity_status with its flat term structure.
  *
@@ -924,7 +895,7 @@ $_ws_taxonomy_registry = [
 // ════════════════════════════════════════════════════════════════════════════
 
 /**
- * Registers all taxonomies defined in ws_taxonomy_registry.
+ * Registers all taxonomies defined in _ws_taxonomy_registry.
  *
  * Hooked to 'init'.
  * @return void
@@ -932,11 +903,11 @@ $_ws_taxonomy_registry = [
  */
 function ws_register_all_taxonomies()
 {
-    global $ws_taxonomy_registry;
+    global $_ws_taxonomy_registry;
 
     $default_caps = ws_get_taxonomy_caps();
 
-    foreach ($ws_taxonomy_registry as $slug => $config) {
+    foreach ($_ws_taxonomy_registry as $slug => $config) {
         if (taxonomy_exists($slug)) {
             continue;
         }
@@ -1006,7 +977,7 @@ function ws_get_taxonomy_caps()
 /**
  * Returns all taxonomy registry entries that serve the given record type.
  *
- * Scans the global $ws_taxonomy_registry and collects every taxonomy whose
+ * Scans the global $_ws_taxonomy_registry and collects every taxonomy whose
  * 'record' array contains $record_type. Each result carries the taxonomy slug,
  * human-readable labels, and the pre-configured prompt string for that type —
  * ready for use by admin LLM prompt-generation tooling.
@@ -1029,7 +1000,7 @@ function ws_get_taxonomy_caps()
  */
 function ws_get_taxonomies_for_record(string $record_type): array
 {
-    global $ws_taxonomy_registry;
+    global $_ws_taxonomy_registry;
 
     if (!in_array($record_type, ['legal', 'assist'], true)) {
         wp_die("This is a FuQ'n Error! ws_get_taxonomies_for_record() called with invalid type: '{$record_type}'. Expected 'legal' or 'assist'.");
@@ -1038,7 +1009,7 @@ function ws_get_taxonomies_for_record(string $record_type): array
     $prompt_key = $record_type . '_prompt'; // resolves to 'legal_prompt' or 'assist_prompt'
     $result     = [];
 
-    foreach ($ws_taxonomy_registry as $slug => $config) {
+    foreach ($_ws_taxonomy_registry as $slug => $config) {
 
         if (! in_array($record_type, $config['record'] ?? [], true)) {
             continue;
@@ -1075,12 +1046,12 @@ function ws_get_taxonomies_for_record(string $record_type): array
 
 function ws_seed_all_taxonomies()
 {
-    global $ws_taxonomy_registry;
+    global $_ws_taxonomy_registry;
 
     $ran_seeder = false;
     $all_errors = [];
 
-    foreach ($ws_taxonomy_registry as $slug => $config) {
+    foreach ($_ws_taxonomy_registry as $slug => $config) {
         if (! empty($config['terms'])) {
             // Strict configuration check: Taxonomies must be snake_case
             if (strpos($slug, '-') !== false) {

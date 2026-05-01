@@ -15,7 +15,7 @@ Create new files with same names as the originals.
 Strictly enforced. No exceptions.
 
 - Meta names (ACF field `name` key): `snake_case` only.
-- Choice keys (select / multi-select option values): `kebab-case` only.
+- Choice keys (select option values): `kebab-case` only.
 - Taxonomy terms: `kebab-case` only.
 
 ### CPT Infix
@@ -72,9 +72,10 @@ is required when the trigger `field_name` deviates from conditional `field_name`
 dropped). For `*_context` conditionals, annotation is always required.
 
 ### Sister Fields
-Sister fields inherits their sibling's conditional but are not considered a `*_companion` field. Sisters use
+Sister fields inherit their sibling's conditional but are not considered a `*_companion` field. Sisters use
 the identical conditionals of their siblings. Do not re-document conditionals. Instead note inline as "Sister field
-to `sibling_field`;"
+to `sibling_field`;". If a sister field has extra requirements, document them after the sibling relationship with
+AND / OR / NOT.
 
 - No naming convention applies to sister fields. Use a logical/contextual name for the data it holds or concept
   it covers.
@@ -82,6 +83,7 @@ to `sibling_field`;"
   prescribed; use best editorial logic.
 - Sisters may not appear without a corresponding `*_companion` sibling in the same cluster.
 - Sister clusters can chain. When multiple conditions layer: chains get messy — use inline notes where they help.
+- Sisters may have additional requirements; document conditionals after declaring siblings. Use AND / OR / NOT.
 
 ### Avoid
 Avoidance is preferred not required.
@@ -116,7 +118,6 @@ Added to a field's choices or taxonomy to signal a companion should appear.
 Document any use of non-standard sentinels in table below.
 
 - `has-limits`     — in `ws_remedy`               : triggers `remedy_limits`.
-- `has-phases`     — in `ws_fee_shifting_rule`    : triggers `fee_shifting_rule_phases`.
 - `has-channel`    — in `ws_protected_disclosure` : triggers `disclosure_channel_context`.
 - `has-ic-channel` — in `ws_protected_disclosure` : triggers `ic_channel_sequence_context`.
 
@@ -140,15 +141,30 @@ Document required hook use in the inline definition of field where hook is neede
 Always write unified hooks over duplicates. A single hook using `get_post_type()` is preferred over two
 near-identical hooks per CPT. Reuse hooks wherever possible.
 
+### Precedent Taxonomy Mapping Choices
+
+`extended_taxonomies` and `suppressed_taxonomies` use the same controlled taxonomy-term picker.
+
+- `taxonomy` choices come from one allowlist of legal-record taxonomies that precedent may extend or suppress.
+- `term` choices are filtered by the selected `taxonomy` in the same repeater row.
+- Store both values as slugs for readable ingest, export, and review.
+- Validate on save that selected `term` exists in selected `taxonomy`.
+- Do not allow free-entry taxonomy names or term names in these mapping rows.
+
 ### Contradiction Guards
 Document when hook is required to guard against invalid combinations of values in table below. Note if cross-field
 monitoring is required. When cross-field monitoring also requires cross-tab monitoring add to detailed entry to 
 [Cross-Tab Conditional and Monitoring] block.
 
-- `fee_shifting_rules` — detect and flag contradictory terms.
-- `sovereign_immunity_limits` — detect and flag contradictory terms.
-- `causation_application` — enforce mutual exclusivity: `liability`, `damages`, and `both` must never appear
-   together. `has-details` may accompany any single primary value.
+- `sovereign_immunity_statuses` — detect and flag contradictory terms.
+   * `not-waived` is mutually exclusive with `partially-waived`, `fully-waived`, and `cap-applies`.
+   * `fully-waived` is mutually exclusive with `partially-waived` and `tort-claims-act-gate`.
+- `protected_classes` and `excluded_classes` — same class slug must never be present in both taxonomies.
+   * When overlap is detected: flag for editor resolution; do not auto-remove because the correct side is legal-context
+     dependent.
+- `garcetti-exception` — invalid unless `public-sector` is present in `employment_sectors`.
+   * When `public-sector` is absent: remove `garcetti-exception`, clear `garcetti_exception_context`, and clear any
+     sister fields.
 - `mitigation-exception` — invalid without `mitigation-required` in `legal_recognitions`.
    * When `mitigation-required` is absent: remove `mitigation-exception`, clear `mitigation_exception_context`,
      and clear any sister fields.
@@ -161,11 +177,22 @@ monitoring is required. When cross-field monitoring also requires cross-tab moni
 - `exhaustion-required` — invalid when `process_pathway_scope` is `direct-court`.
    * When `direct-court` is set: remove `exhaustion-required`, clear `exhaustion_required_context`, and clear any
      sister fields.
-- `garcetti-exception` — invalid unless one `public-sector` child-slug is present in `employment_sectors`.
-   * When no child-slug is present: remove `garcetti-exception` from `legal_recognitions`, clear
-     `garcetti_exception_context`, and clear any sister fields.
-- `has-phases` — invalid when selecting taxonomy term for repeater child [`fee_shifting_rule`].
-   * When `fee_shifting_rule_phases` has already been conditionally revealed as repeater.
+- `direct-filing-permitted` — invalid with `exhaustion-required`.
+   * When `direct-filing-permitted` is present in `process_types`: remove `exhaustion-required`, clear
+     `exhaustion_required_context`, and clear any sister fields.
+- `sovereign-immunity-waiver` — invalid when `sovereign_immunity_waiver` is `none` or
+  `sovereign_immunity_statuses` includes `not-waived`.
+   * When no waiver is indicated: remove `sovereign-immunity-waiver` from `legal_recognitions`.
+- Multi-select fallback values — `see-context` / `see-details` must not be combined with specific choices.
+   * Applies to the same-field multi-selects listed in [Cross-Tab Conditional and Monitoring].
+- Multi-select umbrella values — summary choices must not be combined with their own component choices.
+   * Applies to `sovereign_immunity_scope`, `anti_slapp_protection_scope`, and `settlement_restriction_scope`.
+- `malicious_reporting_sanctions.sanction_penalty` — `felony` and `misdemeanor` must not appear in the same row.
+   * Use separate repeater rows for separate criminal tracks.
+- `scope` — enforce precedent taxonomy bucket consistency.
+   * When `scope` is `favorable`: clear `suppressed_taxonomies`.
+   * When `scope` is `adverse`: clear `extended_taxonomies`.
+   * When `scope` is `neutral`: clear both `extended_taxonomies` and `suppressed_taxonomies`.
 
 ### Agency Filtering
 
@@ -187,9 +214,11 @@ monitoring is required. When cross-field monitoring also requires cross-tab moni
 - `*_class` · `*_scope` · `*_status` · `*_rule` · `*_framework` · `*_weight` · `*_standard` → select
 - `*_share`        — used to describe specified portion of a reward, e.g. "25-30%"
 - `*_compare`      — used to describe mandated comparison (select: `gte`|`lte`|`gt`|`lt`|`eq`)
+- `*_value`        — integer / number
+- `*_unit`         — select; calendar unit unless stated otherwise
 - `*_formula`      — used to describe mandated calculations
 - `*_sanctions`    — used to describe specified unlawful conduct and associated penalties (repeater)
-- `*_application`  — used to describe where or how a legal standard applies (multi-select)
+- `*_application`  — used to describe where or how a legal standard applies (select)
 - `*_direction`    — used to describe directional legal operation, e.g. "Federal Preempts State" (select)
 - `*_bar`          — used for claim-blocking doctrines or procedural bars (select/bool)
 - select → signals single-select; multi-select must be specified
@@ -326,8 +355,7 @@ Fields ordered: identification → related dates → scope → curated
 - `jurisdiction`                   — (single-select taxonomy: `WS_JURISDICTION_TAXONOMY`)
 - `official_name`
 - `common_name`
-- `citation`                       — (statute citation / precedent case / case name (shared slot); yes: there will
-                                      be a `ws_jx_citation_citation`)
+- `citation`                       — (statute citation / precedent case / case name; shared slot)
 - `date`                           — (enacted / ruling / decision date (shared slot))
 - `has_effective_date`             — (only when `effective_date` is specified and differs from `date`)
 - `effective_date`
@@ -336,8 +364,7 @@ Fields ordered: identification → related dates → scope → curated
 - `retro_context`                  — (conditional on `retroactive-date` in `legal_recognitions`)
 - `protection_scope`               — (single-select taxonomy: `ws_protection_scope`; internal use only)
 - `general_description`            — (brief; reserve full summary for `plain_english_wysiwyg`)
-- `has_attach_flag`                — (special-case; approved use of `has_*` bool; triggers display_order. Used
-                                      together for attaching curated records to jx-summary at render)
+- `has_attach_flag`                — (special-case; approved use of `has_*` bool; triggers `display_order`)
 - `display_order`                  — (conditional on `has_attach_flag` is true)
 
 ---
@@ -354,12 +381,13 @@ classes → sectors → targets → recognitions
 - `bad_faith_exclusion_context`    — (conditional on `bad-faith-exclusion` in `legal_recognitions`)
 - `anonymity_protection_context`   — (conditional on `anonymity-protection` in `legal_recognitions`)
 - `malicious_reporting_sanctions`  — (sister field to `malicious_reporting_context`; repeater:
-      ├── `sanction_conduct`             [select: `knowingly-false`|`reckless-disregard`|`bad-faith-motive`|
+      ├── `sanction_conduct`             [multi-select: `knowingly-false`|`reckless-disregard`|`bad-faith-motive`|
       │                                   `see-context`],
-      └── `sanction_penalty`             [select: `civil-fine`|`remedy-forfeiture`|`attorney-fee-shift`|`felony`|
-                                          `misdemeanor`|`see-context`])
+      ├── `sanction_penalty`             [multi-select: `civil-fine`|`remedy-forfeiture`|`attorney-fee-shift`|
+      │                                    `felony`|`misdemeanor`|`see-context`])
+      └── `sanction_context`       — (conditional on `sanction_conduct` is non-empty)
 - `malicious_reporting_context`    — (conditional on `malicious-reporting-sanctions` in `legal_recognitions`)
-- `protected_action_standard`      — (sister field to `protected_action_context`; select: `per-se-protected`|
+- `protected_action_standard`      — (sister field to `protected_action_context`; multi-select: `per-se-protected`|
                                       `actual-violation`|`reasonable-belief`|`good-faith`)
 - `reasonable_belief_scope`        — (sister field to `reasonable_belief_context`; select: `objective-only`|
                                       `subjective-only`|`dual-prong`|`see-context`)
@@ -376,17 +404,16 @@ classes → sectors → targets → recognitions
 - `excluded_class_context`         — (conditional on `excluded-class` in `legal_recognitions`)
 - `excluded_class_details`
 - `employment_sectors`             — (taxonomy: `ws_employment_sector`)
-- `garcetti_exception_context`     — (conditional on `garcetti-exception` in `legal_recognitions` AND any 
-                                      `public-sector` child-slug in `employment_sectors`)
+- `garcetti_exception_context`     — (conditional on `garcetti-exception` in `legal_recognitions` AND
+                                      `public-sector` in `employment_sectors`)
 - `disclosure_targets`             — (taxonomy: `ws_disclosure_target`)
-- `disclosure_channel_scope`       — (sister field of `disclosure_channel_context`; select: `any-channel`|
+- `disclosure_channel_scope`       — (sister field to `disclosure_channel_context`; select: `any-channel`|
                                       `approved-channel-only`|`mandatory-internal-first`|`see-context`)
-- `disclosure_format`              — (sister field of `disclosure_channel_context`; select: `written-only`|
+- `disclosure_format`              — (sister field to `disclosure_channel_context`; select: `written-only`|
                                       `oral-permitted`|`either`|`has-details`)
 - `disclosure_format_details`
 - `disclosure_channel_context`     — (conditional on `has-channel` in `protected_disclosures`)
-- `ic_channel_sequence_context`    — (conditional on `has-ic-channel` in `protected_disclosures`; document
-                                      mandatory Intel Community/National Security disclosure channel sequence)
+- `ic_channel_sequence_context`    — (conditional on `has-ic-channel` in `protected_disclosures`)
 - `disclosure_target_details`
 
 ---
@@ -399,17 +426,15 @@ Fields ordered: core SOL → modifiers → exhaustion → pathways → threshold
 - `sol_unit`                       — (select: `days`|`weeks`|`months`|`years`)
 - `sol_trigger`                    — (select: `accrual`|`constructive-discharge-accrual`|`discovery-rule`|
                                       `filing-of-complaint`|`conclusion-of-admin-process`|`see-context`)
-- `sol_trigger_discovery_context`  — (conditional on `sol_trigger` is `discovery-rule`; detail discovery specifics)
-- `sol_trigger_context`            — (conditional on `sol_trigger` is non-empty; detail trigger as legal, factual,
-                                      or contextual as necessary)
+- `sol_trigger_discovery_context`  — (conditional on `sol_trigger` is `discovery-rule`)
+- `sol_trigger_context`            — (conditional on `sol_trigger` is non-empty)
 - `is_sol_suspended_during_admin`  — (only true when SOL is explicitly tolled while pending administrative action)
 - `has_sol_details`
 - `sol_details`
 - `sop_value`                      — (sister field to `statute_of_repose_context`)
 - `sop_unit`                       — (sister field to `statute_of_repose_context`; select: `days`|`weeks`|
                                       `months`|`years`)
-- `is_sop_tolling_available`       — (sister field to `statute_of_repose_context`; very unlikely; true only when
-                                      explicitly stated; use `statute_of_repose_context` to describe context)
+- `is_sop_tolling_available`       — (sister field to `statute_of_repose_context`; true only when explicitly stated)
 - `statute_of_repose_context`      — (conditional on `statute-of-repose` in `legal_recognitions`)
 - `statutory_tolling_context`      — (conditional on `statutory-tolling` in `legal_recognitions`)
 - `equitable_tolling_context`      — (conditional on `equitable-tolling` in `legal_recognitions`)
@@ -432,7 +457,7 @@ Fields ordered: core SOL → modifiers → exhaustion → pathways → threshold
                                       `contractors`|`workers`|`fte`)
 - `employer_threshold_details`
 - `has_cure_period`
-- `cure_period_value`              — (sister field to `cure_period_details`; integer)
+- `cure_period_value`              — (sister field to `cure_period_details`)
 - `cure_period_unit`               — (sister field to `cure_period_details`; select: `days`|`weeks`|`months`|
                                       `years`)
 - `cure_period_details`
@@ -450,31 +475,32 @@ Fields ordered: core SOL → modifiers → exhaustion → pathways → threshold
 
 Fields ordered: adverse actions → recognitions → sanctions
 
-- `adverse_actions`                — (taxonomy: `ws_adverse_action`)
+- `adverse_actions`                   — (taxonomy: `ws_adverse_action`)
 - `adverse_action_details`
-- `adverse_action_scope`           — (select: `termination-only`|`material-adverse`|
-                                      `broad-any-adverse-action`|`see-context`)
-- `adverse_action_scope_context`   — (conditional on `adverse_action_scope` is non-empty)
-- `preservation_deadline_value`    — (sister field to `evidence_preservation_context`)
-- `preservation_deadline_unit`     — (sister field to `evidence_preservation_context`; select:
-                                      `days`|`weeks`|`months`|`years`)
-- `preservation_requirement_scope` — (sister field to `evidence_preservation_context`; select:
-                                      `litigation-hold`|`statutory-hold`|`court-order`|
-                                      `agency-request`|`see-context`)
-- `evidence_preservation_context`  — (conditional on `evidence-preservation` in `legal_recognitions`)
+- `adverse_action_scope`              — (select: `termination-only`|`material-adverse`|
+                                         `broad-any-adverse-action`|`see-context`)
+- `adverse_action_scope_context`      — (conditional on `adverse_action_scope` is non-empty)
+- `preservation_deadline_value`       — (sister field to `evidence_preservation_context`)
+- `preservation_deadline_unit`        — (sister field to `evidence_preservation_context`; select:`days`|`weeks`|
+                                         `months`|`years`)
+- `preservation_requirement_scope`    — (sister field to `evidence_preservation_context`; multi-select:
+                                         `litigation-hold`|`statutory-hold`|`court-order`|
+                                         `agency-request`|`see-context`)
+- `evidence_preservation_context`     — (conditional on `evidence-preservation` in `legal_recognitions`)
 - `constructive_discharge_standard`   — (sister field to `constructive_discharge_context`; select:
                                          `objective-intolerability`|`intent-required`|`dual-prong`|`see-context`)
 - `constructive_discharge_context`    — (conditional on `constructive-discharge` in `adverse_actions`)
 - `is_evidence_collection_protected`
 - `anticipatory_retaliation_context`  — (conditional on `anticipatory-retaliation` in `adverse_actions`)
 - `cats_paw_liability_context`        — (conditional on `cats-paw-liability` in `legal_recognitions`)
-- `is_cats_paw_liability_extended`    — (conditional on any `associates-of-whistleblower`child-slug in
-                                         `protected_classes` AND `cats-paw-liability` in `legal_recognitions`)
+- `is_cats_paw_liability_extended`    — (sister field to `cats_paw_liability_context`; AND conditional on any
+                                         `associates-of-whistleblower` child slug in `protected_classes`)
 - `third_party_retaliation_context`   — (conditional on `third-party-retaliation` in `legal_recognitions`)
 - `criminal_sanctions`                — (sister field to `criminal_sanctions_context`; repeater:
-      ├── `sanction_conduct`                [select: `retaliation`|`disclosure`|`false-report`|`obstruction`|
+      ├── `sanction_conduct`                [multi-select: `retaliation`|`disclosure`|`false-report`|`obstruction`|
       │                                      `see-context`],
-      └── `sanction_level`                  [select: `misdemeanor`|`felony`|`see-context`])
+      ├── `sanction_level`                  [select: `misdemeanor`|`felony`|`see-context`],
+      └── `sanction_context`                [conditional on `sanction_conduct` is non-empty])
 - `criminal_sanctions_context`        — (conditional on `criminal-sanctions` in `legal_recognitions`)
 
 ---
@@ -484,12 +510,13 @@ Fields ordered: adverse actions → recognitions → sanctions
 Fields ordered: process → pathway → fee shifting → remedies → reinstatement
 
 - `process_types`                  — (taxonomy: `ws_process_type`)
-- `primary_agency`                 — (auto-fill by hook when first post_type[`ws-agency`] added to local or federal)
+- `primary_agency`                 — (derived from first attached post_type[`ws-agency`] when empty)
 - `local_agencies`                 — (multi-select: post_type[`ws-agency`] filtered by jx, common `*disclosure*`
                                       and `process_types`)
 - `process_pathway_scope`          — (sister field to `process_pathway_context`; select: `agency-first-mandatory`|
                                       `direct-court`|`either`|`hybrid-right-to-sue-on-inaction`|`see-context`)
-- `is_agency_inaction_trigger`     — (conditional on `process_pathway_scope` is `hybrid-right-to-sue-on-inaction`)
+- `is_agency_inaction_trigger`     — (sister field to `process_pathway_context`; AND conditional on
+                                      `process_pathway_scope` is `hybrid-right-to-sue-on-inaction`)
 - `process_pathway_context`        — (conditional on `process-pathway` in `legal_recognitions`)
 - `enforcement_sequence`           — (priority of enforcement agencies, with any enforcement requirements)
 - `private_roa_context`            — (conditional on `private-right-of-action` in `legal_recognitions`)
@@ -497,30 +524,39 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
                                       `damages-only`|`liability-only`|`see-context`)
 - `jury_trial_context`             — (conditional on `private-right-of-action` AND `jury-trial` in
                                       `legal_recognitions`)
-- `fee_shifting_rules`             — (taxonomy: `ws_fee_shifting_rule`)
-- `fee_shifting_rule_phases`       — (conditional on `fee_shifting_rules` includes `has-phases`; repeater:
+- `fee_shifting_standard`          — (sister field to `fee_shifting_standard_context`; select:
+                                      `bilateral-loser-pays`|`unilateral-pro-plaintiff`|`none-american-rule`|
+                                      `prevailing-defendant-bad-faith`|`see-context`)
+- `fee_shifting_scope`             — (sister field to `fee_shifting_standard_context`; multi-select: `mandatory`|
+                                      `discretionary`|`asymmetrical`|`has-phases`|`none`; hook for contradictions)
+- `fee_shifting_phases`            — (conditional on `fee_shifting_scope` is `has-phases`; repeater:
       ├── `phase`                        [select: `administrative`|`investigative`|`litigation`|`appeal`|
-      │                                   `has-details`],
-      ├── `fee_shifting_rule`            [single-select taxonomy: `ws_fee_shifting_rule`; hook excludes 
-      │                                   `has-phases` sentinel],
-      └── `phase_details`                [conditional on `phase` is `has-details`])
-- `fee_shifting_asymmetry`         — (conditional on `fee_shifting_rules` includes `has-asymmetry`; select:
-                                      `one-way-plaintiff`|`one-way-defendant-frivolous`|`two-way`|`american-rule`|
-                                      `has-details`)
+      │                                   `see-context`],
+      ├── `phase_standard`               [select: `bilateral-loser-pays`|`unilateral-pro-plaintiff`|
+      │                                   `unilateral-pro-defendant`| `prevailing-defendant-bad-faith`|
+      │                                   `none-american-rule`|`see-context`],
+      ├── `phase_scope`                  [multi-select: `mandatory`|`discretionary`|`asymmetrical`|`none`],
+      ├── `phase_asymmetry`              [conditional on `phase_scope` is `asymmetrical`; select: `two-way`|
+      │                                   `one-way-plaintiff`|`one-way-defendant-frivolous`|`has-details`],
+      ├── `asymmetry_details`            [conditional on `phase_asymmetry` is `has-details`] ,                   
+      └── `phase_context`                [conditional on `phase` is non-empty])
+- `fee_shifting_asymmetry`         — (conditional on `fee_shifting_scope` is `asymmetrical`; select: `two-way`|
+                                      `one-way-plaintiff`|`one-way-defendant-frivolous`|`has-details`)
 - `fee_shifting_asymmetry_details`
+- `fee_shifting_standard_context`  — (conditional on `fee-shifting-standard` in `legal_recognitions`)
 - `remedies`                       — (taxonomy: `ws_remedy`)
 - `remedy_limits`                  — (conditional on `remedies` includes `has-limits`)
 - `remedy_caps`                    — (sister field to `remedy_limits`; repeater:
-       ├── `cap_remedy`                  [select: `emotional-distress`|`punitive`|`compensatory`|`aggregate`|
-       │                                  `employer-size-tiered`],
-       ├── `employer_tier`               [conditional on `cap_remedy` is `employer-size-tiered`, e.g. "15-14", "100+"],
-       ├── `max_amount`                  [e.g., "300000", "uncapped"],
+       ├── `remedy_cap`                  [select: `emotional-distress`|`punitive`|`compensatory`|`aggregate`|
+       │                                  `employer-size-tiered`|`see-context`],
+       ├── `employer_tier`               [conditional on `cap_remedy` is `employer-size-tiered`,
+       │                                  e.g. "15-24", "100+"],
+       ├── `cap_amount`                  [e.g., "300000", "uncapped"],
        ├── `applies_to`                  [select: `single-claim`|`per-plaintiff`|`per-incident`|`aggregate-action`|
-       │                                  `has-details`],
-       └── `application_details`         [conditional on `applies_to` is `has-details`])
-- `remedy_caps_context`            — (sister field to `remedy_limits`)
-- `has_blacklisting_extended`      — (conditional on`blacklisting` in `adverse_actions`; true when future-employers
-                                      are also specified)
+       │                                  `see-context`],
+       └── `cap_context`                [conditional on `remedy_cap` is non-empty])
+- `has_blacklisting_extended`      — (conditional on `blacklisting` in `adverse_actions`; true when
+                                      future-employers are also specified)
 - `blacklisting_extended_details`
 - `remedy_details`
 - `remedy_liquidated_multiplier`   — (conditional on `liquidated-damages` in `remedies`; select:
@@ -528,17 +564,17 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
                                       `statutory-daily-fine`|`up-to-double`|`up-to-treble`|`has-details`)
 - `remedy_liquidated_formula`      — (conditional on `remedy_liquidated_multiplier` is `statutory-formula`)
 - `remedy_liquidated_details`      — (conditional on `remedy_liquidated_multiplier` is `has-details`)
-- `mitigation_required_scope`      — (sister field to `mitigation_required_context`;select: `yes-statutory`|
-                                      `yes-common-law`|`has-details`, hook for invalid combos)
-- `mitigation_required_context`    — (conditional on `mitigation-required` is `legal_recognitions`)
-- `mitigation_exception_context`   — (conditional on `mitigation-required` is `legal_recognitions` AND
-                                      `mitigation-exception` is `legal_recognitions`)
-- `interest_provision_scope`       — (sister field to`interest_provision_context`; select: `pre-judgment-statutory`|
+- `mitigation_required_scope`      — (sister field to `mitigation_required_context`; select: `yes-statutory`|
+                                      `yes-common-law`|`has-details`)
+- `mitigation_required_context`    — (conditional on `mitigation-required` in `legal_recognitions`)
+- `mitigation_exception_context`   — (conditional on `mitigation-required` in `legal_recognitions` AND
+                                      `mitigation-exception` in `legal_recognitions`)
+- `interest_provision_scope`       — (sister field to `interest_provision_context`; select: `pre-judgment-statutory`|
                                       `post-judgment`|`both`|`discretionary`|`see-context`)
 - `interest_provision_context`     — (conditional on `equitable-interest-award` in `legal_recognitions`)
 - `reinstatement_standard`         — (sister field to `preliminary_reinstatement_context`; select: `mandatory`|
                                       `discretionary`|`has-details`)
-- `reinstatement_standard_details`
+- `reinstatement_standard_details` — (sister field to `preliminary_reinstatement_context`)
 - `preliminary_reinstatement_scope`     — (sister field to `preliminary_reinstatement_context`; select:
                                            `admin-phase`|`full-pendency`|`both`)
 - `preliminary_reinstatement_context`   — (conditional on `preliminary-reinstatement` in `legal_recognitions`)
@@ -559,16 +595,16 @@ rebuttable presumption → temporal presumption → detail overflow
 - `burden_shifting_context`        — (conditional on `burden_shifting_framework` is non-empty)
 - `burden_shifting_details`
 - `same_decision_standard`         — (sister field to `same_decision_context`; select: `preponderance`|
-                                      `clear-and-convincing`|`not-available`|`see-context`)
+                                      `clear-and-convincing`|`see-context`)
 - `same_decision_context`          — (conditional on `employer_defenses` includes `same-decision-defense`)
 - `causal_nexus_statutory_text`    — (conditional on `causation_standards` is non-empty; verbatim or near-verbatim
                                       statutory language describing the causal link standard)
 - `employee_standards`             — (taxonomy: `ws_employee_standard`; evidentiary burden only)
 - `employee_standard_details`
 - `causation_standards`            — (taxonomy: `ws_causation_standard`; causal link standard)
-- `causation_application`          — (sister field to `causation_standard_context`; multi-select: `liability`|
-                                      `damages`|`both`|`has-details`; combo limited to `has-details` plus one other)
-- `causation_application_details`
+- `causation_application`          — (sister field to `causation_standard_context`; select: `liability`|
+                                      `damages`|`both`|`see-context`)
+- `causation_application_context`  — (conditional on `causation_application` is non-empty)
 - `causation_standard_context`     — (conditional on `causation_standards` is non-empty)
 - `causation_dual_standard_context`  — (conditional on `causation-dual-standard` in `legal_recognitions`)
 - `employer_knowledge_scope`       — (sister field to `employer_knowledge_context`; select:
@@ -615,7 +651,7 @@ Fields ordered: rewards → qui tam specifics
                                       reduce share below statutory floor)
 - `qui_tam_share_context`          — (conditional on `qui-tam` in `process_types`)
 - `has_first_to_file_bar`          — (sister field to `qui_tam_share_context`)
-- `first_to_file_details`
+- `first_to_file_bar_details`
 - `has_public_disclosure_bar`      — (sister field to `qui_tam_share_context` AND conditional on
                                       `bounty-qui-tam-award` in `remedies`)
 - `public_disclosure_bar_details`
@@ -643,30 +679,30 @@ Fields ordered: contractual → recognitions → immunity → defendants.
 - `proper_defendant_details`
 - `joint_employer_context`         — (conditional on `proper_defendants` includes `joint-employer` OR
                                       `staffing-agency`)
-- `individual_liability_scope`     — (sister of `individual_liability_context`; multi-select: `supervisor`|
+- `individual_liability_scope`     — (sister field to `individual_liability_context`; multi-select: `supervisor`|
                                       `coworker`|`officer-director`|`any-individual`|`has-details`)
 - `individual_liability_context`   — (conditional on `individual-liability` in `legal_recognitions`)
-- `sovereign_immunity_statuses`    — (sister field of `sovereign_immunity_context`; taxonomy:
+- `sovereign_immunity_statuses`    — (sister field to `sovereign_immunity_context`; taxonomy:
                                       `ws_sovereign_immunity_status`)
-- `sovereign_immunity_scope`       — (sister field to `sovereign_immunity_status_details`; select:
+- `sovereign_immunity_scope`       — (sister field to `sovereign_immunity_context`; multi-select:
                                       `state-only`|`instrumentalities-included`|`political-subdivisions-included`|
                                       `all`|`see-details`)
-- `sovereign_immunity_waiver`      — (sister field to `sovereign_immunity_status_details`; select:
-                                      `explicit-waiver`|`implied-waiver`|`none`|`not-applicable`)
-- `sovereign_immunity_status_details`
+- `sovereign_immunity_waiver`      — (sister field to `sovereign_immunity_context`; select:
+                                      `explicit-waiver`|`implied-waiver`|`none`)
+- `sovereign_immunity_status_details` — (sister field to `sovereign_immunity_context`)
 - `sovereign_immunity_context`     — (conditional on `sovereign-immunity-status` in `legal_recognitions`)
 - `nda_limits_context`             — (conditional on `nda-limitations` in `legal_recognitions`)
 - `anti_gag_provision_context`     — (conditional on `anti-gag-provision` in `legal_recognitions`)
 - `no_retaliatory_evidence_context`  — (conditional on `no-retaliatory-evidence` in `legal_recognitions`)
 - `stay_of_discipline_context`     — (conditional on `stay-of-disciplinary-action` in `legal_recognitions`)
-- `anti_slapp_protection_scope`    — (sister field to `anti_slapp_protection_context`; select:
+- `anti_slapp_protection_scope`    — (sister field to `anti_slapp_protection_context`; multi-select:
                                       `motion-to-strike`|`discovery-stay`|`fee-shift-on-motion`|
                                       `full-procedural`|`see-context`)
 - `anti_slapp_protection_context`  — (conditional on `anti-slapp-protection` in `legal_recognitions`)
 - `discovery_protection_context`   — (conditional on `discovery-protection` in `legal_recognitions`; documents
                                       specific protections against retaliatory subpoenas, abusive discovery,
                                       or litigation harassment distinct from anti-SLAPP)
-- `settlement_restriction_scope`   — (sister field to `settlement_restriction_context`; select: `amount-only`|
+- `settlement_restriction_scope`   — (sister field to `settlement_restriction_context`; multi-select: `amount-only`|
                                       `facts`|`full-prohibition`|`agency-notification`|`see-context`)
 - `settlement_restriction_context` — (conditional on `confidential-settlement-restriction` in `legal_recognitions`)
 - `successor_liability_context`    — (conditional on `successor-liability` in `legal_recognitions`)
@@ -689,7 +725,7 @@ Fields ordered: reviewed → source url → authority
 
 - `last_reviewed_date`             — (manually updated when record reviewed for accuracy)
 - `url`                            — (url field; statute / precedent / case law URL (shared slot))
-- `url_is_pdf`                     — (when true, renderer adds a "(PDF)" text after the url)
+- `url_is_pdf`                     — (true when source URL points to a PDF)
 - `authority_reference`            — (holds the official legislative history citation or regulatory citation
                                       (CFR, Federal Register, etc.))
 
@@ -700,7 +736,7 @@ Fields ordered: reviewed → source url → authority
 Fields ordered: id → derived
 
 - `_id`                            — (generated by ingest tool or matrix seeder)
-- `_disclosure_target_class`       — (derived from `disclosure_targets`; auto-fill by hook on save; select:
+- `_disclosure_target_class`       — (derived from `disclosure_targets`; select:
                                       `internal`|`external`|`both`)
 
 ---
@@ -729,10 +765,10 @@ These fields do not appear on substantive records.
 - `review_standard_scope`          — (sister field to `review_standard_context`; select: `de-novo`|
                                       `substantial-evidence`|`arbitrary-capricious`|`abuse-of-discretion`|
                                       `has-details`)
-- `review_standard_details`
+- `review_standard_details`        — (sister field to `review_standard_context`)
 - `review_standard_context`        — (conditional on `civil-review-standard` in `legal_recognitions`)
 
-#### Processes & Remedies Tab (insert after `anticipatory_retaliation_context`)
+#### Retaliation Tab (insert after `anticipatory_retaliation_context`)
 - `election_of_remedies_rules`     — (multi-select: `administrative-bars-civil`|`state-bars-federal`|
                                       `remedy-exclusivity`|`first-filed-controls`|`no-election-required`|
                                       `see-context`)
@@ -745,8 +781,7 @@ These fields do not appear on substantive records.
 
 #### Hidden Fields
 
-- `_precedent_ids`                 — (merged array of `citation_ids` and `construction_ids`; auto-fill by hook
-                                      on save)
+- `_precedent_ids`                 — (merged array of `citation_ids` and `construction_ids`)
 
 ---
 
@@ -759,9 +794,8 @@ These fields do not appear on substantive records.
 
 #### Hidden Fields
 
-- `_primary_agency_is_fed`         — (derived from `primary_agency` jx; auto-fill by hook on save)
-- `_related_agencies`              — (merged array of `local_agencies` and `federal_agencies`; auto-fill by hook
-                                      on save)
+- `_primary_agency_is_fed`         — (derived from `primary_agency` jx)
+- `_related_agencies`              — (merged array of `local_agencies` and `federal_agencies`)
 
 ---
 
@@ -801,12 +835,10 @@ These fields do not appear on precedent-records.
 
 - `status`                         — (select: `published`|`unpublished`|`memorandum`|`vacated`)
 - `binding_scope`                  — (select: `binding`|`persuasive`|`mixed`|`distinguished`|`overruled`)
-- `court`                          — (select: populate choices by hook on load/fill filter by jx)
+- `court`                          — (select; filtered by jx)
 - `court_details`                  — (conditional on `court` is `has-details`)
-- `court_jx`                       — (sister field to `court_details`; taxonomy: `WS_JURISDICTION_TAXONOMY`,
-                                      `load_terms` => 1, `save_terms` => 0)
-- `court_is_fed`                   — (derived from `court` `ws_jx_codes`; manually set when `court`
-                                      is `has-details`)
+- `court_jx`                       — (sister field to `court_details`; taxonomy: `WS_JURISDICTION_TAXONOMY`)
+- `court_is_fed`                   — (derived from `court` `ws_jx_codes`)
 
 #### Effective Date Tab (insert after `effective_year`)
 
@@ -821,13 +853,9 @@ These fields do not appear on precedent-records.
 - `suppressed_taxonomies`          — (conditional on `scope` is `adverse`; repeater:
       ├── `taxonomy`                     [select: taxonomy slug],
       └── `term`                         [select: taxonomy term])
-- `has_affected_jx`                — (derived from `court` `ws_jx_codes`; manually set false when single jx
-                                      is same as precedent `jurisdiction`; manually set if true when
-                                      `court`-`has-details` and covers multiple jx)
-- `affected_jx`                    — (conditional on `has_affected_jx`; derived from `court` `ws_jx_codes`;
-                                      manually set taxonomy: `WS_JURISDICTION_TAXONOMY`, `load_terms` => 1,
-                                      `save_terms` => 0, once `has_affected_jx` is true to apply affected jx
-                                       by `court`-`has-details` `court_jx`)
+- `has_affected_jx`                — (derived from `court` `ws_jx_codes`; true when affected jx differs from
+                                      precedent `jurisdiction`)
+- `affected_jx`                    — (conditional on `has_affected_jx`; taxonomy: `WS_JURISDICTION_TAXONOMY`)
 
 #### Relationships Tab
 
@@ -836,13 +864,12 @@ These fields do not appear on precedent-records.
 - `parent_weight`                  — (select: `primary`|`secondary`|`distinguishing-only`)
 - `has_negative_treatment`
 - `negative_treatment_class`       — (sister field to `negative_treatment_details`; select: `overruled`|
-                                      `distinguished`|`limited`|`questioned`|`superseded-by-statute`|`has-details`)
-- `negative_treatment_class_details`
+                                      `distinguished`|`limited`|`questioned`|`superseded-by-statute`|`see-details`)
 - `negative_treatment_details`
 
 #### Source / Audit Tab (insert after `authority_reference`)
 
-- `authority_source`               — (select: `constitutional`|`legislative`|`judicial`|`regulatory`|
+- `authority_source`               — (multi-select: `constitutional`|`legislative`|`judicial`|`regulatory`|
                                       `executive`|`has-details`)
 - `authority_source_details`
 - `review_standard_scope`          — (select: `de-novo`|`substantial-evidence`|`arbitrary-capricious`|
@@ -857,10 +884,9 @@ These fields do not appear on precedent-records.
 
 #### Hidden Fields
 
-- `_primary_agency_is_fed`         — (derived from `primary_agency` jx; auto-fill by hook on save)
-- `_related_agencies`              — (merged array of `local_agencies` and `federal_agencies`; auto-fill by hook
-                                      on save)
-- `_parent_ids`                    — (merged array of `statute_ids` and `comlaw_ids`; auto-fill by hook on save)
+- `_primary_agency_is_fed`         — (derived from `primary_agency` jx)
+- `_related_agencies`              — (merged array of `local_agencies` and `federal_agencies`)
+- `_parent_ids`                    — (merged array of `statute_ids` and `comlaw_ids`)
 
 ---
 
@@ -893,8 +919,7 @@ Only fields that currently violate target naming conventions, are inconsistent
 across legal ACFs, or were structurally redesigned during the canonical rewrite.
 Fields that are unchanged or new do not appear in this list.
 
-- `fee_shiftings`                            → `fee_shifting_rules`
-- `ws_fee_shifting`                          → `ws_fee_shifting_rule`          (taxonomy table)
+- `fee_shiftings`                            → `fee_shifting_standard`
 - `has_limit_ambiguous`                      → `has_sol_details`
 - `limit_details`                            → `sol_details`
 - `has_tolling_details`                      →  split into `statutory-tolling` and `equitable-tolling` true when present in `legal_recognitions`
@@ -932,6 +957,7 @@ Fields that are unchanged or new do not appear in this list.
 - `has_preemption` + `preemption_details`    →  removed (preemption block replaced with `federal_state_interaction` block)
 - `preemption_direction`                     → `federal_state_interaction`
 - `sovereign_immunity_limits`                → `sovereign_immunity_statuses`    (taxonomy)
+
 ---
 
 ## Relationship Direction Contract (For Sync)
@@ -942,6 +968,39 @@ Fields that are unchanged or new do not appear in this list.
 ---
 
 ## Cross-Tab Conditional and Monitoring
+
+### Contradiction Guard Cross-Tab Pairs
+The following hook guards compare fields that live on different tabs:
+
+- `garcetti-exception` in `legal_recognitions` requires `public-sector` in `employment_sectors`.
+- `exhaustion-required` in `legal_recognitions` conflicts with `direct-filing-permitted` in `process_types`.
+- `sovereign-immunity-waiver` in `legal_recognitions` conflicts with `sovereign_immunity_waiver` is `none` or
+  `not-waived` in `sovereign_immunity_statuses`.
+- `protected_classes` and `excluded_classes` must not contain the same class slug.
+
+### Contradiction Guard Cross-Field in Sister Blocks
+The following hook guards compare fields in a single block:
+
+- `fee_shifting` block (Processes & Remedies tab), monitor for contradictions and invalid combinations.
+  * `fee_shifting_standard` has possible values that makes some values in `fee_shifting_scope` invalid.
+  * `fee_shifting_scope` is multi-select and can create invalid combos.
+  * `fee-shifting-standard` in `legal_recognitions`, means that `none-american-rule` can only be set with phased
+     exceptions. `fee_shifting_scope` must be set to `has-phases`only, or `fee-shifting-standard` removed from
+    `legal_recognitions`.
+
+### Contradiction Guard Same-Field Multi-Selects
+The following hook guards protect multi-select fields whose choices include umbrella or fallback values:
+
+- `sovereign_immunity_scope` cannot combine `state-only` with `instrumentalities-included`,
+   `political-subdivisions-included`, or `all`.
+- `sovereign_immunity_scope` cannot combine `all` with `state-only`, `instrumentalities-included`, or
+   `political-subdivisions-included`.
+- `anti_slapp_protection_scope` cannot combine `full-procedural` with `motion-to-strike`, `discovery-stay`, or
+   `fee-shift-on-motion`.
+- `settlement_restriction_scope` cannot combine `full-prohibition` with `amount-only`, `facts`, or
+   `agency-notification`.
+- `malicious_reporting_sanctions.sanction_penalty` cannot combine `felony` and `misdemeanor` in the same repeater
+   row. Add a second row when the same provision creates separate felony and misdemeanor tracks.
 
 ### mixed-motive → mixed_motive_remedy_context
 
@@ -980,15 +1039,16 @@ Conditional-Companion fields `*_context` noted with ` → ` are triggered by slu
 Sister fields noted by ` + ` inherit the conditional behavior, but are defined by the sibling.
 Sister fields cannot appear without the triggered sibling being revealed.
 Sister fields can (and usually do) appear before sibling.
-Sister fields can have additional conditionals AND / OR / NOT.
+Sister fields can have additional conditionals, use AND / OR / NOT after sibling is declared.
 
 ```
+
 // ── Identity Tab ─────────────────────────────────────────────────────────────
 'retroactive-date'                    → 'retro_context'                         + 'retro_date'                       // Specified
 
 // ── Classification Tab ───────────────────────────────────────────────────────
 'manager-rule-exclusion'              → 'manager_rule_exclusion_context'                                             // Applies
-'public-concern-required'             → 'public_concern_required_context'                                                     // Applies
+'public-concern-required'             → 'public_concern_required_context'                                            // Applies
 'bad-faith-exclusion'                 → 'bad_faith_exclusion_context'                                                // Applies
 'malicious-reporting-sanctions'       → 'malicious_reporting_context'           + 'malicious_reporting_sanctions'    // Applies
 'anonymity-protection'                → 'anonymity_protection_context'                                               // Recognized
@@ -1005,31 +1065,44 @@ Sister fields can have additional conditionals AND / OR / NOT.
 'equitable-tolling'                   → 'equitable_tolling_context'                                                  // Recognized
 'cba-grievance-preemption'            → 'cba_preemption_context'                                                     // Applies
 'amended-claim'                       → 'amended_claim_context'                                                      // Recognized
-'exhaustion-required'                 → 'exhaustion_required_context'           + 'exhaustion_required_class'        // Required
+'exhaustion-required'                 → 'exhaustion_required_context'           + 'exhaustion_required_scope'        // Required
 'pre-filing-notice'                   → 'filing_notice_context'                 + 'filing_notice_target' + 'filing_notice_value'
                                                                                 + 'filing_notice_unit'               // Required
 'statutory-preclusion'                → 'statutory_preclusion_context'                                               // Applies
 
-// ── Retaliation Tab ──────────────────────────────────────────────────────────
+// ── Retaliation Tab ───────────────────────────────────────────────────────────────────
+'evidence-preservation'               → 'evidence_preservation_context'         + 'preservation_deadline_value' + 'preservation_deadline_unit'
+                                                                                + 'preservation_requirement_scope'   // Required
 'cats-paw-liability'                  → 'cats_paw_liability_context'            + 'is_cats_paw_liability_extended'   // Recognized
 'third-party-retaliation'             → 'third_party_retaliation_context'                                            // Prohibited
 'criminal-sanctions'                  → 'criminal_sanctions_context'            + 'criminal_sanctions'               // Specified
 
 // ── Processes & Remedies Tab ──────────────────────────────────────────────────────────
+'process-pathway'                     → 'process_pathway_context'               + 'process_pathway_scope'
+                                                                                + 'is_agency_inaction_trigger'       // Specified
 'private-right-of-action'             → 'private_roa_context'                                                        // Available
 'jury-trial'                          → 'jury_trial_context'                    + 'jury_trial_scope'                 // Available
-'preliminary-reinstatement'           → 'preliminary_reinstatement_context'     + 'preliminary_reinstatement_standard' + 'reinstatement_standard_details'
+'fee-shifting-standard'               → 'fee_shifting_standard_context'         + 'fee_shifting_standard_context'
+'civil-review-standard'               → 'review_standard_context'               + 'review_standard_scope'
+                                                                                + 'review_standard_details'          // Specified
+'equitable-interest-award'            → 'interest_provision_context'            + 'interest_provision_scope'         // Available
+'mitigation-required'                 → 'mitigation_required_context'           + 'mitigation_required_scope'        // Specified
+'mitigation-exception'                → 'mitigation_exception_context'                                               // Recognized
+'preliminary-reinstatement'           → 'preliminary_reinstatement_context'     + 'reinstatement_standard' + 'reinstatement_standard_details'
                                                                                 + 'preliminary_reinstatement_scope'  // Available
 
-// ── Burden of Proof Tab ──────────────────────────────────────────────────────
+// ── Burden of Proof Tab ───────────────────────────────────────────────────────────────
+'causation-dual-standard'             → 'causation_dual_standard_context'                                            // Applies
 'employer-knowledge'                  → 'employer_knowledge_context'            + 'employer_knowledge_scope'         // Required
 'temporal-proximity-sufficient'       → 'temporal_proximity_context'            + 'temporal_proximity_value'
                                                                                 + 'temporal_proximity_unit'          // Recognized
 
-// ── Waiver & Scope Tab ───────────────────────────────────────────────────────
+// ── Waiver & Scope Tab ────────────────────────────────────────────────────────────────
 'contractual-waiver'                  → 'contractual_waiver_context'            + 'contractual_waiver_scope'         // Recognized
 'waiver-of-collateral-claims'         → 'waiver_of_collateral_claims_context'                                        // Applies
 'class-action-waiver'                 → 'class_action_waiver_context'                                                // Recognized
+'sovereign-immunity-status'           → 'sovereign_immunity_context'            + 'sovereign_immunity_statuses' + 'sovereign_immunity_scope' + 'sovereign_immunity_waiver'
+                                                                                + 'sovereign_immunity_status_details' // Specified
 'nda-limitations'                     → 'nda_limits_context'                                                         // Recognized
 'anti-gag-provision'                  → 'anti_gag_provision_context'                                                 // Recognized
 'no-retaliatory-evidence'             → 'no_retaliatory_evidence_context'                                            // Barred
@@ -1041,7 +1114,7 @@ Sister fields can have additional conditionals AND / OR / NOT.
 'successor-liability'                 → 'successor_liability_context'                                                // Recognized
 'extraterritorial-coverage'           → 'extraterritorial_context'                                                   // Recognized
 
-// ── Without Context (no tab) ────────────────────────────────────────────────
+// ── Without Context (no tab) ─────────────────────────────────────────────────────────
 'statutory-nexus-diverges-from-common-law'  — (no companion needed)   // Applies
 'catch-all-protection'                      — (no companion needed)   // Present
 'internal-only-disclosure'                  — (no companion needed)   // Sufficient
@@ -1072,44 +1145,6 @@ Sister fields can have additional conditionals AND / OR / NOT.
 The same underlying concept (e.g. contributing factor) may appear in both tables under different framing —
 intentional and legally correct.
 
-### Existing Tables: Term Additions (v2.3) [DONE]
-
-### NEVER ###
-### DO THIS AND I WILL SHOOT YOUR DOG ### All additions to existing tables require a `seed_version` bump on the affected taxonomy in `register-taxonomies.php`.
-### NEVER ###
-
-**`ws_legal_recognition`** — append in logical tab order, before the Without Context block: [DONE]
-
-| Slug | Label | Companion | Note |
-|---|---|---|---|
-| `garcetti-exception` | Garcetti / Official-Duties Exclusion Applies | → `garcetti_exception_context` | Applies |
-| `official-duties-carveout` | Official Duties Carveout (Lane v. Franks Exception) | (no companion) | Applies |
-| `equitable-interest-award` | Equitable Interest Provision Available | → `interest_provision_context` | Available |
-| `mitigation-exception` | Mitigation Exception Recognized | → `mitigation_exception_context` | Recognized |
-| `causation-dual-standard` | Causation Dual Standard (Liability vs Damages Differ) | → `causation_dual_standard_context` | Applies
-| `statutory-nexus-diverges-from-common-law` | Statutory Nexus Overrides Circuit Common Law | (no companion) | Applies |
-
-**`ws_remedy`** — append before `has-limits` sentinel: [DONE]
-
-| Slug | Label |
-|---|---|
-| `non-economic-cap-separate` | Non-Economic Damages Capped Separately |
-| `punitive-damages-capped-separately` | Punitive Damages Capped Separately |
-
-***`ws_process_type`** — append after existing terms. [DONE]
-
-| Slug | Label |
-|---|---|
-| `hybrid-admin-civil-path` | Hybrid Admin → Civil Pathway |
-| `direct-filing-permitted` | Direct Filing Permitted (No Exhaustion) |
-
-**`ws_protected_class`** [DONE]
-
-| Slug | Label | Parent |
-|---|---|---|
-| `victim-domestic-violence-sexual-assault` | Victim of Domestic/Sexual Violence | `special-status` |
-| `domestic-work-employee` | Domestic Work Employee | `private-sector` |
-
 ---
 
 ## Notes
@@ -1122,4 +1157,3 @@ intentional and legally correct.
   are not independently conditional.
 - Zero live data implications. This spec is purely structural and ready for PHP field generation or
   ingest schema mapping.
-
