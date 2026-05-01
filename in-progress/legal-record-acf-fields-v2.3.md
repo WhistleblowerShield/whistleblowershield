@@ -334,7 +334,7 @@ Fields ordered: identification → related dates → scope → curated
 - `effective_year`                 — (derived from `effective_date` if present, `date` if not)
 - `retro_date`                     — (sister field to `retro_context`)
 - `retro_context`                  — (conditional on `retroactive-date` in `legal_recognitions`)
-- `_protection_scope`              — (single-select taxonomy: `ws_protection_scope`; internal use only)
+- `protection_scope`               — (single-select taxonomy: `ws_protection_scope`; internal use only)
 - `general_description`            — (brief; reserve full summary for `plain_english_wysiwyg`)
 - `has_attach_flag`                — (special-case; approved use of `has_*` bool; triggers display_order. Used
                                       together for attaching curated records to jx-summary at render)
@@ -400,7 +400,7 @@ Fields ordered: core SOL → modifiers → exhaustion → pathways → threshold
 - `sol_trigger`                    — (select: `accrual`|`constructive-discharge-accrual`|`discovery-rule`|
                                       `filing-of-complaint`|`conclusion-of-admin-process`|`see-context`)
 - `sol_trigger_discovery_context`  — (conditional on `sol_trigger` is `discovery-rule`; detail discovery specifics)
-- `sol_trigger_context`            — (conditional on `sol_trigger` is non-empty; detail trigger as legally factual
+- `sol_trigger_context`            — (conditional on `sol_trigger` is non-empty; detail trigger as legal, factual,
                                       or contextual as necessary)
 - `is_sol_suspended_during_admin`  — (only true when SOL is explicitly tolled while pending administrative action)
 - `has_sol_details`
@@ -479,7 +479,7 @@ Fields ordered: adverse actions → recognitions → sanctions
 
 ---
 
-### Process & Remedies Tab
+### Processes & Remedies Tab
 
 Fields ordered: process → pathway → fee shifting → remedies → reinstatement
 
@@ -558,9 +558,9 @@ rebuttable presumption → temporal presumption → detail overflow
                                       see [Cross-Tab Conditional and Monitoring] below)
 - `burden_shifting_context`        — (conditional on `burden_shifting_framework` is non-empty)
 - `burden_shifting_details`
-- `same_decision_standard`         — (select: `preponderance`|`clear-and-convincing`|`not-available`|`see-context`;
-                                      conditional on `employer_defenses` includes `same-decision-defense` OR
-                                      `same-decision-clear-convincing`)
+- `same_decision_standard`         — (sister field to `same_decision_context`; select: `preponderance`|
+                                      `clear-and-convincing`|`not-available`|`see-context`)
+- `same_decision_context`          — (conditional on `employer_defenses` includes `same-decision-defense`)
 - `causal_nexus_statutory_text`    — (conditional on `causation_standards` is non-empty; verbatim or near-verbatim
                                       statutory language describing the causal link standard)
 - `employee_standards`             — (taxonomy: `ws_employee_standard`; evidentiary burden only)
@@ -584,8 +584,8 @@ rebuttable presumption → temporal presumption → detail overflow
 - `presumption_window_value`       — (sister field to `temporal_presumption_details`)
 - `presumption_window_unit`        — (sister field to `temporal_presumption_details`; select: `days`|`weeks`|
                                       `months`|`years`)
-- `presumption_effect`             — (sister field to `temporal_presumption_details`; select:
-                                      `shifts-burden`|`creates-inference`|`rebuttable-presumption`|`has-details`)
+- `presumption_effect`             — (sister field to `temporal_presumption_details`; select: `shifts-burden`|
+                                      `creates-inference`|`rebuttable-presumption`|`has-details`)
 - `presumption_effect_details`
 - `temporal_presumption_details`
 - `temporal_proximity_value`       — (sister field to `temporal_proximity_context`)
@@ -614,13 +614,11 @@ Fields ordered: rewards → qui tam specifics
 - `qui_tam_reduction_context`      — (sister field to `qui_tam_share_context`; conditions under which the court may
                                       reduce share below statutory floor)
 - `qui_tam_share_context`          — (conditional on `qui-tam` in `process_types`)
-- `has_first_to_file_bar`          — (qui-tam only. True when a prior filing by another relator may
-                                      bar this claim under the first-to-file rule)
-- `first_to_file_context`          — (conditional on `has_first_to_file_bar` is true)
-- `has_public_disclosure_bar`      — (qui-tam only. True when prior public disclosure may independently
-                                      bar this claim; flag whenever `bounty-qui-tam-award` is in `remedies`
-                                      to prevent false reads on claim availability)
-- `public_disclosure_bar_context`  — (conditional on `has_public_disclosure_bar` is true)
+- `has_first_to_file_bar`          — (sister field to `qui_tam_share_context`)
+- `first_to_file_details`
+- `has_public_disclosure_bar`      — (sister field to `qui_tam_share_context` AND conditional on
+                                      `bounty-qui-tam-award` in `remedies`)
+- `public_disclosure_bar_details`
 
 ---
 
@@ -648,7 +646,7 @@ Fields ordered: contractual → recognitions → immunity → defendants.
 - `individual_liability_scope`     — (sister of `individual_liability_context`; multi-select: `supervisor`|
                                       `coworker`|`officer-director`|`any-individual`|`has-details`)
 - `individual_liability_context`   — (conditional on `individual-liability` in `legal_recognitions`)
-- `sovereign_immunity_status`      — (sister field of `sovereign_immunity_context`; taxonomy:
+- `sovereign_immunity_statuses`    — (sister field of `sovereign_immunity_context`; taxonomy:
                                       `ws_sovereign_immunity_status`)
 - `sovereign_immunity_scope`       — (sister field to `sovereign_immunity_status_details`; select:
                                       `state-only`|`instrumentalities-included`|`political-subdivisions-included`|
@@ -726,7 +724,7 @@ The notable precedent fields capture modifications to the definitions:
 - `_parent_ids`: `statute_ids`, `comlaw_ids` — legal record or records affected by ruling
 These fields do not appear on substantive records.
 
-#### Process & Remedies Tab (insert after `jury_trial_context`)
+#### Processes & Remedies Tab (insert after `jury_trial_context`)
 
 - `review_standard_scope`          — (sister field to `review_standard_context`; select: `de-novo`|
                                       `substantial-evidence`|`arbitrary-capricious`|`abuse-of-discretion`|
@@ -734,7 +732,7 @@ These fields do not appear on substantive records.
 - `review_standard_details`
 - `review_standard_context`        — (conditional on `civil-review-standard` in `legal_recognitions`)
 
-#### Process & Remedies Tab (insert after `anticipatory_retaliation_context`)
+#### Processes & Remedies Tab (insert after `anticipatory_retaliation_context`)
 - `election_of_remedies_rules`     — (multi-select: `administrative-bars-civil`|`state-bars-federal`|
                                       `remedy-exclusivity`|`first-filed-controls`|`no-election-required`|
                                       `see-context`)
@@ -747,16 +745,17 @@ These fields do not appear on substantive records.
 
 #### Hidden Fields
 
-- `_precedent_ids`                 — (merged array of `citation_ids` and `construction_ids`; auto-fill by hook on save)
+- `_precedent_ids`                 — (merged array of `citation_ids` and `construction_ids`; auto-fill by hook
+                                      on save)
 
 ---
 
 ### Statute-Specific
 
-#### Process & Remedies Tab (insert after `local_agencies`)
+#### Processes & Remedies Tab (insert after `local_agencies`)
 
 - `federal_agencies`               — (multi-select: post_type[`ws-agency`] filtered to jx='us', common
-                                      `*disclosure*` and `process_types`))
+                                      `*disclosure*` and `process_types`)
 
 #### Hidden Fields
 
@@ -768,7 +767,7 @@ These fields do not appear on substantive records.
 
 ### Common-Law-Specific
 
-#### Identity and Publishing Tab (insert after `citation`)
+#### Identity Tab (insert after `citation`)
 
 - `precedent_common`               — (common name for precedent case held in field `citation`)
 
@@ -798,7 +797,7 @@ inapplicable to court decisions:
 - `_precedent_ids`              — Precedent-Records have `_parent_ids`: `statute_ids`, `comlaw_ids` instead.
 These fields do not appear on precedent-records.
 
-#### Identity and Publishing Tab
+#### Identity Tab
 
 - `status`                         — (select: `published`|`unpublished`|`memorandum`|`vacated`)
 - `binding_scope`                  — (select: `binding`|`persuasive`|`mixed`|`distinguished`|`overruled`)
@@ -816,10 +815,12 @@ These fields do not appear on precedent-records.
 #### Classification Tab (insert after `legal_recognitions`)
 
 - `scope`                          — (select: `favorable`|`adverse`|`neutral`)
-- `extended_taxonomies`            — (conditional on `scope` is `favorable`; repeater;
-                                      each row: taxonomy slug + term slug being added to parent's coverage)
-- `suppressed_taxonomies`          — (conditional on `scope` is `adverse`; repeater;
-                                      each row: taxonomy slug + term slug being removed from parent's coverage)
+- `extended_taxonomies`            — (conditional on `scope` is `favorable`; repeater:
+      ├── `taxonomy`                     [select: taxonomy slug],
+      └── `term`                         [select: taxonomy term])
+- `suppressed_taxonomies`          — (conditional on `scope` is `adverse`; repeater:
+      ├── `taxonomy`                     [select: taxonomy slug],
+      └── `term`                         [select: taxonomy term])
 - `has_affected_jx`                — (derived from `court` `ws_jx_codes`; manually set false when single jx
                                       is same as precedent `jurisdiction`; manually set if true when
                                       `court`-`has-details` and covers multiple jx)
@@ -846,12 +847,13 @@ These fields do not appear on precedent-records.
 - `authority_source_details`
 - `review_standard_scope`          — (select: `de-novo`|`substantial-evidence`|`arbitrary-capricious`|
                                       `abuse-of-discretion`|`has-details`)
+- `review_standard_scope_details`
 - `review_standard_details`
 
-#### Process & Remedies Tab (insert after `local_agencies`)
+#### Processes & Remedies Tab (insert after `local_agencies`)
 
 - `federal_agencies`               — (multi-select: post_type[`ws-agency`] filtered to jx='us', common
-                                      `*disclosure*` and `process_types`))
+                                      `*disclosure*` and `process_types`)
 
 #### Hidden Fields
 
@@ -864,7 +866,7 @@ These fields do not appear on precedent-records.
 
 ### Citation-Specific
 
-#### Identity and Publishing Tab (insert after `citation`)
+#### Identity Tab (insert after `citation`)
 
 - `types`                          — (multi-select: `case-law`|`statute`|`regulatory`|`secondary`)
 - `type_context`                   — (conditional on `types` is non-empty; provide context for `types` chosen)
@@ -873,7 +875,7 @@ These fields do not appear on precedent-records.
 
 ### Construction-Specific
 
-#### Identity and Publishing Tab
+#### Identity Tab
 
 - `type`                           — (select: `case-law`|`statute`|`regulatory`|`secondary`)
 - `is_en_banc`                     — (defaults true; when false, triggers `panel_composition_details`; approved use
@@ -925,8 +927,11 @@ Fields that are unchanged or new do not appear in this list.
 - `doctrine_id`                              →  removed (visible dedupe IDs deemed unnecessary)
 - `bop_flag`                                 →  removed (used by researchers only, never meant for ACF meta)
 - `statute_id` + `comlaw_id` — singular      →  pluralized to support (rare-but-possible) multi-values
+- `disclosure_types`                         → `protected_disclosures`
+- `ws_disclosure_type` (taxonomy)            → `ws_protected_disclosure`        (taxonomy) 
+- `has_preemption` + `preemption_details`    →  removed (preemption block replaced with `federal_state_interaction` block)
 - `preemption_direction`                     → `federal_state_interaction`
-
+- `sovereign_immunity_limits`                → `sovereign_immunity_statuses`    (taxonomy)
 ---
 
 ## Relationship Direction Contract (For Sync)
@@ -975,9 +980,10 @@ Conditional-Companion fields `*_context` noted with ` → ` are triggered by slu
 Sister fields noted by ` + ` inherit the conditional behavior, but are defined by the sibling.
 Sister fields cannot appear without the triggered sibling being revealed.
 Sister fields can (and usually do) appear before sibling.
+Sister fields can have additional conditionals AND / OR / NOT.
 
 ```
-// ── Effective Date Tab ──────────────────────────────────────────────────────
+// ── Identity Tab ─────────────────────────────────────────────────────────────
 'retroactive-date'                    → 'retro_context'                         + 'retro_date'                       // Specified
 
 // ── Classification Tab ───────────────────────────────────────────────────────
@@ -1009,16 +1015,14 @@ Sister fields can (and usually do) appear before sibling.
 'third-party-retaliation'             → 'third_party_retaliation_context'                                            // Prohibited
 'criminal-sanctions'                  → 'criminal_sanctions_context'            + 'criminal_sanctions'               // Specified
 
-// ── Process & Remedies Tab ──────────────────────────────────────────────────────────
+// ── Processes & Remedies Tab ──────────────────────────────────────────────────────────
 'private-right-of-action'             → 'private_roa_context'                                                        // Available
 'jury-trial'                          → 'jury_trial_context'                    + 'jury_trial_scope'                 // Available
-'preliminary-reinstatement'           → 'preliminary_reinstatement_context'     + 'preliminary_reinstatement_standard'
-                                                                                + 'reinstatement_standard_details'
+'preliminary-reinstatement'           → 'preliminary_reinstatement_context'     + 'preliminary_reinstatement_standard' + 'reinstatement_standard_details'
                                                                                 + 'preliminary_reinstatement_scope'  // Available
 
 // ── Burden of Proof Tab ──────────────────────────────────────────────────────
 'employer-knowledge'                  → 'employer_knowledge_context'            + 'employer_knowledge_scope'         // Required
-'same-decision-defense'               → 'same_decision_standard'                                                     // Recognized
 'temporal-proximity-sufficient'       → 'temporal_proximity_context'            + 'temporal_proximity_value'
                                                                                 + 'temporal_proximity_unit'          // Recognized
 
@@ -1038,14 +1042,15 @@ Sister fields can (and usually do) appear before sibling.
 'extraterritorial-coverage'           → 'extraterritorial_context'                                                   // Recognized
 
 // ── Without Context (no tab) ────────────────────────────────────────────────
-'catch-all-protection'                  — (no companion needed)   // Present
-'internal-only-disclosure'              — (no companion needed)   // Sufficient
-'trade-secret-immunity'                 — (no companion needed)   // Recognized
-'continuing-violation-doctrine'         — (no companion needed)   // Recognized
-'prospective-whistleblower-protection'  — (no companion needed)   // Available
-'sovereign-immunity-waiver'             — (no companion needed)   // Recognized
-'class-action'                          — (no companion needed)   // Permitted
-'official-duties-carveout'              — (no companion needed)   // Applies
+'statutory-nexus-diverges-from-common-law'  — (no companion needed)   // Applies
+'catch-all-protection'                      — (no companion needed)   // Present
+'internal-only-disclosure'                  — (no companion needed)   // Sufficient
+'trade-secret-immunity'                     — (no companion needed)   // Recognized
+'continuing-violation-doctrine'             — (no companion needed)   // Recognized
+'prospective-whistleblower-protection'      — (no companion needed)   // Available
+'sovereign-immunity-waiver'                 — (no companion needed)   // Recognized
+'class-action'                              — (no companion needed)   // Permitted
+'official-duties-carveout'                  — (no companion needed)   // Applies
 
 ```
 
@@ -1055,11 +1060,9 @@ Sister fields can (and usually do) appear before sibling.
 
 ### New Tables (v2.3)
 
-- `ws_sovereign_immunity_status` — flat. Tracks how state/federal sovereign immunity applies to whistleblower
-  claims. Enables cross-jurisdiction comparison and Phase 2 filtering.
-  Attached to `jx-statute`, `jx-common-law`, `jx-citation`, `jx-construction`.
+- `ws_sovereign_immunity_status` — flat. [DONE]
 
-### Existing Tables: Split Taxonomy Note
+### Existing Tables: Split Taxonomy Note  [DONE]
 
 `ws_employee_standard` was split to create `ws_causation_standard`; sibling taxonomies covering distinct concepts.
 
@@ -1069,7 +1072,7 @@ Sister fields can (and usually do) appear before sibling.
 The same underlying concept (e.g. contributing factor) may appear in both tables under different framing —
 intentional and legally correct.
 
-### Existing Tables: Term Additions (v2.3)
+### Existing Tables: Term Additions (v2.3) [DONE]
 
 ### NEVER ###
 ### DO THIS AND I WILL SHOOT YOUR DOG ### All additions to existing tables require a `seed_version` bump on the affected taxonomy in `register-taxonomies.php`.
@@ -1090,10 +1093,6 @@ intentional and legally correct.
 
 | Slug | Label |
 |---|---|
-| `pre-judgment-interest` | Pre-Judgment Interest |
-| `post-judgment-interest` | Post-Judgment Interest |
-| `discretionary-interest` | Discretionary Interest Award |
-| `mitigation-exemption` | Mitigation Exemption |
 | `non-economic-cap-separate` | Non-Economic Damages Capped Separately |
 | `punitive-damages-capped-separately` | Punitive Damages Capped Separately |
 
@@ -1104,7 +1103,7 @@ intentional and legally correct.
 | `hybrid-admin-civil-path` | Hybrid Admin → Civil Pathway |
 | `direct-filing-permitted` | Direct Filing Permitted (No Exhaustion) |
 
-**`ws_protected_class`**
+**`ws_protected_class`** [DONE]
 
 | Slug | Label | Parent |
 |---|---|---|

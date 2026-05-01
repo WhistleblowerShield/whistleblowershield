@@ -816,7 +816,7 @@ $_ws_taxonomy_registry = [
             'cats-paw-liability'                    => 'Cat\'s Paw Liability Recognized',                     // + cats_paw_liability_context
             'third-party-retaliation'               => 'Third-Party Retaliation Prohibited',                  // + third_party_retaliation_context
             'criminal-sanctions'                    => 'Criminal Sanctions Specified',                        // + criminal_sanctions_context     + criminal_sanctions
-            // Processes and Remedies                                                                           // ───── # Process & Remedies Tab ───────────────────────────────────────────────────
+            // Processes and Remedies                                                                         // ───── # Processes & Remedies Tab ───────────────────────────────────────────────────
             'process-pathway'                       => 'Process Pathway Specified',                           // + process_pathway_context        + process_pathway_scope
             'private-right-of-action'               => 'Private Right of Action Available',                   // + private_roa_context
             'jury-trial'                            => 'Jury Trial Available',                                // =>>> NOTE  =>>> invalid term unless 'private-right-of-action' is also present. // + jury_trial_context + jury_trial_scope
@@ -917,37 +917,6 @@ $_ws_taxonomy_registry = [
             'has-details'                   => 'Has Details',
         ]
     ],
-
-// —— 24. Remedy Cap Basis ———————————————————————————————————————————————————
-/**
- * Assigns ws_remedy_cap_basis with its flat term structure.
- *
- * Classifies the structural basis for damages caps (employer size, aggregate,
- * per-claim). Used for the remedy_caps repeater cap_type select and Phase 2
- * query-layer normalization when remedy_limits is active.
- *
- * @todo legal_prompt — set instruction string.
- *
- */
-/*     'ws_remedy_cap_basis'  => [
-        'cpts'                  => ['jx-statute', 'jx-common-law'],
-        'plural'                => 'Remedy Cap Bases',
-        'singular'              => 'Remedy Cap Basis',
-        'menu_name'             => 'Cap Bases',
-        'hierarchical'          => false,
-        'seed_version'          => '1.0.0',
-        'record'                => ['legal'],
-        'legal_prompt'          => '',
-        'terms'                 => [
-            'employer-size-tiered'  => 'Tiered by Employer Size',
-            'per-plaintiff'         => 'Per Plaintiff Cap',
-            'per-incident'          => 'Per Incident Cap',
-            'aggregate-action'      => 'Aggregate Action Cap',
-            'single-claim'          => 'Single Claim Cap',
-            'see-context'           => 'See Context'
-        ]
-    ], */
-
 ];
 
 // ════════════════════════════════════════════════════════════════════════════
