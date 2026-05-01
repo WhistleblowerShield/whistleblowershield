@@ -103,7 +103,7 @@ $_ws_taxonomy_registry = [
 // —— 2. Process Types ———————————————————————————————————————————————————————
 /**
  * Assigns ws_process_type with its flat term structure.
- *
+ * 
  * @todo legal_prompt, assist_prompt — set instruction strings.
  * 
  */
@@ -127,7 +127,6 @@ $_ws_taxonomy_registry = [
             'state-agency-complaint'   => 'State Agency Complaint',
             'congressional-disclosure' => 'Congressional Disclosure',
             'representative-action'    => 'Representative Action',
-            'de-novo-civil'            => 'De Novo Civil Action',
             'arbitration-compelled'    => 'Arbitration Compelled',
             'hybrid-admin-civil-path'  => 'Hybrid Admin → Civil Pathway',
             'direct-filing-permitted'  => 'Direct Filing Permitted (No Exhaustion)',
@@ -823,9 +822,10 @@ $_ws_taxonomy_registry = [
             'third-party-retaliation'               => 'Third-Party Retaliation Prohibited',                  // + third_party_retaliation_context
             'criminal-sanctions'                    => 'Criminal Sanctions Specified',                        // + criminal_sanctions_context     + criminal_sanctions
             // Process and Remedies                                                                           // ───── # Process & Remedies Tab ───────────────────────────────────────────────────
-            `process-pathway`                       => 'Process Pathway Specified',                           // + process_pathway_context        + process_pathway_scope
+            'process-pathway'                       => 'Process Pathway Specified',                           // + process_pathway_context        + process_pathway_scope
             'private-right-of-action'               => 'Private Right of Action Available',                   // + private_roa_context
             'jury-trial'                            => 'Jury Trial Available',                                // =>>> NOTE  =>>> invalid term unless 'private-right-of-action' is also present. // + jury_trial_context + jury_trial_scope
+            'civil-review-standard'                 => 'Civil Review Standard Specified',                     // + review_standard_context        + review_standard_scope
             'equitable-interest-award'              => 'Equitable Interest Provision Available',              // + interest_provision_context     + interest_provision_scope
             'mitigation-required'                   => 'Mitigation Requirement Specified',                    // + mitigation_required_context    + mitigation_required_scope
             'mitigation-exception'                  => 'Mitigation Exception Recognized',                     //  =>>> NOTE  =>>> invalid term unless 'mitigation-required' is also present.     // + mitigation_exception_context
@@ -886,7 +886,6 @@ $_ws_taxonomy_registry = [
             'causation-proximate-cause'                => 'Proximate Cause Standard',
             'dual-standard-applies'                    => 'Dual Standard (Liability vs Damages Differ)',
             'statutory-nexus-diverges-from-common-law' => 'Statutory Nexus Overrides Circuit Common Law',
-            'any-consideration-nexus'                  => 'Any Consideration Nexus',
             'has-details'                              => 'Has Details',
         ]
     ],

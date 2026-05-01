@@ -30,7 +30,8 @@ Absent from this draft; applied at registration. Strictly enforced. No exception
   * There is no `ws_*` codebase indicator.
 - tab field `key`: `field_jx_{cpt}_{tab-label}_tab`
   * `tab-label` is tab field `label` lowercase; no `_and_`, no symbols, omit.
-  * Do not use abbreviations. No longer approved: `sol` = `statute_of_limitations` · `bop` = `burden_of_proof`
+  * Do not use abbreviations in tabs.
+  * No longer approved: `sol` = `statute_of_limitations` · `bop` = `burden_of_proof`
 - group `key`: `group_jx_{cpt}_metadata`
 - group `menu_order`: must be < 85 — workflow groups occupy 85–99; CPT group must precede them.
 
@@ -291,7 +292,7 @@ records.
                                                    {attorney-fees},
                                                    {liquidated-damages},
                                                    {tax-gross-up},
-                                                   {interim-relief}
+                                                   {injunctive-relief}
                                                    [23 terms omitted]
         exhaustion_required                 -> classifications.legal_recognitions
                                                    {exhaustion-required}
@@ -349,7 +350,7 @@ classes → sectors → targets → recognitions
 - `legal_recognitions`             — (taxonomy: `ws_legal_recognition`; replaces all `*_recognized` booleans,
                                       includes other state bools; See [Slug-to-Companion Map] below.)
 - `manager_rule_exclusion_context` — (conditional on `manager-rule-exclusion` in `legal_recognitions`)
-- `public_concern_Required_context`  — (conditional on `public-concern-required` in `legal_recognitions`)
+- `public_concern_required_context`  — (conditional on `public-concern-required` in `legal_recognitions`)
 - `bad_faith_exclusion_context`    — (conditional on `bad-faith-exclusion` in `legal_recognitions`)
 - `anonymity_protection_context`   — (conditional on `anonymity-protection` in `legal_recognitions`)
 - `malicious_reporting_sanctions`  — (sister field to `malicious_reporting_context`; repeater:
@@ -720,8 +721,15 @@ The notable precedent fields capture modifications to the definitions:
 - `_parent_ids`: `statute_ids`, `comlaw_ids` — legal record or records affected by ruling
 These fields do not appear on substantive records.
 
-#### Process & Remedies Tab (insert after `anticipatory_retaliation_context`)
+#### Process & Remedies Tab (insert after `jury_trial_context`)
 
+- `review_standard_scope`          — (sister field to `review_standard_context`; select: `de-novo`|
+                                      `substantial-evidence`|`arbitrary-capricious`|`abuse-of-discretion`|
+                                      `has-details`)
+- `review_standard_details`
+- `review_standard_context`        — (conditional on `civil-review-standard` in `legal_recognitions`)
+
+#### Process & Remedies Tab (insert after `anticipatory_retaliation_context`)
 - `election_of_remedies_rules`     — (multi-select: `administrative-bars-civil`|`state-bars-federal`|
                                       `remedy-exclusivity`|`first-filed-controls`|`no-election-required`|
                                       `see-context`)
@@ -770,7 +778,7 @@ These fields do not appear on substantive records.
                                       `has-details`)
 - `recognition_status_details`
 
-#### Statute of Limitations & Thresholds Tab (insert after `interaction_details`)
+#### Statute of Limitations & Thresholds Tab (insert after `federal_state_interaction_details`)
 
 - `statutory_preclusion_context`   — (conditional on `statutory-preclusion` in `legal_recognitions`)
 
@@ -831,7 +839,7 @@ These fields do not appear on precedent-records.
 - `authority_source`               — (select: `constitutional`|`legislative`|`judicial`|`regulatory`|
                                       `executive`|`has-details`)
 - `authority_source_details`
-- `review_standard`                — (select: `de-novo`|`substantial-evidence`|`arbitrary-capricious`|
+- `review_standard_scope`          — (select: `de-novo`|`substantial-evidence`|`arbitrary-capricious`|
                                       `abuse-of-discretion`|`has-details`)
 - `review_standard_details`
 
@@ -1129,6 +1137,4 @@ duplicates `contractor-gig` — neither added:
   are not independently conditional.
 - Zero live data implications. This spec is purely structural and ready for PHP field generation or
   ingest schema mapping.
-- The `temporal-proximity-sufficient` duplicate key in `ws_legal_recognition` (lines 830 and 837 of
-  the original `register-taxonomies.php`) must be resolved before next seed — the second entry silently
-  overwrites the first. Keep the second (no-companion) entry and remove the first.
+
