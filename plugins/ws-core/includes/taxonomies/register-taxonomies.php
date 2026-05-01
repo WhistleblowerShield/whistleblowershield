@@ -770,7 +770,7 @@ $_ws_taxonomy_registry = [
             'bad-faith-exclusion'                   => 'Bad Faith / Knowingly False Exclusion Applies',       // + bad_faith_exclusion_context
             'anonymity-protection'                  => 'Anonymity / Confidentiality Protection Recognized',   // + anonymity_protection_context
             'malicious-reporting-sanctions'         => 'Malicious Reporting Sanctions Specified',             // + malicious_reporting_context    + malicious_reporting_sanctions
-            'protected-action'                      => 'Protected Action Specified',                          // + protected_action_context       + protected_actions + protected_action_standard + protected_action_source
+            'protected-action'                      => 'Protected Action Specified',                          // + protected_action_context       + protected_actions + protected_action_standards + protected_action_source
             'excluded-class'                        => 'Excluded Class Specified',                            // + excluded_class_context         + excluded_classes
             'garcetti-exception'                    => 'Garcetti / Official-Duties Exclusion Applies',        // =>>> NOTE  =>>> invalid term unless 'public-sector' is in 'employment_sectors'. // + garcetti_exception_context
             // Statute of Limitations & Thresholds                                                            // ───── # Statute of Limitations & Thresholds Tab ─────────────────────────
@@ -780,10 +780,10 @@ $_ws_taxonomy_registry = [
             'cba-grievance-preemption'              => 'CBA Grievance Preemption Applies',                    // + cba_preemption_context
             'amended-claim'                         => 'Amended Claim / Relation Back Recognized',            // + amended_claim_context
             'exhaustion-required'                   => 'Exhaustion Required',                                 // + exhaustion_required_context    + exhaustion_required_scope
-            'pre-filing-notice'                     => 'Pre-Filing Notice Required',                          // + filing_notice_context          + filing_notice_target + filing_notice_value + filing_notice_unit
+            'pre-filing-notice'                     => 'Pre-Filing Notice Required',                          // + filing_notice_context          + filing_notice_targets + filing_notice_value + filing_notice_unit
             'statutory-preclusion'                  => 'Statutory Preclusion Applies',                        // + statutory_preclusion_context   // only present in common law records
             // Retaliation                                                                                    // ───── # Retaliation Tab ───────────────────────────────────────────────────
-            'evidence-preservation'                 => 'Evidence Preservation Required',                      // + evidence_preservation_context  + preservation_deadline_value + preservation_deadline_unit + preservation_requirement_scope
+            'evidence-preservation'                 => 'Evidence Preservation Required',                      // + evidence_preservation_context  + preservation_deadline_value + preservation_deadline_unit + preservation_requirement_scopes
             'cats-paw-liability'                    => 'Cat\'s Paw Liability Recognized',                     // + cats_paw_liability_context     + is_cats_paw_liability_extended
             'third-party-retaliation'               => 'Third-Party Retaliation Prohibited',                  // + third_party_retaliation_context
             'criminal-sanctions'                    => 'Criminal Sanctions Specified',                        // + criminal_sanctions_context     + criminal_sanctions
@@ -791,29 +791,30 @@ $_ws_taxonomy_registry = [
             'process-pathway'                       => 'Process Pathway Specified',                           // + process_pathway_context        + process_pathway_scope + is_agency_inaction_trigger
             'private-right-of-action'               => 'Private Right of Action Available',                   // + private_roa_context
             'jury-trial'                            => 'Jury Trial Available',                                // =>>> NOTE  =>>> invalid term unless 'private-right-of-action' is also present. // + jury_trial_context + jury_trial_scope
+            'fee-shifting-standard'                 => 'Fee Shifting Standard Specified',                     // + fee_shifting_standard_context  + fee_shifting_standard + fee_shifting_scopes
             'civil-review-standard'                 => 'Civil Review Standard Specified',                     // + review_standard_context        + review_standard_scope + review_standard_details
             'equitable-interest-award'              => 'Equitable Interest Provision Available',              // + interest_provision_context     + interest_provision_scope
-            'mitigation-required'                   => 'Mitigation Requirement Specified',                    // + mitigation_required_context    + mitigation_required_scope
+            'mitigation-required'                   => 'Mitigation Requirement Specified',                    // + mitigation_required_context    + mitigation_required_scopes
             'mitigation-exception'                  => 'Mitigation Exception Recognized',                     //  =>>> NOTE  =>>> invalid term unless 'mitigation-required' is also present.     // + mitigation_exception_context
-            'preliminary-reinstatement'             => 'Preliminary / Interim Reinstatement Available',       // + preliminary_reinstatement_context + reinstatement_standard + reinstatement_standard_details + preliminary_reinstatement_scope
+            'preliminary-reinstatement'             => 'Preliminary / Interim Reinstatement Available',       // + preliminary_reinstatement_context + reinstatement_standard + reinstatement_standard_details + preliminary_reinstatement_scopes
             // Burden of Proof                                                                                // ───── # Burden of Proof Tab ───────────────────────────────────────────────
-            'burden-shifting-framework'             => 'Burden Shifting Framework Specified',                 // + burden_shifting_context        + burden_shifting_framework
+            'burden-shifting-framework'             => 'Burden Shifting Framework Specified',                 // + burden_shifting_context        + burden_shifting_frameworks
             'causation-dual-standard'               => 'Causation Dual Standard (Liability vs Damages Differ)', // + causation_dual_standard_context
-            'employer-knowledge'                    => 'Employer Knowledge Element Required',                 // + employer_knowledge_context     + employer_knowledge_scope
+            'employer-knowledge'                    => 'Employer Knowledge Element Required',                 // + employer_knowledge_context     + employer_knowledge_scopes
             'temporal-proximity-sufficient'         => 'Temporal Proximity Sufficient for Causation',         // + temporal_proximity_context     + temporal_proximity_value + temporal_proximity_unit
             // Waiver & Scope                                                                                 // ───── # Waiver & Scope Tab ────────────────────────────────────────────────
             'contractual-waiver'                    => 'Contractual Waiver Recognized',                       // =>>> NOTE  =>>> invalid term if 'civil_action_waiver_scope' is set to 'anti'.   // + contractual_waiver_context + contractual_waiver_scope
             'waiver-of-collateral-claims'           => 'Waiver of Collateral Claims Applies',                 // + waiver_of_collateral_claims_context
             'class-action-waiver'                   => 'Class Action Waiver Recognized',                      // + class_action_waiver_context
-            'individual-liability'                  => 'Individual Liability Available',                      // + individual_liability_context   + individual_liability_scope
-            'sovereign-immunity-status'             => 'Sovereign Immunity Status Specified',                 // + sovereign_immunity_context     + sovereign_immunity_statuses + sovereign_immunity_scope + sovereign_immunity_waiver + sovereign_immunity_status_details
+            'individual-liability'                  => 'Individual Liability Available',                      // + individual_liability_context   + individual_liability_scopes
+            'sovereign-immunity-status'             => 'Sovereign Immunity Status Specified',                 // + sovereign_immunity_context     + sovereign_immunity_statuses + sovereign_immunity_scopes + sovereign_immunity_waiver + sovereign_immunity_status_details
             'nda-limitations'                       => 'NDA / Non-Disparagement Limitations Recognized',      // + nda_limits_context
             'anti-gag-provision'                    => 'Anti-Gag Provision Recognized',                       // + anti_gag_provision_context
             'no-retaliatory-evidence'               => 'Retaliatory Evidence Barred',                         // + no_retaliatory_evidence_context
             'stay-of-disciplinary-action'           => 'Stay of Disciplinary Action Available',               // + stay_of_discipline_context
-            'anti-slapp-protection'                 => 'Anti-SLAPP Protection Applies',                       // + anti_slapp_protection_context  + anti_slapp_protection_scope
+            'anti-slapp-protection'                 => 'Anti-SLAPP Protection Applies',                       // + anti_slapp_protection_context  + anti_slapp_protection_scopes
             'discovery-protection'                  => 'Discovery Protection / Anti-Harassment Recognized',   // + discovery_protection_context
-            'confidential-settlement-restriction'   => 'Confidential Settlement Restriction Applies',         // + settlement_restriction_context + settlement_restriction_scope
+            'confidential-settlement-restriction'   => 'Confidential Settlement Restriction Applies',         // + settlement_restriction_context + settlement_restriction_scopes
             'successor-liability'                   => 'Successor Employer Liability Recognized',             // + successor_liability_context
             'extraterritorial-coverage'             => 'Extraterritorial Coverage Recognized',                // + extraterritorial_context
             // Without Context                                                                                // ───── # Without Context (no Tab) ──────────────────────────────────────────
