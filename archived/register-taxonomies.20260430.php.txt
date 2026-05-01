@@ -3,31 +3,26 @@
 /**
  * register-taxonomies.php — WhistleblowerShield Taxonomy Registry
  *
- * Single source of truth for all 24 ws-core taxonomies. $_ws_taxonomy_registry (global
+ * Single source of truth for all 22 ws-core taxonomies. $ws_taxonomy_registry (global
  * array) drives registration, seeding, and LLM prompt generation from one place.
- * 
- * ws_jurisdiction taxonomy table use canonical table array in matrix-jurisdictions.php.
  *
  * Registration: ws_register_all_taxonomies() on init. Capabilities via ws_get_taxonomy_caps().
  * Seeding:      ws_seed_all_taxonomies() on admin_init, version-gated per taxonomy via
- *               ws_seeded_{slug} option key.
- *               ### [AFTER CODE IS DEPLOYED AND LIVE DATA IS SEEDED] ###
- *               Bump seed_version to trigger re-seed.
- *               ### [DO NOT BUMP BEFORE CODE IS DEPLOYED] ###
+ *               ws_seeded_{slug} option key. Bump seed_version to trigger re-seed.
  * Term format:  'slug' => 'Label'           (flat or child of active parent)
  *               'slug' => ['Label', 1]      (top-level parent; next terms become children)
- * Sentinels:    has-parent / has-details / has-* — signals a companion ACF freetext field
- *               holds details or context not covered by available slugs.
+ * Sentinels:    has-details-parent / has-details — signals a companion ACF freetext field
+ *               holds detail beyond available slugs.
  * Record keys:  'record' => ['legal', 'assist'] — marks which LLM record types use this
  *               taxonomy. Drives ws_get_taxonomies_for_record('legal'|'assist'), which
  *               returns taxonomy slug + labels + configured prompt string per entry.
  *
  * Two-phase registration (taxonomy before CPTs, object_type binding after):
- * See TAXONOMY TWO-PHASE BEHAVIOR in loader.php. Do not collapse.
+ * see TAXONOMY TWO-PHASE BEHAVIOR in loader.php. Do not collapse.
  *
  * @package       WhistleblowerShield
  * @since         2.1.0
- * @version       3.20.0 [3.20 locked — never been deployed, no live data, bump patch only] — [Do not bump gates]
+ * @version       3.20.0
  * @author        Whistleblower Shield
  * @link          https://whistleblowershield.org
  * @copyright     Copyright (c) 2026 Whistleblower Shield
@@ -90,13 +85,12 @@ $_ws_taxonomy_registry = [
             'national-security'          => ['National Security', 1],
                 'intelligence-community'         => 'Intelligence Community Reporting',
                 'classified-information'         => 'Classified Information Disclosures',
+                'ic-channel-required'            => 'IC Mandatory Channel Required',
                 'export-sanctions-compliance'    => 'Export Controls & Sanctions Compliance',
             'general-legal'              => ['General Legal', 1],
                 'general-wrongdoing'             => 'General Wrongdoing / Violation of Law',
-            'has-parent'                 => ['Has Sentinels', 1],
-                'has-channel'                    => 'Has Channel Requirement',
-                'has-ic-channel'                 => 'Intelligence Community Channel Required',
-                
+            'has-details-parent'         => ['Has Details', 1],
+                'has-channel-requirement'        => 'Has Channel Requirement',
        ]
     ],
 
@@ -129,8 +123,6 @@ $_ws_taxonomy_registry = [
             'representative-action'    => 'Representative Action',
             'de-novo-civil'            => 'De Novo Civil Action',
             'arbitration-compelled'    => 'Arbitration Compelled',
-            'hybrid-admin-civil-path'  => 'Hybrid Admin → Civil Pathway',
-            'direct-filing-permitted'  => 'Direct Filing Permitted (No Exhaustion)',
         ]
     ],
 
@@ -180,12 +172,6 @@ $_ws_taxonomy_registry = [
             'consequential-damages'     => 'Consequential / Special Damages',
             'declaratory-relief'        => 'Declaratory Relief',
             'tax-gross-up'              => 'Tax Gross-Up',
-            'pre-judgment-interest'              => 'Pre-Judgment Interest',
-            'post-judgment-interest'             => 'Post-Judgment Interest',
-            'discretionary-interest'             => 'Discretionary Interest Award',
-            'mitigation-exception'               => 'Mitigation Exception / Exemption',
-            'non-economic-cap-separate'          => 'Non-Economic Damages Capped Separately',
-            'punitive-damages-capped-separately' => 'Punitive Damages Capped Separately',
             'has-limits'                => 'Has Limits/Caps/Standards',
             'has-details'               => 'Has Details',
         ]
@@ -222,7 +208,6 @@ $_ws_taxonomy_registry = [
                 'contractor-gig'                 => 'Independent Contractor / Gig',
                 'non-profit-staff'               => 'Non-Profit Employee',
                 'agricultural-worker'            => 'Agricultural Worker',
-                'domestic-work-employee'         => 'Domestic Work Employee',
             'healthcare-staff'             => ['Healthcare & Medical', 1],
                 'clinical-staff'                 => 'Clinical (Nurse / Physician)',
                 'medical-student'                => 'Medical Student / Intern / Resident',
@@ -232,7 +217,6 @@ $_ws_taxonomy_registry = [
                 'perceived-whistleblower'        => 'Perceived Whistleblower',
                 'intern-volunteer'               => 'Intern / Volunteer',
                 'qui-tam-relator'                => 'Qui Tam Relator',
-                'victim-domestic-violence-sexual-assault' => 'Victim of Domestic/Sexual Violence',
             'associates-of-whistleblower'  => ['Associates of Whistleblower', 1],
                 'associates-spouse'              => 'Spouse of Whistleblower',
                 'associates-immediate-family'    => 'Immediate Family of Whistleblower',
@@ -240,7 +224,7 @@ $_ws_taxonomy_registry = [
                 'associates-close'               => 'Close Associates of Whistleblower',
             'all-sectors'                  => ['All Sectors', 1],
                 'all-employees'                  => 'All Employees',
-            'has-parent'                   => ['Has Sentinels', 1],
+            'has-details-parent'           => ['Has Details', 1],
                 'has-details'                    => 'Has Details',
         ]
     ],
@@ -289,7 +273,7 @@ $_ws_taxonomy_registry = [
                 'associates-immediate-family'    => 'Immediate Family of Whistleblower',
                 'associates-household-family'    => 'Household Family of Whistleblower',
                 'associates-close'               => 'Close Associates of Whistleblower',
-            'has-parent'                   => ['Has Sentinels', 1],
+            'has-details-parent'           => ['Has Details', 1],
                 'has-details'                    => 'Has Details',
         ]
     ],
@@ -325,6 +309,7 @@ $_ws_taxonomy_registry = [
             'workplace-isolation'          => 'Workplace Isolation / Ostracism',
             'post-employment-retaliation'  => 'Post-Employment Retaliation',
             'blacklisting'                 => 'Blacklisting',
+            'continued-blacklisting'       => 'Continued Blacklisting',
             'negative-reference'           => 'Negative Reference',
             'security-clearance-action'    => 'Security Clearance Action',
             'contract-non-renewal'         => 'Contract Non-Renewal',
@@ -467,8 +452,8 @@ $_ws_taxonomy_registry = [
                 'public-media'             => 'Media / Press',
                 'public-nonprofit'         => 'Non-Profit / Advocacy Organization',
                 'public-social-media'      => 'Social Media',
-            'has-parent'            => ['Has Sentinels', 1],
-                'has-details'              => 'Has Details',
+            'has-details-parent'    => ['Has Details', 1],
+                'has-details'             => 'Has Details',
         ]
     ],
 
@@ -681,6 +666,8 @@ $_ws_taxonomy_registry = [
  * Covers evidentiary burden-of-proof standards only — the volume/quality of
  * evidence required. Causation standards (the logical link between disclosure
  * and adverse action) are in ws_causation_standard.
+ * The has-details sentinel signals a companion ACF freetext field holds a standard
+ * not covered by the registered slugs.
  *
  * @todo legal_prompt — set instruction string.
  * 
@@ -751,21 +738,21 @@ $_ws_taxonomy_registry = [
         'record'               => ['legal'],
         'legal_prompt'         => '',
         'terms'                => [
-            'opposition-clause'     => ['Opposition Clause', 1],
-                'opposing-practice'              => 'Opposing Practice',
-                'internal-objection'             => 'Internal Objection',
-                'refusal-to-participate'         => 'Refusal to Participate',
-                'refusal-to-violate-law'         => 'Refusal to Violate Law',
-            'participation-clause'  => ['Participation Clause', 1],
-                'filing-complaint'               => 'Filing Complaint',
-                'testifying'                     => 'Testifying',
-                'assisting-whistleblower'        => 'Assisting Whistleblower',
+            'opposition-clause'    => ['Opposition Clause', 1],
+                'opposing-practice'       => 'Opposing Practice',
+                'internal-objection'      => 'Internal Objection',
+                'refusal-to-participate'  => 'Refusal to Participate',
+                'refusal-to-violate-law'  => 'Refusal to Violate Law',
+            'participation-clause' => ['Participation Clause', 1],
+                'filing-complaint'        => 'Filing Complaint',
+                'testifying'              => 'Testifying',
+                'assisting-whistleblower' => 'Assisting Whistleblower',
                 'cooperation-with-investigation' => 'Cooperation with Investigation',
-                'participation-support'          => 'Participation Support',
-            'attempted-parent'      => ['Attempted Parent', 1],
-                'attempted-reporting'            => 'Attempted Reporting',
-            'concerted-parent'      => ['Concerted Parent', 1],
-                'concerted-activity'             => 'Concerted Activity',
+                'participation-support'   => 'Participation Support',
+            'attempted-reporting'  => ['Attempted Reporting', 1],
+                'attempted-reporting'     => 'Attempted Reporting',
+            'concerted-activity'   => ['Concerted Activity', 1],
+                'concerted-activity'      => 'Concerted Activity',
         ]
     ],
 
@@ -796,69 +783,60 @@ $_ws_taxonomy_registry = [
         'seed_version'          => '1.0.0',
         'record'                => [],
         'terms'                 => [
-            // Identity                                                                                       // ───── # Identity Tab ────────────────────────────────────────────────
+            // Effective Date                                                                                 // ───── # Effective Date Tab ────────────────────────────────────────────────
             'retroactive-date'                      => 'Retroactive Date Specified',                          // + retro_context + retro_date
-            // Classification                                                                                 // ───── # Classification Tab ────────────────────────────────────────────────
-            // = NOTE = 'legal_recognitions' appears at top of Classification Tab                             // =>>> NOTE  =>>> 'legal_recognitions' appears at top of Classification Tab
+            // Classifications                                                                                // ───── # Classifications Tab ───────────────────────────────────────────────
+            // = NOTE = `legal_recognitions` appears at top of Classifications Tab                            //  =>>> NOTE  =>>> `legal_recognitions` appears at top of Classifications Tab
             'manager-rule-exclusion'                => 'Manager Rule / Duty Speech Exclusion Applies',        // + manager_rule_exclusion_context
             'public-concern-required'               => 'Public Concern Requirement Applies',                  // + public_concern_context
             'bad-faith-exclusion'                   => 'Bad Faith / Knowingly False Exclusion Applies',       // + bad_faith_exclusion_context
             'anonymity-protection'                  => 'Anonymity / Confidentiality Protection Recognized',   // + anonymity_protection_context
-            'malicious-reporting-sanctions'         => 'Malicious Reporting Sanctions Specified',             // + malicious_reporting_context    + malicious_reporting_sanctions
-            'protected-action'                      => 'Protected Action Specified',                          // + protected_action_context       + protected_actions + protected_action_standard + protected_action_source
-            'excluded-class'                        => 'Excluded Class Specified',                            // + excluded_class_context         + excluded_classes
-            'garcetti-exception'                    => 'Garcetti / Official-Duties Exclusion Applies',        // + garcetti_exception_context
-            // Statute of Limitations & Thresholds                                                            // ───── # Statute of Limitations & Thresholds Tab ─────────────────────────
-            'statute-of-repose'                     => 'Statute of Repose Specified',                         // + statute_of_repose_context      + sop_value + sop_unit + is_sop_tolling_available
+            'malicious-reporting-sanctions'         => 'Malicious Reporting Sanctions Specified',             // + malicious_reporting_context + malicious_reporting_sanctions
+            'protected-action'                      => 'Protected Action Specified',                          // + protected_action_context  + protected_actions + protected_action_standard + protected_action_source
+            'excluded-class'                        => 'Excluded Class Specified',                            // + excluded_class_context    + excluded_classes
+            // Statute of Limitations & Procedural                                                            // ───── # Statute of Limitations And Thresholds Tab ─────────────────────────
+            'statute-of-repose'                     => 'Statute of Repose Specified',                         // + statute_of_repose_context + sop_value + sop_unit + is_sop_tolling_available
             'statutory-tolling'                     => 'Statutory Tolling Specified',                         // + statutory_tolling_context
             'equitable-tolling'                     => 'Equitable Tolling Recognized',                        // + equitable_tolling_context
             'cba-grievance-preemption'              => 'CBA Grievance Preemption Applies',                    // + cba_preemption_context
             'amended-claim'                         => 'Amended Claim / Relation Back Recognized',            // + amended_claim_context
-            'exhaustion-required'                   => 'Exhaustion Required',                                 // + exhaustion_required_context    + exhaustion_required_class
-            'pre-filing-notice'                     => 'Pre-Filing Notice Required',                          // + filing_notice_context          + filing_notice_target + filing_notice_value + filing_notice_unit
-            'statutory-preclusion'                  => 'Statutory Preclusion Applies',                        // + statutory_preclusion_context   // only present in common law records
-            'savings-clause'                        => 'Savings Clause Preserves State Law',                  // + savings_clause_context
-            'agency-inaction-triggers-suit'         => 'Agency Inaction Triggers De Novo Civil Right',        // sister to process_pathway (bool)
-            'federal-concurrent-enforcement'        => 'Federal/State Concurrent Enforcement Applies',        // signals interaction_details
-            'state-floor-exceeds-federal'           => 'State Floor Exceeds Federal Minimum',                 // signals interaction_details
+            'exhaustion-required'                   => 'Exhaustion Required',                                 // + exhaustion_required_context + exhaustion_required_class
+            'pre-filing-notice'                     => 'Pre-Filing Notice Required',                          // + filing_notice_context + filing_notice_target + filing_notice_value + filing_notice_unit
+            'statutory-preclusion'                  => 'Statutory Preclusion Applies',                        // + statutory_preclusion_context // only present in common law records
             // Retaliation                                                                                    // ───── # Retaliation Tab ───────────────────────────────────────────────────
             'cats-paw-liability'                    => 'Cat\'s Paw Liability Recognized',                     // + cats_paw_liability_context
             'third-party-retaliation'               => 'Third-Party Retaliation Prohibited',                  // + third_party_retaliation_context
-            'criminal-sanctions'                    => 'Criminal Sanctions Specified',                        // + criminal_sanctions_context     + criminal_sanctions
-            // Process and Remedies                                                                           // ───── # Process & Remedies Tab ───────────────────────────────────────────────────
-            `process-pathway`                       => 'Process Pathway Specified',                           // + process_pathway_context        + process_pathway_scope
+            'criminal-sanctions'                    => 'Criminal Sanctions Specified',                        // + criminal_sanctions_context + criminal_sanctions
+            // Process & Remedies                                                                             // ───── # Process & Remedies Tab ────────────────────────────────────────────
             'private-right-of-action'               => 'Private Right of Action Available',                   // + private_roa_context
-            'jury-trial'                            => 'Jury Trial Available',                                //  =>>> NOTE  =>>> invalid term unless 'private-right-of-action' is also present. // + jury_trial_context + jury_trial_scope
-            'equitable-interest-award'              => 'Equitable Interest Provision Available',              // + interest_provision_context     + interest_provision_scope
-            'mitigation-required'                   => 'Mitigation Requirement Specified',                    // + mitigation_required_context    + mitigation_required_scope
-            'mitigation-exception'                  => 'Mitigation Exception Recognized',                     //  =>>> NOTE  =>>> invalid term unless 'mitigation-required' is also present.     // + mitigation_exception_context
+            'jury-trial'                            => 'Jury Trial Available',                                //  =>>> NOTE  =>>> invalid term without 'private-right-of-action' also present.  // + jury_trial_context + jury_trial_scope
             'preliminary-reinstatement'             => 'Preliminary / Interim Reinstatement Available',       // + preliminary_reinstatement_context
-            // Burden of Proof                                                                                // ───── # Burden of Proof Tab ───────────────────────────────────────────────
-            'employer-knowledge'                    => 'Employer Knowledge Element Required',                 // + employer_knowledge_context     + employer_knowledge_scope
-            'temporal-proximity-sufficient'         => 'Temporal Proximity Sufficient for Causation',         // + temporal_proximity_context     + temporal_proximity_value + temporal_proximity_unit
             // Waiver & Scope                                                                                 // ───── # Waiver & Scope Tab ────────────────────────────────────────────────
-            'contractual-waiver'                    => 'Contractual Waiver Recognized',                       // =>>> NOTE  =>>> invalid term if 'civil_action_waiver_scope' is set to 'anti'.   // + contractual_waiver_context + contractual_waiver_scope
+            'contractual-waiver'                    => 'Contractual Waiver Recognized',                       //  =>>> NOTE  =>>> invalid term if 'civil_action_waiver_scope' is set to 'anti'. // + contractual_waiver_context + contractual_waiver_scope
             'waiver-of-collateral-claims'           => 'Waiver of Collateral Claims Applies',                 // + waiver_of_collateral_claims_context
-            'class-action-waiver'                   => 'Class Action Waiver Recognized',                      // + class_action_waiver_context
-            'individual-liability'                  => 'Individual Liability Available',                      // + individual_liability_context   + individual_liability_scope
+            'class-action-waiver'                   => 'Class Action Waiver Recognized',                                 // + class_action_waiver_context
+            'individual-liability'                  => 'Individual Liability Available',                      // + individual_liability_context + individual_liability_scope
             'nda-limitations'                       => 'NDA / Non-Disparagement Limitations Recognized',      // + nda_limits_context
             'anti-gag-provision'                    => 'Anti-Gag Provision Recognized',                       // + anti_gag_provision_context
             'no-retaliatory-evidence'               => 'Retaliatory Evidence Barred',                         // + no_retaliatory_evidence_context
             'stay-of-disciplinary-action'           => 'Stay of Disciplinary Action Available',               // + stay_of_discipline_context
-            'anti-slapp-protection'                 => 'Anti-SLAPP Protection Applies',                       // + anti_slapp_protection_context  + anti_slapp_protection_scope
+            'anti-slapp-protection'                 => 'Anti-SLAPP Protection Applies',                       // + anti_slapp_protection_context + anti_slapp_protection_scope
             'discovery-protection'                  => 'Discovery Protection / Anti-Harassment Recognized',   // + discovery_protection_context
             'confidential-settlement-restriction'   => 'Confidential Settlement Restriction Applies',         // + settlement_restriction_context + settlement_restriction_scope
             'successor-liability'                   => 'Successor Employer Liability Recognized',             // + successor_liability_context
             'extraterritorial-coverage'             => 'Extraterritorial Coverage Recognized',                // + extraterritorial_context
+            // Burden of Proof                                                                                // ───── # Burden of Proof Tab ───────────────────────────────────────────────
+            'employer-knowledge'                    => 'Employer Knowledge Element Required',                 // + employer_knowledge_context
+            'temporal-proximity-sufficient'         => 'Temporal Proximity Sufficient Context Recognized',     // + temporal_proximity_sufficient_context + temporal_proximity_value + temporal_proximity_unit
             // Without Context                                                                                // ───── # Without Context (no Tab) ──────────────────────────────────────────
             'catch-all-protection'                  => 'Catch-All Protection Clause Present',                 // (no companion)
             'internal-only-disclosure'              => 'Internal-Only Disclosure Sufficient',                 // (no companion)
             'trade-secret-immunity'                 => 'Trade Secret Immunity Recognized',                    // (no companion)
             'continuing-violation-doctrine'         => 'Continuing Violation Doctrine Recognized',            // (no companion)
             'prospective-whistleblower-protection'  => 'Prospective Whistleblower Protection Recognized',     // (no companion)
+            'temporal-proximity-sufficient'         => 'Temporal Proximity Sufficient for Causation',         // (no companion)
             'sovereign-immunity-waiver'             => 'Sovereign Immunity Waiver Recognized',                // (no companion)
             'class-action'                          => 'Class / Collective Action Permitted',                 // (no companion)
-            'official-duties-carveout'              => 'Official Duties Carveout (Lane v. Franks Exception)', // (no companion)
         ]
     ],
 
@@ -869,6 +847,8 @@ $_ws_taxonomy_registry = [
  * Covers the causal link required between the disclosure and the adverse action.
  * Distinct from ws_employee_standard which covers evidentiary burden-of-proof
  * standards (the volume/quality of evidence required).
+ * The has-details sentinel signals a companion ACF freetext field holds a standard
+ * not covered by the registered slugs.
  *
  */
     'ws_causation_standard'  => [
@@ -878,81 +858,17 @@ $_ws_taxonomy_registry = [
         'seed_version'           => '1.0.0',
         'record'                 => [],
         'terms'                  => [
-            'causation-but-for'                        => 'But-For Causation Standard',
-            'causation-any-consideration'              => 'Any Consideration Causation Standard',
-            'causation-contributing-factor'            => 'Contributing Factor Causation Standard',
-            'contributing-factor-but-for-backstop'     => 'Contributing Factor (But-For Backstop)',
-            'causation-motivating-factor'              => 'Motivating Factor Causation Standard',
-            'substantial-motivating-factor'            => 'Substantial Motivating Factor Standard',
-            'causation-substantial-factor'             => 'Substantial Factor Causation Standard',
-            'causation-proximate-cause'                => 'Proximate Cause Standard',
-            'dual-standard-applies'                    => 'Dual Standard (Liability vs Damages Differ)',
-            'statutory-nexus-diverges-from-common-law' => 'Statutory Nexus Overrides Circuit Common Law',
-            'any-consideration-nexus'                  => 'Any Consideration Nexus',
-            'has-details'                              => 'Has Details',
+            'causation-but-for'                     => 'But-For Causation Standard',
+            'causation-any-consideration'           => 'Any Consideration Causation Standard',
+            'causation-contributing-factor'         => 'Contributing Factor Causation Standard',
+            'contributing-factor-but-for-backstop'  => 'Contributing Factor (But-For Backstop)',
+            'causation-motivating-factor'           => 'Motivating Factor Causation Standard',
+            'substantial-motivating-factor'         => 'Substantial Motivating Factor Standard',
+            'causation-substantial-factor'          => 'Substantial Factor Causation Standard',
+            'causation-proximate-cause'             => 'Proximate Cause Standard',
+            'has-details'                           => 'Has Details',
         ]
     ],
-
-// —— 23. Sovereign Immunity Status ——————————————————————————————————————————
-/**
- * Assigns ws_sovereign_immunity_status with its flat term structure.
- *
- * Tracks how state/federal sovereign immunity applies to whistleblower claims.
- * Enables Phase 2 filtering and cross-jurisdiction comparison for public-sector
- * retaliation cases where sovereign immunity blocks or limits relief.
- *
- * @todo legal_prompt — set instruction string.
- *
- */
-    'ws_sovereign_immunity_status'  => [
-        'cpts'                          => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction'],
-        'plural'                        => 'Sovereign Immunity Statuses',
-        'singular'                      => 'Sovereign Immunity Status',
-        'menu_name'                     => 'Sov. Immunity',
-        'hierarchical'                  => false,
-        'seed_version'                  => '1.0.0',
-        'record'                        => ['legal'],
-        'legal_prompt'                  => '',
-        'terms'                         => [
-            'not-waived'                    => 'Not Waived (Claim Barred)',
-            'partially-waived'              => 'Partially Waived (Conditions Apply)',
-            'fully-waived'                  => 'Fully Waived (Private Action Permitted)',
-            'cap-applies'                   => 'Damages Cap Applies',
-            'tort-claims-act-gate'          => 'FTCA / State TCA Gateway Required',
-            'has-details'                   => 'Has Details',
-        ]
-    ],
-
-// —— 24. Remedy Cap Basis ———————————————————————————————————————————————————
-/**
- * Assigns ws_remedy_cap_basis with its flat term structure.
- *
- * Classifies the structural basis for damages caps (employer size, aggregate,
- * per-claim). Used for the remedy_caps repeater cap_type select and Phase 2
- * query-layer normalization when remedy_limits is active.
- *
- * @todo legal_prompt — set instruction string.
- *
- */
-/*     'ws_remedy_cap_basis'  => [
-        'cpts'                  => ['jx-statute', 'jx-common-law'],
-        'plural'                => 'Remedy Cap Bases',
-        'singular'              => 'Remedy Cap Basis',
-        'menu_name'             => 'Cap Bases',
-        'hierarchical'          => false,
-        'seed_version'          => '1.0.0',
-        'record'                => ['legal'],
-        'legal_prompt'          => '',
-        'terms'                 => [
-            'employer-size-tiered'  => 'Tiered by Employer Size',
-            'per-plaintiff'         => 'Per Plaintiff Cap',
-            'per-incident'          => 'Per Incident Cap',
-            'aggregate-action'      => 'Aggregate Action Cap',
-            'single-claim'          => 'Single Claim Cap',
-            'see-context'           => 'See Context'
-        ]
-    ], */
-
 ];
 
 // ════════════════════════════════════════════════════════════════════════════
