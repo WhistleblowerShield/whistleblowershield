@@ -397,14 +397,12 @@ Fields ordered: core SOL → modifiers → exhaustion → pathways → threshold
 
 - `sol_value`
 - `sol_unit`                       — (select: `days`|`weeks`|`months`|`years`)
-- `sol_trigger`                    — (select: `filing-of-complaint`|`accrual`|`discovery-actual`|
-                                      `discovery-constructive`|`discovery-notice`|`conclusion-of-admin-process`|
-                                      `see-context`)
-- `sol_trigger_context`            — (conditional on `sol_trigger` is non-empty)
-- `sol_trigger_event`              — (select: `notice-of-action`|`occurrence-of-action`|`discovery-of-harm`|
-                                      `constructive-discharge-accrual`; when the clock starts, independent of
-                                      how it runs)
-- `is_sol_suspended_during_admin`  — (true when SOL is expressly tolled during administrative pendency)
+- `sol_trigger`                    — (select: `accrual`|`constructive-discharge-accrual`|`discovery-rule`|
+                                      `filing-of-complaint`|`conclusion-of-admin-process`|`see-context`)
+- `sol_trigger_discovery_context`  — (conditional on `sol_trigger` is `discovery-rule`; detail discovery specifics)
+- `sol_trigger_context`            — (conditional on `sol_trigger` is non-empty; detail trigger as legally factual
+                                      or contextual as necessary)
+- `is_sol_suspended_during_admin`  — (only true when SOL is explicitly tolled while pending administrative action)
 - `has_sol_details`
 - `sol_details`
 - `sop_value`                      — (sister field to `statute_of_repose_context`)
@@ -457,6 +455,13 @@ Fields ordered: adverse actions → recognitions → sanctions
 - `adverse_action_scope`              — (select: `termination-only`|`material-adverse`|
                                          `broad-any-adverse-action`|`see-context`)
 - `adverse_action_scope_context`      — (conditional on `adverse_action_scope` is non-empty)
+- `preservation_deadline_value`    — (sister field to `evidence_preservation_context`)
+- `preservation_deadline_unit`     — (sister field to `evidence_preservation_context`; select:
+                                      `days`|`weeks`|`months`|`years`)
+- `preservation_requirement_scope` — (sister field to `evidence_preservation_context`; select:
+                                      `litigation-hold`|`statutory-hold`|`court-order`|
+                                      `agency-request`|`see-context`)
+- `evidence_preservation_context`  — (conditional on `evidence-preservation` in `legal_recognitions`)
 - `constructive_discharge_standard`   — (sister field to `constructive_discharge_context`; select:
                                          `objective-intolerability`|`intent-required`|`dual-prong`|`see-context`)
 - `constructive_discharge_context`    — (conditional on `constructive-discharge` in `adverse_actions`)
@@ -482,12 +487,11 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
 - `primary_agency`                 — (auto-fill by hook when first post_type[`ws-agency`] added to local or federal)
 - `local_agencies`                 — (multi-select: post_type[`ws-agency`] filtered by jx, common `*disclosure*`
                                       and `process_types`)
-- `enforcement_priority`           — (select: `agency-first`|`court-first`|`either`|`sequential`)
-- `enforcement_channel`            — (priority of enforcement agencies, with any enforcement requirements)
 - `process_pathway_scope`          — (sister field to `process_pathway_context`; select: `agency-first-mandatory`|
-                                      `direct-court`|`hybrid-right-to-sue-on-inaction`|`see-context`)
+                                      `direct-court`|`either`|`hybrid-right-to-sue-on-inaction`|`see-context`)
 - `is_agency_inaction_trigger`     — (conditional on `process_pathway_scope` is `hybrid-right-to-sue-on-inaction`)
 - `process_pathway_context`        — (conditional on `process-pathway` in `legal_recognitions`)
+- `enforcement_sequence`           — (priority of enforcement agencies, with any enforcement requirements)
 - `private_roa_context`            — (conditional on `private-right-of-action` in `legal_recognitions`)
 - `jury_trial_scope`               — (sister field to `jury_trial_context`; select: `all-claims`|
                                       `damages-only`|`liability-only`|`see-context`)
@@ -566,6 +570,7 @@ rebuttable presumption → temporal presumption → detail overflow
                                       `damages`|`both`|`has-details`; combo limited to `has-details` plus one other)
 - `causation_application_details`
 - `causation_standard_context`     — (conditional on `causation_standards` is non-empty)
+- `causation_dual_standard_context`  — (conditional on `causation-dual-standard` in `legal_recognitions`)
 - `employer_knowledge_scope`       — (sister field to `employer_knowledge_context`; select:
                                       `actual-knowledge`|`constructive-knowledge`|`inferred-knowledge`|
                                       `imputed-knowledge`|`has-details`)
@@ -1000,9 +1005,6 @@ Sister fields can (and usually do) appear before sibling.
                                                                                 + 'filing_notice_unit'               // Required
 'statutory-preclusion'                → 'statutory_preclusion_context'                                               // Applies
 'savings-clause'                      → 'savings_clause_context'                                                     // Specified
-'agency-inaction-triggers-suit'       → (sister field to process_pathway, bool)                                           // Applies
-'federal-concurrent-enforcement'      → (signals interaction_details)                                               // Applies
-'state-floor-exceeds-federal'         → (signals interaction_details)                                               // Applies
 
 // ── Retaliation Tab ──────────────────────────────────────────────────────────
 'cats-paw-liability'                  → 'cats_paw_liability_context'            + 'is_cats_paw_liability_extended'   // Recognized
@@ -1058,8 +1060,6 @@ Sister fields can (and usually do) appear before sibling.
 - `ws_sovereign_immunity_status` — flat. Tracks how state/federal sovereign immunity applies to whistleblower
   claims. Enables cross-jurisdiction comparison and Phase 2 filtering.
   Attached to `jx-statute`, `jx-common-law`, `jx-citation`, `jx-construction`.
-- `ws_remedy_cap_basis` — flat. Classifies structural basis for damages caps. Drives `cap_type` select in the
-  `remedy_caps` repeater. Attached to `jx-statute`, `jx-common-law`.
 
 ### Existing Tables: Split Taxonomy Note
 
@@ -1073,22 +1073,22 @@ intentional and legally correct.
 
 ### Existing Tables: Term Additions (v2.3)
 
-All additions to existing tables require a `seed_version` bump on the affected taxonomy in `register-taxonomies.php`.
+### NEVER ###
+### DO THIS AND I WILL SHOOT YOUR DOG ### All additions to existing tables require a `seed_version` bump on the affected taxonomy in `register-taxonomies.php`.
+### NEVER ###
 
-**`ws_legal_recognition`** — append in logical tab order, before the Without Context block:
+**`ws_legal_recognition`** — append in logical tab order, before the Without Context block: [DONE]
 
 | Slug | Label | Companion | Note |
 |---|---|---|---|
-| `garcetti-exception` | Garcetti / Official-Duties Exclusion Applies | `→ garcetti_exception_context` | Applies |
-| `savings-clause` | Savings Clause Preserves State Law | `→ savings_clause_context` | Specified |
-| `federal-concurrent-enforcement` | Federal/State Concurrent Enforcement Applies | `→ (signals interaction_details)` | Applies |
-| `state-floor-exceeds-federal` | State Floor Exceeds Federal Minimum | `→ (signals interaction_details)` | Applies |
-| `agency-inaction-triggers-suit` | Agency Inaction Triggers De Novo Civil Right | `→ (sister field to process_pathway)` | Applies |
+| `garcetti-exception` | Garcetti / Official-Duties Exclusion Applies | → `garcetti_exception_context` | Applies |
 | `official-duties-carveout` | Official Duties Carveout (Lane v. Franks Exception) | (no companion) | Applies |
-| `equitable-interest-award` | Equitable Interest Provision Available | `→ interest_provision_context` | Available |
-| `mitigation-exception` | Mitigation Exception Recognized | `→ mitigation_exception_context` | Recognized |
+| `equitable-interest-award` | Equitable Interest Provision Available | → `interest_provision_context` | Available |
+| `mitigation-exception` | Mitigation Exception Recognized | → `mitigation_exception_context` | Recognized |
+| `causation-dual-standard` | Causation Dual Standard (Liability vs Damages Differ) | → `causation_dual_standard_context` | Applies
+| `statutory-nexus-diverges-from-common-law` | Statutory Nexus Overrides Circuit Common Law | (no companion) | Applies? |
 
-**`ws_remedy`** — append before `has-limits` sentinel:
+**`ws_remedy`** — append before `has-limits` sentinel: [DONE]
 
 | Slug | Label |
 |---|---|
@@ -1099,26 +1099,14 @@ All additions to existing tables require a `seed_version` bump on the affected t
 | `non-economic-cap-separate` | Non-Economic Damages Capped Separately |
 | `punitive-damages-capped-separately` | Punitive Damages Capped Separately |
 
-**`ws_causation_standard`** — append before `has-details` sentinel. `substantial-motivating-factor` and
-`causation-any-consideration` already exist in the registry — do not add again:
-
-| Slug | Label |
-|---|---|
-| `dual-standard-applies` | Dual Standard (Liability vs Damages Differ) |
-| `statutory-nexus-diverges-from-common-law` | Statutory Nexus Overrides Circuit Common Law |
-| `any-consideration-nexus` | Any Consideration Nexus |
-
-**`ws_process_type`** — append after existing terms. `de-novo-civil` already covers the
-`agency-inaction-civil-trigger` concept — do not add that slug:
+***`ws_process_type`** — append after existing terms. [DONE]
 
 | Slug | Label |
 |---|---|
 | `hybrid-admin-civil-path` | Hybrid Admin → Civil Pathway |
 | `direct-filing-permitted` | Direct Filing Permitted (No Exhaustion) |
 
-**`ws_protected_class`** — append under `special-status` parent unless noted.
-`family-member-whistleblower` duplicates `associates-immediate-family`; `contractor-subcontractor-agent`
-duplicates `contractor-gig` — neither added:
+**`ws_protected_class`**
 
 | Slug | Label | Parent |
 |---|---|---|

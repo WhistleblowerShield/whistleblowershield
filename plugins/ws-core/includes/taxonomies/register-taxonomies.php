@@ -179,12 +179,12 @@ $_ws_taxonomy_registry = [
             'consequential-damages'     => 'Consequential / Special Damages',
             'declaratory-relief'        => 'Declaratory Relief',
             'tax-gross-up'              => 'Tax Gross-Up',
-            'pre-judgment-interest'              => 'Pre-Judgment Interest',
-            'post-judgment-interest'             => 'Post-Judgment Interest',
-            'discretionary-interest'             => 'Discretionary Interest Award',
-            'mitigation-exception'               => 'Mitigation Exception / Exemption',
-            'non-economic-cap-separate'          => 'Non-Economic Damages Capped Separately',
-            'punitive-damages-capped-separately' => 'Punitive Damages Capped Separately',
+            'pre-judgment-interest'               => 'Pre-Judgment Interest',
+            'post-judgment-interest'              => 'Post-Judgment Interest',
+            'discretionary-interest'              => 'Discretionary Interest Award',
+            'mitigation-exemption'                => 'Mitigation Exemption',
+            'non-economic-cap-separate'           => 'Non-Economic Damages Capped Separately',
+            'punitive-damages-capped-separately'  => 'Punitive Damages Capped Separately',
             'has-limits'                => 'Has Limits/Caps/Standards',
             'has-details'               => 'Has Details',
         ]
@@ -818,6 +818,7 @@ $_ws_taxonomy_registry = [
             'pre-filing-notice'                     => 'Pre-Filing Notice Required',                          // + filing_notice_context          + filing_notice_target + filing_notice_value + filing_notice_unit
             'statutory-preclusion'                  => 'Statutory Preclusion Applies',                        // + statutory_preclusion_context   // only present in common law records
             // Retaliation                                                                                    // ───── # Retaliation Tab ───────────────────────────────────────────────────
+            'evidence-preservation'                 => 'Evidence Preservation Required',                      // + evidence_preservation_context  + preservation_timeline_value + preservation_timeline_unit + preservation_requirement_scope
             'cats-paw-liability'                    => 'Cat\'s Paw Liability Recognized',                     // + cats_paw_liability_context
             'third-party-retaliation'               => 'Third-Party Retaliation Prohibited',                  // + third_party_retaliation_context
             'criminal-sanctions'                    => 'Criminal Sanctions Specified',                        // + criminal_sanctions_context     + criminal_sanctions
@@ -826,6 +827,7 @@ $_ws_taxonomy_registry = [
             'private-right-of-action'               => 'Private Right of Action Available',                   // + private_roa_context
             'jury-trial'                            => 'Jury Trial Available',                                // =>>> NOTE  =>>> invalid term unless 'private-right-of-action' is also present. // + jury_trial_context + jury_trial_scope
             'civil-review-standard'                 => 'Civil Review Standard Specified',                     // + review_standard_context        + review_standard_scope
+            'causation-dual-standard'               => 'Causation Dual Standard (Liability vs Damages Differ)',  // + causation_dual_standard_context
             'equitable-interest-award'              => 'Equitable Interest Provision Available',              // + interest_provision_context     + interest_provision_scope
             'mitigation-required'                   => 'Mitigation Requirement Specified',                    // + mitigation_required_context    + mitigation_required_scope
             'mitigation-exception'                  => 'Mitigation Exception Recognized',                     //  =>>> NOTE  =>>> invalid term unless 'mitigation-required' is also present.     // + mitigation_exception_context
@@ -849,6 +851,7 @@ $_ws_taxonomy_registry = [
             'successor-liability'                   => 'Successor Employer Liability Recognized',             // + successor_liability_context
             'extraterritorial-coverage'             => 'Extraterritorial Coverage Recognized',                // + extraterritorial_context
             // Without Context                                                                                // ───── # Without Context (no Tab) ──────────────────────────────────────────
+            'statutory-nexus-diverges-from-common-law'  => 'Statutory Nexus Overrides Circuit Common Law',    // (no companion)
             'catch-all-protection'                  => 'Catch-All Protection Clause Present',                 // (no companion)
             'internal-only-disclosure'              => 'Internal-Only Disclosure Sufficient',                 // (no companion)
             'trade-secret-immunity'                 => 'Trade Secret Immunity Recognized',                    // (no companion)
@@ -867,6 +870,8 @@ $_ws_taxonomy_registry = [
  * Covers the causal link required between the disclosure and the adverse action.
  * Distinct from ws_employee_standard which covers evidentiary burden-of-proof
  * standards (the volume/quality of evidence required).
+ * 
+ * @todo legal_prompt — set instruction string. 
  *
  */
     'ws_causation_standard'  => [
@@ -874,18 +879,16 @@ $_ws_taxonomy_registry = [
         'plural'                 => 'Causation Standards',
         'singular'               => 'Causation Standard',
         'seed_version'           => '1.0.0',
-        'record'                 => [],
+        'record'                 => ['legal'],
+        'legal_prompt'           => '',
         'terms'                  => [
             'causation-but-for'                        => 'But-For Causation Standard',
             'causation-any-consideration'              => 'Any Consideration Causation Standard',
             'causation-contributing-factor'            => 'Contributing Factor Causation Standard',
-            'contributing-factor-but-for-backstop'     => 'Contributing Factor (But-For Backstop)',
             'causation-motivating-factor'              => 'Motivating Factor Causation Standard',
-            'substantial-motivating-factor'            => 'Substantial Motivating Factor Standard',
             'causation-substantial-factor'             => 'Substantial Factor Causation Standard',
             'causation-proximate-cause'                => 'Proximate Cause Standard',
-            'dual-standard-applies'                    => 'Dual Standard (Liability vs Damages Differ)',
-            'statutory-nexus-diverges-from-common-law' => 'Statutory Nexus Overrides Circuit Common Law',
+            'contributing-factor-but-for-backstop'     => 'Contributing Factor (But-For Backstop)',
             'has-details'                              => 'Has Details',
         ]
     ],
