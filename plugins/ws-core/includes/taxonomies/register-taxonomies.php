@@ -150,7 +150,6 @@ $_ws_taxonomy_registry = [
         'terms'         => [
             'reinstatement'             => 'Reinstatement',
             'interim-reinstatement'     => 'Interim / Preliminary Reinstatement',
-            'interim-relief'            => 'Interim Relief',
             'back-pay'                  => 'Back Pay',
             'interest-on-backpay'       => 'Interest on Back Pay',
             'front-pay'                 => 'Front Pay',
@@ -163,7 +162,6 @@ $_ws_taxonomy_registry = [
             'punitive-damages'          => 'Punitive Damages',
             'treble-damages'            => 'Treble Damages',
             'civil-penalty'             => 'Civil Penalty',
-            'civil-penalties'           => 'Civil Penalties (Aggregate)',
             'attorney-fees'             => 'Attorney Fees',
             'litigation-costs'          => 'Litigation Costs',
             'injunctive-relief'         => 'Injunctive Relief',
@@ -179,10 +177,6 @@ $_ws_taxonomy_registry = [
             'consequential-damages'     => 'Consequential / Special Damages',
             'declaratory-relief'        => 'Declaratory Relief',
             'tax-gross-up'              => 'Tax Gross-Up',
-            'pre-judgment-interest'               => 'Pre-Judgment Interest',
-            'post-judgment-interest'              => 'Post-Judgment Interest',
-            'discretionary-interest'              => 'Discretionary Interest Award',
-            'mitigation-exemption'                => 'Mitigation Exemption',
             'non-economic-cap-separate'           => 'Non-Economic Damages Capped Separately',
             'punitive-damages-capped-separately'  => 'Punitive Damages Capped Separately',
             'has-limits'                => 'Has Limits/Caps/Standards',
@@ -516,9 +510,7 @@ $_ws_taxonomy_registry = [
         'record'                => ['legal'],
         'legal_prompt'          => '',
         'terms'                 => [
-            'mixed-motive-defense'               => 'Mixed Motive Defense',
             'same-decision-defense'              => 'Same-Decision Defense',
-            'same-decision-clear-convincing'     => 'Same-Decision (Clear and Convincing)',
             'legitimate-non-retaliatory-reason'  => 'Legitimate Non-Retaliatory Reason',
             'after-acquired-evidence'            => 'After-Acquired Evidence (Specific Non-Retaliatory)',
             'good-faith-compliance'              => 'Good-Faith Compliance',
@@ -713,6 +705,9 @@ $_ws_taxonomy_registry = [
  * - disclosure:  legal protection for reporting wrongdoing
  * - retaliation: legal protection from adverse actions after reporting
  * - both:        legal protection for both disclosure and retaliation
+ * 
+ *  No 'record' key is intentional, do not assign to research prompts.
+ *  The protection scope of any legal record is an internal editorial call.
  *
  */
     'ws_protection_scope'  => [
@@ -721,7 +716,6 @@ $_ws_taxonomy_registry = [
         'singular'             => 'Protection Scope Type',
         'menu_name'            => 'Protections',
         'seed_version'         => '1.0.0',
-        'record'               => [],
         'terms'                => [
             'disclosure'           => 'Disclosure',
             'retaliation'          => 'Retaliation',
@@ -822,7 +816,7 @@ $_ws_taxonomy_registry = [
             'cats-paw-liability'                    => 'Cat\'s Paw Liability Recognized',                     // + cats_paw_liability_context
             'third-party-retaliation'               => 'Third-Party Retaliation Prohibited',                  // + third_party_retaliation_context
             'criminal-sanctions'                    => 'Criminal Sanctions Specified',                        // + criminal_sanctions_context     + criminal_sanctions
-            // Process and Remedies                                                                           // ───── # Process & Remedies Tab ───────────────────────────────────────────────────
+            // Processes and Remedies                                                                           // ───── # Process & Remedies Tab ───────────────────────────────────────────────────
             'process-pathway'                       => 'Process Pathway Specified',                           // + process_pathway_context        + process_pathway_scope
             'private-right-of-action'               => 'Private Right of Action Available',                   // + private_roa_context
             'jury-trial'                            => 'Jury Trial Available',                                // =>>> NOTE  =>>> invalid term unless 'private-right-of-action' is also present. // + jury_trial_context + jury_trial_scope

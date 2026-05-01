@@ -334,7 +334,7 @@ Fields ordered: identification → related dates → scope → curated
 - `effective_year`                 — (derived from `effective_date` if present, `date` if not)
 - `retro_date`                     — (sister field to `retro_context`)
 - `retro_context`                  — (conditional on `retroactive-date` in `legal_recognitions`)
-- `protection_scope`               — (single-select taxonomy: `ws_protection_scope`)
+- `_protection_scope`              — (single-select taxonomy: `ws_protection_scope`; internal use only)
 - `general_description`            — (brief; reserve full summary for `plain_english_wysiwyg`)
 - `has_attach_flag`                — (special-case; approved use of `has_*` bool; triggers display_order. Used
                                       together for attaching curated records to jx-summary at render)
@@ -450,11 +450,11 @@ Fields ordered: core SOL → modifiers → exhaustion → pathways → threshold
 
 Fields ordered: adverse actions → recognitions → sanctions
 
-- `adverse_actions`                   — (taxonomy: `ws_adverse_action`)
+- `adverse_actions`                — (taxonomy: `ws_adverse_action`)
 - `adverse_action_details`
-- `adverse_action_scope`              — (select: `termination-only`|`material-adverse`|
-                                         `broad-any-adverse-action`|`see-context`)
-- `adverse_action_scope_context`      — (conditional on `adverse_action_scope` is non-empty)
+- `adverse_action_scope`           — (select: `termination-only`|`material-adverse`|
+                                      `broad-any-adverse-action`|`see-context`)
+- `adverse_action_scope_context`   — (conditional on `adverse_action_scope` is non-empty)
 - `preservation_deadline_value`    — (sister field to `evidence_preservation_context`)
 - `preservation_deadline_unit`     — (sister field to `evidence_preservation_context`; select:
                                       `days`|`weeks`|`months`|`years`)
@@ -899,7 +899,7 @@ Fields that are unchanged or new do not appear in this list.
 - `tolling_details`                          →  split into `statutory_tolling_context` and `equitable_tolling_context`
 - `has_exhaustion_required`                  → `exhaustion-required`            in `legal_recognitions`
 - `exhaustion_details`                       → `exhaustion_required_context`
-- `exhaustion_is_jurisdictional` (bool)      → `exhaustion_required_class`     (single select)
+- `exhaustion_is_jurisdictional` (bool)      → `exhaustion_required_scope`     (single select)
 - `rebuttable_presumption`                   → `rebuttable_presumption_details`
 - `has_statutory_preclusion`                 → `statutory-preclusion`           in `legal_recognitions`
 - `doctrine_basis_wysiwyg`                   → `doctrine_basis`                (never was wysiwyg)
@@ -982,7 +982,7 @@ Sister fields can (and usually do) appear before sibling.
 
 // ── Classification Tab ───────────────────────────────────────────────────────
 'manager-rule-exclusion'              → 'manager_rule_exclusion_context'                                             // Applies
-'public-concern-required'             → 'public_concern_context'                                                     // Applies
+'public-concern-required'             → 'public_concern_required_context'                                                     // Applies
 'bad-faith-exclusion'                 → 'bad_faith_exclusion_context'                                                // Applies
 'malicious-reporting-sanctions'       → 'malicious_reporting_context'           + 'malicious_reporting_sanctions'    // Applies
 'anonymity-protection'                → 'anonymity_protection_context'                                               // Recognized
@@ -1000,11 +1000,9 @@ Sister fields can (and usually do) appear before sibling.
 'cba-grievance-preemption'            → 'cba_preemption_context'                                                     // Applies
 'amended-claim'                       → 'amended_claim_context'                                                      // Recognized
 'exhaustion-required'                 → 'exhaustion_required_context'           + 'exhaustion_required_class'        // Required
-'pre-filing-notice'                   → 'filing_notice_context'                 + 'filing_notice_target'
-                                                                                + 'filing_notice_value'
+'pre-filing-notice'                   → 'filing_notice_context'                 + 'filing_notice_target' + 'filing_notice_value'
                                                                                 + 'filing_notice_unit'               // Required
 'statutory-preclusion'                → 'statutory_preclusion_context'                                               // Applies
-'savings-clause'                      → 'savings_clause_context'                                                     // Specified
 
 // ── Retaliation Tab ──────────────────────────────────────────────────────────
 'cats-paw-liability'                  → 'cats_paw_liability_context'            + 'is_cats_paw_liability_extended'   // Recognized
@@ -1086,7 +1084,7 @@ intentional and legally correct.
 | `equitable-interest-award` | Equitable Interest Provision Available | → `interest_provision_context` | Available |
 | `mitigation-exception` | Mitigation Exception Recognized | → `mitigation_exception_context` | Recognized |
 | `causation-dual-standard` | Causation Dual Standard (Liability vs Damages Differ) | → `causation_dual_standard_context` | Applies
-| `statutory-nexus-diverges-from-common-law` | Statutory Nexus Overrides Circuit Common Law | (no companion) | Applies? |
+| `statutory-nexus-diverges-from-common-law` | Statutory Nexus Overrides Circuit Common Law | (no companion) | Applies |
 
 **`ws_remedy`** — append before `has-limits` sentinel: [DONE]
 
