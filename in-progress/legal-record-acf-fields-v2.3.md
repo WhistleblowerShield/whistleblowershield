@@ -53,7 +53,8 @@ the suffix itself declares field shape, follow the actual field cardinality: use
 fields and plural for multi-value fields, especially `*_scope` / `*_scopes` and `*_status` / `*_statuses`
 (e.g. `disclosure_target_scope` or `disclosure_target_scopes`, depending on cardinality).
 
-# EXCEPTION: For those that need a rule, `*_details` and `*_context` behave as lexical field labels, not as
+# EXCEPTION:
+For those that need a rule, `*_details` and `*_context` behave as lexical field labels, not as
 true count nouns that track storage cardinality.
 
 ### Booleans
@@ -140,82 +141,7 @@ Use when a companion field is already triggered by another mechanism, making `ha
 
 ## Hook Requirements
 
-### General
-Document required hook use in the inline definition of field where hook is needed.
-
-- Derived fields: auto-fill on load and on save.
-- Merged hidden fields (e.g., `_related_agencies`, `_precedent_ids`, `_parent_ids`): auto-fill on save.
-- Derived select choices (e.g., `court` filtered by `jurisdiction`): filter on field load.
-
-Always write unified hooks over duplicates. A single hook using `get_post_type()` is preferred over two
-near-identical hooks per CPT. Reuse hooks wherever possible.
-
-### Precedent Taxonomy Mapping Choices
-
-`extended_taxonomies` and `suppressed_taxonomies` use the same controlled taxonomy-term picker.
-
-- `taxonomy` choices come from one allowlist of legal-record taxonomies that precedent may extend or suppress.
-- `term` choices are filtered by the selected `taxonomy` in the same repeater row.
-- Store both values as slugs for readable ingest, export, and review.
-- Validate on save that selected `term` exists in selected `taxonomy`.
-- Do not allow free-entry taxonomy names or term names in these mapping rows.
-
-### Contradiction Guards
-Document when hook is required to guard against invalid combinations of values in table below. Note if cross-field
-monitoring is required. When cross-field monitoring also requires cross-tab monitoring add to detailed entry to 
-[Cross-Tab Conditional and Monitoring] block.
-
-- `sovereign_immunity_statuses` — detect and flag contradictory terms.
-   * `not-waived` is mutually exclusive with `partially-waived`, `fully-waived`, and `cap-applies`.
-   * `fully-waived` is mutually exclusive with `partially-waived` and `tort-claims-act-gate`.
-- `protected_classes` and `excluded_classes` — same class slug must never be present in both taxonomies.
-   * When overlap is detected: flag for editor resolution; do not auto-remove because the correct side is legal-context
-     dependent.
-- `garcetti-exception` — invalid unless `public-sector` is present in `employment_sectors`.
-   * When `public-sector` is absent: remove `garcetti-exception`, clear `garcetti_exception_context`, and clear any
-     sister fields.
-- `mitigation-exception` — invalid without `mitigation-required` in `legal_recognitions`.
-   * When `mitigation-required` is absent: remove `mitigation-exception`, clear `mitigation_exception_context`,
-     and clear any sister fields.
-- `contractual-waiver` — invalid when `civil_action_waiver_scope` is `anti`.
-   * When `anti` is set: remove `contractual-waiver` from `legal_recognitions`, clear `contractual_waiver_context`,
-     and clear any sister fields.
-- `jury-trial` — invalid without `private-right-of-action` in `legal_recognitions`.
-   * When `private-right-of-action` is absent: remove `jury-trial`, clear `jury_trial_context`, and clear any
-     sister fields.
-- `exhaustion-required` — invalid when `process_pathway_scope` is `direct-court`.
-   * When `direct-court` is set: remove `exhaustion-required`, clear `exhaustion_required_context`, and clear any
-     sister fields.
-- `direct-filing-permitted` — invalid with `exhaustion-required`.
-   * When `direct-filing-permitted` is present in `process_types`: remove `exhaustion-required`, clear
-     `exhaustion_required_context`, and clear any sister fields.
-- `sovereign-immunity-waiver` — invalid when `sovereign_immunity_waiver` is `none` or
-  `sovereign_immunity_statuses` includes `not-waived`.
-   * When no waiver is indicated: remove `sovereign-immunity-waiver` from `legal_recognitions`.
-- Multi-select fallback values — `see-context` / `see-details` must not be combined with specific choices.
-   * Applies to the same-field multi-selects listed in [Cross-Tab Conditional and Monitoring].
-- `malicious_reporting_sanctions.sanction_penalty` — `felony` and `misdemeanor` must not appear in the same row.
-   * Use separate repeater rows for separate criminal tracks.
-- `scope` — enforce precedent taxonomy bucket consistency.
-   * When `scope` is `favorable`: clear `suppressed_taxonomies`.
-   * When `scope` is `adverse`: clear `extended_taxonomies`.
-   * When `scope` is `neutral`: clear both `extended_taxonomies` and `suppressed_taxonomies`.
-- `burden_shifting_frameworks` — `mixed-motive` is incompatible with `but-for` in most formulations; multi-framework combinations need validity check. Burden of Proof tab.
-- `election_of_remedies_rules` — `no-election-required` invalidates all other choices in the same field. Retaliation tab.
-- `proper_defendants` — `employer-entity-only` is mutually exclusive with individual-liability choices (`individual-supervisors`, `any-individual`). Waiver & Scope tab.
-- `negative_treatment_classes` — `overruled` is incompatible with lesser treatment classes (`limited`, `distinguished`, `questioned`). Relationships tab.
-- `sol_triggers` — evaluate whether `see-context` exclusivity rule extends to this field. Statute of Limitations & Thresholds tab.
-- `types` (citation-specific) — citation type choices likely mutually exclusive; needs evaluation. Identity tab.
-
-### Agency Filtering
-
-- `primary_agency` — auto-fill with the first attached `ws-agency` post when empty. Filter choices to
-   currently attached posts only. Instructions when empty: `"Attach one ws-agency to local or federal first"`;
-   when non-empty: `"Override primary_agency with any currently attached local or federal agency"`.
-- `local_agencies` — filter to jx-applicable, non-federal `ws-agency` posts. (Stub: future refinement
-   intersecting `ws_process_type`, `ws_disclosure_targets` and `ws_protected_disclosure` taxonomies.)
-- `federal_agencies` — filter to federal `ws-agency` posts only. (Stub: future refinement intersecting
-  `ws_process_type`, `ws_disclosure_targets` and `ws_protected_disclosure` taxonomies.)
+### See legal-record-acf-hooks.md
 
 ---
 
@@ -693,26 +619,28 @@ Fields ordered: contractual → recognitions → immunity → defendants.
 - `individual_liability_scopes`    — (sister field to `individual_liability_context`; multi-select: `supervisor`|
                                       `coworker`|`officer-director`|`any-individual`|`has-details`)
 - `individual_liability_context`   — (conditional on `individual-liability` in `legal_recognitions`)
-- `sovereign_immunity_statuses`    — (sister field to `sovereign_immunity_context`; taxonomy:
-                                      `ws_sovereign_immunity_status`)
-- `sovereign_immunity_scope`       — (sister field to `sovereign_immunity_context`; select:`state-only`|
-                                      `instrumentalities-included`|`political-subdivisions-included`|`all`|`see-details`)                                      
-- `sovereign_immunity_waiver`      — (sister field to `sovereign_immunity_context`; select:
-                                      `explicit-waiver`|`implied-waiver`|`none`)
-- `sovereign_immunity_status_details` — (sister field to `sovereign_immunity_context`)
+- `sovereign_immunity_statuses`    — (sister field to `sovereign_immunity_context`; select: `not-waived`|
+                                      `partially-waived`|`fully-waived`|`has-details`)
+- `sovereign_immunity_scope`       — (conditional on `sovereign_immunity_status` is non-empty; select: `all`|
+                                      `instrumentalities-included`|`political-subdivisions-included`|
+                                      `state-only`|`see-context`)
+- `sovereign_immunity_waiver`      — (conditional on `sovereign_immunity_status` is NOT `not-waived`; select:
+                                      `explicit-waiver`|`implied-waiver`)
+- `sovereign_immunity_status_details`
 - `sovereign_immunity_context`     — (conditional on `sovereign-immunity-status` in `legal_recognitions`)
 - `nda_limits_context`             — (conditional on `nda-limitations` in `legal_recognitions`)
 - `anti_gag_provision_context`     — (conditional on `anti-gag-provision` in `legal_recognitions`)
 - `no_retaliatory_evidence_context`  — (conditional on `no-retaliatory-evidence` in `legal_recognitions`)
 - `stay_of_discipline_context`     — (conditional on `stay-of-disciplinary-action` in `legal_recognitions`)
-- `anti_slapp_protection_scope`    — (sister field to `anti_slapp_protection_context`; select: `motion-to-strike`|
-                                      `discovery-stay`|`fee-shift-on-motion`|`full-procedural`|`see-context`)
+- `anti_slapp_protection_scopes`   — (sister field to `anti_slapp_protection_context`; multi-select:
+                                      `motion-to-strike`|`discovery-stay`|`fee-shift-on-motion`|
+                                      `full-procedural`|`see-context`)
 - `anti_slapp_protection_context`  — (conditional on `anti-slapp-protection` in `legal_recognitions`)
 - `discovery_protection_context`   — (conditional on `discovery-protection` in `legal_recognitions`; documents
                                       specific protections against retaliatory subpoenas, abusive discovery,
                                       or litigation harassment distinct from anti-SLAPP)
-- `settlement_restriction_scope`   — (sister field to `settlement_restriction_context`; select: `amount-only`|`facts`|
-                                      `full-prohibition`|`agency-notification`|`see-context`)
+- `settlement_restriction_scope`   — (sister field to `settlement_restriction_context`; select: `amount-only`|
+                                      `facts`|`full-prohibition`|`agency-notification`|`see-context`)
 - `settlement_restriction_context` — (conditional on `confidential-settlement-restriction` in `legal_recognitions`)
 - `successor_liability_context`    — (conditional on `successor-liability` in `legal_recognitions`)
 - `extraterritorial_context`       — (conditional on `extraterritorial-coverage` in `legal_recognitions`)
@@ -872,8 +800,9 @@ These fields do not appear on precedent-records.
 - `comlaw_ids`
 - `parent_weight`                  — (select: `primary`|`secondary`|`distinguishing-only`)
 - `has_negative_treatment`
-- `negative_treatment_classes`     — (sister field to `negative_treatment_details`; multi-select: `overruled`|
-                                      `distinguished`|`limited`|`questioned`|`superseded-by-statute`|`see-details`)
+- `negative_treatment_class`     — (sister field to `negative_treatment_details`; select: `overruled`|
+                                    `distinguished`|`limited`|`questioned`|`superseded-by-statute`|
+                                    `see-details`)
 - `negative_treatment_details`
 
 #### Source / Audit Tab (insert after `authority_reference`)
@@ -973,65 +902,6 @@ Fields that are unchanged or new do not appear in this list.
 
 ---
 
-## Relationship Direction Contract (For Sync)
-
-- Parent-bearing legal records: `citation`, `construction`.
-- Child-bearing  legal records: `statute`, `common_law`.
-
----
-
-## Cross-Tab Conditional and Monitoring
-
-### Contradiction Guard Cross-Tab Pairs
-The following hook guards compare fields that live on different tabs:
-
-- `garcetti-exception` in `legal_recognitions` requires `public-sector` in `employment_sectors`.
-- `exhaustion-required` in `legal_recognitions` conflicts with `direct-filing-permitted` in `process_types`.
-- `sovereign-immunity-waiver` in `legal_recognitions` conflicts with `sovereign_immunity_waiver` is `none` or
-  `not-waived` in `sovereign_immunity_statuses`.
-- `protected_classes` and `excluded_classes` must not contain the same class slug.
-
-### Contradiction Guard Cross-Field in Sister Blocks
-The following hook guards compare fields in a single block:
-
-- `fee_shifting` block (Processes & Remedies tab), monitor for contradictions and invalid combinations.
-  * `fee_shifting_standard` has possible values that makes some values in `fee_shifting_scopes` invalid.
-  * `fee_shifting_scopes` is multi-select and can create invalid combos.
-  * `fee-shifting-standard` in `legal_recognitions`, means that `none-american-rule` can only be set with phased
-     exceptions. `fee_shifting_scopes` must be set to `has-phases`only, or `fee-shifting-standard` removed from
-    `legal_recognitions`.
-
-### Contradiction Guard Same-Field Multi-Selects
-The following hook guards protect multi-select fields whose choices include umbrella or fallback values:
-
-- `malicious_reporting_sanctions.sanction_penalty` cannot combine `felony` and `misdemeanor` in the same repeater
-   row. Add a second row when the same provision creates separate felony and misdemeanor tracks.
-
-### mixed-motive → mixed_motive_remedy_context
-
-When `burden_shifting_frameworks` (Burden Of Proof tab) includes `mixed-motive`,
-the field `mixed_motive_remedy_context` (Processes & Remedies tab) becomes relevant.
-ACF conditional logic cannot surface this cross-tab dependency natively.
-
-Implementation: register an `acf/save_post` hook (or `admin_notices` hooked to
-`current_screen`) that detects `mixed-motive` in `burden_shifting_frameworks` and
-emits a dismissible admin notice directing the editor to the Enforcement tab:
-
-> "Mixed-motive framework selected — please complete the 'Mixed Motive Remedy
->  Context' field on the Enforcement tab."
-
-Notice should be informative (not alarmist) and display on the edit screen for all four legal record CPTs.
-Dismiss state does not need to persist — the notice should reappear on each save as long as `mixed-motive`
-is present and `mixed_motive_remedy_context` is empty.
-
-### blacklisting in adverse_actions → is_blacklisting_extended (Processes & Remedies Tab)
-
-`is_blacklisting_extended` (Processes & Remedies tab) is conditionally revealed
-  * When `adverse_actions` (Retaliation tab) includes `blacklisting`.
-
-
----
-
 ## Slug-to-Companion Map (ws_legal_recognition taxonomy)
 
 Used for bool-state values of Legal Recognitions where true when:
@@ -1050,7 +920,12 @@ Conditional-Companion fields `*_context` noted with ` → ` are triggered by slu
 Sister fields noted by ` + ` inherit the conditional behavior, but are defined by the sibling.
 Sister fields cannot appear without the triggered sibling being revealed.
 Sister fields can (and usually do) appear before sibling.
-Sister fields can have additional conditionals, use AND / OR / NOT after sibling is declared.
+Sister fields can have further conditional requirements; use AND / OR / NOT after sibling is declared.
+
+Within triggered clusters, companions and sisters are required where logically necessary, with field attribute
+'required' => 1 set in generated ACF where applicable. Where critical, hooks should monitor for cases where a
+triggering slug is present and a required field in that cluster is empty, and block save with a validation
+error that references both the slug and the missing field.
 
 ```
 
@@ -1119,7 +994,7 @@ Sister fields can have additional conditionals, use AND / OR / NOT after sibling
 'anti-gag-provision'                  → 'anti_gag_provision_context'                                                 // Recognized
 'no-retaliatory-evidence'             → 'no_retaliatory_evidence_context'                                            // Barred
 'stay-of-disciplinary-action'         → 'stay_of_discipline_context'                                                 // Available
-'anti-slapp-protection'               → 'anti_slapp_protection_context'         + 'anti_slapp_protection_scope'      // Applies
+'anti-slapp-protection'               → 'anti_slapp_protection_context'         + 'anti_slapp_protection_scopes'     // Applies
 'discovery-protection'                → 'discovery_protection_context'                                               // Applies
 'confidential-settlement-restriction' → 'settlement_restriction_context'        + 'settlement_restriction_scope'     // Applies
 'individual-liability'                → 'individual_liability_context'          + 'individual_liability_scopes'      // Available
@@ -1138,24 +1013,6 @@ Sister fields can have additional conditionals, use AND / OR / NOT after sibling
 'official-duties-carveout'                  — (no companion needed)   // Applies
 
 ```
-
----
-
-## Taxonomy Reference
-
-### New Tables (v2.3)
-
-- `ws_sovereign_immunity_status` — flat. [DONE]
-
-### Existing Tables: Split Taxonomy Note  [DONE]
-
-`ws_employee_standard` was split to create `ws_causation_standard`; sibling taxonomies covering distinct concepts.
-
-- `ws_employee_standard`  — evidentiary weight: how much proof, what quality.
-- `ws_causation_standard` — causal logic: the relationship between disclosure and adverse action.
-
-The same underlying concept (e.g. contributing factor) may appear in both tables under different framing —
-intentional and legally correct.
 
 ---
 

@@ -15,11 +15,11 @@ defined( 'ABSPATH' ) || exit;
  *
  * Prompt group values:
  *   0 = do not attach to prompt
- *   1 = essential
- *   2 = expected
- *   3 = expected-if-found
- *   4 = conditional
- *   5 = optional
+ *   1 = essential          — omit 'record' if not found
+ *   2 = expected-if-found  — fallback to empty "", [] if not found, do not omit
+ *   3 = expected           — fallback to default value if not found, do not omit
+ *   4 = conditional        — triggered by specific values in specific keys
+ *   5 = optional           — omit 'key' when not found
  *
  * @package    WhistleblowerShield
  * @since      2.0.0
@@ -235,7 +235,7 @@ function ws_get_jx_statute_acf_tabs(): array {
                 [ 'name' => 'anti_gag_provision_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'anti-gag-provision' ] ],
                 [ 'name' => 'no_retaliatory_evidence_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'no-retaliatory-evidence' ] ],
                 [ 'name' => 'stay_of_discipline_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'stay-of-disciplinary-action' ] ],
-                [ 'name' => 'anti_slapp_protection_scope', 'type' => 'select', 'multiple' => 0, 'choices' => [ 'motion-to-strike', 'discovery-stay', 'fee-shift-on-motion', 'full-procedural', 'see-context' ], 'group' => 4, 'sister' => 'anti_slapp_protection_context' ],
+                [ 'name' => 'anti_slapp_protection_scopes', 'type' => 'select', 'multiple' => 1, 'choices' => [ 'motion-to-strike', 'discovery-stay', 'fee-shift-on-motion', 'full-procedural', 'see-context' ], 'group' => 4, 'sister' => 'anti_slapp_protection_context' ],
                 [ 'name' => 'anti_slapp_protection_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'anti-slapp-protection' ] ],
                 [ 'name' => 'discovery_protection_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'discovery-protection' ] ],
                 [ 'name' => 'settlement_restriction_scope', 'type' => 'select', 'multiple' => 0, 'choices' => [ 'amount-only', 'facts', 'full-prohibition', 'agency-notification', 'see-context' ], 'group' => 4, 'sister' => 'settlement_restriction_context' ],
