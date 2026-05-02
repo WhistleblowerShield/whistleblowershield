@@ -130,7 +130,7 @@ disclosure_targets   → *_disclosure_target_details
 adverse_actions      → *_adverse_action_details
 remedies             → *_remedy_details
 employer_defenses    → *_employer_defense_details
-employee_standards   → *_employee_standard_details
+employee_standard   → *_employee_standard_details
 ```
 
 ### Other taxonomies

@@ -38,7 +38,7 @@
  *   ws_jx_citation_fee_shifting                  Fee shifting (multi_select, optional)
  *   ws_jx_citation_employer_defenses              Employer Defenses (multi_select, optional)
  *   ws_jx_citation_employer_defense_details       Employer Defense Details (textarea, optional)
- *   ws_jx_citation_employee_standards             Employee Standards (multi_select, optional)
+ *   ws_jx_citation_employee_standard             Employee Standards (multi_select, optional)
  *   ws_jx_citation_employee_standard_details      Employee Standard Details (textarea, optional)
  *   ws_jx_citation_has_employer_threshold         Has Employer Size Threshold (true_false, optional)
  *   ws_jx_citation_employer_threshold_details     Employer Threshold Details (textarea, optional, conditional)
@@ -451,9 +451,9 @@ function ws_register_acf_jx_citations() {
             ],
 
             [
-                'key'           => 'field_jx_citation_employee_standards',
+                'key'           => 'field_jx_citation_employee_standard',
                 'label'         => 'Employee Standards',
-                'name'          => 'ws_jx_citation_employee_standards',
+                'name'          => 'ws_jx_citation_employee_standard',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_employee_standard',
                 'field_type'    => 'multi_select',
@@ -581,7 +581,7 @@ function ws_register_acf_jx_citations() {
 // - ws_jx_citation_disclosure_targets
 // - ws_jx_citation_adverse_actions
 // - ws_jx_citation_remedies
-// - ws_jx_citation_employee_standards
+// - ws_jx_citation_employee_standard
 // - ws_jx_citation_employer_defenses
 
 add_filter( 'acf/load_field', 'ws_jx_citation_details_conditional' );
@@ -593,7 +593,7 @@ function ws_jx_citation_details_conditional( $field ) {
         'field_jx_citation_disclosure_target_details'  => [ 'ws_disclosure_target',    'field_jx_citation_disclosure_targets' ],
         'field_jx_citation_adverse_action_details'     => [ 'ws_adverse_action',       'field_jx_citation_adverse_actions' ],
         'field_jx_citation_remedy_details'             => [ 'ws_remedy',               'field_jx_citation_remedies' ],
-        'field_jx_citation_employee_standard_details'  => [ 'ws_employee_standard',    'field_jx_citation_employee_standards' ],
+        'field_jx_citation_employee_standard_details'  => [ 'ws_employee_standard',    'field_jx_citation_employee_standard' ],
         'field_jx_citation_employer_defense_details'   => [ 'ws_employer_defense',     'field_jx_citation_employer_defenses' ],
     ];
 

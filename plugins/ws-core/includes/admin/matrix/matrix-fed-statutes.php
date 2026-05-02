@@ -31,7 +31,7 @@ $_ws_fed_statutes_matrix = [
         'trigger'                     => 'adverse_action',
         'exhaustion_required'         => 1,
         'exhaustion_details'          => 'Must file with OSHA within 180 days of the adverse action. OSHA has 60 days to investigate. If no final order within 180 days, complainant may file in federal district court.',
-        'employee_standards'          => ['contributing_factor'],
+        'employee_standard'          => ['contributing_factor'],
         'display_order'               => 10,
         'post_content'                => 'Protects employees of publicly traded companies who report securities fraud, mail fraud, wire fraud, bank fraud, or violations of SEC rules. Enforced by OSHA.',
         'process_types'               => [ 'administrative-complaint', 'civil-lawsuit' ],
@@ -55,7 +55,7 @@ $_ws_fed_statutes_matrix = [
         'trigger'                     => 'adverse_action',
         'exhaustion_required'         => 0,
         'exhaustion_details'          => '',
-        'employee_standards'          => ['preponderance'],
+        'employee_standard'          => ['preponderance'],
         'display_order'               => 20,
         'post_content'                => 'Provides anti-retaliation protections and monetary awards (10–30% of sanctions over $1M) for reporting violations of federal securities laws directly to the SEC.',
         'process_types'               => [ 'civil-lawsuit', 'regulatory-tip' ],
@@ -79,7 +79,7 @@ $_ws_fed_statutes_matrix = [
         'trigger'                     => 'discovery',
         'exhaustion_required'         => 0,
         'exhaustion_details'          => '',
-        'employee_standards'          => ['preponderance'],
+        'employee_standard'          => ['preponderance'],
         'display_order'               => 30,
         'post_content'                => 'Allows private citizens (relators) to file qui tam lawsuits on behalf of the government against those who defraud federal programs. Relators receive 15–30% of recovered funds.',
         'process_types'               => [ 'qui-tam', 'civil-lawsuit' ],
@@ -103,7 +103,7 @@ $_ws_fed_statutes_matrix = [
         'trigger'                     => 'adverse_action',
         'exhaustion_required'         => 1,
         'exhaustion_details'          => 'Federal employees must generally file with the Office of Special Counsel (OSC) first. OSC has 240 days to investigate. If OSC declines to pursue, the employee may file an Individual Right of Action (IRA) with the MSPB.',
-        'employee_standards'          => ['contributing_factor'],
+        'employee_standard'          => ['contributing_factor'],
         'display_order'               => 40,
         'post_content'                => 'Protects federal employees and applicants who disclose government waste, fraud, abuse, or law violations. Enforced by the Office of Special Counsel (OSC) and the Merit Systems Protection Board (MSPB).',
         'process_types'               => [ 'administrative-complaint', 'civil-lawsuit' ],
@@ -127,7 +127,7 @@ $_ws_fed_statutes_matrix = [
         'trigger'                     => 'adverse_action',
         'exhaustion_required'         => 1,
         'exhaustion_details'          => 'Same as the Whistleblower Protection Act — must exhaust OSC remedies before filing with the MSPB.',
-        'employee_standards'          => ['contributing_factor'],
+        'employee_standard'          => ['contributing_factor'],
         'display_order'               => 50,
         'post_content'                => 'Expands WPA protections to cover disclosures of classified information to Congress, disclosures made in the ordinary course of duties, and protections for employees of the TSA.',
         'process_types'               => [ 'administrative-complaint', 'civil-lawsuit', 'congressional-disclosure' ],
@@ -151,7 +151,7 @@ $_ws_fed_statutes_matrix = [
         'trigger'                     => 'adverse_action',
         'exhaustion_required'         => 1,
         'exhaustion_details'          => 'Must file with OSHA within 30 days. OSHA investigates and may order reinstatement, back pay, and other remedies.',
-        'employee_standards'          => ['contributing_factor'],
+        'employee_standard'          => ['contributing_factor'],
         'display_order'               => 60,
         'post_content'                => 'Protects private-sector employees who report workplace safety violations or participate in OSHA proceedings from retaliation.',
         'process_types'               => [ 'administrative-complaint' ],
@@ -175,7 +175,7 @@ $_ws_fed_statutes_matrix = [
         'trigger'                     => 'adverse_action',
         'exhaustion_required'         => 1,
         'exhaustion_details'          => 'Must file a complaint with the Inspector General of the relevant agency. If no action within 210 days, may file in federal district court.',
-        'employee_standards'          => ['preponderance'],
+        'employee_standard'          => ['preponderance'],
         'display_order'               => 70,
         'post_content'                => 'Protects employees of defense contractors, subcontractors, grantees, and personal services contractors who disclose fraud, waste, abuse, or violations related to defense contracts.',
         'process_types'               => [ 'administrative-complaint', 'civil-lawsuit' ],
@@ -300,8 +300,8 @@ function ws_seed_fed_statutes_matrix() {
         }
 
         // ws_employee_standard
-        if ( ! empty( $statute['employee_standards'] ) ) {
-            ws_matrix_assign_terms( $post_id, $statute['employee_standards'], 'ws_employee_standard' );
+        if ( ! empty( $statute['employee_standard'] ) ) {
+            ws_matrix_assign_terms( $post_id, $statute['employee_standard'], 'ws_employee_standard' );
         }
 
         // Mark as seeded.

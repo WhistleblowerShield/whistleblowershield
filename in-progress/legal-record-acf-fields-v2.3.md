@@ -47,6 +47,15 @@ Strictly enforced.
 - Single-value fields: singular noun.
 - Multi-value fields (multi-select, repeater, array): plural noun.
 
+Pluralize the field name for cardinality. For companion-like freetext fields, keep the modified key infix
+singular, such as `*_details` and `*_context` (e.g. `disclosure_targets` → `disclosure_target_details`). When
+the suffix itself declares field shape, follow the actual field cardinality: use singular for single-value
+fields and plural for multi-value fields, especially `*_scope` / `*_scopes` and `*_status` / `*_statuses`
+(e.g. `disclosure_target_scope` or `disclosure_target_scopes`, depending on cardinality).
+
+# EXCEPTION: For those that need a rule, `*_details` and `*_context` behave as lexical field labels, not as
+true count nouns that track storage cardinality.
+
 ### Booleans
 
 - `has_*` — trigger boolean. True activates a companion or dependent field. May trigger `*_details`, another
@@ -185,15 +194,12 @@ monitoring is required. When cross-field monitoring also requires cross-tab moni
    * When no waiver is indicated: remove `sovereign-immunity-waiver` from `legal_recognitions`.
 - Multi-select fallback values — `see-context` / `see-details` must not be combined with specific choices.
    * Applies to the same-field multi-selects listed in [Cross-Tab Conditional and Monitoring].
-- Multi-select umbrella values — summary choices must not be combined with their own component choices.
-   * Applies to `sovereign_immunity_scopes`, `anti_slapp_protection_scopes`, and `settlement_restriction_scopes`.
 - `malicious_reporting_sanctions.sanction_penalty` — `felony` and `misdemeanor` must not appear in the same row.
    * Use separate repeater rows for separate criminal tracks.
 - `scope` — enforce precedent taxonomy bucket consistency.
    * When `scope` is `favorable`: clear `suppressed_taxonomies`.
    * When `scope` is `adverse`: clear `extended_taxonomies`.
    * When `scope` is `neutral`: clear both `extended_taxonomies` and `suppressed_taxonomies`.
-- `federal_state_interactions` — preemption and coexistence choices are mutually exclusive in combination; needs contradiction guard. Statute of Limitations & Thresholds tab.
 - `burden_shifting_frameworks` — `mixed-motive` is incompatible with `but-for` in most formulations; multi-framework combinations need validity check. Burden of Proof tab.
 - `election_of_remedies_rules` — `no-election-required` invalidates all other choices in the same field. Retaliation tab.
 - `proper_defendants` — `employer-entity-only` is mutually exclusive with individual-liability choices (`individual-supervisors`, `any-individual`). Waiver & Scope tab.
@@ -307,11 +313,11 @@ records.
         limit_trigger                       -> sol_triggers
 
     burden_of_proof. (The Burden of Proof (Matching Scan))
-        employee_standards                  -> employee_standards
+        employee_standard                  -> employee_standard
                                                    {preponderance},
                                                    {clear-and-convincing}
                                                    [6 terms omitted]
-        causation_standards                 -> causation_standards
+        causation_standard                 -> causation_standard
                                                    {causation-but-for},
                                                    {causation-contributing-factor},
                                                    {causation-motivating-factor},
@@ -468,13 +474,13 @@ Fields ordered: core SOL → modifiers → exhaustion → pathways → threshold
 - `cure_period_unit`               — (sister field to `cure_period_details`; select: `days`|`weeks`|`months`|
                                       `years`)
 - `cure_period_details`
-- `federal_state_interactions`     — (multi-select: `express-preemption`|`savings-clause-preserves-state`|
+- `federal_state_interaction`      — (select: `express-preemption`|`savings-clause-preserves-state`|
                                       `concurrent-enforcement`|`field-preemption`|`state-exceeds-federal-floor`|
                                       `has-details`)
-- `savings_clause_context`         — (conditional on `federal_state_interactions` includes
+- `savings_clause_context`         — (conditional on `federal_state_interaction` is
                                       `savings-clause-preserves-state`)
-- `federal_state_interaction_context`  — (conditional on `federal_state_interactions` is non-empty)
-- `federal_state_interactions_details`
+- `federal_state_interaction_context`  — (conditional on `federal_state_interaction` is non-empty)
+- `federal_state_interaction_details`
 
 ---
 
@@ -602,15 +608,15 @@ rebuttable presumption → temporal presumption → detail overflow
 - `same_decision_standard`         — (sister field to `same_decision_context`; select: `preponderance`|
                                       `clear-and-convincing`|`see-context`)
 - `same_decision_context`          — (conditional on `employer_defenses` includes `same-decision-defense`)
-- `causal_nexus_statutory_text`    — (conditional on `causation_standards` is non-empty; verbatim or near-verbatim
+- `causal_nexus_statutory_text`    — (conditional on `causation_standard` is non-empty; verbatim or near-verbatim
                                       statutory language describing the causal link standard)
-- `employee_standards`             — (taxonomy: `ws_employee_standard`; evidentiary burden only)
+- `employee_standard`              — (single-select taxonomy: `ws_employee_standard`; evidentiary burden only)
 - `employee_standard_details`
-- `causation_standards`            — (taxonomy: `ws_causation_standard`; causal link standard)
+- `causation_standard`             — single-select (taxonomy: `ws_causation_standard`; causal link standard)
 - `causation_application`          — (sister field to `causation_standard_context`; select: `liability`|
                                       `damages`|`both`|`see-context`)
 - `causation_application_context`  — (conditional on `causation_application` is non-empty)
-- `causation_standard_context`     — (conditional on `causation_standards` is non-empty)
+- `causation_standard_context`     — (conditional on `causation_standard` is non-empty)
 - `causation_dual_standard_context`  — (conditional on `causation-dual-standard` in `legal_recognitions`)
 - `employer_knowledge_scopes`      — (sister field to `employer_knowledge_context`; multi-select:
                                       `actual-knowledge`|`constructive-knowledge`|`inferred-knowledge`|
@@ -655,9 +661,9 @@ Fields ordered: rewards → qui tam specifics
 - `qui_tam_reduction_context`      — (sister field to `qui_tam_share_context`; conditions under which the court may
                                       reduce share below statutory floor)
 - `qui_tam_share_context`          — (conditional on `qui-tam` in `process_types`)
-- `has_first_to_file_bar`          — (sister field to `qui_tam_share_context`)
+- `has_first_to_file_bar`           — (sister field to `qui_tam_share_context`)
 - `first_to_file_bar_details`
-- `has_public_disclosure_bar`      — (sister field to `qui_tam_share_context` AND conditional on
+- `has_public_disclosure_bar`       — (sister field to `qui_tam_share_context` AND conditional on
                                       `bounty-qui-tam-award` in `remedies`)
 - `public_disclosure_bar_details`
 
@@ -689,9 +695,8 @@ Fields ordered: contractual → recognitions → immunity → defendants.
 - `individual_liability_context`   — (conditional on `individual-liability` in `legal_recognitions`)
 - `sovereign_immunity_statuses`    — (sister field to `sovereign_immunity_context`; taxonomy:
                                       `ws_sovereign_immunity_status`)
-- `sovereign_immunity_scopes`      — (sister field to `sovereign_immunity_context`; multi-select:
-                                      `state-only`|`instrumentalities-included`|`political-subdivisions-included`|
-                                      `all`|`see-details`)
+- `sovereign_immunity_scope`       — (sister field to `sovereign_immunity_context`; select:`state-only`|
+                                      `instrumentalities-included`|`political-subdivisions-included`|`all`|`see-details`)                                      
 - `sovereign_immunity_waiver`      — (sister field to `sovereign_immunity_context`; select:
                                       `explicit-waiver`|`implied-waiver`|`none`)
 - `sovereign_immunity_status_details` — (sister field to `sovereign_immunity_context`)
@@ -700,15 +705,14 @@ Fields ordered: contractual → recognitions → immunity → defendants.
 - `anti_gag_provision_context`     — (conditional on `anti-gag-provision` in `legal_recognitions`)
 - `no_retaliatory_evidence_context`  — (conditional on `no-retaliatory-evidence` in `legal_recognitions`)
 - `stay_of_discipline_context`     — (conditional on `stay-of-disciplinary-action` in `legal_recognitions`)
-- `anti_slapp_protection_scopes`   — (sister field to `anti_slapp_protection_context`; multi-select:
-                                      `motion-to-strike`|`discovery-stay`|`fee-shift-on-motion`|
-                                      `full-procedural`|`see-context`)
+- `anti_slapp_protection_scope`    — (sister field to `anti_slapp_protection_context`; select: `motion-to-strike`|
+                                      `discovery-stay`|`fee-shift-on-motion`|`full-procedural`|`see-context`)
 - `anti_slapp_protection_context`  — (conditional on `anti-slapp-protection` in `legal_recognitions`)
 - `discovery_protection_context`   — (conditional on `discovery-protection` in `legal_recognitions`; documents
                                       specific protections against retaliatory subpoenas, abusive discovery,
                                       or litigation harassment distinct from anti-SLAPP)
-- `settlement_restriction_scopes`  — (sister field to `settlement_restriction_context`; multi-select: `amount-only`|
-                                      `facts`|`full-prohibition`|`agency-notification`|`see-context`)
+- `settlement_restriction_scope`   — (sister field to `settlement_restriction_context`; select: `amount-only`|`facts`|
+                                      `full-prohibition`|`agency-notification`|`see-context`)
 - `settlement_restriction_context` — (conditional on `confidential-settlement-restriction` in `legal_recognitions`)
 - `successor_liability_context`    — (conditional on `successor-liability` in `legal_recognitions`)
 - `extraterritorial_context`       — (conditional on `extraterritorial-coverage` in `legal_recognitions`)
@@ -821,7 +825,7 @@ These fields do not appear on substantive records.
                                       `has-details`)
 - `recognition_status_details`
 
-#### Statute of Limitations & Thresholds Tab (insert after `federal_state_interactions_details`)
+#### Statute of Limitations & Thresholds Tab (insert after `federal_state_interaction_details`)
 
 - `statutory_preclusion_context`   — (conditional on `statutory-preclusion` in `legal_recognitions`)
 
@@ -959,8 +963,8 @@ Fields that are unchanged or new do not appear in this list.
 - `disclosure_types`                         → `protected_disclosures`
 - `ws_disclosure_type` (taxonomy)            → `ws_protected_disclosure`        (taxonomy)
 - `sol_trigger_event`                        →  removed (collapsed in to unified `sol_trigger`; `sol_trigger_context` now must describe legal, factual, and contextual per trigger)
-- `has_preemption` + `preemption_details`    →  removed (preemption block replaced with `federal_state_interactions` block)
-- `preemption_direction`                     → `federal_state_interactions`
+- `has_preemption` + `preemption_details`    →  removed (preemption block replaced with `federal_state_interaction` block)
+- `preemption_direction`                     → `federal_state_interaction`
 - `sovereign_immunity_limits`                → `sovereign_immunity_statuses`    (taxonomy)
 - `threshold_compare`                        → `employer_threshold_compare`
 - `threshold_value`                          → `employer_threshold_value`
@@ -1000,14 +1004,6 @@ The following hook guards compare fields in a single block:
 ### Contradiction Guard Same-Field Multi-Selects
 The following hook guards protect multi-select fields whose choices include umbrella or fallback values:
 
-- `sovereign_immunity_scopes` cannot combine `state-only` with `instrumentalities-included`,
-   `political-subdivisions-included`, or `all`.
-- `sovereign_immunity_scopes` cannot combine `all` with `state-only`, `instrumentalities-included`, or
-   `political-subdivisions-included`.
-- `anti_slapp_protection_scopes` cannot combine `full-procedural` with `motion-to-strike`, `discovery-stay`, or
-   `fee-shift-on-motion`.
-- `settlement_restriction_scopes` cannot combine `full-prohibition` with `amount-only`, `facts`, or
-   `agency-notification`.
 - `malicious_reporting_sanctions.sanction_penalty` cannot combine `felony` and `misdemeanor` in the same repeater
    row. Add a second row when the same provision creates separate felony and misdemeanor tracks.
 
@@ -1117,15 +1113,15 @@ Sister fields can have additional conditionals, use AND / OR / NOT after sibling
 'contractual-waiver'                  → 'contractual_waiver_context'            + 'contractual_waiver_scope'         // Recognized
 'waiver-of-collateral-claims'         → 'waiver_of_collateral_claims_context'                                        // Applies
 'class-action-waiver'                 → 'class_action_waiver_context'                                                // Recognized
-'sovereign-immunity-status'           → 'sovereign_immunity_context'            + 'sovereign_immunity_statuses' + 'sovereign_immunity_scopes' + 'sovereign_immunity_waiver'
+'sovereign-immunity-status'           → 'sovereign_immunity_context'            + 'sovereign_immunity_statuses' + 'sovereign_immunity_scope' + 'sovereign_immunity_waiver'
                                                                                 + 'sovereign_immunity_status_details' // Specified
 'nda-limitations'                     → 'nda_limits_context'                                                         // Recognized
 'anti-gag-provision'                  → 'anti_gag_provision_context'                                                 // Recognized
 'no-retaliatory-evidence'             → 'no_retaliatory_evidence_context'                                            // Barred
 'stay-of-disciplinary-action'         → 'stay_of_discipline_context'                                                 // Available
-'anti-slapp-protection'               → 'anti_slapp_protection_context'         + 'anti_slapp_protection_scopes'     // Applies
+'anti-slapp-protection'               → 'anti_slapp_protection_context'         + 'anti_slapp_protection_scope'      // Applies
 'discovery-protection'                → 'discovery_protection_context'                                               // Applies
-'confidential-settlement-restriction' → 'settlement_restriction_context'        + 'settlement_restriction_scopes'    // Applies
+'confidential-settlement-restriction' → 'settlement_restriction_context'        + 'settlement_restriction_scope'     // Applies
 'individual-liability'                → 'individual_liability_context'          + 'individual_liability_scopes'      // Available
 'successor-liability'                 → 'successor_liability_context'                                                // Recognized
 'extraterritorial-coverage'           → 'extraterritorial_context'                                                   // Recognized
@@ -1155,7 +1151,7 @@ Sister fields can have additional conditionals, use AND / OR / NOT after sibling
 
 `ws_employee_standard` was split to create `ws_causation_standard`; sibling taxonomies covering distinct concepts.
 
-- `ws_employee_standard` — evidentiary weight: how much proof, what quality.
+- `ws_employee_standard`  — evidentiary weight: how much proof, what quality.
 - `ws_causation_standard` — causal logic: the relationship between disclosure and adverse action.
 
 The same underlying concept (e.g. contributing factor) may appear in both tables under different framing —

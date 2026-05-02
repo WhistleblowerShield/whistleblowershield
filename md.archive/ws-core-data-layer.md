@@ -248,7 +248,7 @@ stamp, plain-english, source verify, and major edit from shared groups.
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_jx_statute_employee_standards` | taxonomy | `ws_employee_standard` terms; `save_terms: 1` |
+| `ws_jx_statute_employee_standard` | taxonomy | `ws_employee_standard` terms; `save_terms: 1` |
 | `ws_jx_statute_employee_standard_details` | textarea | Details on employee standard |
 | `ws_jx_statute_employer_defenses` | taxonomy | `ws_employer_defense` terms; `save_terms: 1` |
 | `ws_jx_statute_employer_defense_details` | textarea | Details on employer defense |

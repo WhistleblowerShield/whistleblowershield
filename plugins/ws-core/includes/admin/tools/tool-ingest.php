@@ -687,7 +687,7 @@ function ws_ingest_allowed_record_keys( string $record_type ): array {
             'fee_shifting_rules',
             'employer_defenses',
             'employer_defense_details',
-            'employee_standards',
+            'employee_standard',
             'employee_standard_details',
             '_multi_taxonomy_details',
             'links',
@@ -722,7 +722,7 @@ function ws_ingest_allowed_record_keys( string $record_type ): array {
             'fee_shifting_rules',
             'employer_defenses',
             'employer_defense_details',
-            'employee_standards',
+            'employee_standard',
             'employee_standard_details',
             '_multi_taxonomy_details',
             'links',
@@ -1078,7 +1078,7 @@ function ws_ingest_statute_field_map_v2(): array {
         'enforcement.primary_agency'         => [ 'ws_jx_statute_enforcement_channel', 'textarea' ],
 
         // ── Burden of Proof ───────────────────────────────────────────────
-        'burden_of_proof.employee_standards'         => [ 'ws_jx_statute_employee_standards',         'tax', 'ws_employee_standard' ],
+        'burden_of_proof.employee_standard'         => [ 'ws_jx_statute_employee_standard',         'tax', 'ws_employee_standard' ],
         'burden_of_proof.employee_standard_details'  => [ 'ws_jx_statute_employee_standard_details',  'textarea' ],
         'burden_of_proof.employer_defenses'          => [ 'ws_jx_statute_employer_defenses',           'tax', 'ws_employer_defense'  ],
         'burden_of_proof.employer_defense_details'   => [ 'ws_jx_statute_employer_defense_details',   'textarea' ],
@@ -1151,7 +1151,7 @@ function ws_ingest_common_law_field_map_v2(): array {
         // ── Burden of Proof ───────────────────────────────────────────────
         'burden_of_proof.statutory_preclusion'          => [ 'ws_jx_comlaw_statutory_preclusion',         'bool'     ],
         'burden_of_proof.statutory_preclusion_details'  => [ 'ws_jx_comlaw_statutory_preclusion_details', 'textarea' ],
-        'burden_of_proof.employee_standards'            => [ 'ws_jx_comlaw_employee_standards',             'tax', 'ws_employee_standard' ],
+        'burden_of_proof.employee_standard'            => [ 'ws_jx_comlaw_employee_standard',             'tax', 'ws_employee_standard' ],
         'burden_of_proof.employee_standard_details'     => [ 'ws_jx_comlaw_employee_standard_details',     'textarea' ],
         'burden_of_proof.employer_defenses'             => [ 'ws_jx_comlaw_employer_defenses',              'tax', 'ws_employer_defense'  ],
         'burden_of_proof.employer_defense_details'      => [ 'ws_jx_comlaw_employer_defense_details',      'textarea' ],
@@ -1196,7 +1196,7 @@ function ws_ingest_citation_field_map_v2(): array {
         'fee_shifting_rules'              => [ 'ws_jx_citation_fee_shifting_rules',             'tax', 'ws_fee_shifting_rule'       ],
         'employer_defenses'          => [ 'ws_jx_citation_employer_defenses',         'tax', 'ws_employer_defense'   ],
         'employer_defense_details'   => [ 'ws_jx_citation_employer_defense_details',  'textarea' ],
-        'employee_standards'         => [ 'ws_jx_citation_employee_standards',        'tax', 'ws_employee_standard'  ],
+        'employee_standard'         => [ 'ws_jx_citation_employee_standard',        'tax', 'ws_employee_standard'  ],
         'employee_standard_details'  => [ 'ws_jx_citation_employee_standard_details', 'textarea' ],
 
         // ── Advisory / omitted ───────────────────────────────────────────
@@ -1241,7 +1241,7 @@ function ws_ingest_construction_field_map_v2(): array {
         'fee_shifting_rules'          => [ 'ws_jx_construction_fee_shifting_rules',              'tax', 'ws_fee_shifting_rule'       ],
         'employer_defenses'           => [ 'ws_jx_construction_employer_defenses',          'tax', 'ws_employer_defense'   ],
         'employer_defense_details'   => [ 'ws_jx_construction_employer_defense_details',  'textarea' ],
-        'employee_standards'          => [ 'ws_jx_construction_employee_standards',         'tax', 'ws_employee_standard'  ],
+        'employee_standard'          => [ 'ws_jx_construction_employee_standard',         'tax', 'ws_employee_standard'  ],
         'employee_standard_details'  => [ 'ws_jx_construction_employee_standard_details', 'textarea' ],
 
         // ── Advisory / omitted ───────────────────────────────────────────

@@ -585,7 +585,7 @@ function ws_get_jx_statute_data( $jx_term_id ) {
                 'construction_ids'        => ws_q_normalize_id_list( get_post_meta( $sid, 'ws_jx_statute_construction_ids', true ) ),
 
                 // ── Burden of Proof ───────────────────────────────────────
-                'employee_standard'          => ws_q_normalize_id_list( get_field( 'ws_jx_statute_employee_standards', $sid ) ),
+                'employee_standard'          => ws_q_normalize_id_list( get_field( 'ws_jx_statute_employee_standard', $sid ) ),
                 'employee_standard_details'  => get_post_meta( $sid, 'ws_jx_statute_employee_standard_details', true ),
                 'employer_defense'           => ws_q_normalize_id_list( get_field( 'ws_jx_statute_employer_defenses', $sid ) ),
                 'employer_defense_details'   => get_post_meta( $sid, 'ws_jx_statute_employer_defense_details', true ),
@@ -754,7 +754,7 @@ function ws_get_jx_citation_data( $jx_term_id ) {
                 'fee_shifting_rules' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_fee_shifting_rules', $cid ) ),
                 'employer_defense' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_employer_defenses', $cid ) ),
                 'employer_defense_details' => get_post_meta( $cid, 'ws_jx_citation_employer_defense_details', true ),
-                'employee_standard' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_employee_standards', $cid ) ),
+                'employee_standard' => ws_q_normalize_id_list( get_field( 'ws_jx_citation_employee_standard', $cid ) ),
                 'employee_standard_details' => get_post_meta( $cid, 'ws_jx_citation_employee_standard_details', true ),
                 'statute_ids'     => ws_q_normalize_id_list( get_field( 'ws_jx_citation_statute_ids', $cid ) ),
                 'comlaw_ids'  => ws_q_normalize_id_list( get_field( 'ws_jx_citation_comlaw_ids', $cid ) ),
@@ -870,7 +870,7 @@ function ws_get_jx_construction_data( $jx_term_id ) {
                 'fee_shifting_rules' => ws_q_normalize_id_list( get_field( 'ws_jx_construction_fee_shifting_rules', $iid ) ),
                 'employer_defense' => ws_q_normalize_id_list( get_field( 'ws_jx_construction_employer_defenses', $iid ) ),
                 'employer_defense_details' => get_post_meta( $iid, 'ws_jx_construction_employer_defense_details', true ),
-                'employee_standard' => ws_q_normalize_id_list( get_field( 'ws_jx_construction_employee_standards', $iid ) ),
+                'employee_standard' => ws_q_normalize_id_list( get_field( 'ws_jx_construction_employee_standard', $iid ) ),
                 'employee_standard_details' => get_post_meta( $iid, 'ws_jx_construction_employee_standard_details', true ),
                 'parent_statute_id' => ws_q_first_id( get_post_meta( $iid, 'ws_jx_construction_statute_id', true ) ),
                 'parent_comlaw_id'  => ws_q_first_id( get_post_meta( $iid, 'ws_jx_construction_comlaw_id', true ) ),
@@ -1177,7 +1177,7 @@ function ws_get_jx_common_law_data( $jx_term_id ) {
                 // ── Burden of Proof ───────────────────────────────────────
                 'has_preclusion'                => (bool) get_post_meta( $rid, 'ws_jx_comlaw_has_statutory_preclusion',         true ),
                 'statutory_preclusion_details'  => get_post_meta( $rid, 'ws_jx_comlaw_statutory_preclusion_details', true ),
-                'employee_standard'             => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_employee_standards',        $rid ) ),
+                'employee_standard'             => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_employee_standard',        $rid ) ),
                 'employee_standard_details'     => get_post_meta( $rid, 'ws_jx_comlaw_employee_standard_details', true ),
                 'employer_defense'         => ws_q_normalize_id_list( get_field( 'ws_jx_comlaw_employer_defenses',         $rid ) ),
                 'employer_defense_details' => get_post_meta( $rid, 'ws_jx_comlaw_employer_defense_details', true ),

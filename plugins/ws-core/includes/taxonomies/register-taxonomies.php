@@ -807,14 +807,14 @@ $_ws_taxonomy_registry = [
             'waiver-of-collateral-claims'           => 'Waiver of Collateral Claims Applies',                 // + waiver_of_collateral_claims_context
             'class-action-waiver'                   => 'Class Action Waiver Recognized',                      // + class_action_waiver_context
             'individual-liability'                  => 'Individual Liability Available',                      // + individual_liability_context   + individual_liability_scopes
-            'sovereign-immunity-status'             => 'Sovereign Immunity Status Specified',                 // + sovereign_immunity_context     + sovereign_immunity_statuses + sovereign_immunity_scopes + sovereign_immunity_waiver + sovereign_immunity_status_details
+            'sovereign-immunity-status'             => 'Sovereign Immunity Status Specified',                 // + sovereign_immunity_context     + sovereign_immunity_statuses + sovereign_immunity_scope + sovereign_immunity_waiver + sovereign_immunity_status_details
             'nda-limitations'                       => 'NDA / Non-Disparagement Limitations Recognized',      // + nda_limits_context
             'anti-gag-provision'                    => 'Anti-Gag Provision Recognized',                       // + anti_gag_provision_context
             'no-retaliatory-evidence'               => 'Retaliatory Evidence Barred',                         // + no_retaliatory_evidence_context
             'stay-of-disciplinary-action'           => 'Stay of Disciplinary Action Available',               // + stay_of_discipline_context
-            'anti-slapp-protection'                 => 'Anti-SLAPP Protection Applies',                       // + anti_slapp_protection_context  + anti_slapp_protection_scopes
+            'anti-slapp-protection'                 => 'Anti-SLAPP Protection Applies',                       // + anti_slapp_protection_context  + anti_slapp_protection_scope
             'discovery-protection'                  => 'Discovery Protection / Anti-Harassment Recognized',   // + discovery_protection_context
-            'confidential-settlement-restriction'   => 'Confidential Settlement Restriction Applies',         // + settlement_restriction_context + settlement_restriction_scopes
+            'confidential-settlement-restriction'   => 'Confidential Settlement Restriction Applies',         // + settlement_restriction_context + settlement_restriction_scope
             'successor-liability'                   => 'Successor Employer Liability Recognized',             // + successor_liability_context
             'extraterritorial-coverage'             => 'Extraterritorial Coverage Recognized',                // + extraterritorial_context
             // Without Context                                                                                // ───── # Without Context (no Tab) ──────────────────────────────────────────

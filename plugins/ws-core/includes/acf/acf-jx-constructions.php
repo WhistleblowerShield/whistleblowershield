@@ -44,7 +44,7 @@
  *   ws_jx_construction_fee_shifting                  Fee Shifting (multi_select, optional)
  *   ws_jx_construction_employer_defenses              Employer Defense (multi_select, optional)
  *   ws_jx_construction_employer_defense_details       Employer Defense Details (textarea, optional)
- *   ws_jx_construction_employee_standards             Employee Standard (multi_select, optional)
+ *   ws_jx_construction_employee_standard             Employee Standard (multi_select, optional)
  *   ws_jx_construction_employee_standard_details      Employee Standard Details (textarea, optional)
  *
  * Relationships tab:
@@ -524,9 +524,9 @@ function ws_register_acf_jx_construction_s() {
             ],
 
             [
-                'key'           => 'field_jx_construction_employee_standards',
+                'key'           => 'field_jx_construction_employee_standard',
                 'label'         => 'Employee Standard',
-                'name'          => 'ws_jx_construction_employee_standards',
+                'name'          => 'ws_jx_construction_employee_standard',
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_employee_standard',
                 'field_type'    => 'multi_select',
@@ -663,7 +663,7 @@ function ws_register_acf_jx_construction_s() {
 // - ws_jx_construction_disclosure_targets
 // - ws_jx_construction_adverse_actions
 // - ws_jx_construction_remedies
-// - ws_jx_construction_employee_standards
+// - ws_jx_construction_employee_standard
 // - ws_jx_construction_employer_defenses
 
 add_filter( 'acf/load_field', 'ws_jx_construction_details_conditional' );
@@ -675,7 +675,7 @@ function ws_jx_construction_details_conditional( $field ) {
         'field_jx_construction_disclosure_target_details'   => [ 'ws_disclosure_target',    'field_jx_construction_disclosure_targets' ],
         'field_jx_construction_adverse_action_details'      => [ 'ws_adverse_action',       'field_jx_construction_adverse_actions' ],
         'field_jx_construction_remedy_details'              => [ 'ws_remedy',               'field_jx_construction_remedies' ],
-        'field_jx_construction_employee_standard_details'   => [ 'ws_employee_standard',    'field_jx_construction_employee_standards' ],
+        'field_jx_construction_employee_standard_details'   => [ 'ws_employee_standard',    'field_jx_construction_employee_standard' ],
         'field_jx_construction_employer_defense_details'    => [ 'ws_employer_defense',     'field_jx_construction_employer_defenses' ],
     ];
 
