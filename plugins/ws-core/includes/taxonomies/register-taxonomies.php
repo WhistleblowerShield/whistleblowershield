@@ -232,7 +232,7 @@ $_ws_taxonomy_registry = [
                 'associates-household-family'    => 'Household Family of Whistleblower',
                 'associates-close'               => 'Close Associates of Whistleblower',
             'all-sectors'                  => ['All Sectors', 1],
-                'all-employees'                  => 'All Employees',
+                'all-employees-only'             => 'All Employees Only',
             'has-parent'                   => ['Has Sentinels', 1],
                 'has-details'                    => 'Has Details',
         ]
@@ -242,7 +242,7 @@ $_ws_taxonomy_registry = [
 /**
  * Assigns ws_excluded_class with its hierarchical term structure.
  *
- * Duplicate table of ws_protected_class with all-sectors (all-employees) removed.
+ * Duplicate table of ws_protected_class with all-sectors (all-employees-only) removed.
  *
  * @todo - should be sync'd with ws_protected_class table by hook, with
  *         never_excluded and never_protected gates when adding terms to
@@ -527,7 +527,7 @@ $_ws_taxonomy_registry = [
 /**
  * Assigns ws_employment_sector with its flat term structure.
  *
- * 'all-sectors' is used for organizations that serve all worker types.
+ * 'all-sectors-only' is used for organizations that serve all worker types.
  *
  * @todo legal_prompt, assist_prompt — set instruction strings.
  * 
@@ -549,7 +549,7 @@ $_ws_taxonomy_registry = [
             'military-defense'       => 'Military & Defense Contractors',
             'government-contractor'  => 'Government Contractor',
             'nonprofit-ngo'          => 'Nonprofit & NGO Employee',
-            'all-sectors'            => 'All Employment Sectors',
+            'all-sectors-only'       => 'All Employment Sectors Only',
         ]
     ],
 
@@ -803,11 +803,13 @@ $_ws_taxonomy_registry = [
             'employer-knowledge'                    => 'Employer Knowledge Element Required',                 // + employer_knowledge_context     + employer_knowledge_scopes
             'temporal-proximity-sufficient'         => 'Temporal Proximity Sufficient for Causation',         // + temporal_proximity_context     + temporal_proximity_value + temporal_proximity_unit
             // Waiver & Scope                                                                                 // ───── # Waiver & Scope Tab ────────────────────────────────────────────────
-            'contractual-waiver'                    => 'Contractual Waiver Recognized',                       // =>>> NOTE  =>>> invalid term if 'civil_action_waiver_scope' is set to 'anti'.   // + contractual_waiver_context + contractual_waiver_scope
-            'waiver-of-collateral-claims'           => 'Waiver of Collateral Claims Applies',                 // + waiver_of_collateral_claims_context
+            'all-waivers-blocked'                   => 'All Waivers Blocked',                                 // + all_waivers_blocked_context; excludes waiver clusters
+            'civil-action-waiver'                   => 'Civil Action Waiver Recognized',                      // + civil_action_waiver_context + civil_action_waiver_scope
+            'contractual-waiver'                    => 'Contractual Waiver Recognized',                       // + contractual_waiver_context + contractual_waiver_scope
+            'collateral-claims-waiver'              => 'Collateral Claims Waiver Applies',                    // + collateral_claims_waiver_context
             'class-action-waiver'                   => 'Class Action Waiver Recognized',                      // + class_action_waiver_context
             'individual-liability'                  => 'Individual Liability Available',                      // + individual_liability_context   + individual_liability_scopes
-            'sovereign-immunity-status'             => 'Sovereign Immunity Status Specified',                 // + sovereign_immunity_context     + sovereign_immunity_statuses + sovereign_immunity_scope + sovereign_immunity_waiver + sovereign_immunity_status_details
+            'sovereign-immunity-status'             => 'Sovereign Immunity Status Specified',                 // + sovereign_immunity_context     + sovereign_immunity_status + sovereign_immunity_limits + sovereign_immunity_scope + sovereign_immunity_waiver + sovereign_immunity_status_details
             'nda-limitations'                       => 'NDA / Non-Disparagement Limitations Recognized',      // + nda_limits_context
             'anti-gag-provision'                    => 'Anti-Gag Provision Recognized',                       // + anti_gag_provision_context
             'no-retaliatory-evidence'               => 'Retaliatory Evidence Barred',                         // + no_retaliatory_evidence_context
@@ -860,36 +862,36 @@ $_ws_taxonomy_registry = [
         ]
     ],
 
-// —— 22. Sovereign Immunity Status ——————————————————————————————————————————
-/**
- * Assigns ws_sovereign_immunity_status with its flat term structure.
- *
- * Tracks how state/federal sovereign immunity applies to whistleblower claims.
- * Enables Phase 2 filtering and cross-jurisdiction comparison for public-sector
- * retaliation cases where sovereign immunity blocks or limits relief.
- *
- * @todo legal_prompt — set instruction string.
- *
- */
-    'ws_sovereign_immunity_status'  => [
-        'cpts'                          => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction'],
-        'plural'                        => 'Sovereign Immunity Statuses',
-        'singular'                      => 'Sovereign Immunity Status',
-        'menu_name'                     => 'Sov. Immunity',
-        'hierarchical'                  => false,
-        'seed_version'                  => '1.0.0',
-        'record'                        => ['legal'],
-        'legal_prompt'                  => '',
-        'terms'                         => [
-            'not-waived'                    => 'Not Waived (Claim Barred)',
-            'partially-waived'              => 'Partially Waived (Conditions Apply)',
-            'fully-waived'                  => 'Fully Waived (Private Action Permitted)',
-            'cap-applies'                   => 'Damages Cap Applies',
-            'conditions-apply'              => 'Conditions Apply',
-            'tort-claims-act-gate'          => 'FTCA / State TCA Gateway Required',
-            'has-details'                   => 'Has Details',
-        ]
-    ],
+// // —— 22. Sovereign Immunity Status ——————————————————————————————————————————
+// /**
+//  * Assigns ws_sovereign_immunity_status with its flat term structure.
+//  *
+//  * Tracks how state/federal sovereign immunity applies to whistleblower claims.
+//  * Enables Phase 2 filtering and cross-jurisdiction comparison for public-sector
+//  * retaliation cases where sovereign immunity blocks or limits relief.
+//  *
+//  * @todo legal_prompt — set instruction string.
+//  *
+//  */
+//     'ws_sovereign_immunity_status'  => [
+//         'cpts'                          => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction'],
+//         'plural'                        => 'Sovereign Immunity Statuses',
+//         'singular'                      => 'Sovereign Immunity Status',
+//         'menu_name'                     => 'Sov. Immunity',
+//         'hierarchical'                  => false,
+//         'seed_version'                  => '1.0.0',
+//         'record'                        => ['legal'],
+//         'legal_prompt'                  => '',
+//         'terms'                         => [
+//             'not-waived'                    => 'Not Waived (Claim Barred)',
+//             'partially-waived'              => 'Partially Waived (Conditions Apply)',
+//             'fully-waived'                  => 'Fully Waived (Private Action Permitted)',
+//             'cap-applies'                   => 'Damages Cap Applies',
+//             'conditions-apply'              => 'Conditions Apply',
+//             'tort-claims-act-gate'          => 'FTCA / State TCA Gateway Required',
+//             'has-details'                   => 'Has Details',
+//         ]
+//     ],
 ];
 
 // ════════════════════════════════════════════════════════════════════════════
