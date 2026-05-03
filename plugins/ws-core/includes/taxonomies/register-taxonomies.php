@@ -3,7 +3,7 @@
 /**
  * register-taxonomies.php — WhistleblowerShield Taxonomy Registry
  *
- * Single source of truth for all 22 ws-core taxonomies. $_ws_taxonomy_registry (global
+ * Single source of truth for all 21 ws-core taxonomies. $_ws_taxonomy_registry (global
  * array) drives registration, seeding, and LLM prompt generation from one place.
  * 
  * ws_jurisdiction taxonomy table use canonical table array in matrix-jurisdictions.php.
@@ -861,37 +861,6 @@ $_ws_taxonomy_registry = [
             'has-details'                              => 'Has Details',
         ]
     ],
-
-// // —— 22. Sovereign Immunity Status ——————————————————————————————————————————
-// /**
-//  * Assigns ws_sovereign_immunity_status with its flat term structure.
-//  *
-//  * Tracks how state/federal sovereign immunity applies to whistleblower claims.
-//  * Enables Phase 2 filtering and cross-jurisdiction comparison for public-sector
-//  * retaliation cases where sovereign immunity blocks or limits relief.
-//  *
-//  * @todo legal_prompt — set instruction string.
-//  *
-//  */
-//     'ws_sovereign_immunity_status'  => [
-//         'cpts'                          => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction'],
-//         'plural'                        => 'Sovereign Immunity Statuses',
-//         'singular'                      => 'Sovereign Immunity Status',
-//         'menu_name'                     => 'Sov. Immunity',
-//         'hierarchical'                  => false,
-//         'seed_version'                  => '1.0.0',
-//         'record'                        => ['legal'],
-//         'legal_prompt'                  => '',
-//         'terms'                         => [
-//             'not-waived'                    => 'Not Waived (Claim Barred)',
-//             'partially-waived'              => 'Partially Waived (Conditions Apply)',
-//             'fully-waived'                  => 'Fully Waived (Private Action Permitted)',
-//             'cap-applies'                   => 'Damages Cap Applies',
-//             'conditions-apply'              => 'Conditions Apply',
-//             'tort-claims-act-gate'          => 'FTCA / State TCA Gateway Required',
-//             'has-details'                   => 'Has Details',
-//         ]
-//     ],
 ];
 
 // ════════════════════════════════════════════════════════════════════════════

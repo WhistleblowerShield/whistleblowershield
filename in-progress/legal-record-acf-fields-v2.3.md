@@ -679,8 +679,8 @@ rebuttable presumption → temporal presumption → detail overflow
 - `burden_shifting_frameworks`     — (sister field to `burden_shifting_context`; multi-select: `mcdonnell-douglas`|
                                       `motivating-factor`|`but-for`|`mixed-motive`|`has-details`;
                                        see [Cross-Tab Conditional and Monitoring] below)
+- `burden_shifting_details`
 - `burden_shifting_context`        — (conditional on `burden-shifting-framework` in `legal_recognitions`)
-- `burden_shifting_details`        — (conditional on `burden_shifting_frameworks` includes `has-details`)
 - `same_decision_standard`         — (sister field to `same_decision_context`; select: `preponderance`|
                                       `clear-and-convincing`|`see-context`)
 - `same_decision_context`          — (conditional on `employer_defenses` includes `same-decision-defense`)
