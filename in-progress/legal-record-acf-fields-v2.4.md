@@ -1,4 +1,4 @@
-# Legal Record ACF Canonical Field Draft (v2.3)
+# Legal Record ACF Canonical Field Draft (v2.4)
 
 **Purpose:** Unified, prefix-free field set for all four legal record types
 (`statute`, `common_law`, `citation`, `construction`) as the working spec for the
