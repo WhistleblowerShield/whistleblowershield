@@ -110,222 +110,79 @@ for validation, filtering, and editor guidance.
 ### Symbol Legend
 
 The breadcrumb tables below use these markers:
-
-- `[R]` — value may require a value in another field.
-- `[C]` — value may conflict with a value or absence in another field.
-- `[D]` — value may duplicate a concept represented by another field or value.
-- `[E]` — value may exclude another field or cluster from existing.
-- `[W]` — stale hidden value that must be wiped when the controlling field no longer permits the dependent field.
-- `[U]` — umbrella-only value vs. granular value it already covers.
+- `[I]` — values in same-field can create invalid combinations.
 - `[X]` — mutually exclusive values.
-- `[N]` — required none/no answer vs. affirmative values.
-- `[O]` — overloaded field; too many conflict styles to summarize here.
-- `[Q]` — candidate retained for later review; no specific conflict class assigned yet.
-
-Parent slugs are not selectable values and are not conflicts by themselves. If children from two parent families
-conflict, note as `[X] children 'parent-x' v. 'parent-y'`.
-
-### Contradiction Guards
-
-Document each contradiction guard at the affected field's definition. Note whether the guard requires cross-field
-monitoring; if it also crosses tabs, list it under [Cross-Tab Guards] below.
-
-- `protected_classes` and `excluded_classes`: the same class slug must never appear in both. When overlap is
-  detected, flag for editor resolution rather than auto-removing — the correct side is legal-context dependent.
-- `garcetti-exception`: invalid unless `public-sector` is in `employment_sectors`. When `public-sector` is
-  absent, remove `garcetti-exception` and clear `garcetti_exception_context` and any sister fields.
-- `mitigation-exception`: invalid without `mitigation-required` in `legal_recognitions`. When
-  `mitigation-required` is absent, remove `mitigation-exception` and clear `mitigation_exception_context` and any
-  sister fields.
-- `all-waivers-blocked`: excludes specific waiver clusters; see [Cross-Field Exclusions].
-- `jury-trial`: invalid without `private-right-of-action` in `legal_recognitions`. When `private-right-of-action`
-  is absent, remove `jury-trial` and clear `jury_trial_context` and any sister fields.
-- `exhaustion-required`: invalid when `process_pathway_scope` is `direct-court`. When `direct-court` is set,
-  remove `exhaustion-required` and clear `exhaustion_required_context` and any sister fields.
-- `direct-filing-permitted`: invalid with `exhaustion-required`. When `direct-filing-permitted` is in
-  `process_types`, remove `exhaustion-required` and clear `exhaustion_required_context` and any sister fields.
-- `blanket-sovereign-immunity-waiver`: excludes the `sovereign-immunity-status` slug and its full status cluster;
-  see [Cross-Field Exclusions].
-- `malicious_reporting_sanctions.sanction_penalty`: `felony` and `misdemeanor` must not appear in the same
-  repeater row — use separate rows for separate criminal tracks.
-- `scope`: enforce precedent taxonomy bucket consistency. `favorable` clears `suppressed_taxonomies`; `adverse`
-  clears `extended_taxonomies`; `neutral` clears both; `dual-effect` allows both.
-- `burden_shifting_frameworks`: `mixed-motive` is incompatible with `but-for` in most formulations;
-  multi-framework combinations need a validity check on the Burden of Proof tab.
-- `election_of_remedies_rules`: `no-election-required` invalidates all other choices in the same field on the
-  Retaliation tab.
-- `is_employer_only_defendant`: when true, force `proper_defendants` to exactly `employer-entity` and clear every
-  other value.
-- Multi-select redirect values: evaluate whether `see-details` must not be combined with specific choices.
-- `class` for precedent records: choices are likely mutually exclusive and need evaluation on the Identity tab.
-
-### Cross-Tab Guards
-
-Guards comparing fields on different tabs:
-
-- `garcetti-exception` in `legal_recognitions` requires `public-sector` in `employment_sectors`.
-- `exhaustion-required` in `legal_recognitions` conflicts with `direct-filing-permitted` in `process_types`.
-- `protected_classes` and `excluded_classes` must not contain the same class slug.
-
-### Sister-Block Guards
-
-Guards comparing fields inside a single triggered block:
-
-- **`fee_shifting` block (Processes & Remedies tab):** when `fee-shifting-standard` is in `legal_recognitions`,
-  `none-american-rule` in `fee_shifting_standard` can only be set with phased exceptions — `fee_shifting_scopes`
-  must be `has-phases` only, or `fee-shifting-standard` must be removed from `legal_recognitions`. Multi-select
-  `fee_shifting_scopes` may also produce invalid combinations; review later.
+- `[U]` — umbrella-only value excludes granular and contradictory values.
+- `[D]` — value may duplicate a concept represented by another field or value.
+- `[R]` — value requires a value in another field.
+- `[E]` — value excludes another field or or field value.
 
 ### Potential Invalid Multi-Value Combos
 
-Breadcrumb list. Multi-select or multi-taxonomy fields that may need same-field invalid-combo review later.
+`[I]` — List of multi value fields that can have same-field invalid combinations:
+`[X]` — Denotes specific conflict
+`[U]` — Denotes umbrella-only value
 
-- `legal_recognitions` — `[O]`
-- `protected_action_standards` — `[X]` `per-se-protected`
-- `protected_action_source` — `[Q]`
-- `protected_actions` — `[Q]`
-- `protected_disclosures` — `[Q]`
+- `sol_triggers`
+- `remedies`
+- `employer_defenses`
+- `burden_shifting_frameworks` —  `[X]` `mixed-motive`, `but-for`
 - `protected_classes` — `[U]` `all-employees-only`
-- `excluded_classes` — `[Q]`
 - `employment_sectors` — `[U]` `all-sectors-only`
-- `disclosure_targets` — `[Q]`
-- `adverse_actions` — `[Q]`
-- `sol_triggers` — `[Q]`
-- `filing_notice_targets` — `[Q]`
-- `preservation_requirement_scopes` — `[Q]`
-- `malicious_reporting_sanctions.conduct_sanctioned` — `[Q]`
-- `malicious_reporting_sanctions.sanction_penalty` — `[X]` `felony`, `misdemeanor`
-- `criminal_sanctions.sanction_conduct` — `[Q]`
-- `process_types` — `[Q]`
-- `fee_shifting_phases.phase_scope` — `[N]` `none`
-- `remedies` — `[Q]`
 - `preliminary_reinstatement_scopes` — `[U]` `full-pendency-only`
-- `burden_shifting_frameworks` — `[X]` `mixed-motive`, `but-for`
-- `employer_knowledge_scopes` — `[Q]`
-- `employer_defenses` — `[Q]`
 - `individual_liability_scopes` — `[U]` `any-individual-only`
 - `anti_slapp_protection_scopes` — `[U]` `full-procedural-only`
-- `election_of_remedies_rules` — `[N]` `no-election-required`
-- `public_policy_sources` — `[Q]`
-- `authority_sources` — `[Q]`
-- `class` — `[X]`
+- `election_of_remedies_rules` — `[U]` `no-election-required-only`
+- `settlement_restriction_scope` — `[U]` `amount-only` OR `full-prohibition-only`
+- `sovereign_immunity_scope` — `[U]` `all-only` OR `state-only`
+- `sovereign_immunity_limits` — `[U]` `none-only`
 
 ### Potential Duplicate Cross-Field Concepts
 
-Breadcrumb list. `[D]` values may duplicate a concept represented elsewhere.
-
-- `legal_recognitions` — `[D]`
+`[D]` — List of values that may duplicate a concept represented value in another field:
+- `legal_recognitions`
     * `pre-filing-notice` → `process_types` — `pre-suit-notice`
-    * `criminal-sanctions` → `process_types` — `criminal-referral`
-    * `private-right-of-action` → `process_types` — `civil-lawsuit`
-    * `class-action` → `process_types` — `representative-action`
-    * `civil-action-waiver` → `civil_action_waiver_scope` — waiver-permission values
-    * `contractual-waiver` → `contractual_waiver_scope` — waiver-enforcement values
-    * `class-action-waiver` → `civil_action_waiver_scope` — `permitted-individual-only`
-    * `discovery-protection` → `adverse_actions` — `retaliatory-discovery`
-    * `anti-slapp-protection` → `adverse_actions` — `retaliatory-litigation`
-- `process_types` — `[D]`
+- `process_types`
     * `direct-filing-permitted` → `process_pathway_scope` — `direct-court`
 
-### Potential Cross-Field Required Values
+### Cross-Field Required Values
 
-Breadcrumb list. `[R]` values may require a value in another field.
-
-- `legal_recognitions` — `[R]`
-    * `public-concern-required` → `employment_sectors` — `public-sector`
-    * `garcetti-exception` → `employment_sectors` — `public-sector`
-    * `jury-trial` → `legal_recognitions` — `private-right-of-action`
-    * `mitigation-exception` → `legal_recognitions` — `mitigation-required`
-    * `preliminary-reinstatement` → `remedies` — `reinstatement` or `interim-reinstatement`
-    * `fee-shifting-standard` → `remedies` — `attorney-fees` or `attorney-fees-admin`
-    * `equitable-interest-award` → `remedies` — `interest-on-backpay`
-    * `internal-only-disclosure` → `process_types` — `internal-disclosure`
-    * `internal-only-disclosure` → `disclosure_targets` — at least one child of `internal`
-- `adverse_actions` — `[R]`
-    * `constructive-discharge` → `sol_triggers` — `constructive-discharge-accrual`
-- `remedies` — `[R]`
-    * `bounty-qui-tam-award` → `process_types` — `qui-tam`
-    * `bounty-qui-tam-award` → `protected_classes` — `qui-tam-relator`
-    * `liquidated-damages` → `remedy_liquidated_multiplier` — non-empty
-- `remedy_caps.remedy_cap` — `[R]`
+`[R]` — List of field values that require a value in another field:
+- `process_types`
+    * `qui-tam` → `legal_recognitions` — `qui-tam-action`
+    * `civil-lawsuit` → `legal_recognitions` — `private-right-of-action`
+- `sol_triggers`
+    * `constructive-discharge-accrual` → `adverse_actions` — `constructive-discharge`
+- `remedies`
+    * `bounty-qui-tam-award` → `legal_recognitions` — `qui-tam-action`
+- `remedy_caps.remedy_cap`
     * `punitive` → `remedies` — `punitive-damages`
     * `compensatory` → `remedies` — `compensatory-damages`
-- `protected_classes` — `[R]`
+- `protected_classes`
     * `qui-tam-relator` → `process_types` — `qui-tam`
-- `burden_shifting_frameworks` — `[R]`
-    * `mixed-motive` → `mixed_motive_remedy_context` — non-empty
-
-### Potential Cross-Field Invalid Combos
-
-Breadcrumb list. `[C]` values may conflict with a value or absence in another field.
-
-- `legal_recognitions` — `[C]`
-    * `exhaustion-required` → `process_pathway_scope` — `direct-court`
-    * `exhaustion-required` → `process_types` — `direct-filing-permitted`
-- `protected_classes` — `[C]`
-    * same class slug → `excluded_classes` — same class slug
-- `excluded_classes` — `[C]`
-    * same class slug → `protected_classes` — same class slug
-- `fee_shifting_scopes` — `[C]`
-    * `has-phases` only requirement → `legal_recognitions` — `fee-shifting-standard`
-- `fee_shifting_phases.phase_scope` — `[C]`
-    * `none` → affirmative phase-scope values
-- `election_of_remedies_rules` — `[C]`
-    * `no-election-required` → affirmative election-rule values
-- `is_employer_only_defendant` — `[C]`
-    * true → `proper_defendants` — any value other than `employer-entity`
-- `process_types` — `[C]`
-    * `direct-filing-permitted` → `legal_recognitions` — `exhaustion-required`
-
-### Potential Required-Empty Cleanup
-
-Breadcrumb list. `[W]` marks stale hidden values that must be wiped when the controlling field no longer permits
-the dependent field.
-
-- `scope` — `[W]`
-    * `favorable` → `suppressed_taxonomies` must be empty
-    * `adverse` → `extended_taxonomies` must be empty
-    * `neutral` → `extended_taxonomies` must be empty
-    * `neutral` → `suppressed_taxonomies` must be empty
-    * `dual-effect` → `extended_taxonomies` and `suppressed_taxonomies` may both carry values
 
 ### Cross-Field Exclusions
 
-Authoritative list of values that exclude other slugs, fields, or clusters. The `[E]` marker in the field spec
-slug map flags entries that appear here. When a controlling value is set, hooks must clear the excluded fields
-on save and prevent re-population.
-
-- `legal_recognitions` — `[E]`
-    * `all-waivers-blocked` → excludes `civil-action-waiver` cluster
-    * `all-waivers-blocked` → excludes `contractual-waiver` cluster
-    * `all-waivers-blocked` → excludes `collateral-claims-waiver` cluster
-    * `all-waivers-blocked` → excludes `class-action-waiver` cluster
-    * `blanket-sovereign-immunity-waiver` → excludes `sovereign-immunity-status` slug and its status cluster
-    * `internal-only-disclosure` → excludes multiple external-disclosure paths; review later
-    * `bad-faith-exclusion` → excludes protected-action good-faith posture
+`[E]` — List of values that exclude a value in another field:
+- `legal_recognitions`
     * `statutory-preclusion` → excludes ordinary process/remedy pathway fields when claim is fully precluded
     * `no-retaliatory-evidence` → excludes evidence-use fields that treat retaliatory evidence as available
-- `process_pathway_scope` — `[E]`
-    * `direct-court` → excludes `exhaustion-required` cluster
-- `fee_shifting_standard` — `[E]`
-    * `none-american-rule` → excludes non-phased `fee_shifting_scopes`
-- `sovereign_immunity_status` — `[E]`
+- `process_pathway_scope`
+    * `direct-court` → excludes `exhaustion-required` in `legal_recognitions`
+- `sovereign_immunity_status`
     * `not-waived` → excludes `sovereign_immunity_waiver_class`
 
-### Cluster Gate Consistency
+### Special Cases
 
-Migrated cross-taxonomy clusters carry one of two relationship markers in the field spec slug map. Each requires
-a consistency hook with different semantics.
-
-- `// PAIRED:` — Mutual requirement. Both the recognition slug and the sister-taxonomy term must be present
-  together; neither stands alone meaningfully. Hook flags either-direction divergence (recognition slug present
-  without sister-tax term, or vice versa). Currently applied to: `qui-tam-action` ↔ `qui-tam` in
-  `process_types`.
-- `// PREREQUISITE:` — One-way requirement. The sister-taxonomy term must be present *if* the recognition slug
-  is set, but the sister-tax term can stand alone (representing the doctrine without the structured recognition
-  detail). Hook flags only the case where the recognition slug is present without the sister-tax term — the
-  reverse is allowed. Currently applied to: `same-decision-defense-recognized` → `same-decision-defense` in
-  `employer_defenses`; `constructive-discharge-recognized` → `constructive-discharge` in `adverse_actions`.
+List of special case:
+- `protected_classes` and `excluded_classes`: slug-to-slug exclusion.
+    * Block save with hook. Requires editor resolution.
+- `scope`: enforce precedent consistency.
+    * `favorable` clears `suppressed_taxonomies`
+    * `adverse` clears `extended_taxonomies`
+    * `neutral` clears both.
+- `has_fee_shifting_phases`: auto-set true, when `fee_shifting_standard` is `american-rule-only`.
+- `is_employer_only_defendant`: when true, `employer-entity` is only valid value in `proper_defendants`.
 
 ---
 
