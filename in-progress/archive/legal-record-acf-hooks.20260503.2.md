@@ -176,6 +176,23 @@ Guards comparing fields inside a single triggered block:
   must be `has-phases` only, or `fee-shifting-standard` must be removed from `legal_recognitions`. Multi-select
   `fee_shifting_scopes` may also produce invalid combinations; review later.
 
+### Mixed-Motive Remedy Notice
+
+When `mixed-motive` is in `burden_shifting_frameworks` (Burden of Proof tab) and `mixed_motive_remedy_context`
+(Processes & Remedies tab) is empty, emit a dismissible admin notice via `acf/save_post` or `admin_notices`
+(attached through `current_screen`):
+
+> "Mixed-motive framework selected — please complete the 'Mixed Motive Remedy Context' field on the Processes &
+> Remedies tab."
+
+Display on edit screens for all four legal-record CPTs. Tone: informative, not alarmist. Dismiss state need not
+persist — the notice should re-emit each save while the condition holds.
+
+### Blacklisting Extension Visibility
+
+`is_blacklisting_extended` (Processes & Remedies tab) is conditionally revealed when `adverse_actions`
+(Retaliation tab) includes `blacklisting`.
+
 ### Potential Invalid Multi-Value Combos
 
 Breadcrumb list. Multi-select or multi-taxonomy fields that may need same-field invalid-combo review later.
@@ -289,11 +306,9 @@ the dependent field.
     * `neutral` → `suppressed_taxonomies` must be empty
     * `dual-effect` → `extended_taxonomies` and `suppressed_taxonomies` may both carry values
 
-### Cross-Field Exclusions
+### Potential Cross-Field Exclusions
 
-Authoritative list of values that exclude other slugs, fields, or clusters. The `[E]` marker in the field spec
-slug map flags entries that appear here. When a controlling value is set, hooks must clear the excluded fields
-on save and prevent re-population.
+Breadcrumb list. `[E]` values may exclude another field or cluster from existing.
 
 - `legal_recognitions` — `[E]`
     * `all-waivers-blocked` → excludes `civil-action-waiver` cluster
@@ -312,21 +327,6 @@ on save and prevent re-population.
 - `sovereign_immunity_status` — `[E]`
     * `not-waived` → excludes `sovereign_immunity_waiver_class`
 
-### Cluster Gate Consistency
-
-Migrated cross-taxonomy clusters carry one of two relationship markers in the field spec slug map. Each requires
-a consistency hook with different semantics.
-
-- `// PAIRED:` — Mutual requirement. Both the recognition slug and the sister-taxonomy term must be present
-  together; neither stands alone meaningfully. Hook flags either-direction divergence (recognition slug present
-  without sister-tax term, or vice versa). Currently applied to: `qui-tam-action` ↔ `qui-tam` in
-  `process_types`.
-- `// PREREQUISITE:` — One-way requirement. The sister-taxonomy term must be present *if* the recognition slug
-  is set, but the sister-tax term can stand alone (representing the doctrine without the structured recognition
-  detail). Hook flags only the case where the recognition slug is present without the sister-tax term — the
-  reverse is allowed. Currently applied to: `same-decision-defense-recognized` → `same-decision-defense` in
-  `employer_defenses`; `constructive-discharge-recognized` → `constructive-discharge` in `adverse_actions`.
-
 ---
 
 ## Global Hook-Writing Guidance
@@ -341,7 +341,7 @@ slug-presence conditionals when both appear in the same cluster (e.g., `all-waiv
 
 **Cleanup vs. validation.** Prefer deterministic cleanup over silent invalid state — when a controlling field
 makes another field impossible, clear the stale field on save and validate that it remains empty. Use
-`ws_hooked_error` instead when cleanup would destroy editorial judgment (e.g., overlapping `protected_classes`
+`validation_error` instead when cleanup would destroy editorial judgment (e.g., overlapping `protected_classes`
 and `excluded_classes` should flag for editor review, not auto-resolve).
 
 **Triggered-cluster requiredness.** The slug map is the source of truth — `[R]` fields must be non-empty when
@@ -383,28 +383,28 @@ utility files; when a helper signature changes, update this section first.
 
 **ACF value access.**
 
-- `ws_hooked_get(int $post_id, string $field)` — read the current saved value of an ACF field.
-- `ws_hooked_set(int $post_id, string $field, mixed $value)` — write a value to an ACF field.
-- `ws_hooked_clear(int $post_id, array $fields)` — clear multiple ACF fields in one call.
+- `acf_value(int $post_id, string $field)` — read the current saved value of an ACF field.
+- `set_acf_value(int $post_id, string $field, mixed $value)` — write a value to an ACF field.
+- `clear_acf_values(int $post_id, array $fields)` — clear multiple ACF fields in one call.
 
 **Taxonomy slug operations.**
 
-- `ws_hooked_has_slug(int $post_id, string $taxonomy_field, string $slug)` — true when the slug is attached to
-  the post in the given taxonomy field.
-- `ws_hooked_has_child_slug(int $post_id, string $taxonomy_field, string $parent_slug)` — return true when any term
+- `has_slug(int $post_id, string $taxonomy_field, string $slug)` — return true when the named slug is currently
+  attached to the post in the given taxonomy field.
+- `has_any_child_slug(int $post_id, string $taxonomy_field, string $parent_slug)` — return true when any term
   attached to the post is a descendant of the named parent slug. Centralizes parent/child resolution so callers
   don't enumerate child slugs by hand and don't break when new children are added to the seeder.
-- `ws_hooked_remove_slugs(int $post_id, string $taxonomy_field, array $slugs)` — remove the listed slugs from
-  the taxonomy field.
+- `remove_slugs(int $post_id, string $taxonomy_field, array $slugs)` — remove the listed slugs from a taxonomy
+  field on the post.
 
 **Field value checks.**
 
-- `ws_hooked_has_value(int $post_id, string $field, string $value)` — return true when the field's saved value
+- `field_has_value(int $post_id, string $field, string $value)` — return true when the field's saved value
   equals or contains the given value (works for scalar and array fields).
 
 **Pattern helpers.**
 
-- `ws_hooked_sentinels(array $values)` — return the subset of values matching `has-*` or `see-*` patterns.
+- `ws_filter_sentinels(array $values)` — return the subset of values matching `has-*` or `see-*` patterns.
   Centralizing sentinel detection means adding a future sentinel (e.g., `has-limits`, `see-policy`) requires no
   changes to any hook that excludes sentinels from its granular-value comparisons.
 
@@ -414,21 +414,21 @@ These helpers operate across multiple ACF fields on a single post. Each one capt
 fall-through, wipe-by-map, exact-only-when-bool — so callers can wire field names into the helper rather than
 re-implement the body each time.
 
-- `ws_hooked_merge(int $post_id, array $source_fields)` — read each named field, treat its value as an
+- `ws_hooked_array_merge(int $post_id, array $source_fields)` — read each named field, treat its value as an
   array, merge them, dedupe, drop empties, and return the merged array. Caller writes the result wherever needed.
-- `ws_hooked_first_filled(int $post_id, array $source_fields)` — return the first non-empty value among the
+- `ws_first_non_empty_value(int $post_id, array $source_fields)` — return the first non-empty value among the
   named fields, in order. Used for derived fields with fallback chains (e.g., prefer `effective_date`, fall back
   to `date`).
-- `ws_hooked_wipe_map(int $post_id, string $controlling_field, array $wipe_map)` — given a map keyed by the
+- `ws_apply_wipe_map(int $post_id, string $controlling_field, array $wipe_map)` — given a map keyed by the
   controlling field's possible values, each mapping to a list of fields to clear, look up the current value and
   clear the corresponding fields. Standard application for `[W]` cleanup rules.
-- `ws_hooked_exact_only(int $post_id, string $bool_field, string $target_field, array $exact_values)` —
+- `ws_apply_exact_only_when_bool(int $post_id, string $bool_field, string $target_field, array $exact_values)` —
   when the bool field is true, force the target field to exactly the given values (clearing anything else).
   Standard application for `[C]` boolean refinements.
 
 **Error reporting.**
 
-- `ws_hooked_error(string $field, string $message)` — emit a validation error for the named field with the
+- `validation_error(string $field, string $message)` — emit a validation error for the named field with the
   given message. Causes ACF to block save and surface the message to the editor.
 
 ### Merge Arrays
@@ -438,8 +438,8 @@ Use this pattern for hidden merged relationship fields such as `_related_agencie
 
 ```php
 function ws_merge_related_agencies(int $post_id): void {
-    ws_hooked_set($post_id, '_related_agencies',
-        ws_hooked_merge($post_id, ['local_agencies', 'federal_agencies']));
+    set_acf_value($post_id, '_related_agencies',
+        ws_hooked_array_merge($post_id, ['local_agencies', 'federal_agencies']));
 }
 ```
 
@@ -451,9 +451,9 @@ inline.
 
 ```php
 function ws_derive_effective_year(int $post_id): void {
-    $source_date = ws_hooked_first_filled($post_id, ['effective_date', 'date']);
+    $source_date = ws_first_non_empty_value($post_id, ['effective_date', 'date']);
 
-    ws_hooked_set($post_id, 'effective_year', $source_date ? substr($source_date, 0, 4) : '');
+    set_acf_value($post_id, 'effective_year', $source_date ? substr($source_date, 0, 4) : '');
 }
 ```
 
@@ -463,8 +463,8 @@ Use this pattern for `[U]` fields. The hook target is the `-only` value.
 
 ```php
 function ws_validate_umbrella_only(int $post_id, string $field, string $only_value): void {
-    $values = (array) ws_hooked_get($post_id, $field);
-    $sentinels = ws_hooked_sentinels($values);
+    $values = (array) acf_value($post_id, $field);
+    $sentinels = ws_filter_sentinels($values);
 
     if (!in_array($only_value, $values, true)) {
         return;
@@ -473,7 +473,7 @@ function ws_validate_umbrella_only(int $post_id, string $field, string $only_val
     $granular = array_diff($values, [$only_value], $sentinels);
 
     if ($granular) {
-        ws_hooked_error($field, "$only_value cannot be combined with granular values.");
+        validation_error($field, "$only_value cannot be combined with granular values.");
     }
 }
 ```
@@ -488,12 +488,12 @@ function ws_validate_required_cluster_field(
     string $trigger_slug,
     string $required_field
 ): void {
-    if (!ws_hooked_has_slug($post_id, 'legal_recognitions', $trigger_slug)) {
+    if (!has_slug($post_id, 'legal_recognitions', $trigger_slug)) {
         return;
     }
 
-    if (empty(ws_hooked_get($post_id, $required_field))) {
-        ws_hooked_error($required_field, "$required_field is required when $trigger_slug is selected.");
+    if (empty(acf_value($post_id, $required_field))) {
+        validation_error($required_field, "$required_field is required when $trigger_slug is selected.");
     }
 }
 ```
@@ -505,18 +505,18 @@ can exist.
 
 ```php
 function ws_clear_waiver_clusters_when_blocked(int $post_id): void {
-    if (!ws_hooked_has_slug($post_id, 'legal_recognitions', 'all-waivers-blocked')) {
+    if (!has_slug($post_id, 'legal_recognitions', 'all-waivers-blocked')) {
         return;
     }
 
-    ws_hooked_remove_slugs($post_id, 'legal_recognitions', [
+    remove_slugs($post_id, 'legal_recognitions', [
         'civil-action-waiver',
         'contractual-waiver',
         'collateral-claims-waiver',
         'class-action-waiver',
     ]);
 
-    ws_hooked_clear($post_id, [
+    clear_acf_values($post_id, [
         'civil_action_waiver_context',
         'civil_action_waiver_scope',
         'contractual_waiver_context',
@@ -538,11 +538,11 @@ function ws_validate_none_value(string $field, array $values, string $none_value
         return;
     }
 
-    $sentinels = ws_hooked_sentinels($values);
+    $sentinels = ws_filter_sentinels($values);
     $others = array_diff($values, [$none_value], $sentinels);
 
     if ($others) {
-        ws_hooked_error($field, "$none_value cannot be combined with affirmative values.");
+        validation_error($field, "$none_value cannot be combined with affirmative values.");
     }
 }
 ```
@@ -554,7 +554,7 @@ wipe map is domain-specific data; the engine that applies it is agnostic.
 
 ```php
 function ws_cleanup_precedent_scope(int $post_id): void {
-    ws_hooked_wipe_map($post_id, 'scope', [
+    ws_apply_wipe_map($post_id, 'scope', [
         'favorable' => ['suppressed_taxonomies'],
         'adverse'   => ['extended_taxonomies'],
         'neutral'   => ['extended_taxonomies', 'suppressed_taxonomies'],
@@ -575,12 +575,12 @@ function ws_validate_cross_field_requirement(
     string $required_field,
     string $required_value
 ): void {
-    if (!ws_hooked_has_value($post_id, $source_field, $source_value)) {
+    if (!field_has_value($post_id, $source_field, $source_value)) {
         return;
     }
 
-    if (!ws_hooked_has_value($post_id, $required_field, $required_value)) {
-        ws_hooked_error(
+    if (!field_has_value($post_id, $required_field, $required_value)) {
+        validation_error(
             $required_field,
             "$source_field:$source_value requires $required_field:$required_value."
         );
@@ -595,7 +595,7 @@ target field to a fixed value set, clearing anything else.
 
 ```php
 function ws_apply_employer_only_defendant(int $post_id): void {
-    ws_hooked_exact_only($post_id, 'is_employer_only_defendant',
+    ws_apply_exact_only_when_bool($post_id, 'is_employer_only_defendant',
         'proper_defendants', ['employer-entity']);
 }
 ```
@@ -603,7 +603,7 @@ function ws_apply_employer_only_defendant(int $post_id): void {
 ### Validate Same-Field Multi-Select Exclusion
 
 Use this pattern for `[X]` pairs in multi-select fields where two specific values are mutually exclusive, such as
-`mixed-motive` and `but-for` in `burden_shifting_frameworks`. Use `ws_hooked_error` rather than auto-cleanup so
+`mixed-motive` and `but-for` in `burden_shifting_frameworks`. Use `validation_error` rather than auto-cleanup so
 the editor decides which value to keep.
 
 ```php
@@ -613,10 +613,10 @@ function ws_validate_incompatible_pair(
     string $value_a,
     string $value_b
 ): void {
-    $values = (array) ws_hooked_get($post_id, $field);
+    $values = (array) acf_value($post_id, $field);
 
     if (in_array($value_a, $values, true) && in_array($value_b, $values, true)) {
-        ws_hooked_error(
+        validation_error(
             $field,
             "$value_a and $value_b cannot both be selected in $field; choose one."
         );
@@ -644,14 +644,14 @@ function ws_validate_repeater_row_exclusion(
     string $value_a,
     string $value_b
 ): void {
-    $rows = (array) ws_hooked_get($post_id, $repeater_field);
+    $rows = (array) acf_value($post_id, $repeater_field);
 
     foreach ($rows as $idx => $row) {
         $row_values = (array) ($row[$sub_field] ?? []);
 
         if (in_array($value_a, $row_values, true) && in_array($value_b, $row_values, true)) {
             $row_num = $idx + 1;
-            ws_hooked_error(
+            validation_error(
                 "$repeater_field.$sub_field",
                 "Row $row_num: $value_a and $value_b cannot appear in the same row. Use a separate row for each."
             );
@@ -673,23 +673,23 @@ function ws_validate_repeater_row_exclusion(
 
 Use this pattern for sister fields whose validity depends on a triggering slug in `legal_recognitions` AND a
 cross-taxonomy condition in another taxonomy, such as `is_cats_paw_liability_extended`. Cleanup (rather than
-`ws_hooked_error`) is correct here because the field is structurally meaningless when its prerequisites are
+`validation_error`) is correct here because the field is structurally meaningless when its prerequisites are
 absent.
 
 ```php
 function ws_apply_cats_paw_extension_guard(int $post_id): void {
-    if (!ws_hooked_get($post_id, 'is_cats_paw_liability_extended')) {
+    if (!acf_value($post_id, 'is_cats_paw_liability_extended')) {
         return;
     }
 
     // Both conditions must hold for the extension flag to remain valid:
     //   1. Sibling cluster active: 'cats-paw-liability' present in legal_recognitions
     //   2. Cross-taxonomy:         any child of 'associates-of-whistleblower' in protected_classes
-    $sibling_active    = ws_hooked_has_slug($post_id, 'legal_recognitions', 'cats-paw-liability');
-    $associate_present = ws_hooked_has_child_slug($post_id, 'protected_classes', 'associates-of-whistleblower');
+    $sibling_active    = has_slug($post_id, 'legal_recognitions', 'cats-paw-liability');
+    $associate_present = has_any_child_slug($post_id, 'protected_classes', 'associates-of-whistleblower');
 
     if (!$sibling_active || !$associate_present) {
-        ws_hooked_set($post_id, 'is_cats_paw_liability_extended', false);
+        set_acf_value($post_id, 'is_cats_paw_liability_extended', false);
     }
 }
 ```
