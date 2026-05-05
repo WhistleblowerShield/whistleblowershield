@@ -193,7 +193,7 @@ helper API.
 
 **Inputs and ordering.** Normalize values before validating — treat taxonomy, select, and multi-select values as
 slug arrays internally even when ACF stores a scalar. Taxonomy-absence conditionals must evaluate before
-slug-presence conditionals when both appear in the same cluster (e.g., `all-waivers-blocked` absent, then
+slug-presence conditionals when both appear in the same cluster (e.g., `all-waivers-unenforceable` absent, then
 `civil-action-waiver` present).
 
 **Cleanup vs. validation.** Prefer deterministic cleanup over silent invalid state — when a controlling field
@@ -362,7 +362,7 @@ can exist.
 
 ```php
 function ws_clear_waiver_clusters_when_blocked(int $post_id): void {
-    if (!ws_hooked_has_slug($post_id, 'legal_recognitions', 'all-waivers-blocked')) {
+    if (!ws_hooked_has_slug($post_id, 'legal_recognitions', 'all-waivers-unenforceable')) {
         return;
     }
 
