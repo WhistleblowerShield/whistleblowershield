@@ -28,11 +28,11 @@ mark them twice as `[+][R]`.
 
 ### Details, Sentinels, and Companions
 
-`has-details` is a sentinel value used to trigger `*_details` companions — when present in the trigger field, the
-companion is revealed. `see-details` is a sentinel used in cases where an already-active `*_details` field exists
-in the same cluster. Similarly `see-context` is a sentinel used in cases where an already-active `*_context` field
-exists. Each sentinel is essentially editorial guidance to use the companion field for freetext nuance regarding
-the specified trigger field, or the cluster as a whole.
+Avoid using `has-details` (defined in the main spec) when the selected value already lives inside a triggered
+cluster rooted by a `*_context` field; use `see-context`. `see-context` is a sentinel used in cases where an
+already-active `*_context` field exists, as is the case with most clusters. The sentinel is essentially editorial
+guidance to use the companion field for freetext nuance regarding the specified trigger field, or the cluster as a
+whole.
 
 ### Requiredness
 
@@ -56,9 +56,10 @@ definition to the doctrine such as `*_scope` or `*_limit` is acceptable; in thos
 required. Where possible avoid using field negating choices. Prefer empty fields that are not required, where
 logical.
 
-Do not include ambiguous choice terms. Always prefer `has-details` or `see-context` where data may reasonably be
-'unclear' or 'mixed'. If the possible data can genuinely be classified as 'mixed' and not require further nuance,
-'mixed' can be used. Annotate its use with inline comment.
+Do not include ambiguous choice terms. Always prefer `see-context` (or `has-details` when necessary) where data may
+reasonably be 'unclear', 'mixed' or 'varies'. If the possible data can genuinely be classified as 'mixed' or
+'varies' and not does require further nuance, 'mixed'or 'varies' may be used; 'unclear' is simply unacceptable.
+Annotate use with inline comments.
 
 ---
 
@@ -117,16 +118,16 @@ The breadcrumb tables below use these markers:
 
 - Reviewed multi-value fields with no currently defined same-field conflict are intentionally omitted.
 - `legal_recognitions`
-    * `[X]` `all-waivers-unenforceable` excludes `civil-action-waiver`, `contractual-waiver`,
-                                                 `collateral-claims-waiver`, `class-action-waiver`
+    * `[X]` `all-waivers-unenforceable`         excludes `civil-action-waiver`, `contractual-waiver`,
+                                                         `collateral-claims-waiver`, `class-action-waiver`
     * `[X]` `blanket-sovereign-immunity-waived` excludes `sovereign-immunity-status`
-    * `[X]` `class-action-permitted` excludes `class-action-waiver`
-- `burden_shifting_frameworks` —  `[X]` `mixed-motive`, `but-for`
-- `protected_classes` — `[U]` `all-employees-only`
-- `employment_sectors` — `[U]` `all-sectors-only`
+    * `[X]` `class-action-permitted`            excludes `class-action-waiver`
+- `burden_shifting_frameworks`       — `[X]` `mixed-motive`, `but-for`
+- `protected_classes`                — `[U]` `all-employees-only`
+- `employment_sectors`               — `[U]` `all-sectors-only`
 - `preliminary_reinstatement_scopes` — `[U]` `full-pendency-only`
-- `individual_liability_scopes` — `[U]` `any-individual-only`
-- `anti_slapp_protection_scopes` — `[U]` `full-procedural-only`
+- `individual_liability_scopes`      — `[U]` `any-individual-only`
+- `anti_slapp_protection_scopes`     — `[U]` `full-procedural-only`
 
 ### Potential Duplicate Cross-Field Concepts
 
