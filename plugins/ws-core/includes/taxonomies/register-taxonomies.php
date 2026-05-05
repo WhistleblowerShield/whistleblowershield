@@ -777,6 +777,7 @@ $_ws_taxonomy_registry = [
             'protected-action'                          => 'Protected Action Specified',
             'excluded-class'                            => 'Excluded Class Specified',
             'garcetti-exception'                        => 'Garcetti / Official-Duties Exclusion Applies',
+            'disclosure-channel-defined'                => 'Disclosure Channel Defined',
             // Statute of Limitations & Thresholds
             'statute-of-repose'                         => 'Statute of Repose Specified',
             'statutory-tolling'                         => 'Statutory Tolling Specified',
@@ -786,8 +787,12 @@ $_ws_taxonomy_registry = [
             'exhaustion-required'                       => 'Exhaustion Required',
             'pre-filing-notice'                         => 'Pre-Filing Notice Required',
             'statutory-preclusion'                      => 'Statutory Preclusion Applies',
+            'employer-threshold-specified'              => 'Employer Threshold Specified',
+            'cure-period-specified'                     => 'Cure Period Specified',
             // Retaliation
             'evidence-preservation'                     => 'Evidence Preservation Required',
+            'constructive-discharge-standard'           => 'Constructive Discharge Standard Specified',
+            'remedy-election-required'                  => 'Election of Remedies Required',
             'cats-paw-liability'                        => 'Cat\'s Paw Liability Recognized',
             'third-party-retaliation'                   => 'Third-Party Retaliation Prohibited',
             'criminal-sanctions'                        => 'Criminal Sanctions Specified',
@@ -803,9 +808,14 @@ $_ws_taxonomy_registry = [
             'preliminary-reinstatement'                 => 'Preliminary / Interim Reinstatement Available',
             // Burden of Proof
             'burden-shifting-framework'                 => 'Burden Shifting Framework Specified',
+            'same-decision-defense-standard'            => 'Same-Decision Defense Standard Specified',
             'causation-dual-standard'                   => 'Causation Dual Standard Applies',
             'employer-knowledge'                        => 'Employer Knowledge Element Required',
+            'temporal-presumption-recognized'           => 'Temporal Presumption Recognized',
             'temporal-proximity-sufficient'             => 'Temporal Proximity Sufficient',
+            // Rewards
+            'reward-available'                          => 'Reward Available',
+            'qui-tam-action'                            => 'Qui Tam Action Available',
             // Waiver & Scope
             'all-waivers-unenforceable'                 => 'All Waivers Unenforceable',
             'civil-action-waiver'                       => 'Civil Action Waiver Enforceable',

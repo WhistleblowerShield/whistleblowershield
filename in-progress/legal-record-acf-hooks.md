@@ -2,82 +2,74 @@
 
 This document captures hook requirements for the legal-record ACF model. The field spec identifies *where* a hook
 is needed; this doc explains the shared behavior, validation rules, and known hook backlog. See the [Hook Rules]
-section of `legal-record-acf-fields.md` for the high-level "when to write a hook" rules.
+section of `legal-record-acf-fields-v2.5.md` for the high-level "when to write a hook" rules.
 
 ---
 
 ## Triggered Cluster Guidance
 
-A triggered cluster begins when a slug in `legal_recognitions` reveals one or more related fields. A cluster may
-include a `*_context` companion, one or more structured sister fields, and downstream conditionals that depend on
-specific values *inside* the cluster.
+A triggered cluster is defined as more than one field being revealed by a trigger. By convention all clusters are
+triggered when a specified recognition slug is present in `legal_recognitions`. Clusters normally consist of one
+`*_context` field with at least one sister field. If an existing trigger of one field expands to two fields, it
+should migrate as conditional term in `legal_recognitions`.
 
-### Cluster Anatomy
+Not all recognition slugs in `legal_recognitions` trigger clusters. Some trigger the single `*_context` companion.
+Others are simply bool states, with no companion fields. See [Slug-to-Companion Map] in spec for slug specifics.
 
-When `slug-x` is present in `legal_recognitions`, the corresponding `slug_x_context` field is revealed. The
-`*_context` field is descriptive and not required by default. Use `see-context` when a structured choice is
-directionally correct but incomplete and the overflow belongs in the cluster's `*_context`; `see-context` may
-appear alone or alongside structured values when that combination is meaningful for review.
+When triggered the first field, `*_context`, carries the narrative glue for the cluster. Its name should relate
+directly to the recognized doctrine represented by the slugs presence. The remaining sisters fields carry the
+structured data that defines the cluster. They should be named to reflect the aspect of the doctrine they help
+define, and their suffix should represent the data they hold (e.g. `*_class`, `*_scope`, `*_status`).
 
-Each slug-triggered cluster should have one primary required structured sister field when the doctrine can be
-captured structurally — mark it `[R]` in the slug map. Additional sister fields are allowed when they are
-genuinely parallel structured companions arising directly from slug presence (rather than from a downstream field
-choice).
+Each cluster will have at least one required field where the represented doctrine should be captured structurally
+— mark it `[R]` in the spec's slug map. Additional sister fields may be required where necessary. Sister fields
+that have further conditions before they are revealed — mark as `[+]`; they may also become required once revealed,
+mark them twice as `[+][R]`.
 
-A field should remain a sister only when this sentence is true:
+### Details, Sentinels, and Companions
 
-> This field becomes relevant because the slug is present, not because another field in the cluster took a
-> specific value.
-
-If the sentence is false, model the field as a direct conditional on the relevant trigger field and value rather
-than as a fake sibling. Example:
-
-```text
-sovereign-immunity-status -> sovereign_immunity_context + sovereign_immunity_status[R]
-
-sovereign_immunity_waiver_class is conditional on sovereign_immunity_status is NOT not-waived.
-sovereign_immunity_scope is conditional on sovereign_immunity_status is non-empty.
-sovereign_immunity_status_details is conditional on sovereign_immunity_status is has-details.
-```
-
-### Details Companions
-
-`has-details` is reserved for dedicated `*_details` companions — when present in a field, it triggers the
-same-stem `*_details` field. `see-details` is reserved for cases where an already-active details field exists
-elsewhere in the same cluster.
+`has-details` is a sentinel value used to trigger `*_details` companions — when present in the trigger field, the
+companion is revealed. `see-details` is a sentinel used in cases where an already-active `*_details` field exists
+in the same cluster. Similarly `see-context` is a sentinel used in cases where an already-active `*_context` field
+exists. Each sentinel is essentially editorial guidance to use the companion field for freetext nuance regarding
+the specified trigger field, or the cluster as a whole.
 
 ### Requiredness
 
-Requiredness belongs first in field attributes — generated ACF should set `'required' => 1` where applicable.
-Hooks enforce requiredness when conditional logic alone cannot do so safely; when a triggering slug is present
-and the cluster's required field is empty, validation must block save and identify both the triggering slug and
-the missing field so the editor can either complete the field or remove the slug.
+Cluster requiredness hierarchy: a revealed and structured sister field is usually the required field for the
+cluster. It will be marked `[R]` in the [Slug-to-Companion Map] of the main spec; Multiple sisters may be
+required. In some cases the `*_context` field will be required as well. When `*_context` is revealed without
+sisters, it is the `[R]` required field by default; It is also possible the only sister field or fields are
+required by general rule; in this case the sister fields are not marked as required, and the `*_context` field
+becomes the required field by default. Hooks should monitor all required fields in the cluster. If any are empty,
+a validation error should identify both the triggering slug and the empty field or fields, for editorial review.
 
-Cluster requiredness hierarchy: a matching structured sister (when one exists) is the required field and gets
-`[R]`; `*_context` is revealed but not required by default; if no structured sister is revealed, `*_context`
-becomes the required field; hooks block save whenever the cluster's required field is empty. This prevents a
-selected recognition slug from creating an empty cluster with no captured substance.
+Requiredness must first be set in field attributes — generated ACF should set `'required' => 1` where applicable.
+Hooks enforce requiredness when conditional logic alone cannot block the save or surface a proper flag.
 
 ### Non-Applicability and Ambiguity
 
-Absence can define non-applicability — if the absence of a recognition slug already means the cluster does not
-apply, do not add redundant `none` choices inside that cluster's structured fields. Use `none`, `no-*`, or
-equivalent non-applicability values only when the field itself must still be answered; in those cases the field
-must be required, and the non-applicability value must be monitored as mutually exclusive with affirmative values
-in the same field.
+Absence defines non-applicability — The absence of a recognition slug already means the doctrine does not
+apply. Do not use redundant `none` values as choices in the cluster's select fields where their presence would
+represent the recognized doctrine does not apply. Using `none`, `no-*` as choices in select fields that add
+definition to the doctrine such as `*_scope` or `*_limit` is acceptable; in those cases the field must become
+required. Where possible avoid using field negating choices. Prefer empty fields that are not required, where
+logical.
 
-Do not encode ambiguity as a fake enum when narrative capture is cleaner. Avoid unclear-type choices where
-`has-details` or `see-context` provides a better review-state path.
+Do not include ambiguous choice terms. Always prefer `has-details` or `see-context` where data may reasonably be
+'unclear' or 'mixed'. If the possible data can genuinely be classified as 'mixed' and not require further nuance,
+'mixed' can be used. Annotate its use with inline comment.
 
 ---
 
 ## Precedent Taxonomy Mapping
 
-`extended_taxonomies` and `suppressed_taxonomies` use the same controlled taxonomy-term picker. `taxonomy`
-choices come from one allowlist of legal-record taxonomies that precedent may extend or suppress (see [Eligible
-Taxonomy Allowlist] in the spec); `term` choices are filtered by the selected `taxonomy` in the same repeater
-row. Store both values as slugs for readable ingest, export, and review. Validate on save that the selected
-`term` exists in the selected `taxonomy`. Free-entry taxonomy or term names are not allowed.
+`extended_taxonomies` and `suppressed_taxonomies` use the same filtered taxonomy-term choices. `taxonomy`
+choices come from the allowlist of legal-record taxonomies that precedent may realistically extend or suppress
+(see [Eligible Taxonomy Allowlist] in the main spec); `term` choices are filtered by the selected `taxonomy` in
+the same repeater row. Available terms for `extended_taxonomies` must not already be present in the parent
+legal-record. Similarly terms for `suppressed_taxonomies` must be present. Hooks must monitor both values as slugs
+and validate the values on save.
 
 ---
 
@@ -123,19 +115,18 @@ The breadcrumb tables below use these markers:
 `[X]` — Denotes specific conflict
 `[U]` — Denotes umbrella-only value
 
-- `sol_triggers`
-- `remedies`
-- `employer_defenses`
+- Reviewed multi-value fields with no currently defined same-field conflict are intentionally omitted.
+- `legal_recognitions`
+    * `[X]` `all-waivers-unenforceable` excludes `civil-action-waiver`, `contractual-waiver`,
+      `collateral-claims-waiver`, `class-action-waiver`
+    * `[X]` `blanket-sovereign-immunity-waived` excludes `sovereign-immunity-status`
+    * `[X]` `class-action-permitted` excludes `class-action-waiver`
 - `burden_shifting_frameworks` —  `[X]` `mixed-motive`, `but-for`
 - `protected_classes` — `[U]` `all-employees-only`
 - `employment_sectors` — `[U]` `all-sectors-only`
 - `preliminary_reinstatement_scopes` — `[U]` `full-pendency-only`
 - `individual_liability_scopes` — `[U]` `any-individual-only`
 - `anti_slapp_protection_scopes` — `[U]` `full-procedural-only`
-- `election_of_remedies_rules` — `[U]` `no-election-required-only`
-- `settlement_restriction_scope` — `[U]` `amount-only` OR `full-prohibition-only`
-- `sovereign_immunity_scope` — `[U]` `all-only` OR `state-only`
-- `sovereign_immunity_limits` — `[U]` `none-only`
 
 ### Potential Duplicate Cross-Field Concepts
 
@@ -178,10 +169,10 @@ List of special case:
 - `protected_classes` and `excluded_classes`: slug-to-slug exclusion.
     * Block save with hook. Requires editor resolution.
 - `scope`: enforce precedent consistency.
-    * `favorable` clears `suppressed_taxonomies`
-    * `adverse` clears `extended_taxonomies`
-    * `neutral` clears both.
-- `has_fee_shifting_phases`: auto-set true, when `fee_shifting_standard` is `american-rule-only`.
+    * `favorable` conflicts with `suppressed_taxonomies`
+    * `adverse` conflicts with `extended_taxonomies`
+    * `neutral` conflicts with both `extended_taxonomies` and `suppressed_taxonomies`.
+- `has_fee_shifting_phases`: auto-set true, when `fee_shifting_standard` is `none-american-rule`.
 - `is_employer_only_defendant`: when true, `employer-entity` is only valid value in `proper_defendants`.
 
 ---
@@ -196,26 +187,27 @@ slug arrays internally even when ACF stores a scalar. Taxonomy-absence condition
 slug-presence conditionals when both appear in the same cluster (e.g., `all-waivers-unenforceable` absent, then
 `civil-action-waiver` present).
 
-**Cleanup vs. validation.** Prefer deterministic cleanup over silent invalid state — when a controlling field
-makes another field impossible, clear the stale field on save and validate that it remains empty. Use
-`ws_hooked_error` instead when cleanup would destroy editorial judgment (e.g., overlapping `protected_classes`
-and `excluded_classes` should flag for editor review, not auto-resolve).
+**Conflict validation.** Prefer explicit validation over silent conflict resolution. When a controlling field or
+taxonomy term makes another value impossible, block save and flag the field that contains the conflict. The error
+must name the controlling field/value and the conflicting field/value so the editor can resolve the record.
 
 **Triggered-cluster requiredness.** The slug map is the source of truth — `[R]` fields must be non-empty when
-their triggering slug is present. A `*_context` field is required only when it is the sole surfaced field in its
-triggered cluster, unless the map explicitly marks a structured sister `[R]`.
+their triggering slug is present. A `*_context` field is always required when it is the sole surfaced field in its
+triggered cluster; a structured sister, when present, will usually be required `[R]` instead. Sisters do not
+preclude `*_context` from being required as well.
 
 **Umbrella, sentinel, and none values.** Umbrella hooks target values ending in `-only` — when a `-only` value is
-present, remove or reject granular sibling values in the same field. Sentinels (`has-details`, `see-details`,
-`see-context`) are not granular values and may remain valid alongside an umbrella or exclusion value when the
-field definition allows the companion to carry nuance. Required none/no values are valid only in required fields
-and must exclude affirmative siblings in the same field when present.
+present, flag granular or excluded values in the same field. Sentinels (`has-details`, `see-details`, `see-context`) are not granular values and may remain valid alongside an umbrella or exclusion value when the
+remain valid choices; it allows the companion to carry nuance regarding the umbrella value when necessary. Blanket
+`none`/`no-*` values are valid only in required fields, where an empty field is not allowed.They act as umbrella
+values and exclude affirmative choices in the same field when present.
 
-**Exclusion, cleanup, and cross-field hooks.** Exclusion hooks should clear all fields in the excluded cluster —
-context, sisters, details, and chained downstream conditionals. Required-empty cleanup hooks should clear hidden
-stale values when a controlling field changes, then validate that hidden disallowed fields remain empty.
-Cross-field required hooks should validate both directions that matter — if value A requires value B, the error
-should name both fields and both values.
+**Exclusion and cross-field hooks.** Exclusion hooks should flag all fields in the excluded cluster — context,
+sisters, details, and chained downstream conditionals. Hooks must identify the required-empty field or fields and
+the value and field at the root of the exclusion. Hooks also need to monitor for stale values when a controlling
+field changes; block save and flag stale values in their respective field for editor review.
+Cross-field required hooks should validate both directions where required — when a value in a depended field
+requires a value in a specific field, save should be blocked the flag should name both fields and both values.
 
 **Repeaters.** Validate each row independently unless the rule is explicitly cross-row.
 
@@ -242,7 +234,6 @@ utility files; when a helper signature changes, update this section first.
 
 - `ws_hooked_get(int $post_id, string $field)` — read the current saved value of an ACF field.
 - `ws_hooked_set(int $post_id, string $field, mixed $value)` — write a value to an ACF field.
-- `ws_hooked_clear(int $post_id, array $fields)` — clear multiple ACF fields in one call.
 
 **Taxonomy slug operations.**
 
@@ -251,8 +242,6 @@ utility files; when a helper signature changes, update this section first.
 - `ws_hooked_has_child_slug(int $post_id, string $taxonomy_field, string $parent_slug)` — return true when any term
   attached to the post is a descendant of the named parent slug. Centralizes parent/child resolution so callers
   don't enumerate child slugs by hand and don't break when new children are added to the seeder.
-- `ws_hooked_remove_slugs(int $post_id, string $taxonomy_field, array $slugs)` — remove the listed slugs from
-  the taxonomy field.
 
 **Field value checks.**
 
@@ -267,21 +256,14 @@ utility files; when a helper signature changes, update this section first.
 
 **Composition helpers.**
 
-These helpers operate across multiple ACF fields on a single post. Each one captures a recurring shape — merge,
-fall-through, wipe-by-map, exact-only-when-bool — so callers can wire field names into the helper rather than
-re-implement the body each time.
+These helpers operate across multiple ACF fields on a single post. Each one captures a recurring shape — merge or
+fall-through — so callers can wire field names into the helper rather than re-implement the body each time.
 
 - `ws_hooked_merge(int $post_id, array $source_fields)` — read each named field, treat its value as an
   array, merge them, dedupe, drop empties, and return the merged array. Caller writes the result wherever needed.
 - `ws_hooked_first_filled(int $post_id, array $source_fields)` — return the first non-empty value among the
   named fields, in order. Used for derived fields with fallback chains (e.g., prefer `effective_date`, fall back
   to `date`).
-- `ws_hooked_wipe_map(int $post_id, string $controlling_field, array $wipe_map)` — given a map keyed by the
-  controlling field's possible values, each mapping to a list of fields to clear, look up the current value and
-  clear the corresponding fields. Standard application for `[W]` cleanup rules.
-- `ws_hooked_exact_only(int $post_id, string $bool_field, string $target_field, array $exact_values)` —
-  when the bool field is true, force the target field to exactly the given values (clearing anything else).
-  Standard application for `[C]` boolean refinements.
 
 **Error reporting.**
 
@@ -357,37 +339,35 @@ function ws_validate_required_cluster_field(
 
 ### Apply Taxonomy-Absence Exclusion First
 
+Current dogma: flag only. Surface the exclusionary value in its field, and surface the values it excludes in
+their respective fields. Do not auto-resolve by removing terms or clearing fields.
+
 Use this pattern for clusters such as waiver fields where a blocking slug must be absent before specific clusters
 can exist.
 
 ```php
-function ws_clear_waiver_clusters_when_blocked(int $post_id): void {
+function ws_validate_waiver_clusters_when_blocked(int $post_id): void {
     if (!ws_hooked_has_slug($post_id, 'legal_recognitions', 'all-waivers-unenforceable')) {
         return;
     }
 
-    ws_hooked_remove_slugs($post_id, 'legal_recognitions', [
+    foreach ([
         'civil-action-waiver',
         'contractual-waiver',
         'collateral-claims-waiver',
         'class-action-waiver',
-    ]);
-
-    ws_hooked_clear($post_id, [
-        'civil_action_waiver_context',
-        'civil_action_waiver_scope',
-        'contractual_waiver_context',
-        'contractual_waiver_scope',
-        'collateral_claims_waiver_context',
-        'class_action_waiver_context',
-    ]);
+    ] as $excluded_slug) {
+        if (ws_hooked_has_slug($post_id, 'legal_recognitions', $excluded_slug)) {
+            ws_hooked_error('legal_recognitions',
+                "$excluded_slug cannot be combined with all-waivers-unenforceable.");
+        }
+    }
 }
 ```
 
 ### Enforce Required None/No Exclusivity
 
-Use this pattern for `[N]` values such as `fee_shifting_phases.phase_scope = none` and
-`election_of_remedies_rules = no-election-required`.
+Use this pattern for `[N]` values (negative value exclusivity is currently unused).
 
 ```php
 function ws_validate_none_value(string $field, array $values, string $none_value): void {
@@ -404,21 +384,10 @@ function ws_validate_none_value(string $field, array $values, string $none_value
 }
 ```
 
-### Wipe Hidden Stale Values
+### Flag Hidden Stale Values
 
-Use this pattern for `[W]` cleanup rules where ACF conditionals hide fields but old values may remain saved. The
-wipe map is domain-specific data; the engine that applies it is agnostic.
-
-```php
-function ws_cleanup_precedent_scope(int $post_id): void {
-    ws_hooked_wipe_map($post_id, 'scope', [
-        'favorable' => ['suppressed_taxonomies'],
-        'adverse'   => ['extended_taxonomies'],
-        'neutral'   => ['extended_taxonomies', 'suppressed_taxonomies'],
-        // 'dual-effect' omitted: both fields may carry values
-    ]);
-}
-```
+Current dogma: flag only. Surface stale values in their specific field, and name the field/value that made them
+stale. Do not auto-resolve by wiping hidden values.
 
 ### Enforce Cross-Field Required Values
 
@@ -445,15 +414,24 @@ function ws_validate_cross_field_requirement(
 }
 ```
 
-### Enforce Exact-Only Boolean Cleanup
+### Enforce Exact-Only Boolean Refinement
 
-Use this pattern for boolean refinements such as `is_employer_only_defendant` — when the bool is true, force the
-target field to a fixed value set, clearing anything else.
+Use this pattern for boolean refinements such as `is_employer_only_defendant` — when the bool is true, the target
+field must contain only the allowed value set. Flag conflicting values; do not clear them.
 
 ```php
-function ws_apply_employer_only_defendant(int $post_id): void {
-    ws_hooked_exact_only($post_id, 'is_employer_only_defendant',
-        'proper_defendants', ['employer-entity']);
+function ws_validate_employer_only_defendant(int $post_id): void {
+    if (!ws_hooked_get($post_id, 'is_employer_only_defendant')) {
+        return;
+    }
+
+    $values = (array) ws_hooked_get($post_id, 'proper_defendants');
+    $invalid = array_diff($values, ['employer-entity']);
+
+    if ($invalid) {
+        ws_hooked_error('proper_defendants',
+            'is_employer_only_defendant allows only proper_defendants:employer-entity.');
+    }
 }
 ```
 
@@ -529,12 +507,11 @@ function ws_validate_repeater_row_exclusion(
 ### Apply Cross-Taxonomy AND-Conditional Guard
 
 Use this pattern for sister fields whose validity depends on a triggering slug in `legal_recognitions` AND a
-cross-taxonomy condition in another taxonomy, such as `is_cats_paw_liability_extended`. Cleanup (rather than
-`ws_hooked_error`) is correct here because the field is structurally meaningless when its prerequisites are
-absent.
+cross-taxonomy condition in another taxonomy, such as `is_cats_paw_liability_extended`. Flag the field when its
+prerequisites are absent.
 
 ```php
-function ws_apply_cats_paw_extension_guard(int $post_id): void {
+function ws_validate_cats_paw_extension_guard(int $post_id): void {
     if (!ws_hooked_get($post_id, 'is_cats_paw_liability_extended')) {
         return;
     }
@@ -546,7 +523,8 @@ function ws_apply_cats_paw_extension_guard(int $post_id): void {
     $associate_present = ws_hooked_has_child_slug($post_id, 'protected_classes', 'associates-of-whistleblower');
 
     if (!$sibling_active || !$associate_present) {
-        ws_hooked_set($post_id, 'is_cats_paw_liability_extended', false);
+        ws_hooked_error('is_cats_paw_liability_extended',
+            'Extended cat\'s paw liability requires cats-paw-liability and an associates-of-whistleblower protected class.');
     }
 }
 ```
