@@ -752,6 +752,10 @@ $_ws_taxonomy_registry = [
  * - Prohibited  — conduct expressly forbidden; violation triggers statutory liability
  * - Present     — clause or provision exists without implying judicial affirmation
  * - Sufficient  — condition independently meets the threshold for protection to attach
+ * - Limited     — legal effect, scope, or enforceability is narrowed by statute or rule
+ * - Enforceable — waiver, agreement, or procedural limitation may be given legal effect
+ * - Unenforceable — waiver, agreement, or procedural limitation cannot be given legal effect
+ * - Waived      — immunity, defense, or objection has been relinquished or abrogated
  *
  */
     'ws_legal_recognition'  => [
@@ -761,74 +765,74 @@ $_ws_taxonomy_registry = [
         'seed_version'          => '1.0.0',
         'record'                => [],
         'terms'                 => [
-            // Identity                                                                                       // ───── # Identity Tab ────────────────────────────────────────────────
-            'retroactive-date'                      => 'Retroactive Date Specified',                          // + retro_context + retro_date
-            // Classification                                                                                 // ───── # Classification Tab ────────────────────────────────────────────────
-            // = NOTE = 'legal_recognitions' appears at top of Classification Tab                             // =>>> NOTE  =>>> 'legal_recognitions' appears at top of Classification Tab
-            'manager-rule-exclusion'                => 'Manager Rule / Duty Speech Exclusion Applies',        // + manager_rule_exclusion_context
-            'public-concern-required'               => 'Public Concern Requirement Applies',                  // + public_concern_required_context
-            'bad-faith-exclusion'                   => 'Bad Faith / Knowingly False Exclusion Applies',       // + bad_faith_exclusion_context
-            'anonymity-protection'                  => 'Anonymity / Confidentiality Protection Recognized',   // + anonymity_protection_context
-            'malicious-reporting-sanctions'         => 'Malicious Reporting Sanctions Specified',             // + malicious_reporting_context    + malicious_reporting_sanctions
-            'protected-action'                      => 'Protected Action Specified',                          // + protected_action_context       + protected_actions + protected_action_standards + protected_action_source
-            'excluded-class'                        => 'Excluded Class Specified',                            // + excluded_class_context         + excluded_classes
-            'garcetti-exception'                    => 'Garcetti / Official-Duties Exclusion Applies',        // =>>> NOTE  =>>> invalid term unless 'public-sector' is in 'employment_sectors'. // + garcetti_exception_context
-            // Statute of Limitations & Thresholds                                                            // ───── # Statute of Limitations & Thresholds Tab ─────────────────────────
-            'statute-of-repose'                     => 'Statute of Repose Specified',                         // + statute_of_repose_context      + sop_value + sop_unit + is_sop_tolling_available
-            'statutory-tolling'                     => 'Statutory Tolling Specified',                         // + statutory_tolling_context
-            'equitable-tolling'                     => 'Equitable Tolling Recognized',                        // + equitable_tolling_context
-            'cba-grievance-preemption'              => 'CBA Grievance Preemption Applies',                    // + cba_preemption_context
-            'amended-claim'                         => 'Amended Claim / Relation Back Recognized',            // + amended_claim_context
-            'exhaustion-required'                   => 'Exhaustion Required',                                 // + exhaustion_required_context    + exhaustion_required_scope
-            'pre-filing-notice'                     => 'Pre-Filing Notice Required',                          // + filing_notice_context          + filing_notice_targets + filing_notice_value + filing_notice_unit
-            'statutory-preclusion'                  => 'Statutory Preclusion Applies',                        // + statutory_preclusion_context   // only present in common law records
-            // Retaliation                                                                                    // ───── # Retaliation Tab ───────────────────────────────────────────────────
-            'evidence-preservation'                 => 'Evidence Preservation Required',                      // + evidence_preservation_context  + preservation_deadline_value + preservation_deadline_unit + preservation_requirement_scopes
-            'cats-paw-liability'                    => 'Cat\'s Paw Liability Recognized',                     // + cats_paw_liability_context     + is_cats_paw_liability_extended
-            'third-party-retaliation'               => 'Third-Party Retaliation Prohibited',                  // + third_party_retaliation_context
-            'criminal-sanctions'                    => 'Criminal Sanctions Specified',                        // + criminal_sanctions_context     + criminal_sanctions
-            // Processes and Remedies                                                                         // ───── # Processes & Remedies Tab ───────────────────────────────────────────────────
-            'process-pathway'                       => 'Process Pathway Specified',                           // + process_pathway_context        + process_pathway_scope + is_agency_inaction_trigger
-            'private-right-of-action'               => 'Private Right of Action Available',                   // + private_roa_context
-            'jury-trial'                            => 'Jury Trial Available',                                // =>>> NOTE  =>>> invalid term unless 'private-right-of-action' is also present. // + jury_trial_context + jury_trial_scope
-            'fee-shifting-standard'                 => 'Fee Shifting Standard Specified',                     // + fee_shifting_standard_context  + fee_shifting_standard + fee_shifting_scopes
-            'civil-review-standard'                 => 'Civil Review Standard Specified',                     // + review_standard_context        + review_standard_scope + review_standard_details
-            'equitable-interest-award'              => 'Equitable Interest Provision Available',              // + interest_provision_context     + interest_provision_scope
-            'mitigation-required'                   => 'Mitigation Requirement Specified',                    // + mitigation_required_context    + mitigation_required_scopes
-            'mitigation-exception'                  => 'Mitigation Exception Recognized',                     //  =>>> NOTE  =>>> invalid term unless 'mitigation-required' is also present.     // + mitigation_exception_context
-            'preliminary-reinstatement'             => 'Preliminary / Interim Reinstatement Available',       // + preliminary_reinstatement_context + reinstatement_standard + reinstatement_standard_details + preliminary_reinstatement_scopes
-            // Burden of Proof                                                                                // ───── # Burden of Proof Tab ───────────────────────────────────────────────
-            'burden-shifting-framework'             => 'Burden Shifting Framework Specified',                 // + burden_shifting_context        + burden_shifting_frameworks
-            'causation-dual-standard'               => 'Causation Dual Standard (Liability vs Damages Differ)', // + causation_dual_standard_context
-            'employer-knowledge'                    => 'Employer Knowledge Element Required',                 // + employer_knowledge_context     + employer_knowledge_scopes
-            'temporal-proximity-sufficient'         => 'Temporal Proximity Sufficient for Causation',         // + temporal_proximity_context     + temporal_proximity_value + temporal_proximity_unit
-            // Waiver & Scope                                                                                 // ───── # Waiver & Scope Tab ────────────────────────────────────────────────
-            'all-waivers-blocked'                   => 'All Waivers Blocked',                                 // + all_waivers_blocked_context; excludes waiver clusters
-            'civil-action-waiver'                   => 'Civil Action Waiver Recognized',                      // + civil_action_waiver_context + civil_action_waiver_scope
-            'contractual-waiver'                    => 'Contractual Waiver Recognized',                       // + contractual_waiver_context + contractual_waiver_scope
-            'collateral-claims-waiver'              => 'Collateral Claims Waiver Applies',                    // + collateral_claims_waiver_context
-            'class-action-waiver'                   => 'Class Action Waiver Recognized',                      // + class_action_waiver_context
-            'individual-liability'                  => 'Individual Liability Available',                      // + individual_liability_context   + individual_liability_scopes
-            'sovereign-immunity-status'             => 'Sovereign Immunity Status Specified',                 // + sovereign_immunity_context     + sovereign_immunity_status + sovereign_immunity_limits + sovereign_immunity_scope + sovereign_immunity_waiver + sovereign_immunity_status_details
-            'nda-limitations'                       => 'NDA / Non-Disparagement Limitations Recognized',      // + nda_limits_context
-            'anti-gag-provision'                    => 'Anti-Gag Provision Recognized',                       // + anti_gag_provision_context
-            'no-retaliatory-evidence'               => 'Retaliatory Evidence Barred',                         // + no_retaliatory_evidence_context
-            'stay-of-disciplinary-action'           => 'Stay of Disciplinary Action Available',               // + stay_of_discipline_context
-            'anti-slapp-protection'                 => 'Anti-SLAPP Protection Applies',                       // + anti_slapp_protection_context  + anti_slapp_protection_scopes
-            'discovery-protection'                  => 'Discovery Protection / Anti-Harassment Recognized',   // + discovery_protection_context
-            'confidential-settlement-restriction'   => 'Confidential Settlement Restriction Applies',         // + settlement_restriction_context + settlement_restriction_scope
-            'successor-liability'                   => 'Successor Employer Liability Recognized',             // + successor_liability_context
-            'extraterritorial-coverage'             => 'Extraterritorial Coverage Recognized',                // + extraterritorial_context
-            // Without Context                                                                                // ───── # Without Context (no Tab) ──────────────────────────────────────────
-            'statutory-nexus-diverges-from-common-law'  => 'Statutory Nexus Overrides Circuit Common Law',    // (no companion)
-            'catch-all-protection'                  => 'Catch-All Protection Clause Present',                 // (no companion)
-            'internal-only-disclosure'              => 'Internal-Only Disclosure Sufficient',                 // (no companion)
-            'trade-secret-immunity'                 => 'Trade Secret Immunity Recognized',                    // (no companion)
-            'continuing-violation-doctrine'         => 'Continuing Violation Doctrine Recognized',            // (no companion)
-            'prospective-whistleblower-protection'  => 'Prospective Whistleblower Protection Recognized',     // (no companion)
-            'sovereign-immunity-waiver'             => 'Sovereign Immunity Waiver Recognized',                // (no companion)
-            'class-action'                          => 'Class / Collective Action Permitted',                 // (no companion)
-            'official-duties-carveout'              => 'Official Duties Carveout (Lane v. Franks Exception)', // (no companion)
+            // Identity
+            'retroactive-date'                      => 'Retroactive Date Specified',
+            // Classification
+            // = NOTE = 'legal_recognitions' appears at top of Classification Tab
+            'manager-rule-exclusion'                => 'Manager Rule / Duty Speech Exclusion Applies',
+            'public-concern-required'               => 'Public Concern Required',
+            'bad-faith-exclusion'                   => 'Bad Faith / Knowingly False Exclusion Applies',
+            'anonymity-protection'                  => 'Anonymity / Confidentiality Protection Available',
+            'malicious-reporting-sanctions'         => 'Malicious Reporting Sanctions Specified',
+            'protected-action'                      => 'Protected Action Specified',
+            'excluded-class'                        => 'Excluded Class Specified',
+            'garcetti-exception'                    => 'Garcetti / Official-Duties Exclusion Applies',
+            // Statute of Limitations & Thresholds
+            'statute-of-repose'                     => 'Statute of Repose Specified',
+            'statutory-tolling'                     => 'Statutory Tolling Specified',
+            'equitable-tolling'                     => 'Equitable Tolling Available',
+            'cba-grievance-preemption'              => 'CBA Grievance Preemption Applies',
+            'amended-claim'                         => 'Amended Claim / Relation Back Available',
+            'exhaustion-required'                   => 'Exhaustion Required',
+            'pre-filing-notice'                     => 'Pre-Filing Notice Required',
+            'statutory-preclusion'                  => 'Statutory Preclusion Applies',
+            // Retaliation
+            'evidence-preservation'                 => 'Evidence Preservation Required',
+            'cats-paw-liability'                    => 'Cat\'s Paw Liability Recognized',
+            'third-party-retaliation'               => 'Third-Party Retaliation Prohibited',
+            'criminal-sanctions'                    => 'Criminal Sanctions Specified',
+            // Processes and Remedies
+            'process-pathway'                       => 'Process Pathway Specified',
+            'private-right-of-action'               => 'Private Right of Action Available',
+            'jury-trial'                            => 'Jury Trial Available',
+            'fee-shifting-standard'                 => 'Fee Shifting Standard Specified',
+            'civil-review-standard'                 => 'Civil Review Standard Specified',
+            'equitable-interest-award'              => 'Equitable Interest Provision Available',
+            'mitigation-required'                   => 'Mitigation Required',
+            'mitigation-exception'                  => 'Mitigation Exception Available',
+            'preliminary-reinstatement'             => 'Preliminary / Interim Reinstatement Available',
+            // Burden of Proof
+            'burden-shifting-framework'             => 'Burden Shifting Framework Specified',
+            'causation-dual-standard'               => 'Causation Dual Standard Applies',
+            'employer-knowledge'                    => 'Employer Knowledge Element Required',
+            'temporal-proximity-sufficient'         => 'Temporal Proximity Sufficient',
+            // Waiver & Scope
+            'all-waivers-blocked'                   => 'All Waivers Unenforceable',
+            'civil-action-waiver'                   => 'Civil Action Waiver Enforceable',
+            'contractual-waiver'                    => 'Contractual Waiver Enforceable',
+            'collateral-claims-waiver'              => 'Collateral Claims Waiver Enforceable',
+            'class-action-waiver'                   => 'Class Action Waiver Enforceable',
+            'individual-liability'                  => 'Individual Liability Available',
+            'sovereign-immunity-status'             => 'Sovereign Immunity Status Specified',
+            'nda-limitations'                       => 'NDA / Non-Disparagement Clauses Limited',
+            'anti-gag-provision'                    => 'Anti-Gag Provision Present',
+            'no-retaliatory-evidence'               => 'Retaliatory Evidence Barred',
+            'stay-of-disciplinary-action'           => 'Stay of Disciplinary Action Available',
+            'anti-slapp-protection'                 => 'Anti-SLAPP Protection Available',
+            'discovery-protection'                  => 'Discovery Protection / Anti-Harassment Available',
+            'confidential-settlement-restriction'   => 'Confidential Settlement Terms Limited',
+            'successor-liability'                   => 'Successor Employer Liability Recognized',
+            'extraterritorial-coverage'             => 'Extraterritorial Coverage Applies',
+            // Without Context
+            'statutory-nexus-diverges-from-common-law'  => 'Statutory Nexus Override Applies',
+            'catch-all-protection'                  => 'Catch-All Protection Clause Present',
+            'internal-only-disclosure'              => 'Internal-Only Disclosure Sufficient',
+            'trade-secret-immunity'                 => 'Trade Secret Immunity Available',
+            'continuing-violation-doctrine'         => 'Continuing Violation Doctrine Recognized',
+            'prospective-whistleblower-protection'  => 'Prospective Whistleblower Protection Recognized',
+            'sovereign-immunity-waiver'             => 'Sovereign Immunity Waived',
+            'class-action'                          => 'Class / Collective Action Permitted',
+            'official-duties-carveout'              => 'Official Duties Carveout Recognized',
         ]
     ],
 
