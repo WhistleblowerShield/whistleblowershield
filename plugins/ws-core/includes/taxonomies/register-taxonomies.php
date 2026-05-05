@@ -129,7 +129,6 @@ $_ws_taxonomy_registry = [
             'representative-action'    => 'Representative Action',
             'arbitration-compelled'    => 'Arbitration Compelled',
             'hybrid-admin-civil-path'  => 'Hybrid Admin → Civil Pathway',
-            'direct-filing-permitted'  => 'Direct Filing Permitted (No Exhaustion)',
         ]
     ],
 
@@ -822,6 +821,7 @@ $_ws_taxonomy_registry = [
             'contractual-waiver'                        => 'Contractual Waiver Enforceable',
             'collateral-claims-waiver'                  => 'Collateral Claims Waiver Enforceable',
             'class-action-waiver'                       => 'Class Action Waiver Enforceable',
+            'proper-defendants-specified'               => 'Proper Defendants Specified',
             'individual-liability'                      => 'Individual Liability Available',
             'sovereign-immunity-status'                 => 'Sovereign Immunity Status Specified',
             'nda-limitations'                           => 'NDA / Non-Disparagement Clauses Limited',

@@ -522,14 +522,16 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
 - `primary_agency`                 — (derived from first attached post_type[`ws-agency`] when empty)
 - `local_agencies`                 — (multi-select: post_type[`ws-agency`] filtered by jx)
 - `federal_agencies`               — (multi-select: post_type[`ws-agency`] filtered to jx=`us`)
-- `process_pathway_scope`          — (Sister to `process_pathway_context`; select: `agency-first-mandatory`|
+- `process_pathway_scope`          — (Sister to `process_pathway_context`; select: `direct-agency`|
                                       `direct-court`|`either`|`hybrid-right-to-sue-on-inaction`|`see-context`)
+- `process_pathway_limit`          — (Sister to `process_pathway_context`; select: `mandatory`|`permitted`|
+                                      `conditional`|`unavailable`|`see-context`)
 - `is_agency_inaction_trigger`     — (conditional on `process_pathway_scope` is `hybrid-right-to-sue-on-inaction`)
 - `process_pathway_context`        — (conditional on `process-pathway` in `legal_recognitions`)
 - `enforcement_sequence`           — (freetext; narrative glue tying enforcement agencies, sequence, and any
                                       enforcement requirements together; associated fields include
                                       `process_types`, `primary_agency`, `local_agencies`, `federal_agencies`,
-                                      and `process_pathway_scope`)
+                                      `process_pathway_scope`, and `process_pathway_limit`)
 - `private_roa_context`            — (conditional on `private-right-of-action` in `legal_recognitions`)
 - `jury_trial_scope`               — (Sister to `jury_trial_context`; select: `all-claims`|`damages`|
                                       `liability`|`see-context`)
@@ -668,26 +670,26 @@ Fields ordered: contractual → recognitions → immunity → defendants.
 - `all_waivers_blocked_context`    — (conditional on `all-waivers-unenforceable` in `legal_recognitions`)
 - `civil_action_waiver_scope`      — (Sister to `civil_action_waiver_context`; select: `prohibited`|
                                       `permitted-individual-only`|`permitted-collective`|`see-context`)
-- `civil_action_waiver_context`    — (conditional on `all-waivers-unenforceable` absent in `legal_recognitions` AND
-                                      `civil-action-waiver` in `legal_recognitions`)
+- `civil_action_waiver_context`    — (conditional on `all-waivers-unenforceable` absent in `legal_recognitions`
+                                      AND `civil-action-waiver` in `legal_recognitions`)
 - `contractual_waiver_scope`       — (Sister to `contractual_waiver_context`; select: `void`|
                                       `limited`|`enforceable`|`void-public-policy`|`void-as-to-whistleblowing`|
                                       `enforceable-with-exceptions`|`see-context`)
-- `contractual_waiver_context`     — (conditional on `all-waivers-unenforceable` absent in `legal_recognitions` AND
-                                      `contractual-waiver` in `legal_recognitions`)
-- `collateral_claims_waiver_context`  — (conditional on `all-waivers-unenforceable` absent in `legal_recognitions` AND
-                                      `collateral-claims-waiver` in `legal_recognitions`)
-- `class_action_waiver_context`    — (conditional on `all-waivers-unenforceable` absent in `legal_recognitions` AND
-                                      `class-action-waiver` in `legal_recognitions`)
-- `proper_defendants`              — (multi-select: `employer-entity`|`individual-supervisors`|
-                                      `government-agency`|`contractors-included`|`successor-employer`|
-                                      `joint-employer`|`staffing-agency`|`scope-of-employment-required`|
-                                      `has-details`)
-- `is_employer_only_defendant`     — (true only when the law expressly limits proper defendants to the employer
-                                      entity; hook forces `proper_defendants` to `employer-entity` only)
-- `proper_defendant_details`
-- `joint_employer_context`         — (conditional on `proper_defendants` includes `joint-employer` OR
-                                      `proper_defendants` includes `staffing-agency`)
+- `contractual_waiver_context`     — (conditional on `all-waivers-unenforceable` absent in `legal_recognitions`
+                                      AND `contractual-waiver` in `legal_recognitions`)
+- `collateral_claims_waiver_context`  — (conditional on `all-waivers-unenforceable` absent in `legal_recognitions`
+                                         AND `collateral-claims-waiver` in `legal_recognitions`)
+- `class_action_waiver_context`    — (conditional on `all-waivers-unenforceable` absent in `legal_recognitions`
+                                      AND `class-action-waiver` in `legal_recognitions`)
+- `proper_defendant_rules`         — (Sister to `proper_defendants_context`; repeater:
+      ├── `defendant_class`              [select: `employer-entity`|`individual-supervisor`|`public-official`|
+      │                                   `government-agency`|`contractor`|`successor-employer`|
+      │                                   `parent-subsidiary`|`joint-employer`|`staffing-agency`|
+      │                                   `labor-organization`|`see-context`],
+      ├── `defendant_limit`              [select: `mandatory`|`permitted`|`conditional`|`unavailable`|
+      │                                   `exclusive`|`see-context`],                   
+      └── `defendant_context`            [conditional on `defendant_class` is non-empty])
+- `proper_defendants_context`      — (conditional on `proper-defendants-specified` in `legal_recognitions`)
 - `individual_liability_scopes`    — (Sister to `individual_liability_context`; multi-select: `supervisor`|
                                       `coworker`|`officer-director`|`any-individual-only`|`has-details`)
 - `individual_liability_details`   — (conditional on `individual_liability_scopes` includes `has-details`)
@@ -994,6 +996,10 @@ Fields that are unchanged or new do not appear in this list.
 - `has_preemption` + `preemption_details`    →  removed (preemption block replaced with `federal_state_interaction` block)
 - `preemption_direction`                     → `federal_state_interaction`
 - `sovereign_immunity_statuses`              → `sovereign_immunity_status`     (select)
+- `proper_defendants`                        → `proper_defendant_rules.defendant_class`
+- `is_employer_only_defendant`               → `proper_defendant_rules.defendant_limit` = `exclusive`
+- `proper_defendant_details`                 → `proper_defendants_context`
+- `joint_employer_context`                   → `proper_defendant_rules.defendant_context`
 - `threshold_compare`                        → `employer_threshold_compare`
 - `threshold_value`                          → `employer_threshold_value`
 - `threshold_unit`                           → `employer_threshold_model`
@@ -1079,7 +1085,7 @@ Available:      'equitable-tolling'                                     → 'equ
 Applies:        'cba-grievance-preemption'                              → 'cba_preemption_context' [R]
 Available:      'amended-claim'                                         → 'amended_claim_context' [R]
 Required:       'exhaustion-required' [E-]                              → 'exhaustion_required_context'           + 'exhaustion_required_scope' [R]
-                   * 'direct-filing-permitted' in 'process_types'
+                   * 'direct-court' in 'process_pathway_scope'
 Required:       'pre-filing-notice'                                     → 'filing_notice_context'                 + 'filing_notice_targets' [R] + 'filing_notice_value'
 Applies:        'statutory-preclusion' [E]                              → 'statutory_preclusion_context' [R]
 Specified:      'employer-threshold-specified'                          → 'employer_threshold_context'            + 'employer_threshold_compare' [R] + 'employer_threshold_value' [R] + 'employer_threshold_model' [R]
@@ -1097,7 +1103,7 @@ Specified:      'criminal-sanctions' [P]                                → 'cri
                    * 'criminal-referral' in 'process_types'
 
 // ── Processes & Remedies Tab ─────────────────────────────────────────────────
-Specified:      'process-pathway'                                       → 'process_pathway_context'               + 'process_pathway_scope' [R]
+Specified:      'process-pathway'                                       → 'process_pathway_context'               + 'process_pathway_scope' [R] + 'process_pathway_limit'
 Available:      'private-right-of-action'                               → 'private_roa_context' [R]
 Available:      'jury-trial' [P]                                        → 'jury_trial_context'                    + 'jury_trial_scope' [R]
                    * 'private-right-of-action'
@@ -1144,6 +1150,7 @@ Enforceable:    'class-action-waiver' [E-]                              → 'cla
                    * 'all-waivers-unenforceable'
 Specified:      'sovereign-immunity-status' [E-]                        → 'sovereign_immunity_context'            + 'sovereign_immunity_status' [R] + 'sovereign_immunity_limits' + 'sovereign_immunity_scope'
                    * 'blanket-sovereign-immunity-waived'
+Specified:      'proper-defendants-specified'                           → 'proper_defendants_context'             + 'proper_defendant_rules' [R]
 Limited:        'nda-limitations'                                       → 'nda_limits_context' [R]
 Present:        'anti-gag-provision-present'                            → 'anti_gag_provision_context' [R]
 Barred:         'no-retaliatory-evidence' [E]                           → 'no_retaliatory_evidence_context' [R]

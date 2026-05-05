@@ -118,7 +118,7 @@ The breadcrumb tables below use these markers:
 - Reviewed multi-value fields with no currently defined same-field conflict are intentionally omitted.
 - `legal_recognitions`
     * `[X]` `all-waivers-unenforceable` excludes `civil-action-waiver`, `contractual-waiver`,
-      `collateral-claims-waiver`, `class-action-waiver`
+                                                 `collateral-claims-waiver`, `class-action-waiver`
     * `[X]` `blanket-sovereign-immunity-waived` excludes `sovereign-immunity-status`
     * `[X]` `class-action-permitted` excludes `class-action-waiver`
 - `burden_shifting_frameworks` —  `[X]` `mixed-motive`, `but-for`
@@ -133,8 +133,6 @@ The breadcrumb tables below use these markers:
 `[D]` — List of values that may duplicate a concept represented value in another field:
 - `legal_recognitions`
     * `pre-filing-notice` → `process_types` — `pre-suit-notice`
-- `process_types`
-    * `direct-filing-permitted` → `process_pathway_scope` — `direct-court`
 
 ### Cross-Field Required Values
 
@@ -169,11 +167,12 @@ List of special case:
 - `protected_classes` and `excluded_classes`: slug-to-slug exclusion.
     * Block save with hook. Requires editor resolution.
 - `scope`: enforce precedent consistency.
-    * `favorable` conflicts with `suppressed_taxonomies`
-    * `adverse` conflicts with `extended_taxonomies`
-    * `neutral` conflicts with both `extended_taxonomies` and `suppressed_taxonomies`.
-- `has_fee_shifting_phases`: auto-set true, when `fee_shifting_standard` is `none-american-rule`.
-- `is_employer_only_defendant`: when true, `employer-entity` is only valid value in `proper_defendants`.
+    * `favorable` conflicts with `suppressed_taxonomies` is non-empty.
+    * `adverse` conflicts with `extended_taxonomies` is non-empty.
+    * `neutral` conflicts with both `extended_taxonomies` and `suppressed_taxonomies` when non-empty.
+- `has_fee_shifting_phases`: auto-set true, when `fee_shifting_standard` is `none-american-rule`. Flag for
+   editorial review with note that `none-american-rule` as the `fee_shifting_standard` requires at least one
+   `fee_shifting_phases.phase` as an exception to `none-american-rule` or remove the recognition slug.
 
 ---
 
@@ -197,10 +196,10 @@ triggered cluster; a structured sister, when present, will usually be required `
 preclude `*_context` from being required as well.
 
 **Umbrella, sentinel, and none values.** Umbrella hooks target values ending in `-only` — when a `-only` value is
-present, flag granular or excluded values in the same field. Sentinels (`has-details`, `see-details`, `see-context`) are not granular values and may remain valid alongside an umbrella or exclusion value when the
-remain valid choices; it allows the companion to carry nuance regarding the umbrella value when necessary. Blanket
-`none`/`no-*` values are valid only in required fields, where an empty field is not allowed.They act as umbrella
-values and exclude affirmative choices in the same field when present.
+present, flag granular or excluded values in the same field. Sentinels (`has-details`, `see-details`,
+`see-context`) remain valid choices; it allows the companion to carry nuance regarding the umbrella value when
+necessary. Blanket `none`/`no-*` values are valid only in required fields, where an empty field is not allowed.
+They act as umbrella values and exclude affirmative choices in the same field when present.
 
 **Exclusion and cross-field hooks.** Exclusion hooks should flag all fields in the excluded cluster — context,
 sisters, details, and chained downstream conditionals. Hooks must identify the required-empty field or fields and
@@ -410,27 +409,6 @@ function ws_validate_cross_field_requirement(
             $required_field,
             "$source_field:$source_value requires $required_field:$required_value."
         );
-    }
-}
-```
-
-### Enforce Exact-Only Boolean Refinement
-
-Use this pattern for boolean refinements such as `is_employer_only_defendant` — when the bool is true, the target
-field must contain only the allowed value set. Flag conflicting values; do not clear them.
-
-```php
-function ws_validate_employer_only_defendant(int $post_id): void {
-    if (!ws_hooked_get($post_id, 'is_employer_only_defendant')) {
-        return;
-    }
-
-    $values = (array) ws_hooked_get($post_id, 'proper_defendants');
-    $invalid = array_diff($values, ['employer-entity']);
-
-    if ($invalid) {
-        ws_hooked_error('proper_defendants',
-            'is_employer_only_defendant allows only proper_defendants:employer-entity.');
     }
 }
 ```
