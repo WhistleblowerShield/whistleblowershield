@@ -809,6 +809,7 @@ $_ws_taxonomy_registry = [
             'burden-shifting-framework'                 => 'Burden Shifting Framework Specified',
             'same-decision-defense-standard'            => 'Same-Decision Defense Standard Specified',
             'causation-dual-standard'                   => 'Causation Dual Standard Applies',
+            'statutory-nexus-controls'                  => 'Statutory Nexus Controls',
             'employer-knowledge-required'               => 'Employer Knowledge Element Required',
             'temporal-presumption-recognized'           => 'Temporal Presumption Recognized',
             'temporal-proximity-sufficient'             => 'Temporal Proximity Sufficient',
@@ -816,7 +817,7 @@ $_ws_taxonomy_registry = [
             'reward-available'                          => 'Reward Available',
             'qui-tam-action'                            => 'Qui Tam Action Available',
             // Waiver & Scope
-            'all-plaintiff-waivers-void'                => 'All Waivers Unenforceable',
+            'all-plaintiff-waivers-void'                => 'All Plaintiff Waivers Void',
             'civil-action-waiver'                       => 'Civil Action Waiver Enforceable',
             'contractual-waiver'                        => 'Contractual Waiver Enforceable',
             'collateral-claims-waiver'                  => 'Collateral Claims Waiver Enforceable',
@@ -834,7 +835,6 @@ $_ws_taxonomy_registry = [
             'successor-liability'                       => 'Successor Employer Liability Recognized',
             'extraterritorial-coverage'                 => 'Extraterritorial Coverage Applies',
             // Without Context
-            'statutory-nexus-controls'                  => 'Statutory Nexus Controls',
             'catch-all-protection'                      => 'Catch-All Protection Clause Present',
             'internal-only-disclosure-sufficient'       => 'Internal-Only Disclosure Sufficient',
             'trade-secret-immunity-available'           => 'Trade Secret Immunity Available',

@@ -154,7 +154,7 @@ Conditional `*_details` and paired `*_unit` fields follow declared rules, and do
 ### Cluster Triggers
 
 Clusters that reveal more than one field beyond `_context` must trigger from `legal_recognitions`. When a
-`legal_recognitions` also requires a term form a related taxonomy, add it as a `[P]` 'Prerequisite' for the slug
+`legal_recognitions` also requires a term from a related taxonomy, add it as a `[P]` 'Prerequisite' for the slug
 in the [Slug-to-Companion Map] below. If required slug mutually requires the same slug in `legal_recognitions`, it
 is considered `[P+]` "Paired". Add the "Paired" slug and its taxonomy to the [Cross-Field] `[R]` requirements
 table in `legal-record-acf-hooks.md`. Hooks must flag for the 'Prerequisite' or 'Paired' terms as appropriate.
@@ -1158,7 +1158,7 @@ Applies:      'cba-grievance-preemption'                              → 'cba_p
 Available:    'amended-claim'                                         → 'amended_claim_context'[R]
 Required:     'exhaustion-required'                                   → 'exhaustion_required_context'           + 'exhaustion_required_scope'[R]
 Required:     'pre-filing-notice-required'[P]                         → 'filing_notice_required_context'        + 'filing_notice_required_targets'[R]   + 'filing_notice_required_value'
-                 * 'pre-filing-notice-process' in process_types
+                 * 'pre-filing-notice-process' in 'process_types'
 Specified:    'employer-threshold-specified'                          → 'employer_threshold_context'            + 'employer_threshold_compare'[R]       + 'employer_threshold_value'[R]
                                                                                                                 + 'employer_threshold_model'[R]
 Specified:    'cure-period-specified'                                 → 'cure_period_context'                   + 'cure_period_value'[R]
@@ -1181,7 +1181,8 @@ Recognized:   'remedy-election-required'                              → 'elect
 
 // ── Processes & Remedies Tab ─────────────────────────────────────────────────────────────────────────
 Specified:    'process-pathway'                                       → 'process_pathway_context'               + 'process_pathway_scope'[R]            + 'process_pathway_limit'
-Available:    'private-right-of-action'                               → 'private_roa_context'[R]
+Available:    'private-right-of-action'[P+]                           → 'private_roa_context'[R]
+                 * 'civil-lawsuit' in 'process_types'
 Available:    'jury-trial'[P]                                         → 'jury_trial_context'                    + 'jury_trial_scope'[R]
                  * 'private-right-of-action'
 Specified:    'fee-shifting-standard'[P]                              → 'fee_shifting_standard_context'         + 'fee_shifting_standard'[R]            + 'fee_shifting_scope'[R]
