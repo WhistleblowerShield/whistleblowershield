@@ -128,7 +128,6 @@ For Cross-Tab Cross-Field:
 - `burden_shifting_frameworks`       — `[X]` `mixed-motive`, `but-for`
 - `protected_classes`                — `[U]` `all-employees-only`
 - `employment_sectors`               — `[U]` `all-sectors-only`
-- `preliminary_reinstatement_scopes` — `[U]` `full-pendency-only`
 - `individual_liability_scopes`      — `[U]` `any-individual-only`
 - `anti_slapp_protection_scopes`     — `[U]` `full-procedural-only`
 

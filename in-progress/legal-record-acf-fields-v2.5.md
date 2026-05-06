@@ -651,8 +651,8 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
 - `reinstatement_standard`         — (Sister to `preliminary_reinstatement_context`; select: `mandatory`|
                                       `discretionary`|`has-details`)
 - `reinstatement_standard_details`
-- `preliminary_reinstatement_scopes`    — (Sister to `preliminary_reinstatement_context`; multi-select:
-                                           `admin-phase`|`full-pendency-only`)
+- `preliminary_reinstatement_scope`    — (Sister to `preliminary_reinstatement_context`; select:
+                                           `admin-phase`|`full-pendency-only`|`see-context`)
 - `preliminary_reinstatement_context`   — (conditional on `preliminary-reinstatement` in `legal_recognitions` AND
                                            `reinstatement` OR `interim-reinstatement` in `remedies`)
 
@@ -1192,7 +1192,7 @@ Available:    'equitable-interest-award'[P]                           → 'inter
 Required:     'mitigation-required'                                   → 'mitigation_required_context'           + 'mitigation_required_scopes'[R]
 Available:    'mitigation-exception'[P]                               → 'mitigation_exception_context'[R]
                  * 'mitigation-required'
-Available:    'preliminary-reinstatement'[P]                          → 'preliminary_reinstatement_context'     + 'reinstatement_standard'[R]           + 'preliminary_reinstatement_scopes'[R]
+Available:    'preliminary-reinstatement'[P]                          → 'preliminary_reinstatement_context'     + 'reinstatement_standard'[R]           + 'preliminary_reinstatement_scope'[R]
                  * 'reinstatement' OR 'interim-reinstatement' in 'remedies' 
 
 // ── Processes & Remedies Tab (Substantive Records Only) ──────────────────────────────────────────────
