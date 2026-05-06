@@ -652,7 +652,7 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
                                       `discretionary`|`has-details`)
 - `reinstatement_standard_details`
 - `preliminary_reinstatement_scope`    — (Sister to `preliminary_reinstatement_context`; select:
-                                           `admin-phase`|`full-pendency-only`|`see-context`)
+                                           `admin-phase`|`full-pendency`|`see-context`)
 - `preliminary_reinstatement_context`   — (conditional on `preliminary-reinstatement` in `legal_recognitions` AND
                                            `reinstatement` OR `interim-reinstatement` in `remedies`)
 
