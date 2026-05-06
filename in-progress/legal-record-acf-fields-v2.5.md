@@ -1121,8 +1121,8 @@ Marked slugs have exclusions documented in the [Cross-Field]`[E]` Exclusions tab
 
 Marker Payloads:
 When a marker is present, condition applies to listed slugs. If cross-taxonomy, the specific taxonomy is stated.
-When also conditional on non-taxonomy fields, or specific field values see [Cross-Field] `[E]` Exclusions table or
-`[R]` Requirements table in `legal-record-acf-hooks.md`.
+When conditions also apply to non-taxonomy fields, or specific field values, no other marker is used; See
+[Cross-Field] `[E]` Exclusions table or `[R]` Requirements table in `legal-record-acf-hooks.md`.
 - `[E+]` — Slug excludes other slugs.
 - `[E-]` — Slug is excluded by other slugs.
 - `[P]`  — 'Prerequisite' slug required.
