@@ -753,7 +753,7 @@ $_ws_taxonomy_registry = [
  * - Sufficient  — condition independently meets the threshold for protection to attach
  * - Limited     — legal effect, scope, or enforceability is narrowed by statute or rule
  * - Enforceable — waiver, agreement, or procedural limitation may be given legal effect
- * - Unenforceable — waiver, agreement, or procedural limitation cannot be given legal effect
+ * - Void        — legal effect, scope, or enforceability is no longer relevant
  * - Waived      — immunity, defense, or objection has been relinquished or abrogated
  *
  */
