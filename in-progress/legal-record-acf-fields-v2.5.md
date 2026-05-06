@@ -1128,7 +1128,9 @@ When also conditional on non-taxonomy fields, or specific field values see [Cros
 - `[P]`  — 'Prerequisite' slug required.
 - `[P+]` — 'Paired' slug mutually-required.
 
-Related taxonomy and specific slug when `[P+]` 'Paired' are also documented in `[R]` requirements table .
+Related taxonomy and specific slug when `[P+]` 'Paired' are also cross-documented in `[R]` requirements table.
+Related taxonomy where any-slug will do, causation_standards, is noted as non-empty. Conditionals cannot test for
+any-slug, but any-slug will qualify as non-empty. Conditionals can test for non-empty. Slug rule *bent*; approved.
 
 ```
 
