@@ -88,6 +88,30 @@ Conditional annotation is optional when the naming convention makes the trigger 
 required. Conditional `*_context` companion must always document its conditional. See [Conditional Annotation] for
 accepted forms.
 
+### Repeater Pluralization — Row Singularization
+
+Repeater fields, by their default nature, signify multiple values will apply. Even if technically untrue and a
+repeater field is expressly indented for a single value (first: you've likely made a mistake; second:) always 
+pluralize the repeater fields. Inside repeater fields, avoid multi value fields unless absolutely required, use
+single value fields only. If multiple values are required, add a an additional row for each required value.
+Example:
+Repeater.
+  - Incorrect Form:
+    * Row_01 = [(Attribute = Color), (Specifics = Red, Blue)] *is wrong*
+  - Correct Form:
+    * Row_01 = [(Attribute = Color), (Specific = Red)]  *and*
+    * Row_02 = [(Attribute = Color), (Specific = Blue)] *is right*
+
+#### Repeater Context
+
+By convention, the last column of a row in a repeater is a freetext `*_context` companion. Even though it is
+acknowledged as unnecessary, set the field as "conditional on `first_column` is non-empty"; this conforms to
+the general rules regarding use of `*_context` companion fields. If for any reason the `first_column` could
+legitimately be empty, (first: you've likely made a mistake; second:) set as "conditional on `primary_column`";
+which should never be empty. If for any reason there is legitimately no column that will be non-empty in every row
+(first: you really have made a mistake; second:) omit the conditional entirely, and annotated the field inline,
+include you `username` and `editor_id` — So that I can find you and educate you about repeaters.
+
 ### Sister Fields
 
 Sister fields inherit a sibling's (usually a `*_context` companion) conditional logic without repeating the
@@ -100,7 +124,7 @@ document trigger slug and conditional cluster fields in [Slug-to-Companion Map] 
 conditional fields — when chained fields become "messy", add inline notes clarity.
 
 Conditional `*_details` and paired `*_unit` fields follow declared rules, and do not require documentation in the
-[Slug-to-Companion Map].
+[Slug-to-Companion Map] below.
 
 ### Cluster Triggers
 
@@ -112,6 +136,14 @@ table in `legal-record-acf-hooks.md`. Hooks must flag for the 'Prerequisite' or 
 
 Single-field conditionals (`*_context` companion only) may migrate to `legal_recognitions`.
 Migration of single-field conditionals is not required.
+
+### Legal Recognition Taxonomy Slugs
+
+Recognition slugs in `ws_legal_recognition` taxonomy and set in `legal_recognitions`, should always be named
+relative to the doctrine their presence "recognizes". When the doctrine is clear without the bool-state verb
+(e.g. `-recognized`, `-permitted`, `-specified`) suffix, omit the suffix for brevity. Otherwise include the
+suffix. Prefer clarity over brevity; don't over-commit to brevity, if later concerns arise due to clarity append
+the damn suffix.
 
 ### Avoided Names
 
@@ -236,6 +268,7 @@ Use only these accepted conditional-annotation forms:
 - Boolean true: `conditional on bool_field is true`
 - Boolean false: `conditional on bool_field is false`
 - Compound values and conditions: combine with all-caps `AND`, `OR`, and `NOT`
+- Absent conditionals imply "AND not-empty"; 'absent from select field' form can be used with multi-select.
 
 Annotation is optional for `*_details`, `*_limits`, `*_phases`, and `*_companions` when the naming convention
 makes the trigger unambiguous. It is required for all other conditional fields, and `*_context` fields must always
@@ -480,14 +513,14 @@ Fields ordered: core SOL → modifiers → exhaustion → pathways → threshold
 
 ### Retaliation Tab
 
-Fields ordered: adverse actions → recognitions → sanctions
+Fields ordered: scope → adverse actions → recognitions → sanctions
 
-- `adverse_actions`                   — (taxonomy: `ws_adverse_action`)
-- `adverse_action_details`
-- `is_blacklisting_extended`          — (conditional on `blacklisting` in `adverse_actions`)
 - `adverse_action_scope`              — (select: `termination-only`|`material-adverse`|`broad-any-adverse-action`|
                                          `see-context`)
 - `adverse_action_scope_context`      — (conditional on `adverse_action_scope` is non-empty)
+- `adverse_actions`                   — (taxonomy: `ws_adverse_action`)
+- `adverse_action_details`
+- `is_blacklisting_extended`          — (conditional on `blacklisting` in `adverse_actions`)
 - `preservation_deadline_value`       — (Sister to `evidence_preservation_context`)
 - `preservation_deadline_unit`
 - `preservation_requirement_scopes`    — (Sister to `evidence_preservation_context`; multi-select:
@@ -667,19 +700,19 @@ Fields ordered: rewards → qui tam specifics
 
 Fields ordered: contractual → recognitions → immunity → defendants.
 
-- `all_waivers_blocked_context`    — (conditional on `all-waivers-unenforceable` in `legal_recognitions`)
+- `all_waivers_blocked_context`    — (conditional on `all-plaintiff-waivers-void` in `legal_recognitions`)
 - `civil_action_waiver_scope`      — (Sister to `civil_action_waiver_context`; select: `prohibited`|
                                       `permitted-individual-only`|`permitted-collective`|`see-context`)
-- `civil_action_waiver_context`    — (conditional on `all-waivers-unenforceable` absent in `legal_recognitions`
+- `civil_action_waiver_context`    — (conditional on `all-plaintiff-waivers-void` absent in `legal_recognitions`
                                       AND `civil-action-waiver` in `legal_recognitions`)
 - `contractual_waiver_scope`       — (Sister to `contractual_waiver_context`; select: `void`|
                                       `limited`|`enforceable`|`void-public-policy`|`void-as-to-whistleblowing`|
                                       `enforceable-with-exceptions`|`see-context`)
-- `contractual_waiver_context`     — (conditional on `all-waivers-unenforceable` absent in `legal_recognitions`
+- `contractual_waiver_context`     — (conditional on `all-plaintiff-waivers-void` absent in `legal_recognitions`
                                       AND `contractual-waiver` in `legal_recognitions`)
-- `collateral_claims_waiver_context`  — (conditional on `all-waivers-unenforceable` absent in `legal_recognitions`
+- `collateral_claims_waiver_context`  — (conditional on `all-plaintiff-waivers-void` absent in `legal_recognitions`
                                          AND `collateral-claims-waiver` in `legal_recognitions`)
-- `class_action_waiver_context`    — (conditional on `all-waivers-unenforceable` absent in `legal_recognitions`
+- `class_action_waiver_context`    — (conditional on `all-plaintiff-waivers-void` absent in `legal_recognitions`
                                       AND `class-action-waiver` in `legal_recognitions`)
 - `proper_defendant_rules`         — (Sister to `proper_defendants_context`; repeater:
       ├── `defendant_class`              [select: `employer-entity`|`individual-supervisor`|`public-official`|
@@ -702,7 +735,8 @@ Fields ordered: contractual → recognitions → immunity → defendants.
 - `sovereign_immunity_scope`       — (Sister to `sovereign_immunity_context`; select: `all`|
                                       `instrumentalities-included`|`political-subdivisions-included`|
                                       `state-exclusively`|`see-context`)
-- `sovereign_immunity_waiver_class`  — (conditional on `sovereign_immunity_status` is NOT `not-waived`; select:
+- `sovereign_immunity_waiver_class`  — (Sister to `sovereign_immunity_context`; AND conditional on
+                                        `sovereign_immunity_status` is NOT `not-waived`; select:
                                         `explicit-waiver`|`implied-waiver`)
 - `sovereign_immunity_status_details`
 - `sovereign_immunity_context`     — (conditional on `sovereign-immunity-status` in `legal_recognitions`)
@@ -750,7 +784,6 @@ Fields ordered: source url → authority
 
 Fields ordered: id → derived
 
-- `_id`                            — (generated by ingest tool or matrix seeder)
 - `_disclosure_target_class`       — (derived from `disclosure_targets`; select: `internal`|`external`|`both`)
 - `_primary_agency_is_fed`         — (derived from `primary_agency` jx)
 - `_related_agencies`              — (merged array of `local_agencies` and `federal_agencies`)
@@ -1108,7 +1141,7 @@ Available:      'private-right-of-action'                               → 'pri
 Available:      'jury-trial' [P]                                        → 'jury_trial_context'                    + 'jury_trial_scope' [R]
                    * 'private-right-of-action'
 Specified:      'fee-shifting-standard' [P]                             → 'fee_shifting_standard_context'         + 'fee_shifting_standard' [R] + 'fee_shifting_scope' [R]
-                   * 'attorney-fees' OR 'attorney-fees-admin' in 'remedies'                                       + 'fee_shifting_phases' [+][R]
+                   * 'attorney-fees' OR 'attorney-fees-admin' in 'remedies'                                       + 'fee_shifting_phases' [+][R] + 'has_fee_shifting_phases' [R]
 Specified:      'civil-review-standard'                                 → 'review_standard_context'               + 'review_standard_scope' [R]
 Available:      'equitable-interest-award' [P]                          → 'interest_provision_context'            + 'interest_provision_scope' [R]
                    * 'interest-on-backpay' in 'remedies'
@@ -1135,21 +1168,21 @@ Available:      'qui-tam-action' [P+]                                   → 'qui
                    * 'bounty-qui-tam-award' in 'remedies'
 
 // ── Waiver & Scope Tab ───────────────────────────────────────────────────────
-Unenforceable:  'all-waivers-unenforceable' [E+]                        → 'all_waivers_blocked_context' [R]
+Unenforceable:  'all-plaintiff-waivers-void' [E+]                       → 'all_waivers_blocked_context' [R]
                    * 'civil-action-waiver'
                    * 'contractual-waiver'
                    * 'collateral-claims-waiver'
                    * 'class-action-waiver'
 Enforceable:    'civil-action-waiver' [E-]                              → 'civil_action_waiver_context'           + 'civil_action_waiver_scope' [R]
-                   * 'all-waivers-unenforceable'
+                   * 'all-plaintiff-waivers-void'
 Enforceable:    'contractual-waiver' [E-]                               → 'contractual_waiver_context'            + 'contractual_waiver_scope' [R]
-                   * 'all-waivers-unenforceable'
+                   * 'all-plaintiff-waivers-void'
 Enforceable:    'collateral-claims-waiver' [E-]                         → 'collateral_claims_waiver_context' [R]
-                   * 'all-waivers-unenforceable'
+                   * 'all-plaintiff-waivers-void'
 Enforceable:    'class-action-waiver' [E-]                              → 'class_action_waiver_context' [R]
-                   * 'all-waivers-unenforceable'
+                   * 'all-plaintiff-waivers-void'
 Specified:      'sovereign-immunity-status' [E-]                        → 'sovereign_immunity_context'            + 'sovereign_immunity_status' [R] + 'sovereign_immunity_limits' + 'sovereign_immunity_scope'
-                   * 'blanket-sovereign-immunity-waived'
+                   * 'blanket-sovereign-immunity-waived'                                                          + 'sovereign_immunity_waiver_class' [+][R]
 Specified:      'proper-defendants-specified'                           → 'proper_defendants_context'             + 'proper_defendant_rules' [R]
 Limited:        'nda-limitations'                                       → 'nda_limits_context' [R]
 Present:        'anti-gag-provision-present'                            → 'anti_gag_provision_context' [R]

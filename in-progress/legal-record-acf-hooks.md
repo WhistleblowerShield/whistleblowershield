@@ -29,7 +29,7 @@ mark them twice as `[+][R]`.
 ### Details, Sentinels, and Companions
 
 Avoid using `has-details` (defined in the main spec) when the selected value already lives inside a triggered
-cluster rooted by a `*_context` field; use `see-context`. `see-context` is a sentinel used in cases where an
+cluster rooted to a `*_context` field; use `see-context`. `see-context` is a sentinel used in cases where an
 already-active `*_context` field exists, as is the case with most clusters. The sentinel is essentially editorial
 guidance to use the companion field for freetext nuance regarding the specified trigger field, or the cluster as a
 whole.
@@ -52,12 +52,12 @@ Hooks enforce requiredness when conditional logic alone cannot block the save or
 Absence defines non-applicability — The absence of a recognition slug already means the doctrine does not
 apply. Do not use redundant `none` values as choices in the cluster's select fields where their presence would
 represent the recognized doctrine does not apply. Using `none`, `no-*` as choices in select fields that add
-definition to the doctrine such as `*_scope` or `*_limit` is acceptable; in those cases the field must become
-required. Where possible avoid using field negating choices. Prefer empty fields that are not required, where
-logical.
+definition to the doctrine such as `*_scope` or `*_limit` is acceptable; in those cases the field then becomes
+required. Mark the slug with `[R]` in the [Slug-to-Companion Map] in the main spec. In clusters, where possible
+avoid using field negating choices. Prefer empty fields that are not required, where logical.
 
-Do not include ambiguous choice terms. Always prefer `see-context` (or `has-details` when necessary) where data may
-reasonably be 'unclear', 'mixed' or 'varies'. If the possible data can genuinely be classified as 'mixed' or
+Avoid including ambiguous choice values. Always prefer `see-context` (or `has-details` when necessary) where data
+may reasonably be 'unclear', 'mixed' or 'varies'. If the possible data can genuinely be classified as 'mixed' or
 'varies' and not does require further nuance, 'mixed'or 'varies' may be used; 'unclear' is simply unacceptable.
 Annotate use with inline comments.
 
@@ -65,12 +65,12 @@ Annotate use with inline comments.
 
 ## Precedent Taxonomy Mapping
 
-`extended_taxonomies` and `suppressed_taxonomies` use the same filtered taxonomy-term choices. `taxonomy`
+`extended_taxonomies` and `suppressed_taxonomies` use the different filtered taxonomy-term choices. `taxonomy`
 choices come from the allowlist of legal-record taxonomies that precedent may realistically extend or suppress
 (see [Eligible Taxonomy Allowlist] in the main spec); `term` choices are filtered by the selected `taxonomy` in
-the same repeater row. Available terms for `extended_taxonomies` must not already be present in the parent
-legal-record. Similarly terms for `suppressed_taxonomies` must be present. Hooks must monitor both values as slugs
-and validate the values on save.
+the same repeater row. Available terms for `extended_taxonomies` must exclude terms already present in the parent
+legal-record. Similarly, terms for `suppressed_taxonomies` must be limited to terms present. Hooks must monitor
+both values as slugs and validate the values on save.
 
 ---
 
@@ -109,6 +109,8 @@ The breadcrumb tables below use these markers:
 - `[D]` — value may duplicate a concept represented by another field or value.
 - `[R]` — value requires a value in another field.
 - `[E]` — value excludes another field or or field value.
+- `[C]` — *reserved for* value has cross-tab cross-field conditions.
+- `[N]` — *reserved for* negative-exclusionary value excludes all affirmative values
 
 ### Potential Invalid Multi-Value Combos
 
@@ -118,7 +120,7 @@ The breadcrumb tables below use these markers:
 
 - Reviewed multi-value fields with no currently defined same-field conflict are intentionally omitted.
 - `legal_recognitions`
-    * `[X]` `all-waivers-unenforceable`         excludes `civil-action-waiver`, `contractual-waiver`,
+    * `[X]` `all-plaintiff-waivers-void`        excludes `civil-action-waiver`, `contractual-waiver`,
                                                          `collateral-claims-waiver`, `class-action-waiver`
     * `[X]` `blanket-sovereign-immunity-waived` excludes `sovereign-immunity-status`
     * `[X]` `class-action-permitted`            excludes `class-action-waiver`
@@ -172,7 +174,7 @@ List of special case:
     * `adverse` conflicts with `extended_taxonomies` is non-empty.
     * `neutral` conflicts with both `extended_taxonomies` and `suppressed_taxonomies` when non-empty.
 - `has_fee_shifting_phases`: auto-set true, when `fee_shifting_standard` is `none-american-rule`. Flag for
-   editorial review with note that `none-american-rule` as the `fee_shifting_standard` requires at least one
+   editorial review with note, that `none-american-rule` as the `fee_shifting_standard` requires at least one
    `fee_shifting_phases.phase` as an exception to `none-american-rule` or remove the recognition slug.
 
 ---
@@ -184,7 +186,7 @@ helper API.
 
 **Inputs and ordering.** Normalize values before validating — treat taxonomy, select, and multi-select values as
 slug arrays internally even when ACF stores a scalar. Taxonomy-absence conditionals must evaluate before
-slug-presence conditionals when both appear in the same cluster (e.g., `all-waivers-unenforceable` absent, then
+slug-presence conditionals when both appear in the same cluster (e.g., `all-plaintiff-waivers-void` absent, then
 `civil-action-waiver` present).
 
 **Conflict validation.** Prefer explicit validation over silent conflict resolution. When a controlling field or
@@ -200,12 +202,14 @@ preclude `*_context` from being required as well.
 present, flag granular or excluded values in the same field. Sentinels (`has-details`, `see-details`,
 `see-context`) remain valid choices; it allows the companion to carry nuance regarding the umbrella value when
 necessary. Blanket `none`/`no-*` values are valid only in required fields, where an empty field is not allowed.
-They act as umbrella values and exclude affirmative choices in the same field when present.
+They act as umbrella values and exclude affirmative choices in the same field when present. No blanket fields are
+currently in use.
 
 **Exclusion and cross-field hooks.** Exclusion hooks should flag all fields in the excluded cluster — context,
 sisters, details, and chained downstream conditionals. Hooks must identify the required-empty field or fields and
 the value and field at the root of the exclusion. Hooks also need to monitor for stale values when a controlling
 field changes; block save and flag stale values in their respective field for editor review.
+
 Cross-field required hooks should validate both directions where required — when a value in a depended field
 requires a value in a specific field, save should be blocked the flag should name both fields and both values.
 
@@ -272,8 +276,9 @@ fall-through — so callers can wire field names into the helper rather than re-
 
 ### Merge Arrays
 
-Use this pattern for hidden merged relationship fields such as `_related_agencies`, `_precedent_ids`, and
-`_parent_ids`. The same shape works for any merged hidden field — change only the source and target field names.
+Use this pattern for merged relationship fields such as `_related_agencies`, `_precedent_ids`, and `_parent_ids`.
+The same shape works for any merged field — change only the source and target field names.
+Note: Most merged arrays are hidden; the example is of a hidden target field denoted by leading underscore.
 
 ```php
 function ws_merge_related_agencies(int $post_id): void {
@@ -347,7 +352,7 @@ can exist.
 
 ```php
 function ws_validate_waiver_clusters_when_blocked(int $post_id): void {
-    if (!ws_hooked_has_slug($post_id, 'legal_recognitions', 'all-waivers-unenforceable')) {
+    if (!ws_hooked_has_slug($post_id, 'legal_recognitions', 'all-plaintiff-waivers-void')) {
         return;
     }
 
@@ -359,7 +364,7 @@ function ws_validate_waiver_clusters_when_blocked(int $post_id): void {
     ] as $excluded_slug) {
         if (ws_hooked_has_slug($post_id, 'legal_recognitions', $excluded_slug)) {
             ws_hooked_error('legal_recognitions',
-                "$excluded_slug cannot be combined with all-waivers-unenforceable.");
+                "$excluded_slug cannot be combined with all-plaintiff-waivers-void.");
         }
     }
 }
@@ -367,7 +372,8 @@ function ws_validate_waiver_clusters_when_blocked(int $post_id): void {
 
 ### Enforce Required None/No Exclusivity
 
-Use this pattern for `[N]` values (negative value exclusivity is currently unused).
+`[N]` marker reserved for future use.
+<!-- Use this pattern for `[N]` values (negative value exclusivity is currently unused).
 
 ```php
 function ws_validate_none_value(string $field, array $values, string $none_value): void {
@@ -383,11 +389,12 @@ function ws_validate_none_value(string $field, array $values, string $none_value
     }
 }
 ```
+-->
 
 ### Flag Hidden Stale Values
 
-Current dogma: flag only. Surface stale values in their specific field, and name the field/value that made them
-stale. Do not auto-resolve by wiping hidden values.
+Current dogma: flag only. Surface stale values in their specific field, and name the field/value that created the
+stale state. Do not auto-resolve by wiping hidden values.
 
 ### Enforce Cross-Field Required Values
 
@@ -446,7 +453,9 @@ declared near the field definition. Keep one declaration per field so the rule t
 
 ### Validate Repeater-Row Sub-Field Exclusion
 
-Use this pattern when sub-field values must not co-occur within a single repeater row, such as `felony` and
+Note: Repeater-Row sub-fields should never be multi-select, use additional rows to document multi-values.
+`malicious_reporting_sanctions.sanction_penalty` was never meant to be multi-select.
+<!-- Use this pattern when sub-field values must not co-occur within a single repeater row, such as `felony` and
 `misdemeanor` in `malicious_reporting_sanctions.sanction_penalty`. The rule is row-scoped — the same two values
 are valid across separate rows. Identify the offending row in the error message so the editor can navigate to it.
 
@@ -482,6 +491,7 @@ function ws_validate_repeater_row_exclusion(
 //     'misdemeanor'
 // );
 ```
+-->
 
 ### Apply Cross-Taxonomy AND-Conditional Guard
 

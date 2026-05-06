@@ -816,7 +816,7 @@ $_ws_taxonomy_registry = [
             'reward-available'                          => 'Reward Available',
             'qui-tam-action'                            => 'Qui Tam Action Available',
             // Waiver & Scope
-            'all-waivers-unenforceable'                 => 'All Waivers Unenforceable',
+            'all-plaintiff-waivers-void'                 => 'All Waivers Unenforceable',
             'civil-action-waiver'                       => 'Civil Action Waiver Enforceable',
             'contractual-waiver'                        => 'Contractual Waiver Enforceable',
             'collateral-claims-waiver'                  => 'Collateral Claims Waiver Enforceable',
