@@ -563,7 +563,7 @@ if ( ! is_admin() ) {
 	// render-agency.php       — Agency page renderers (procedures list, header, etc.)
 	// ws-statute-bold.php     — Wraps statute citations in <strong> tags when output to HTML
 	//
-	// NOTE: Missing files in this layer are logged to the error log (see error_log() calls below)
+	// *NOTE:* Missing files in this layer are logged to the error log (see error_log() calls below)
 	// but do NOT trigger admin_notices — this block runs only on ! is_admin(), so admin_notices
 	// would never fire here. Check the server error log if assembly layer output is silently broken.
 	$render_files = [

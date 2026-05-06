@@ -194,7 +194,7 @@ immediate user-facing failure.
 **Adding a new URL field:** Add an entry to `$ws_url_monitor_map` in
 the file header. No other changes required.
 
-**Production reliability note:** WP-Cron fires on page load. On
+**Production reliability *NOTE:*** WP-Cron fires on page load. On
 low-traffic sites the schedule interval is approximate. For guaranteed
 timing, add a server-side crontab hitting `wp-cron.php?doing_wp_cron`
 every five minutes.

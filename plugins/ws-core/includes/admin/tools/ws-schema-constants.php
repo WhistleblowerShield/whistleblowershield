@@ -242,7 +242,7 @@ function ws_schema_allowed( $constant ): array {
 
 
 /**
- * Validates a single value against an allowed schema constant.
+ * Validates a single-value against an allowed schema constant.
  *
  * Returns true when the value is in the allowed set.
  * Case-sensitive — schema values are always lowercase slugs.

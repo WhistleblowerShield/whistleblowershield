@@ -1406,7 +1406,7 @@ function ws_ingest_build_assist_org_seed_append( array $record ): string {
 
     $blocks = [];
     if ( $nationwide_example !== '' ) {
-        $blocks[] = "Nationwide scope note: {$nationwide_example}";
+        $blocks[] = "Nationwide scope *NOTE:* {$nationwide_example}";
     }
     if ( $case_stage_details !== '' ) {
         $blocks[] = "Case stage notes: {$case_stage_details}";

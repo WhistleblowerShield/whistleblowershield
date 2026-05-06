@@ -419,7 +419,7 @@ function ws_register_acf_jx_citations() {
                 'type'          => 'taxonomy',
                 'taxonomy'      => 'ws_fee_shifting_rule',
                 'field_type'    => 'multi_select',
-                'instructions'  => 'Fee-shifting outcome or discussion in this citation. Tag only where the cited source explicitly addresses fees. Single value.',
+                'instructions'  => 'Fee-shifting outcome or discussion in this citation. Tag only where the cited source explicitly addresses fees. single-value.',
                 'add_term'      => 0,
                 'save_terms'    => 1,
                 'load_terms'    => 1,

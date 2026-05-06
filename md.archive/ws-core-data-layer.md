@@ -62,7 +62,7 @@ Hidden audit keys (no ACF field, never shown in UI):
 **Attaches to:** `jx-statute`, `jx-common-law`,`jx-citation`, `jx-construction`,
 `ws-agency`, `ws-assist-org`
 
-Note: `jx-summary` and `ag-procedure` are intentionally excluded.
+*NOTE:* `jx-summary` and `ag-procedure` are intentionally excluded.
 The summary IS the plain-english document. The procedure walkthrough
 IS the plain-english content. Neither carries this overlay.
 

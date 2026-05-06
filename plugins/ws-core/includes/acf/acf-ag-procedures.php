@@ -532,7 +532,7 @@ function ws_register_acf_ag_procedures() {
 //   — The procedure is a new auto-draft (no taxonomy terms saved yet).
 //   — The procedure has no jurisdiction or protected disclosures assigned.
 //
-// Note: the hook fires via AJAX when the editor interacts with the picker,
+// *NOTE:* the hook fires via AJAX when the editor interacts with the picker,
 // so $post_id is the procedure post ID with its current saved taxonomy state.
 
 add_filter(

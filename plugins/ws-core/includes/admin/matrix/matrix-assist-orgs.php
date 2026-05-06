@@ -854,7 +854,7 @@ $_ws_assist_org_matrix = [
             'all-sectors',
         ],
         'protected_classes'       => [ 'all-employees' ],
-        'protected_class_details' => 'All individuals regardless of employment classification or income; connects to state bar lawyer referral services in all 50 states. Note: ABA Free Legal Answers (sister program) is income-restricted for civil matters — the Find Legal Help directory entry point is unrestricted.',
+        'protected_class_details' => 'All individuals regardless of employment classification or income; connects to state bar lawyer referral services in all 50 states. *NOTE:* ABA Free Legal Answers (sister program) is income-restricted for civil matters — the Find Legal Help directory entry point is unrestricted.',
         'protected_disclosures' => [
             'wage-hour-violations',
             'occupational-health-safety',

@@ -87,7 +87,7 @@
  *
  * Expand each dataset array as those CPTs are defined.
  *
- * NOTE: Audit trail data (_ws_last_edited_by, _ws_edit_history) is stored
+ * *NOTE:* Audit trail data (_ws_last_edited_by, _ws_edit_history) is stored
  * in wp_postmeta as private hidden keys and is NOT retrieved through this
  * query layer. Use ws_get_last_editor( $post_id ) and
  * ws_get_edit_history( $post_id ) defined in admin-audit-trail.php instead.
@@ -798,7 +798,7 @@ function ws_get_jx_citation_data( $jx_term_id ) {
 // Accepts a taxonomy term ID integer as scope ($jx_term_id).
 // Returns an array of construction data arrays, or empty array if none found.
 //
-// Note: constructions are US federal court decisions. When querying a
+// *NOTE:* constructions are US federal court decisions. When querying a
 // non-US jurisdiction, local records are returned first and US-scoped records
 // are appended with is_fed = true.
 // ════════════════════════════════════════════════════════════════════════════

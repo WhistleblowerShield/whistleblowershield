@@ -426,7 +426,7 @@ function ws_render_jx_citations( $items, $section_class = '' ) {
  * URL builder, not a database query. Wraps output in ws_render_section() which
  * applies wp_kses_post(). Called by ws_shortcode_jx_construction_().
  *
- * Note: Constructions are federal court decisions. On state jurisdiction pages
+ * *NOTE:* Constructions are federal court decisions. On state jurisdiction pages
  * they arrive with is_fed = true (US-term append). The --fed modifier class is
  * applied but the local/federal two-group split used for statutes and citations
  * is not appropriate here — all constructions share a single section heading.

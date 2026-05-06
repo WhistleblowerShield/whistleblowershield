@@ -17,7 +17,7 @@ slugs use `kebab-case`.
 
 ### Umbrella Choice Values
 
-Umbrella values in multi value fields end with `-only`, when the value represents a blanket selection that
+Umbrella values in multi-value fields end with `-only`, when the value represents a blanket selection that
 excludes granular sibling values in the same field. Do not use `-only` with other values, find alternatives.
 
 Hooks targeting the umbrella`-only` values must flag granular siblings when present. Sentinels such as
@@ -91,9 +91,9 @@ accepted forms.
 ### Repeater Pluralization — Row Singularization
 
 Repeater fields, by their default nature, signify multiple values will apply. Even if technically untrue and a
-repeater field is expressly indented for a single value (first: you've likely made a mistake; second:) always 
-pluralize the repeater fields. Inside repeater fields, avoid multi value fields unless absolutely required, use
-single value fields only. If multiple values are required, add a an additional row for each required value.
+repeater field is expressly intended for a single-value (first: you've likely made a mistake; second:) always 
+pluralize the repeater fields. Inside repeater fields, avoid multi-value fields unless absolutely required, use
+single-value fields only. If multiple values are required, add an additional row for each required value.
 Example:
 Repeater.
   - Incorrect Form:
@@ -104,13 +104,38 @@ Repeater.
 
 #### Repeater Context
 
-By convention, the last column of a row in a repeater is a freetext `*_context` companion. Even though it is
-acknowledged as unnecessary, set the field as "conditional on `first_column` is non-empty"; this conforms to
-the general rules regarding use of `*_context` companion fields. If for any reason the `first_column` could
-legitimately be empty, (first: you've likely made a mistake; second:) set as "conditional on `primary_column`";
-which should never be empty. If for any reason there is legitimately no column that will be non-empty in every row
-(first: you really have made a mistake; second:) omit the conditional entirely, and annotated the field inline,
-include you `username` and `editor_id` — So that I can find you and educate you about repeaters.
+By convention, the last subfield of a row in a repeater is a freetext `*_context` companion. Even though it is
+acknowledged as unnecessary, set the field as "conditional on `first_subfield` is non-empty"; this conforms to
+the general rules regarding use of `*_context` companion fields. If for any reason the `first_subfield` could
+legitimately be empty, (first: you've likely made a mistake; second:) set as "conditional on `primary_subfield`";
+which should never be empty. If for any reason there is legitimately no subfield that will be non-empty in every
+row (first: you really have made a mistake; second:) omit the conditional entirely, and annotate the field
+inline. Include your `username` and `editor_id` — So that: I can find you —and— educate you about repeaters.
+
+*NOTE:* The following revision is up for debate:
+<!-- ### Repeater Pluralization — Row Singularization
+
+Repeater fields, by default, signify that multiple values may apply. Always pluralize repeater field names,
+even when a repeater is temporarily expected to hold only one row.
+
+Inside repeater rows, avoid multi-value fields unless absolutely required. Prefer single-value subfields and add
+one row per value.
+
+Example:
+- Incorrect:
+  * Row 01 = [(Attribute = Color), (Specifics = Red, Blue)]
+- Correct:
+  * Row 01 = [(Attribute = Color), (Specific = Red)]
+  * Row 02 = [(Attribute = Color), (Specific = Blue)]
+
+#### Repeater Context
+
+By convention, the final subfield in a repeater row is a freetext `*_context` companion. Set it as conditional on
+the row identity field being non-empty, usually the first subfield.
+
+If the first subfield may legitimately be empty, use the primary required subfield instead. If no row subfield is
+guaranteed to be non-empty, the repeater is probably mis-modeled; omit the conditional only with an inline
+annotation explaining the exception. -->
 
 ### Sister Fields
 
@@ -189,6 +214,11 @@ nuance cleanly. New taxonomy-term sentinels must use the `has-*` prefix; in hier
 - `has-ic-channel` in `ws_protected_disclosure` triggers `ic_channel_sequence_context`.
 
 **Redirect sentinels** — use `see-details` and `see-context` when associated companion field is already triggered.
+
+*NOTE:* Avoid including ambiguous choice values. Always prefer `see-context` (or `has-details` when necessary)
+where data may reasonably be 'other', 'unclear', 'mixed' or 'varies'. If the possible data can genuinely be
+classified as 'mixed' or 'varies' and not does require further nuance, 'mixed' or 'varies' may be used; 'unclear'
+and 'other' are simply unacceptable. Annotate use of begrudgingly-permissible choices with inline comments.
 
 ---
 
@@ -487,11 +517,11 @@ Fields ordered: core SOL → modifiers → exhaustion → pathways → threshold
 - `exhaustion_required_scope`      — (Sister to `exhaustion_required_context`; select:
                                       `jurisdictional`|`claims-processing`|`waivable`|`see-context`)
 - `exhaustion_required_context`    — (conditional on `exhaustion-required` in `legal_recognitions`)
-- `filing_notice_value`            — (Sister to `filing_notice_context`)
-- `filing_notice_unit`
-- `filing_notice_targets`          — (Sister to `filing_notice_context`; multi-select: `employer`|`agency`|
+- `filing_notice_required_value`            — (Sister to `filing_notice_required_context`)
+- `filing_notice_required_unit`
+- `filing_notice_required_targets`          — (Sister to `filing_notice_required_context`; multi-select: `employer`|`agency`|
                                       `attorney-general`|`labor-board`|`see-context`)
-- `filing_notice_context`          — (conditional on `pre-filing-notice` in `legal_recognitions`)
+- `filing_notice_required_context`          — (conditional on `pre-filing-notice-required` in `legal_recognitions`)
 - `employer_threshold_compare`     — (Sister to `employer_threshold_context`; select: `gte`|`lte`|`gt`|`lt`|
                                       `eq`)
 - `employer_threshold_value`       — (Sister to `employer_threshold_context`)
@@ -519,6 +549,8 @@ Fields ordered: scope → adverse actions → recognitions → sanctions
                                          `see-context`)
 - `adverse_action_scope_context`      — (conditional on `adverse_action_scope` is non-empty)
 - `adverse_actions`                   — (taxonomy: `ws_adverse_action`)
+- `anticipatory_retaliation_context`  — (conditional on `anticipatory-retaliation` in `adverse_actions`)
+- `threatened_retaliation_context`    — (conditional on `threatened-retaliation` in `adverse_actions`)
 - `adverse_action_details`
 - `is_blacklisting_extended`          — (conditional on `blacklisting` in `adverse_actions`)
 - `preservation_deadline_value`       — (Sister to `evidence_preservation_context`)
@@ -531,7 +563,6 @@ Fields ordered: scope → adverse actions → recognitions → sanctions
                                          `objective-intolerability`|`intent-required`|`see-context`)
 - `constructive_discharge_context`    — (conditional on `constructive-discharge-standard` in `legal_recognitions`)
 - `is_evidence_collection_protected`
-- `anticipatory_retaliation_context`  — (conditional on `anticipatory-retaliation` in `adverse_actions`)
 - `cats_paw_liability_context`        — (conditional on `cats-paw-liability` in `legal_recognitions`)
 - `is_cats_paw_liability_extended`    — (Sister to `cats_paw_liability_context`; AND conditional on
                                          any child-slug of `associates-of-whistleblower` in `protected_classes`)
@@ -644,7 +675,7 @@ rebuttable presumption → temporal presumption → detail overflow
 - `employee_standard_details`
 - `has_causal_nexus_statutory_text`  — (conditional on `causation_standard` is non-empty)
 - `causal_nexus_statutory_text`    — (captures verbatim statutory text distinct from `causation_standard_context`)
-- `causation_standard`             — single-select (taxonomy: `ws_causation_standard`)
+- `causation_standard`             — (single-select taxonomy: `ws_causation_standard`)
 - `causation_application`          — (Sister to `causation_standard_context`; select: `liability`|
                                       `damages`|`both`|`see-context`)
 - `causation_application_context`  — (conditional on `causation_application` is non-empty)
@@ -655,7 +686,7 @@ rebuttable presumption → temporal presumption → detail overflow
                                       `actual-knowledge`|`constructive-knowledge`|`inferred-knowledge`|
                                       `imputed-knowledge`|`has-details`)
 - `employer_knowledge_scopes_details`
-- `employer_knowledge_context`     — (conditional on `employer-knowledge` in `legal_recognitions`)
+- `employer_knowledge_context`     — (conditional on `employer-knowledge-required` in `legal_recognitions`)
 - `employer_defenses`              — (taxonomy: `ws_employer_defense`)
 - `employer_defense_details`
 - `has_rebuttable_presumption`
@@ -864,6 +895,11 @@ Future statute-only additions, if any, will be documented here.
 
 - `statutory_preclusion_context`   — (conditional on `statutory-preclusion` in `legal_recognitions`)
 
+#### Burden of Proof Tab (insert after `causal_nexus_statutory_text`)
+
+- `statutory_nexus_context`        — (conditional on `statutory-nexus-controls` in `legal_recognitions`)
+
+
 ---
 
 ### Precedent-Record Common Fields (citation + construction)
@@ -1037,6 +1073,8 @@ Fields that are unchanged or new do not appear in this list.
 - `threshold_value`                          → `employer_threshold_value`
 - `threshold_unit`                           → `employer_threshold_model`
 - `public_concern_context`                   → `public_concern_required_context`
+- `statutory-nexus-diverges-from-common-law` → `statutory-nexus-controls`
+- `statutory-nexus-diverges`                 → `statutory-nexus-controls`
 
 ---
 
@@ -1094,120 +1132,134 @@ Related taxonomy and specific slug when `[P+]` 'Paired' are also documented in `
 
 ```
 
-// ── Identity Tab ─────────────────────────────────────────────────────────────
-Specified:      'retroactive-date'                                      → 'retro_context'                         + 'retro_date' [R]
+// ── Identity Tab ─────────────────────────────────────────────────────────────────────────────────────
+Specified:      'retroactive-date'                                      → 'retro_context'                         + 'retro_date'[R]
 
-// ── Classification Tab ───────────────────────────────────────────────────────
-Applies:        'manager-rule-exclusion'                                → 'manager_rule_exclusion_context' [R]
-Required:       'public-concern-required' [P]                           → 'public_concern_required_context' [R]
+// ── Classification Tab ───────────────────────────────────────────────────────────────────────────────
+Applies:        'manager-rule-exclusion'                                → 'manager_rule_exclusion_context'[R]
+Required:       'public-concern-required'[P]                            → 'public_concern_required_context'[R]
                    * 'public-sector' in 'employment_sectors'
-Applies:        'bad-faith-exclusion'                                   → 'bad_faith_exclusion_context' [R]
-Specified:      'malicious-reporting-sanctions'                         → 'malicious_reporting_context'           + 'malicious_reporting_sanctions' [R]
-Available:      'anonymity-protection'                                  → 'anonymity_protection_context' [R]
-Specified:      'protected-action'                                      → 'protected_action_context'              + 'protected_actions' [R] + 'protected_action_standards' + 'protected_action_sources'
-                                                                                                                  + 'reasonable_belief_context' [+][R] + 'reasonable_belief_scope'
-Specified:      'excluded-class'                                        → 'excluded_class_context'                + 'excluded_classes' [R]
-Applies:        'garcetti-exception' [P]                                → 'garcetti_exception_context' [R]
+Applies:        'bad-faith-exclusion'                                   → 'bad_faith_exclusion_context'[R]
+Specified:      'malicious-reporting-sanctions'                         → 'malicious_reporting_context'           + 'malicious_reporting_sanctions'[R]
+Available:      'anonymity-protection'                                  → 'anonymity_protection_context'[R]
+Specified:      'protected-action'                                      → 'protected_action_context'              + 'protected_actions'[R]                + 'protected_action_standards'
+                                                                                                                  + 'protected_action_sources'
+                                                                                                                  + 'reasonable_belief_context'[+][R]     + 'reasonable_belief_scope'
+Specified:      'excluded-class'                                        → 'excluded_class_context'                + 'excluded_classes'[R]
+Applies:        'garcetti-exception'[P]                                 → 'garcetti_exception_context'[R]
                    * 'public-sector' in 'employment_sectors'
-Specified:      'disclosure-channel-defined'                            → 'disclosure_channel_context'            + 'disclosure_channel_scope' [R] + 'disclosure_format'
+Specified:      'disclosure-channel-defined'                            → 'disclosure_channel_context'            + 'disclosure_channel_scope'[R]         + 'disclosure_format'
 
-// ── Statute of Limitations & Thresholds Tab ──────────────────────────────────
-Specified:      'statute-of-repose'                                     → 'statute_of_repose_context' [R]         + 'sop_value' + 'is_sop_tolling_available'
-Specified:      'statutory-tolling'                                     → 'statutory_tolling_context' [R]
-Available:      'equitable-tolling'                                     → 'equitable_tolling_context' [R]
-Applies:        'cba-grievance-preemption'                              → 'cba_preemption_context' [R]
-Available:      'amended-claim'                                         → 'amended_claim_context' [R]
-Required:       'exhaustion-required' [E-]                              → 'exhaustion_required_context'           + 'exhaustion_required_scope' [R]
-                   * 'direct-court' in 'process_pathway_scope'
-Required:       'pre-filing-notice'                                     → 'filing_notice_context'                 + 'filing_notice_targets' [R] + 'filing_notice_value'
-Applies:        'statutory-preclusion' [E]                              → 'statutory_preclusion_context' [R]
-Specified:      'employer-threshold-specified'                          → 'employer_threshold_context'            + 'employer_threshold_compare' [R] + 'employer_threshold_value' [R] + 'employer_threshold_model' [R]
-Specified:      'cure-period-specified'                                 → 'cure_period_context'                   + 'cure_period_value' [R]
+// ── Statute of Limitations & Thresholds Tab ──────────────────────────────────────────────────────────
+Specified:      'statute-of-repose'                                     → 'statute_of_repose_context'[R]          + 'sop_value' + 'is_sop_tolling_available'
+Specified:      'statutory-tolling'                                     → 'statutory_tolling_context'[R]
+Available:      'equitable-tolling'                                     → 'equitable_tolling_context'[R]
+Applies:        'cba-grievance-preemption'                              → 'cba_preemption_context'[R]
+Available:      'amended-claim'                                         → 'amended_claim_context'[R]
+Required:       'exhaustion-required'                                   → 'exhaustion_required_context'           + 'exhaustion_required_scope'[R]
+Required:       'pre-filing-notice-required'[P]                         → 'filing_notice_required_context'        + 'filing_notice_required_targets'[R]   + 'filing_notice_required_value'
+                   * 'pre-filing-notice-process' in process_types
+Specified:      'employer-threshold-specified'                          → 'employer_threshold_context'            + 'employer_threshold_compare'[R]       + 'employer_threshold_value'[R]
+                                                                                                                  + 'employer_threshold_model'[R]
+Specified:      'cure-period-specified'                                 → 'cure_period_context'                   + 'cure_period_value'[R]
 
-// ── Retaliation Tab ──────────────────────────────────────────────────────────
-Required:       'evidence-preservation'                                 → 'evidence_preservation_context'         + 'preservation_requirement_scopes' [R] + 'preservation_deadline_value'
-Specified:      'constructive-discharge-standard' [P]                   → 'constructive_discharge_context'        + 'constructive_discharge_standard' [R]
+// ── Statute of Limitations & Thresholds Tab (Common Law Records Only) ────────────────────────────────
+Applies:        'statutory-preclusion'[E]                               → 'statutory_preclusion_context'[R]
+
+
+// ── Retaliation Tab ──────────────────────────────────────────────────────────────────────────────────
+Required:       'evidence-preservation'                                 → 'evidence_preservation_context'         + 'preservation_requirement_scopes'[R]  + 'preservation_deadline_value'
+Specified:      'constructive-discharge-standard'[P]                    → 'constructive_discharge_context'        + 'constructive_discharge_standard'[R]
                    * 'constructive-discharge' in 'adverse_actions'
-Recognized:     'remedy-election-required'                              → 'election_of_remedies_context'          + 'election_of_remedies_rules' [R]
-Recognized:     'cats-paw-liability'                                    → 'cats_paw_liability_context' [R]        + 'is_cats_paw_liability_extended' [+]
-Prohibited:     'third-party-retaliation' [P]                           → 'third_party_retaliation_context' [R]
+Recognized:     'cats-paw-liability'                                    → 'cats_paw_liability_context'[R]         + 'is_cats_paw_liability_extended'[+]
+Prohibited:     'third-party-retaliation'[P]                            → 'third_party_retaliation_context'[R]
                    * any retaliation-slug in 'adverse_actions'
-Specified:      'criminal-sanctions' [P]                                → 'criminal_sanctions_context'            + 'criminal_sanctions' [R]
+Specified:      'criminal-sanctions'[P]                                 → 'criminal_sanctions_context'            + 'criminal_sanctions'[R]
                    * 'criminal-referral' in 'process_types'
 
-// ── Processes & Remedies Tab ─────────────────────────────────────────────────
-Specified:      'process-pathway'                                       → 'process_pathway_context'               + 'process_pathway_scope' [R] + 'process_pathway_limit'
-Available:      'private-right-of-action'                               → 'private_roa_context' [R]
-Available:      'jury-trial' [P]                                        → 'jury_trial_context'                    + 'jury_trial_scope' [R]
+// ── Retaliation Tab (Substantive Records Only) ───────────────────────────────────────────────────────
+Recognized:     'remedy-election-required'                              → 'election_of_remedies_context'          + 'election_of_remedies_rules'[R]
+
+// ── Processes & Remedies Tab ─────────────────────────────────────────────────────────────────────────
+Specified:      'process-pathway'                                       → 'process_pathway_context'               + 'process_pathway_scope'[R]            + 'process_pathway_limit'
+Available:      'private-right-of-action'                               → 'private_roa_context'[R]
+Available:      'jury-trial'[P]                                         → 'jury_trial_context'                    + 'jury_trial_scope'[R]
                    * 'private-right-of-action'
-Specified:      'fee-shifting-standard' [P]                             → 'fee_shifting_standard_context'         + 'fee_shifting_standard' [R] + 'fee_shifting_scope' [R]
-                   * 'attorney-fees' OR 'attorney-fees-admin' in 'remedies'                                       + 'fee_shifting_phases' [+][R] + 'has_fee_shifting_phases' [R]
-Specified:      'civil-review-standard'                                 → 'review_standard_context'               + 'review_standard_scope' [R]
-Available:      'equitable-interest-award' [P]                          → 'interest_provision_context'            + 'interest_provision_scope' [R]
+Specified:      'fee-shifting-standard'[P]                              → 'fee_shifting_standard_context'         + 'fee_shifting_standard'[R]            + 'fee_shifting_scope'[R]
+                   * 'attorney-fees' OR 'attorney-fees-admin' in 'remedies'                                       + 'fee_shifting_phases'[+][R]           + 'has_fee_shifting_phases'
+Available:      'equitable-interest-award'[P]                           → 'interest_provision_context'            + 'interest_provision_scope'[R]
                    * 'interest-on-backpay' in 'remedies'
-Required:       'mitigation-required'                                   → 'mitigation_required_context'           + 'mitigation_required_scopes' [R]
-Available:      'mitigation-exception' [P]                              → 'mitigation_exception_context' [R]
+Required:       'mitigation-required'                                   → 'mitigation_required_context'           + 'mitigation_required_scopes'[R]
+Available:      'mitigation-exception'[P]                               → 'mitigation_exception_context'[R]
                    * 'mitigation-required'
-Available:      'preliminary-reinstatement' [P]                         → 'preliminary_reinstatement_context'     + 'reinstatement_standard' [R] + 'preliminary_reinstatement_scopes' [R]
+Available:      'preliminary-reinstatement'[P]                          → 'preliminary_reinstatement_context'     + 'reinstatement_standard'[R]           + 'preliminary_reinstatement_scopes'[R]
                    * 'reinstatement' OR 'interim-reinstatement' in 'remedies' 
 
-// ── Burden of Proof Tab ──────────────────────────────────────────────────────
-Specified:      'burden-shifting-framework'                             → 'burden_shifting_context'               + 'burden_shifting_frameworks' [R]
-Specified:      'same-decision-defense-standard' [P]                    → 'same_decision_context'                 + 'same_decision_standard' [R]
+// ── Processes & Remedies Tab (Substantive Records Only) ──────────────────────────────────────────────
+Specified:      'civil-review-standard'                                 → 'review_standard_context'               + 'review_standard_scope'[R]
+
+
+// ── Burden of Proof Tab ──────────────────────────────────────────────────────────────────────────────
+Specified:      'burden-shifting-framework'                             → 'burden_shifting_context'               + 'burden_shifting_frameworks'[R]
+Specified:      'same-decision-defense-standard'[P]                     → 'same_decision_context'                 + 'same_decision_standard'[R]
                    * 'same-decision-defense' in 'employer_defenses'
-Applies:        'causation-dual-standard' [P]                           → 'causation_dual_standard_context' [R]
-                   *  any-slug in 'causation_standard'
-Required:       'employer-knowledge'                                    → 'employer_knowledge_context'            + 'employer_knowledge_scopes' [R]
-Recognized:     'temporal-presumption-recognized'                       → 'temporal_presumption_context'          + 'presumption_window_value' [R] + 'presumption_effect' [R]
+Applies:        'causation-dual-standard'[P]                            → 'causation_dual_standard_context'[R]
+                   *  non-empty in 'causation_standard'
+Required:       'employer-knowledge-required'                           → 'employer_knowledge_context'            + 'employer_knowledge_scopes'[R]
+Recognized:     'temporal-presumption-recognized'                       → 'temporal_presumption_context'          + 'presumption_window_value'[R]         + 'presumption_effect'[R]
 Sufficient:     'temporal-proximity-sufficient'                         → 'temporal_proximity_context'            + 'temporal_proximity_value'
 
-// ── Rewards Tab ──────────────────────────────────────────────────────────────
-Available:      'reward-available'                                      → 'reward_context'                        + 'reward_discretion_standard' [R]
-Available:      'qui-tam-action' [P+]                                   → 'qui_tam_share_context' [R]             + 'qui_tam_government_share' + 'qui_tam_relator_share' + 'qui_tam_reduction_context'
-                   * 'qui-tam' in 'process_types'                                                                 + 'has_first_to_file_bar' + 'has_public_disclosure_bar'
-                   * 'bounty-qui-tam-award' in 'remedies'
+// ── Burden of Proof Tab (Common Law Records Only) ────────────────────────────────────────────────────
+Applies:        'statutory-nexus-controls'                              → 'statutory_nexus_context'[R]
 
-// ── Waiver & Scope Tab ───────────────────────────────────────────────────────
-Unenforceable:  'all-plaintiff-waivers-void' [E+]                       → 'all_waivers_blocked_context' [R]
+// ── Rewards Tab ──────────────────────────────────────────────────────────────────────────────────────
+Available:      'reward-available'                                      → 'reward_context'                        + 'reward_discretion_standard'[R]
+Available:      'qui-tam-action'[P+]                                    → 'qui_tam_share_context'[R]              + 'qui_tam_government_share'            + 'qui_tam_relator_share'
+                   * 'qui-tam-process' in 'process_types'                                                         + 'qui_tam_reduction_context'
+                   * 'bounty-qui-tam-award' in 'remedies'                                                         + 'has_first_to_file_bar'               + 'has_public_disclosure_bar'
+
+// ── Waiver & Scope Tab ───────────────────────────────────────────────────────────────────────────────
+Unenforceable:  'all-plaintiff-waivers-void'[E+]                        → 'all_waivers_blocked_context'[R]
                    * 'civil-action-waiver'
                    * 'contractual-waiver'
                    * 'collateral-claims-waiver'
                    * 'class-action-waiver'
-Enforceable:    'civil-action-waiver' [E-]                              → 'civil_action_waiver_context'           + 'civil_action_waiver_scope' [R]
+Enforceable:    'civil-action-waiver'[E-]                               → 'civil_action_waiver_context'           + 'civil_action_waiver_scope'[R]
                    * 'all-plaintiff-waivers-void'
-Enforceable:    'contractual-waiver' [E-]                               → 'contractual_waiver_context'            + 'contractual_waiver_scope' [R]
+Enforceable:    'contractual-waiver'[E-]                                → 'contractual_waiver_context'            + 'contractual_waiver_scope'[R]
                    * 'all-plaintiff-waivers-void'
-Enforceable:    'collateral-claims-waiver' [E-]                         → 'collateral_claims_waiver_context' [R]
+Enforceable:    'collateral-claims-waiver'[E-]                          → 'collateral_claims_waiver_context'[R]
                    * 'all-plaintiff-waivers-void'
-Enforceable:    'class-action-waiver' [E-]                              → 'class_action_waiver_context' [R]
+Enforceable:    'class-action-waiver'[E-]                               → 'class_action_waiver_context'[R]
                    * 'all-plaintiff-waivers-void'
-Specified:      'sovereign-immunity-status' [E-]                        → 'sovereign_immunity_context'            + 'sovereign_immunity_status' [R] + 'sovereign_immunity_limits' + 'sovereign_immunity_scope'
-                   * 'blanket-sovereign-immunity-waived'                                                          + 'sovereign_immunity_waiver_class' [+][R]
-Specified:      'proper-defendants-specified'                           → 'proper_defendants_context'             + 'proper_defendant_rules' [R]
-Limited:        'nda-limitations'                                       → 'nda_limits_context' [R]
-Present:        'anti-gag-provision-present'                            → 'anti_gag_provision_context' [R]
-Barred:         'no-retaliatory-evidence' [E]                           → 'no_retaliatory_evidence_context' [R]
-Available:      'stay-of-disciplinary-action'                           → 'stay_of_discipline_context' [R]
-Available:      'anti-slapp-protection'                                 → 'anti_slapp_protection_context'         + 'anti_slapp_protection_scopes' [R]
-Available:      'discovery-protection' [P]                              → 'discovery_protection_context' [R]
+                   * 'class-action-permitted'
+Specified:      'sovereign-immunity-status'[E-]                         → 'sovereign_immunity_context'            + 'sovereign_immunity_status'[R]        + 'sovereign_immunity_limits'
+                   * 'blanket-sovereign-immunity-waived'                                                          + 'sovereign_immunity_scope'            + 'sovereign_immunity_waiver_class'[+][R]
+Specified:      'proper-defendants-specified'                           → 'proper_defendants_context'             + 'proper_defendant_rules'[R]
+Limited:        'nda-limitations'                                       → 'nda_limits_context'[R]
+Present:        'anti-gag-provision-present'                            → 'anti_gag_provision_context'[R]
+Barred:         'no-retaliatory-evidence'[E]                            → 'no_retaliatory_evidence_context'[R]
+Available:      'stay-of-disciplinary-action'                           → 'stay_of_discipline_context'[R]
+Available:      'anti-slapp-protection'                                 → 'anti_slapp_protection_context'         + 'anti_slapp_protection_scopes'[R]
+Available:      'discovery-protection'[P]                               → 'discovery_protection_context'[R]
                    * 'retaliatory-discovery' in 'adverse_actions' 
-Limited:        'confidential-settlement-restriction'                   → 'settlement_restriction_context'        + 'settlement_restriction_scope' [R]
-Available:      'individual-liability'                                  → 'individual_liability_context'          + 'individual_liability_scopes' [R]
-Recognized:     'successor-liability'                                   → 'successor_liability_context' [R]
-Applies:        'extraterritorial-coverage'                             → 'extraterritorial_context' [R]
+Limited:        'confidential-settlement-restriction'                   → 'settlement_restriction_context'        + 'settlement_restriction_scope'[R]
+Available:      'individual-liability'                                  → 'individual_liability_context'          + 'individual_liability_scopes'[R]
+Recognized:     'successor-liability'                                   → 'successor_liability_context'[R]
+Applies:        'extraterritorial-coverage'                             → 'extraterritorial_context'[R]
 
-// ── Without Context (no tab) ─────────────────────────────────────────────────
-Applies:        'statutory-nexus-diverges-from-common-law'              — (no companion needed)
+// ── Without Context (no tab) ─────────────────────────────────────────────────────────────────────────
 Present:        'catch-all-protection'                                  — (no companion needed)
-Sufficient:     'internal-only-disclosure-sufficient' [P]               — (no companion needed)
+Sufficient:     'internal-only-disclosure-sufficient'[P]                — (no companion needed)
                    * 'internal-disclosure' in 'process_types'
                    *  any child-slug of 'internal' in 'disclosure_targets'
 Available:      'trade-secret-immunity-available'                       — (no companion needed)
 Recognized:     'continuing-violation-doctrine'                         — (no companion needed)
 Recognized:     'prospective-whistleblower-protection'                  — (no companion needed)
-Waived:         'blanket-sovereign-immunity-waived' [E+]                — (no companion needed)
+Waived:         'blanket-sovereign-immunity-waived'[E+]                 — (no companion needed)
                    * 'sovereign-immunity-status'
-Permitted:      'class-action-permitted'                                — (no companion needed)
+Permitted:      'class-action-permitted'[E+]                            — (no companion needed)
+                   * 'class-action-waiver'
 Recognized:     'official-duties-carveout'                              — (no companion needed)
 
 ```

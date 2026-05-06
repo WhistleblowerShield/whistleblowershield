@@ -57,9 +57,9 @@ required. Mark the slug with `[R]` in the [Slug-to-Companion Map] in the main sp
 avoid using field negating choices. Prefer empty fields that are not required, where logical.
 
 Avoid including ambiguous choice values. Always prefer `see-context` (or `has-details` when necessary) where data
-may reasonably be 'unclear', 'mixed' or 'varies'. If the possible data can genuinely be classified as 'mixed' or
-'varies' and not does require further nuance, 'mixed'or 'varies' may be used; 'unclear' is simply unacceptable.
-Annotate use with inline comments.
+may reasonably be 'other', 'unclear', 'mixed' or 'varies'. If the possible data can genuinely be classified as
+'mixed' or 'varies' and not does require further nuance, 'mixed' or 'varies' may be used; 'unclear' and 'other'
+are simply unacceptable. Annotate use of begrudgingly-permissible choices with inline comments.
 
 ---
 
@@ -103,27 +103,28 @@ for validation, filtering, and editor guidance.
 ### Symbol Legend
 
 The breadcrumb tables below use these markers:
-- `[I]` — values in same-field can create invalid combinations.
-- `[X]` — mutually exclusive values.
-- `[U]` — umbrella-only value excludes granular and contradictory values.
-- `[D]` — value may duplicate a concept represented by another field or value.
-- `[R]` — value requires a value in another field.
-- `[E]` — value excludes another field or or field value.
-- `[C]` — *reserved for* value has cross-tab cross-field conditions.
-- `[N]` — *reserved for* negative-exclusionary value excludes all affirmative values
 
-### Potential Invalid Multi-Value Combos
+For Same-Field:
+- `[I]` — multi-value fields where values create invalid combinations.
+  - `[X]` — mutually exclusive values.
+  - `[U]` — umbrella-only value excludes granular and contradictory values.
+  - `[N]` — *reserved for* negation value excludes all affirmative values.
 
-`[I]` — List of multi value fields that can have same-field invalid combinations:
-`[X]` — Denotes specific conflict
-`[U]` — Denotes umbrella-only value
+For Cross-Field:
+- `[D]` — *reserved for* value may duplicate a concept represented by cross-field value.
+- `[R]` — value requires a value cross-field.
+- `[E]` — value excludes a value cross-field.
 
-- Reviewed multi-value fields with no currently defined same-field conflict are intentionally omitted.
-- `legal_recognitions`
-    * `[X]` `all-plaintiff-waivers-void`        excludes `civil-action-waiver`, `contractual-waiver`,
-                                                         `collateral-claims-waiver`, `class-action-waiver`
-    * `[X]` `blanket-sovereign-immunity-waived` excludes `sovereign-immunity-status`
-    * `[X]` `class-action-permitted`            excludes `class-action-waiver`
+For Cross-Tab Cross-Field:
+- `[C]` — value has cross-tab cross-field conditions.
+
+### Invalid Multi-Value Combos
+
+`[I]` — List of multi-value fields where values create invalid combinations:
+— `[X]` Denotes mutually exclusive values
+— `[U]` Denotes umbrella-only value
+— `[N]` Denotes negation value (currently none)
+
 - `burden_shifting_frameworks`       — `[X]` `mixed-motive`, `but-for`
 - `protected_classes`                — `[U]` `all-employees-only`
 - `employment_sectors`               — `[U]` `all-sectors-only`
@@ -131,51 +132,97 @@ The breadcrumb tables below use these markers:
 - `individual_liability_scopes`      — `[U]` `any-individual-only`
 - `anti_slapp_protection_scopes`     — `[U]` `full-procedural-only`
 
-### Potential Duplicate Cross-Field Concepts
-
-`[D]` — List of values that may duplicate a concept represented value in another field:
-- `legal_recognitions`
-    * `pre-filing-notice` → `process_types` — `pre-suit-notice`
+Reviewed multi-value fields with no currently defined same-field conflict are intentionally omitted.
 
 ### Cross-Field Required Values
 
-`[R]` — List of field values that require a value in another field:
+`[R]` — Fields with values that require a value:
+- (Processes & Remedies Tab)
+- `remedy_caps.remedy_cap`
+    * `punitive`     → `remedies` — `punitive-damages`
+    * `compensatory` → `remedies` — `compensatory-damages`
+
+### Cross-Tab Required Values
+
+`[R][C]` — Fields with values that require a value:
+- (Classifications Tab) → (Processes & Remedies Tab)
+- `protected_classes`
+    * `qui-tam-relator` → `process_types` — `qui-tam-process`
+- (Processes & Remedies Tab) → (Classifications Tab)
 - `process_types`
-    * `qui-tam` → `legal_recognitions` — `qui-tam-action`
+    * `qui-tam-process` → `legal_recognitions` — `qui-tam-action`
     * `civil-lawsuit` → `legal_recognitions` — `private-right-of-action`
-- `sol_triggers`
-    * `constructive-discharge-accrual` → `adverse_actions` — `constructive-discharge`
 - `remedies`
     * `bounty-qui-tam-award` → `legal_recognitions` — `qui-tam-action`
-- `remedy_caps.remedy_cap`
-    * `punitive` → `remedies` — `punitive-damages`
-    * `compensatory` → `remedies` — `compensatory-damages`
-- `protected_classes`
-    * `qui-tam-relator` → `process_types` — `qui-tam`
+- (Statute of Limitations & Thresholds Tab) → (Retaliation Tab)
+- `sol_triggers`
+    * `constructive-discharge-accrual` → `adverse_actions` — `constructive-discharge`
 
 ### Cross-Field Exclusions
 
-`[E]` — List of values that exclude a value in another field:
-- `legal_recognitions`
-    * `statutory-preclusion` → excludes ordinary process/remedy pathway fields when claim is fully precluded
-    * `no-retaliatory-evidence` → excludes evidence-use fields that treat retaliatory evidence as available
-- `process_pathway_scope`
-    * `direct-court` → excludes `exhaustion-required` in `legal_recognitions`
+`[E]` — Fields with values that exclude a value:
+- (Retaliation Tab)
+- `adverse_action_scope`
+    * `termination-only` → excludes `demotion` AND `suspension` AND `disciplinary-action` AND `transfer`
+                                AND `schedule-change` AND `benefit-denial` AND `benefit-clawback`
+                                AND `pay-reduction` AND `harassment` AND `hostile-work-environment`
+                                AND `workplace-isolation` AND `post-employment-retaliation` AND `blacklisting`
+                                AND `negative-reference` AND `security-clearance-action` AND `contract-non-renewal`
+                                AND `professional-license-action` AND `privilege-revocation`
+                                AND `immigration-threat` AND `anticipatory-retaliation` AND `threatened-retaliation`
+                                AND `retaliatory-investigation` AND `retaliatory-litigation`
+                                AND `retaliatory-discovery` in `adverse_actions`
+─── **For the Record** ───────────────────────────────────────────────────────────────────────────────────────────
+- `adverse_action_scope`
+    * `termination-only` → allows `termination` AND `constructive-discharge`
+                              AND `has-details` in `adverse_actions`
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────—
+- (Waiver & Scope Tab)
 - `sovereign_immunity_status`
     * `not-waived` → excludes `sovereign_immunity_waiver_class`
 
+### Cross-Tab Excluded Values
+
+`[E][C]` — Fields with values that exclude a value:
+- (Processes & Remedies Tab) → (Classifications Tab)
+- `process_pathway_scope`
+    * `direct-court` → excludes `exhaustion-required` in `legal_recognitions`
+
 ### Special Cases
 
-List of special case:
+List of special cases:
+- (Classifications Tab)
+- `legal_recognitions`
+    * `statutory-preclusion` → excludes ordinary process/remedy pathway fields when claim is fully precluded
+    * `no-retaliatory-evidence` → excludes evidence-use fields that treat retaliatory evidence as available
 - `protected_classes` and `excluded_classes`: slug-to-slug exclusion.
     * Block save with hook. Requires editor resolution.
+
+- (Classifications Tab — Precedent Records Only)
 - `scope`: enforce precedent consistency.
     * `favorable` conflicts with `suppressed_taxonomies` is non-empty.
     * `adverse` conflicts with `extended_taxonomies` is non-empty.
     * `neutral` conflicts with both `extended_taxonomies` and `suppressed_taxonomies` when non-empty.
-- `has_fee_shifting_phases`: auto-set true, when `fee_shifting_standard` is `none-american-rule`. Flag for
-   editorial review with note, that `none-american-rule` as the `fee_shifting_standard` requires at least one
-   `fee_shifting_phases.phase` as an exception to `none-american-rule` or remove the recognition slug.
+
+- (Retaliation Tab)    
+- `adverse_action_scope`
+    * `material-adverse` → excludes `anticipatory-retaliation` AND `threatened-retaliation` in `adverse_actions`
+                           OVERRIDE: the matching `*_context` field is 'non-empty' with specific context.
+─── **OVERRIDE: Specific Context Defined** ───────────────────────────────────────────────────────────────────────
+*NOTE:* Editors are responsible for verifying the context accurately explains why the threatened or anticipatory
+act qualifies as `material-adverse`. The hook can only confirm the context field is 'non-empty'.
+
+- `adverse_action_scope`
+    * `material-adverse` + `anticipatory_retaliation_context` detailing how it qualifies as `material-adverse`
+                  allows → `anticipatory-retaliation`
+    * `material-adverse` + `threatened_retaliation_context`   detailing how it qualifies as `material-adverse`
+                  allows → `threatened-retaliation`
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────—
+
+- (Processes & Remedies Tab)
+- `has_fee_shifting_phases`: auto-set true when `fee_shifting_standard` is `none-american-rule`. Flag for
+   editorial review with note that `none-american-rule` as the `fee_shifting_standard` requires at least one
+   `fee_shifting_phases.phase` as an exception to `none-american-rule`, or remove the recognition slug.
 
 ---
 
@@ -278,7 +325,7 @@ fall-through — so callers can wire field names into the helper rather than re-
 
 Use this pattern for merged relationship fields such as `_related_agencies`, `_precedent_ids`, and `_parent_ids`.
 The same shape works for any merged field — change only the source and target field names.
-Note: Most merged arrays are hidden; the example is of a hidden target field denoted by leading underscore.
+*NOTE:* Most merged arrays are hidden; the example is of a hidden target field denoted by leading underscore.
 
 ```php
 function ws_merge_related_agencies(int $post_id): void {
@@ -453,7 +500,7 @@ declared near the field definition. Keep one declaration per field so the rule t
 
 ### Validate Repeater-Row Sub-Field Exclusion
 
-Note: Repeater-Row sub-fields should never be multi-select, use additional rows to document multi-values.
+*NOTE:* Repeater-Row sub-fields should never be multi-select, use additional rows to document multi-values.
 `malicious_reporting_sanctions.sanction_penalty` was never meant to be multi-select.
 <!-- Use this pattern when sub-field values must not co-occur within a single repeater row, such as `felony` and
 `misdemeanor` in `malicious_reporting_sanctions.sanction_penalty`. The rule is row-scoped — the same two values

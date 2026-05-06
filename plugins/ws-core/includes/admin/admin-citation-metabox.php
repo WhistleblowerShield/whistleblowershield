@@ -30,7 +30,7 @@
  *    pre-assigned (via tax_input URL parameter, handled by WordPress core).
  * 6. After saving, the editor closes the tab and refreshes the statute screen.
  *
- * NOTE: The button is disabled (with tooltip) on auto-draft statutes because
+ * *NOTE:* The button is disabled (with tooltip) on auto-draft statutes because
  * the statute_id must reference a saved post to be meaningful.
  *
  * @package    WhistleblowerShield

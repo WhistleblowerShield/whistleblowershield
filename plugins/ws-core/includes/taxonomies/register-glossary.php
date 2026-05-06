@@ -592,7 +592,7 @@ function ws_seed_glossary_taxonomy() {
             'desc'    => 'A person who reports illegal activity, fraud, safety violations, or other wrongdoing — typically by their employer or within their organization — to someone in a position to act on it.',
             'aliases' => 'whistle-blower|whistle blower',
         ],
-        'qui-tam' => [
+        'qui-tam-process' => [
             'name'    => 'Qui Tam',
             'desc'    => 'A type of lawsuit where a private citizen reports fraud against the government and — if the case succeeds — receives a percentage of what the government recovers. Filed under the False Claims Act.',
             'aliases' => 'qui tam action|qui tam lawsuit|qui tam suit',

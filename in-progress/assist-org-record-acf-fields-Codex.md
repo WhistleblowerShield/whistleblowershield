@@ -543,7 +543,7 @@ How deep the help goes.
 - `unclear`
 - `has-details`
 
-Note: this draft currently models service depth as a select to avoid adding a taxonomy before the field proves useful.
+*NOTE:* this draft currently models service depth as a select to avoid adding a taxonomy before the field proves useful.
 
 ### `ws_aorg_service_exclusion`
 

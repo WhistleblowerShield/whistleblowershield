@@ -24,7 +24,7 @@
  * 5. After saving the new construction, the editor closes the tab and
  *    refreshes the statute screen to see the updated list.
  *
- * NOTE: The button is disabled (with tooltip) on auto-draft statutes because
+ * *NOTE:* The button is disabled (with tooltip) on auto-draft statutes because
  * the statute_id must reference a saved post to be meaningful.
  *
  * @package    WhistleblowerShield

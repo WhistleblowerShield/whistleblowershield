@@ -206,7 +206,7 @@ All plugin functions carry the `ws_` prefix. No exceptions.
    Meta key infixes, CPT slugs, and taxonomy slugs are always singular:
    `ws_aorg_*` not `ws_aorgs_*`, `ws_agency_*` not `ws_agencies_*`.
 7. Data-set naming: Meta names (arrays) with multiple values are always plural;
-   meta names with single value (strings) are always singular.
+   meta names with single-value (strings) are always singular.
 8. Cache meta names (where not constants) always end with underscore.
 9. Global, Hidden and Internal meta names always begin with underscore.
 

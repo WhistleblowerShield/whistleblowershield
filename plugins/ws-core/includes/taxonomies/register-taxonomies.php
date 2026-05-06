@@ -117,18 +117,18 @@ $_ws_taxonomy_registry = [
         'legal_prompt'     => '',
         'assist_prompt'    => '',
         'terms'            => [
-            'pre-suit-notice'          => 'Pre-Suit Notice',
-            'administrative-complaint' => 'Administrative Complaint',
-            'civil-lawsuit'            => 'Civil Lawsuit',
-            'qui-tam'                  => 'Qui Tam (False Claims)',
-            'internal-disclosure'      => 'Internal Disclosure',
-            'regulatory-tip'           => 'Regulatory Tip',
-            'criminal-referral'        => 'Criminal Referral',
-            'state-agency-complaint'   => 'State Agency Complaint',
-            'congressional-disclosure' => 'Congressional Disclosure',
-            'representative-action'    => 'Representative Action',
-            'arbitration-compelled'    => 'Arbitration Compelled',
-            'hybrid-admin-civil-path'  => 'Hybrid Admin → Civil Pathway',
+            'pre-filing-notice-process'  => 'Pre-Filing Notice Process',
+            'administrative-complaint'   => 'Administrative Complaint',
+            'civil-lawsuit'              => 'Civil Lawsuit',
+            'qui-tam-process'            => 'Qui Tam (False Claims)',
+            'internal-disclosure'        => 'Internal Disclosure',
+            'regulatory-tip'             => 'Regulatory Tip',
+            'criminal-referral'          => 'Criminal Referral',
+            'state-agency-complaint'     => 'State Agency Complaint',
+            'congressional-disclosure'   => 'Congressional Disclosure',
+            'representative-action'      => 'Representative Action',
+            'arbitration-compelled'      => 'Arbitration Compelled',
+            'hybrid-admin-civil-path'    => 'Hybrid Admin → Civil Pathway',
         ]
     ],
 
@@ -759,9 +759,9 @@ $_ws_taxonomy_registry = [
  */
     'ws_legal_recognition'  => [
         'cpts'                  => ['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction'],
-        'plural'                                    => 'Legal Recognitions',
-        'singular'                                  => 'Legal Recognition',
-        'seed_version'                              => '1.0.0',
+        'plural'                => 'Legal Recognitions',
+        'singular'              => 'Legal Recognition',
+        'seed_version'          => '1.0.0',
         'record'                => [],
         'terms'                 => [
             // Identity
@@ -784,7 +784,7 @@ $_ws_taxonomy_registry = [
             'cba-grievance-preemption'                  => 'CBA Grievance Preemption Applies',
             'amended-claim'                             => 'Amended Claim / Relation Back Available',
             'exhaustion-required'                       => 'Exhaustion Required',
-            'pre-filing-notice'                         => 'Pre-Filing Notice Required',
+            'pre-filing-notice-required'                => 'Pre-Filing Notice Required',
             'statutory-preclusion'                      => 'Statutory Preclusion Applies',
             'employer-threshold-specified'              => 'Employer Threshold Specified',
             'cure-period-specified'                     => 'Cure Period Specified',
@@ -809,14 +809,14 @@ $_ws_taxonomy_registry = [
             'burden-shifting-framework'                 => 'Burden Shifting Framework Specified',
             'same-decision-defense-standard'            => 'Same-Decision Defense Standard Specified',
             'causation-dual-standard'                   => 'Causation Dual Standard Applies',
-            'employer-knowledge'                        => 'Employer Knowledge Element Required',
+            'employer-knowledge-required'               => 'Employer Knowledge Element Required',
             'temporal-presumption-recognized'           => 'Temporal Presumption Recognized',
             'temporal-proximity-sufficient'             => 'Temporal Proximity Sufficient',
             // Rewards
             'reward-available'                          => 'Reward Available',
             'qui-tam-action'                            => 'Qui Tam Action Available',
             // Waiver & Scope
-            'all-plaintiff-waivers-void'                 => 'All Waivers Unenforceable',
+            'all-plaintiff-waivers-void'                => 'All Waivers Unenforceable',
             'civil-action-waiver'                       => 'Civil Action Waiver Enforceable',
             'contractual-waiver'                        => 'Contractual Waiver Enforceable',
             'collateral-claims-waiver'                  => 'Collateral Claims Waiver Enforceable',
@@ -834,7 +834,7 @@ $_ws_taxonomy_registry = [
             'successor-liability'                       => 'Successor Employer Liability Recognized',
             'extraterritorial-coverage'                 => 'Extraterritorial Coverage Applies',
             // Without Context
-            'statutory-nexus-diverges-from-common-law'  => 'Statutory Nexus Override Applies',
+            'statutory-nexus-controls'                  => 'Statutory Nexus Controls',
             'catch-all-protection'                      => 'Catch-All Protection Clause Present',
             'internal-only-disclosure-sufficient'       => 'Internal-Only Disclosure Sufficient',
             'trade-secret-immunity-available'           => 'Trade Secret Immunity Available',
