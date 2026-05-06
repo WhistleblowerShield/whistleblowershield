@@ -2,7 +2,7 @@
 
 This document captures hook requirements for the legal-record ACF model. The field spec identifies *where* a hook
 is needed; this doc explains the shared behavior, validation rules, and known hook backlog. See the [Hook Rules]
-section of `legal-record-acf-fields-v2.5.md` for the high-level "when to write a hook" rules.
+section of `legal-record-acf-fields-v2.X.md` for the high-level "when to write a hook" rules.
 
 ---
 
@@ -28,11 +28,11 @@ mark them twice as `[+][R]`.
 
 ### Details, Sentinels, and Companions
 
-Avoid using `has-details` (defined in the main spec) when the selected value already lives inside a triggered
-cluster rooted to a `*_context` field; use `see-context`. `see-context` is a sentinel used in cases where an
-already-active `*_context` field exists, as is the case with most clusters. The sentinel is essentially editorial
-guidance to use the companion field for freetext nuance regarding the specified trigger field, or the cluster as a
-whole.
+Except where reasonably needed, avoid using `has-details` (defined in the main spec) when the selected value
+already lives inside a triggered cluster rooted to a `*_context` field; use `see-context`. `see-context` is a
+sentinel used in cases where an already-active `*_context` field exists, as is the case with most clusters. The
+sentinel is essentially editorial guidance to use the companion field for freetext nuance regarding the specified
+trigger field, or the cluster as a whole.
 
 ### Requiredness
 
@@ -206,15 +206,15 @@ List of special cases:
 - (Retaliation Tab)    
 - `adverse_action_scope`
     * `material-adverse` → excludes `anticipatory-retaliation` AND `threatened-retaliation` in `adverse_actions`
-                           OVERRIDE: the matching `*_context` field is 'non-empty' with specific context.
+                           OVERRIDE: the matching `*_gloss` field is 'non-empty' with specific context.
 ─── **OVERRIDE: Specific Context Defined** ───────────────────────────────────────────────────────────────────────
-*NOTE:* Editors are responsible for verifying the context accurately explains why the threatened or anticipatory
-act qualifies as `material-adverse`. The hook can only confirm the context field is 'non-empty'.
+*NOTE:* Editors are responsible for verifying the gloss accurately explains why the threatened or anticipatory
+act qualifies as `material-adverse`. The hook can only confirm the gloss field is 'non-empty'.
 
 - `adverse_action_scope`
-    * `material-adverse` + `anticipatory_retaliation_context` detailing how it qualifies as `material-adverse`
+    * `material-adverse` + `anticipatory_retaliation_gloss` detailing how it qualifies as `material-adverse`
                   allows → `anticipatory-retaliation`
-    * `material-adverse` + `threatened_retaliation_context`   detailing how it qualifies as `material-adverse`
+    * `material-adverse` + `threatened_retaliation_gloss`     detailing how it qualifies as `material-adverse`
                   allows → `threatened-retaliation`
 ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────—
 
@@ -245,11 +245,15 @@ triggered cluster; a structured sister, when present, will usually be required `
 preclude `*_context` from being required as well.
 
 **Umbrella, sentinel, and none values.** Umbrella hooks target values ending in `-only` — when a `-only` value is
-present, flag granular or excluded values in the same field. Sentinels (`has-details`, `see-details`,
-`see-context`) remain valid choices; it allows the companion to carry nuance regarding the umbrella value when
-necessary. Blanket `none`/`no-*` values are valid only in required fields, where an empty field is not allowed.
-They act as umbrella values and exclude affirmative choices in the same field when present. No blanket fields are
-currently in use.
+present, flag granular or excluded values in the same field. Sentinels (`has-details` and `see-context`) remain
+valid choices; they allows the companion to carry nuance regarding the umbrella value when necessary.
+
+*NOTE:* Blanket negation values are not currently in use in any field; values `none`/`none-*`/`no-*` are reserved
+for future use.
+Blanket `none`/`none-*`/`no-*` values are valid only in required fields where an empty field is not logical. They
+act as umbrella values and exclude all affirmative choices in the same field when present.
+*EXCEPTION:* The value `none-american-rule` is valid in `fee_shifting_standard`; it is an actual legal term, not an
+implemented sentinel.
 
 **Exclusion and cross-field hooks.** Exclusion hooks should flag all fields in the excluded cluster — context,
 sisters, details, and chained downstream conditionals. Hooks must identify the required-empty field or fields and

@@ -213,8 +213,8 @@ Returns all fields from the statute ACF group: `official_name`,
 `url_is_pdf`, `last_reviewed`, `ref_materials`, plus `plain`,
 `verify`, and `author` sub-arrays.
 
-*NOTE:* Only returns published records with `attach_flag = true`,
-sorted by `ws_display_order ASC`. Unflagged statutes are not returned
+*NOTE:* Only returns published records with `*_has_attach_flag` is true,
+sorted by `*_display_order` ASC. Unflagged statutes are not returned
 by this function — they are accessible via their own archive.
 
 #### `ws_get_jx_citation_data( $jx_term_id )`
