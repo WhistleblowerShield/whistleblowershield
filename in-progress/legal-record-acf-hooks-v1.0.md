@@ -19,7 +19,8 @@ authoritative for everything else this doc references.
 ## Precedent Taxonomy Mapping
 
 `extended_taxonomies` and `suppressed_taxonomies` use filtered taxonomy-term choices. `taxonomy` choices come
-from the allowlist of legal-record taxonomies that precedent records may realistically extend or suppress (see
+from the allowlist of legal-record taxonomies that precedent records **are capable of** realistically extending or
+suppress (see
 the eligible-taxonomy allowlist in the field spec). `term` choices are filtered by the selected `taxonomy` in the
 same repeater row.
 
@@ -39,7 +40,8 @@ attached posts only. `local_agencies` filters to jurisdiction-applicable, non-fe
 Editor instructions on `primary_agency`: when empty, show "Attach one ws-agency to local or federal first"; when
 non-empty, show "Override primary_agency with any currently attached local or federal agency."
 
-Future agency filtering may intersect `ws_process_type`, `ws_disclosure_target`, and `ws_protected_disclosure`
+Future agency filtering **are expected to** intersect `ws_process_type`, `ws_disclosure_target`, and
+`ws_protected_disclosure`
 taxonomies.
 
 ---
@@ -56,7 +58,8 @@ directions when populating `_parent_ids` and `_precedent_ids`.
 
 The `ws_legal_recognition` taxonomy is the recognition taxonomy for legal records. Slugs in this taxonomy are
 surfaced through the `legal_recognitions` field on every legal-record CPT and serve as bool-state values for
-doctrines or operational states. Each slug presence answers a yes/no question about the record. Slugs may stand
+doctrines or operational states. Each slug presence answers a yes/no question about the record. Slugs **are
+authorized to** stand
 alone (no companion needed) or anchor a cluster of structured fields.
 
 ### Recognition Status Vocabulary
@@ -67,14 +70,14 @@ Slugs in this map carry a single-word status prefix that reads as "the doctrine 
 - **Recognized** — judicial doctrine courts have affirmatively acknowledged
 - **Required** — mandatory obligation; non-compliance typically defeats the claim
 - **Applies** — statutory condition that operates by force of law when triggered
-- **Available** — mechanism or remedy that may be invoked but is not automatic
+- **Available** — mechanism or remedy that **is available to** be invoked but is not automatic
 - **Permitted** — right expressly allowed; cannot be waived or procedurally blocked
 - **Barred** — doctrine, action, or evidence explicitly excluded by law or rule
 - **Prohibited** — conduct expressly forbidden; violation triggers statutory liability
 - **Present** — clause or provision exists without implying judicial affirmation
 - **Sufficient** — condition independently meets the threshold for protection to attach
 - **Limited** — legal effect, scope, or enforceability is narrowed by statute or rule
-- **Enforceable** — waiver, agreement, or procedural limitation may be given legal effect
+- **Enforceable** — waiver, agreement, or procedural limitation **is capable of being** given legal effect
 - **Void** — legal effect, scope, or enforceability is no longer relevant
 - **Waived** — immunity, defense, or objection has been relinquished or abrogated
 
@@ -82,9 +85,10 @@ Slugs in this map carry a single-word status prefix that reads as "the doctrine 
 
 Conditional companion fields (preferably `*_context`) noted with ` → ` are revealed when the corresponding slug
 is present in `legal_recognitions`. Sister fields noted with ` + ` silently inherit the conditional from the
-triggered sibling and are revealed only with the sibling. Sister fields may have additional conditions before
+triggered sibling and are revealed only with the sibling. Sister fields **are permitted to** have additional
+conditions before
 they are revealed; those conditions are documented after the sibling using `AND`, `OR`, or `NOT`. Sister fields
-may appear before or after their sibling. The freetext sibling is usually last.
+**are permitted to** appear before or after their sibling. The freetext sibling **is almost always** last.
 
 Cluster requiredness rules, sentinel rules, and validation philosophy live in `ws-acf-hook-guidance-v1.0.md`.
 This map declares only the trigger-to-cluster relationships and the markers that drive cross-field hooks.
@@ -93,7 +97,7 @@ This map declares only the trigger-to-cluster relationships and the markers that
 
 - `[R]`   — Required field for the cluster. Hook blocks save when slug is present and field is empty.
 - `[+]`   — Field exists in the cluster but is revealed only when an additional documented condition is met. Inline
-            field definitions document the condition. May combine with `[R]` as `[+][R]`.
+            field definitions document the condition. **Is permitted to** combine with `[R]` as `[+][R]`.
 - `[E]`   — Slug has cross-field exclusions documented in the cross-field exclusions table below.
 - `[E+]`  — Slug excludes other slugs in `legal_recognitions` (specific exclusions listed under the slug).
 - `[E-]`  — Slug is excluded by another slug in `legal_recognitions` (specific blocking slug listed under the
@@ -134,8 +138,8 @@ Available:    'amended-claim'                                         → 'amend
 Required:     'exhaustion-required'                                   → 'exhaustion_required_context'           + 'exhaustion_required_scope'[R]
 Required:     'pre-filing-notice-required'[P]                         → 'filing_notice_required_context'        + 'filing_notice_required_targets'[R]   + 'filing_notice_required_value'
                  * 'pre-filing-notice-process' in 'process_types'
-Specified:    'employer-threshold-specified'                          → 'employer_threshold_context'            + 'employer_threshold_compare'[R]       + 'employer_threshold_value'[R]         + 'employer_threshold_model'[R]
-Specified:    'cure-period-specified'                                 → 'cure_period_context'                   + 'cure_period_value'[R]
+Specified:    'employer-threshold-specified'                          → 'employer_threshold_context'            + 'employer_threshold_compare'[R]       + 'employer_threshold_value'            + 'employer_threshold_model'[R]
+Specified:    'cure-period-specified'                                 → 'cure_period_context'[R]                + 'cure_period_value'
 
 // ── Statute of Limitations & Thresholds Tab (Common Law Records Only) ────────────────────────────────
 Applies:      'statutory-preclusion'[E]                               → 'statutory_preclusion_context'[R]
@@ -163,14 +167,14 @@ Specified:    'fee-shifting-standard'[P]                              → 'fee_s
                  * 'attorney-fees' OR 'attorney-fees-admin' in 'remedies'
 Available:    'equitable-interest-award'[P]                           → 'interest_provision_context'            + 'interest_provision_scope'[R]
                  * 'interest-on-backpay' in 'remedies'
-Required:     'mitigation-required'                                   → 'mitigation_required_context'           + 'mitigation_required_scopes'[R]
+Required:     'mitigation-required'                                   → 'mitigation_required_context'           + 'mitigation_required_sources'[R]
 Available:    'mitigation-exception'[P]                               → 'mitigation_exception_context'[R]
                  * 'mitigation-required'
-Available:    'preliminary-reinstatement'[P]                          → 'preliminary_reinstatement_context'     + 'reinstatement_standard'[R]           + 'preliminary_reinstatement_scope'[R]
+Available:    'preliminary-reinstatement'[P]                          → 'preliminary_reinstatement_context'     + 'preliminary_reinstatement_rule'[R]           + 'preliminary_reinstatement_scope'[R]
                  * 'reinstatement' OR 'interim-reinstatement' in 'remedies'
 
 // ── Processes & Remedies Tab (Substantive Records Only) ──────────────────────────────────────────────
-Specified:    'civil-review-standard'                                 → 'review_standard_context'               + 'review_standard_scope'[R]
+Specified:    'civil-review-standard'                                 → 'review_standard_context'               + 'review_standard'[R]
 
 // ── Burden of Proof Tab ──────────────────────────────────────────────────────────────────────────────
 Specified:    'burden-shifting-framework'                             → 'burden_shifting_context'               + 'burden_shifting_frameworks'[R]
@@ -179,10 +183,14 @@ Specified:    'same-decision-defense-standard'[P]                     → 'same_
 Applies:      'causation-dual-standard'[P]                            → 'causation_dual_standard_context'[R]
                  * 'causation_standard' is non-empty
 Required:     'employer-knowledge-required'                           → 'employer_knowledge_context'            + 'employer_knowledge_scopes'[R]
-Recognized:   'temporal-presumption-recognized'                       → 'temporal_presumption_context'          + 'presumption_window_value'[R]         + 'presumption_effect'[R]
+Recognized:   'temporal-presumption-recognized'                       → 'temporal_presumption_context'          + 'presumption_window_value'            + 'presumption_effect'[R]
+Sufficient:   'temporal-proximity-sufficient'                         → 'temporal_proximity_context'[R]         + 'temporal_proximity_value'
+
+// ── Burden of Proof Tab (Common Law Records Only) ────────────────────────────────────────────────────
+Applies:      'statutory-nexus-controls'                              → 'statutory_nexus_context'[R]
 
 // ── Reward Tab ───────────────────────────────────────────────────────────────────────────────────────
-Available:    'reward-available'                                      → 'reward_context'                        + 'reward_discretion_standard'[R]
+Available:    'reward-available'                                      → 'reward_context'                        + 'reward_discretion_scope'[R]
 Available:    'qui-tam-action'[P+]                                    → 'qui_tam_share_context'[R]              + 'qui_tam_government_share'            + 'qui_tam_relator_share'               + 'qui_tam_reduction_context'           + 'has_first_to_file_bar'               + 'has_public_disclosure_bar'
                  * 'qui-tam-process' in 'process_types'
                  * 'bounty-qui-tam-award' in 'remedies'
@@ -193,9 +201,9 @@ Void:         'all-plaintiff-waivers-void'[E+]                        → 'all_w
                  * 'contractual-waiver'
                  * 'collateral-claims-waiver'
                  * 'class-action-waiver'
-Enforceable:  'civil-action-waiver'[E-]                               → 'civil_action_waiver_context'           + 'civil_action_waiver_scope'[R]
+Enforceable:  'civil-action-waiver'[E-]                               → 'civil_action_waiver_context'           + 'civil_action_waiver_status'[R]
                  * 'all-plaintiff-waivers-void'
-Enforceable:  'contractual-waiver'[E-]                                → 'contractual_waiver_context'            + 'contractual_waiver_scope'[R]
+Enforceable:  'contractual-waiver'[E-]                                → 'contractual_waiver_context'            + 'contractual_waiver_status'[R]
                  * 'all-plaintiff-waivers-void'
 Enforceable:  'collateral-claims-waiver'[E-]                          → 'collateral_claims_waiver_context'[R]
                  * 'all-plaintiff-waivers-void'
@@ -210,7 +218,7 @@ Present:      'anti-gag-provision-present'                            → 'anti_
 Barred:       'no-retaliatory-evidence'[E]                            → 'no_retaliatory_evidence_context'[R]
 Available:    'stay-of-disciplinary-action'                           → 'stay_of_discipline_context'[R]
 Available:    'anti-slapp-protection'                                 → 'anti_slapp_protection_context'[R]      + 'anti_slapp_protection_scopes'[R]
-Available:    'discovery-protection'[P]                               → 'discovery_protection_context'[R]
+Available:    'discovery-protection'[P]                               → 'discovery_protection_context'[R]       + 'discovery_protection_scopes'[R]
                  * 'retaliatory-discovery' in 'adverse_actions'
 Limited:      'confidential-settlement-restriction'                   → 'settlement_restriction_context'        + 'settlement_restriction_scope'[R]
 Available:    'individual-liability'                                  → 'individual_liability_context'          + 'individual_liability_scopes'[R]
@@ -250,7 +258,7 @@ For Same-Field validation:
   - `[N]` — *reserved for* negation value excluding all affirmative values (none currently active).
 
 For Cross-Field validation:
-- `[D]` — *reserved for* values that may duplicate a concept represented in another field.
+- `[D]` — *reserved for* values that **might** duplicate a concept represented in another field.
 - `[R]` — value requires a value in another field.
 - `[E]` — value excludes a value in another field.
 
@@ -364,7 +372,8 @@ When the override applies:
 - `material-adverse` plus `threatened_retaliation_gloss` (detailing how the threatened act qualifies) → allows
   `threatened-retaliation`.
 
-The hook can only confirm the gloss field is non-empty. Editors are responsible for verifying that the gloss
+The hook **is only capable of confirming** the gloss field is non-empty. Editors are responsible for verifying that
+the gloss
 content actually justifies the override.
 
 ### Auto-Set Boolean
@@ -409,7 +418,8 @@ function ws_validate_cats_paw_extension_guard(int $post_id): void {
 ### Material Adverse Override Validation
 
 The `adverse_action_scope` value `material-adverse` excludes anticipatory and threatened retaliation by default;
-the exclusion can be overridden when a `*_gloss` field carries justification. Two glosses participate:
+the exclusion **is explicitly authorized to** be overridden when a `*_gloss` field carries justification. Two
+glosses participate:
 `anticipatory_retaliation_gloss` and `threatened_retaliation_gloss`. The hook checks that the relevant gloss is
 non-empty when the corresponding adverse-action slug is present alongside `material-adverse`.
 
@@ -473,8 +483,10 @@ Items deferred from the current review pass:
   accumulates.
 - `superseded-by-statute` recognition slug now has `superseded_by_statute_id`. Future hooks need to decide
   whether the ID field is required or merely recommended when the class is selected.
-- Inactive or non-existing fields should not trigger stale-value hook logic. Where a taxonomy slug suppresses an
-  entire cluster, hook validation should flag the controlling taxonomy conflict first and avoid pretending
+- Inactive or non-existing fields **must never** trigger stale-value hook logic. Where a taxonomy slug suppresses
+  an
+  entire cluster, hook validation **must unconditionally** flag the controlling taxonomy conflict first and avoid
+pretending
   hidden downstream sisters are independently meaningful.
 
 ---

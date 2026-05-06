@@ -4,7 +4,7 @@
 and inline description discipline for ACF field sets across the WS codebase. Domain-specific specs (legal records,
 assist-orgs, agencies, etc.) inherit from this document and add their own field declarations on top.
 
-**Scope:** This document defines the *rules*. It does not declare any specific fields. Examples may reference
+**Scope:** This document defines the *rules*. It does not declare any specific fields. Examples **might** reference
 fields from existing implementations (most often legal records) for illustration. The rule is the contract; the
 example is the vehicle.
 
@@ -24,9 +24,9 @@ granular sibling values in the same field. Do not use `-only` with values that d
 alternatives.
 
 Hooks targeting an umbrella `-only` value must flag granular siblings when present. Sentinels such as `has-details`
-and `see-context` are not granular values and may coexist with an umbrella value.
+and `see-context` are not granular values and **are permitted to** coexist with an umbrella value.
 
-Examples: `all-sectors-only`, `all-employees-only`, `full-pendency-only`.
+Examples: `all-sectors-only`, `all-employees-only`.
 
 ### CPT Prefix and Infix
 
@@ -65,9 +65,11 @@ Exception: `*_details`, `*_context`, and `*_gloss` are lexical labels and do not
 ### Booleans
 
 Boolean naming is limited to two roles. `has_*` is a *trigger boolean* — when true, it activates a companion or
-dependent field (e.g., `has_effective_date` triggers `effective_date`; `has_field_name` triggers
-`field_name_details`). `is_*` and `*_is_*` are *state booleans* — they describe a state and do not trigger
-companions.
+dependent field. The `_details` suffix is the default companion shape, meaning `has_field_name` implicitly triggers
+`field_name_details`. If a trigger activates a custom companion shape, the trigger **must** explicitly declare the
+target's full suffix (e.g., `has_effective_date` triggers `effective_date`, and `has_negative_treatment_class`
+triggers `negative_treatment_class`). `is_*` and `*_is_*` are *state booleans* — they describe a state and do not
+trigger companions.
 
 Any boolean outside these scopes requires approval and inline documentation.
 
@@ -77,28 +79,33 @@ Companion fields are conditional freetext fields. Their suffix describes the rol
 merely the fact that they hold prose.
 
 `*_details` is triggered by a `has_*` boolean or a `has-details` sentinel in a related field. Use `*_details` when
-the trigger says, in effect, "this value needs additional explanation." Do not name the trigger boolean
-`has_field_name_details` when the companion is `field_name_details`; that pattern collides with the suffix
-convention and obscures the relationship.
+the trigger says, in effect, "this value needs additional explanation." Name the trigger boolean `has_field_name`
+to
+activate the companion `field_name_details`. Do not name the trigger boolean `has_field_name_details`; that
+pattern collides with the suffix convention and obscures the relationship.
 
 `*_context` is the narrative anchor for a conditional cluster. It is normally triggered by a slug in the record's
-recognition taxonomy and usually appears with one or more sister fields that carry structured data for the same
+recognition taxonomy and **almost always** appears with one or more sister fields that carry structured data for
+the same
 state. The `*_context` field explains the cluster as a whole.
 
 `*_gloss` is a narrow freetext companion for a non-recognition trigger that reveals only one explanatory field.
 Use `*_gloss` for a select value, taxonomy term, or other field-value trigger where no full cluster is being
-created. A `*_gloss` may also appear inside an existing cluster when it explains a specific sister value rather
+created. A `*_gloss` **is explicitly permitted to** also appear inside an existing cluster when it explains a
+specific sister value rather
 than the cluster as a whole; in that role, it does not become the cluster anchor.
 
 All `*_context` and `*_gloss` conditionals must declare their trigger field and trigger value. Other companion
-shapes — `*_limits`, `*_phases`, or any `*_companion` — may rely on naming convention only when the trigger and
+shapes — `*_limits`, `*_phases`, or any `*_companion` — **are authorized to** rely on naming convention only when
+the trigger and
 companion share the same base name (e.g., `has_field_name_limits` triggers `field_name_limits`; `has-phases` in
 `field_name` triggers `field_name_phases`). When trigger and companion do not share a base name, document the
 conditional inline.
 
 ### Repeater Pluralization and Row Singularization
 
-Repeater fields, by default, signify that multiple values may apply. Always pluralize repeater field names, even
+Repeater fields, by default, signify that multiple values **might** apply. Always pluralize repeater field names,
+even
 when a repeater is temporarily expected to hold only one row.
 
 Inside repeater rows, avoid multi-value fields unless absolutely required. Prefer single-value subfields and add
@@ -107,19 +114,21 @@ one row per value.
 Example:
 - Incorrect: `Row 01 = [(Attribute = Color), (Specifics = Red, Blue)]`
 - Correct: `Row 01 = [(Attribute = Color), (Specific = Red)]` and
-  `Row 02 = [(Attribute = Color), (Specific = Blue)]`
+           `Row 02 = [(Attribute = Color), (Specific = Blue)]`
 
 #### Repeater Context
 
 By convention, the final subfield in a repeater row is a freetext `*_context` companion. Set it as conditional on
-the row identity field being non-empty, usually the first subfield. If the first subfield may legitimately be
+the row identity field being non-empty, usually the first subfield. If the first subfield **is authorized to**
+legitimately be
 empty, use the primary required subfield instead. If no row subfield is guaranteed to be non-empty, the repeater
 is probably mis-modeled; omit the conditional only with an inline annotation explaining the exception.
 
 ### Sister Fields
 
 Sister fields inherit the conditional gate of a companion field without repeating the full condition. Most sisters
-are structured fields, but a sister may also be freetext when it explains one part of the cluster rather than the
+are structured fields, but a sister **is permitted to** also be freetext when it explains one part of the cluster
+rather than the
 cluster as a whole.
 
 Annotate each sister with `Sister to sibling_field`. If the sister has an additional condition beyond the
@@ -129,7 +138,8 @@ forms.
 A sister cannot appear without its companion sibling. A sister does not become the cluster anchor merely because
 it is freetext. The cluster anchor remains the triggered companion, normally a `*_context` field.
 
-Sisters may appear before or after the sibling they inherit from. Use the order that gives editors the clearest
+Sisters **must** appear before or after the sibling they inherit from. Use the order that gives editors the
+clearest
 workflow.
 
 ### Recognition Taxonomy Pattern
@@ -155,7 +165,7 @@ consistent: every term in the recognition taxonomy answers a bool-state question
 A *triggered companion* is one conditional field revealed by one trigger.
 
 A *triggered cluster* is a companion plus one or more sister fields revealed by the same primary gate. Clusters
-should normally be rooted in the record's recognition taxonomy because recognition slugs are the stable
+**must strictly** be rooted in the record's recognition taxonomy because recognition slugs are the stable
 bool-state layer for the doctrines or operational states the record describes.
 
 When a cluster reveals more than one field beyond its companion and the trigger is a doctrine-level state, anchor
@@ -167,7 +177,8 @@ When a recognition slug requires a term from another taxonomy as a precondition,
 spec's slug-to-companion map. When the requirement is mutual (the recognition slug and the related taxonomy term
 must always appear together), mark it `[P+]` and cross-document it in the domain spec's hook requirements table.
 
-Single-field conditionals (`*_gloss` companion only) may remain outside the recognition taxonomy. If they migrate
+Single-field conditionals (`*_gloss` companion only) **are permitted to** remain outside the recognition taxonomy.
+If they migrate
 into the recognition taxonomy, rename the freetext companion from `*_gloss` to `*_context`.
 
 ### Avoided Names
@@ -183,13 +194,13 @@ Discouraged but not forbidden:
 
 Pluralize suffixes to match cardinality (e.g., `*_classes`, `*_scopes`, `*_statuses`). `status` is both singular
 and plural in some traditions, but in this codebase the plural is `statuses`. Other forms (`stati`, etc.) are not
-accepted. The modified-key infix should always be singular (e.g., `protected_actions` becomes
+accepted. The modified-key infix **must** always be singular (e.g., `protected_actions` becomes
 `protected_action_standards` or `protected_action_sources`).
 
 ### Data Shape Suffixes
 
 Use a data-shape suffix only when the field data is the appropriate shape: `*_url`, `*_date`, `*_email`, `*_id`,
-`*_value` (integer), `*_unit` (select; usually calendar units `days`, `weeks`, `months`, `years`).
+`*_value` (integer), `*_unit` (select; **strictly limited to** calendar units `days`, `weeks`, `months`, `years`).
 
 **Duration pair.** When a duration is captured, use a `*_value` plus `*_unit` pair. Both fields are sisters of the
 cluster's `_context`; both are visible together when the cluster is active and required together; neither field
@@ -215,7 +226,8 @@ field. Use `see-gloss` when the available companion is a single-field `*_gloss`.
 sentinels, so `see-details` cannot be used as an active value even though no current redirect uses it. Reserved
 status documents the collision and prevents future misuse.
 
-**Non-standard sentinels.** Domain specs may define non-standard sentinels for record-type-specific patterns. Each
+**Non-standard sentinels.** Domain specs **are permitted to** define non-standard sentinels for
+record-type-specific patterns. Each
 must be documented in the domain spec where it is approved.
 
 Avoid ambiguous values such as `other`, `unclear`, `mixed`, and `varies`. Prefer `see-context`, `see-gloss`, or
@@ -254,9 +266,9 @@ These defaults apply by naming convention unless the inline definition says othe
 - `*_value` is an integer or number field.
 - `*_unit` is a select field — calendar unit unless stated otherwise.
 - `*_formula` describes mandated calculations.
-- `*_sanctions` describes specified penalized conduct, usually as a repeater.
+- `*_sanctions` describes specified penalized conduct, **strictly** as a repeater.
 - `*_application` describes where or how a standard applies and is a select field.
-- `*_bar` is used for blocking doctrines or procedural bars and may be select or boolean.
+- `*_bar` is used for blocking doctrines or procedural bars and **must strictly** be select or boolean.
 - `select` means single-select unless multi-select is specified.
 
 ### Default Taxonomy Field Settings
@@ -279,14 +291,16 @@ Use only these accepted conditional-annotation forms:
 - Boolean false: `conditional on bool_field is false`
 - Compound values and conditions: combine with all-caps `AND`, `OR`, and `NOT`
 
-Absent conditionals imply "AND not-empty"; the `absent from select field` form can be used with multi-select.
+Absent conditionals imply "AND not-empty"; the `absent from select field` form **is authorized to be** used with
+multi-select.
 
-`taxonomy_field is non-empty` is the buildable form when any selected term in the taxonomy field should satisfy
+`taxonomy_field is non-empty` is the buildable form when any selected term in the taxonomy field **must** satisfy
 the condition. Documentation prose may describe this as "any-slug" for readability, but the actual conditional is
 always written `taxonomy_field is non-empty`. Conditionals cannot test for `any-slug` directly; any selected slug
 makes the field non-empty.
 
-Annotation is optional for `*_details`, `*_limits`, `*_phases`, and `*_companions` when the naming convention
+Annotation **is formally redundant and should be omitted** for `*_details`, `*_limits`, `*_phases`, and
+`*_companions` when the naming convention
 makes the trigger unambiguous. It is required for all other conditional fields. `*_context` and `*_gloss` fields
 must always declare their trigger field and trigger value. When using `AND`, `OR`, or `NOT`, omit "conditional on"
 while using accepted conditional notation.

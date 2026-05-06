@@ -333,12 +333,12 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
 - `fee_shifting_asymmetry_details`
 - `fee_shifting_standard_context`  — (conditional on `fee-shifting-standard` in `legal_recognitions`)
 - `remedies`                       — (taxonomy: `ws_remedy`)
-- `remedy_limits`                  — (conditional on `remedies` includes `has-limits`)
+- `remedy_limits`
 - `remedy_caps`                    — (Sister to `remedy_limits`; repeater:
        ├── `remedy_cap`                  [select: `emotional-distress`|`punitive`|`compensatory`|`aggregate`|
        │                                  `employer-size-tiered`|`see-context`],
        ├── `employer_tier`               [conditional on `remedy_cap` is `employer-size-tiered`],
-       ├── `cap_amount`,
+       ├── `cap_amount`                  [currency],
        ├── `applies_to`                  [select: `single-claim`|`per-plaintiff`|`per-incident`|
        │                                  `aggregate-action`|`see-context`],
        └── `cap_context`                 [conditional on `remedy_cap` is non-empty])
@@ -348,7 +348,7 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
                                       `statutory-daily-fine`|`up-to-double`|`up-to-treble`|`has-details`)
 - `remedy_liquidated_formula`      — (conditional on `remedy_liquidated_multiplier` is `statutory-formula`)
 - `remedy_liquidated_details`      — (conditional on `remedy_liquidated_multiplier` is `has-details`)
-- `mitigation_required_scopes`     — (Sister to `mitigation_required_context`; multi-select: `yes-statutory`|
+- `mitigation_required_sources`     — (Sister to `mitigation_required_context`; multi-select: `yes-statutory`|
                                       `yes-common-law`)
 - `mitigation_required_context`    — (conditional on `mitigation-required` in `legal_recognitions`)
 - `mitigation_exception_context`   — (conditional on `mitigation-required` in `legal_recognitions` AND
@@ -357,9 +357,9 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
                                       `pre-judgment-statutory`|`post-judgment`|`both`|`discretionary`|
                                       `see-context`)
 - `interest_provision_context`     — (conditional on `equitable-interest-award` in `legal_recognitions`)
-- `reinstatement_standard`         — (Sister to `preliminary_reinstatement_context`; select: `mandatory`|
+- `preliminary_reinstatement_rule`         — (Sister to `preliminary_reinstatement_context`; select: `mandatory`|
                                       `discretionary`|`has-details`)
-- `reinstatement_standard_details`
+- `preliminary_reinstatement_rule_details`
 - `preliminary_reinstatement_scope` — (Sister to `preliminary_reinstatement_context`; select: `admin-phase`|
                                       `full-pendency`|`see-context`)
 - `preliminary_reinstatement_context` — (conditional on `preliminary-reinstatement` in `legal_recognitions` AND
@@ -386,12 +386,12 @@ temporal presumption → detail overflow.
 - `causal_nexus_statutory_text`    — (Sister to `causation_standard_context`; captures verbatim statutory text
                                       distinct from `causation_standard_context`)
 - `causation_standard`             — (single-select taxonomy: `ws_causation_standard`)
-- `causation_application`          — (Sister to `causation_standard_context`; select: `liability`|
+- `causation_scope`          — (Sister to `causation_standard_context`; select: `liability`|
                                       `damages`|`both`|`see-context`)
-- `causation_application_context`  — (Sister to `causation_standard_context`)
+- `causation_scope_context`  — (Sister to `causation_standard_context`)
 - `causation_standard_context`     — (conditional on `causation_standard` is non-empty)
 - `causation_dual_standard_context` — (conditional on `causation-dual-standard` in `legal_recognitions` AND
-                                      `causation_standard` is non-empty)
+                                       `causation_standard` is non-empty)
 - `employer_knowledge_scopes`      — (Sister to `employer_knowledge_context`; multi-select:
                                       `actual-knowledge`|`constructive-knowledge`|`inferred-knowledge`|
                                       `imputed-knowledge`|`has-details`)
@@ -419,10 +419,10 @@ temporal presumption → detail overflow.
 
 Fields ordered: rewards → qui tam specifics.
 
-- `reward_discretion_standard`     — (Sister to `reward_context`; select: `mandatory`|`discretionary`|
+- `reward_discretion_scope`     — (Sister to `reward_context`; select: `mandatory`|`discretionary`|
                                       `presumptive`|`formula-based`|`has-details`)
-- `reward_discretion_formula`      — (conditional on `reward_discretion_standard` is `formula-based`)
-- `reward_discretion_details`      — (conditional on `reward_discretion_standard` is `has-details`)
+- `reward_discretion_formula`      — (conditional on `reward_discretion_scope` is `formula-based`)
+- `reward_discretion_details`      — (conditional on `reward_discretion_scope` is `has-details`)
 - `reward_context`                 — (conditional on `reward-available` in `legal_recognitions`)
 - `qui_tam_government_share`       — (Sister to `qui_tam_share_context`)
 - `qui_tam_relator_share`          — (Sister to `qui_tam_share_context`)
@@ -442,11 +442,11 @@ Fields ordered: rewards → qui tam specifics.
 Fields ordered: contractual → recognitions → immunity → defendants.
 
 - `all_waivers_blocked_context`    — (conditional on `all-plaintiff-waivers-void` in `legal_recognitions`)
-- `civil_action_waiver_scope`      — (Sister to `civil_action_waiver_context`; select: `prohibited`|
+- `civil_action_waiver_status`      — (Sister to `civil_action_waiver_context`; select: `prohibited`|
                                       `permitted-individual-only`|`permitted-collective`|`see-context`)
 - `civil_action_waiver_context`    — (conditional on `all-plaintiff-waivers-void` absent in
                                       `legal_recognitions` AND `civil-action-waiver` in `legal_recognitions`)
-- `contractual_waiver_scope`       — (Sister to `contractual_waiver_context`; select: `void`|`limited`|
+- `contractual_waiver_status`       — (Sister to `contractual_waiver_context`; select: `void`|`limited`|
                                       `enforceable`|`void-public-policy`|`void-as-to-whistleblowing`|
                                       `enforceable-with-exceptions`|`see-context`)
 - `contractual_waiver_context`     — (conditional on `all-plaintiff-waivers-void` absent in
@@ -455,6 +455,7 @@ Fields ordered: contractual → recognitions → immunity → defendants.
                                       `legal_recognitions` AND `collateral-claims-waiver` in
                                       `legal_recognitions`)
 - `class_action_waiver_context`    — (conditional on `all-plaintiff-waivers-void` absent in
+                                      `legal_recognitions` AND `class-action-permitted` absent in
                                       `legal_recognitions` AND `class-action-waiver` in `legal_recognitions`)
 - `proper_defendant_rules`         — (Sister to `proper_defendants_context`; repeater:
       ├── `defendant_class`              [select: `employer-entity`|`individual-supervisor`|`public-official`|
@@ -558,10 +559,10 @@ records:
 
 ##### Processes & Remedies Tab (insert after `jury_trial_context`)
 
-- `review_standard_scope`          — (Sister to `review_standard_context`; select: `de-novo`|
+- `review_standard`          — (Sister to `review_standard_context`; select: `de-novo`|
                                       `substantial-evidence`|`arbitrary-capricious`|`abuse-of-discretion`|
                                       `has-details`)
-- `review_standard_scope_details`
+- `review_standard_details`
 - `review_standard_context`        — (conditional on `civil-review-standard` in `legal_recognitions`)
 
 ##### Retaliation Tab (insert after `anticipatory_retaliation_gloss`)
@@ -631,7 +632,7 @@ decisions:
 - `class_details`
 - `status`                         — (select: `published`|`unpublished`|`memorandum`|`vacated`)
 - `binding_strength`               — (select: `binding`|`persuasive`|`mixed`|`distinguished`|`overruled`;
-                                      approved use of `mixed` where binding strength can truly vary; needs
+                                      approved use of `mixed` where binding strength **is capable of** truly varying; needs
                                       review with real-world data)
 - `court`                          — (select; filtered by jx)
 - `court_details`
@@ -689,9 +690,9 @@ Excluded: `ws_jurisdiction` (geographic, not classificatory); `ws_aorg_*`, `ws_l
 - `authority_sources`              — (multi-select: `constitutional`|`legislative`|`judicial`|`regulatory`|
                                       `executive`|`has-details`)
 - `authority_source_details`
-- `review_standard_scope`          — (select: `de-novo`|`substantial-evidence`|`arbitrary-capricious`|
+- `review_standard`          — (select: `de-novo`|`substantial-evidence`|`arbitrary-capricious`|
                                       `abuse-of-discretion`|`has-details`)
-- `review_standard_scope_details`
+- `review_standard_details`
 
 #### Hidden Fields
 
@@ -777,18 +778,22 @@ ingest schema mapping.
 
 The legal-record field set is the *destination* schema, not the *acquisition* schema. Researchers — including LLM
 research assistants — are not expected to find or report data in ACF-field shape. The pipeline is staged so each
-layer extracts what it can model cleanly and passes the rest forward as narrative for the next layer:
+layer extracts what it **is capable of modeling** cleanly and passes the rest forward as narrative for the next
+layer:
 
 1. **Researcher (LLM or human).** Reports findings in legal terms, not field terms. Where possible, findings
-   should map cleanly to a field. Otherwise, findings ride forward as a breadcrumb in freetext or `*_context`
+   **must strictly** map cleanly to a field. Otherwise, findings ride forward as a breadcrumb in freetext or
+`*_context`
    companions for downstream review.
-2. **Reconciler.** May update findings to map to fields — disambiguating cross-jurisdictional terminology,
+2. **Reconciler.** **Is authorized to** update findings to map to fields — disambiguating cross-jurisdictional
+terminology,
    normalizing values, splitting compound findings, resolving freetext into structured equivalents when
    possible. Remaining findings stay as breadcrumbs for human review.
 3. **Human reviewer.** Final resolution. Validates field-mapped values, reviews un-mapped findings, and
    researches remaining required fields. The final summary is then written to `plain_english_wysiwyg`.
 
-This staging is the operational form of the omission-over-fabrication rule: each layer maps what it can and
+This staging is the operational form of the omission-over-fabrication rule: each layer maps what it **is capable
+of** and
 avoids invention. Freetext fields and `*_context` companions are not failure modes — they are the designed
 channels through which breadcrumbs survive between stages without being lost.
 

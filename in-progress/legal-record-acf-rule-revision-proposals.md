@@ -20,7 +20,7 @@ but the boundaries are still easy to misread:
   narrowly-triggered field inside a larger cluster.
 
 The last case is the dangerous one. A field such as
-`causation_application_context` can be a sister in a large cluster even though
+`causation_scope_context` can be a sister in a large cluster even though
 it is freetext. A field such as `mixed_motive_remedy_gloss` can be a
 field-value-triggered explanation inside a cluster without becoming the cluster
 anchor.
@@ -64,7 +64,7 @@ companion share the same base name.
 
 The current sister-field prose is true, but not quite broad enough. It implies
 that sisters are usually structured fields, while the current model has
-legitimate freetext sisters such as `causation_application_context`. The issue
+legitimate freetext sisters such as `causation_scope_context`. The issue
 is not whether the sister is prose or structured data; the issue is whether the
 field depends on the same cluster gate.
 

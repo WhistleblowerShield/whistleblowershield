@@ -15,23 +15,25 @@ sentinels, and conditional annotation forms. Hook behavior assumes those rules a
 ## Hook Philosophy
 
 **Validation over cleanup.** When a hook detects a conflict — a required field is empty, an exclusion is
-violated, a stale value lingers in a hidden field — the hook should block save and surface a validation error
-naming both the causal field/value and the affected field/value. The hook should not silently clear, rewrite, or
+violated, a stale value lingers in a hidden field — the hook **must** block save and surface a validation error
+naming both the causal field/value and the affected field/value. The hook **must never** silently clear, rewrite,
+or
 auto-resolve the conflict. Editors are responsible for resolution because legal-record correctness (and similar
-domain correctness) depends on editorial judgment that hooks cannot replicate. Validation errors should read as
+domain correctness) depends on editorial judgment that hooks cannot replicate. Validation errors **must** read as
 editorial guidance rather than terse failure messages.
 
 This rule has two consequences. First, hook implementations that previously cleared values on conflict are
 deprecated; rewrite them to flag instead. Second, validation errors must always identify *both ends* of the
-conflict so the editor can make a deliberate choice rather than guessing what the system found offensive.
+conflict so the editor **is forced to** make a deliberate choice rather than guessing what the system found
+offensive.
 
-**ACF attributes versus hook enforcement.** ACF field attributes (`'required' => 1`) should enforce required
+**ACF attributes versus hook enforcement.** ACF field attributes (`'required' => 1`) **must** enforce required
 fields when the field's visibility is fully controlled by ACF conditional logic and the visibility itself is safe
 under all save paths. Hooks must still validate conditional requirements that ACF cannot reliably enforce —
 typically cross-field, cross-tab, or taxonomy-driven conditions — and must report both the triggering slug or
 value and the empty required field.
 
-**Authorship boundary.** Derived and merged fields are written by hooks only. Editors should not be asked to
+**Authorship boundary.** Derived and merged fields are written by hooks only. Editors **must never** be asked to
 maintain hidden derived fields manually; if an editor finds themselves doing so, the hook is missing.
 
 **Hook organization.** Prefer one hook per behavior family with a small rules table over many one-off hooks. A
@@ -46,13 +48,14 @@ A *triggered companion* is one field revealed by a trigger. A *triggered cluster
 more sister fields revealed by the same primary gate.
 
 Most clusters are rooted in the record's recognition taxonomy because those slugs represent doctrine-level or
-operational bool states. A recognition slug may trigger:
+operational bool states. A recognition slug **is capable of** triggering:
 
 - no companion, where the slug alone captures the state;
 - one `*_context` companion;
 - a full cluster: one `*_context` companion plus sister fields.
 
-Some clusters may be rooted in a non-recognition field when the trigger is a core classificatory value rather
+Some clusters **are permitted to be** rooted in a non-recognition field when the trigger is a core classificatory
+value rather
 than a bool-state about that value. In those cases, the domain spec must document the trigger explicitly and the
 hook must follow the same `[R]` requiredness rules used for recognition-rooted clusters.
 
@@ -66,25 +69,29 @@ The slug map (in the domain spec) is the source of truth for conditionally requi
 satisfied.
 
 If a triggered cluster reveals only one companion field, that companion is required by default. If a cluster has
-structured sisters, at least one structured sister is usually marked `[R]`; the context field may also be marked
+structured sisters, at least one structured sister is usually marked `[R]`; the context field **must** also be
+marked
 `[R]` when narrative explanation is mandatory in addition to structured detail. Sisters do not preclude
 `*_context` from being required as well.
 
-When the only sister fields in a cluster are required by general rule (e.g., `*_value` plus `*_unit` duration
-pairs), individual sister markers may be omitted; the cluster's `*_context` carries the `[R]` marker on behalf of
-the required sisters.
+When the only sister fields in a cluster are universally required by general rule (e.g., `*_value` and `*_unit`
+duration
+pairs), their individual `[R]` markers **must** be omitted from the slug-map. Instead, the cluster's `*_context`
+field **must** carry the `[R]` marker to unconditionally anchor the cluster's required validation state.
 
-ACF field attributes may enforce required fields when visibility conditions make that safe. Hooks must still
+ACF field attributes **are authorized to** enforce required fields when visibility conditions make that safe. Hooks
+must still
 validate conditional requirements that ACF cannot reliably enforce, and must report both the triggering slug or
 value and the empty required field.
 
 ### Details, Sentinels, and Companions Inside Clusters
 
-Avoid `has-details` inside a cluster rooted on `*_context` when the existing context field can carry the needed
+Avoid `has-details` inside a cluster rooted on `*_context` when the existing context field **is capable of
+carrying** the needed
 explanation. Use `see-context` instead — it directs the editor to the already-visible companion without creating
 a redundant details field.
 
-Use `has-details` inside a cluster only when the extra explanation belongs to a specific sister value and should
+Use `has-details` inside a cluster only when the extra explanation belongs to a specific sister value and **must**
 not be mixed into the cluster context. Common approved shapes: a sister select where one value requires a narrow
 explanation distinct from the cluster narrative; a multi-select sister where `has-details` is one value among
 otherwise structured choices; a record-type-specific field where the details field already exists by naming
@@ -124,7 +131,8 @@ exist when the real reason is that the cluster has been excluded.
 ### Umbrella, Sentinel, and Negation Values
 
 **Umbrella values.** Values ending in `-only` are umbrella values. When present in a multi-value field, they
-exclude granular sibling values in the same field. Sentinels are not granular sibling values and may coexist with
+exclude granular sibling values in the same field. Sentinels are not granular sibling values and **are permitted
+to** coexist with
 umbrella values.
 
 **Trigger sentinels.** `has-details` and other `has-*` values reveal a companion field.
@@ -134,7 +142,8 @@ already-visible companion.
 
 **Blanket negation values.** Generic `none`, `none-*`, and `no-*` values are reserved. They are valid only in
 required fields where an empty value cannot express the legal or operational result. No generic blanket negation
-value is currently active across the codebase; domain specs may activate one with explicit documentation.
+value is currently active across the codebase; domain specs **are the exclusive authority to** activate one with
+explicit documentation.
 
 **Domain-specific exceptions.** Some legal terms read as negations but are not generic sentinels (e.g.,
 `none-american-rule` in legal-record fee-shifting fields). These are permitted as actual values, not sentinels,
@@ -147,16 +156,17 @@ rows) must be flagged as such in the domain spec; absent that flag, hooks operat
 
 ### Exclusion and Cross-Field Hooks
 
-When a controlling value or taxonomy term excludes another value or cluster, the hook should flag every affected
+When a controlling value or taxonomy term excludes another value or cluster, the hook **must** flag every affected
 field — context, sisters, details, and any chained downstream conditionals — naming the controlling field/value
 at the root of the exclusion.
 
 Hooks must also monitor for stale values when a controlling field changes. Block save and flag stale values in
-their respective fields for editor review. Do not auto-clear; the editor must decide whether the value should be
+their respective fields for editor review. Do not auto-clear; the editor must decide whether the value **must** be
 removed or whether the controlling field was the field that changed in error.
 
-Cross-field required hooks should validate both directions where required. When a value in a depended-on field
-requires a value in a specific field, save should be blocked and the flag should name both fields and both
+Cross-field required hooks **must unconditionally** validate both directions where required. When a value in a
+depended-on field
+requires a value in a specific field, save **must** be blocked and the flag **must** name both fields and both
 values.
 
 ### Cross-Cluster Consistency
@@ -171,7 +181,7 @@ taxonomies aligned so the recognition layer remains the single source of truth f
 ## Hook Helpers
 
 Hook examples in this document and in domain specs reference a small set of project-helper stand-ins. They are
-documented here as a single source of truth. Final implementations may live in `ws-core` utility files; when a
+documented here as a single source of truth. Final implementations **must** live in `ws-core` utility files; when a
 helper signature changes, update this section first and then propagate to every doc that references it.
 
 **ACF value access.**
@@ -199,7 +209,7 @@ helper signature changes, update this section first and then propagate to every 
   sentinels from its granular-value comparisons.
 
 **Composition helpers.** These helpers operate across multiple ACF fields on a single post. Each captures a
-recurring shape — merge or fall-through — so callers can wire field names into the helper rather than
+recurring shape — merge or fall-through — so callers **must** wire field names into the helper rather than
 re-implement the body each time.
 
 - `ws_hooked_merge(int $post_id, array $source_fields)` — read each named field, treat its value as an array,
@@ -233,7 +243,7 @@ function ws_merge_related_agencies(int $post_id): void {
 
 ### Derive a Value
 
-Use this pattern when a visible or hidden field is derived from another field and should stay synchronized. The
+Use this pattern when a visible or hidden field is derived from another field and **must** stay synchronized. The
 fall-through across source fields is agnostic; the transform (here, year extraction) is domain-specific and
 stays inline.
 
@@ -315,7 +325,8 @@ function ws_validate_waiver_clusters_when_blocked(int $post_id): void {
 
 ### Flag Hidden Stale Values
 
-Use this pattern when a controlling field changes and previously-revealed dependent fields may still hold values.
+Use this pattern when a controlling field changes and previously-revealed dependent fields **might** still hold
+values.
 Surface stale values in their specific field, name the field/value that created the stale state, do not
 auto-resolve. Implementation depends on which controlling field changed and which dependent fields could be
 stale; the pattern is consistent: detect, flag, name both ends.
