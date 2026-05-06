@@ -1166,7 +1166,6 @@ Specified:      'cure-period-specified'                                 → 'cur
 // ── Statute of Limitations & Thresholds Tab (Common Law Records Only) ────────────────────────────────
 Applies:        'statutory-preclusion'[E]                               → 'statutory_preclusion_context'[R]
 
-
 // ── Retaliation Tab ──────────────────────────────────────────────────────────────────────────────────
 Required:       'evidence-preservation'                                 → 'evidence_preservation_context'         + 'preservation_requirement_scopes'[R]  + 'preservation_deadline_value'
 Specified:      'constructive-discharge-standard'[P]                    → 'constructive_discharge_context'        + 'constructive_discharge_standard'[R]
@@ -1197,7 +1196,6 @@ Available:      'preliminary-reinstatement'[P]                          → 'pre
 
 // ── Processes & Remedies Tab (Substantive Records Only) ──────────────────────────────────────────────
 Specified:      'civil-review-standard'                                 → 'review_standard_context'               + 'review_standard_scope'[R]
-
 
 // ── Burden of Proof Tab ──────────────────────────────────────────────────────────────────────────────
 Specified:      'burden-shifting-framework'                             → 'burden_shifting_context'               + 'burden_shifting_frameworks'[R]
