@@ -21,7 +21,7 @@ first install. All seeders run once and are gated against re-running.
 
 **Load order is non-negotiable:** `matrix-helpers.php` first, then
 `matrix-jurisdictions.php`. All other seeders depend on the `us`
-`ws_jurisdiction` term existing before they run.
+`WS_JURISDICTION_TAXONOMY` term existing before they run.
 
 ---
 

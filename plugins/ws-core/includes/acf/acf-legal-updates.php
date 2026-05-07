@@ -62,7 +62,7 @@
  * USE NOTES
  * ---------
  * Legal updates are linked to one or more jurisdiction records through
- * ws_legal_update_jurisdictions (ws_jurisdiction taxonomy, save_terms: 1).
+ * ws_legal_update_jurisdictions (WS_JURISDICTION_TAXONOMY taxonomy, save_terms: 1).
  * These records support internal legal tracking, journalist research, and
  * future public update feeds and timelines.
  * 
@@ -115,7 +115,7 @@ function ws_register_acf_legal_update() {
 
             // ── Affected Jurisdictions ────────────────────────────────────
 			// Taxonomy multi-select — one update may affect many
-			// jurisdictions. Scoped via ws_jurisdiction taxonomy terms.
+			// jurisdictions. Scoped via WS_JURISDICTION_TAXONOMY taxonomy terms.
 			[
 				'key'           => 'field_legal_update_jurisdictions',
 				'label'         => 'Affected Jurisdiction(s)',

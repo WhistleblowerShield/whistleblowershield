@@ -128,7 +128,7 @@ The toggle resets after the legal update is created.
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_jurisdiction_jx` | taxonomy | Links this post to its `ws_jurisdiction` term; `save_terms: 1` |
+| `ws_jurisdiction_jx` | taxonomy | Links this post to its `WS_JURISDICTION_TAXONOMY` term; `save_terms: 1` |
 | `ws_jx_code` | message | Displays jx_term as USPS code (e.g. `CA`, `US`) |
 | `ws_jurisdiction_class` | select | `state` / `federal` / `territory` / `district` |
 | `ws_jurisdiction_name` | text | Display name used in headings |
@@ -349,7 +349,7 @@ stamp, plain-english, source verify, and major edit from shared groups.
 | Meta Key | Type | Notes |
 |---|---|---|
 | `ws_jx_construction_statute_id` | post_object | Parent `jx-statute` post (single, required) |
-| `ws_jx_construction_affected_jx` | taxonomy | `ws_jurisdiction` terms auto-populated from court's `ws_jx_codes`; `save_terms: 0` to avoid taxonomy pollution |
+| `ws_jx_construction_affected_jx` | taxonomy | `WS_JURISDICTION_TAXONOMY` terms auto-populated from court's `ws_jx_codes`; `save_terms: 0` to avoid taxonomy pollution |
 
 **Tab: Reference Materials**
 
@@ -410,7 +410,7 @@ fields DO attach.
 |---|---|---|
 | `ws_ag_procedure_agency_id` | post_object | Parent `ws-agency` post; pre-filled from `?agency_id=` URL param on new posts |
 | `ws_procedure_type` | taxonomy | `ws_procedure_type` terms; radio UI; `save_terms: 1` |
-| `ws_jurisdictions` *(taxonomy field)* | taxonomy | Jurisdiction scope; `save_terms: 1` |
+| `WS_JURISDICTION_TAXONOMYs` *(taxonomy field)* | taxonomy | Jurisdiction scope; `save_terms: 1` |
 | `ws_ag_procedure_protected_disclosures` | taxonomy | `ws_protected_disclosure` terms; `save_terms: 1` |
 | `ws_ag_procedure_statute_ids` | relationship | Related `jx-statute` posts; auto-scoped to matching jurisdiction and protected disclosures |
 | `ws_ag_procedure_comlaw_ids` | relationship | Related `jx-common-law` posts; auto-scoped to matching jurisdiction |
@@ -473,7 +473,7 @@ fields DO attach.
 | Meta Key | Type | Notes |
 |---|---|---|
 | `ws_aorg_serves_nationwide` | true_false | Serves all 57 jurisdictions — enables nationwide overlay |
-| `ws_jurisdictions` *(taxonomy field)* | taxonomy | Specific jurisdictions served; `save_terms: 1` |
+| `WS_JURISDICTION_TAXONOMYs` *(taxonomy field)* | taxonomy | Specific jurisdictions served; `save_terms: 1` |
 | `ws_aorg_protected_disclosures` | taxonomy | `ws_protected_disclosure` terms; `save_terms: 1` |
 | `ws_aorg_services` | taxonomy | `ws_aorg_service` terms; `save_terms: 1` |
 | `ws_aorg_additional_services` | textarea | Free-text overflow; auto-assigns `additional` service term |
@@ -524,7 +524,7 @@ fields DO attach.
 
 | Meta Key | Type | Notes |
 |---|---|---|
-| `ws_legal_update_jurisdictions` | taxonomy | Affected jurisdiction; `ws_jurisdiction` term; `save_terms: 1` |
+| `ws_legal_update_jurisdictions` | taxonomy | Affected jurisdiction; `WS_JURISDICTION_TAXONOMY` term; `save_terms: 1` |
 | `ws_legal_update_multi_jurisdiction` | true_false | Affects multiple jurisdictions |
 | `ws_legal_update_source_url` | url | Primary source URL |
 | `ws_legal_update_source_url_is_pdf` | true_false | Is primary source URL a PDF |
@@ -585,4 +585,4 @@ without an ACF save cycle.
 Fields that explicitly use `save_terms: 0` do so to prevent taxonomy
 query pollution — `ws_jx_construction_affected_jx` is the notable example,
 where terms are auto-populated from court matrix data and should not
-affect standard `ws_jurisdiction` taxonomy queries.
+affect standard `WS_JURISDICTION_TAXONOMY` taxonomy queries.

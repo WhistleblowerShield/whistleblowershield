@@ -945,7 +945,7 @@ $_ws_jx_matrix = [
 // Creates or updates all 57 jurisdiction CPT posts from $_ws_jx_matrix.
 //
 // Seeder order:
-//   1. Seed ws_jurisdiction taxonomy terms (slugs = lowercase USPS codes).
+//   1. Seed WS_JURISDICTION_TAXONOMY taxonomy terms (slugs = lowercase USPS codes).
 //   2. Create/update jurisdiction CPT posts.
 //   3. Assign taxonomy term to each post via wp_set_object_terms().
 //   4. Write ws_matrix_source = 'matrix-jurisdictions' on each post.
@@ -1037,7 +1037,7 @@ function ws_seed_jurisdiction_matrix() {
             }
         }
 
-        // Assign ws_jurisdiction taxonomy term.
+        // Assign WS_JURISDICTION_TAXONOMY taxonomy term.
         //
         // wp_set_object_terms() writes the actual taxonomy relationship to
         // wp_term_relationships. This is what makes tax_query, wp_get_post_terms(),

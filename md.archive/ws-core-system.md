@@ -100,7 +100,7 @@ denotes site-wide or directory CPTs.
 
 ## Taxonomies
 
-Sixteen taxonomies are registered. `ws_jurisdiction` is the canonical
+Sixteen taxonomies are registered. `WS_JURISDICTION_TAXONOMY` is the canonical
 join key used across every content CPT. All others are classification
 or filtering taxonomies. Taxonomy tables are always singular. Strings
 that are single-select taxonomy are also always singular. Arrays that
@@ -108,7 +108,7 @@ are multi-select are always plural.
 
 | Slug | Label | Hierarchical | Public | Applied To |
 |---|---|---|---|---|
-| `ws_jurisdiction` | Jurisdictions | — | — | All content CPTs | multi-select |
+| `WS_JURISDICTION_TAXONOMY` | Jurisdictions | — | — | All content CPTs | multi-select |
 | `ws_protected_disclosure` | Disclosure Categories | ✓ | ✓ | `jx-statute`, `jx-citation`, `ws-agency`, `ag-procedure`, `ws-assist-org` | multi-select |
 | `ws_process_type` | Process Types | — | ✓ | `jx-statute`, `ws-agency`, `ws-assist-org`, `jx-construction` | multi-select |
 | `ws_remedy` | Remedies | — | — | `jx-statute` | multi-select |
@@ -125,11 +125,11 @@ are multi-select are always plural.
 | `ws_aorg_service` | Services Offered | — | — | `ws-assist-org` | multi-select |
 | `ws_procedure_type` | Procedure Types | — | — | `ag-procedure` | single-select |
 
-**`ws_jurisdiction` details:** Private taxonomy. Slugs are lowercase
+**`WS_JURISDICTION_TAXONOMY` details:** Private taxonomy. Slugs are lowercase
 USPS codes (`us`, `ca`, `tx`, `dc`, `pr`, etc.). Terms are seeded by
 `matrix-jurisdictions.php`. Always reference via the
 `WS_JURISDICTION_TAXONOMY` constant — never hardcode the string
-`'ws_jurisdiction'`.
+`'WS_JURISDICTION_TAXONOMY'`.
 
 **Hierarchical taxonomies:** `ws_protected_disclosure` has six parent
 categories with ~30 child terms covering the main areas of whistleblower
@@ -158,7 +158,7 @@ All constants are defined in `ws-core.php` before the bootstrap runs.
 | `WS_CORE_VERSION` | `'3.19.0'` | Plugin version — used as asset enqueue version string |
 | `WS_CORE_PATH` | `plugin_dir_path()` | Absolute filesystem path to plugin root |
 | `WS_CORE_URL` | `plugin_dir_url()` | URL to plugin root for asset enqueues |
-| `WS_JURISDICTION_TAXONOMY` | `'ws_jurisdiction'` | Canonical taxonomy slug — use everywhere WordPress expects a taxonomy identifier |
+| `WS_JURISDICTION_TAXONOMY` | `'WS_JURISDICTION_TAXONOMY'` | Canonical taxonomy slug — use everywhere WordPress expects a taxonomy identifier |
 | `WS_CACHE_ALL_JURISDICTIONS` | `'ws_all_jurisdictions_cache_'` | Transient key for full jurisdiction list cache |
 | `WS_CACHE_JX_INDEX` | `'ws_jx_index_cache_'` | Transient key for jurisdiction index page cache |
 | `WS_CACHE_LEGAL_UPDATES_SITEWIDE` | `'ws_legal_updates_sitewide_'` | Transient key for sitewide legal updates cache (up to 100 items) |

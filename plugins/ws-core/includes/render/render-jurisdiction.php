@@ -104,7 +104,7 @@ function ws_handle_jurisdiction_render( $content ) {
 
     $is_rendering = true;
 
-    // Resolve ws_jurisdiction term ID once — both render paths need it.
+    // Resolve WS_JURISDICTION_TAXONOMY term ID once — both render paths need it.
     $jx_term_id = ws_get_jx_term_id( $post->ID );
 
     // ── Phase 2 dispatch ──────────────────────────────────────────────────
@@ -143,7 +143,7 @@ Curated Render Path  (default)
  *                fallback
  *
  * @param  WP_Post  $post        The jurisdiction post object.
- * @param  int|null $jx_term_id  The ws_jurisdiction term ID for this post.
+ * @param  int|null $jx_term_id  The WS_JURISDICTION_TAXONOMY term ID for this post.
  * @return string                Assembled HTML for the jurisdiction page.
  */
 function ws_render_jx_curated( $post, $jx_term_id ) {
@@ -269,7 +269,7 @@ function ws_render_jx_curated( $post, $jx_term_id ) {
 //     (e.g. /california/?industry=12&disclosure=8).
 //
 // @param  WP_Post  $post           The jurisdiction post object.
-// @param  int|null $jx_term_id     The ws_jurisdiction term ID for this post.
+// @param  int|null $jx_term_id     The WS_JURISDICTION_TAXONOMY term ID for this post.
 // @param  array    $filter_context Taxonomy term IDs resolved from $_GET params.
 // @return string                   HTML for the filtered jurisdiction page.
 // ════════════════════════════════════════════════════════════════════════════

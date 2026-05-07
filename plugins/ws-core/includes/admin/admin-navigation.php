@@ -24,9 +24,9 @@
  * ------------
  *
  * jurisdiction (core record)
- *      ├── jx-summary                  (one-to-one, scoped by ws_jurisdiction taxonomy)
- *      ├── jx-statute or jx-common-law (one-to-many, scoped by ws_jurisdiction taxonomy)
- *      └── jx-citation                 (many-to-one, scoped by ws_jurisdiction taxonomy + ws_jx_citation_has_attach_flag)
+ *      ├── jx-summary                  (one-to-one, scoped by WS_JURISDICTION_TAXONOMY taxonomy)
+ *      ├── jx-statute or jx-common-law (one-to-many, scoped by WS_JURISDICTION_TAXONOMY taxonomy)
+ *      └── jx-citation                 (many-to-one, scoped by WS_JURISDICTION_TAXONOMY taxonomy + ws_jx_citation_has_attach_flag)
  *
  *
  * SHARED HELPER
@@ -34,7 +34,7 @@
  * ws_get_attached_citation_count( $post_id )
  *
  * Returns the number of published jx-citation records assigned the same
- * ws_jurisdiction term as the given jurisdiction post with ws_jx_citation_has_attach_flag = 1.
+ * WS_JURISDICTION_TAXONOMY term as the given jurisdiction post with ws_jx_citation_has_attach_flag = 1.
  * Defined here and shared by admin-columns.php and
  * jurisdiction-dashboard.php (both load after this file).
  *
@@ -58,7 +58,7 @@
  *        - Create Now and Add Citation URLs migrated from ws_jx_code query
  *          arg to ws_jx_term (taxonomy term slug).
  *        - ws_get_attached_citation_count() migrated from ws_jx_code meta
- *          query to ws_jurisdiction taxonomy query with ws_jx_citation_has_attach_flag meta.
+ *          query to WS_JURISDICTION_TAXONOMY taxonomy query with ws_jx_citation_has_attach_flag meta.
  * 3.1.0  Added Legal Updates, Agencies, and Assist-Orgs count rows.
  *        All three use taxonomy-scoped count queries with View All links.
  * 3.9.0  Added ws_add_agency_navigation_box() and ws_render_agency_navigation_box()
@@ -153,7 +153,7 @@ function ws_render_jx_navigation_box($post) {
  * Uses deterministic ordering (`modified DESC`) within each status bucket.
  *
  * @param string $post_type CPT slug.
- * @param int    $term_id   ws_jurisdiction term ID.
+ * @param int    $term_id   WS_JURISDICTION_TAXONOMY term ID.
  * @return int              Related post ID, or 0 when none found.
  */
 function ws_find_related_jx_record_id( $post_type, $term_id ) {
@@ -204,7 +204,7 @@ function ws_render_admin_link($label, $related, $post_type, $parent_id) {
         echo '<a class="button button-small" href="' . get_edit_post_link($related->ID) . '">Edit Record</a>';
     } else {
         // Build the Smart Link — passes ws_jx_term (taxonomy term slug) so the
-        // new-post screen auto-assigns the ws_jurisdiction taxonomy term via
+        // new-post screen auto-assigns the WS_JURISDICTION_TAXONOMY taxonomy term via
         // the wp_insert_post hook in admin-hooks.php.
         $parent_name = get_the_title( $parent_id );
         $jx_slugs    = wp_get_post_terms( $parent_id, WS_JURISDICTION_TAXONOMY, [ 'fields' => 'slugs' ] );
@@ -227,7 +227,7 @@ function ws_render_admin_link($label, $related, $post_type, $parent_id) {
 Shared Helper: Attached Citation Count
 ---------------------------------------------------------
 Returns the number of published jx-citation records that
-are scoped to this jurisdiction (ws_jurisdiction taxonomy)
+are scoped to this jurisdiction (WS_JURISDICTION_TAXONOMY taxonomy)
 and have ws_jx_citation_has_attach_flag set to true.
 
 Shared by:
@@ -273,7 +273,7 @@ function ws_get_attached_citation_count( $post_id ) {
 ---------------------------------------------------------
 Render: CPT Count Row
 ---------------------------------------------------------
-Generic count row for CPTs that are scoped by ws_jurisdiction
+Generic count row for CPTs that are scoped by WS_JURISDICTION_TAXONOMY
 taxonomy but don't use the attached-flag pattern (legal updates,
 agencies, assist-orgs). Shows a count badge and a View All link
 filtered by taxonomy term.

@@ -96,7 +96,7 @@
  *          No dependencies. Must load before every seeder.
  *
  *      matrix-jurisdictions.php
- *          Seeds the 57 ws_jurisdiction taxonomy terms (including 'us')
+ *          Seeds the 57 WS_JURISDICTION_TAXONOMY taxonomy terms (including 'us')
  *          and creates the 57 jurisdiction CPT posts.
  *          ALL other seeders depend on the 'us' term existing.
  *

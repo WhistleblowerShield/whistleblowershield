@@ -3,7 +3,7 @@
  * cpt-jx-citations.php — Registers the jx-citation CPT.
  *
  * Stores case law and regulatory citations for a jurisdiction.
- * Scoped via ws_jurisdiction taxonomy term. Not publicly queryable —
+ * Scoped via WS_JURISDICTION_TAXONOMY taxonomy term. Not publicly queryable —
  * content surfaces on jurisdiction pages via the Assembly Layer only.
  * attach_flag + ws_display_order control what appears on curated summary views.
  *
@@ -14,7 +14,7 @@
  * VERSION
  * -------
  * 2.3.0   Initial release.
- * 3.0.0   ws_jx_code join retired; ws_jurisdiction taxonomy used throughout.
+ * 3.0.0   ws_jx_code join retired; WS_JURISDICTION_TAXONOMY taxonomy used throughout.
  */
 
 defined( 'ABSPATH' ) || exit;

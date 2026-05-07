@@ -26,7 +26,7 @@ assist organizations, legal updates, references, and summaries. Each CPT
 is a distinct data type with its own ACF field group defining its fields.
 
 Taxonomies provide classification and — critically — the join mechanism
-that scopes every content record to its jurisdiction. The `ws_jurisdiction`
+that scopes every content record to its jurisdiction. The `WS_JURISDICTION_TAXONOMY`
 taxonomy is the canonical foreign key throughout the system. There is no
 post meta join; there is no relationship field join. If a record belongs
 to California, it carries the `ca` term. That's the whole relationship.
@@ -161,7 +161,7 @@ appear in the same section.
 ## The Jurisdiction Join
 
 Every content CPT is scoped to one or more jurisdictions via the
-`ws_jurisdiction` taxonomy. The term slug is the canonical USPS code in
+`WS_JURISDICTION_TAXONOMY` taxonomy. The term slug is the canonical USPS code in
 lowercase (`ca`, `us`, `tx`, `dc`, `pr`, etc.).
 
 This replaced an earlier post meta join key (`ws_jx_code`) in v3.0.0.
@@ -171,7 +171,7 @@ that post meta could not provide.
 
 The constant `WS_JURISDICTION_TAXONOMY` holds the taxonomy slug and is
 used wherever WordPress expects a taxonomy identifier. Never hardcode the
-string `'ws_jurisdiction'` — always use the constant.
+string `'WS_JURISDICTION_TAXONOMY'` — always use the constant.
 
 ---
 

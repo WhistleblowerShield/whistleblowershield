@@ -15,7 +15,7 @@
  *   2. Core CPTs registered — post_type_exists() for each content CPT.
  *                            Catches loader ordering regressions during development.
  *
- *   3. Core taxonomy registered — taxonomy_exists('ws_jurisdiction').
+ *   3. Core taxonomy registered — taxonomy_exists('WS_JURISDICTION_TAXONOMY').
  *                            Catches taxonomy load failures; breaks term queries,
  *                            metabox jurisdiction guard, and Add URL tax_input param.
  *
@@ -97,7 +97,7 @@ function ws_health_check_admin_notice() {
 
     // ── 3. Core taxonomy registration ─────────────────────────────────────
     //
-    // ws_jurisdiction drives the jurisdiction metabox guard, the tax_input
+    // WS_JURISDICTION_TAXONOMY drives the jurisdiction metabox guard, the tax_input
     // pre-fill on construction/citation add URLs, and front-end term queries.
 
     if ( ! taxonomy_exists( WS_JURISDICTION_TAXONOMY ) ) {

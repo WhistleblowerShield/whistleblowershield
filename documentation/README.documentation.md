@@ -83,7 +83,7 @@ directly. This is the most important architectural rule in the codebase.
 Violations produce fragile, unmaintainable output code.
 
 **The taxonomy join:** All content CPTs are scoped to jurisdictions via
-the `ws_jurisdiction` taxonomy, not post meta. The USPS code slug (e.g.
+the `WS_JURISDICTION_TAXONOMY` taxonomy, not post meta. The USPS code slug (e.g.
 `ca`, `us`, `tx`) is the canonical join key across every content type.
 
 **The attach-flag pattern:** Statutes, citations, and constructions each

@@ -123,7 +123,7 @@ jurisdiction page.
 ### Lookup Helpers
 
 #### `ws_get_term_id_by_code( $jx_code )`
-Resolves a USPS code to a `ws_jurisdiction` taxonomy term ID. Returns
+Resolves a USPS code to a `WS_JURISDICTION_TAXONOMY` taxonomy term ID. Returns
 `int` term ID or `0`. Caches result in transient
 `ws_id_for_term_{term_id}_` for `DAY_IN_SECONDS`.
 
@@ -137,7 +137,7 @@ Used by shortcodes to normalize their `jx` attribute before calling
 dataset functions.
 
 #### `ws_get_jx_term_id( $post_id )`
-Returns the `ws_jurisdiction` taxonomy term ID for a jurisdiction post.
+Returns the `WS_JURISDICTION_TAXONOMY` taxonomy term ID for a jurisdiction post.
 Returns `0` if no term is assigned.
 
 #### `ws_get_us_term_id()`
@@ -153,7 +153,7 @@ ACF writes for repeaters and returns the same shape `get_field()` would.
 ### Dataset Functions
 
 All dataset functions accept a `$jx_term_id` integer (the
-`ws_jurisdiction` taxonomy term ID) as their primary scope parameter,
+`WS_JURISDICTION_TAXONOMY` taxonomy term ID) as their primary scope parameter,
 except `ws_get_jurisdiction_data()` which accepts post ID, slug, or
 USPS code.
 

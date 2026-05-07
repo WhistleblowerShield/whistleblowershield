@@ -19,7 +19,7 @@
  *    and an Edit link.
  * 4. "Add New Construction" opens:
  *    post-new.php?post_type=jx-construction&statute_id={ID}
- *    in a new browser tab. The statute's own ws_jurisdiction term is passed
+ *    in a new browser tab. The statute's own WS_JURISDICTION_TAXONOMY term is passed
  *    via tax_input so the new construction inherits the correct jurisdiction.
  * 5. After saving the new construction, the editor closes the tab and
  *    refreshes the statute screen to see the updated list.
@@ -42,7 +42,7 @@
  *         a proper meta_query for the statute filter and a separate
  *         'meta_key' / 'orderby' pair for the year sort.
  * 3.0.0  Phase 12.1: Replaced ws_jx_code meta check with has_term() against
- *         the ws_jurisdiction taxonomy. &ws_jx_code=US removed from add URL.
+ *         the WS_JURISDICTION_TAXONOMY taxonomy. &ws_jx_code=US removed from add URL.
  * 3.0.1  Added inline comment to direct meta reads in metabox render function
  *        explaining why the query layer is not used in admin metabox context.
  * 3.6.0  Metabox now reads ws_jx_statute_construction_ids (reverse index maintained
@@ -50,7 +50,7 @@
  * 3.8.0  Removed federal-only guard (has_term 'us' check). Both federal and
  *        state statutes now show the metabox. Court label resolution updated
  *        to use ws_court_lookup() + other branch. Add URL now uses the
- *        statute's own ws_jurisdiction term instead of hardcoded 'us'.
+ *        statute's own WS_JURISDICTION_TAXONOMY term instead of hardcoded 'us'.
  *        Metabox title renamed from "Federal Court Constructions".
  */
 
@@ -105,7 +105,7 @@ function ws_render_construction_metabox( $post ) {
     //                    — read by acf/load_value in acf-jx-constructions.php
     //                      to pre-select ws_jx_construction_statute_id or
     //                      ws_jx_construction_comlaw_id.
-    // tax_input[...][]   — WordPress core pre-assigns the ws_jurisdiction taxonomy
+    // tax_input[...][]   — WordPress core pre-assigns the WS_JURISDICTION_TAXONOMY taxonomy
     //                      term on the new post screen without any ACF hook.
     //                      Uses the statute's own jurisdiction term so state-level
     //                      constructions inherit the correct jurisdiction.

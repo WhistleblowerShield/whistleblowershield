@@ -22,11 +22,11 @@
  * 4. "Add New Citation" opens:
  *    post-new.php?post_type=jx-citation
  *      &statute_id={ID}
- *      &tax_input[ws_jurisdiction][]={term_id}
+ *      &tax_input[WS_JURISDICTION_TAXONOMY][]={term_id}
  *      &post_title=Citation — {statute title}
  *    in a new browser tab.
  * 5. The new citation screen has the statute relationship pre-selected (via
- *    acf/load_value in acf-jx-citations.php) and the ws_jurisdiction taxonomy
+ *    acf/load_value in acf-jx-citations.php) and the WS_JURISDICTION_TAXONOMY taxonomy
  *    pre-assigned (via tax_input URL parameter, handled by WordPress core).
  * 6. After saving, the editor closes the tab and refreshes the statute screen.
  *
@@ -41,7 +41,7 @@
  * VERSION
  * -------
  * 3.6.0  Initial release. Mirrors admin-construction-metabox.php pattern.
- *        No jurisdiction gate. Pre-assigns ws_jurisdiction via tax_input URL
+ *        No jurisdiction gate. Pre-assigns WS_JURISDICTION_TAXONOMY via tax_input URL
  *        param (WordPress core); pre-selects statute via acf/load_value hook.
  *        Metabox reads ws_jx_statute_citation_ids (reverse index maintained
  *        by admin-hooks.php) — simple post__in query, no meta_query JOIN.
@@ -95,7 +95,7 @@ function ws_render_citation_metabox( $post ) {
     //                    — read by acf/load_value in acf-jx-citations.php to
     //                      pre-select ws_jx_citation_statute_ids or
     //                      ws_jx_citation_comlaw_ids.
-    // tax_input[...][]   — WordPress core pre-assigns the ws_jurisdiction taxonomy
+    // tax_input[...][]   — WordPress core pre-assigns the WS_JURISDICTION_TAXONOMY taxonomy
     //                      term(s) on the new post screen without any ACF hook.
     //                      All terms from the statute are forwarded; a statute
     //                      may carry more than one jurisdiction term.

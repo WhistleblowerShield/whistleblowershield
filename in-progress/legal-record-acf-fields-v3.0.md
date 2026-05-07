@@ -132,7 +132,7 @@ workflow within each tab.
 
 Fields ordered: identification → related dates → scope → curated.
 
-- `jurisdiction`                   — (single-select taxonomy: `ws_jurisdiction`)
+- `jurisdiction`                   — (single-select taxonomy: `WS_JURISDICTION_TAXONOMY`)
 - `official_name`
 - `common_name`
 - `citation`                       — (statute citation / precedent case / case name; shared slot)
@@ -623,7 +623,7 @@ Statute records have no deltas. Future statute-only additions, if any, will be d
 
 - `statutory_preclusion_context`   — (conditional on `statutory-preclusion` in `legal_recognitions`)
 
-#### Burden of Proof Tab (insert after `causal_nexus_statutory_text`)
+#### Burden of Proof Tab (insert after `causation_standard_statutory_text`)
 
 - `statutory_nexus_context`        — (conditional on `statutory-nexus-controls` in `legal_recognitions`)
 
@@ -649,7 +649,7 @@ decisions:
                                       review with real-world data)
 - `court`                          — (select; filtered by jx)
 - `court_details`
-- `court_jx`                       — (Sister to `court_details`; taxonomy: `ws_jurisdiction`)
+- `court_jx`                       — (Sister to `court_details`; taxonomy: `WS_JURISDICTION_TAXONOMY`)
 
 #### Identity Tab (insert after `effective_year`)
 
@@ -672,7 +672,7 @@ decisions:
       └── `term`                         [select: taxonomy term])
 - `has_affected_jx`                — (derived from `court` `ws_jx_codes`; true when affected jx differs from
                                       precedent `jurisdiction`)
-- `affected_jx`                    — (conditional on `has_affected_jx` is true; taxonomy: `ws_jurisdiction`)
+- `affected_jx`                    — (conditional on `has_affected_jx` is true; taxonomy: `WS_JURISDICTION_TAXONOMY`)
 
 ##### Eligible Taxonomy Allowlist for `extended_taxonomies` / `suppressed_taxonomies`
 
@@ -684,7 +684,7 @@ Eligible: `ws_legal_recognition`, `ws_protected_disclosure`, `ws_protected_class
 `ws_employment_sector`, `ws_disclosure_target`, `ws_protected_action`, `ws_adverse_action`, `ws_employer_defense`,
 `ws_remedy`, `ws_process_type`, `ws_employee_standard`, `ws_causation_standard`.
 
-Excluded: `ws_jurisdiction` (geographic, not classificatory); `ws_aorg_*`, `ws_language`, `ws_case_stage`,
+Excluded: `WS_JURISDICTION_TAXONOMY` (geographic, not classificatory); `ws_aorg_*`, `ws_language`, `ws_case_stage`,
 `ws_procedure_type` (not attached to legal-record CPTs).
 
 #### Relationships Tab
@@ -814,6 +814,8 @@ channels through which breadcrumbs survive between stages without being lost.
 
 *Geo-centric and historical context regarding the pluralization of status appears in the liner notes. LP edition
 only. More info available by handwritten request with self-addressed stamped envelope; sender ZIP and return ZIP
-must be at least 175 nautical miles apart, USPS-verified.*
+must be at least 175 nautical miles apart, USPS-verified. The limited vinyl edition, read by Patrick Stewart,
+includes the liner notes, disputed pluralizations, and the extended commentary track on the `status` incident,
+including its violations of at least three rules.*
 
 — drafted for Dejunai by Claude (Anthropic), session of 2026-05-06

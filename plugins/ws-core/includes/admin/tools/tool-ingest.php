@@ -2866,14 +2866,14 @@ function ws_ingest_process_statute_record( array $record, array $meta, array $bl
         update_post_meta( $post_id, '_ws_auto_source_chain', wp_json_encode( $meta['source_chain'] ) );
     }
 
-    // ── Step 4: Assign ws_jurisdiction taxonomy term ──────────────────────
+    // ── Step 4: Assign WS_JURISDICTION_TAXONOMY taxonomy term ──────────────────────
     if ( $jx_slug ) {
         $term = get_term_by( 'slug', $jx_slug, WS_JURISDICTION_TAXONOMY );
         if ( $term && ! is_wp_error( $term ) ) {
             wp_set_object_terms( $post_id, $term->term_id, WS_JURISDICTION_TAXONOMY );
             $result['log'][] = "jurisdiction: assigned '{$jx_slug}'";
         } else {
-            $result['warnings'][] = "$sid: jurisdiction term '{$jx_slug}' not found in ws_jurisdiction taxonomy.";
+            $result['warnings'][] = "$sid: jurisdiction term '{$jx_slug}' not found in WS_JURISDICTION_TAXONOMY taxonomy.";
         }
     }
 
@@ -3169,7 +3169,7 @@ function ws_ingest_process_common_law_record( array $record, array $meta, array 
             wp_set_object_terms( $post_id, $term->term_id, WS_JURISDICTION_TAXONOMY );
             $result['log'][] = "jurisdiction: assigned '{$jx_slug}'";
         } else {
-            $result['warnings'][] = "$did: jurisdiction term '{$jx_slug}' not found in ws_jurisdiction taxonomy.";
+            $result['warnings'][] = "$did: jurisdiction term '{$jx_slug}' not found in WS_JURISDICTION_TAXONOMY taxonomy.";
         }
     }
 
@@ -3459,7 +3459,7 @@ function ws_ingest_process_citation_record( array $record, array $meta, array $b
             wp_set_object_terms( $post_id, $term->term_id, WS_JURISDICTION_TAXONOMY );
             $result['log'][] = "jurisdiction: assigned '{$jx_slug}'";
         } else {
-            $result['warnings'][] = "$cid: jurisdiction term '{$jx_slug}' not found in ws_jurisdiction taxonomy.";
+            $result['warnings'][] = "$cid: jurisdiction term '{$jx_slug}' not found in WS_JURISDICTION_TAXONOMY taxonomy.";
         }
     }
 
@@ -3663,7 +3663,7 @@ function ws_ingest_process_construction_record( array $record, array $meta, arra
             wp_set_object_terms( $post_id, $term->term_id, WS_JURISDICTION_TAXONOMY );
             $result['log'][] = "jurisdiction: assigned '{$jx_slug}'";
         } else {
-            $result['warnings'][] = "$iid: jurisdiction term '{$jx_slug}' not found in ws_jurisdiction taxonomy.";
+            $result['warnings'][] = "$iid: jurisdiction term '{$jx_slug}' not found in WS_JURISDICTION_TAXONOMY taxonomy.";
         }
     }
 
@@ -3863,7 +3863,7 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
             wp_set_object_terms( $post_id, [ (int) $term->term_id ], WS_JURISDICTION_TAXONOMY );
             $result['log'][] = "jurisdiction: assigned '{$jx_slug}'";
         } else {
-            $result['warnings'][] = "{$org_name}: jurisdiction term '{$jx_slug}' not found in ws_jurisdiction taxonomy.";
+            $result['warnings'][] = "{$org_name}: jurisdiction term '{$jx_slug}' not found in WS_JURISDICTION_TAXONOMY taxonomy.";
         }
     }
 

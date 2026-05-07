@@ -3,7 +3,7 @@
  * cpt-jurisdictions.php — Registers the jurisdiction CPT.
  *
  * Represents one of 57 U.S. jurisdictions: 50 states, DC, 5 territories,
- * federal. Jurisdiction code is the slug of the assigned ws_jurisdiction
+ * federal. Jurisdiction code is the slug of the assigned WS_JURISDICTION_TAXONOMY
  * taxonomy term (e.g. 'ca', 'us') — not ws_jx_code post meta.
  *
  * @package WhistleblowerShield

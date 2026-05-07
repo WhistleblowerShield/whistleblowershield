@@ -46,7 +46,7 @@ define( 'WS_CORE_URL',     plugin_dir_url( __FILE__ ) );
 
 // The registered taxonomy slug. Passed wherever WordPress expects a taxonomy
 // identifier — wp_get_post_terms(), has_term(), tax_query 'taxonomy' key, etc.
-define( 'WS_JURISDICTION_TAXONOMY', 'ws_jurisdiction' );
+define( 'WS_JURISDICTION_TAXONOMY', 'WS_JURISDICTION_TAXONOMY' );
 
 // Transient keys for the two jurisdiction-level query caches. Both are
 // invalidated together by ws_invalidate_jurisdiction_caches() whenever a

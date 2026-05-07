@@ -5,7 +5,7 @@
  * Stores court constructions of whistleblower statutes. Each record
  * captures one case — citation, court, holding, favorable flag.
  * Linked to parent statute via ws_jx_construction_statute_id (post_object).
- * Scoped via ws_jurisdiction taxonomy term.
+ * Scoped via WS_JURISDICTION_TAXONOMY taxonomy term.
  *
  * Created via "Add New Construction" button in admin-construction-metabox.php
  * on the jx-statute edit screen.

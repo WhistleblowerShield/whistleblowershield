@@ -679,7 +679,7 @@ function ws_citation_prefill_comlaw_ids( $value, $post_id, $field ) {
 
 // ── Admin notice: zero attached citations ─────────────────────────────────────
 //
-// Fires on jx-summary edit screens only. Reads the assigned ws_jurisdiction
+// Fires on jx-summary edit screens only. Reads the assigned WS_JURISDICTION_TAXONOMY
 // taxonomy term on the jx-summary post, then queries for attached jx-citation
 // records scoped to that same term.
 //
@@ -697,7 +697,7 @@ function ws_jx_cite_no_citations_notice() {
     global $post;
     if ( ! $post ) return;
 
-    // Get the ws_jurisdiction taxonomy term assigned to this jx-summary.
+    // Get the WS_JURISDICTION_TAXONOMY taxonomy term assigned to this jx-summary.
     $terms = wp_get_post_terms( $post->ID, WS_JURISDICTION_TAXONOMY );
     if ( empty( $terms ) || is_wp_error( $terms ) ) return;
 

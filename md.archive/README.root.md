@@ -91,7 +91,7 @@ shortcode placement required in posts.
 JavaScript file. Jurisdiction-specific styles load only on jurisdiction
 pages.
 
-The `ws_jurisdiction` taxonomy is the canonical join key across every
+The `WS_JURISDICTION_TAXONOMY` taxonomy is the canonical join key across every
 content type. A statute that belongs to California carries the `ca`
 term. There is no post meta join, no relationship field join. The USPS
 code slug is the whole relationship.

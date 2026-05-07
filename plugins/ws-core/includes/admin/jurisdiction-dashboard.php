@@ -21,7 +21,7 @@
  *        (defined in admin-navigation.php, which loads first).
  * 3.0.0  Removed Resources column (CPT deleted). Added constructions, Legal
  *        Updates, Agencies, and Assist-Orgs count columns. All counts use
- *        ws_jurisdiction taxonomy queries — no ACF relationship fields.
+ *        WS_JURISDICTION_TAXONOMY taxonomy queries — no ACF relationship fields.
  * 3.6.1  Added 10-minute transient cache with auto-invalidation on save/delete
  *        and manual refresh button.
  * 3.11.0 Added unpublished parenthetical counts across dashboard CPT columns.
@@ -115,7 +115,7 @@ function ws_render_jurisdiction_dashboard() {
 
     foreach ( $jurisdictions as $jx ) {
 
-        // Resolve ws_jurisdiction term for this jurisdiction post.
+        // Resolve WS_JURISDICTION_TAXONOMY term for this jurisdiction post.
         $terms   = wp_get_post_terms( $jx->ID, WS_JURISDICTION_TAXONOMY );
         $term_id = ( ! is_wp_error( $terms ) && ! empty( $terms ) ) ? (int) $terms[0]->term_id : 0;
 
@@ -210,7 +210,7 @@ function ws_jx_dashboard_invalidate_cache( $post_id ) {
  * Returns the post status of the first record of $post_type assigned to $term_id,
  * or null if none exists. Used for one-to-one CPT relationships (e.g. jx-summary).
  *
- * @param  int    $term_id   ws_jurisdiction term ID.
+ * @param  int    $term_id   WS_JURISDICTION_TAXONOMY term ID.
  * @param  string $post_type CPT slug.
  * @return string|null       Post status string or null.
  */
@@ -230,7 +230,7 @@ function ws_jx_dashboard_one_status( $term_id, $post_type ) {
  * Returns the count of published records of $post_type for $term_id.
  * If $attach_only is true, also requires $attach_meta_key = 1.
  *
- * @param  int    $term_id     ws_jurisdiction term ID.
+ * @param  int    $term_id     WS_JURISDICTION_TAXONOMY term ID.
  * @param  string $post_type   CPT slug.
  * @param  bool   $attach_only     Restrict to attach-flagged records only.
  * @param  string $attach_meta_key Attach-flag meta key to enforce when $attach_only is true.
@@ -257,7 +257,7 @@ function ws_jx_dashboard_count( $term_id, $post_type, $attach_only = false, $att
  * Returns the count of unpublished records (draft/pending/future/private)
  * of $post_type for $term_id.
  *
- * @param  int    $term_id   ws_jurisdiction term ID.
+ * @param  int    $term_id   WS_JURISDICTION_TAXONOMY term ID.
  * @param  string $post_type CPT slug.
  * @return int
  */

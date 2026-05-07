@@ -18,16 +18,16 @@
  * ------------
  *
  * jurisdiction (public CPT)
- *      ├── jx-summary       (attach via ws_jurisdiction taxonomy)
- *      ├── jx-statute       (attach_flag + order, ws_jurisdiction taxonomy scope)
- *      ├── jx-common-law    (attach_flag + order, ws_jurisdiction taxonomy scope)
- *      ├── jx-citation      (attach_flag + order, ws_jurisdiction taxonomy scope)
- *      └── jx-construction  (attach_flag + order, ws_jurisdiction taxonomy scope)
+ *      ├── jx-summary       (attach via WS_JURISDICTION_TAXONOMY taxonomy)
+ *      ├── jx-statute       (attach_flag + order, WS_JURISDICTION_TAXONOMY taxonomy scope)
+ *      ├── jx-common-law    (attach_flag + order, WS_JURISDICTION_TAXONOMY taxonomy scope)
+ *      ├── jx-citation      (attach_flag + order, WS_JURISDICTION_TAXONOMY taxonomy scope)
+ *      └── jx-construction  (attach_flag + order, WS_JURISDICTION_TAXONOMY taxonomy scope)
  *
  * JURISDICTION IDENTITY
  * ---------------------
  * The canonical two-letter code for each jurisdiction is the slug of its
- * assigned ws_jurisdiction taxonomy term (e.g., 'ca', 'tx', 'us').
+ * assigned WS_JURISDICTION_TAXONOMY taxonomy term (e.g., 'ca', 'tx', 'us').
  * All lookups use taxonomy queries.
  *
  * ws_jx_term_id post meta is written on each jurisdiction post (by the seeder
@@ -133,7 +133,7 @@ defined( 'ABSPATH' ) || exit;
 // ════════════════════════════════════════════════════════════════════════════
 // Term ID Lookup by Code
 //
-// Resolves a two-letter USPS code to the ws_jurisdiction taxonomy term ID.
+// Resolves a two-letter USPS code to the WS_JURISDICTION_TAXONOMY taxonomy term ID.
 // This is step one of the code → post ID chain and is exposed as its own
 // helper so callers that need only the term ID (e.g. to scope a dataset
 // query directly) can stop here without the extra post lookup.
@@ -142,7 +142,7 @@ defined( 'ABSPATH' ) || exit;
 // ════════════════════════════════════════════════════════════════════════════
 
 /**
- * Resolves a two-letter USPS jurisdiction code to its ws_jurisdiction term ID.
+ * Resolves a two-letter USPS jurisdiction code to its WS_JURISDICTION_TAXONOMY term ID.
  *
  * @param  string $jx_code  Two-letter USPS code (case-insensitive).
  * @return int               Term ID, or 0 if not found.
@@ -389,7 +389,7 @@ function ws_get_jurisdiction_data( $input = null ) {
         'name'       => get_the_title( $post_id ),
         'class'      => get_field( 'ws_jurisdiction_class', $post_id ),
         'code'       => $jx_code,
-        // ws_jx_term_id is the ws_jurisdiction taxonomy term ID written by
+        // ws_jx_term_id is the WS_JURISDICTION_TAXONOMY taxonomy term ID written by
         // the seeder and save_post_jurisdiction hook. Returned here for
         // callers that need the term ID directly without a get_term_by() call.
         'jx_term_id' => (int) get_post_meta( $post_id, 'ws_jurisdiction_jx', true ),
@@ -429,7 +429,7 @@ function ws_get_jurisdiction_data( $input = null ) {
 // ════════════════════════════════════════════════════════════════════════════
 // Dataset: Summary
 //
-// Retrieves the jx-summary post assigned to the given ws_jurisdiction term
+// Retrieves the jx-summary post assigned to the given WS_JURISDICTION_TAXONOMY term
 // and returns a fully-hydrated data array.
 //
 // jx-summary is inherently plain-english. It does not use the has_plain_english
@@ -491,7 +491,7 @@ function ws_get_jx_summary_data( $jx_term_id ) {
 // Dataset: Statutes
 //
 // Returns the editorially curated jx-statute records for the jurisdiction
-// summary page — published records assigned to the given ws_jurisdiction
+// summary page — published records assigned to the given WS_JURISDICTION_TAXONOMY
 // taxonomy term that have attach_flag = true, sorted by order ASC.
 //
 // attach_flag is NOT a publish gate. It marks the 3–5 statutes an editor
@@ -630,7 +630,7 @@ function ws_get_jx_statute_data( $jx_term_id ) {
 // ════════════════════════════════════════════════════════════════════════════
 // Jurisdiction Term ID Helper
 //
-// Returns the ws_jurisdiction taxonomy term ID assigned to a jurisdiction
+// Returns the WS_JURISDICTION_TAXONOMY taxonomy term ID assigned to a jurisdiction
 // post. Used by shortcodes to resolve the term_id before calling data
 // functions without making taxonomy calls inside the shortcode itself.
 //
@@ -649,7 +649,7 @@ function ws_get_jx_term_id( $post_id ) {
 // ════════════════════════════════════════════════════════════════════════════
 // US Term ID Helper
 //
-// Returns the ws_jurisdiction taxonomy term ID for the 'us' term.
+// Returns the WS_JURISDICTION_TAXONOMY taxonomy term ID for the 'us' term.
 // Result is cached in a static variable — one DB read per request.
 //
 // Always resolved by literal slug/code ('us') to avoid relying on seeded
@@ -674,7 +674,7 @@ function ws_get_us_term_id() {
 // Dataset: Citations
 //
 // Returns the editorially curated jx-citation records for the jurisdiction
-// summary page — published records assigned to the given ws_jurisdiction
+// summary page — published records assigned to the given WS_JURISDICTION_TAXONOMY
 // taxonomy term that have attach_flag = true, sorted by order ASC.
 //
 // attach_flag is NOT a publish gate. It marks the 3–5 citations an editor
@@ -788,7 +788,7 @@ function ws_get_jx_citation_data( $jx_term_id ) {
 //
 // Returns the editorially curated jx-construction records for the
 // jurisdiction summary page — published records assigned to the given
-// ws_jurisdiction taxonomy term that have attach_flag = true, sorted by
+// WS_JURISDICTION_TAXONOMY taxonomy term that have attach_flag = true, sorted by
 // order ASC.
 //
 // attach_flag is NOT a publish gate. It marks the 3–5 constructions an
@@ -1057,7 +1057,7 @@ add_action( 'save_post_jurisdiction', function( $post_id ) {
     // Clear list and index caches.
     ws_invalidate_jurisdiction_list_and_index_caches();
 
-    // Resolve the assigned ws_jurisdiction term once for both operations.
+    // Resolve the assigned WS_JURISDICTION_TAXONOMY term once for both operations.
     $terms = wp_get_post_terms( $post_id, WS_JURISDICTION_TAXONOMY );
 
     if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
@@ -1088,7 +1088,7 @@ add_action( 'before_delete_post', function( $post_id ) {
 // federal common law doctrine records the same way ws_get_jx_statute_data()
 // appends federal statutes.
 //
-// @param int $jx_term_id  The ws_jurisdiction term ID for the jurisdiction.
+// @param int $jx_term_id  The WS_JURISDICTION_TAXONOMY term ID for the jurisdiction.
 // @return array           Flat array of common law doctrine row arrays.
 //                         Empty array if no records exist.
 // ════════════════════════════════════════════════════════════════════════════

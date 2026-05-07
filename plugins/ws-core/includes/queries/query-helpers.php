@@ -73,18 +73,18 @@ function ws_resolve_display_name( $user_id ) {
 // ════════════════════════════════════════════════════════════════════════════
 // ws_jx_term_by_code()
 //
-// Single chokepoint for all ws_jurisdiction term lookups by USPS code.
+// Single chokepoint for all WS_JURISDICTION_TAXONOMY term lookups by USPS code.
 // Accepts any case and normalizes to lowercase internally so callers can pass
 // human-entered values without failing term resolution.
 //
-// Use this everywhere a USPS code needs to resolve to a ws_jurisdiction term.
+// Use this everywhere a USPS code needs to resolve to a WS_JURISDICTION_TAXONOMY term.
 // For callers that only need the term ID, use ws_get_term_id_by_code() in
 // query-jurisdiction.php, which delegates here.
 //
 // ════════════════════════════════════════════════════════════════════════════
 
 /**
- * Resolves a USPS jurisdiction code to a ws_jurisdiction WP_Term object.
+ * Resolves a USPS jurisdiction code to a WS_JURISDICTION_TAXONOMY WP_Term object.
  *
  * @param  string       $code  USPS jurisdiction code (e.g. 'ca', 'us', 'tx').
  * @return WP_Term|false       Term object, or false if not found.
@@ -112,7 +112,7 @@ function ws_jx_term_by_code( $code ) {
 // ws_jx_codes CONTRACT
 // --------------------
 // ws_jx_codes values MUST be lowercase in the matrix source files
-// (e.g. 'ca', 'tx', 'us') to match ws_jurisdiction taxonomy term slugs.
+// (e.g. 'ca', 'tx', 'us') to match WS_JURISDICTION_TAXONOMY taxonomy term slugs.
 // This function does not normalize matrix payloads; it expects exact keys.
 //
 // ════════════════════════════════════════════════════════════════════════════

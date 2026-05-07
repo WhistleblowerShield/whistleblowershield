@@ -276,7 +276,7 @@ function ws_shortcode_jx_citation() {
     global $post;
     if ( ! $post ) return '';
 
-    // Resolve ws_jurisdiction taxonomy term for the current jurisdiction post.
+    // Resolve WS_JURISDICTION_TAXONOMY taxonomy term for the current jurisdiction post.
     $term_id = ws_get_jx_term_id( $post->ID );
     if ( ! $term_id ) return '';
 

@@ -112,7 +112,7 @@ function ws_register_acf_jurisdiction_fields() {
 			// Core identifiers for each jurisdiction record. ws_jx_code is a
 			// legacy display field retained for visual reference only — the
 			// canonical jurisdiction identifier is the slug of the assigned
-			// ws_jurisdiction taxonomy term. All fields are seeder-populated
+			// WS_JURISDICTION_TAXONOMY taxonomy term. All fields are seeder-populated
 			// and locked against manual editing.
 			// ────────────────────────────────────────────────────────────────
 
@@ -129,7 +129,7 @@ function ws_register_acf_jurisdiction_fields() {
                 'type'          => 'taxonomy',
                 'taxonomy'      => WS_JURISDICTION_TAXONOMY,
                 'field_type'    => 'select',
-                'instructions'  => 'Internal taxonomy field. Seeded by Matrix at Plugin Install. Drives the ws_jurisdiction term assignment for this jurisdiction record.',
+                'instructions'  => 'Internal taxonomy field. Seeded by Matrix at Plugin Install. Drives the WS_JURISDICTION_TAXONOMY term assignment for this jurisdiction record.',
 				'required'      => 1,
 				'add_term'      => 0,
                 'save_terms'    => 0,

@@ -17,7 +17,7 @@
  *        Badge shows count with red/orange/green thresholds (0/1-2/3+).
  * 3.0.0  Removed Resources column (CPT deleted). Replaced ACF relationship
  *        field lookups (ws_related_summary, ws_related_statutes) with
- *        taxonomy queries on ws_jurisdiction — matches admin-navigation.php.
+ *        taxonomy queries on WS_JURISDICTION_TAXONOMY — matches admin-navigation.php.
  * 3.1.0  Added columns for jx-statute, jx-citation, jx-construction,
  *        ws-legal-update, ws-agency, and ws-assist-org list tables.
  * 3.1.1  Added inline comments to direct meta reads explaining why the

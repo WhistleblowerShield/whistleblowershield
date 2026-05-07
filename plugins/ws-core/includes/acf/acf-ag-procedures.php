@@ -240,7 +240,7 @@ function ws_register_acf_ag_procedures() {
                 'instructions' => 'Statutes this procedure specifically operates under. The picker is pre-filtered by this procedure\'s jurisdiction and protected disclosures. Use the taxonomy dropdowns to refine further if needed.',
                 'post_type'    => [ 'jx-statute' ],
                 // 'search' provides a text box; 'taxonomy' adds dropdown filters
-                // for ws_jurisdiction and ws_protected_disclosure so editors can
+                // for WS_JURISDICTION_TAXONOMY and ws_protected_disclosure so editors can
                 // narrow the list before selecting. Auto-scoping (see hook below)
                 // applies the procedure\'s own taxonomy scope automatically.
                 'filters'      => [ 'search', 'taxonomy' ],
@@ -277,7 +277,7 @@ function ws_register_acf_ag_procedures() {
                 'instructions' => 'Common Law entries this procedure specifically operates under. The picker is pre-filtered by this procedure\'s jurisdiction and protected disclosures. Use the taxonomy dropdowns to refine further if needed.',
                 'post_type'    => [ 'jx-common-law' ],
                 // 'search' provides a text box; 'taxonomy' adds dropdown filters
-                // for ws_jurisdiction and ws_protected_disclosure so editors can
+                // for WS_JURISDICTION_TAXONOMY and ws_protected_disclosure so editors can
                 // narrow the list before selecting. Auto-scoping (see hook below)
                 // applies the procedure\'s own taxonomy scope automatically.
                 'filters'      => [ 'search', 'taxonomy' ],

@@ -104,7 +104,7 @@ function ws_is_legal_parent_id( $post_id ) {
 //   title                  string  Procedure post title.
 //   url                    string  Permalink to the individual procedure post.
 //   type                   string  'disclosure' | 'retaliation' | 'both'
-//   jurisdiction           array   WP_Term[] from ws_jurisdiction taxonomy.
+//   jurisdiction           array   WP_Term[] from WS_JURISDICTION_TAXONOMY taxonomy.
 //   protected_disclosures  array   WP_Term[] from ws_protected_disclosure taxonomy.
 //   entry_point            string  How the filer initiates: online/mail/phone/in_person/multi
 //   intake_url             string  Direct link to the intake form/portal for this procedure.
@@ -383,7 +383,7 @@ function ws_get_procedures_for_record( $record_id ) {
 // ws_get_agency_data( $jx_term_id )
 //
 // Returns all published ws-agency records assigned to the given
-// ws_jurisdiction taxonomy term, ordered alphabetically.
+// WS_JURISDICTION_TAXONOMY taxonomy term, ordered alphabetically.
 //
 // Used by jurisdiction-scoped render paths that need the agency dataset
 // without procedural children.
@@ -392,7 +392,7 @@ function ws_get_procedures_for_record( $record_id ) {
 /**
  * Returns all published agencies linked to one jurisdiction term.
  *
- * @param  int $jx_term_id ws_jurisdiction term ID.
+ * @param  int $jx_term_id WS_JURISDICTION_TAXONOMY term ID.
  * @return array<int,array<string,mixed>> Flat agency rows.
  */
 function ws_get_agency_data( $jx_term_id ) {

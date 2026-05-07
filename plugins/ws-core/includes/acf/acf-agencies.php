@@ -78,7 +78,7 @@
  * 
  * JURISDICTION FIELD
  * ------------------
- * Scoped via the ws_jurisdiction taxonomy (field_agency_jurisdictions).
+ * Scoped via the WS_JURISDICTION_TAXONOMY taxonomy (field_agency_jurisdictions).
  * ACF saves/loads terms natively -- no dynamic choice filter needed.
  * Replaces the retired ws_jx_code meta select.
  *
@@ -180,7 +180,7 @@ function ws_register_acf_agencies() {
             // ── Jurisdiction(s) ───────────────────────────────────────────
             //
             // Agencies may have authority over multiple jurisdictions.
-            // Scoped via the ws_jurisdiction taxonomy — assign terms to
+            // Scoped via the WS_JURISDICTION_TAXONOMY taxonomy — assign terms to
             // control which jurisdiction pages surface this agency.
             // save_terms=1 writes term assignments directly; load_terms=1
             // reflects current taxonomy state in the admin UI.
@@ -391,4 +391,4 @@ function ws_register_acf_agencies() {
 
 
 // Dynamic choice filter removed (Phase 3.2 / 12.1).
-// ws_jurisdiction is now a taxonomy field — ACF loads terms natively.
+// WS_JURISDICTION_TAXONOMY is now a taxonomy field — ACF loads terms natively.

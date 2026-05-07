@@ -380,7 +380,7 @@ function ws_feed_ingest_item( $guid ) {
         return false;
     }
 
-    // ── Resolve ws_jurisdiction term ──────────────────────────────────────
+    // ── Resolve WS_JURISDICTION_TAXONOMY term ──────────────────────────────────────
 
     $term = ws_jx_term_by_code( sanitize_text_field( $entry['jx_code'] ?? 'us' ) );
 

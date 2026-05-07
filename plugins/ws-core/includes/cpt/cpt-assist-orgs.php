@@ -7,7 +7,7 @@
  * Distinct from ws-agency (enforcement bodies). Agencies receive reports.
  * Assist organizations help the whistleblower navigate the process.
  *
- * Scoped via ws_jurisdiction taxonomy. Nationwide orgs carry the 'us' term
+ * Scoped via WS_JURISDICTION_TAXONOMY taxonomy. Nationwide orgs carry the 'us' term
  * and ws_aorg_serves_nationwide = 1.
  *
  * @package WhistleblowerShield

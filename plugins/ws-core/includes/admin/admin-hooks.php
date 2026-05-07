@@ -6,7 +6,7 @@
  * content types. Centralizes cross-CPT behaviors that were previously
  * duplicated in every ACF registration file:
  *
- *   1. URL pre-population   — auto-assigns ws_jurisdiction taxonomy term and
+ *   1. URL pre-population   — auto-assigns WS_JURISDICTION_TAXONOMY taxonomy term and
  *                             post title on new-post screens opened from the
  *                             "Create Now" links in admin-navigation.php.
  *
@@ -47,12 +47,12 @@
  * ---------------------
  * ws_jx_code has been retired as the jurisdiction join mechanism. Addendum
  * CPTs (jx-summary, jx-statute, jx-citation, jx-construction) now use the
- * ws_jurisdiction taxonomy to identify their parent jurisdiction.
+ * WS_JURISDICTION_TAXONOMY taxonomy to identify their parent jurisdiction.
  *
  * Auto-assignment on Create Now flow: when a new addendum post is created from
  * the admin navigation panel, ws_jx_term (term slug) is passed as a URL query
  * arg. The wp_insert_post hook below reads this arg and assigns the matching
- * ws_jurisdiction term immediately on post creation.
+ * WS_JURISDICTION_TAXONOMY term immediately on post creation.
  *
  *
  * STAMP META KEYS
@@ -98,12 +98,12 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-// ── Auto-assign ws_jurisdiction taxonomy on new addendum post creation ────────
+// ── Auto-assign WS_JURISDICTION_TAXONOMY taxonomy on new addendum post creation ────────
 //
 // When the "Create Now" or "Add Citation" link is clicked from the jurisdiction
 // admin navigation panel, the URL includes ws_jx_term (jurisdiction term slug).
 // This hook fires on wp_insert_post for new posts and assigns the matching
-// ws_jurisdiction term immediately, so the addendum is correctly scoped.
+// WS_JURISDICTION_TAXONOMY term immediately, so the addendum is correctly scoped.
 
 add_action( 'wp_insert_post', function( $post_id, $post, $update ) {
     if ( $update ) return;
@@ -812,7 +812,7 @@ function ws_sync_additional_services_term( $post_id ) {
 // ACF Taxonomy Field Query Overrides
 // ---------------------------------------------------------------
 /**
- * Apply display_order sort to the ws_jurisdiction taxonomy ACF select field.
+ * Apply display_order sort to the WS_JURISDICTION_TAXONOMY taxonomy ACF select field.
  */
 add_filter( 'acf/fields/taxonomy/query/taxonomy=WS_JURISDICTION_TAXONOMY', function( $args, $field, $post_id ) {
     $args['meta_key'] = 'display_order';

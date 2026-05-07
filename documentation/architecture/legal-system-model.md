@@ -105,7 +105,7 @@ answer on the platform.
 
 An agency record captures the agency's mission, contact information,
 reporting URLs, hotlines, languages supported, and the protected disclosures
-it handles. Agencies carry the `ws_jurisdiction` taxonomy term indicating
+it handles. Agencies carry the `WS_JURISDICTION_TAXONOMY` taxonomy term indicating
 where they have authority.
 
 ### Filing Procedure
@@ -199,7 +199,7 @@ Jurisdiction (57)
 ```
 
 All relationships in the diagram above are implemented via the
-`ws_jurisdiction` taxonomy join — not via post meta or ACF relationship
+`WS_JURISDICTION_TAXONOMY` taxonomy join — not via post meta or ACF relationship
 fields. The only exception is the procedure-to-agency link
 (`ws_ag_procedure_agency_id`, a direct post ID reference) and the
 procedure-to-parent cross-reference (`_ws_ag_procedure_parent_ids`).

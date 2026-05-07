@@ -551,7 +551,7 @@ function ws_register_acf_jx_construction_s() {
             // Tab: Relationships
             //
             // Links this construction back to statute and/or common-law parent.
-            // Jurisdiction scope is provided by ws_jurisdiction taxonomy.
+            // Jurisdiction scope is provided by WS_JURISDICTION_TAXONOMY taxonomy.
             // ────────────────────────────────────────────────────────────────
 
             [
@@ -704,7 +704,7 @@ function ws_jx_construction_details_conditional( $field ) {
 //
 // Builds the court select list based on parent record scope:
 //
-//   Federal statute (has 'us' ws_jurisdiction term):
+//   Federal statute (has 'us' WS_JURISDICTION_TAXONOMY term):
 //     All federal courts (SCOTUS + circuits + districts) merged with all
 //     state courts. $_ws_federal_court_matrix and $_ws_state_court_matrix
 //     are merged.
@@ -842,7 +842,7 @@ function ws_construction_prefill_comlaw_id( $value, $post_id, $field ) {
 // Runs at priority 20 (after ACF saves its fields at 10). Reads the court key
 // saved to ws_jx_construction_court, looks it up via ws_court_lookup() (checks both
 // $_ws_federal_court_matrix and $_ws_state_court_matrix), and resolves
-// ws_jx_codes to ws_jurisdiction taxonomy term IDs.
+// ws_jx_codes to WS_JURISDICTION_TAXONOMY taxonomy term IDs.
 //
 // SCOTUS (ws_jx_codes = us): writes an empty array. The query/render layer
 // treats empty affected_jx + SCOTUS court as "us" — avoids
@@ -879,7 +879,7 @@ function ws_jx_construction_auto_populate_affected_jx( $post_id ) {
     //     return;
     // }
 
-    // Resolve each USPS code to a ws_jurisdiction term ID.
+    // Resolve each USPS code to a WS_JURISDICTION_TAXONOMY term ID.
     $term_ids = [];
     foreach ( $jx_codes as $code ) {
         $term = ws_jx_term_by_code( $code );

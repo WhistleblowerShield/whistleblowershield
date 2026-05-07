@@ -84,7 +84,7 @@ create legal update entries.
 | `ws_legal_update_parent_post_type` | Source CPT slug |
 | `ws_legal_update_type` | Derived from CPT (`jx-statute` → `statute`, etc.) |
 | `ws_legal_update_law_name` | Official name from source post; falls back to post title |
-| `ws_jurisdiction` (taxonomy) | Copied from source post via `wp_set_post_terms()` |
+| `WS_JURISDICTION_TAXONOMY` (taxonomy) | Copied from source post via `wp_set_post_terms()` |
 
 ---
 
@@ -282,7 +282,7 @@ when everything is healthy.
 2. **Core CPTs registered** — `post_type_exists()` for each content
    CPT. Catches loader ordering regressions during development.
 
-3. **Core taxonomy registered** — `taxonomy_exists('ws_jurisdiction')`.
+3. **Core taxonomy registered** — `taxonomy_exists('WS_JURISDICTION_TAXONOMY')`.
    Catches taxonomy load failures that would break term queries,
    the metabox jurisdiction guard, and `tax_input` parameters.
 
