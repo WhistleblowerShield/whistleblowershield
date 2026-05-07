@@ -160,7 +160,8 @@ Fields ordered: legal_recognitions → activity standard → disclosure → clas
                                       `legal-record-acf-hooks-v1.0.md`.)
 - `manager_rule_exclusion_context` — (conditional on `manager-rule-exclusion` in `legal_recognitions`)
 - `public_concern_required_context` — (conditional on `public-concern-required` in `legal_recognitions` AND
-                                      `public-sector` in `employment_sectors`)
+                                       `public-sector` in `employment_sectors`)
+- `manner_of_opposition_context`   — (conditional on `manner-of-opposition-standard` in `legal_recognitions`)
 - `bad_faith_exclusion_context`    — (conditional on `bad-faith-exclusion` in `legal_recognitions`)
 - `anonymity_protection_context`   — (conditional on `anonymity-protection` in `legal_recognitions`)
 - `malicious_reporting_sanctions`  — (Sister to `malicious_reporting_context`; repeater:
@@ -172,9 +173,9 @@ Fields ordered: legal_recognitions → activity standard → disclosure → clas
 - `malicious_reporting_context`    — (conditional on `malicious-reporting-sanctions` in `legal_recognitions`)
 - `protected_action_standards`     — (Sister to `protected_action_context`; multi-select: `per-se-protected`|
                                       `actual-violation`|`reasonable-belief`|`good-faith`)
-- `reasonable_belief_scope`        — (Sister to `reasonable_belief_context`; select: `objective-only`|
-                                      `subjective-only`|`dual-prong`|`see-context`)
-- `reasonable_belief_context`      — (conditional on `protected_action_standards` includes `reasonable-belief`)
+- `reasonable_belief_scope`        — (Sister to `protected_action_context`; AND conditional on
+                                      `protected_action_standards` includes `reasonable-belief`; select:
+                                      `objective-only`|`subjective-only`|`dual-prong`|`see-context`)
 - `protected_action_sources`       — (Sister to `protected_action_context`; multi-select: `constitutional`|
                                       `statutory`|`judicial`|`regulatory`|`executive`|`see-context`)
 - `protected_actions`              — (Sister to `protected_action_context`; taxonomy: `ws_protected_action`)
@@ -212,7 +213,7 @@ Fields ordered: core SOL → modifiers → exhaustion → pathways → threshold
 - `sol_trigger_discovery_gloss`    — (conditional on `sol_triggers` includes `discovery-rule`)
 - `sol_trigger_gloss`              — (conditional on `sol_triggers` is non-empty)
 - `is_sol_suspended_during_admin`
-- `has_sol_details`                — (approved use of `has_field_name_details`)
+- `has_sol_details`                — (approved use of `*_details` on trigger)
 - `sol_details`
 - `sop_value`                      — (Sister to `statute_of_repose_context`)
 - `sop_unit`
@@ -259,6 +260,7 @@ Fields ordered: scope → adverse actions → recognitions → sanctions.
 - `anticipatory_retaliation_gloss`    — (conditional on `anticipatory-retaliation` in `adverse_actions`)
 - `threatened_retaliation_gloss`      — (conditional on `threatened-retaliation` in `adverse_actions`)
 - `adverse_action_details`
+- `facially_retaliatory_policy_context` — (conditional on `facially-retaliatory-policy` in `legal_recognitions`)
 - `is_blacklisting_extended`          — (conditional on `blacklisting` in `adverse_actions`)
 - `preservation_deadline_value`       — (Sister to `evidence_preservation_context`)
 - `preservation_deadline_unit`
@@ -306,6 +308,11 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
                                       `primary_agency`, `local_agencies`, `federal_agencies`,
                                       `process_pathway_scope`, `process_pathway_limit`)
 - `private_roa_context`            — (conditional on `private-right-of-action` in `legal_recognitions`)
+- `pleading_standard_rule`         — (Sister to `pleading_standard_context`; select: `rule-8-notice`|
+                                      `rule-9b-particularity`|`state-equivalent-notice`|
+                                      `state-equivalent-particularity`|`has-details`)
+- `pleading_standard_details`
+- `pleading_standard_context`      — (conditional on `heightened-pleading-standard` in `legal_recognitions`)
 - `jury_trial_scope`               — (Sister to `jury_trial_context`; select: `all-claims`|`damages`|
                                       `liability`|`see-context`)
 - `jury_trial_context`             — (conditional on `private-right-of-action` AND `jury-trial` in
@@ -353,6 +360,9 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
 - `mitigation_required_context`    — (conditional on `mitigation-required` in `legal_recognitions`)
 - `mitigation_exception_context`   — (conditional on `mitigation-required` in `legal_recognitions` AND
                                       `mitigation-exception` in `legal_recognitions`)
+- `after_acquired_evidence_effect` — (Sister to `after_acquired_evidence_context`; select: `bars-front-pay`|
+                                      `bars-reinstatement`|`bars-damages`|`bars-all`|`see-context`)
+- `after_acquired_evidence_context` — (conditional on `after-acquired-evidence` in `legal_recognitions`)
 - `interest_provision_scope`       — (Sister to `interest_provision_context`; select:
                                       `pre-judgment-statutory`|`post-judgment`|`both`|`discretionary`|
                                       `see-context`)
@@ -382,16 +392,19 @@ temporal presumption → detail overflow.
 - `same_decision_context`          — (conditional on `same-decision-defense-standard` in `legal_recognitions`)
 - `employee_standard`              — (single-select taxonomy: `ws_employee_standard`)
 - `employee_standard_details`
-- `has_causal_nexus_statutory_text` — (Sister to `causation_standard_context`)
-- `causal_nexus_statutory_text`    — (Sister to `causation_standard_context`; captures verbatim statutory text
-                                      distinct from `causation_standard_context`)
-- `causation_standard`             — (single-select taxonomy: `ws_causation_standard`)
-- `causation_scope`          — (Sister to `causation_standard_context`; select: `liability`|
+- `employment_classification_test` — (Sister to `employment_classification_context`; select: `economic-realities`|
+                                      `common-law-darden`|`abc-test`|`right-to-control`|`hybrid`|`see-context`)
+- `employment_classification_context` — (conditional on `employment-classification-test` in `legal_recognitions`)
+- `has_causation_standard_statutory_text` — (Sister to `causation_standard_context`)
+- `causation_standard_statutory_text` — (captures verbatim statutory text distinct from
+                                      `causation_standard_context`)
+- `causation_standard`             — (Sister to `causation_standard_context`; single-select taxonomy:
+                                      `ws_causation_standard`)
+- `causation_scope`                — (Sister to `causation_standard_context`; select: `liability`|
                                       `damages`|`both`|`see-context`)
-- `causation_scope_context`  — (Sister to `causation_standard_context`)
-- `causation_standard_context`     — (conditional on `causation_standard` is non-empty)
-- `causation_dual_standard_context` — (conditional on `causation-dual-standard` in `legal_recognitions` AND
-                                       `causation_standard` is non-empty)
+- `causation_standard_context`     — (conditional on `causation-standard-recognized` in `legal_recognitions`)
+- `causation_dual_standard_context`  — (conditional on `causation-dual-standard` in `legal_recognitions` AND
+                                        `causation-standard-recognized` in `legal_recognitions`)
 - `employer_knowledge_scopes`      — (Sister to `employer_knowledge_context`; multi-select:
                                       `actual-knowledge`|`constructive-knowledge`|`inferred-knowledge`|
                                       `imputed-knowledge`|`has-details`)
@@ -410,7 +423,7 @@ temporal presumption → detail overflow.
 - `temporal_proximity_value`       — (Sister to `temporal_proximity_context`)
 - `temporal_proximity_unit`
 - `temporal_proximity_context`     — (conditional on `temporal-proximity-sufficient` in `legal_recognitions`)
-- `has_bop_details`                — (approved use of `has_field_name_details`)
+- `has_bop_details`                — (approved use of `*_details` on triiger)
 - `bop_details`
 
 ---

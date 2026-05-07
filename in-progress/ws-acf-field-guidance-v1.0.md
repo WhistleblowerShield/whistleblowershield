@@ -138,9 +138,7 @@ forms.
 A sister cannot appear without its companion sibling. A sister does not become the cluster anchor merely because
 it is freetext. The cluster anchor remains the triggered companion, normally a `*_context` field.
 
-Sisters **must** appear before or after the sibling they inherit from. Use the order that gives editors the
-clearest
-workflow.
+Sisters **must** be revealed in proximity of their sibling. Use the editorial judegement and prioritize workflow.
 
 ### Recognition Taxonomy Pattern
 
@@ -168,10 +166,11 @@ A *triggered cluster* is a companion plus one or more sister fields revealed by 
 **must strictly** be rooted in the record's recognition taxonomy because recognition slugs are the stable
 bool-state layer for the doctrines or operational states the record describes.
 
-When a cluster reveals more than one field beyond its companion and the trigger is a doctrine-level state, anchor
-the cluster on a recognition taxonomy slug. When the trigger is instead a core classificatory field that already
-stores the controlling value (rather than a bool-state about that value), a non-empty field gate is allowed; the
-spec must document the trigger explicitly inline.
+When a condition reveals more than one field beyond its companion, it becomes a *triggered cluster*. The cluster
+**must strictly** be anchored on a recognition taxonomy slug, without exception. If a core classificatory field
+(which stores a controlling value rather than a bool-state) needs to trigger a cluster, it **must** fire off a
+corresponding term presence in the recognition taxonomy to serve as the stable bool-state anchor. Non-empty field
+gates are only allowed for single-field conditionals.
 
 When a recognition slug requires a term from another taxonomy as a precondition, mark the slug `[P]` in the domain
 spec's slug-to-companion map. When the requirement is mutual (the recognition slug and the related taxonomy term
@@ -294,11 +293,10 @@ Use only these accepted conditional-annotation forms:
 Absent conditionals imply "AND not-empty"; the `absent from select field` form **is authorized to be** used with
 multi-select.
 
-`taxonomy_field is non-empty` is the buildable form when any selected term in the taxonomy field **must** satisfy
-the condition. Documentation prose may describe this as "any-slug" for readability, but the actual conditional is
-always written `taxonomy_field is non-empty`. Conditionals cannot test for `any-slug` directly; any selected slug
+`taxonomy_field is non-empty` is the buildable form when the conditional should trigger on the presence of
+any term in the taxonomy field. Documentation prose may describe this as "any-slug" for readability, but the
+actual conditional is always written `taxonomy_field is non-empty`. Conditionals cannot test for `any-slug` directly; any selected slug
 makes the field non-empty.
-
 Annotation **is formally redundant and should be omitted** for `*_details`, `*_limits`, `*_phases`, and
 `*_companions` when the naming convention
 makes the trigger unambiguous. It is required for all other conditional fields. `*_context` and `*_gloss` fields

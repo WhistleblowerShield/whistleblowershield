@@ -40,9 +40,8 @@ attached posts only. `local_agencies` filters to jurisdiction-applicable, non-fe
 Editor instructions on `primary_agency`: when empty, show "Attach one ws-agency to local or federal first"; when
 non-empty, show "Override primary_agency with any currently attached local or federal agency."
 
-Future agency filtering **are expected to** intersect `ws_process_type`, `ws_disclosure_target`, and
-`ws_protected_disclosure`
-taxonomies.
+Future agency filtering is expected to intersect `ws_process_type`, `ws_disclosure_target`, and
+`ws_protected_disclosure`taxonomies.
 
 ---
 
@@ -120,10 +119,11 @@ Specified:    'retroactive-date'                                      → 'retro
 Applies:      'manager-rule-exclusion'                                → 'manager_rule_exclusion_context'[R]
 Required:     'public-concern-required'[P]                            → 'public_concern_required_context'[R]
                  * 'public-sector' in 'employment_sectors'
+Applies:      'manner-of-opposition-standard'                         → 'manner_of_opposition_context'[R]
 Applies:      'bad-faith-exclusion'                                   → 'bad_faith_exclusion_context'[R]
 Specified:    'malicious-reporting-sanctions'                         → 'malicious_reporting_context'           + 'malicious_reporting_sanctions'[R]
 Available:    'anonymity-protection'                                  → 'anonymity_protection_context'[R]
-Specified:    'protected-action'                                      → 'protected_action_context'              + 'protected_actions'[R]                + 'protected_action_standards'          + 'protected_action_sources'            + 'reasonable_belief_context'[+][R]     + 'reasonable_belief_scope'
+Specified:    'protected-action'                                      → 'protected_action_context'              + 'protected_actions'[R]                + 'protected_action_standards'          + 'protected_action_sources'            + 'reasonable_belief_scope'[+]
 Specified:    'excluded-class'                                        → 'excluded_class_context'                + 'excluded_classes'[R]
 Applies:      'garcetti-exception'[P]                                 → 'garcetti_exception_context'[R]
                  * 'public-sector' in 'employment_sectors'
@@ -148,6 +148,7 @@ Applies:      'statutory-preclusion'[E]                               → 'statu
 Required:     'evidence-preservation'                                 → 'evidence_preservation_context'         + 'preservation_requirement_scopes'[R]  + 'preservation_deadline_value'
 Specified:    'constructive-discharge-standard'[P]                    → 'constructive_discharge_context'        + 'constructive_discharge_standard'[R]
                  * 'constructive-discharge' in 'adverse_actions'
+Prohibited:   'facially-retaliatory-policy'                           → 'facially_retaliatory_policy_context'[R]
 Recognized:   'cats-paw-liability'                                    → 'cats_paw_liability_context'[R]         + 'is_cats_paw_liability_extended'[+]
 Prohibited:   'third-party-retaliation'[P]                            → 'third_party_retaliation_context'[R]
                  * any retaliation-slug in 'adverse_actions'
@@ -161,6 +162,7 @@ Recognized:   'remedy-election-required'                              → 'elect
 Specified:    'process-pathway'                                       → 'process_pathway_context'               + 'process_pathway_scope'[R]            + 'process_pathway_limit'
 Available:    'private-right-of-action'[P+]                           → 'private_roa_context'[R]
                  * 'civil-lawsuit' in 'process_types'
+Required:     'heightened-pleading-standard'                          → 'pleading_standard_context'             + 'pleading_standard_rule'[R]
 Available:    'jury-trial'[P]                                         → 'jury_trial_context'                    + 'jury_trial_scope'[R]
                  * 'private-right-of-action'
 Specified:    'fee-shifting-standard'[P]                              → 'fee_shifting_standard_context'         + 'fee_shifting_standard'[R]            + 'fee_shifting_scope'[R]               + 'fee_shifting_phases'[+][R]           + 'has_fee_shifting_phases'
@@ -170,6 +172,7 @@ Available:    'equitable-interest-award'[P]                           → 'inter
 Required:     'mitigation-required'                                   → 'mitigation_required_context'           + 'mitigation_required_sources'[R]
 Available:    'mitigation-exception'[P]                               → 'mitigation_exception_context'[R]
                  * 'mitigation-required'
+Applies:      'after-acquired-evidence'                               → 'after_acquired_evidence_context'       + 'after_acquired_evidence_effect'[R]
 Available:    'preliminary-reinstatement'[P]                          → 'preliminary_reinstatement_context'     + 'preliminary_reinstatement_rule'[R]           + 'preliminary_reinstatement_scope'[R]
                  * 'reinstatement' OR 'interim-reinstatement' in 'remedies'
 
@@ -177,11 +180,15 @@ Available:    'preliminary-reinstatement'[P]                          → 'preli
 Specified:    'civil-review-standard'                                 → 'review_standard_context'               + 'review_standard'[R]
 
 // ── Burden of Proof Tab ──────────────────────────────────────────────────────────────────────────────
+Applies:      'employment-classification-test'[P]                     → 'employment_classification_context'[R]  + 'employment_classification_test'[R]
+                 * 'independent-contractor', 'sub-contractor', or 'franchisee' in 'protected_classes'
 Specified:    'burden-shifting-framework'                             → 'burden_shifting_context'               + 'burden_shifting_frameworks'[R]
 Specified:    'same-decision-defense-standard'[P]                     → 'same_decision_context'                 + 'same_decision_standard'[R]
                  * 'same-decision-defense' in 'employer_defenses'
-Applies:      'causation-dual-standard'[P]                            → 'causation_dual_standard_context'[R]
+Recognized:   'causation-standard-recognized'[P+]                     → 'causation_standard_context'[R]         + 'causation_standard'[R]               + 'causation_scope'                     + 'has_causation_standard_statutory_text'
                  * 'causation_standard' is non-empty
+Applies:      'causation-dual-standard'[P]                            → 'causation_dual_standard_context'[R]
+                 * 'causation-standard-recognized'
 Required:     'employer-knowledge-required'                           → 'employer_knowledge_context'            + 'employer_knowledge_scopes'[R]
 Recognized:   'temporal-presumption-recognized'                       → 'temporal_presumption_context'          + 'presumption_window_value'            + 'presumption_effect'[R]
 Sufficient:   'temporal-proximity-sufficient'                         → 'temporal_proximity_context'[R]         + 'temporal_proximity_value'
