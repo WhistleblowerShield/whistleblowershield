@@ -62,33 +62,41 @@ Field names are prefix-free here. ACF registration applies the `ws_aorg_` prefix
 
 ### Identity and Publishing
 
-- `organization_status` - select: `active`|`inactive`|`merged`|`closed`|`unclear`|`has-details`
-- `organization_status_details` - conditional on `organization_status` is `has-details`
+- `organization_status` - select: `active`|`inactive`|`merged`|`closed`|`unclear`
 - `public_directory_status` - select: `draft-review`|`publish-ready`|`needs-verification`|
-  `temporarily-hidden`|`do-not-publish`|`has-details`
-- `public_directory_status_details` - conditional on `public_directory_status` is `has-details`
+  `temporarily-hidden`|`do-not-publish`
 - `editor_confidence` - select: `high`|`medium`|`low`|`do-not-use`
 - `editor_confidence_notes`
+- `organization_model` - select: `nonprofit`|`legal-aid`|`law-firm`|`bar-program`|`advocacy`|
+  `oversight-office`|`union`|`government-office`|`coalition`|`program`|`mixed`
 
 Why now: these fields prevent research records from silently becoming recommendations before a human is ready to
-stand behind the routing.
+stand behind the routing. `organization_model` replaces the working concept behind `aorg_type`; it describes the
+kind of organization, not whether the organization is a good whistleblower match.
 
 ### Service Fit
 
 - `whistleblower_fit` - select: `primary-focus`|`significant-program`|`adjacent-help`|`not-specific`|
-  `none`|`unclear`|`has-details`
-- `whistleblower_fit_details` - conditional on `whistleblower_fit` is `has-details`
+  `none`|`unclear`
+- `whistleblower_scope` - integer/select score: `0`|`1`|`2`|`3`
+- `whistleblower_scope_details`
 - `service_depth` - select: `information-only`|`triage-only`|`brief-advice`|`document-review`|
-  `limited-scope-help`|`direct-representation`|`referral-only`|`warm-handoff`|`ongoing-support`|
-  `unclear`|`has-details`
-- `service_depth_details` - conditional on `service_depth` is `has-details`
+  `limited-scope-help`|`direct-representation`|`referral-only`|`warm-handoff`|`peer-support`|
+  `ongoing-support`|`unclear`
 - `intake_commitment_class` - select: `personal-help-request`|`screening-form`|`referral-request`|
-  `general-contact-only`|`leak-drop-only`|`information-only`|`unclear`|`has-details`
-- `intake_commitment_class_details` - conditional on `intake_commitment_class` is `has-details`
+  `peer-support-request`|`general-contact-only`|`tip-submission-only`|`leak-drop-only`|`information-only`|
+  `unclear`
 - `service_limits` - textarea
 
 Why now: current overflow repeatedly distinguishes direct help, referral, screening, general information, peer
 support, and legal representation. These are not decoration; they change who should be shown first.
+
+`whistleblower_scope` remains the 0-3 scoring spine already used by the cascade and seeded records:
+
+- `0` - no meaningful whistleblower service;
+- `1` - adjacent or weak whistleblower relevance;
+- `2` - significant whistleblower program or subject-matter subset;
+- `3` - primary or broad whistleblower support.
 
 `service_limits` is intentionally freetext for this pass. It catches known user-facing limits such as "no phone
 legal advice," "referral only," "subject-matter limited," and "no guaranteed representation" without forcing a
@@ -96,41 +104,33 @@ second modeling campaign.
 
 ### Intake and Contact
 
-- `intake_status` - select: `open`|`limited`|`waitlist`|`closed`|`unclear`|`has-details`
-- `intake_status_details` - conditional on `intake_status` is `has-details`
+- `intake_status` - select: `open`|`limited`|`waitlist`|`closed`|`unclear`
 - `expected_response_time` - select: `same-day`|`one-to-three-days`|`one-week`|`over-one-week`|
-  `not-stated`|`unclear`|`has-details`
-- `expected_response_time_details` - conditional on `expected_response_time` is `has-details`
+  `not-stated`|`unclear`
 
 Why now: Maya and James need to know whether a path is likely to produce help, not just whether a URL exists.
 
 ### Eligibility and Cost
 
 - `eligibility_status` - select: `open-to-public`|`screening-required`|`restricted`|`members-only`|
-  `referral-only`|`unclear`|`has-details`
-- `eligibility_status_details` - conditional on `eligibility_status` is `has-details`
-- `income_screening` - select: `required`|`not-required`|`possible`|`unclear`|`has-details`
-- `income_screening_details` - conditional on `income_screening` is `has-details`
+  `referral-only`|`unclear`
+- `income_screening` - select: `required`|`not-required`|`possible`|`unclear`
 - `membership_requirement` - select: `none`|`union-members-only`|`profession-members-only`|
-  `program-members-only`|`has-details`
-- `membership_requirement_details` - conditional on `membership_requirement` is `has-details`
+  `program-members-only`
 
 Why now: research repeatedly found "case review," "no income cutoff," "membership," and "qualifying case" facts.
 Those facts affect whether the result is useful now or only theoretically relevant.
 
 ### Safety and Privacy
 
-- `anonymous_pre_consult_status` - select: `yes`|`no`|`unclear`|`has-details`
-- `anonymous_pre_consult_details` - conditional on `anonymous_pre_consult_status` is `has-details`
-- `confidentiality_claimed` - select: `yes`|`no`|`unclear`|`has-details`
-- `confidentiality_claimed_details` - conditional on `confidentiality_claimed` is `has-details`
-- `secure_channel_status` - select: `dedicated-secure-channel`|`standard-web-form`|`leak-drop-only`|
-  `none-found`|`unclear`|`has-details`
-- `secure_channel_status_details` - conditional on `secure_channel_status` is `has-details`
+- `anonymous_pre_consult_status` - select: `yes`|`no`|`unclear`
+- `confidentiality_claimed` - select: `yes`|`no`|`unclear`
+- `secure_channel_status` - select: `dedicated-secure-channel`|`standard-web-form`|`secure-tip-only`|
+  `leak-drop-only`|`none-found`|`unclear`
 - `secure_contact_tools` - multi-select: `signal`|`protonmail`|`tutanota`|`wire`|`keybase`|
   `pgp-email`|`securedrop`|`globaleaks`|`encrypted-web-form`|`other`
 - `secure_contact_tool_details` - conditional on `secure_contact_tools` includes `other`
-- `risk_warning_notes`
+- `public_warning_notes`
 
 Why now: HTTPS intake, pseudonym use, SecureDrop, Signal, and privilege/confidentiality claims are different facts.
 Collapsing them makes the directory less safe.
@@ -139,15 +139,11 @@ Collapsing them makes the directory less safe.
 
 - `has_attorneys` - select: `yes`|`no`|`unclear`
 - `attorney_role` - select: `direct-representation`|`consultation-only`|`referral-panel`|
-  `supervised-clinic`|`policy-only`|`unclear`|`has-details`
-- `attorney_role_details` - conditional on `attorney_role` is `has-details`
+  `supervised-clinic`|`policy-only`|`unclear`
 - `legal_representation_status` - select: `available`|`limited`|`referral-only`|`not-available`|
-  `unclear`|`has-details`
-- `legal_representation_status_details` - conditional on `legal_representation_status` is `has-details`
+  `unclear`
 - `attorney_client_relationship_status` - select: `may-form`|`does-not-form`|`not-stated`|
-  `unclear`|`has-details`
-- `attorney_client_relationship_status_details` - conditional on `attorney_client_relationship_status` is
-  `has-details`
+  `unclear`
 
 Why now: "has attorneys" is too blunt. The directory needs to distinguish direct representation from referral
 panels, policy shops, and standard forms that expressly do not create an attorney-client relationship.
@@ -156,34 +152,37 @@ panels, policy shops, and standard forms that expressly do not create an attorne
 
 ## Existing Fields to Keep
 
-These existing fields remain useful and should not be renamed in the Phase 2 starting-point pass unless an ACF
-rewrite is already happening for other reasons:
+These existing fields remain useful. ACF registration will apply the `ws_aorg_` prefix automatically. The actual meta keys in the database will still have the prefix, but the JSON pipeline should target the canonical base names.
 
-- `ws_aorg_official_name`
-- `ws_aorg_common_name`
-- `ws_aorg_description`
-- `ws_aorg_type`
-- `ws_aorg_website_url`
-- `ws_aorg_intake_url`
-- `ws_aorg_contact_url`
-- `ws_aorg_phones`
-- `ws_aorg_emails`
-- `ws_aorg_mailing_address`
-- `ws_aorg_serves_nationwide`
-- `ws_aorg_jurisdictions`
-- `ws_aorg_protected_disclosures`
-- `ws_aorg_disclosure_targets`
-- `ws_aorg_case_stages`
-- `ws_aorg_process_types`
-- `ws_aorg_services`
-- `ws_aorg_employment_sectors`
-- `ws_aorg_protected_classes`
-- `ws_aorg_cost_models`
-- `ws_aorg_languages`
-- `ws_aorg_legitimacy_url`
-- `ws_aorg_last_reviewed`
+Actual base-name changes:
+- `official_homepage_url` (was `website_url`)
+- `general_description` (was `description`)
+- `is_nationwide` (was `serves_nationwide`)
+- `last_reviewed_date` (was `last_reviewed`)
 
-Rename normalization can wait. Maya and James do not benefit from clean meta names if the directory stalls.
+Fields keeping their base names (with prefix applied at registration):
+- `official_name`
+- `common_name`
+- `whistleblower_scope`
+- `whistleblower_scope_details`
+- `intake_url`
+- `contact_url`
+- `phones` (kept as scalar/text for starting-point to avoid repeater churn)
+- `emails` (kept as scalar/text for starting-point to avoid repeater churn)
+- `mailing_address`
+- `jurisdictions`
+- `protected_disclosures`
+- `disclosure_targets`
+- `case_stages`
+- `process_types`
+- `services`
+- `employment_sectors`
+- `protected_classes`
+- `cost_models`
+- `languages`
+
+*Note: `aorg_type` is fully retired and replaced by `organization_model`.*
+*Note: `legitimacy_url` is deferred from the starting point as it was modeled as a repeater in Codex.*
 
 ---
 
@@ -192,12 +191,12 @@ Rename normalization can wait. Maya and James do not benefit from clean meta nam
 Do not use `*_context` for this starting-point assist-org pass unless a true cluster is created. These are mostly
 single-field conditionals from select values, so `*_details` is sufficient.
 
-Do not use `see-details` or `see-context` in the new local selects for this pass. If the value needs explanation,
-use `has-details` and its matching `*_details` field.
+Do not use `see-details`, `see-context`, or `has-details` in canonical research values. `has-details` is an
+editorial approval blocker only, not seedable data.
 
 Do not convert every recurring service fact into a new taxonomy term. Use existing `ws_aorg_service` where the term
 exists. Use the new local select fields for routing-critical distinctions. Leave non-routing nuance in
-`service_limits`, `risk_warning_notes`, or `_review_notes`.
+`service_limits`, `public_warning_notes`, or `_review_notes`.
 
 ---
 
@@ -232,10 +231,12 @@ Keep the existing scoring structure. Add only small, explainable modifiers.
 
 Positive signals:
 
+- `whistleblower_scope` remains the base score.
 - `whistleblower_fit = primary-focus` strong bonus.
 - `whistleblower_fit = significant-program` moderate bonus.
-- `service_depth = direct-representation`, `warm-handoff`, or `ongoing-support` bonus.
+- `service_depth = direct-representation`, `warm-handoff`, `peer-support`, or `ongoing-support` bonus.
 - `intake_commitment_class = personal-help-request` bonus.
+- `intake_commitment_class = peer-support-request` bonus for retaliation-active or post-report users.
 - `intake_status = open` bonus.
 - `secure_channel_status = dedicated-secure-channel` small safety bonus.
 - `anonymous_pre_consult_status = yes` small safety bonus for pre-report users.
@@ -248,8 +249,11 @@ Warning or downgrade signals:
 - `editor_confidence = do-not-use` blocks public recommendation.
 - `whistleblower_fit = none` blocks public recommendation.
 - `whistleblower_fit = unclear` keeps record visible only as low-confidence fallback.
+- `whistleblower_scope = 0` blocks public recommendation.
 - `intake_commitment_class = leak-drop-only` blocks ordinary help routing.
+- `intake_commitment_class = tip-submission-only` blocks ordinary help routing.
 - `intake_commitment_class = information-only` downgrades for James.
+- `secure_channel_status = secure-tip-only` requires public warning if shown.
 - `secure_channel_status = leak-drop-only` requires public warning if shown.
 - `legal_representation_status = referral-only` should not be labeled as direct legal help.
 
@@ -262,6 +266,7 @@ Do not let engagement scoring overpower fit. A hotline is useful only when the o
 The prompt should ask researchers to distinguish these facts explicitly:
 
 - What kind of help does the organization provide?
+- What is the 0-3 `whistleblower_scope` score, and what evidence supports it?
 - How deep is the help?
 - Does the intake path request personal assistance, screen for possible help, refer out, or only accept tips?
 - Can a user begin without giving their legal name?
@@ -277,17 +282,17 @@ Use `unclear` when the question matters but the answer is not stated.
 
 ## Ingest Update Target
 
-Ingest must validate the new local select values and reject invalid values.
+Since JSONs will be modified and ingest rebuilt, ingest expects the new canonical keys natively. Ingest must validate the new local select values and reject invalid ones.
 
-Ingest may map old tri-state fields forward:
+For the old tri-state or legacy fields that require conceptual mapping during JSON modification:
 
+- `assistance_type` -> `organization_model` (JSON must translate legacy types to new models)
 - `anonymous_pre_consult_possible` -> `anonymous_pre_consult_status`
-- `has_secure_channel` -> `secure_channel_status`
+- `has_secure_channel` -> `secure_channel_status` (JSON must not map `has_secure_channel = yes` to `dedicated-secure-channel` without verifying a secure tool or URL exists)
 - `has_attorneys` -> `has_attorneys`
 - `income_eligibility_required` -> `income_screening`
 
-Ingest must not map `has_secure_channel = yes` to `dedicated-secure-channel` unless a secure tool or secure URL is
-also present. A normal HTTPS intake form maps to `standard-web-form`.
+Ingest must not map a normal HTTPS intake form to `dedicated-secure-channel`; it maps to `standard-web-form`.
 
 Ingest should preserve `_review_notes`, `_reconciled_notes`, and `_schema_gap_notes` for audit. Those fields are
 not routing inputs.

@@ -171,8 +171,7 @@ that post meta could not provide.
 
 The constant `WS_JURISDICTION_TAXONOMY` holds the taxonomy slug and is
 used wherever WordPress expects a taxonomy identifier. Never hardcode the
-string `'WS_JURISDICTION_TAXONOMY'` — always use the constant.
-
+taxonomy slug string (e.g., `'ws_jurisdiction'`) — always use the constant `WS_JURISDICTION_TAXONOMY`.
 ---
 
 ## The Attach-Flag Pattern

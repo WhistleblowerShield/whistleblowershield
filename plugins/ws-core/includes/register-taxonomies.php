@@ -394,7 +394,7 @@ $_ws_taxonomy_registry = [
 
 // —— 9. Jurisdictions ———————————————————————————————————————————————————————
 /**
- * Assigns WS_JURISDICTION_TAXONOMY with its flat term structure.
+ * Assigns ws_jurisdiction with its flat term structure.
  *
  * Seed terms are derived from the canonical jurisdiction matrix:
  * matrix key -> taxonomy slug, title -> taxonomy label.
@@ -402,7 +402,7 @@ $_ws_taxonomy_registry = [
  * @todo legal_prompt, assist_prompt — set instruction strings.
  * 
  */
-    'WS_JURISDICTION_TAXONOMY'  => [
+    'ws_jurisdiction'  => [
         'cpts'             => ['jurisdiction', 'jx-statute', 'jx-summary', 'jx-citation', 'jx-construction', 'jx-common-law', 'ws-agency', 'ag-procedure', 'ws-assist-org'],
         'plural'           => 'Jurisdictions',
         'singular'         => 'Jurisdiction',
@@ -770,6 +770,7 @@ $_ws_taxonomy_registry = [
             // = NOTE = 'legal_recognitions' appears at top of Classification Tab
             'manager-rule-exclusion'                    => 'Manager Rule / Duty Speech Exclusion Applies',
             'public-concern-required'                   => 'Public Concern Required',
+            'manner-of-opposition-standard'             => 'Manner of Opposition Standard Applies',
             'bad-faith-exclusion'                       => 'Bad Faith / Knowingly False Exclusion Applies',
             'anonymity-protection'                      => 'Anonymity / Confidentiality Protection Available',
             'malicious-reporting-sanctions'             => 'Malicious Reporting Sanctions Specified',
@@ -791,12 +792,14 @@ $_ws_taxonomy_registry = [
             // Retaliation
             'evidence-preservation'                     => 'Evidence Preservation Required',
             'constructive-discharge-standard'           => 'Constructive Discharge Standard Specified',
+            'facially-retaliatory-policy'               => 'Facially Retaliatory Policy Prohibited',
             'remedy-election-required'                  => 'Election of Remedies Required',
             'cats-paw-liability'                        => 'Cat\'s Paw Liability Recognized',
             'third-party-retaliation'                   => 'Third-Party Retaliation Prohibited',
             'criminal-sanctions'                        => 'Criminal Sanctions Specified',
             // Processes and Remedies
             'process-pathway'                           => 'Process Pathway Specified',
+            'heightened-pleading-standard'              => 'Heightened Pleading Standard Required',
             'private-right-of-action'                   => 'Private Right of Action Available',
             'jury-trial'                                => 'Jury Trial Available',
             'fee-shifting-standard'                     => 'Fee Shifting Standard Specified',
@@ -804,10 +807,13 @@ $_ws_taxonomy_registry = [
             'equitable-interest-award'                  => 'Equitable Interest Provision Available',
             'mitigation-required'                       => 'Mitigation Required',
             'mitigation-exception'                      => 'Mitigation Exception Available',
+            'after-acquired-evidence'                   => 'After-Acquired Evidence Doctrine Applies',
             'preliminary-reinstatement'                 => 'Preliminary / Interim Reinstatement Available',
             // Burden of Proof
+            'employment-classification-test'            => 'Employment Classification Test Applies',
             'burden-shifting-framework'                 => 'Burden Shifting Framework Specified',
             'same-decision-defense-standard'            => 'Same-Decision Defense Standard Specified',
+            'causation-standard-recognized'             => 'Causation Standard Recognized',
             'causation-dual-standard'                   => 'Causation Dual Standard Applies',
             'statutory-nexus-controls'                  => 'Statutory Nexus Controls',
             'employer-knowledge-required'               => 'Employer Knowledge Element Required',

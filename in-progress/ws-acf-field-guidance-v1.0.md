@@ -124,6 +124,8 @@ legitimately be
 empty, use the primary required subfield instead. If no row subfield is guaranteed to be non-empty, the repeater
 is probably mis-modeled; omit the conditional only with an inline annotation explaining the exception.
 
+**Repeater Trigger Doctrine:** A triggered repeater counts as one parent-level field for non-recognition trigger doctrine. No root/global `*_context` is needed on the repeater itself. The row-level `*_context` carries the necessary per-row nuance.
+
 ### Sister Fields
 
 Sister fields inherit the conditional gate of a companion field without repeating the full condition. Most sisters
@@ -162,19 +164,20 @@ consistent: every term in the recognition taxonomy answers a bool-state question
 
 A *triggered companion* is one conditional field revealed by one trigger.
 
-A *triggered cluster* is a companion plus one or more sister fields revealed by the same primary gate. Clusters
-**must strictly** be rooted in the record's recognition taxonomy because recognition slugs are the stable
+A *triggered cluster* is a companion plus one or more sister fields revealed by the same primary gate. For legal and doctrinal concepts, clusters
+**must strictly** be rooted in the record's recognition taxonomy because these "qualified-bools" (recognition slugs) are the stable
 bool-state layer for the doctrines or operational states the record describes.
 
-When a condition reveals more than one field beyond its companion, it becomes a *triggered cluster*. The cluster
-**must strictly** be anchored on a recognition taxonomy slug, without exception. If a core classificatory field
-(which stores a controlling value rather than a bool-state) needs to trigger a cluster, it **must** fire off a
-corresponding term presence in the recognition taxonomy to serve as the stable bool-state anchor. Non-empty field
-gates are only allowed for single-field conditionals.
+When a condition reveals more than one field beyond its companion, it becomes a *triggered cluster*. For any legal or doctrinal concept, the cluster
+**must strictly** be anchored on a recognition taxonomy slug (a qualified-bool), without exception. If a core classificatory field
+(which stores a controlling value rather than a bool-state) needs to trigger a doctrinal cluster, it **must** fire off a
+corresponding term presence in the recognition taxonomy to serve as the stable bool-state anchor.
+
+**Exception for Non-Legal Bools:** A non-doctrine bool (e.g., `has_negative_treatment`) that represents a pure operational state of the record itself, rather than a legal doctrine, is exempt from the recognition taxonomy anchor requirement. However, any multi-field cluster triggered by a non-legal bool **must be strictly audited**. The knee-jerk pattern of automatically pairing a freetext companion with structured sister fields is prohibited here; if the non-legal state is sufficiently captured by structured data alone, omit the narrative glue. Non-empty field gates are only allowed for single-field conditionals.
 
 When a recognition slug requires a term from another taxonomy as a precondition, mark the slug `[P]` in the domain
 spec's slug-to-companion map. When the requirement is mutual (the recognition slug and the related taxonomy term
-must always appear together), mark it `[P+]` and cross-document it in the domain spec's hook requirements table.
+must always appear together), or when the pairing is with a non-empty taxonomy field rather than a specific term, mark it `[P+]` and cross-document it in the domain spec's hook requirements table.
 
 Single-field conditionals (`*_gloss` companion only) **are permitted to** remain outside the recognition taxonomy.
 If they migrate
@@ -195,6 +198,10 @@ Pluralize suffixes to match cardinality (e.g., `*_classes`, `*_scopes`, `*_statu
 and plural in some traditions, but in this codebase the plural is `statuses`. Other forms (`stati`, etc.) are not
 accepted. The modified-key infix **must** always be singular (e.g., `protected_actions` becomes
 `protected_action_standards` or `protected_action_sources`).
+
+### Record-Type Double Roles
+
+Explicitly approved: The same meta key is permitted to carry record-type-specific behavior (e.g., `review_standard` acts as a sister field in substantive records, but as a standalone field in precedent records). This is a valid pattern when the underlying concept is identical but the structural requirements of the CPT differ.
 
 ### Data Shape Suffixes
 
@@ -281,11 +288,12 @@ Use only these accepted conditional-annotation forms:
 - Taxonomy term present: `conditional on slug in taxonomy_field`
 - Taxonomy term absent: `conditional on slug absent in taxonomy_field`
 - Any term in taxonomy field: `conditional on taxonomy_field is non-empty`
-- Any non-empty value: `conditional on trigger_field is non-empty`
+- Any non-empty value: `conditional on trigger_field is non-empty` (formally approved for whole-field gloss triggers)
 - Specific value in select field: `conditional on trigger_field is trigger_value`
 - Specific value absent from select field: `conditional on trigger_field is NOT trigger_value`
 - Specific value in multi-select field: `conditional on trigger_field includes trigger_value`
 - Child taxonomy value present: `conditional on any child-slug of parent-slug in taxonomy_field`
+- Pseudo-class child taxonomy value present: `conditional on any retaliation-slug in adverse_actions` (where `retaliation-slug` is the accepted pseudo-class representing any term acting as a structural retaliation root)
 - Boolean true: `conditional on bool_field is true`
 - Boolean false: `conditional on bool_field is false`
 - Compound values and conditions: combine with all-caps `AND`, `OR`, and `NOT`

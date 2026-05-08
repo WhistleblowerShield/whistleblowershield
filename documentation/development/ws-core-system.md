@@ -108,8 +108,7 @@ are multi-select are always plural.
 
 | Slug | Label | Hierarchical | Public | Applied To |
 |---|---|---|---|---|
-| `WS_JURISDICTION_TAXONOMY` | Jurisdictions | — | — | All content CPTs | multi-select |
-| `ws_protected_disclosure` | Disclosure Categories | ✓ | ✓ | `jx-statute`, `jx-citation`, `ws-agency`, `ag-procedure`, `ws-assist-org` | multi-select |
+| `ws_jurisdiction` | Jurisdictions | — | — | All content CPTs | multi-select || `ws_protected_disclosure` | Disclosure Categories | ✓ | ✓ | `jx-statute`, `jx-citation`, `ws-agency`, `ag-procedure`, `ws-assist-org` | multi-select |
 | `ws_process_type` | Process Types | — | ✓ | `jx-statute`, `ws-agency`, `ws-assist-org`, `jx-construction` | multi-select |
 | `ws_remedy` | Remedies | — | — | `jx-statute` | multi-select |
 | `ws_protected_class` | Protected Classes | ✓ | — | `jx-statute` | multi-select |
@@ -126,12 +125,11 @@ are multi-select are always plural.
 | `ws_procedure_type` | Procedure Types | — | — | `ag-procedure` | single-select |
 
 **`WS_JURISDICTION_TAXONOMY` details:** Private taxonomy. Slugs are lowercase
+**`WS_JURISDICTION_TAXONOMY` details:** Private taxonomy. Slugs are lowercase
 USPS codes (`us`, `ca`, `tx`, `dc`, `pr`, etc.). Terms are seeded by
 `matrix-jurisdictions.php`. Always reference via the
 `WS_JURISDICTION_TAXONOMY` constant — never hardcode the string
-`'WS_JURISDICTION_TAXONOMY'`.
-
-**Hierarchical taxonomies:** `ws_protected_disclosure` has six parent
+`'ws_jurisdiction'`.**Hierarchical taxonomies:** `ws_protected_disclosure` has six parent
 categories with ~30 child terms covering the main areas of whistleblower
 law (workplace, financial, government accountability, public health,
 privacy, national security). `ws_protected_class` and
@@ -160,8 +158,7 @@ All constants are defined in `ws-core.php` before the bootstrap runs.
 | `WS_CORE_URL` | `plugin_dir_url()` | URL to plugin root for asset enqueues |
 | `WS_JURISDICTION_TAXONOMY` | `'WS_JURISDICTION_TAXONOMY'` | Canonical taxonomy slug — use everywhere WordPress expects a taxonomy identifier |
 | `WS_CACHE_ALL_JURISDICTIONS` | `'ws_all_jurisdictions_cache_'` | Transient key for full jurisdiction list cache |
-| `WS_CACHE_JX_INDEX` | `'ws_jx_index_cache_'` | Transient key for jurisdiction index page cache |
-| `WS_CACHE_LEGAL_UPDATES_SITEWIDE` | `'ws_legal_updates_sitewide_'` | Transient key for sitewide legal updates cache (up to 100 items) |
+| `WS_JURISDICTION_TAXONOMY` | `'ws_jurisdiction'` | Canonical taxonomy slug — use everywhere WordPress expects a taxonomy identifier || `WS_CACHE_LEGAL_UPDATES_SITEWIDE` | `'ws_legal_updates_sitewide_'` | Transient key for sitewide legal updates cache (up to 100 items) |
 | `WS_REF_PARENT_TYPES` | `['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction']` | CPT slugs that support reference parent relationships |
 | `WS_SOURCE_MATRIX_SEED` | `'matrix_seed'` | Source method: created by matrix seeder |
 | `WS_SOURCE_AI_RESEARCH` | `'ai_research'` | Source method: created with AI assistance |

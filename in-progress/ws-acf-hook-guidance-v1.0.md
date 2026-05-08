@@ -36,6 +36,8 @@ value and the empty required field.
 **Authorship boundary.** Derived and merged fields are written by hooks only. Editors **must never** be asked to
 maintain hidden derived fields manually; if an editor finds themselves doing so, the hook is missing.
 
+**Auto-Set Exceptions.** General hook doctrine favors validation over cleanup or automatic setting. However, derived/guard-field exceptions are approved when explicit editorial intent directly forces a structural state (e.g., `has_fee_shifting_phases` is approved to auto-set true when `fee_shifting_standard` is `none-american-rule`).
+
 **Hook organization.** Prefer one hook per behavior family with a small rules table over many one-off hooks. A
 rules table keeps the legitimate variations greppable and the inert ones obvious. Reuse hook logic wherever
 possible — a single hook branching by `get_post_type()` beats near-identical hooks per CPT.
@@ -44,25 +46,7 @@ possible — a single hook branching by `get_post_type()` beats near-identical h
 
 ## Triggered Cluster Guidance
 
-A *triggered companion* is one field revealed by a trigger. A *triggered cluster* is a companion plus one or
-more sister fields revealed by the same primary gate.
-
-Clusters are rooted in the record's recognition taxonomy because those slugs represent doctrine-level or
-operational bool states. A recognition slug **is capable of** triggering:
-
-- no companion, where the slug alone captures the state;
-- one `*_context` companion;
-- a full cluster: one `*_context` companion plus sister fields.
-
-Non-recognition fields cannot anchor triggered clusters. A non-recognition trigger may reveal a single companion
-field only. If a non-recognition value appears to require multiple fields, first reduce the model to the one
-essential field or redesign the shape so the trigger target remains one field. If two fields are truly
-irreducible, annotate the exception inline with explicit approval and keep it outside the recognition taxonomy.
-Do not promote non-doctrinal, non-recognition states into the recognition taxonomy merely to satisfy cluster
-mechanics.
-
-The first companion field normally carries the narrative context for the cluster. Sister fields carry structured
-values or narrower explanations that belong to the same triggered state.
+For definitions of triggered companions, triggered clusters, and the requirement that doctrines anchor to the recognition taxonomy, see ws-acf-field-guidance-v1.0.md. This section covers the hook validation rules for those clusters.
 
 ### Required Fields
 

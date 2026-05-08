@@ -410,8 +410,7 @@ fields DO attach.
 |---|---|---|
 | `ws_ag_procedure_agency_id` | post_object | Parent `ws-agency` post; pre-filled from `?agency_id=` URL param on new posts |
 | `ws_procedure_type` | taxonomy | `ws_procedure_type` terms; radio UI; `save_terms: 1` |
-| `WS_JURISDICTION_TAXONOMYs` *(taxonomy field)* | taxonomy | Jurisdiction scope; `save_terms: 1` |
-| `ws_ag_procedure_protected_disclosures` | taxonomy | `ws_protected_disclosure` terms; `save_terms: 1` |
+| `WS_JURISDICTION_TAXONOMY` *(taxonomy field)* | taxonomy | Jurisdiction scope; `save_terms: 1` || `ws_ag_procedure_protected_disclosures` | taxonomy | `ws_protected_disclosure` terms; `save_terms: 1` |
 | `ws_ag_procedure_statute_ids` | relationship | Related `jx-statute` posts; auto-scoped to matching jurisdiction and protected disclosures |
 | `ws_ag_procedure_comlaw_ids` | relationship | Related `jx-common-law` posts; auto-scoped to matching jurisdiction |
 | `_ws_ag_procedure_parent_ids` | relationship | (Internal) Merged array of related `jx-statute` and `jx-common-law` posts |
@@ -474,8 +473,7 @@ fields DO attach.
 |---|---|---|
 | `ws_aorg_serves_nationwide` | true_false | Serves all 57 jurisdictions — enables nationwide overlay |
 | `WS_JURISDICTION_TAXONOMYs` *(taxonomy field)* | taxonomy | Specific jurisdictions served; `save_terms: 1` |
-| `ws_aorg_protected_disclosures` | taxonomy | `ws_protected_disclosure` terms; `save_terms: 1` |
-| `ws_aorg_services` | taxonomy | `ws_aorg_service` terms; `save_terms: 1` |
+| `WS_JURISDICTION_TAXONOMY` *(taxonomy field)* | taxonomy | Specific jurisdictions served; `save_terms: 1` || `ws_aorg_services` | taxonomy | `ws_aorg_service` terms; `save_terms: 1` |
 | `ws_aorg_additional_services` | textarea | Free-text overflow; auto-assigns `additional` service term |
 | `ws_aorg_employment_sectors` | taxonomy | `ws_employment_sector` terms; `save_terms: 1` |
 | `ws_aorg_case_stages` | taxonomy | `ws_case_stage` terms; `save_terms: 1` |

@@ -282,8 +282,7 @@ when everything is healthy.
 2. **Core CPTs registered** — `post_type_exists()` for each content
    CPT. Catches loader ordering regressions during development.
 
-3. **Core taxonomy registered** — `taxonomy_exists('WS_JURISDICTION_TAXONOMY')`.
-   Catches taxonomy load failures that would break term queries,
+3. **Core taxonomy registered** — `taxonomy_exists(WS_JURISDICTION_TAXONOMY)`.   Catches taxonomy load failures that would break term queries,
    the metabox jurisdiction guard, and `tax_input` parameters.
 
 4. **Query layer callable** — `function_exists()` for the two top-level

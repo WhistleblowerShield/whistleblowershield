@@ -60,7 +60,7 @@ The platform is built as a WordPress plugin called `ws-core`, living in `plugins
 - Admin tools: `includes/admin/tools/` — prompt generator (builds research prompts from live schema state), ingest tool (validates and loads JSON batches into WP/ACF/taxonomies), and `ws-schema-constants.php` (canonical enumerations: tri-states, secure tools, whistleblower scope levels, phone types).
 Code comments in individual functions are intentionally brief. The richer explanations live in directory-level `README.md` files within `plugins/ws-core/`. `plugins/ws-core/cascade` does not have a `README.md` file at the moment; all others do.
 
-All taxonomic joins use `WS_JURISDICTION_TAXONOMY` with USPS code slugs (e.g., `ca`, `us`, `tx`) as the canonical key across every content type.
+All taxonomic joins use the constant `WS_JURISDICTION_TAXONOMY` with USPS code slugs (e.g., `ca`, `us`, `tx`) as the canonical key across every content type.
 
 ### What to ignore
 

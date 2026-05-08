@@ -340,15 +340,14 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
 - `fee_shifting_asymmetry_details`
 - `fee_shifting_standard_context`  — (conditional on `fee-shifting-standard` in `legal_recognitions`)
 - `remedies`                       — (taxonomy: `ws_remedy`)
-- `remedy_limits`
-- `remedy_caps`                    — (Sister to `remedy_limits`; repeater:
-       ├── `remedy_cap`                  [select: `emotional-distress`|`punitive`|`compensatory`|`aggregate`|
+- `remedy_limits`                  — (repeater; conditional on `has-limits` in `remedies`:
+       ├── `remedy_limit`                [select: `emotional-distress`|`punitive`|`compensatory`|`aggregate`|
        │                                  `employer-size-tiered`|`see-context`],
-       ├── `employer_tier`               [conditional on `remedy_cap` is `employer-size-tiered`],
-       ├── `cap_amount`                  [currency],
+       ├── `employer_tier`               [conditional on `remedy_limit` is `employer-size-tiered`],
+       ├── `limit_amount`                [currency],
        ├── `applies_to`                  [select: `single-claim`|`per-plaintiff`|`per-incident`|
        │                                  `aggregate-action`|`see-context`],
-       └── `cap_context`                 [conditional on `remedy_cap` is non-empty])
+       └── `limit_context`               [conditional on `remedy_limit` is non-empty])
 - `remedy_details`
 - `remedy_liquidated_multiplier`   — (conditional on `liquidated-damages` in `remedies`; select:
                                       `double`|`treble`|`2x-back-pay`|`2x-wages-lost`|`statutory-formula`|

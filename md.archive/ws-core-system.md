@@ -108,8 +108,7 @@ are multi-select are always plural.
 
 | Slug | Label | Hierarchical | Public | Applied To |
 |---|---|---|---|---|
-| `WS_JURISDICTION_TAXONOMY` | Jurisdictions | — | — | All content CPTs | multi-select |
-| `ws_protected_disclosure` | Disclosure Categories | ✓ | ✓ | `jx-statute`, `jx-citation`, `ws-agency`, `ag-procedure`, `ws-assist-org` | multi-select |
+| `ws_jurisdiction` | Jurisdictions | — | — | All content CPTs | multi-select || `ws_protected_disclosure` | Disclosure Categories | ✓ | ✓ | `jx-statute`, `jx-citation`, `ws-agency`, `ag-procedure`, `ws-assist-org` | multi-select |
 | `ws_process_type` | Process Types | — | ✓ | `jx-statute`, `ws-agency`, `ws-assist-org`, `jx-construction` | multi-select |
 | `ws_remedy` | Remedies | — | — | `jx-statute` | multi-select |
 | `ws_protected_class` | Protected Classes | ✓ | — | `jx-statute` | multi-select |
@@ -158,7 +157,7 @@ All constants are defined in `ws-core.php` before the bootstrap runs.
 | `WS_CORE_VERSION` | `'3.19.0'` | Plugin version — used as asset enqueue version string |
 | `WS_CORE_PATH` | `plugin_dir_path()` | Absolute filesystem path to plugin root |
 | `WS_CORE_URL` | `plugin_dir_url()` | URL to plugin root for asset enqueues |
-| `WS_JURISDICTION_TAXONOMY` | `'WS_JURISDICTION_TAXONOMY'` | Canonical taxonomy slug — use everywhere WordPress expects a taxonomy identifier |
+| `WS_JURISDICTION_TAXONOMY` | `'ws_jurisdiction'` | Canonical taxonomy slug — use everywhere WordPress expects a taxonomy identifier |
 | `WS_CACHE_ALL_JURISDICTIONS` | `'ws_all_jurisdictions_cache_'` | Transient key for full jurisdiction list cache |
 | `WS_CACHE_JX_INDEX` | `'ws_jx_index_cache_'` | Transient key for jurisdiction index page cache |
 | `WS_CACHE_LEGAL_UPDATES_SITEWIDE` | `'ws_legal_updates_sitewide_'` | Transient key for sitewide legal updates cache (up to 100 items) |

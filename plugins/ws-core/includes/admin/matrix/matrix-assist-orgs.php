@@ -66,56 +66,43 @@ defined( 'ABSPATH' ) || exit;
 global $_ws_assist_org_matrix;
 $_ws_assist_org_matrix = [
     [
-        '_ws_aorg_id' => 'us-gov-act-proj',
+        '_id' => 'us-gov-act-proj',
         'common_name' => 'GAP',
         'official_name' => 'Government Accountability Project',
         'slug' => 'government-accountability-project',
-        'description' => 'Promotes government and corporate accountability by advancing a culture of transparency, providing legal representation to whistleblowers, and advocating for strong whistleblower laws.',
-        'ws_aorg_website_url' => 'https://whistleblower.org',
-        'ws_aorg_intake_url' => 'https://crm.whistleblower.org/form/online-intake-application',
-        'ws_aorg_contact_url' => '',
-        'phones' => [
-            [
-                'type' => 'other',
-                'number' => '(202) 457-0034',
-            ],
-        ],
-        'emails' => [
-            [
-                'type' => 'general',
-                'address' => 'info@whistleblower.org',
-            ],
-        ],
-        'has_secure_channel' => 0,
-        'secure_contact_url' => '',
-        'secure_contact_tool' => '',
+        'official_homepage_url' => 'https://whistleblower.org',
+        'intake_url' => 'https://crm.whistleblower.org/form/online-intake-application',
+        'contact_url' => '',
+        'phones' => '(202) 457-0034',
+        
+        'emails' => 'info@whistleblower.org',
+        
+        'secure_channel_status' => 'none-found',
+        'secure_contact_tools' => [],
         'mailing_address' => 'Government Accountability Project, 1612 K St NW, Suite 808, Washington, DC 20006-2802',
-        'income_limit' => 0,
-        'income_limit_details' => '',
-        'eligibility_details' => '',
-        'aorg_type' => 'nonprofit',
+        'income_screening' => 'not-required',
+        'organization_model' => 'nonprofit',
         'cost_models' => [ 'pro-bono' ],
         'is_nationwide' => 1,
-        'is_limited_scope' => 0,
-        'community_scope' => '',
-        'accepts_anon' => 1,
-        'has_attorneys' => 1,
+        'anonymous_pre_consult_status' => 'yes',
+        'has_attorneys' => 'yes',
         'whistleblower_scope' => 3,
-        'whistleblower_scope_details' => 'Government Accountability Project has empowered over 8,000 whistleblowers with legal protection and advocacy expertise.',
-        'nationwide_example' => 'Government Accountability Project is the nation’s leading whistleblower protection organization. Through litigating whistleblower cases, publicizing concerns and developing legal reforms...',
+        'whistleblower_fit' => 'primary-focus',
+        'service_depth' => 'direct-representation',
+        'intake_commitment_class' => 'screening-form',
+        'eligibility_status' => 'screening-required',
         'services' => [
             'legal-rep',
             'consultation',
             'advocacy',
             'media',
         ],
-        'sectors' => [
+        'employment_sectors' => [
             'federal-employee',
             'private-sector',
             'nonprofit-ngo',
         ],
-        'protected_classes' => [ 'has-details' ],
-        'protected_class_details' => 'Serves federal employees, private sector/corporate staff, and nonprofit employees; broad coverage implied but not exhaustively listed by class',
+        'protected_classes' => [ 'federal-employee', 'corporate-staff', 'non-profit-staff' ],
         'protected_disclosures' => [
             'public-corruption-ethics',
             'procurement-spending-fraud',
@@ -138,53 +125,40 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_ws_aorg_id' => 'nat-wb-ctr-us',
+        '_id' => 'nat-wb-ctr-us',
         'common_name' => 'NWC',
         'official_name' => 'National Whistleblower Center',
         'slug' => 'national-whistleblower-center',
-        'description' => 'Advocates for the rights of whistleblowers, promotes whistleblower protections, and educates the public and policymakers about the importance of whistleblowing.',
-        'ws_aorg_website_url' => 'https://www.whistleblowers.org',
-        'ws_aorg_intake_url' => 'https://www.report-fraud-now.info/',
-        'ws_aorg_contact_url' => 'https://www.whistleblowers.org/contact-us/',
-        'phones' => [
-            [
-                'type' => 'other',
-                'number' => '(202) 342-1903',
-            ],
-        ],
-        'emails' => [
-            [
-                'type' => 'general',
-                'address' => 'contact@whistleblowers.org',
-            ],
-        ],
-        'has_secure_channel' => 0,
-        'secure_contact_url' => '',
-        'secure_contact_tool' => '',
+        'official_homepage_url' => 'https://www.whistleblowers.org',
+        'intake_url' => 'https://www.report-fraud-now.info/',
+        'contact_url' => 'https://www.whistleblowers.org/contact-us/',
+        'phones' => '(202) 342-1903',
+        
+        'emails' => 'contact@whistleblowers.org',
+        
+        'secure_channel_status' => 'none-found',
+        'secure_contact_tools' => [],
         'mailing_address' => 'National Whistleblower Center, 1800 M Street NW #33888, Washington, DC 20033',
-        'income_limit' => 0,
-        'income_limit_details' => '',
-        'eligibility_details' => '',
-        'aorg_type' => 'nonprofit',
+        'income_screening' => 'not-required',
+        'organization_model' => 'nonprofit',
         'cost_models' => [ 'unclear' ],
         'is_nationwide' => 1,
-        'is_limited_scope' => 0,
-        'community_scope' => '',
-        'accepts_anon' => 1,
-        'has_attorneys' => 1,
+        'anonymous_pre_consult_status' => 'yes',
+        'has_attorneys' => 'yes',
         'whistleblower_scope' => 3,
-        'whistleblower_scope_details' => 'The National Whistleblower Center (NWC) is the leading nonprofit dedicated to protecting and rewarding whistleblowers around the world. We assist whistleblowers in finding legal aid, advocate for stronger whistleblower protection laws, and educate the public about whistleblowers\' critical role in protecting democracy and the rule of law.',
-        'nationwide_example' => 'NWC is the leading nonprofit dedicated to protecting and rewarding whistleblowers around the world.',
+        'whistleblower_fit' => 'primary-focus',
+        'service_depth' => 'referral-only',
+        'intake_commitment_class' => 'tip-submission-only',
+        'eligibility_status' => 'open-to-public',
         'services' => [
             'referral',
             'advocacy',
             'consultation',
         ],
-        'sectors' => [
-            'all-sectors',
+        'employment_sectors' => [
+            'all-sectors-only',
         ],
-        'protected_classes' => [ 'has-details' ],
-        'protected_class_details' => 'Broad support across all sectors; assists whistleblowers worldwide with US focus',
+        'protected_classes' => [ 'all-employees' ],
         'protected_disclosures' => [
             'securities-commodities-fraud',
             'tax-evasion-fraud',
@@ -207,33 +181,29 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_ws_aorg_id' => 'wb-aid-us',
+        '_id' => 'wb-aid-us',
         'common_name' => '',
         'official_name' => 'Whistleblower Aid',
         'slug' => 'whistleblower-aid',
-        'description' => 'Provides free legal assistance and support to clients who want to safely and legally disclose wrongdoing in the public interest.',
-        'ws_aorg_website_url' => 'https://whistlebloweraid.org',
-        'ws_aorg_intake_url' => 'https://whistlebloweraid.org/become-a-whistleblower/',
-        'ws_aorg_contact_url' => '',
-        'phones' => [],
-        'emails' => [],
-        'has_secure_channel' => 1,
-        'secure_contact_url' => 'https://whistlebloweraid.org/become-a-whistleblower/signal/',
-        'secure_contact_tool' => 'Signal',
+        'official_homepage_url' => 'https://whistlebloweraid.org',
+        'intake_url' => 'https://whistlebloweraid.org/become-a-whistleblower/',
+        'contact_url' => '',
+        'phones' => '',
+        'emails' => '',
+        'secure_channel_status' => 'dedicated-secure-channel',
+        'secure_contact_tools' => [ 'signal' ],
         'mailing_address' => 'Whistleblower Aid, 1250 Connecticut Ave NW, Suite 700, Washington, DC 20036',
-        'income_limit' => 0,
-        'income_limit_details' => '',
-        'eligibility_details' => '',
-        'aorg_type' => 'legal-aid',
+        'income_screening' => 'not-required',
+        'organization_model' => 'legal-aid',
         'cost_models' => [ 'pro-bono' ],
         'is_nationwide' => 1,
-        'is_limited_scope' => 0,
-        'community_scope' => '',
-        'accepts_anon' => 1,
-        'has_attorneys' => 1,
+        'anonymous_pre_consult_status' => 'yes',
+        'has_attorneys' => 'yes',
         'whistleblower_scope' => 3,
-        'whistleblower_scope_details' => 'Whistleblower Aid is a pioneering non-profit legal organization that helps public and private sector workers report and expose wrongdoing — safely, lawfully, and responsibly.',
-        'nationwide_example' => 'Whistleblower Aid is a pioneering non-profit legal organization that helps public and private sector workers report and expose wrongdoing — safely, lawfully, and responsibly.',
+        'whistleblower_fit' => 'primary-focus',
+        'service_depth' => 'direct-representation',
+        'intake_commitment_class' => 'personal-help-request',
+        'eligibility_status' => 'screening-required',
         'services' => [
             'legal-rep',
             'consultation',
@@ -241,12 +211,11 @@ $_ws_assist_org_matrix = [
             'media',
             'retaliation',
         ],
-        'sectors' => [
+        'employment_sectors' => [
             'federal-employee',
             'private-sector',
         ],
-        'protected_classes' => [ 'has-details' ],
-        'protected_class_details' => 'Government employees and private-sector/corporate staff; broad whistleblower support without narrow class restrictions stated',
+        'protected_classes' => [ 'federal-employee', 'corporate-staff' ],
         'protected_disclosures' => [
             'public-corruption-ethics',
             'classified-information',
@@ -269,54 +238,41 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_ws_aorg_id' => 'proj-on-gov-oversight-us',
+        '_id' => 'proj-on-gov-oversight-us',
         'common_name' => 'POGO',
         'official_name' => 'Project On Government Oversight',
         'slug' => 'project-on-government-oversight',
-        'description' => 'Investigates and exposes waste, corruption, abuse of power, and when the government fails to serve the public interest, including supporting federal whistleblowers.',
-        'ws_aorg_website_url' => 'https://www.pogo.org',
-        'ws_aorg_intake_url' => '',
-        'ws_aorg_contact_url' => 'https://www.pogo.org/contact-us',
-        'phones' => [
-            [
-                'type' => 'other',
-                'number' => '(202) 347-1122',
-            ],
-        ],
-        'emails' => [
-            [
-                'type' => 'general',
-                'address' => 'info@pogo.org',
-            ],
-        ],
-        'has_secure_channel' => 0,
-        'secure_contact_url' => '',
-        'secure_contact_tool' => '',
+        'official_homepage_url' => 'https://www.pogo.org',
+        'intake_url' => '',
+        'contact_url' => 'https://www.pogo.org/contact-us',
+        'phones' => '(202) 347-1122',
+        
+        'emails' => 'info@pogo.org',
+        
+        'secure_channel_status' => 'none-found',
+        'secure_contact_tools' => [],
         'mailing_address' => 'Project On Government Oversight, 1100 13th Street NW, Suite 800, Washington, DC 20005',
-        'income_limit' => 0,
-        'income_limit_details' => '',
-        'eligibility_details' => '',
-        'aorg_type' => 'advocacy',
+        'income_screening' => 'not-required',
+        'organization_model' => 'advocacy',
         'cost_models' => [ 'free' ],
         'is_nationwide' => 1,
-        'is_limited_scope' => 0,
-        'community_scope' => '',
-        'accepts_anon' => 1,
-        'has_attorneys' => 0,
+        'anonymous_pre_consult_status' => 'yes',
+        'has_attorneys' => 'no',
         'whistleblower_scope' => 1,
-        'whistleblower_scope_details' => 'POGO was founded to help bring attention to disclosures from Pentagon whistleblowers. Since then, we have worked with whistleblowers on countless investigative projects.',
-        'nationwide_example' => 'POGO has a long history of working with whistleblowers on countless investigative projects.',
+        'whistleblower_fit' => 'adjacent-help',
+        'service_depth' => 'information-only',
+        'intake_commitment_class' => 'general-contact-only',
+        'eligibility_status' => 'open-to-public',
         'services' => [
             'advocacy',
             'hotline',
             'media',
         ],
-        'sectors' => [
+        'employment_sectors' => [
             'federal-employee',
             'military-defense',
         ],
-        'protected_classes' => [ 'has-details' ],
-        'protected_class_details' => 'Primarily federal employees and military/defense-related personnel',
+        'protected_classes' => [ 'federal-employee', 'military-personnel' ],
         'protected_disclosures' => [
             'public-corruption-ethics',
             'procurement-spending-fraud',
@@ -333,42 +289,37 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_ws_aorg_id' => 'anti-fraud-coal-us',
+        '_id' => 'anti-fraud-coal-us',
         'common_name' => 'TAF',
         'official_name' => 'The Anti-Fraud Coalition',
         'slug' => 'the-anti-fraud-coalition',
-        'description' => 'Formerly Taxpayers Against Fraud, the Anti-Fraud Coalition is the leading professional network for attorneys and whistleblowers in False Claims Act and financial fraud cases. Maintains a directory of 400+ qui tam specialists and publishes economic research on whistleblower program effectiveness.',
-        'ws_aorg_website_url' => 'https://www.taf.org',
-        'ws_aorg_intake_url' => 'https://www.taf.org/attorneys/find-an-attorney/',
-        'ws_aorg_contact_url' => '',
-        'phones' => [],
-        'emails' => [],
-        'has_secure_channel' => 0,
-        'secure_contact_url' => '',
-        'secure_contact_tool' => '',
+        'official_homepage_url' => 'https://www.taf.org',
+        'intake_url' => 'https://www.taf.org/attorneys/find-an-attorney/',
+        'contact_url' => '',
+        'phones' => '',
+        'emails' => '',
+        'secure_channel_status' => 'none-found',
+        'secure_contact_tools' => [],
         'mailing_address' => 'The Anti-Fraud Coalition, 1220 19th St NW, Ste 501, Washington, DC 20036',
-        'income_limit' => 0,
-        'income_limit_details' => '',
-        'eligibility_details' => '',
-        'aorg_type' => 'advocacy',
+        'income_screening' => 'not-required',
+        'organization_model' => 'advocacy',
         'cost_models' => [ 'unclear' ],
         'is_nationwide' => 1,
-        'is_limited_scope' => 0,
-        'community_scope' => '',
-        'accepts_anon' => 0,
-        'has_attorneys' => 1,
+        'anonymous_pre_consult_status' => 'no',
+        'has_attorneys' => 'yes',
         'whistleblower_scope' => 2,
-        'whistleblower_scope_details' => 'Through our membership directory of top whistleblower attorneys, we help prospective whistleblowers find the best representation to win these tough cases.',
-        'nationwide_example' => 'TAF helps prospective whistleblowers find the best representation to win these tough cases through our membership directory of top whistleblower attorneys.',
+        'whistleblower_fit' => 'significant-program',
+        'service_depth' => 'referral-only',
+        'intake_commitment_class' => 'referral-request',
+        'eligibility_status' => 'referral-only',
         'services' => [
             'referral',
             'advocacy',
         ],
-        'sectors' => [
-            'all-sectors',
+        'employment_sectors' => [
+            'all-sectors-only',
         ],
-        'protected_classes' => [ 'has-details' ],
-        'protected_class_details' => 'Broad across sectors for False Claims Act/whistleblower cases',
+        'protected_classes' => [ 'all-employees' ],
         'protected_disclosures' => [
             'securities-commodities-fraud',
             'healthcare-medicare-fraud',
@@ -387,54 +338,41 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_ws_aorg_id' => 'wb-america-us',
+        '_id' => 'wb-america-us',
         'common_name' => 'WoA',
         'official_name' => 'Whistleblowers of America',
         'slug' => 'whistleblowers-of-america',
-        'description' => 'Provides peer support, advocacy, and guidance to whistleblowers, with a focus on retaliation response and trauma-informed support.',
-        'ws_aorg_website_url' => 'https://www.whistleblowersofamerica.org',
-        'ws_aorg_intake_url' => '',
-        'ws_aorg_contact_url' => 'https://www.whistleblowersofamerica.org/learn-more/peer-support',
-        'phones' => [
-            [
-                'type' => 'other',
-                'number' => '202-643-1956',
-            ],
-        ],
-        'emails' => [
-            [
-                'type' => 'general',
-                'address' => 'info@whistleblowersofamerica.org',
-            ],
-        ],
-        'has_secure_channel' => 0,
-        'secure_contact_url' => '',
-        'secure_contact_tool' => '',
+        'official_homepage_url' => 'https://www.whistleblowersofamerica.org',
+        'intake_url' => '',
+        'contact_url' => 'https://www.whistleblowersofamerica.org/learn-more/peer-support',
+        'phones' => '202-643-1956',
+        
+        'emails' => 'info@whistleblowersofamerica.org',
+        
+        'secure_channel_status' => 'none-found',
+        'secure_contact_tools' => [],
         'mailing_address' => 'Whistleblowers of America, 11130 Lillian Highway, Pensacola, FL 32506',
-        'income_limit' => 0,
-        'income_limit_details' => '',
-        'eligibility_details' => '',
-        'aorg_type' => 'advocacy',
+        'income_screening' => 'not-required',
+        'organization_model' => 'advocacy',
         'cost_models' => [ 'unclear' ],
         'is_nationwide' => 1,
-        'is_limited_scope' => 0,
-        'community_scope' => '',
-        'accepts_anon' => 1,
-        'has_attorneys' => 0,
+        'anonymous_pre_consult_status' => 'yes',
+        'has_attorneys' => 'no',
         'whistleblower_scope' => 3,
-        'whistleblower_scope_details' => 'We help whistleblowers overcome the traumatic stress caused by retaliation and help with problem-solving — assisting whistleblowers who have suffered retaliation after having identified harm to individuals or the public.',
-        'nationwide_example' => 'WoA assists whistleblowers who have suffered retaliation after having identified harm to individuals or the public.',
+        'whistleblower_fit' => 'primary-focus',
+        'service_depth' => 'peer-support',
+        'intake_commitment_class' => 'peer-support-request',
+        'eligibility_status' => 'open-to-public',
         'services' => [
             'retaliation',
             'advocacy',
             'referral',
             'consultation',
         ],
-        'sectors' => [
-            'all-sectors',
+        'employment_sectors' => [
+            'all-sectors-only',
         ],
-        'protected_classes' => [ 'has-details' ],
-        'protected_class_details' => 'All whistleblowers who have faced retaliation',
+        'protected_classes' => [ 'all-employees' ],
         'protected_disclosures' => [
             'general-wrongdoing',
             'occupational-health-safety',
@@ -451,47 +389,38 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_ws_aorg_id' => 'wb-intl-net-us',
+        '_id' => 'wb-intl-net-us',
         'common_name' => 'WIN',
         'official_name' => 'Whistleblowing International Network',
         'slug' => 'whistleblowing-international-network',
-        'description' => 'Global network of civil society organizations supporting whistleblowing, transparency, and accountability, including member groups operating in the United States.',
-        'ws_aorg_website_url' => 'https://whistleblowingnetwork.org/Home',
-        'ws_aorg_intake_url' => '',
-        'ws_aorg_contact_url' => 'https://whistleblowingnetwork.org/Contact-Us',
-        'phones' => [],
-        'emails' => [
-            [
-                'type' => 'general',
-                'address' => 'info@whistleblowingnetwork.org',
-            ],
-        ],
-        'has_secure_channel' => 0,
-        'secure_contact_url' => '',
-        'secure_contact_tool' => '',
+        'official_homepage_url' => 'https://whistleblowingnetwork.org/Home',
+        'intake_url' => '',
+        'contact_url' => 'https://whistleblowingnetwork.org/Contact-Us',
+        'phones' => '',
+        'emails' => 'info@whistleblowingnetwork.org',
+        
+        'secure_channel_status' => 'none-found',
+        'secure_contact_tools' => [],
         'mailing_address' => 'Whistleblowing International Network (WIN) c/o SCVO, Edward House, 199 Sauchiehall Street, Glasgow, G2 3EX',
-        'income_limit' => 0,
-        'income_limit_details' => '',
-        'eligibility_details' => '',
-        'aorg_type' => 'advocacy',
+        'income_screening' => 'not-required',
+        'organization_model' => 'advocacy',
         'cost_models' => [ 'free' ],
         'is_nationwide' => 1,
-        'is_limited_scope' => 0,
-        'community_scope' => '',
-        'accepts_anon' => 0,
-        'has_attorneys' => 0,
+        'anonymous_pre_consult_status' => 'no',
+        'has_attorneys' => 'no',
         'whistleblower_scope' => 2,
-        'whistleblower_scope_details' => 'WIN supports whistleblowing organizations and individuals worldwide through its member network, advocacy, and capacity-building for civil society groups.',
-        'nationwide_example' => 'WIN connects and strengthens civil society organisations that defend and support whistleblowers.',
+        'whistleblower_fit' => 'significant-program',
+        'service_depth' => 'referral-only',
+        'intake_commitment_class' => 'general-contact-only',
+        'eligibility_status' => 'restricted',
         'services' => [
             'referral',
             'advocacy',
         ],
-        'sectors' => [
-            'all-sectors',
+        'employment_sectors' => [
+            'all-sectors-only',
         ],
-        'protected_classes'       => [ 'has-details' ],
-        'protected_class_details' => 'WIN is an org-to-org network; it does not serve individual whistleblowers directly. Member organizations collectively serve whistleblowers across all worker classes and sectors worldwide.',
+        'protected_classes'       => [ 'all-employees' ],
         'protected_disclosures' => [
             'public-corruption-ethics',
             'election-integrity',
@@ -509,52 +438,39 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_ws_aorg_id' => 'nat-emp-law-proj-us',
+        '_id' => 'nat-emp-law-proj-us',
         'common_name' => 'NELP',
         'official_name' => 'National Employment Law Project',
         'slug' => 'national-employment-law-project',
-        'description' => 'Champions the rights of low-wage and unemployed workers through research and advocacy, including for workers who face retaliation for reporting violations.',
-        'ws_aorg_website_url' => 'https://www.nelp.org',
-        'ws_aorg_intake_url' => '',
-        'ws_aorg_contact_url' => 'https://www.nelp.org/about-us/contact-us/',
-        'phones' => [
-            [
-                'type' => 'other',
-                'number' => '(212) 285-3025',
-            ],
-        ],
-        'emails' => [
-            [
-                'type' => 'general',
-                'address' => 'nelp@nelp.org',
-            ],
-        ],
-        'has_secure_channel' => 0,
-        'secure_contact_url' => '',
-        'secure_contact_tool' => '',
+        'official_homepage_url' => 'https://www.nelp.org',
+        'intake_url' => '',
+        'contact_url' => 'https://www.nelp.org/about-us/contact-us/',
+        'phones' => '(212) 285-3025',
+        
+        'emails' => 'nelp@nelp.org',
+        
+        'secure_channel_status' => 'none-found',
+        'secure_contact_tools' => [],
         'mailing_address' => 'National Office: National Employment Law Project, PO Box 1779, New York, NY 10008',
-        'income_limit' => 0,
-        'income_limit_details' => '',
-        'eligibility_details' => '',
-        'aorg_type' => 'advocacy',
+        'income_screening' => 'not-required',
+        'organization_model' => 'advocacy',
         'cost_models' => [ 'free' ],
         'is_nationwide' => 1,
-        'is_limited_scope' => 0,
-        'community_scope' => '',
-        'accepts_anon' => 0,
-        'has_attorneys' => 0,
+        'anonymous_pre_consult_status' => 'no',
+        'has_attorneys' => 'no',
         'whistleblower_scope' => 1,
-        'whistleblower_scope_details' => 'NELP champions the rights of low-wage workers through research and advocacy, including protection for those who report violations.',
-        'nationwide_example' => 'NELP is leading the fight for a good-jobs economy. Our victories over the last decade have impacted the lives of 100 million workers and their families.',
+        'whistleblower_fit' => 'adjacent-help',
+        'service_depth' => 'information-only',
+        'intake_commitment_class' => 'general-contact-only',
+        'eligibility_status' => 'open-to-public',
         'services' => [
             'advocacy',
         ],
-        'sectors' => [
+        'employment_sectors' => [
             'private-sector',
             'nonprofit-ngo',
         ],
-        'protected_classes'       => [ 'corporate-staff', 'contractor-gig', 'agricultural-worker', 'has-details' ],
-        'protected_class_details' => 'Focused on low-wage, immigrant, contingent, and unemployed workers in private-sector and gig/temp arrangements; has-details reflects emphasis on economically vulnerable subsets rather than all corporate-staff broadly.',
+        'protected_classes'       => [ 'corporate-staff', 'contractor-gig', 'agricultural-worker' ],
         'protected_disclosures' => [
             'wage-hour-violations',
             'occupational-health-safety',
@@ -569,51 +485,38 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_ws_aorg_id' => 'nat-emp-lawyers-assoc-us',
+        '_id' => 'nat-emp-lawyers-assoc-us',
         'common_name' => 'NELA',
         'official_name' => 'National Employment Lawyers Association',
         'slug' => 'national-employment-lawyers-association',
-        'description' => 'National professional association of lawyers representing employees in labor, employment, and civil rights disputes. Provides a lawyer finder to connect workers with plaintiff-side employment counsel.',
-        'ws_aorg_website_url' => 'https://www.nela.org',
-        'ws_aorg_intake_url' => 'https://engagement.nela.org/NELA/findalawyer.aspx',
-        'ws_aorg_contact_url' => '',
-        'phones' => [
-            [
-                'type' => 'other',
-                'number' => '(415) 296-7629',
-            ],
-        ],
-        'emails' => [
-            [
-                'type' => 'general',
-                'address' => 'nelahq@nelahq.org',
-            ],
-        ],
-        'has_secure_channel' => 0,
-        'secure_contact_url' => '',
-        'secure_contact_tool' => '',
+        'official_homepage_url' => 'https://www.nela.org',
+        'intake_url' => 'https://engagement.nela.org/NELA/findalawyer.aspx',
+        'contact_url' => '',
+        'phones' => '(415) 296-7629',
+        
+        'emails' => 'nelahq@nelahq.org',
+        
+        'secure_channel_status' => 'none-found',
+        'secure_contact_tools' => [],
         'mailing_address' => '1800 Sutter Street, Suite 210, Concord, CA 94520',
-        'income_limit' => 0,
-        'income_limit_details' => '',
-        'eligibility_details' => '',
-        'aorg_type' => 'bar-program',
+        'income_screening' => 'not-required',
+        'organization_model' => 'bar-program',
         'cost_models' => [ 'fee-for-service' ],
         'is_nationwide' => 1,
-        'is_limited_scope' => 0,
-        'community_scope' => '',
-        'accepts_anon' => 0,
-        'has_attorneys' => 0,
+        'anonymous_pre_consult_status' => 'no',
+        'has_attorneys' => 'no',
         'whistleblower_scope' => 1,
-        'whistleblower_scope_details' => 'NELA members exclusively represent employees — plaintiffs — in labor, employment, and civil rights matters, providing a national referral network for workers seeking counsel.',
-        'nationwide_example' => 'NELA is the largest professional organization in the United States whose members are lawyers who either exclusively or primarily represent workers in cases involving employment and traditional civil rights issues.',
+        'whistleblower_fit' => 'adjacent-help',
+        'service_depth' => 'referral-only',
+        'intake_commitment_class' => 'referral-request',
+        'eligibility_status' => 'referral-only',
         'services' => [
             'referral',
         ],
-        'sectors' => [
-            'all-sectors',
+        'employment_sectors' => [
+            'all-sectors-only',
         ],
         'protected_classes'       => [ 'all-employees' ],
-        'protected_class_details' => 'Plaintiff-side attorneys in NELA\'s network represent all worker classifications in employment, wage theft, retaliation, discrimination, and civil rights matters nationwide.',
         'protected_disclosures' => [
             'wage-hour-violations',
             'occupational-health-safety',
@@ -631,46 +534,37 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_ws_aorg_id' => 'legal-svc-corp-find-legal-aid-us',
+        '_id' => 'legal-svc-corp-find-legal-aid-us',
         'common_name' => 'LSC',
         'official_name' => 'Legal Services Corporation - Find Legal Aid',
         'slug' => 'legal-services-corporation-find-legal-aid',
-        'description' => 'National legal aid locator supported by the Legal Services Corporation, helping users find local nonprofit legal aid providers for civil legal issues, including workplace retaliation and employment-related matters.',
-        'ws_aorg_website_url' => 'https://www.lsc.gov',
-        'ws_aorg_intake_url' => 'https://www.lsc.gov/about-lsc/what-legal-aid/get-legal-help',
-        'ws_aorg_contact_url' => '',
-        'phones' => [
-            [
-                'type' => 'other',
-                'number' => '(202) 295-1500',
-            ],
-        ],
-        'emails' => [],
-        'has_secure_channel' => 0,
-        'secure_contact_url' => '',
-        'secure_contact_tool' => '',
+        'official_homepage_url' => 'https://www.lsc.gov',
+        'intake_url' => 'https://www.lsc.gov/about-lsc/what-legal-aid/get-legal-help',
+        'contact_url' => '',
+        'phones' => '(202) 295-1500',
+        
+        'emails' => '',
+        'secure_channel_status' => 'none-found',
+        'secure_contact_tools' => [],
         'mailing_address' => 'Legal Services Corporation, 3333 K Street NW, Washington, DC 20007',
-        'income_limit' => 1,
-        'income_limit_details' => 'LSC-funded grantees are legally required to serve clients at or below 125% of Federal Poverty Guidelines per 45 CFR Part 1611; updated annually by HHS',
-        'eligibility_details' => '',
-        'aorg_type' => 'legal-aid',
+        'income_screening' => 'required',
+        'organization_model' => 'legal-aid',
         'cost_models' => [ 'free' ],
         'is_nationwide' => 1,
-        'is_limited_scope' => 0,
-        'community_scope' => '',
-        'accepts_anon' => 0,
-        'has_attorneys' => 0,
+        'anonymous_pre_consult_status' => 'no',
+        'has_attorneys' => 'no',
         'whistleblower_scope' => 1,
-        'whistleblower_scope_details' => 'LSC funds civil legal aid providers across all 50 states and territories; employment and retaliation matters are within scope for many member organizations.',
-        'nationwide_example' => 'LSC currently provides funding to 129 independent nonprofit legal aid programs in every state, the District of Columbia, and U.S. territories.',
+        'whistleblower_fit' => 'adjacent-help',
+        'service_depth' => 'referral-only',
+        'intake_commitment_class' => 'referral-request',
+        'eligibility_status' => 'referral-only',
         'services' => [
             'referral',
         ],
-        'sectors' => [
-            'all-sectors',
+        'employment_sectors' => [
+            'all-sectors-only',
         ],
-        'protected_classes'       => [ 'all-employees', 'has-details' ],
-        'protected_class_details' => 'Income-eligible individuals at or below 125% of Federal Poverty Guidelines (2026: $19,950/individual, $41,250/family of 4). Covers all employment classifications meeting income threshold — veterans, seniors, agricultural workers, gig/contract workers included.',
+        'protected_classes'       => [ 'all-employees' ],
         'protected_disclosures' => [
             'wage-hour-violations',
             'occupational-health-safety',
@@ -689,47 +583,38 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_ws_aorg_id' => 'nat-legal-aid-defender-assoc-us',
+        '_id' => 'nat-legal-aid-defender-assoc-us',
         'common_name' => 'NLADA',
         'official_name' => 'National Legal Aid and Defender Association',
         'slug' => 'national-legal-aid-and-defender-association',
-        'description' => 'National association supporting civil legal aid and public defense providers, with resources and member pathways that help users locate legal-aid support channels.',
-        'ws_aorg_website_url' => 'https://www.nlada.org',
-        'ws_aorg_intake_url' => '',
-        'ws_aorg_contact_url' => '',
-        'phones' => [
-            [
-                'type' => 'other',
-                'number' => '(202) 452-0620',
-            ],
-        ],
-        'emails' => [],
-        'has_secure_channel' => 0,
-        'secure_contact_url' => '',
-        'secure_contact_tool' => '',
+        'official_homepage_url' => 'https://www.nlada.org',
+        'intake_url' => '',
+        'contact_url' => '',
+        'phones' => '(202) 452-0620',
+        
+        'emails' => '',
+        'secure_channel_status' => 'none-found',
+        'secure_contact_tools' => [],
         'mailing_address' => 'National Legal Aid and Defender Association, 1140 Connecticut Ave NW, Suite 900, Washington, DC 20036',
-        'income_limit' => 0,
-        'income_limit_details' => '',
-        'eligibility_details' => '',
-        'aorg_type' => 'advocacy',
+        'income_screening' => 'not-required',
+        'organization_model' => 'advocacy',
         'cost_models' => [ 'free' ],
         'is_nationwide' => 1,
-        'is_limited_scope' => 0,
-        'community_scope' => '',
-        'accepts_anon' => 0,
-        'has_attorneys' => 0,
+        'anonymous_pre_consult_status' => 'no',
+        'has_attorneys' => 'no',
         'whistleblower_scope' => 1,
-        'whistleblower_scope_details' => 'NLADA supports the nation\'s civil legal aid and public defense providers, offering pathways for users to locate income-eligible legal help across all jurisdictions.',
-        'nationwide_example' => 'NLADA is America\'s oldest and largest nonprofit association devoted to excellence in the delivery of legal services to those who cannot afford counsel. For more than a century, we have connected and supported people across the country committed to justice for all.',
+        'whistleblower_fit' => 'adjacent-help',
+        'service_depth' => 'referral-only',
+        'intake_commitment_class' => 'information-only',
+        'eligibility_status' => 'referral-only',
         'services' => [
             'referral',
             'advocacy',
         ],
-        'sectors' => [
-            'all-sectors',
+        'employment_sectors' => [
+            'all-sectors-only',
         ],
-        'protected_classes'       => [ 'all-employees', 'agricultural-worker', 'has-details' ],
-        'protected_class_details' => 'Low-income individuals across all worker classifications; dedicated sections for farmworkers and low-income Latinos; also serves seniors, persons with disabilities, and undocumented persons. Income constraint applies — services flow through member legal aid grantees, not NLADA directly.',
+        'protected_classes'       => [ 'all-employees', 'agricultural-worker' ],
         'protected_disclosures' => [
             'wage-hour-violations',
             'occupational-health-safety',
@@ -747,51 +632,38 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_ws_aorg_id' => 'nat-wb-ctr-att-ref-prog-us',
+        '_id' => 'nat-wb-ctr-att-ref-prog-us',
         'common_name' => 'NWC Referral',
         'official_name' => 'National Whistleblower Center — Attorney Referral Program',
         'slug' => 'national-whistleblower-center-attorney-referral',
-        'description' => 'Referral program connecting whistleblowers with experienced attorneys in False Claims Act, SEC, IRS, and other whistleblower law areas.',
-        'ws_aorg_website_url' => 'https://www.whistleblowers.org',
-        'ws_aorg_intake_url' => 'https://www.whistleblowers.org/find-a-whisteblower-attorney/',
-        'ws_aorg_contact_url' => '',
-        'phones' => [
-            [
-                'type' => 'other',
-                'number' => '(202) 342-1900',
-            ],
-        ],
-        'emails' => [
-            [
-                'type' => 'general',
-                'address' => 'info@whistleblowers.org',
-            ],
-        ],
-        'has_secure_channel' => 0,
-        'secure_contact_url' => '',
-        'secure_contact_tool' => '',
+        'official_homepage_url' => 'https://www.whistleblowers.org',
+        'intake_url' => 'https://www.whistleblowers.org/find-a-whisteblower-attorney/',
+        'contact_url' => '',
+        'phones' => '(202) 342-1900',
+        
+        'emails' => 'info@whistleblowers.org',
+        
+        'secure_channel_status' => 'none-found',
+        'secure_contact_tools' => [],
         'mailing_address' => 'National Whistleblower Center, 2001 S Street NW, Washington, DC 20009',
-        'income_limit' => 0,
-        'income_limit_details' => '',
-        'eligibility_details' => '',
-        'aorg_type' => 'bar-program',
+        'income_screening' => 'not-required',
+        'organization_model' => 'bar-program',
         'cost_models' => [ 'free' ],
         'is_nationwide' => 1,
-        'is_limited_scope' => 0,
-        'community_scope' => '',
-        'accepts_anon' => 0,
-        'has_attorneys' => 0,
+        'anonymous_pre_consult_status' => 'no',
+        'has_attorneys' => 'no',
         'whistleblower_scope' => 2,
-        'whistleblower_scope_details' => 'NWC\'s attorney referral program connects whistleblowers with experienced counsel in False Claims Act, SEC, IRS, and other whistleblower law areas.',
-        'nationwide_example' => 'This program is free of charge for all whistleblowers and has connected hundreds of whistleblowers with attorneys.',
+        'whistleblower_fit' => 'significant-program',
+        'service_depth' => 'referral-only',
+        'intake_commitment_class' => 'referral-request',
+        'eligibility_status' => 'referral-only',
         'services' => [
             'referral',
         ],
-        'sectors' => [
-            'all-sectors',
+        'employment_sectors' => [
+            'all-sectors-only',
         ],
         'protected_classes'       => [ 'federal-employee', 'corporate-staff', 'contractor-gig' ],
-        'protected_class_details' => 'Government and private sector whistleblowers; cases reviewed under WPA (federal employees), Sarbanes-Oxley and Dodd-Frank (corporate), qui tam, and numerous federal and state laws. The referral itself is free; downstream attorney representation terms are set independently.',
         'protected_disclosures' => [
             'securities-commodities-fraud',
             'tax-evasion-fraud',
@@ -810,51 +682,38 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_ws_aorg_id' => 'american-bar-assoc-find-legal-help-us',
+        '_id' => 'american-bar-assoc-find-legal-help-us',
         'common_name' => 'ABA',
         'official_name' => 'American Bar Association — Find Legal Help',
         'slug' => 'american-bar-association-find-legal-help',
-        'description' => 'ABA information portal that directs the public to state and local lawyer referral services and bar-sponsored legal aid programs across the United States.',
-        'ws_aorg_website_url' => 'https://www.americanbar.org/groups/legal_services/',
-        'ws_aorg_intake_url' => 'https://www.americanbar.org/groups/legal_services/flh-home/',
-        'ws_aorg_contact_url' => '',
-        'phones' => [
-            [
-                'type' => 'other',
-                'number' => '(800) 285-2221',
-            ],
-        ],
-        'emails' => [
-            [
-                'type' => 'general',
-                'address' => 'info@americanbar.org',
-            ],
-        ],
-        'has_secure_channel' => 0,
-        'secure_contact_url' => '',
-        'secure_contact_tool' => '',
+        'official_homepage_url' => 'https://www.americanbar.org/groups/legal_services/',
+        'intake_url' => 'https://www.americanbar.org/groups/legal_services/flh-home/',
+        'contact_url' => '',
+        'phones' => '(800) 285-2221',
+        
+        'emails' => 'info@americanbar.org',
+        
+        'secure_channel_status' => 'none-found',
+        'secure_contact_tools' => [],
         'mailing_address' => 'American Bar Association, 321 N Clark St, Chicago, IL 60654',
-        'income_limit' => 1,
-        'income_limit_details' => 'Routes to LSC-funded and pro bono programs that apply income thresholds (typically ≤125-200% FPG); the referral tool itself does not screen income but downstream resources do',
-        'eligibility_details' => '',
-        'aorg_type' => 'bar-program',
+        'income_screening' => 'required',
+        'organization_model' => 'bar-program',
         'cost_models' => [ 'fee-for-service' ],
         'is_nationwide' => 1,
-        'is_limited_scope' => 0,
-        'community_scope' => '',
-        'accepts_anon' => 0,
-        'has_attorneys' => 0,
+        'anonymous_pre_consult_status' => 'no',
+        'has_attorneys' => 'no',
         'whistleblower_scope' => 1,
-        'whistleblower_scope_details' => 'The ABA Find Legal Help portal directs the public to state and local lawyer referral services and bar-sponsored legal aid programs across the United States.',
-        'nationwide_example' => 'The ABA Free Legal Answers virtual advice legal clinic has responded to 400,000 civil legal questions to date, helping many low-income Americans access legal help.',
+        'whistleblower_fit' => 'adjacent-help',
+        'service_depth' => 'referral-only',
+        'intake_commitment_class' => 'referral-request',
+        'eligibility_status' => 'referral-only',
         'services' => [
             'referral',
         ],
-        'sectors' => [
-            'all-sectors',
+        'employment_sectors' => [
+            'all-sectors-only',
         ],
         'protected_classes'       => [ 'all-employees' ],
-        'protected_class_details' => 'All individuals regardless of employment classification or income; connects to state bar lawyer referral services in all 50 states. *NOTE:* ABA Free Legal Answers (sister program) is income-restricted for civil matters — the Find Legal Help directory entry point is unrestricted.',
         'protected_disclosures' => [
             'wage-hour-violations',
             'occupational-health-safety',
@@ -873,54 +732,41 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_ws_aorg_id' => 'pub-emp-environmental-responsibility-us',
+        '_id' => 'pub-emp-environmental-responsibility-us',
         'common_name' => 'PEER',
         'official_name' => 'Public Employees for Environmental Responsibility',
         'slug' => 'public-employees-for-environmental-responsibility',
-        'description' => 'PEER provides free legal and strategic assistance to federal, state, and local government employees who blow the whistle on environmental harm, public health threats, and scientific integrity violations.',
-        'ws_aorg_website_url' => 'https://peer.org',
-        'ws_aorg_intake_url' => 'https://peer.org/contact-legal-team/',
-        'ws_aorg_contact_url' => 'https://peer.org/about-us/contact-us/',
-        'phones' => [
-            [
-                'type' => 'other',
-                'number' => '(202) 265-7337',
-            ],
-        ],
-        'emails' => [
-            [
-                'type' => 'general',
-                'address' => 'info@peer.org',
-            ],
-        ],
-        'has_secure_channel' => 0,
-        'secure_contact_url' => '',
-        'secure_contact_tool' => '',
+        'official_homepage_url' => 'https://peer.org',
+        'intake_url' => 'https://peer.org/contact-legal-team/',
+        'contact_url' => 'https://peer.org/about-us/contact-us/',
+        'phones' => '(202) 265-7337',
+        
+        'emails' => 'info@peer.org',
+        
+        'secure_channel_status' => 'none-found',
+        'secure_contact_tools' => [],
         'mailing_address' => 'Public Employees for Environmental Responsibility, 962 Wayne Ave, Suite 610, Silver Spring, MD 20910',
-        'income_limit' => 0,
-        'income_limit_details' => '',
-        'eligibility_details' => '',
-        'aorg_type' => 'nonprofit',
+        'income_screening' => 'not-required',
+        'organization_model' => 'nonprofit',
         'cost_models' => [ 'pro-bono' ],
         'is_nationwide' => 1,
-        'is_limited_scope' => 0,
-        'community_scope' => '',
-        'accepts_anon' => 1,
-        'has_attorneys' => 1,
+        'anonymous_pre_consult_status' => 'yes',
+        'has_attorneys' => 'yes',
         'whistleblower_scope' => 2,
-        'whistleblower_scope_details' => 'At PEER, our dedicated attorneys represent federal, state, and local government whistleblowers who wish to expose their agency\'s wrongdoings on environmental, public health, and scientific issues.',
-        'nationwide_example' => 'PEER defends government employees, including whistleblowers, free of charge across federal, state, and local levels.',
+        'whistleblower_fit' => 'significant-program',
+        'service_depth' => 'direct-representation',
+        'intake_commitment_class' => 'personal-help-request',
+        'eligibility_status' => 'restricted',
         'services' => [
             'legal-rep',
             'consultation',
             'retaliation',
         ],
-        'sectors' => [
+        'employment_sectors' => [
             'federal-employee',
             'state-local-employee',
         ],
-        'protected_classes' => [ 'has-details' ],
-        'protected_class_details' => 'Public/government employees (federal, state, local)',
+        'protected_classes' => [ 'federal-employee', 'state-employee', 'local-gov-staff' ],
         'protected_disclosures' => [
             'environmental-protection',
             'occupational-health-safety',
@@ -937,52 +783,38 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_ws_aorg_id' => 'signals-net-us',
+        '_id' => 'signals-net-us',
         'common_name' => 'TSN',
         'official_name' => 'The Signals Network',
         'slug' => 'the-signals-network',
-        'description' => 'The Signals Network is a nonprofit that provides holistic support to whistleblowers who share public interest information — including legal assistance, psychological counseling, physical security, and media coordination.',
-        'ws_aorg_website_url' => 'https://thesignalsnetwork.org',
-        'ws_aorg_intake_url' => 'https://thesignalsnetwork.org/whistleblower-protection-program/',
-        'ws_aorg_contact_url' => 'https://thesignalsnetwork.org/contact/',
-        'phones' => [],
-        'emails' => [
-            [
-                'type' => 'general',
-                'address' => 'info@thesignalsnetwork.org',
-            ],
-            [
-                'type' => 'intake',
-                'address' => 'protect@thesignalsnetwork.org',
-            ],
-        ],
-        'has_secure_channel' => 1,
-        'secure_contact_url' => 'https://thesignalsnetwork.org/contact/',
-        'secure_contact_tool' => 'ProtonMail',
+        'official_homepage_url' => 'https://thesignalsnetwork.org',
+        'intake_url' => 'https://thesignalsnetwork.org/whistleblower-protection-program/',
+        'contact_url' => 'https://thesignalsnetwork.org/contact/',
+        'phones' => '',
+        'emails' => 'info@thesignalsnetwork.org, protect@thesignalsnetwork.org',
+        'secure_channel_status' => 'dedicated-secure-channel',
+        'secure_contact_tools' => [ 'protonmail' ],
         'mailing_address' => 'The Signals Network, 416 Florida Ave NW #26152, Washington, DC 20001',
-        'income_limit' => 0,
-        'income_limit_details' => '',
-        'eligibility_details' => '',
-        'aorg_type' => 'nonprofit',
+        'income_screening' => 'not-required',
+        'organization_model' => 'nonprofit',
         'cost_models' => [ 'free' ],
         'is_nationwide' => 1,
-        'is_limited_scope' => 0,
-        'community_scope' => '',
-        'accepts_anon' => 1,
-        'has_attorneys' => 1,
+        'anonymous_pre_consult_status' => 'yes',
+        'has_attorneys' => 'yes',
         'whistleblower_scope' => 3,
-        'whistleblower_scope_details' => 'TSN\'s Whistleblower Protection Program aims to help whistleblowers navigate the legal, physical, psychological and economic consequences of speaking out.',
-        'nationwide_example' => 'TSN is a whistleblower support organization that exists to help support the brave whistleblowers who come forward for the public good.',
+        'whistleblower_fit' => 'primary-focus',
+        'service_depth' => 'ongoing-support',
+        'intake_commitment_class' => 'personal-help-request',
+        'eligibility_status' => 'screening-required',
         'services' => [
             'consultation',
             'media',
             'retaliation',
         ],
-        'sectors' => [
-            'all-sectors',
+        'employment_sectors' => [
+            'all-sectors-only',
         ],
-        'protected_classes' => [ 'has-details' ],
-        'protected_class_details' => 'Broad support for whistleblowers across sectors; no narrow employee class restrictions listed',
+        'protected_classes' => [ 'all-employees' ],
         'protected_disclosures' => [
             'general-wrongdoing',
             'public-corruption-ethics',
@@ -1013,8 +845,8 @@ $_ws_assist_org_matrix = [
  * @return string
  */
 function ws_matrix_build_assist_org_internal_id( array $org, string $jx_slug = '' ): string {
-    $org_name = trim( (string) ( $org['official_name'] ?? '' ) );
-    $homepage = trim( (string) ( $org['ws_aorg_website_url'] ?? '' ) );
+    $org_name = trim( (string) ws_matrix_required( $org, 'official_name' ) );
+    $homepage = trim( (string) ws_matrix_required( $org, 'official_homepage_url' ) );
     $jx_slug  = strtolower( trim( (string) $jx_slug ) );
 
     $host = strtolower( (string) wp_parse_url( $homepage, PHP_URL_HOST ) );
@@ -1111,6 +943,234 @@ function ws_matrix_build_assist_org_internal_id( array $org, string $jx_slug = '
     return $normalized;
 }
 
+/**
+ * Throws a clear matrix-shape error instead of silently tolerating bad seed data.
+ *
+ * @param string $message Error detail.
+ * @return void
+ */
+function ws_matrix_error( string $message ): void {
+    throw new RuntimeException( $message . ' This canonical matrix row is bullsh!t.' );
+}
+
+/**
+ * Reads a required canonical matrix key.
+ *
+ * @param array  $org Matrix org row.
+ * @param string $key Canonical key name.
+ * @return mixed
+ */
+function ws_matrix_required( array $org, string $key ) {
+    if ( ! array_key_exists( $key, $org ) ) {
+        $label = (string) ( $org['slug'] ?? $org['official_name'] ?? 'unknown assist org' );
+        ws_matrix_error( "Missing required matrix key '{$key}' for {$label}." );
+    }
+
+    return $org[ $key ];
+}
+
+/**
+ * Reads an explicitly optional canonical matrix key.
+ *
+ * @param array  $org     Matrix org row.
+ * @param string $key     Canonical key name.
+ * @param mixed  $default Default value.
+ * @return mixed
+ */
+function ws_matrix_optional( array $org, string $key, $default = '' ) {
+    return array_key_exists( $key, $org ) ? $org[ $key ] : $default;
+}
+
+/**
+ * Requires a value from an allowed set.
+ *
+ * @param array  $org     Matrix org row.
+ * @param string $key     Canonical key name.
+ * @param array  $allowed Allowed values.
+ * @return string
+ */
+function ws_matrix_required_enum( array $org, string $key, array $allowed ): string {
+    $value = sanitize_key( (string) ws_matrix_required( $org, $key ) );
+
+    if ( $value === 'has-details' ) {
+        $label = (string) ( $org['slug'] ?? $org['official_name'] ?? 'unknown assist org' );
+        ws_matrix_error( "Editorial flag 'has-details' is not seedable data for '{$key}' in {$label}." );
+    }
+
+    if ( ! in_array( $value, $allowed, true ) ) {
+        $label = (string) ( $org['slug'] ?? $org['official_name'] ?? 'unknown assist org' );
+        ws_matrix_error( "Invalid value '{$value}' for matrix key '{$key}' in {$label}." );
+    }
+
+    return $value;
+}
+
+/**
+ * Reads a required canonical array key.
+ *
+ * @param array  $org Matrix org row.
+ * @param string $key Canonical key name.
+ * @return array
+ */
+function ws_matrix_required_array( array $org, string $key ): array {
+    $value = ws_matrix_required( $org, $key );
+
+    if ( ! is_array( $value ) ) {
+        $label = (string) ( $org['slug'] ?? $org['official_name'] ?? 'unknown assist org' );
+        ws_matrix_error( "Matrix key '{$key}' must be an array for {$label}." );
+    }
+
+    return $value;
+}
+
+/**
+ * Converts yes/no/unclear status to the legacy boolean field shape.
+ *
+ * @param string $status Current status.
+ * @return int
+ */
+function ws_matrix_status_bool( string $status ): int {
+    return $status === 'yes' ? 1 : 0;
+}
+
+function ws_matrix_income_screening( array $org ): string {
+    return ws_matrix_required_enum(
+        $org,
+        'income_screening',
+        [ 'required', 'not-required', 'possible', 'unclear' ]
+    );
+}
+
+function ws_matrix_secure_channel_status( array $org ): string {
+    return ws_matrix_required_enum(
+        $org,
+        'secure_channel_status',
+        [
+            'dedicated-secure-channel',
+            'standard-web-form',
+            'secure-tip-only',
+            'leak-drop-only',
+            'none-found',
+            'unclear',
+        ]
+    );
+}
+
+/**
+ * Normalizes secure contact tools to current multi-select slugs.
+ *
+ * @param array $org Matrix org row.
+ * @return array
+ */
+function ws_matrix_secure_contact_tools( array $org ): array {
+    $tools = ws_matrix_required_array( $org, 'secure_contact_tools' );
+
+    $map = [
+        'signal'       => 'signal',
+        'protonmail'   => 'protonmail',
+        'proton-mail'  => 'protonmail',
+        'tutanota'     => 'tutanota',
+        'wire'         => 'wire',
+        'keybase'      => 'keybase',
+        'pgp'          => 'pgp-email',
+        'pgp-email'    => 'pgp-email',
+        'securedrop'   => 'securedrop',
+        'secure-drop'  => 'securedrop',
+        'globaleaks'   => 'globaleaks',
+        'global-leaks' => 'globaleaks',
+        'encrypted-web-form' => 'encrypted-web-form',
+        'other'        => 'other',
+    ];
+
+    $normalized = [];
+    foreach ( $tools as $tool ) {
+        $slug = sanitize_key( (string) $tool );
+        if ( $slug === 'has-details' ) {
+            $label = (string) ( $org['slug'] ?? $org['official_name'] ?? 'unknown assist org' );
+            ws_matrix_error( "Editorial flag 'has-details' is not seedable data for {$label}." );
+        }
+
+        if ( ! isset( $map[ $slug ] ) ) {
+            $label = (string) ( $org['slug'] ?? $org['official_name'] ?? 'unknown assist org' );
+            ws_matrix_error( "Invalid secure contact tool '{$slug}' for {$label}." );
+        }
+
+        $normalized[] = $map[ $slug ];
+    }
+
+    return array_values( array_unique( $normalized ) );
+}
+
+/**
+ * Provides the old single text value for current secure_contact_tools rows.
+ *
+ * @param array $tools Current secure-contact tool slugs.
+ * @return string
+ */
+function ws_matrix_legacy_secure_tool( array $tools ): string {
+    $labels = [
+        'signal'              => 'Signal',
+        'protonmail'          => 'ProtonMail',
+        'tutanota'            => 'Tutanota',
+        'wire'                => 'Wire',
+        'keybase'             => 'Keybase',
+        'pgp-email'           => 'PGP Email',
+        'securedrop'          => 'SecureDrop',
+        'globaleaks'          => 'GlobaLeaks',
+        'encrypted-web-form'  => 'Encrypted Web Form',
+        'other'               => 'Other',
+    ];
+
+    $first = $tools[0] ?? '';
+    return $labels[ $first ] ?? '';
+}
+
+/**
+ * Assigns terms for the assist-org matrix and fails loudly on bad slugs.
+ *
+ * @param int    $post_id  Post ID.
+ * @param array  $slugs    Term slugs.
+ * @param string $taxonomy Taxonomy slug.
+ * @return void
+ */
+function ws_matrix_assign_terms_strict( int $post_id, array $slugs, string $taxonomy ): void {
+    if ( ! taxonomy_exists( $taxonomy ) ) {
+        ws_matrix_error( "Missing taxonomy '{$taxonomy}' while seeding post {$post_id}." );
+    }
+
+    if ( empty( $slugs ) ) {
+        ws_matrix_error( "No term slugs provided for taxonomy '{$taxonomy}' on post {$post_id}." );
+    }
+
+    $term_ids = [];
+    foreach ( $slugs as $slug ) {
+        $slug = sanitize_key( (string) $slug );
+        if ( $slug === '' ) {
+            ws_matrix_error( "Blank term slug passed for taxonomy '{$taxonomy}' on post {$post_id}." );
+        }
+
+        if ( $slug === 'has-details' ) {
+            ws_matrix_error(
+                "Editorial flag 'has-details' is not seedable data for taxonomy '{$taxonomy}' on post {$post_id}."
+            );
+        }
+
+        $term = get_term_by( 'slug', $slug, $taxonomy );
+        if ( ! $term || is_wp_error( $term ) ) {
+            ws_matrix_error( "Missing term slug '{$slug}' in taxonomy '{$taxonomy}' on post {$post_id}." );
+        }
+
+        $term_ids[] = (int) $term->term_id;
+    }
+
+    $result = wp_set_object_terms( $post_id, $term_ids, $taxonomy );
+    if ( is_wp_error( $result ) ) {
+        ws_matrix_error(
+            "Failed assigning taxonomy '{$taxonomy}' on post {$post_id}: " . $result->get_error_message()
+        );
+    }
+}
+
 function ws_seed_assist_org_matrix() {
 
     global $_ws_assist_org_matrix;
@@ -1118,7 +1178,7 @@ function ws_seed_assist_org_matrix() {
     // Resolve the US jurisdiction term ID.
     $us_term = ws_jx_term_by_code( 'us' );
     if ( ! $us_term || is_wp_error( $us_term ) ) {
-        return; // Jurisdiction terms not yet seeded — bail.
+        ws_matrix_error( 'US jurisdiction term is missing; assist-org matrix cannot seed.' );
     }
     $us_term_id = (int) $us_term->term_id;
 
@@ -1130,23 +1190,19 @@ function ws_seed_assist_org_matrix() {
 
         $internal_id = ws_matrix_build_assist_org_internal_id( $org, 'us' );
         if ( $internal_id === '' ) {
-            $internal_id = (string) ( $org['_ws_aorg_id'] ?? '' );
+            ws_matrix_error( "Failed building internal ID for '{$org['slug']}'." );
         }
 
-        $existing = get_page_by_path( $org['slug'], OBJECT, 'ws-assist-org' );
-        // Matrix no longer requires duplicated description + post_content
-        // values. Seeder derives post_content from description unless an
-        // explicit post_content override exists.
-        $content  = (string) ( $org['post_content'] ?? ( $org['description'] ?? '' ) );
+        $slug = sanitize_title( (string) ws_matrix_required( $org, 'slug' ) );
+        $official_name = trim( (string) ws_matrix_required( $org, 'official_name' ) );
+        $description = '';
 
-        // Optional matrix-level HTML comment block for this org.
-        if ( ! empty( $org['html_comment'] ) ) {
-            $content = rtrim( $content ) . "\n\n" . trim( (string) $org['html_comment'] );
-        }
+        $existing = get_page_by_path( $slug, OBJECT, 'ws-assist-org' );
+        $content  = '';
 
         $post_data = [
-            'post_title'   => $org['official_name'],
-            'post_name'    => $org['slug'],
+            'post_title'   => $official_name,
+            'post_name'    => $slug,
             'post_type'    => 'ws-assist-org',
             'post_status'  => 'publish',
             'post_content' => $content,
@@ -1160,7 +1216,8 @@ function ws_seed_assist_org_matrix() {
         }
 
         if ( is_wp_error( $post_id ) || ! $post_id ) {
-            continue;
+            $message = is_wp_error( $post_id ) ? $post_id->get_error_message() : 'empty post ID';
+            ws_matrix_error( "Failed creating/updating assist-org post '{$slug}': {$message}." );
         }
 
         // ── ACF meta fields ──────────────────────────────────────────────────
@@ -1168,31 +1225,102 @@ function ws_seed_assist_org_matrix() {
         // String/URL fields: skipped if empty (no point storing blank strings).
         // Boolean fields (0/1) and array fields always write — 0 is meaningful.
 
+        $organization_model = ws_matrix_required_enum(
+            $org,
+            'organization_model',
+            [
+                'nonprofit',
+                'legal-aid',
+                'law-firm',
+                'bar-program',
+                'advocacy',
+                'oversight-office',
+                'union',
+                'government-office',
+                'coalition',
+                'program',
+                'mixed',
+            ]
+        );
+        $secure_channel_status = ws_matrix_secure_channel_status( $org );
+        $secure_contact_tools = ws_matrix_secure_contact_tools( $org );
+        $secure_contact_tool = ws_matrix_legacy_secure_tool( $secure_contact_tools );
+        $income_screening = ws_matrix_income_screening( $org );
+        $anonymous_pre_consult_status = ws_matrix_required_enum(
+            $org,
+            'anonymous_pre_consult_status',
+            [ 'yes', 'no', 'unclear' ]
+        );
+        $has_attorneys = ws_matrix_required_enum(
+            $org,
+            'has_attorneys',
+            [ 'yes', 'no', 'unclear' ]
+        );
+        $whistleblower_fit = ws_matrix_required_enum(
+            $org,
+            'whistleblower_fit',
+            [ 'primary-focus', 'significant-program', 'adjacent-help', 'not-specific', 'none', 'unclear' ]
+        );
+        $service_depth = ws_matrix_required_enum(
+            $org,
+            'service_depth',
+            [
+                'information-only',
+                'triage-only',
+                'brief-advice',
+                'document-review',
+                'limited-scope-help',
+                'direct-representation',
+                'referral-only',
+                'warm-handoff',
+                'peer-support',
+                'ongoing-support',
+                'unclear',
+            ]
+        );
+        $intake_commitment_class = ws_matrix_required_enum(
+            $org,
+            'intake_commitment_class',
+            [
+                'personal-help-request',
+                'screening-form',
+                'referral-request',
+                'peer-support-request',
+                'general-contact-only',
+                'tip-submission-only',
+                'leak-drop-only',
+                'information-only',
+                'unclear',
+            ]
+        );
+        $eligibility_status = ws_matrix_required_enum(
+            $org,
+            'eligibility_status',
+            [ 'open-to-public', 'screening-required', 'restricted', 'members-only', 'referral-only', 'unclear' ]
+        );
+
         $meta = [
-            '_ws_aorg_id'          => $internal_id,
-            'ws_aorg_official_name'        => $org['official_name']                ?? '',
-            'ws_aorg_common_name'          => $org['common_name']          ?? '',
-            'ws_aorg_description'          => $org['description']          ?? '',
-            'ws_aorg_website_url'          => $org['ws_aorg_website_url']  ?? '',
-            'ws_aorg_intake_url'           => $org['ws_aorg_intake_url']   ?? '',
-            'ws_aorg_contact_url'          => $org['ws_aorg_contact_url']  ?? '',
-            'ws_aorg_has_secure_channel'   => $org['has_secure_channel']   ?? 0,
-            'ws_aorg_secure_contact_url'   => $org['secure_contact_url']   ?? '',
-            'ws_aorg_secure_contact_tool'  => $org['secure_contact_tool']  ?? '',
-            'ws_aorg_mailing_address'      => $org['mailing_address']      ?? '',
-            'ws_aorg_has_income_limit'     => $org['income_limit']         ?? '',
-            'ws_aorg_has_income_limit_details' => $org['income_limit_details']   ?? '',
-            'ws_aorg_eligibility_details'  => $org['eligibility_details']    ?? '',
-            'ws_aorg_serves_nationwide'    => $org['is_nationwide']        ?? 0,
-            'ws_aorg_has_limited_scope'    => $org['is_limited_scope']     ?? 0,
-            'ws_aorg_community_scope'      => $org['community_scope']      ?? '',
-            'ws_aorg_accepts_anonymous'    => $org['accepts_anon']         ?? 0,
-            'ws_aorg_licensed_attorneys'   => $org['has_attorneys']        ?? 0,
-            // Whistleblower focus score (1-3) — drives base score in ws_filter_score_org().
-            // Always write even if 0; 1 is the minimum meaningful value and 0 signals
-            // the matrix entry is missing this field (ingest should warn).
-            'ws_aorg_whistleblower_scope'         => $org['whistleblower_scope']  ?? 1,
-            'ws_aorg_whistleblower_scope_details' => $org['whistleblower_scope_details']   ?? '',
+            '_ws_aorg_id'                  => $internal_id,
+            'ws_aorg_official_name'        => $official_name,
+            'ws_aorg_common_name'          => ws_matrix_optional( $org, 'common_name' ),
+            'ws_aorg_official_homepage_url'=> ws_matrix_required( $org, 'official_homepage_url' ),
+            'ws_aorg_intake_url'           => ws_matrix_optional( $org, 'intake_url' ),
+            'ws_aorg_contact_url'          => ws_matrix_optional( $org, 'contact_url' ),
+            'ws_aorg_organization_model'   => $organization_model,
+            'ws_aorg_secure_channel_status' => $secure_channel_status,
+            'ws_aorg_secure_contact_tools' => $secure_contact_tools,
+            'ws_aorg_mailing_address'      => ws_matrix_optional( $org, 'mailing_address' ),
+            'ws_aorg_income_screening'     => $income_screening,
+            'ws_aorg_eligibility_status'   => $eligibility_status,
+            'ws_aorg_is_nationwide'        => ws_matrix_required( $org, 'is_nationwide' ),
+            'ws_aorg_anonymous_pre_consult_status' => $anonymous_pre_consult_status,
+            'ws_aorg_has_attorneys'        => $has_attorneys,
+            'ws_aorg_whistleblower_fit'    => $whistleblower_fit,
+            'ws_aorg_service_depth'        => $service_depth,
+            'ws_aorg_intake_commitment_class' => $intake_commitment_class,
+            'ws_aorg_whistleblower_scope'  => ws_matrix_required( $org, 'whistleblower_scope' ),
+            'ws_aorg_phones'               => ws_matrix_optional( $org, 'phones' ),
+            'ws_aorg_emails'               => ws_matrix_optional( $org, 'emails' ),
         ];
 
         foreach ( $meta as $key => $value ) {
@@ -1201,102 +1329,52 @@ function ws_seed_assist_org_matrix() {
             }
         }
 
-        // Contact repeaters: consume canonical matrix arrays directly.
-        $phone_rows = [];
-        if ( ! empty( $org['phones'] ) && is_array( $org['phones'] ) ) {
-            foreach ( $org['phones'] as $row ) {
-                if ( ! is_array( $row ) ) {
-                    continue;
-                }
-                $number = trim( (string) ( $row['number'] ?? '' ) );
-                if ( $number === '' ) {
-                    continue;
-                }
-                $type = sanitize_key( (string) ( $row['type'] ?? 'other' ) );
-                if ( $type === '' ) {
-                    $type = 'other';
-                }
-                $phone_rows[] = [
-                    'ws_aorg_phone_type'   => $type,
-                    'ws_aorg_phone_number' => $number,
-                ];
-            }
-        }
-
-        $email_rows = [];
-        if ( ! empty( $org['emails'] ) && is_array( $org['emails'] ) ) {
-            foreach ( $org['emails'] as $row ) {
-                if ( ! is_array( $row ) ) {
-                    continue;
-                }
-                $address = sanitize_email( (string) ( $row['address'] ?? '' ) );
-                if ( $address === '' ) {
-                    continue;
-                }
-                $type = sanitize_key( (string) ( $row['type'] ?? 'other' ) );
-                if ( $type === '' ) {
-                    $type = 'other';
-                }
-                $email_rows[] = [
-                    'ws_aorg_email_type'    => $type,
-                    'ws_aorg_email_address' => $address,
-                ];
-            }
-        }
-
-        if ( function_exists( 'update_field' ) ) {
-            update_field( 'ws_aorg_phones', $phone_rows, $post_id );
-            update_field( 'ws_aorg_emails', $email_rows, $post_id );
-        } else {
-            update_post_meta( $post_id, 'ws_aorg_phones', $phone_rows );
-            update_post_meta( $post_id, 'ws_aorg_emails', $email_rows );
-        }
-
         // ── Taxonomies ───────────────────────────────────────────────────────
 
-        // Organization type (single slug).
-        if ( ! empty( $org['aorg_type'] ) ) {
-            ws_matrix_assign_terms( $post_id, [ $org['aorg_type'] ], 'ws_aorg_type' );
+        // Organization model (single slug; currently stored in legacy ws_aorg_type taxonomy).
+        if ( $organization_model !== '' ) {
+            ws_matrix_assign_terms_strict( $post_id, [ $organization_model ], 'ws_aorg_type' );
         }
 
         // Cost models (array of slugs — must match ws_aorg_cost_model seeder).
-        if ( ! empty( $org['cost_models'] ) && is_array( $org['cost_models'] ) ) {
-            ws_matrix_assign_terms( $post_id, $org['cost_models'], 'ws_aorg_cost_model' );
-        }
+        ws_matrix_assign_terms_strict( $post_id, ws_matrix_required_array( $org, 'cost_models' ), 'ws_aorg_cost_model' );
 
         // Protected disclosures (array of slugs — must match ws_protected_disclosure seeder).
-        if ( ! empty( $org['protected_disclosures'] ) ) {
-            ws_matrix_assign_terms( $post_id, $org['protected_disclosures'], 'ws_protected_disclosure' );
-        }
+        ws_matrix_assign_terms_strict(
+            $post_id,
+            ws_matrix_required_array( $org, 'protected_disclosures' ),
+            'ws_protected_disclosure'
+        );
 
         // Optional disclosure targets (array of slugs).
-        if ( ! empty( $org['disclosure_targets'] ) ) {
-            ws_matrix_assign_terms( $post_id, $org['disclosure_targets'], 'ws_disclosure_target' );
-        }
+        ws_matrix_assign_terms_strict(
+            $post_id,
+            ws_matrix_required_array( $org, 'disclosure_targets' ),
+            'ws_disclosure_target'
+        );
 
         // Case stages (array of slugs).
-        if ( ! empty( $org['case_stages'] ) ) {
-            ws_matrix_assign_terms( $post_id, $org['case_stages'], 'ws_case_stage' );
-        }
+        ws_matrix_assign_terms_strict( $post_id, ws_matrix_required_array( $org, 'case_stages' ), 'ws_case_stage' );
 
         // Services offered (array of ws_aorg_service slugs — must match seeder).
-        if ( ! empty( $org['services'] ) ) {
-            ws_matrix_assign_terms( $post_id, $org['services'], 'ws_aorg_service' );
-        }
+        ws_matrix_assign_terms_strict( $post_id, ws_matrix_required_array( $org, 'services' ), 'ws_aorg_service' );
 
         // Employment sectors (array of ws_employment_sector slugs).
-        if ( ! empty( $org['sectors'] ) ) {
-            ws_matrix_assign_terms( $post_id, $org['sectors'], 'ws_employment_sector' );
-        }
+        ws_matrix_assign_terms_strict( $post_id, ws_matrix_required_array( $org, 'employment_sectors' ), 'ws_employment_sector' );
 
         // Language: English (all seeded national orgs operate in English).
         $default_languages = [ 'english' ];
         if ( ! empty( $default_languages ) ) {
-            ws_matrix_assign_terms( $post_id, $default_languages, 'ws_language' );
+            ws_matrix_assign_terms_strict( $post_id, $default_languages, 'ws_language' );
         }
 
         // Jurisdiction: US.
-        wp_set_object_terms( $post_id, $us_term_id, WS_JURISDICTION_TAXONOMY );
+        $jx_result = wp_set_object_terms( $post_id, $us_term_id, WS_JURISDICTION_TAXONOMY );
+        if ( is_wp_error( $jx_result ) ) {
+            ws_matrix_error(
+                "Failed assigning US jurisdiction on post {$post_id}: " . $jx_result->get_error_message()
+            );
+        }
 
         // ── Seeder stamp ─────────────────────────────────────────────────────
         update_post_meta( $post_id, 'ws_matrix_source', 'matrix-assist-orgs' );
@@ -1308,7 +1386,16 @@ function ws_seed_assist_org_matrix() {
 
 add_action( 'admin_init', function() {
     if ( get_option( 'ws_seeded_assist_org_matrix' ) !== '1.0.0' ) {
-        ws_seed_assist_org_matrix();
+        try {
+            ws_seed_assist_org_matrix();
+        } catch ( RuntimeException $e ) {
+            wp_die(
+                esc_html( '[ws-core assist-org matrix] ' . $e->getMessage() ),
+                esc_html__( 'Assist-org matrix seed failed', 'whistleblowershield' ),
+                [ 'response' => 500 ]
+            );
+        }
+
         update_option( 'ws_seeded_assist_org_matrix', '1.0.0' );
     }
 } );

@@ -143,6 +143,7 @@ Specified:    'cure-period-specified'                                 → 'cure_
 
 // ── Statute of Limitations & Thresholds Tab (Common Law Records Only) ────────────────────────────────
 Applies:      'statutory-preclusion'[E]                               → 'statutory_preclusion_context'[R]
+                 * excludes 'process_types', 'primary_agency', 'local_agencies', 'federal_agencies', 'process_pathway_scope', 'process_pathway_limit', 'enforcement_sequence', 'remedies', 'remedy_limits', 'remedy_details'
 
 // ── Retaliation Tab ──────────────────────────────────────────────────────────────────────────────────
 Required:     'evidence-preservation'                                 → 'evidence_preservation_context'         + 'preservation_requirement_scopes'[R]  + 'preservation_deadline_value'
@@ -223,6 +224,7 @@ Specified:    'proper-defendants-specified'                           → 'prope
 Limited:      'nda-limitations'                                       → 'nda_limits_context'[R]
 Present:      'anti-gag-provision-present'                            → 'anti_gag_provision_context'[R]
 Barred:       'no-retaliatory-evidence'[E]                            → 'no_retaliatory_evidence_context'[R]
+                 * excludes 'after_acquired_evidence_effect', 'after_acquired_evidence_context'
 Available:    'stay-of-disciplinary-action'                           → 'stay_of_discipline_context'[R]
 Available:    'anti-slapp-protection'                                 → 'anti_slapp_protection_context'[R]      + 'anti_slapp_protection_scopes'[R]
 Available:    'discovery-protection'[P]                               → 'discovery_protection_context'[R]       + 'discovery_protection_scopes'[R]

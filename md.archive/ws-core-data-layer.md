@@ -410,7 +410,7 @@ fields DO attach.
 |---|---|---|
 | `ws_ag_procedure_agency_id` | post_object | Parent `ws-agency` post; pre-filled from `?agency_id=` URL param on new posts |
 | `ws_procedure_type` | taxonomy | `ws_procedure_type` terms; radio UI; `save_terms: 1` |
-| `WS_JURISDICTION_TAXONOMYs` *(taxonomy field)* | taxonomy | Jurisdiction scope; `save_terms: 1` |
+| `ws_ag_jurisdictions` *(taxonomy field)* | taxonomy | Jurisdiction scope; `save_terms: 1` |
 | `ws_ag_procedure_protected_disclosures` | taxonomy | `ws_protected_disclosure` terms; `save_terms: 1` |
 | `ws_ag_procedure_statute_ids` | relationship | Related `jx-statute` posts; auto-scoped to matching jurisdiction and protected disclosures |
 | `ws_ag_procedure_comlaw_ids` | relationship | Related `jx-common-law` posts; auto-scoped to matching jurisdiction |

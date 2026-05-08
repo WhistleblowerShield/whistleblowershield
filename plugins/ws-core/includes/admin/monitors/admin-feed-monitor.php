@@ -382,8 +382,7 @@ function ws_feed_ingest_item( $guid ) {
 
     // ── Resolve WS_JURISDICTION_TAXONOMY term ──────────────────────────────────────
 
-    $term = ws_jx_term_by_code( sanitize_text_field( $entry['jx_code'] ?? 'us' ) );
-
+    $term = ws_jx_term_by_code( sanitize_text_field( $entry['jx_code'] ?? 'US' ) );
     // ── Create post ───────────────────────────────────────────────────────
 
     $post_id = wp_insert_post( [

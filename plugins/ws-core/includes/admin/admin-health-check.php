@@ -15,7 +15,7 @@
  *   2. Core CPTs registered — post_type_exists() for each content CPT.
  *                            Catches loader ordering regressions during development.
  *
- *   3. Core taxonomy registered — taxonomy_exists('WS_JURISDICTION_TAXONOMY').
+ *   3. Core taxonomy registered — taxonomy_exists(WS_JURISDICTION_TAXONOMY).
  *                            Catches taxonomy load failures; breaks term queries,
  *                            metabox jurisdiction guard, and Add URL tax_input param.
  *

@@ -137,8 +137,7 @@ employee_standard   → *_employee_standard_details
 
 | Slug | Attaches To | Notes | Constant |
 |---|---|---|
-| `WS_JURISDICTION_TAXONOMY` | All content CPTs | Canonical join key. USPS slug. | `WS_JURISDICTION_TAXONOMY` |
-| `ws_language` | `ws-agency`, `ws-assist-org` | `additional` is a system sentinel ||
+| `ws_jurisdiction` | All content CPTs | Canonical join key. USPS slug. | `WS_JURISDICTION_TAXONOMY` || `ws_language` | `ws-agency`, `ws-assist-org` | `additional` is a system sentinel ||
 | `ws_case_stage` | `ws-assist-org` | Phase 2 filter axis ||
 | `ws_aorg_type` | `ws-assist-org` | Single-value ||
 | `ws_employment_sector` | `jx-statute`, `jx-common-law`, `jx-citation`, `jx-construction`,`ws-agency`, `ag-procedure`, `ws-assist-org` | Phase 2 filter axis ||
