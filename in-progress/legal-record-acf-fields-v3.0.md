@@ -132,7 +132,7 @@ workflow within each tab.
 
 Fields ordered: identification → related dates → scope → curated.
 
-- `jurisdiction`                   — (single-select taxonomy: `WS_JURISDICTION_TAXONOMY`)
+- `jurisdiction`                   — (single-select taxonomy: `ws_jurisdiction`)
 - `official_name`
 - `common_name`
 - `citation`
@@ -188,6 +188,7 @@ Fields ordered: legal_recognitions → activity standard → disclosure → clas
 - `garcetti_exception_context`     — (conditional on `garcetti-exception` in `legal_recognitions` AND
                                       `public-sector` in `employment_sectors`; hook: required)
 - `disclosure_targets`             — (taxonomy: `ws_disclosure_target`)
+- `disclosure_target_details`
 - `disclosure_channel_scope`       — (Sister to `disclosure_channel_context`; select: `any-channel`|
                                       `approved-channel-only`|`mandatory-internal-first`|`see-context`; hook: required)
 - `disclosure_format`              — (Sister to `disclosure_channel_context`; select: `written-only`|
@@ -195,7 +196,6 @@ Fields ordered: legal_recognitions → activity standard → disclosure → clas
 - `disclosure_format_details`
 - `disclosure_channel_context`     — (conditional on `disclosure-channel-defined` in `legal_recognitions`)
 - `ic_channel_sequence_gloss`      — (conditional on `has-ic-channel` in `protected_disclosures`)
-- `disclosure_target_details`
 
 ---
 
@@ -435,6 +435,7 @@ Fields ordered: rewards → qui tam specifics.
 - `qui_tam_share_context`       — (conditional on `qui-tam-action` in `legal_recognitions`; hook: required)
 - `first_to_file_bar`           — (Sister to `qui_tam_share_context`; AND `bounty-qui-tam-award` in `remedies`)
 - `public_disclosure_bar`       — (Sister to `qui_tam_share_context`; AND `bounty-qui-tam-award` in `remedies`) 
+
 ---
 
 ### Waiver & Scope Tab
@@ -634,7 +635,7 @@ decisions:
                                       approved use of `mixed` where binding strength **is capable of** truly varying)
 - `court`                          — (select: @matrix; hook: filter)
 - `court_details`
-- `court_jx`                       — (Sister to `court_details`; taxonomy: `WS_JURISDICTION_TAXONOMY`)
+- `court_jx`                       — (Sister to `court_details`; taxonomy: `ws_jurisdiction`)
 
 #### Identity Tab (insert after `effective_year`)
 
@@ -652,7 +653,7 @@ decisions:
       ├── `taxonomy`                     [select: taxonomy slug],
       └── `term`                         [select: taxonomy term]; hook: filter)
 - `has_affected_jx`                — (hook: derive)
-- `affected_jx`                    — (conditional on `has_affected_jx` is true; taxonomy: `WS_JURISDICTION_TAXONOMY`; hook: filter)
+- `affected_jx`                    — (conditional on `has_affected_jx` is true; taxonomy: `ws_jurisdiction`; hook: filter)
 
 ##### Eligible Taxonomy Allowlist for `extended_taxonomies` / `suppressed_taxonomies`
 
@@ -664,7 +665,7 @@ Eligible: `ws_legal_recognition`, `ws_protected_disclosure`, `ws_protected_class
 `ws_employment_sector`, `ws_disclosure_target`, `ws_protected_action`, `ws_adverse_action`, `ws_employer_defense`,
 `ws_remedy`, `ws_process_type`, `ws_employee_standard`, `ws_causation_standard`.
 
-Excluded: `WS_JURISDICTION_TAXONOMY` (geographic, not classificatory); `ws_aorg_*`, `ws_language`, `ws_case_stage`,
+Excluded: `ws_jurisdiction` (geographic, not classificatory); `ws_aorg_*`, `ws_language`, `ws_case_stage`,
 `ws_procedure_type` (not attached to legal-record CPTs).
 
 #### Relationships Tab

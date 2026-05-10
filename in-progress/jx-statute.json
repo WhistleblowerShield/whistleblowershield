@@ -10,14 +10,12 @@
                 "derive"
             ],
             "multiple": 0,
-            "name": "_disclosure_target_class",
             "type": "select"
         },
         "_primary_agency_is_fed": {
             "hook": [
                 "derive"
             ],
-            "name": "_primary_agency_is_fed",
             "type": "true_false"
         },
         "_related_agencies": {
@@ -25,287 +23,117 @@
                 "merge"
             ],
             "multiple": 1,
-            "name": "_related_agencies",
             "post_type": true,
             "type": "post_object"
         }
     },
     "meta": {
         "_warning": "Per WS-Core Security Protocol 4.7.2, direct modification is prohibited. Hand-editing triggers automated disciplinary flaying. Intestines will be removed via the navel to preserve the audit trail.",
-        "checksum": "4e577b4e",
+        "checksum": "a8de07a8",
         "cpt": "jx-statute",
-        "generated_timestamp": "2026-05-10T18:37:08+00:00",
+        "generated_timestamp": "2026-05-10T19:28:54+00:00",
         "generator_version": "11.1.0",
         "infix": "jx",
         "protocol_reference": "Security Protocol Manual (WS-SPM-4.7.2)",
         "status": "pending"
     },
     "tabs": {
-        "authority_tab": {
+        "identity_tab": {
             "fields": {
-                "authority_reference": {
-                    "name": "authority_reference",
-                    "type": "text"
-                },
-                "url": {
-                    "name": "url",
-                    "type": "text"
-                },
-                "url_is_pdf": {
-                    "name": "url_is_pdf",
-                    "type": "true_false"
-                }
-            },
-            "label": "Authority Tab"
-        },
-        "burden_of_proof_tab": {
-            "fields": {
-                "bop_details": {
-                    "name": "bop_details",
-                    "type": "textarea"
-                },
-                "burden_shifting_context": {
-                    "logic": "`burden-shifting-framework` in `legal_recognitions`",
-                    "name": "burden_shifting_context",
-                    "type": "textarea"
-                },
-                "burden_shifting_details": {
-                    "logic": "`burden_shifting_frameworks` includes `has-details`",
-                    "name": "burden_shifting_details",
-                    "type": "textarea"
-                },
-                "burden_shifting_frameworks": {
-                    "choices": [
-                        "mcdonnell-douglas",
-                        "motivating-factor",
-                        "but-for",
-                        "mixed-motive",
-                        "has-details"
-                    ],
-                    "hook": [
-                        "required"
-                    ],
-                    "multiple": 1,
-                    "name": "burden_shifting_frameworks",
-                    "type": "select"
-                },
-                "causation_dual_standard_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`causation-dual-standard` in `legal_recognitions` AND `causation-standard-recognized` in `legal_recognitions`",
-                    "name": "causation_dual_standard_context",
-                    "type": "textarea"
-                },
-                "causation_scope": {
-                    "choices": [
-                        "liability",
-                        "damages",
-                        "both",
-                        "see-context"
-                    ],
-                    "multiple": 0,
-                    "name": "causation_scope",
-                    "type": "select"
-                },
-                "causation_standard": {
+                "jurisdiction": {
                     "field_type": "select",
-                    "hook": [
-                        "required"
-                    ],
-                    "name": "causation_standard",
-                    "taxonomy": "ws_causation_standard",
+                    "taxonomy": "ws_jurisdiction",
                     "type": "taxonomy"
                 },
-                "causation_standard_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`causation-standard-recognized` in `legal_recognitions`",
-                    "name": "causation_standard_context",
-                    "type": "textarea"
-                },
-                "causation_standard_statutory_text": {
-                    "name": "causation_standard_statutory_text",
+                "official_name": {
                     "type": "text"
                 },
-                "employee_standard": {
-                    "field_type": "select",
-                    "name": "employee_standard",
-                    "taxonomy": "ws_employee_standard",
-                    "type": "taxonomy"
+                "common_name": {
+                    "type": "text"
                 },
-                "employee_standard_details": {
-                    "name": "employee_standard_details",
-                    "type": "textarea"
+                "citation": {
+                    "type": "text"
                 },
-                "employer_defense_details": {
-                    "name": "employer_defense_details",
-                    "type": "textarea"
+                "date": {
+                    "type": "date_picker"
                 },
-                "employer_defenses": {
-                    "field_type": "multi_select",
-                    "name": "employer_defenses",
-                    "taxonomy": "ws_employer_defense",
-                    "type": "taxonomy"
-                },
-                "employer_knowledge_context": {
-                    "logic": "`employer-knowledge-required` in `legal_recognitions`",
-                    "name": "employer_knowledge_context",
-                    "type": "textarea"
-                },
-                "employer_knowledge_scopes": {
-                    "choices": [
-                        "actual-knowledge",
-                        "constructive-knowledge",
-                        "inferred-knowledge",
-                        "imputed-knowledge",
-                        "has-details"
-                    ],
-                    "hook": [
-                        "required"
-                    ],
-                    "multiple": 1,
-                    "name": "employer_knowledge_scopes",
-                    "type": "select"
-                },
-                "employer_knowledge_scopes_details": {
-                    "name": "employer_knowledge_scopes_details",
-                    "type": "textarea"
-                },
-                "employment_classification_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`employment-classification-test` in `legal_recognitions`",
-                    "name": "employment_classification_context",
-                    "type": "textarea"
-                },
-                "employment_classification_test": {
-                    "choices": [
-                        "economic-realities",
-                        "common-law-darden",
-                        "abc-test",
-                        "right-to-control",
-                        "hybrid",
-                        "see-context"
-                    ],
-                    "hook": [
-                        "required"
-                    ],
-                    "multiple": 0,
-                    "name": "employment_classification_test",
-                    "type": "select"
-                },
-                "has_bop_details": {
-                    "name": "has_bop_details",
-                    "type": "textarea"
-                },
-                "has_causation_standard_statutory_text": {
-                    "name": "has_causation_standard_statutory_text",
+                "has_effective_date": {
                     "type": "true_false"
                 },
-                "has_rebuttable_presumption": {
-                    "name": "has_rebuttable_presumption",
-                    "type": "true_false"
+                "effective_date": {
+                    "type": "date_picker"
                 },
-                "mixed_motive_remedy_gloss": {
-                    "logic": "`burden_shifting_frameworks` includes `mixed-motive`",
-                    "name": "mixed_motive_remedy_gloss",
-                    "type": "textarea"
-                },
-                "presumption_effect": {
-                    "choices": [
-                        "shifts-burden",
-                        "creates-inference",
-                        "rebuttable-presumption",
-                        "has-details"
-                    ],
+                "effective_year": {
                     "hook": [
-                        "required"
+                        "butchers"
                     ],
-                    "multiple": 0,
-                    "name": "presumption_effect",
-                    "type": "select"
-                },
-                "presumption_effect_details": {
-                    "name": "presumption_effect_details",
-                    "type": "textarea"
-                },
-                "presumption_window_unit": {
-                    "choices": [
-                        "days",
-                        "weeks",
-                        "months",
-                        "years"
-                    ],
-                    "name": "presumption_window_unit",
-                    "type": "select"
-                },
-                "presumption_window_value": {
-                    "name": "presumption_window_value",
                     "type": "number"
                 },
-                "rebuttable_presumption_details": {
-                    "name": "rebuttable_presumption_details",
-                    "type": "textarea"
-                },
-                "same_decision_context": {
-                    "logic": "`same-decision-defense-standard` in `legal_recognitions`",
-                    "name": "same_decision_context",
-                    "type": "textarea"
-                },
-                "same_decision_standard": {
-                    "choices": [
-                        "preponderance",
-                        "clear-and-convincing",
-                        "see-context"
-                    ],
+                "retro_date": {
                     "hook": [
                         "required"
+                    ],
+                    "type": "date_picker"
+                },
+                "retro_context": {
+                    "logic": "`retroactive-date` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "protection_scope": {
+                    "choices": [
+                        "disclosure",
+                        "retaliation",
+                        "both"
                     ],
                     "multiple": 0,
-                    "name": "same_decision_standard",
                     "type": "select"
                 },
-                "temporal_presumption_context": {
-                    "logic": "`temporal-presumption-recognized` in `legal_recognitions`",
-                    "name": "temporal_presumption_context",
-                    "type": "textarea"
+                "general_description": {
+                    "type": "text"
                 },
-                "temporal_proximity_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`temporal-proximity-sufficient` in `legal_recognitions`",
-                    "name": "temporal_proximity_context",
-                    "type": "textarea"
+                "has_attach_flag": {
+                    "type": "true_false"
                 },
-                "temporal_proximity_unit": {
-                    "choices": [
-                        "days",
-                        "weeks",
-                        "months",
-                        "years"
-                    ],
-                    "name": "temporal_proximity_unit",
-                    "type": "select"
-                },
-                "temporal_proximity_value": {
-                    "name": "temporal_proximity_value",
+                "display_order": {
+                    "logic": "`has_attach_flag` is true",
                     "type": "number"
+                },
+                "last_reviewed_date": {
+                    "type": "date_picker"
                 }
             },
-            "label": "Burden Of Proof Tab"
+            "label": "Identity Tab"
         },
         "classification_tab": {
             "fields": {
-                "anonymity_protection_context": {
+                "legal_recognitions": {
+                    "field_type": "multi_select",
+                    "hook": [
+                        "impacts",
+                        "excludes"
+                    ],
+                    "taxonomy": "ws_legal_recognition",
+                    "type": "taxonomy"
+                },
+                "manager_rule_exclusion_context": {
                     "hook": [
                         "required"
                     ],
-                    "logic": "`anonymity-protection` in `legal_recognitions`",
-                    "name": "anonymity_protection_context",
+                    "logic": "`manager-rule-exclusion` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "public_concern_required_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`public-concern-required` in `legal_recognitions` AND `public-sector` in `employment_sectors`",
+                    "type": "textarea"
+                },
+                "manner_of_opposition_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`manner-of-opposition-standard` in `legal_recognitions`",
                     "type": "textarea"
                 },
                 "bad_faith_exclusion_context": {
@@ -313,114 +141,13 @@
                         "required"
                     ],
                     "logic": "`bad-faith-exclusion` in `legal_recognitions`",
-                    "name": "bad_faith_exclusion_context",
                     "type": "textarea"
                 },
-                "disclosure_channel_context": {
-                    "logic": "`disclosure-channel-defined` in `legal_recognitions`",
-                    "name": "disclosure_channel_context",
-                    "type": "textarea"
-                },
-                "disclosure_channel_scope": {
-                    "choices": [
-                        "any-channel",
-                        "approved-channel-only",
-                        "mandatory-internal-first",
-                        "see-context"
-                    ],
+                "anonymity_protection_context": {
                     "hook": [
                         "required"
                     ],
-                    "multiple": 0,
-                    "name": "disclosure_channel_scope",
-                    "type": "select"
-                },
-                "disclosure_format": {
-                    "choices": [
-                        "written-only",
-                        "oral-permitted",
-                        "either",
-                        "has-details"
-                    ],
-                    "multiple": 0,
-                    "name": "disclosure_format",
-                    "type": "select"
-                },
-                "disclosure_format_details": {
-                    "name": "disclosure_format_details",
-                    "type": "textarea"
-                },
-                "disclosure_target_details": {
-                    "name": "disclosure_target_details",
-                    "type": "textarea"
-                },
-                "disclosure_targets": {
-                    "field_type": "multi_select",
-                    "name": "disclosure_targets",
-                    "taxonomy": "ws_disclosure_target",
-                    "type": "taxonomy"
-                },
-                "employment_sectors": {
-                    "field_type": "multi_select",
-                    "hook": [
-                        "impacts"
-                    ],
-                    "name": "employment_sectors",
-                    "taxonomy": "ws_employment_sector",
-                    "type": "taxonomy"
-                },
-                "excluded_class_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`excluded-class` in `legal_recognitions`",
-                    "name": "excluded_class_context",
-                    "type": "textarea"
-                },
-                "excluded_class_details": {
-                    "name": "excluded_class_details",
-                    "type": "textarea"
-                },
-                "excluded_classes": {
-                    "field_type": "multi_select",
-                    "hook": [
-                        "required"
-                    ],
-                    "name": "excluded_classes",
-                    "taxonomy": "ws_excluded_class",
-                    "type": "taxonomy"
-                },
-                "former_employee_gloss": {
-                    "logic": "`former-employee` in `protected_classes`",
-                    "name": "former_employee_gloss",
-                    "type": "textarea"
-                },
-                "garcetti_exception_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`garcetti-exception` in `legal_recognitions` AND `public-sector` in `employment_sectors`",
-                    "name": "garcetti_exception_context",
-                    "type": "textarea"
-                },
-                "ic_channel_sequence_gloss": {
-                    "logic": "`has-ic-channel` in `protected_disclosures`",
-                    "name": "ic_channel_sequence_gloss",
-                    "type": "textarea"
-                },
-                "legal_recognitions": {
-                    "field_type": "multi_select",
-                    "hook": [
-                        "impacts",
-                        "excludes"
-                    ],
-                    "name": "legal_recognitions",
-                    "taxonomy": "ws_legal_recognition",
-                    "type": "taxonomy"
-                },
-                "malicious_reporting_context": {
-                    "logic": "`malicious-reporting-sanctions` in `legal_recognitions`",
-                    "name": "malicious_reporting_context",
+                    "logic": "`anonymity-protection` in `legal_recognitions`",
                     "type": "textarea"
                 },
                 "malicious_reporting_sanctions": {
@@ -439,29 +166,31 @@
                         "required"
                     ],
                     "multiple": 0,
-                    "name": "malicious_reporting_sanctions",
                     "type": "select"
                 },
-                "manager_rule_exclusion_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`manager-rule-exclusion` in `legal_recognitions`",
-                    "name": "manager_rule_exclusion_context",
+                "malicious_reporting_context": {
+                    "logic": "`malicious-reporting-sanctions` in `legal_recognitions`",
                     "type": "textarea"
                 },
-                "manner_of_opposition_context": {
-                    "hook": [
-                        "required"
+                "protected_action_standards": {
+                    "choices": [
+                        "per-se-protected",
+                        "actual-violation",
+                        "reasonable-belief",
+                        "good-faith"
                     ],
-                    "logic": "`manner-of-opposition-standard` in `legal_recognitions`",
-                    "name": "manner_of_opposition_context",
-                    "type": "textarea"
+                    "multiple": 1,
+                    "type": "select"
                 },
-                "protected_action_context": {
-                    "logic": "`protected-action` in `legal_recognitions`",
-                    "name": "protected_action_context",
-                    "type": "textarea"
+                "reasonable_belief_scope": {
+                    "choices": [
+                        "objective-only",
+                        "subjective-only",
+                        "dual-prong",
+                        "see-context"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
                 },
                 "protected_action_sources": {
                     "choices": [
@@ -473,18 +202,6 @@
                         "see-context"
                     ],
                     "multiple": 1,
-                    "name": "protected_action_sources",
-                    "type": "select"
-                },
-                "protected_action_standards": {
-                    "choices": [
-                        "per-se-protected",
-                        "actual-violation",
-                        "reasonable-belief",
-                        "good-faith"
-                    ],
-                    "multiple": 1,
-                    "name": "protected_action_standards",
                     "type": "select"
                 },
                 "protected_actions": {
@@ -492,13 +209,17 @@
                     "hook": [
                         "required"
                     ],
-                    "name": "protected_actions",
                     "taxonomy": "ws_protected_action",
                     "type": "taxonomy"
                 },
-                "protected_class_details": {
-                    "name": "protected_class_details",
+                "protected_action_context": {
+                    "logic": "`protected-action` in `legal_recognitions`",
                     "type": "textarea"
+                },
+                "protected_disclosures": {
+                    "field_type": "multi_select",
+                    "taxonomy": "ws_protected_disclosure",
+                    "type": "taxonomy"
                 },
                 "protected_classes": {
                     "field_type": "multi_select",
@@ -507,135 +228,199 @@
                         "prerequisite",
                         "excludes"
                     ],
-                    "name": "protected_classes",
                     "taxonomy": "ws_protected_class",
                     "type": "taxonomy"
                 },
-                "protected_disclosures": {
-                    "field_type": "multi_select",
-                    "name": "protected_disclosures",
-                    "taxonomy": "ws_protected_disclosure",
-                    "type": "taxonomy"
+                "former_employee_gloss": {
+                    "logic": "`former-employee` in `protected_classes`",
+                    "type": "textarea"
                 },
-                "public_concern_required_context": {
+                "protected_class_details": {
+                    "logic": "`has-details` in `protected_classes`",
+                    "type": "textarea"
+                },
+                "excluded_classes": {
+                    "field_type": "multi_select",
                     "hook": [
                         "required"
                     ],
-                    "logic": "`public-concern-required` in `legal_recognitions` AND `public-sector` in `employment_sectors`",
-                    "name": "public_concern_required_context",
+                    "taxonomy": "ws_excluded_class",
+                    "type": "taxonomy"
+                },
+                "excluded_class_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`excluded-class` in `legal_recognitions`",
                     "type": "textarea"
                 },
-                "reasonable_belief_scope": {
+                "excluded_class_details": {
+                    "logic": "`has-details` in `excluded_classes`",
+                    "type": "textarea"
+                },
+                "employment_sectors": {
+                    "field_type": "multi_select",
+                    "hook": [
+                        "impacts"
+                    ],
+                    "taxonomy": "ws_employment_sector",
+                    "type": "taxonomy"
+                },
+                "garcetti_exception_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`garcetti-exception` in `legal_recognitions` AND `public-sector` in `employment_sectors`",
+                    "type": "textarea"
+                },
+                "disclosure_targets": {
+                    "field_type": "multi_select",
+                    "taxonomy": "ws_disclosure_target",
+                    "type": "taxonomy"
+                },
+                "disclosure_target_details": {
+                    "logic": "`has-details` in `disclosure_targets`",
+                    "type": "textarea"
+                },
+                "disclosure_channel_scope": {
                     "choices": [
-                        "objective-only",
-                        "subjective-only",
-                        "dual-prong",
+                        "any-channel",
+                        "approved-channel-only",
+                        "mandatory-internal-first",
                         "see-context"
                     ],
+                    "hook": [
+                        "required"
+                    ],
                     "multiple": 0,
-                    "name": "reasonable_belief_scope",
                     "type": "select"
+                },
+                "disclosure_format": {
+                    "choices": [
+                        "written-only",
+                        "oral-permitted",
+                        "either",
+                        "has-details"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "disclosure_format_details": {
+                    "type": "textarea"
+                },
+                "disclosure_channel_context": {
+                    "logic": "`disclosure-channel-defined` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "ic_channel_sequence_gloss": {
+                    "logic": "`has-ic-channel` in `protected_disclosures`",
+                    "type": "textarea"
                 }
             },
             "label": "Classification Tab"
         },
-        "identity_tab": {
+        "statute_of_limitations_thresholds_tab": {
             "fields": {
-                "citation": {
-                    "name": "citation",
-                    "type": "text"
-                },
-                "common_name": {
-                    "name": "common_name",
-                    "type": "text"
-                },
-                "date": {
-                    "name": "date",
-                    "type": "date_picker"
-                },
-                "display_order": {
-                    "logic": "`has_attach_flag` is true",
-                    "name": "display_order",
+                "sol_value": {
                     "type": "number"
                 },
-                "effective_date": {
-                    "name": "effective_date",
-                    "type": "date_picker"
-                },
-                "effective_year": {
-                    "hook": [
-                        "butchers"
-                    ],
-                    "name": "effective_year",
-                    "type": "number"
-                },
-                "general_description": {
-                    "name": "general_description",
-                    "type": "text"
-                },
-                "has_attach_flag": {
-                    "name": "has_attach_flag",
-                    "type": "true_false"
-                },
-                "has_effective_date": {
-                    "name": "has_effective_date",
-                    "type": "true_false"
-                },
-                "jurisdiction": {
-                    "field_type": "select",
-                    "name": "jurisdiction",
-                    "taxonomy": "ws_jurisdiction",
-                    "type": "taxonomy"
-                },
-                "last_reviewed_date": {
-                    "name": "last_reviewed_date",
-                    "type": "date_picker"
-                },
-                "official_name": {
-                    "name": "official_name",
-                    "type": "text"
-                },
-                "protection_scope": {
+                "sol_unit": {
                     "choices": [
-                        "disclosure",
-                        "retaliation",
-                        "both"
+                        "days",
+                        "weeks",
+                        "months",
+                        "years"
                     ],
-                    "multiple": 0,
-                    "name": "protection_scope",
                     "type": "select"
                 },
-                "retro_context": {
-                    "logic": "`retroactive-date` in `legal_recognitions`",
-                    "name": "retro_context",
+                "sol_triggers": {
+                    "choices": [
+                        "accrual",
+                        "constructive-discharge-accrual",
+                        "discovery-rule",
+                        "filing-of-complaint",
+                        "conclusion-of-admin-process",
+                        "see-context"
+                    ],
+                    "hook": [
+                        "impacts",
+                        "prerequisite"
+                    ],
+                    "multiple": 1,
+                    "type": "select"
+                },
+                "sol_trigger_discovery_gloss": {
+                    "logic": "`sol_triggers` includes `discovery-rule`",
                     "type": "textarea"
                 },
-                "retro_date": {
+                "sol_trigger_gloss": {
+                    "logic": "`sol_triggers` is non-empty",
+                    "type": "textarea"
+                },
+                "is_sol_suspended_during_admin": {
+                    "type": "true_false"
+                },
+                "has_sol_details": {
+                    "type": "textarea"
+                },
+                "sol_details": {
+                    "type": "textarea"
+                },
+                "sop_value": {
+                    "type": "number"
+                },
+                "sop_unit": {
+                    "choices": [
+                        "days",
+                        "weeks",
+                        "months",
+                        "years"
+                    ],
+                    "type": "select"
+                },
+                "is_sop_tolling_available": {
+                    "type": "true_false"
+                },
+                "statute_of_repose_context": {
                     "hook": [
                         "required"
                     ],
-                    "name": "retro_date",
-                    "type": "date_picker"
-                }
-            },
-            "label": "Identity Tab"
-        },
-        "processes_remedies_tab": {
-            "fields": {
-                "after_acquired_evidence_context": {
-                    "hook": [
-                        "excluded-by"
-                    ],
-                    "logic": "`after-acquired-evidence` in `legal_recognitions`",
-                    "name": "after_acquired_evidence_context",
+                    "logic": "`statute-of-repose` in `legal_recognitions`",
                     "type": "textarea"
                 },
-                "after_acquired_evidence_effect": {
+                "statutory_tolling_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`statutory-tolling` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "equitable_tolling_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`equitable-tolling` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "cba_preemption_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`cba-grievance-preemption` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "amended_claim_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`amended-claim` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "exhaustion_required_scope": {
                     "choices": [
-                        "bars-front-pay",
-                        "bars-reinstatement",
-                        "bars-damages",
-                        "bars-all",
+                        "jurisdictional",
+                        "claims-processing",
+                        "waivable",
                         "see-context"
                     ],
                     "hook": [
@@ -643,229 +428,282 @@
                         "excluded-by"
                     ],
                     "multiple": 0,
-                    "name": "after_acquired_evidence_effect",
                     "type": "select"
                 },
-                "enforcement_sequence": {
-                    "name": "enforcement_sequence",
-                    "type": "text"
-                },
-                "federal_agencies": {
+                "exhaustion_required_context": {
                     "hook": [
-                        "filter"
+                        "excluded-by"
                     ],
-                    "multiple": 1,
-                    "name": "federal_agencies",
-                    "post_type": true,
-                    "type": "post_object"
-                },
-                "fee_shifting_asymmetry": {
-                    "choices": [
-                        "two-way",
-                        "one-way-plaintiff",
-                        "one-way-defendant-frivolous",
-                        "has-details"
-                    ],
-                    "logic": "`fee_shifting_scope` is `asymmetrical`",
-                    "multiple": 0,
-                    "name": "fee_shifting_asymmetry",
-                    "type": "select"
-                },
-                "fee_shifting_asymmetry_details": {
-                    "name": "fee_shifting_asymmetry_details",
+                    "logic": "`exhaustion-required` in `legal_recognitions`",
                     "type": "textarea"
                 },
-                "fee_shifting_phases": {
+                "filing_notice_required_value": {
+                    "type": "number"
+                },
+                "filing_notice_required_unit": {
                     "choices": [
-                        "two-way",
-                        "\u2502                                   `one-way-plaintiff",
-                        "one-way-defendant-frivolous",
-                        "has-details`], \u251c\u2500\u2500 `asymmetry_details`            [conditional on `phase_asymmetry` is `has-details`], \u2514\u2500\u2500 `phase_context`                [conditional on `phase` is non-empty]"
+                        "days",
+                        "weeks",
+                        "months",
+                        "years"
                     ],
-                    "hook": [
-                        "required"
-                    ],
-                    "multiple": 0,
-                    "name": "fee_shifting_phases",
                     "type": "select"
                 },
-                "fee_shifting_scope": {
+                "filing_notice_required_targets": {
                     "choices": [
-                        "mandatory",
-                        "discretionary",
-                        "asymmetrical"
-                    ],
-                    "hook": [
-                        "required"
-                    ],
-                    "multiple": 0,
-                    "name": "fee_shifting_scope",
-                    "type": "select"
-                },
-                "fee_shifting_standard": {
-                    "choices": [
-                        "bilateral-loser-pays",
-                        "unilateral-pro-plaintiff",
-                        "none-american-rule",
-                        "prevailing-defendant-bad-faith",
+                        "employer",
+                        "agency",
+                        "attorney-general",
+                        "labor-board",
                         "see-context"
                     ],
                     "hook": [
                         "required"
                     ],
-                    "multiple": 0,
-                    "name": "fee_shifting_standard",
+                    "multiple": 1,
                     "type": "select"
                 },
-                "fee_shifting_standard_context": {
-                    "logic": "`fee-shifting-standard` in `legal_recognitions`",
-                    "name": "fee_shifting_standard_context",
+                "filing_notice_required_context": {
+                    "logic": "`pre-filing-notice-required` in `legal_recognitions`",
                     "type": "textarea"
                 },
-                "has_fee_shifting_phases": {
-                    "hook": [
-                        "auto-set"
+                "employer_threshold_compare": {
+                    "choices": [
+                        "gte",
+                        "lte",
+                        "gt",
+                        "lt",
+                        "eq"
                     ],
-                    "logic": "`fee_shifting_standard` is `none-american-rule`",
-                    "name": "has_fee_shifting_phases",
+                    "hook": [
+                        "required"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "employer_threshold_value": {
+                    "type": "number"
+                },
+                "employer_threshold_model": {
+                    "choices": [
+                        "employees",
+                        "workers",
+                        "contractors",
+                        "fte"
+                    ],
+                    "hook": [
+                        "required"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "employer_threshold_context": {
+                    "logic": "`employer-threshold-specified` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "cure_period_value": {
+                    "type": "number"
+                },
+                "cure_period_unit": {
+                    "choices": [
+                        "days",
+                        "weeks",
+                        "months",
+                        "years"
+                    ],
+                    "type": "select"
+                },
+                "cure_period_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`cure-period-specified` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "federal_state_interaction": {
+                    "choices": [
+                        "express-preemption",
+                        "savings-clause-preserves-state",
+                        "concurrent-enforcement",
+                        "field-preemption",
+                        "state-exceeds-federal-floor",
+                        "has-details"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "savings_clause_preserves_gloss": {
+                    "logic": "`federal_state_interaction` is `savings-clause-preserves-state`",
+                    "type": "textarea"
+                },
+                "federal_state_interaction_details": {
+                    "type": "textarea"
+                }
+            },
+            "label": "Statute of Limitations & Thresholds Tab"
+        },
+        "retaliation_tab": {
+            "fields": {
+                "adverse_action_scope": {
+                    "choices": [
+                        "termination-only",
+                        "material-adverse",
+                        "broad-any-adverse-action",
+                        "see-gloss"
+                    ],
+                    "hook": [
+                        "excludes"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "adverse_action_scope_gloss": {
+                    "hook": [
+                        "override"
+                    ],
+                    "logic": "`adverse_action_scope` is non-empty",
+                    "type": "textarea"
+                },
+                "adverse_actions": {
+                    "field_type": "multi_select",
+                    "hook": [
+                        "impacts"
+                    ],
+                    "taxonomy": "ws_adverse_action",
+                    "type": "taxonomy"
+                },
+                "anticipatory_retaliation_gloss": {
+                    "hook": [
+                        "override"
+                    ],
+                    "logic": "`anticipatory-retaliation` in `adverse_actions`",
+                    "type": "textarea"
+                },
+                "threatened_retaliation_gloss": {
+                    "hook": [
+                        "override"
+                    ],
+                    "logic": "`threatened-retaliation` in `adverse_actions`",
+                    "type": "textarea"
+                },
+                "adverse_action_details": {
+                    "logic": "`has-details` in `adverse_actions`",
+                    "type": "textarea"
+                },
+                "facially_retaliatory_policy_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`facially-retaliatory-policy` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "is_blacklisting_extended": {
+                    "logic": "`blacklisting` in `adverse_actions`",
                     "type": "true_false"
                 },
-                "interest_provision_context": {
-                    "logic": "`equitable-interest-award` in `legal_recognitions`",
-                    "name": "interest_provision_context",
+                "preservation_deadline_value": {
+                    "type": "number"
+                },
+                "preservation_deadline_unit": {
+                    "choices": [
+                        "days",
+                        "weeks",
+                        "months",
+                        "years"
+                    ],
+                    "type": "select"
+                },
+                "preservation_requirement_scopes": {
+                    "choices": [
+                        "litigation-hold",
+                        "statutory-hold",
+                        "court-order",
+                        "agency-request",
+                        "see-context"
+                    ],
+                    "hook": [
+                        "required"
+                    ],
+                    "multiple": 1,
+                    "type": "select"
+                },
+                "evidence_preservation_context": {
+                    "logic": "`evidence-preservation` in `legal_recognitions`",
                     "type": "textarea"
                 },
-                "interest_provision_scope": {
+                "constructive_discharge_standard": {
                     "choices": [
-                        "pre-judgment-statutory",
-                        "post-judgment",
-                        "both",
-                        "discretionary",
+                        "dual-prong",
+                        "objective-intolerability",
+                        "intent-required",
                         "see-context"
                     ],
                     "hook": [
                         "required"
                     ],
                     "multiple": 0,
-                    "name": "interest_provision_scope",
                     "type": "select"
                 },
-                "is_agency_inaction_included": {
-                    "logic": "`process_pathway_scope` is `hybrid-right-to-sue-on-inaction`",
-                    "name": "is_agency_inaction_included",
+                "constructive_discharge_context": {
+                    "logic": "`constructive-discharge-standard` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "is_evidence_collection_protected": {
                     "type": "true_false"
                 },
-                "jury_trial_context": {
-                    "logic": "`private-right-of-action` AND `jury-trial` in `legal_recognitions`",
-                    "name": "jury_trial_context",
+                "cats_paw_liability_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`cats-paw-liability` in `legal_recognitions`",
                     "type": "textarea"
                 },
-                "jury_trial_scope": {
+                "is_cats_paw_liability_extended": {
+                    "hook": [
+                        "verify"
+                    ],
+                    "type": "true_false"
+                },
+                "third_party_retaliation_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`third-party-retaliation` in `legal_recognitions` AND any retaliation-slug in `adverse_actions`",
+                    "type": "textarea"
+                },
+                "criminal_sanctions": {
                     "choices": [
-                        "all-claims",
-                        "damages",
-                        "liability",
-                        "see-context"
+                        "retaliation",
+                        "disclosure",
+                        "false-report",
+                        "obstruction",
+                        "\u2502                                      `see-context`], \u251c\u2500\u2500 `sanction_level`                  [select: `misdemeanor",
+                        "felony",
+                        "see-context`], \u2514\u2500\u2500 `sanction_context`                [conditional on `sanction_conduct` is non-empty]"
                     ],
                     "hook": [
                         "required"
                     ],
                     "multiple": 0,
-                    "name": "jury_trial_scope",
                     "type": "select"
                 },
-                "local_agencies": {
-                    "hook": [
-                        "filter"
-                    ],
-                    "multiple": 1,
-                    "name": "local_agencies",
-                    "post_type": true,
-                    "type": "post_object"
-                },
-                "mitigation_exception_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`mitigation-required` in `legal_recognitions` AND `mitigation-exception` in `legal_recognitions`",
-                    "name": "mitigation_exception_context",
+                "criminal_sanctions_context": {
+                    "logic": "`criminal-sanctions` in `legal_recognitions` AND `criminal-referral` in `process_types`",
                     "type": "textarea"
-                },
-                "mitigation_required_context": {
-                    "logic": "`mitigation-required` in `legal_recognitions`",
-                    "name": "mitigation_required_context",
-                    "type": "textarea"
-                },
-                "mitigation_required_sources": {
-                    "choices": [
-                        "yes-statutory",
-                        "yes-common-law"
-                    ],
+                }
+            },
+            "label": "Retaliation Tab"
+        },
+        "processes_remedies_tab": {
+            "fields": {
+                "process_types": {
+                    "field_type": "multi_select",
                     "hook": [
-                        "required"
+                        "impacts",
+                        "prerequisite"
                     ],
-                    "multiple": 1,
-                    "name": "mitigation_required_sources",
-                    "type": "select"
-                },
-                "pleading_standard_context": {
-                    "logic": "`heightened-pleading-standard` in `legal_recognitions`",
-                    "name": "pleading_standard_context",
-                    "type": "textarea"
-                },
-                "pleading_standard_details": {
-                    "name": "pleading_standard_details",
-                    "type": "textarea"
-                },
-                "pleading_standard_rule": {
-                    "choices": [
-                        "rule-8-notice",
-                        "rule-9b-particularity",
-                        "state-equivalent-notice",
-                        "state-equivalent-particularity",
-                        "has-details"
-                    ],
-                    "hook": [
-                        "required"
-                    ],
-                    "multiple": 0,
-                    "name": "pleading_standard_rule",
-                    "type": "select"
-                },
-                "preliminary_reinstatement_context": {
-                    "logic": "`preliminary-reinstatement` in `legal_recognitions` AND `reinstatement` OR `interim-reinstatement` in `remedies`",
-                    "name": "preliminary_reinstatement_context",
-                    "type": "textarea"
-                },
-                "preliminary_reinstatement_rule": {
-                    "choices": [
-                        "mandatory",
-                        "discretionary",
-                        "has-details"
-                    ],
-                    "hook": [
-                        "required"
-                    ],
-                    "multiple": 0,
-                    "name": "preliminary_reinstatement_rule",
-                    "type": "select"
-                },
-                "preliminary_reinstatement_rule_details": {
-                    "name": "preliminary_reinstatement_rule_details",
-                    "type": "textarea"
-                },
-                "preliminary_reinstatement_scope": {
-                    "choices": [
-                        "admin-phase",
-                        "full-pendency",
-                        "see-context"
-                    ],
-                    "hook": [
-                        "required"
-                    ],
-                    "multiple": 0,
-                    "name": "preliminary_reinstatement_scope",
-                    "type": "select"
+                    "taxonomy": "ws_process_type",
+                    "type": "taxonomy"
                 },
                 "primary_agency": {
                     "hook": [
@@ -873,34 +711,24 @@
                         "derive"
                     ],
                     "multiple": 0,
-                    "name": "primary_agency",
                     "post_type": true,
                     "type": "post_object"
                 },
-                "private_roa_context": {
+                "local_agencies": {
                     "hook": [
-                        "required"
+                        "filter"
                     ],
-                    "logic": "`private-right-of-action` in `legal_recognitions`",
-                    "name": "private_roa_context",
-                    "type": "textarea"
+                    "multiple": 1,
+                    "post_type": true,
+                    "type": "post_object"
                 },
-                "process_pathway_context": {
-                    "logic": "`process-pathway` in `legal_recognitions`",
-                    "name": "process_pathway_context",
-                    "type": "textarea"
-                },
-                "process_pathway_limit": {
-                    "choices": [
-                        "mandatory",
-                        "permitted",
-                        "conditional",
-                        "unavailable",
-                        "see-context"
+                "federal_agencies": {
+                    "hook": [
+                        "filter"
                     ],
-                    "multiple": 0,
-                    "name": "process_pathway_limit",
-                    "type": "select"
+                    "multiple": 1,
+                    "post_type": true,
+                    "type": "post_object"
                 },
                 "process_pathway_scope": {
                     "choices": [
@@ -916,18 +744,138 @@
                         "excludes"
                     ],
                     "multiple": 0,
-                    "name": "process_pathway_scope",
                     "type": "select"
                 },
-                "process_types": {
-                    "field_type": "multi_select",
-                    "hook": [
-                        "impacts",
-                        "prerequisite"
+                "process_pathway_limit": {
+                    "choices": [
+                        "mandatory",
+                        "permitted",
+                        "conditional",
+                        "unavailable",
+                        "see-context"
                     ],
-                    "name": "process_types",
-                    "taxonomy": "ws_process_type",
-                    "type": "taxonomy"
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "is_agency_inaction_included": {
+                    "logic": "`process_pathway_scope` is `hybrid-right-to-sue-on-inaction`",
+                    "type": "true_false"
+                },
+                "process_pathway_context": {
+                    "logic": "`process-pathway` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "enforcement_sequence": {
+                    "type": "text"
+                },
+                "private_roa_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`private-right-of-action` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "pleading_standard_rule": {
+                    "choices": [
+                        "rule-8-notice",
+                        "rule-9b-particularity",
+                        "state-equivalent-notice",
+                        "state-equivalent-particularity",
+                        "has-details"
+                    ],
+                    "hook": [
+                        "required"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "pleading_standard_details": {
+                    "type": "textarea"
+                },
+                "pleading_standard_context": {
+                    "logic": "`heightened-pleading-standard` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "jury_trial_scope": {
+                    "choices": [
+                        "all-claims",
+                        "damages",
+                        "liability",
+                        "see-context"
+                    ],
+                    "hook": [
+                        "required"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "jury_trial_context": {
+                    "logic": "`private-right-of-action` AND `jury-trial` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "fee_shifting_standard": {
+                    "choices": [
+                        "bilateral-loser-pays",
+                        "unilateral-pro-plaintiff",
+                        "none-american-rule",
+                        "prevailing-defendant-bad-faith",
+                        "see-context"
+                    ],
+                    "hook": [
+                        "required"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "fee_shifting_scope": {
+                    "choices": [
+                        "mandatory",
+                        "discretionary",
+                        "asymmetrical"
+                    ],
+                    "hook": [
+                        "required"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "has_fee_shifting_phases": {
+                    "hook": [
+                        "auto-set"
+                    ],
+                    "logic": "`fee_shifting_standard` is `none-american-rule`",
+                    "type": "true_false"
+                },
+                "fee_shifting_phases": {
+                    "choices": [
+                        "two-way",
+                        "\u2502                                   `one-way-plaintiff",
+                        "one-way-defendant-frivolous",
+                        "has-details`], \u251c\u2500\u2500 `asymmetry_details`            [conditional on `phase_asymmetry` is `has-details`], \u2514\u2500\u2500 `phase_context`                [conditional on `phase` is non-empty]"
+                    ],
+                    "hook": [
+                        "required"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "fee_shifting_asymmetry": {
+                    "choices": [
+                        "two-way",
+                        "one-way-plaintiff",
+                        "one-way-defendant-frivolous",
+                        "has-details"
+                    ],
+                    "logic": "`fee_shifting_scope` is `asymmetrical`",
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "fee_shifting_asymmetry_details": {
+                    "type": "textarea"
+                },
+                "fee_shifting_standard_context": {
+                    "logic": "`fee-shifting-standard` in `legal_recognitions`",
+                    "type": "textarea"
                 },
                 "remedies": {
                     "field_type": "multi_select",
@@ -935,13 +883,8 @@
                         "impacts",
                         "prerequisite"
                     ],
-                    "name": "remedies",
                     "taxonomy": "ws_remedy",
                     "type": "taxonomy"
-                },
-                "remedy_details": {
-                    "name": "remedy_details",
-                    "type": "textarea"
                 },
                 "remedy_limits": {
                     "choices": [
@@ -958,18 +901,11 @@
                     ],
                     "logic": "`has-limits` in `remedies`: \u251c\u2500\u2500 `remedy_limit`                [select: `emotional-distress`|`punitive`|`compensatory`|`aggregate`| \u2502                                  `employer-size-tiered`|`see-context`], \u251c\u2500\u2500 `employer_tier`               [conditional on `remedy_limit` is `employer-size-tiered`], \u251c\u2500\u2500 `limit_amount`                [number], \u251c\u2500\u2500 `applies_to`                  [select: `single-claim`|`per-plaintiff`|`per-incident`| \u2502                                  `aggregate-action`|`see-context`], \u2514\u2500\u2500 `limit_context`               [conditional on `remedy_limit` is non-empty]",
                     "multiple": 0,
-                    "name": "remedy_limits",
                     "type": "select"
                 },
-                "remedy_liquidated_details": {
-                    "logic": "`remedy_liquidated_multiplier` is `has-details`",
-                    "name": "remedy_liquidated_details",
+                "remedy_details": {
+                    "logic": "`has-details` in `remedies`",
                     "type": "textarea"
-                },
-                "remedy_liquidated_formula": {
-                    "logic": "`remedy_liquidated_multiplier` is `statutory-formula`",
-                    "name": "remedy_liquidated_formula",
-                    "type": "text"
                 },
                 "remedy_liquidated_multiplier": {
                     "choices": [
@@ -985,245 +921,323 @@
                     ],
                     "logic": "`liquidated-damages` in `remedies`",
                     "multiple": 0,
-                    "name": "remedy_liquidated_multiplier",
                     "type": "select"
-                }
-            },
-            "label": "Processes & Remedies Tab"
-        },
-        "relationships_tab": {
-            "fields": {
-                "overruled_by_id": {
-                    "multiple": 0,
-                    "name": "overruled_by_id",
-                    "post_type": true,
-                    "type": "post_object"
                 },
-                "ref_materials": {
-                    "multiple": 1,
-                    "name": "ref_materials",
-                    "post_type": true,
-                    "type": "post_object"
-                }
-            },
-            "label": "Relationships Tab"
-        },
-        "retaliation_tab": {
-            "fields": {
-                "adverse_action_details": {
-                    "name": "adverse_action_details",
+                "remedy_liquidated_formula": {
+                    "logic": "`remedy_liquidated_multiplier` is `statutory-formula`",
+                    "type": "text"
+                },
+                "remedy_liquidated_details": {
+                    "logic": "`remedy_liquidated_multiplier` is `has-details`",
                     "type": "textarea"
                 },
-                "adverse_action_scope": {
+                "mitigation_required_sources": {
                     "choices": [
-                        "termination-only",
-                        "material-adverse",
-                        "broad-any-adverse-action",
-                        "see-gloss"
+                        "yes-statutory",
+                        "yes-common-law"
                     ],
-                    "hook": [
-                        "excludes"
-                    ],
-                    "multiple": 0,
-                    "name": "adverse_action_scope",
-                    "type": "select"
-                },
-                "adverse_action_scope_gloss": {
-                    "hook": [
-                        "override"
-                    ],
-                    "logic": "`adverse_action_scope` is non-empty",
-                    "name": "adverse_action_scope_gloss",
-                    "type": "textarea"
-                },
-                "adverse_actions": {
-                    "field_type": "multi_select",
-                    "hook": [
-                        "impacts"
-                    ],
-                    "name": "adverse_actions",
-                    "taxonomy": "ws_adverse_action",
-                    "type": "taxonomy"
-                },
-                "anticipatory_retaliation_gloss": {
-                    "hook": [
-                        "override"
-                    ],
-                    "logic": "`anticipatory-retaliation` in `adverse_actions`",
-                    "name": "anticipatory_retaliation_gloss",
-                    "type": "textarea"
-                },
-                "cats_paw_liability_context": {
                     "hook": [
                         "required"
                     ],
-                    "logic": "`cats-paw-liability` in `legal_recognitions`",
-                    "name": "cats_paw_liability_context",
+                    "multiple": 1,
+                    "type": "select"
+                },
+                "mitigation_required_context": {
+                    "logic": "`mitigation-required` in `legal_recognitions`",
                     "type": "textarea"
                 },
-                "constructive_discharge_context": {
-                    "logic": "`constructive-discharge-standard` in `legal_recognitions`",
-                    "name": "constructive_discharge_context",
+                "mitigation_exception_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`mitigation-required` in `legal_recognitions` AND `mitigation-exception` in `legal_recognitions`",
                     "type": "textarea"
                 },
-                "constructive_discharge_standard": {
+                "after_acquired_evidence_effect": {
                     "choices": [
-                        "dual-prong",
-                        "objective-intolerability",
-                        "intent-required",
+                        "bars-front-pay",
+                        "bars-reinstatement",
+                        "bars-damages",
+                        "bars-all",
+                        "see-context"
+                    ],
+                    "hook": [
+                        "required",
+                        "excluded-by"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "after_acquired_evidence_context": {
+                    "hook": [
+                        "excluded-by"
+                    ],
+                    "logic": "`after-acquired-evidence` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "interest_provision_scope": {
+                    "choices": [
+                        "pre-judgment-statutory",
+                        "post-judgment",
+                        "both",
+                        "discretionary",
                         "see-context"
                     ],
                     "hook": [
                         "required"
                     ],
                     "multiple": 0,
-                    "name": "constructive_discharge_standard",
                     "type": "select"
                 },
-                "criminal_sanctions": {
+                "interest_provision_context": {
+                    "logic": "`equitable-interest-award` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "preliminary_reinstatement_rule": {
                     "choices": [
-                        "retaliation",
-                        "disclosure",
-                        "false-report",
-                        "obstruction",
-                        "\u2502                                      `see-context`], \u251c\u2500\u2500 `sanction_level`                  [select: `misdemeanor",
-                        "felony",
-                        "see-context`], \u2514\u2500\u2500 `sanction_context`                [conditional on `sanction_conduct` is non-empty]"
+                        "mandatory",
+                        "discretionary",
+                        "has-details"
                     ],
                     "hook": [
                         "required"
                     ],
                     "multiple": 0,
-                    "name": "criminal_sanctions",
                     "type": "select"
                 },
-                "criminal_sanctions_context": {
-                    "logic": "`criminal-sanctions` in `legal_recognitions` AND `criminal-referral` in `process_types`",
-                    "name": "criminal_sanctions_context",
+                "preliminary_reinstatement_rule_details": {
                     "type": "textarea"
                 },
-                "evidence_preservation_context": {
-                    "logic": "`evidence-preservation` in `legal_recognitions`",
-                    "name": "evidence_preservation_context",
-                    "type": "textarea"
-                },
-                "facially_retaliatory_policy_context": {
+                "preliminary_reinstatement_scope": {
+                    "choices": [
+                        "admin-phase",
+                        "full-pendency",
+                        "see-context"
+                    ],
                     "hook": [
                         "required"
                     ],
-                    "logic": "`facially-retaliatory-policy` in `legal_recognitions`",
-                    "name": "facially_retaliatory_policy_context",
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "preliminary_reinstatement_context": {
+                    "logic": "`preliminary-reinstatement` in `legal_recognitions` AND `reinstatement` OR `interim-reinstatement` in `remedies`",
+                    "type": "textarea"
+                }
+            },
+            "label": "Processes & Remedies Tab"
+        },
+        "burden_of_proof_tab": {
+            "fields": {
+                "burden_shifting_frameworks": {
+                    "choices": [
+                        "mcdonnell-douglas",
+                        "motivating-factor",
+                        "but-for",
+                        "mixed-motive",
+                        "has-details"
+                    ],
+                    "hook": [
+                        "required"
+                    ],
+                    "multiple": 1,
+                    "type": "select"
+                },
+                "burden_shifting_details": {
+                    "logic": "`burden_shifting_frameworks` includes `has-details`",
                     "type": "textarea"
                 },
-                "is_blacklisting_extended": {
-                    "logic": "`blacklisting` in `adverse_actions`",
-                    "name": "is_blacklisting_extended",
-                    "type": "true_false"
+                "burden_shifting_context": {
+                    "logic": "`burden-shifting-framework` in `legal_recognitions`",
+                    "type": "textarea"
                 },
-                "is_cats_paw_liability_extended": {
-                    "hook": [
-                        "verify"
+                "mixed_motive_remedy_gloss": {
+                    "logic": "`burden_shifting_frameworks` includes `mixed-motive`",
+                    "type": "textarea"
+                },
+                "same_decision_standard": {
+                    "choices": [
+                        "preponderance",
+                        "clear-and-convincing",
+                        "see-context"
                     ],
-                    "name": "is_cats_paw_liability_extended",
+                    "hook": [
+                        "required"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "same_decision_context": {
+                    "logic": "`same-decision-defense-standard` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "employee_standard": {
+                    "field_type": "select",
+                    "taxonomy": "ws_employee_standard",
+                    "type": "taxonomy"
+                },
+                "employee_standard_details": {
+                    "logic": "`has-details` in `employee_standard`",
+                    "type": "textarea"
+                },
+                "employment_classification_test": {
+                    "choices": [
+                        "economic-realities",
+                        "common-law-darden",
+                        "abc-test",
+                        "right-to-control",
+                        "hybrid",
+                        "see-context"
+                    ],
+                    "hook": [
+                        "required"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "employment_classification_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`employment-classification-test` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "has_causation_standard_statutory_text": {
                     "type": "true_false"
                 },
-                "is_evidence_collection_protected": {
-                    "name": "is_evidence_collection_protected",
+                "causation_standard_statutory_text": {
+                    "type": "text"
+                },
+                "causation_standard": {
+                    "field_type": "select",
+                    "hook": [
+                        "required"
+                    ],
+                    "taxonomy": "ws_causation_standard",
+                    "type": "taxonomy"
+                },
+                "causation_scope": {
+                    "choices": [
+                        "liability",
+                        "damages",
+                        "both",
+                        "see-context"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "causation_standard_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`causation-standard-recognized` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "causation_dual_standard_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`causation-dual-standard` in `legal_recognitions` AND `causation-standard-recognized` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "employer_knowledge_scopes": {
+                    "choices": [
+                        "actual-knowledge",
+                        "constructive-knowledge",
+                        "inferred-knowledge",
+                        "imputed-knowledge",
+                        "has-details"
+                    ],
+                    "hook": [
+                        "required"
+                    ],
+                    "multiple": 1,
+                    "type": "select"
+                },
+                "employer_knowledge_scopes_details": {
+                    "type": "textarea"
+                },
+                "employer_knowledge_context": {
+                    "logic": "`employer-knowledge-required` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "employer_defenses": {
+                    "field_type": "multi_select",
+                    "taxonomy": "ws_employer_defense",
+                    "type": "taxonomy"
+                },
+                "employer_defense_details": {
+                    "logic": "`has-details` in `employer_defenses`",
+                    "type": "textarea"
+                },
+                "has_rebuttable_presumption": {
                     "type": "true_false"
                 },
-                "preservation_deadline_unit": {
+                "rebuttable_presumption_details": {
+                    "type": "textarea"
+                },
+                "presumption_window_value": {
+                    "type": "number"
+                },
+                "presumption_window_unit": {
                     "choices": [
                         "days",
                         "weeks",
                         "months",
                         "years"
                     ],
-                    "name": "preservation_deadline_unit",
                     "type": "select"
                 },
-                "preservation_deadline_value": {
-                    "name": "preservation_deadline_value",
-                    "type": "number"
-                },
-                "preservation_requirement_scopes": {
+                "presumption_effect": {
                     "choices": [
-                        "litigation-hold",
-                        "statutory-hold",
-                        "court-order",
-                        "agency-request",
-                        "see-context"
+                        "shifts-burden",
+                        "creates-inference",
+                        "rebuttable-presumption",
+                        "has-details"
                     ],
                     "hook": [
                         "required"
                     ],
-                    "multiple": 1,
-                    "name": "preservation_requirement_scopes",
+                    "multiple": 0,
                     "type": "select"
                 },
-                "third_party_retaliation_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`third-party-retaliation` in `legal_recognitions` AND any retaliation-slug in `adverse_actions`",
-                    "name": "third_party_retaliation_context",
+                "presumption_effect_details": {
                     "type": "textarea"
                 },
-                "threatened_retaliation_gloss": {
-                    "hook": [
-                        "override"
+                "temporal_presumption_context": {
+                    "logic": "`temporal-presumption-recognized` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "temporal_proximity_value": {
+                    "type": "number"
+                },
+                "temporal_proximity_unit": {
+                    "choices": [
+                        "days",
+                        "weeks",
+                        "months",
+                        "years"
                     ],
-                    "logic": "`threatened-retaliation` in `adverse_actions`",
-                    "name": "threatened_retaliation_gloss",
+                    "type": "select"
+                },
+                "temporal_proximity_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`temporal-proximity-sufficient` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "has_bop_details": {
+                    "type": "textarea"
+                },
+                "bop_details": {
                     "type": "textarea"
                 }
             },
-            "label": "Retaliation Tab"
+            "label": "Burden Of Proof Tab"
         },
         "reward_tab": {
             "fields": {
-                "has_first_to_file_bar": {
-                    "name": "has_first_to_file_bar",
-                    "type": "true_false"
-                },
-                "has_public_disclosure_bar": {
-                    "name": "has_public_disclosure_bar",
-                    "type": "true_false"
-                },
-                "qui_tam_government_share": {
-                    "name": "qui_tam_government_share",
-                    "type": "text"
-                },
-                "qui_tam_reduction_context": {
-                    "name": "qui_tam_reduction_context",
-                    "type": "textarea"
-                },
-                "qui_tam_relator_share": {
-                    "name": "qui_tam_relator_share",
-                    "type": "text"
-                },
-                "qui_tam_share_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`qui-tam-action` in `legal_recognitions`",
-                    "name": "qui_tam_share_context",
-                    "type": "textarea"
-                },
-                "reward_context": {
-                    "logic": "`reward-available` in `legal_recognitions`",
-                    "name": "reward_context",
-                    "type": "textarea"
-                },
-                "reward_discretion_details": {
-                    "logic": "`reward_discretion_scope` is `has-details`",
-                    "name": "reward_discretion_details",
-                    "type": "textarea"
-                },
-                "reward_discretion_formula": {
-                    "logic": "`reward_discretion_scope` is `formula-based`",
-                    "name": "reward_discretion_formula",
-                    "type": "text"
-                },
                 "reward_discretion_scope": {
                     "choices": [
                         "mandatory",
@@ -1236,266 +1250,44 @@
                         "required"
                     ],
                     "multiple": 0,
-                    "name": "reward_discretion_scope",
                     "type": "select"
+                },
+                "reward_discretion_formula": {
+                    "logic": "`reward_discretion_scope` is `formula-based`",
+                    "type": "text"
+                },
+                "reward_discretion_details": {
+                    "logic": "`reward_discretion_scope` is `has-details`",
+                    "type": "textarea"
+                },
+                "reward_context": {
+                    "logic": "`reward-available` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "qui_tam_government_share": {
+                    "type": "text"
+                },
+                "qui_tam_relator_share": {
+                    "type": "text"
+                },
+                "qui_tam_reduction_context": {
+                    "type": "textarea"
+                },
+                "qui_tam_share_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`qui-tam-action` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "first_to_file_bar": {
+                    "type": "true_false"
+                },
+                "public_disclosure_bar": {
+                    "type": "true_false"
                 }
             },
             "label": "Reward Tab"
-        },
-        "statute_of_limitations_thresholds_tab": {
-            "fields": {
-                "amended_claim_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`amended-claim` in `legal_recognitions`",
-                    "name": "amended_claim_context",
-                    "type": "textarea"
-                },
-                "cba_preemption_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`cba-grievance-preemption` in `legal_recognitions`",
-                    "name": "cba_preemption_context",
-                    "type": "textarea"
-                },
-                "cure_period_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`cure-period-specified` in `legal_recognitions`",
-                    "name": "cure_period_context",
-                    "type": "textarea"
-                },
-                "cure_period_unit": {
-                    "choices": [
-                        "days",
-                        "weeks",
-                        "months",
-                        "years"
-                    ],
-                    "name": "cure_period_unit",
-                    "type": "select"
-                },
-                "cure_period_value": {
-                    "name": "cure_period_value",
-                    "type": "number"
-                },
-                "employer_threshold_compare": {
-                    "choices": [
-                        "gte",
-                        "lte",
-                        "gt",
-                        "lt",
-                        "eq"
-                    ],
-                    "hook": [
-                        "required"
-                    ],
-                    "multiple": 0,
-                    "name": "employer_threshold_compare",
-                    "type": "select"
-                },
-                "employer_threshold_context": {
-                    "logic": "`employer-threshold-specified` in `legal_recognitions`",
-                    "name": "employer_threshold_context",
-                    "type": "textarea"
-                },
-                "employer_threshold_model": {
-                    "choices": [
-                        "employees",
-                        "workers",
-                        "contractors",
-                        "fte"
-                    ],
-                    "hook": [
-                        "required"
-                    ],
-                    "multiple": 0,
-                    "name": "employer_threshold_model",
-                    "type": "select"
-                },
-                "employer_threshold_value": {
-                    "name": "employer_threshold_value",
-                    "type": "number"
-                },
-                "equitable_tolling_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`equitable-tolling` in `legal_recognitions`",
-                    "name": "equitable_tolling_context",
-                    "type": "textarea"
-                },
-                "exhaustion_required_context": {
-                    "hook": [
-                        "excluded-by"
-                    ],
-                    "logic": "`exhaustion-required` in `legal_recognitions`",
-                    "name": "exhaustion_required_context",
-                    "type": "textarea"
-                },
-                "exhaustion_required_scope": {
-                    "choices": [
-                        "jurisdictional",
-                        "claims-processing",
-                        "waivable",
-                        "see-context"
-                    ],
-                    "hook": [
-                        "required",
-                        "excluded-by"
-                    ],
-                    "multiple": 0,
-                    "name": "exhaustion_required_scope",
-                    "type": "select"
-                },
-                "federal_state_interaction": {
-                    "choices": [
-                        "express-preemption",
-                        "savings-clause-preserves-state",
-                        "concurrent-enforcement",
-                        "field-preemption",
-                        "state-exceeds-federal-floor",
-                        "has-details"
-                    ],
-                    "multiple": 0,
-                    "name": "federal_state_interaction",
-                    "type": "select"
-                },
-                "federal_state_interaction_details": {
-                    "name": "federal_state_interaction_details",
-                    "type": "textarea"
-                },
-                "filing_notice_required_context": {
-                    "logic": "`pre-filing-notice-required` in `legal_recognitions`",
-                    "name": "filing_notice_required_context",
-                    "type": "textarea"
-                },
-                "filing_notice_required_targets": {
-                    "choices": [
-                        "employer",
-                        "agency",
-                        "attorney-general",
-                        "labor-board",
-                        "see-context"
-                    ],
-                    "hook": [
-                        "required"
-                    ],
-                    "multiple": 1,
-                    "name": "filing_notice_required_targets",
-                    "type": "select"
-                },
-                "filing_notice_required_unit": {
-                    "choices": [
-                        "days",
-                        "weeks",
-                        "months",
-                        "years"
-                    ],
-                    "name": "filing_notice_required_unit",
-                    "type": "select"
-                },
-                "filing_notice_required_value": {
-                    "name": "filing_notice_required_value",
-                    "type": "number"
-                },
-                "has_sol_details": {
-                    "name": "has_sol_details",
-                    "type": "textarea"
-                },
-                "is_sol_suspended_during_admin": {
-                    "name": "is_sol_suspended_during_admin",
-                    "type": "true_false"
-                },
-                "is_sop_tolling_available": {
-                    "name": "is_sop_tolling_available",
-                    "type": "true_false"
-                },
-                "savings_clause_preserves_gloss": {
-                    "logic": "`federal_state_interaction` is `savings-clause-preserves-state`",
-                    "name": "savings_clause_preserves_gloss",
-                    "type": "textarea"
-                },
-                "sol_details": {
-                    "name": "sol_details",
-                    "type": "textarea"
-                },
-                "sol_trigger_discovery_gloss": {
-                    "logic": "`sol_triggers` includes `discovery-rule`",
-                    "name": "sol_trigger_discovery_gloss",
-                    "type": "textarea"
-                },
-                "sol_trigger_gloss": {
-                    "logic": "`sol_triggers` is non-empty",
-                    "name": "sol_trigger_gloss",
-                    "type": "textarea"
-                },
-                "sol_triggers": {
-                    "choices": [
-                        "accrual",
-                        "constructive-discharge-accrual",
-                        "discovery-rule",
-                        "filing-of-complaint",
-                        "conclusion-of-admin-process",
-                        "see-context"
-                    ],
-                    "hook": [
-                        "impacts",
-                        "prerequisite"
-                    ],
-                    "multiple": 1,
-                    "name": "sol_triggers",
-                    "type": "select"
-                },
-                "sol_unit": {
-                    "choices": [
-                        "days",
-                        "weeks",
-                        "months",
-                        "years"
-                    ],
-                    "name": "sol_unit",
-                    "type": "select"
-                },
-                "sol_value": {
-                    "name": "sol_value",
-                    "type": "number"
-                },
-                "sop_unit": {
-                    "choices": [
-                        "days",
-                        "weeks",
-                        "months",
-                        "years"
-                    ],
-                    "name": "sop_unit",
-                    "type": "select"
-                },
-                "sop_value": {
-                    "name": "sop_value",
-                    "type": "number"
-                },
-                "statute_of_repose_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`statute-of-repose` in `legal_recognitions`",
-                    "name": "statute_of_repose_context",
-                    "type": "textarea"
-                },
-                "statutory_tolling_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`statutory-tolling` in `legal_recognitions`",
-                    "name": "statutory_tolling_context",
-                    "type": "textarea"
-                }
-            },
-            "label": "Statute of Limitations & Thresholds Tab"
         },
         "waiver_scope_tab": {
             "fields": {
@@ -1504,44 +1296,6 @@
                         "required"
                     ],
                     "logic": "`all-plaintiff-waivers-void` in `legal_recognitions`",
-                    "name": "all_waivers_blocked_context",
-                    "type": "textarea"
-                },
-                "anti_gag_provision_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`anti-gag-provision-present` in `legal_recognitions`",
-                    "name": "anti_gag_provision_context",
-                    "type": "textarea"
-                },
-                "anti_slapp_protection_context": {
-                    "logic": "`anti-slapp-protection` in `legal_recognitions`",
-                    "name": "anti_slapp_protection_context",
-                    "type": "textarea"
-                },
-                "anti_slapp_protection_scopes": {
-                    "choices": [
-                        "motion-to-strike",
-                        "discovery-stay",
-                        "fee-shift-on-motion",
-                        "full-procedural-only",
-                        "see-context"
-                    ],
-                    "hook": [
-                        "required",
-                        "umbrella"
-                    ],
-                    "multiple": 1,
-                    "name": "anti_slapp_protection_scopes",
-                    "type": "select"
-                },
-                "civil_action_waiver_context": {
-                    "hook": [
-                        "excluded-by"
-                    ],
-                    "logic": "`all-plaintiff-waivers-void` absent in `legal_recognitions` AND `civil-action-waiver` in `legal_recognitions`",
-                    "name": "civil_action_waiver_context",
                     "type": "textarea"
                 },
                 "civil_action_waiver_status": {
@@ -1556,33 +1310,13 @@
                         "excluded-by"
                     ],
                     "multiple": 0,
-                    "name": "civil_action_waiver_status",
                     "type": "select"
                 },
-                "class_action_waiver_context": {
-                    "hook": [
-                        "required",
-                        "excluded-by"
-                    ],
-                    "logic": "`all-plaintiff-waivers-void` absent in `legal_recognitions` AND `class-action-permitted` absent in `legal_recognitions` AND `class-action-waiver` in `legal_recognitions`",
-                    "name": "class_action_waiver_context",
-                    "type": "textarea"
-                },
-                "collateral_claims_waiver_context": {
-                    "hook": [
-                        "required",
-                        "excluded-by"
-                    ],
-                    "logic": "`all-plaintiff-waivers-void` absent in `legal_recognitions` AND `collateral-claims-waiver` in `legal_recognitions`",
-                    "name": "collateral_claims_waiver_context",
-                    "type": "textarea"
-                },
-                "contractual_waiver_context": {
+                "civil_action_waiver_context": {
                     "hook": [
                         "excluded-by"
                     ],
-                    "logic": "`all-plaintiff-waivers-void` absent in `legal_recognitions` AND `contractual-waiver` in `legal_recognitions`",
-                    "name": "contractual_waiver_context",
+                    "logic": "`all-plaintiff-waivers-void` absent in `legal_recognitions` AND `civil-action-waiver` in `legal_recognitions`",
                     "type": "textarea"
                 },
                 "contractual_waiver_status": {
@@ -1600,76 +1334,29 @@
                         "excluded-by"
                     ],
                     "multiple": 0,
-                    "name": "contractual_waiver_status",
                     "type": "select"
                 },
-                "discovery_protection_context": {
-                    "logic": "`discovery-protection` in `legal_recognitions`",
-                    "name": "discovery_protection_context",
-                    "type": "textarea"
-                },
-                "discovery_protection_scopes": {
-                    "choices": [
-                        "retaliatory-subpoenas",
-                        "abusive-discovery",
-                        "litigation-harassment",
-                        "see-context"
-                    ],
+                "contractual_waiver_context": {
                     "hook": [
-                        "required"
+                        "excluded-by"
                     ],
-                    "multiple": 1,
-                    "name": "discovery_protection_scopes",
-                    "type": "select"
-                },
-                "extraterritorial_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`extraterritorial-coverage` in `legal_recognitions`",
-                    "name": "extraterritorial_context",
+                    "logic": "`all-plaintiff-waivers-void` absent in `legal_recognitions` AND `contractual-waiver` in `legal_recognitions`",
                     "type": "textarea"
                 },
-                "individual_liability_context": {
-                    "logic": "`individual-liability` in `legal_recognitions`",
-                    "name": "individual_liability_context",
-                    "type": "textarea"
-                },
-                "individual_liability_details": {
-                    "logic": "`individual_liability_scopes` includes `has-details`",
-                    "name": "individual_liability_details",
-                    "type": "textarea"
-                },
-                "individual_liability_scopes": {
-                    "choices": [
-                        "supervisor",
-                        "coworker",
-                        "officer-director",
-                        "any-individual-only",
-                        "has-details"
-                    ],
+                "collateral_claims_waiver_context": {
                     "hook": [
                         "required",
-                        "umbrella"
+                        "excluded-by"
                     ],
-                    "multiple": 1,
-                    "name": "individual_liability_scopes",
-                    "type": "select"
-                },
-                "nda_limits_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`nda-limitations` in `legal_recognitions`",
-                    "name": "nda_limits_context",
+                    "logic": "`all-plaintiff-waivers-void` absent in `legal_recognitions` AND `collateral-claims-waiver` in `legal_recognitions`",
                     "type": "textarea"
                 },
-                "no_retaliatory_evidence_context": {
+                "class_action_waiver_context": {
                     "hook": [
-                        "required"
+                        "required",
+                        "excluded-by"
                     ],
-                    "logic": "`no-retaliatory-evidence` in `legal_recognitions`",
-                    "name": "no_retaliatory_evidence_context",
+                    "logic": "`all-plaintiff-waivers-void` absent in `legal_recognitions` AND `class-action-permitted` absent in `legal_recognitions` AND `class-action-waiver` in `legal_recognitions`",
                     "type": "textarea"
                 },
                 "proper_defendant_rules": {
@@ -1695,17 +1382,163 @@
                         "required"
                     ],
                     "multiple": 0,
-                    "name": "proper_defendant_rules",
                     "type": "select"
                 },
                 "proper_defendants_context": {
                     "logic": "`proper-defendants-specified` in `legal_recognitions`",
-                    "name": "proper_defendants_context",
                     "type": "textarea"
                 },
-                "settlement_restriction_context": {
-                    "logic": "`confidential-settlement-restriction` in `legal_recognitions`",
-                    "name": "settlement_restriction_context",
+                "individual_liability_scopes": {
+                    "choices": [
+                        "supervisor",
+                        "coworker",
+                        "officer-director",
+                        "any-individual-only",
+                        "has-details"
+                    ],
+                    "hook": [
+                        "required",
+                        "umbrella"
+                    ],
+                    "multiple": 1,
+                    "type": "select"
+                },
+                "individual_liability_details": {
+                    "logic": "`individual_liability_scopes` includes `has-details`",
+                    "type": "textarea"
+                },
+                "individual_liability_context": {
+                    "logic": "`individual-liability` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "sovereign_immunity_status": {
+                    "choices": [
+                        "not-waived",
+                        "partially-waived",
+                        "fully-waived",
+                        "has-details"
+                    ],
+                    "hook": [
+                        "required",
+                        "excluded-by"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "sovereign_immunity_limits": {
+                    "choices": [
+                        "cap-applies",
+                        "conditions-apply",
+                        "tort-claims-act-gate"
+                    ],
+                    "hook": [
+                        "excluded-by"
+                    ],
+                    "multiple": 1,
+                    "type": "select"
+                },
+                "sovereign_immunity_limit_gloss": {
+                    "logic": "`sovereign_immunity_limits` is non-empty",
+                    "type": "textarea"
+                },
+                "sovereign_immunity_scope": {
+                    "choices": [
+                        "all",
+                        "instrumentalities-included",
+                        "political-subdivisions-included",
+                        "state-exclusively",
+                        "see-context"
+                    ],
+                    "hook": [
+                        "excluded-by"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "sovereign_immunity_waiver_class": {
+                    "choices": [
+                        "explicit-waiver",
+                        "implied-waiver"
+                    ],
+                    "hook": [
+                        "required",
+                        "excluded-by"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "sovereign_immunity_status_details": {
+                    "type": "textarea"
+                },
+                "sovereign_immunity_context": {
+                    "hook": [
+                        "excluded-by"
+                    ],
+                    "logic": "`sovereign-immunity-status` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "nda_limits_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`nda-limitations` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "anti_gag_provision_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`anti-gag-provision-present` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "no_retaliatory_evidence_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`no-retaliatory-evidence` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "stay_of_discipline_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`stay-of-disciplinary-action` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "anti_slapp_protection_scopes": {
+                    "choices": [
+                        "motion-to-strike",
+                        "discovery-stay",
+                        "fee-shift-on-motion",
+                        "full-procedural-only",
+                        "see-context"
+                    ],
+                    "hook": [
+                        "required",
+                        "umbrella"
+                    ],
+                    "multiple": 1,
+                    "type": "select"
+                },
+                "anti_slapp_protection_context": {
+                    "logic": "`anti-slapp-protection` in `legal_recognitions`",
+                    "type": "textarea"
+                },
+                "discovery_protection_scopes": {
+                    "choices": [
+                        "retaliatory-subpoenas",
+                        "abusive-discovery",
+                        "litigation-harassment",
+                        "see-context"
+                    ],
+                    "hook": [
+                        "required"
+                    ],
+                    "multiple": 1,
+                    "type": "select"
+                },
+                "discovery_protection_context": {
+                    "logic": "`discovery-protection` in `legal_recognitions`",
                     "type": "textarea"
                 },
                 "settlement_restriction_scope": {
@@ -1720,88 +1553,10 @@
                         "required"
                     ],
                     "multiple": 0,
-                    "name": "settlement_restriction_scope",
                     "type": "select"
                 },
-                "sovereign_immunity_context": {
-                    "hook": [
-                        "excluded-by"
-                    ],
-                    "logic": "`sovereign-immunity-status` in `legal_recognitions`",
-                    "name": "sovereign_immunity_context",
-                    "type": "textarea"
-                },
-                "sovereign_immunity_limit_gloss": {
-                    "logic": "`sovereign_immunity_limits` is non-empty",
-                    "name": "sovereign_immunity_limit_gloss",
-                    "type": "textarea"
-                },
-                "sovereign_immunity_limits": {
-                    "choices": [
-                        "cap-applies",
-                        "conditions-apply",
-                        "tort-claims-act-gate"
-                    ],
-                    "hook": [
-                        "excluded-by"
-                    ],
-                    "multiple": 1,
-                    "name": "sovereign_immunity_limits",
-                    "type": "select"
-                },
-                "sovereign_immunity_scope": {
-                    "choices": [
-                        "all",
-                        "instrumentalities-included",
-                        "political-subdivisions-included",
-                        "state-exclusively",
-                        "see-context"
-                    ],
-                    "hook": [
-                        "excluded-by"
-                    ],
-                    "multiple": 0,
-                    "name": "sovereign_immunity_scope",
-                    "type": "select"
-                },
-                "sovereign_immunity_status": {
-                    "choices": [
-                        "not-waived",
-                        "partially-waived",
-                        "fully-waived",
-                        "has-details"
-                    ],
-                    "hook": [
-                        "required",
-                        "excluded-by"
-                    ],
-                    "multiple": 0,
-                    "name": "sovereign_immunity_status",
-                    "type": "select"
-                },
-                "sovereign_immunity_status_details": {
-                    "name": "sovereign_immunity_status_details",
-                    "type": "textarea"
-                },
-                "sovereign_immunity_waiver_class": {
-                    "choices": [
-                        "explicit-waiver",
-                        "implied-waiver"
-                    ],
-                    "hook": [
-                        "required",
-                        "excluded-by"
-                    ],
-                    "multiple": 0,
-                    "name": "sovereign_immunity_waiver_class",
-                    "type": "select"
-                },
-                "stay_of_discipline_context": {
-                    "hook": [
-                        "required"
-                    ],
-                    "logic": "`stay-of-disciplinary-action` in `legal_recognitions`",
-                    "name": "stay_of_discipline_context",
+                "settlement_restriction_context": {
+                    "logic": "`confidential-settlement-restriction` in `legal_recognitions`",
                     "type": "textarea"
                 },
                 "successor_liability_context": {
@@ -1809,11 +1564,46 @@
                         "required"
                     ],
                     "logic": "`successor-liability` in `legal_recognitions`",
-                    "name": "successor_liability_context",
+                    "type": "textarea"
+                },
+                "extraterritorial_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`extraterritorial-coverage` in `legal_recognitions`",
                     "type": "textarea"
                 }
             },
             "label": "Waiver & Scope Tab"
+        },
+        "relationships_tab": {
+            "fields": {
+                "ref_materials": {
+                    "multiple": 1,
+                    "post_type": true,
+                    "type": "post_object"
+                },
+                "overruled_by_id": {
+                    "multiple": 0,
+                    "post_type": true,
+                    "type": "post_object"
+                }
+            },
+            "label": "Relationships Tab"
+        },
+        "authority_tab": {
+            "fields": {
+                "url": {
+                    "type": "url"
+                },
+                "url_is_pdf": {
+                    "type": "true_false"
+                },
+                "authority_reference": {
+                    "type": "text"
+                }
+            },
+            "label": "Authority Tab"
         }
     }
 }

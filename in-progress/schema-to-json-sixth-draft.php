@@ -142,8 +142,19 @@ class WS_Statute_Compiler_Local {
         // Final Logic Resolution and Behavioral Classification
         $manifest = self::resolve_and_purge($manifest, $registry);
 
-        // Deterministic Write
+        // Deterministic Write — sort properties alphabetically, preserve spec tab and field order.
+        $tab_order = array_keys($manifest['tabs']);
+        $field_order = [];
+        foreach ($manifest['tabs'] as $tk => $tab) $field_order[$tk] = array_keys($tab['fields']);
         self::ksort_recursive($manifest);
+        $ordered_tabs = [];
+        foreach ($tab_order as $tk) {
+            $ordered_fields = [];
+            foreach ($field_order[$tk] as $fk) $ordered_fields[$fk] = $manifest['tabs'][$tk]['fields'][$fk];
+            $manifest['tabs'][$tk]['fields'] = $ordered_fields;
+            $ordered_tabs[$tk] = $manifest['tabs'][$tk];
+        }
+        $manifest['tabs'] = $ordered_tabs;
         file_put_contents('./jx-statute.json', json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
         // Audit Log: prepend summary header for at-a-glance review
@@ -218,11 +229,8 @@ class WS_Statute_Compiler_Local {
         foreach ($deltas as $delta) {
             $delta = trim($delta);
 
-            // PHP constants used as taxonomy names in the spec (e.g. WS_JURISDICTION_TAXONOMY)
-            $tax_constants = ['WS_JURISDICTION_TAXONOMY' => 'ws_jurisdiction'];
-
             if (preg_match('/(?:(single-select)\s+)?taxonomy:\s*`?([A-Z_a-z0-9]+)`?/', $delta, $m)) {
-                $tax_slug = $tax_constants[$m[2]] ?? $m[2];
+                $tax_slug = $m[2];
                 $field['type'] = 'taxonomy';
                 $field['taxonomy'] = $tax_slug;
                 $field['field_type'] = ($m[1] === 'single-select') ? 'select' : 'multi_select';
@@ -269,19 +277,32 @@ class WS_Statute_Compiler_Local {
         foreach ($manifest['tabs'] as $t) { foreach ($t['fields'] as $f) { $flat[$f['name']] = $f; } }
         foreach ($manifest['hidden'] as $f) { $flat[$f['name']] = $f; }
 
+        // Pre-build: taxonomy fields carrying has-details → singular base → field name.
+        $has_details_map = [];
+        foreach ($flat as $fname => $ff) {
+            if (($ff['type'] ?? '') !== 'taxonomy') continue;
+            $tax = $ff['taxonomy'] ?? null;
+            if (!$tax || !isset($registry[$tax]['terms']['has-details'])) continue;
+            $candidates = [$fname];
+            if (str_ends_with($fname, 'ies')) $candidates[] = substr($fname, 0, -3) . 'y';
+            if (str_ends_with($fname, 'es'))  $candidates[] = substr($fname, 0, -2);
+            if (str_ends_with($fname, 's'))   $candidates[] = substr($fname, 0, -1);
+            foreach ($candidates as $singular) $has_details_map[$singular] = $fname;
+        }
+
         foreach (['tabs', 'hidden'] as $group) {
             if ($group === 'tabs') {
                 foreach ($manifest['tabs'] as &$tab) {
-                    foreach ($tab['fields'] as &$field) self::finalize_field($field, $flat, $registry);
+                    foreach ($tab['fields'] as &$field) self::finalize_field($field, $flat, $registry, $has_details_map);
                 }
             } else {
-                foreach ($manifest['hidden'] as &$field) self::finalize_field($field, $flat, $registry);
+                foreach ($manifest['hidden'] as &$field) self::finalize_field($field, $flat, $registry, $has_details_map);
             }
         }
         return $manifest;
     }
 
-    private static function finalize_field(&$field, $flat, $registry) {
+    private static function finalize_field(&$field, $flat, $registry, $has_details_map = []) {
         $n = $field['name'];
 
         // Snapshot the spec-declared hooks before any inference so we can log origins.
@@ -310,6 +331,13 @@ class WS_Statute_Compiler_Local {
         } elseif (!empty($field['logic_raw'])) {
             $field['logic'] = $field['logic_raw'];
             self::$audit_log[] = "LOGIC-DIRECT: {$n} captured conditional logic from spec";
+        } elseif (str_ends_with($n, '_details') && empty($field['logic_raw'])) {
+            $base = substr($n, 0, -8);
+            if (isset($has_details_map[$base])) {
+                $trigger = $has_details_map[$base];
+                $field['logic'] = "`has-details` in `{$trigger}`";
+                self::$audit_log[] = "AUTO-LOGIC: {$n} → inferred conditional on has-details in {$trigger}";
+            }
         }
 
         // 2. Behavioral Hook Inference for Multi-Select Choices
@@ -358,7 +386,7 @@ class WS_Statute_Compiler_Local {
         }
 
         // 4. Purge Metadata (spec annotations now authoritative for declared hooks)
-        unset($field['logic_raw'], $field['sister_to'], $field['local_logic']);
+        unset($field['name'], $field['logic_raw'], $field['sister_to'], $field['local_logic']);
 
         if (!empty($field['logic'])) {
             self::validate_terms($n, $field['logic'], $flat, $registry);
@@ -450,6 +478,11 @@ class WS_Statute_Compiler_Local {
     }
 
     private static function infer_type_and_rules($n, &$field) {
+        static $shape_suffixes = ['url', 'date', 'email', 'id', 'value', 'unit', 'formula', 'year', 'order'];
+        if (in_array($n, $shape_suffixes, true)) {
+            self::$audit_log[] = "[WARN] BARE-SHAPE: '{$n}' matches a data-shape suffix without underscore context; type inferred by exact-name guard.";
+        }
+
         if (preg_match('/_(context|details|gloss)$/', $n)) return 'textarea';
         if (preg_match('/_?(has|is)_|(_is_)/', $n)) return 'true_false';
         if (str_ends_with($n, '_bar')) return 'true_false';
@@ -471,7 +504,7 @@ class WS_Statute_Compiler_Local {
         }
 
         if (str_ends_with($n, '_value') || str_ends_with($n, '_year') || str_ends_with($n, '_order')) return 'number';
-        if (str_ends_with($n, '_url')) return 'url';
+        if ($n === 'url' || str_ends_with($n, '_url')) return 'url';
 
         if (str_ends_with($n, '_ids')) {
             $field['multiple'] = 1;

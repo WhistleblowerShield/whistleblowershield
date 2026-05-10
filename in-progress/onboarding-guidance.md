@@ -1,6 +1,6 @@
 # WhistleblowerShield Onboarding Guidance
 
-This file exists for the next Codex instance that wakes up in this repository after the IDE has performed a
+This file exists for the next Agent instance that wakes up in this repository after the IDE has performed a
 surprise lobotomy on the working session.
 
 Read this before touching code.
@@ -30,9 +30,9 @@ the painful legal-record refactor before attempting to design assist-org fields.
 
 ---
 
-## Who Codex Works For
+## Who Agent Works For
 
-Codex works for the end users, not the developer.
+Agent works for the end users, not the developer.
 
 The primary users are:
 
@@ -84,7 +84,7 @@ Legal records were tackled first because they forced the hard rules into the ope
 That process was badly named as assist-org work. It was really the schema-law campaign that assist-orgs now inherit.
 
 Assist-orgs must capitulate to the discovered rules without becoming a second legal-record monolith. The target is
-`assist-org-phase-2-starting-point-refactor.md`, not the larger Codex proposal file. The larger proposal is useful
+`assist-org-phase-2-starting-point-refactor.md`, not the larger Agent proposal file. The larger proposal is useful
 background only.
 
 ---
@@ -239,7 +239,7 @@ Not allowed in public-facing output:
 - jokes about harm;
 - anything that makes a frightened user feel less safe.
 
-Codex may mirror the user's ritual language in conversation, but code, logs, and public text need different
+Agent may mirror the user's ritual language in conversation, but code, logs, and public text need different
 registers:
 
 - public text: humane and clear;
@@ -249,15 +249,4 @@ registers:
 
 ---
 
-## Immediate Post-Resume Guidance
-
-If picking up after this file:
-
-1. Check `git status --short`.
-2. Inspect current diffs before editing.
-3. Do not revert user changes.
-4. Continue assist-org schema alignment from canonical matrix outward.
-5. Remove compatibility code when found.
-6. Treat missing essential matrix data as a hard error.
-7. Keep asking: does this help Maya or James find safe, real help?
-8. Ask the user for the April 5 Cloudflare email contents.
+Ask the user for the April 5 Cloudflare email contents.

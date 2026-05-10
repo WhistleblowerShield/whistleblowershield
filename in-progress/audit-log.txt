@@ -1,25 +1,28 @@
 ================================================================
 WS Statute Compiler Audit Log
 Generator version: 11.1.0
-Generated: 2026-05-10T18:37:08+00:00
-Spec checksum: 4e577b4e
+Generated: 2026-05-10T19:28:54+00:00
+Spec checksum: a8de07a8
 Tab fields: 214 | Hidden fields: 3
 ----------------------------------------------------------------
 Entry counts:
-  APPROVED             8
+  APPROVED             6
+  AUTO-LOGIC           7
   DECLARED             113
-  ESCAPE               45
+  ESCAPE               44
   INFERRED             4
   LOGIC-DIRECT         86
   NO-HOOK              119
   POST-OBJECT          5
   TAXONOMY-BIND        14
+  [WARN] BARE-SHAPE    2
 ================================================================
 ESCAPE: jurisdiction → text (reason: no suffix-based type inference matched)
 TAXONOMY-BIND: jurisdiction → ws_jurisdiction (select)
 ESCAPE: official_name → text (reason: no suffix-based type inference matched)
 ESCAPE: common_name → text (reason: no suffix-based type inference matched)
 ESCAPE: citation → text (reason: no suffix-based type inference matched)
+[WARN] BARE-SHAPE: 'date' matches a data-shape suffix without underscore context; type inferred by exact-name guard.
 ESCAPE: general_description → text (reason: no suffix-based type inference matched)
 APPROVED: has_attach_flag → spec carries editorial-approval annotation
 ESCAPE: legal_recognitions → text (reason: no suffix-based type inference matched)
@@ -78,12 +81,10 @@ APPROVED: has_bop_details → spec carries editorial-approval annotation
 ESCAPE: reward_discretion_formula → text (reason: no suffix-based type inference matched)
 ESCAPE: qui_tam_government_share → text (reason: no suffix-based type inference matched)
 ESCAPE: qui_tam_relator_share → text (reason: no suffix-based type inference matched)
-APPROVED: has_first_to_file_bar → spec carries editorial-approval annotation
-APPROVED: has_public_disclosure_bar → spec carries editorial-approval annotation
 ESCAPE: sovereign_immunity_limits → text (reason: no suffix-based type inference matched)
 ESCAPE: ref_materials → text (reason: no suffix-based type inference matched)
 POST-OBJECT: ref_materials → multiple=1
-ESCAPE: url → text (reason: no suffix-based type inference matched)
+[WARN] BARE-SHAPE: 'url' matches a data-shape suffix without underscore context; type inferred by exact-name guard.
 ESCAPE: authority_reference → text (reason: no suffix-based type inference matched)
 ESCAPE: _related_agencies → text (reason: no suffix-based type inference matched)
 POST-OBJECT: _related_agencies → multiple=1
@@ -131,15 +132,19 @@ DECLARED: protected_classes → prerequisite
 DECLARED: protected_classes → excludes
 LOGIC-DIRECT: former_employee_gloss captured conditional logic from spec
 NO-HOOK: former_employee_gloss has no declared or inferred hook category
+AUTO-LOGIC: protected_class_details → inferred conditional on has-details in protected_classes
 NO-HOOK: protected_class_details has no declared or inferred hook category
 DECLARED: excluded_classes → required
 DECLARED: excluded_class_context → required
 LOGIC-DIRECT: excluded_class_context captured conditional logic from spec
+AUTO-LOGIC: excluded_class_details → inferred conditional on has-details in excluded_classes
 NO-HOOK: excluded_class_details has no declared or inferred hook category
 DECLARED: employment_sectors → impacts
 DECLARED: garcetti_exception_context → required
 LOGIC-DIRECT: garcetti_exception_context captured conditional logic from spec
 NO-HOOK: disclosure_targets has no declared or inferred hook category
+AUTO-LOGIC: disclosure_target_details → inferred conditional on has-details in disclosure_targets
+NO-HOOK: disclosure_target_details has no declared or inferred hook category
 DECLARED: disclosure_channel_scope → required
 NO-HOOK: disclosure_format has no declared or inferred hook category
 NO-HOOK: disclosure_format_details has no declared or inferred hook category
@@ -147,7 +152,6 @@ LOGIC-DIRECT: disclosure_channel_context captured conditional logic from spec
 NO-HOOK: disclosure_channel_context has no declared or inferred hook category
 LOGIC-DIRECT: ic_channel_sequence_gloss captured conditional logic from spec
 NO-HOOK: ic_channel_sequence_gloss has no declared or inferred hook category
-NO-HOOK: disclosure_target_details has no declared or inferred hook category
 NO-HOOK: sol_value has no declared or inferred hook category
 NO-HOOK: sol_unit has no declared or inferred hook category
 DECLARED: sol_triggers → impacts
@@ -202,6 +206,7 @@ DECLARED: anticipatory_retaliation_gloss → override
 LOGIC-DIRECT: anticipatory_retaliation_gloss captured conditional logic from spec
 DECLARED: threatened_retaliation_gloss → override
 LOGIC-DIRECT: threatened_retaliation_gloss captured conditional logic from spec
+AUTO-LOGIC: adverse_action_details → inferred conditional on has-details in adverse_actions
 NO-HOOK: adverse_action_details has no declared or inferred hook category
 DECLARED: facially_retaliatory_policy_context → required
 LOGIC-DIRECT: facially_retaliatory_policy_context captured conditional logic from spec
@@ -262,6 +267,7 @@ DECLARED: remedies → impacts
 DECLARED: remedies → prerequisite
 LOGIC-DIRECT: remedy_limits captured conditional logic from spec
 NO-HOOK: remedy_limits has no declared or inferred hook category
+AUTO-LOGIC: remedy_details → inferred conditional on has-details in remedies
 NO-HOOK: remedy_details has no declared or inferred hook category
 LOGIC-DIRECT: remedy_liquidated_multiplier captured conditional logic from spec
 NO-HOOK: remedy_liquidated_multiplier has no declared or inferred hook category
@@ -297,6 +303,7 @@ DECLARED: same_decision_standard → required
 LOGIC-DIRECT: same_decision_context captured conditional logic from spec
 NO-HOOK: same_decision_context has no declared or inferred hook category
 NO-HOOK: employee_standard has no declared or inferred hook category
+AUTO-LOGIC: employee_standard_details → inferred conditional on has-details in employee_standard
 NO-HOOK: employee_standard_details has no declared or inferred hook category
 DECLARED: employment_classification_test → required
 DECLARED: employment_classification_context → required
@@ -314,6 +321,7 @@ NO-HOOK: employer_knowledge_scopes_details has no declared or inferred hook cate
 LOGIC-DIRECT: employer_knowledge_context captured conditional logic from spec
 NO-HOOK: employer_knowledge_context has no declared or inferred hook category
 NO-HOOK: employer_defenses has no declared or inferred hook category
+AUTO-LOGIC: employer_defense_details → inferred conditional on has-details in employer_defenses
 NO-HOOK: employer_defense_details has no declared or inferred hook category
 NO-HOOK: has_rebuttable_presumption has no declared or inferred hook category
 NO-HOOK: rebuttable_presumption_details has no declared or inferred hook category
@@ -341,8 +349,8 @@ NO-HOOK: qui_tam_relator_share has no declared or inferred hook category
 NO-HOOK: qui_tam_reduction_context has no declared or inferred hook category
 DECLARED: qui_tam_share_context → required
 LOGIC-DIRECT: qui_tam_share_context captured conditional logic from spec
-NO-HOOK: has_first_to_file_bar has no declared or inferred hook category
-NO-HOOK: has_public_disclosure_bar has no declared or inferred hook category
+NO-HOOK: first_to_file_bar has no declared or inferred hook category
+NO-HOOK: public_disclosure_bar has no declared or inferred hook category
 DECLARED: all_waivers_blocked_context → required
 LOGIC-DIRECT: all_waivers_blocked_context captured conditional logic from spec
 DECLARED: civil_action_waiver_status → required
