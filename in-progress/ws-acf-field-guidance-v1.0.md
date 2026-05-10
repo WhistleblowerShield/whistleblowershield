@@ -64,12 +64,13 @@ Exception: `*_details`, `*_context`, and `*_gloss` are lexical labels and do not
 
 ### Booleans
 
-Boolean naming is limited to two roles. `has_*` is a *trigger boolean* — when true, it activates a companion or
-dependent field. The `_details` suffix is the default companion shape, meaning `has_field_name` implicitly triggers
-`field_name_details`. If a trigger activates a custom companion shape, the trigger **must** explicitly declare the
-target's full suffix (e.g., `has_effective_date` triggers `effective_date`, and `has_negative_treatment_class`
-triggers `negative_treatment_class`). `is_*` and `*_is_*` are *state booleans* — they describe a state and do not
-trigger companions.
+Boolean naming is limited to two roles:
+`has_*` is a *trigger boolean* — when true, it activates a conditional field. `has_field_name` implicitly triggers
+  `field_name`; the companion *must immediately* follow the trigger in the field list. When `field_name` already
+   exists, `has_field_name` triggers `field_name_details`; `field_name_details` *must immediately* follow
+   `field_name`.
+`is_*` and `*_is_*` are *state booleans* — they describe a state and do not
+  trigger companions.
 
 Any boolean outside these scopes requires approval and inline documentation.
 
@@ -140,7 +141,7 @@ forms.
 A sister cannot appear without its companion sibling. A sister does not become the cluster anchor merely because
 it is freetext. The cluster anchor remains the triggered companion, normally a `*_context` field.
 
-Sisters **must** be revealed in proximity of their sibling. Use the editorial judegement and prioritize workflow.
+Sisters **must** be revealed in proximity of their sibling. Use the editorial judgement and prioritize workflow.
 
 ### Recognition Taxonomy Pattern
 

@@ -41,6 +41,14 @@ class WS_Statute_Compiler_Local {
         "Subject's spec annotations shall be silently rewritten by an agent given a prompt to 'tighten redundancy.' All `hook:` declarations removed. Rediscovery cost: estimated 2,000 person-hours, distributed across future-self over the next eighteen months in increments of three to five hours per surprise discovery."
     ];
 
+    // The Immutable Choice Sentinel Registry
+    // Sentinels are @-prefixed single-value annotations in select: declarations.
+    // They suppress literal choice output; the named source provides choices at runtime.
+    private const CHOICE_SENTINELS = [
+        '@hook'   => 'Choices provided by a hook at runtime; source is a general hook computation.',
+        '@matrix' => 'Choices provided by a seed matrix via hook; source is a structured data matrix.',
+    ];
+
     // The Immutable Hook Classification Registry
     private const HOOK_CLASSIFICATIONS = [
         'filter'        => 'Restricts selection choices based on external data (e.g., JX).',
@@ -89,10 +97,9 @@ class WS_Statute_Compiler_Local {
             'hidden' => []
         ];
 
-        // Truncate at the Rename Normalization section — everything after it is
-        // non-field content (rename table, notes) whose `- ` lines would be
-        // misread as field declarations.
-        $content = preg_split('/^## Rename Normalization/m', $content)[0];
+        // Truncate at the Specialized Fields section — this prototype targets
+        // statutes only; the per-CPT delta sections are parsed in a later pass.
+        $content = preg_split('/^## Specialized Fields By Legal Record Type/m', $content)[0];
 
         // Segment by Tab Headers
         $sections = preg_split('/^### /m', $content);
@@ -101,7 +108,7 @@ class WS_Statute_Compiler_Local {
         foreach ($sections as $section) {
             $lines = explode("\n", $section);
             $tab_label = trim(array_shift($lines));
-            $tab_key = strtolower(str_replace([' ', '&'], ['_', ''], $tab_label));
+            $tab_key = preg_replace('/_+/', '_', strtolower(str_replace([' ', '&', '/'], ['_', '', ''], $tab_label)));
 
             // Join continuation lines: append any non-field line to the preceding field
             // line while its parenthetical annotation is still open (more ( than )).
@@ -187,24 +194,23 @@ class WS_Statute_Compiler_Local {
         $deltas = preg_split('/;\s*(?!AND|OR|NOT|absent in)/i', $delta_str);
 
         // Post-object field detection (operates on full annotation string before delta loop).
-        // Pattern 1: post_type[`cpt-slug`] — used for agencies and similar relationship fields.
-        if (preg_match('/(?:(multi-select)[:\s]+)?post_type\[`([^`]+)`\]/', $delta_str, $m)) {
+        // Pattern 1: post_type keyword (bare or old bracket form) — relationship field.
+        //   "multi-select: post_type" → multiple=1; bare "post_type" → multiple=0.
+        if (preg_match('/(?:(multi-select)[:\s]+)?post_type\b/', $delta_str, $m)) {
             $field['type'] = 'post_object';
-            $field['post_type'] = $m[2];
-            $field['multiple'] = ($m[1] === 'multi-select') ? 1 : 0;
-            self::$audit_log[] = "POST-OBJECT: {$name} → post_type={$m[2]}, multiple={$field['multiple']}";
-        // Pattern 2: "post object" or "post_id" narrative annotation.
+            $field['post_type'] = true;
+            $field['multiple'] = !empty($m[1]) ? 1 : 0;
+            self::$audit_log[] = "POST-OBJECT: {$name} → multiple={$field['multiple']}";
+        // Pattern 2: legacy "post object" / "post_id" narrative annotation.
         } elseif (str_contains($delta_str, 'post object') || preg_match('/\bpost_id\b/', $delta_str)) {
             $field['type'] = 'post_object';
+            $field['post_type'] = true;
             $field['multiple'] = str_contains($delta_str, 'array') ? 1 : 0;
-            if (preg_match('/post[\s_]object[^`]*`([^`]+)`/', $delta_str, $m)) {
-                $field['post_type'] = $m[1];
-            }
-            self::$audit_log[] = "POST-OBJECT: {$name} → multiple={$field['multiple']}" .
-                (isset($field['post_type']) ? ", post_type={$field['post_type']}" : '');
-        // Pattern 3: hidden merge target — "merged array of" sources.
+            self::$audit_log[] = "POST-OBJECT: {$name} → legacy annotation, multiple={$field['multiple']}";
+        // Pattern 3: legacy hidden merge target annotation.
         } elseif (str_contains($delta_str, 'merged array')) {
             $field['type'] = 'post_object';
+            $field['post_type'] = true;
             $field['multiple'] = 1;
             self::$audit_log[] = "POST-OBJECT: {$name} → merged array (multiple=1)";
         }
@@ -227,7 +233,17 @@ class WS_Statute_Compiler_Local {
             if (preg_match('/select:\s*([^;)]+)/', $delta, $m) && ($field['type'] ?? '') !== 'post_object') {
                 $field['type'] = 'select';
                 $raw_choices = explode('|', trim($m[1]));
-                $field['choices'] = array_map(fn($c) => trim($c, " \t`"), $raw_choices);
+                $choices = array_map(fn($c) => trim($c, " \t`"), $raw_choices);
+                // @-prefixed single value is a runtime sentinel: choices are hook-provided, not declared here.
+                // Valid sentinels are registered in CHOICE_SENTINELS; unknown @-values are a protocol violation.
+                if (count($choices) === 1 && str_starts_with($choices[0], '@')) {
+                    if (!isset(self::CHOICE_SENTINELS[$choices[0]])) {
+                        wp_die("Field '{$name}' declares unknown choice sentinel '{$choices[0]}'. Known sentinels: " . implode(', ', array_keys(self::CHOICE_SENTINELS)) . ".");
+                    }
+                    self::$audit_log[] = "SENTINEL-CHOICES: {$name} → {$choices[0]} (" . self::CHOICE_SENTINELS[$choices[0]] . ")";
+                } else {
+                    $field['choices'] = $choices;
+                }
                 $field['multiple'] = str_contains($delta, 'multi-select') ? 1 : 0;
             }
 
@@ -436,8 +452,14 @@ class WS_Statute_Compiler_Local {
     private static function infer_type_and_rules($n, &$field) {
         if (preg_match('/_(context|details|gloss)$/', $n)) return 'textarea';
         if (preg_match('/_?(has|is)_|(_is_)/', $n)) return 'true_false';
-        if (str_ends_with($n, '_date')) return 'date_picker';
-        
+        if ($n === 'date' || str_ends_with($n, '_date')) return 'date_picker';
+
+        // Guidance-defined select suffixes (ws-acf-field-guidance-v1.0.md §Default Field Types).
+        // Choices are domain-specific and must be declared in the annotation.
+        if (preg_match('/_(class|scope|status|rule|framework|weight|standard|application|bar)e?s?$/', $n)) {
+            return 'select';
+        }
+
         if (str_ends_with($n, '_unit')) {
             $field['choices'] = ['days', 'weeks', 'months', 'years'];
             return 'select';
@@ -447,11 +469,17 @@ class WS_Statute_Compiler_Local {
             return 'select';
         }
 
-        if (str_ends_with($n, '_value') || str_ends_with($n, '_year')) return 'number';
+        if (str_ends_with($n, '_value') || str_ends_with($n, '_year') || str_ends_with($n, '_order')) return 'number';
         if (str_ends_with($n, '_url')) return 'url';
-        
+
         if (str_ends_with($n, '_ids')) {
             $field['multiple'] = 1;
+            $field['post_type'] = true;
+            return 'post_object';
+        }
+        if (str_ends_with($n, '_id')) {
+            $field['multiple'] = 0;
+            $field['post_type'] = true;
             return 'post_object';
         }
 

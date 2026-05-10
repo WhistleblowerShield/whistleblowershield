@@ -1,78 +1,61 @@
 ================================================================
 WS Statute Compiler Audit Log
 Generator version: 11.1.0
-Generated: 2026-05-10T12:58:55+00:00
-Spec checksum: 0f676449
-Tab fields: 264 | Hidden fields: 6
+Generated: 2026-05-10T16:19:17+00:00
+Spec checksum: e69126a9
+Tab fields: 216 | Hidden fields: 3
 ----------------------------------------------------------------
 Entry counts:
-  APPROVED             7
-  DECLARED             119
-  ESCAPE               113
-  INFERRED             8
-  LOGIC-DIRECT         96
-  NO-HOOK              161
-  POST-OBJECT          13
-  TAXONOMY-BIND        16
+  APPROVED             5
+  DECLARED             113
+  ESCAPE               45
+  INFERRED             4
+  LOGIC-DIRECT         86
+  NO-HOOK              121
+  POST-OBJECT          5
+  TAXONOMY-BIND        14
 ================================================================
 ESCAPE: jurisdiction → text (reason: no suffix-based type inference matched)
 TAXONOMY-BIND: jurisdiction → ws_jurisdiction (select)
 ESCAPE: official_name → text (reason: no suffix-based type inference matched)
 ESCAPE: common_name → text (reason: no suffix-based type inference matched)
 ESCAPE: citation → text (reason: no suffix-based type inference matched)
-ESCAPE: date → text (reason: no suffix-based type inference matched)
-ESCAPE: protection_scope → text (reason: no suffix-based type inference matched)
 ESCAPE: general_description → text (reason: no suffix-based type inference matched)
 APPROVED: has_attach_flag → spec carries editorial-approval annotation
-ESCAPE: display_order → text (reason: no suffix-based type inference matched)
 ESCAPE: legal_recognitions → text (reason: no suffix-based type inference matched)
 TAXONOMY-BIND: legal_recognitions → ws_legal_recognition (multi_select)
 ESCAPE: malicious_reporting_sanctions → text (reason: no suffix-based type inference matched)
-ESCAPE: protected_action_standards → text (reason: no suffix-based type inference matched)
-ESCAPE: reasonable_belief_scope → text (reason: no suffix-based type inference matched)
 ESCAPE: protected_action_sources → text (reason: no suffix-based type inference matched)
 ESCAPE: protected_actions → text (reason: no suffix-based type inference matched)
 TAXONOMY-BIND: protected_actions → ws_protected_action (multi_select)
 ESCAPE: protected_disclosures → text (reason: no suffix-based type inference matched)
 TAXONOMY-BIND: protected_disclosures → ws_protected_disclosure (multi_select)
-ESCAPE: protected_classes → text (reason: no suffix-based type inference matched)
 TAXONOMY-BIND: protected_classes → ws_protected_class (multi_select)
-ESCAPE: excluded_classes → text (reason: no suffix-based type inference matched)
 TAXONOMY-BIND: excluded_classes → ws_excluded_class (multi_select)
 ESCAPE: employment_sectors → text (reason: no suffix-based type inference matched)
 TAXONOMY-BIND: employment_sectors → ws_employment_sector (multi_select)
 ESCAPE: disclosure_targets → text (reason: no suffix-based type inference matched)
 TAXONOMY-BIND: disclosure_targets → ws_disclosure_target (multi_select)
-ESCAPE: disclosure_channel_scope → text (reason: no suffix-based type inference matched)
 APPROVED: disclosure_channel_scope → spec carries editorial-approval annotation
 ESCAPE: disclosure_format → text (reason: no suffix-based type inference matched)
 ESCAPE: sol_triggers → text (reason: no suffix-based type inference matched)
 APPROVED: has_sol_details → spec carries editorial-approval annotation
-ESCAPE: exhaustion_required_scope → text (reason: no suffix-based type inference matched)
 ESCAPE: filing_notice_required_targets → text (reason: no suffix-based type inference matched)
 ESCAPE: employer_threshold_model → text (reason: no suffix-based type inference matched)
 ESCAPE: federal_state_interaction → text (reason: no suffix-based type inference matched)
-ESCAPE: adverse_action_scope → text (reason: no suffix-based type inference matched)
 ESCAPE: adverse_actions → text (reason: no suffix-based type inference matched)
 TAXONOMY-BIND: adverse_actions → ws_adverse_action (multi_select)
-ESCAPE: preservation_requirement_scopes → text (reason: no suffix-based type inference matched)
-ESCAPE: constructive_discharge_standard → text (reason: no suffix-based type inference matched)
 ESCAPE: criminal_sanctions → text (reason: no suffix-based type inference matched)
 ESCAPE: process_types → text (reason: no suffix-based type inference matched)
 TAXONOMY-BIND: process_types → ws_process_type (multi_select)
 ESCAPE: primary_agency → text (reason: no suffix-based type inference matched)
-POST-OBJECT: primary_agency → post_type=ws-agency, multiple=0
+POST-OBJECT: primary_agency → multiple=0
 ESCAPE: local_agencies → text (reason: no suffix-based type inference matched)
-POST-OBJECT: local_agencies → post_type=ws-agency, multiple=0
+POST-OBJECT: local_agencies → multiple=1
 ESCAPE: federal_agencies → text (reason: no suffix-based type inference matched)
-POST-OBJECT: federal_agencies → post_type=ws-agency, multiple=0
-ESCAPE: process_pathway_scope → text (reason: no suffix-based type inference matched)
+POST-OBJECT: federal_agencies → multiple=1
 ESCAPE: process_pathway_limit → text (reason: no suffix-based type inference matched)
 ESCAPE: enforcement_sequence → text (reason: no suffix-based type inference matched)
-ESCAPE: pleading_standard_rule → text (reason: no suffix-based type inference matched)
-ESCAPE: jury_trial_scope → text (reason: no suffix-based type inference matched)
-ESCAPE: fee_shifting_standard → text (reason: no suffix-based type inference matched)
-ESCAPE: fee_shifting_scope → text (reason: no suffix-based type inference matched)
 APPROVED: has_fee_shifting_phases → spec carries editorial-approval annotation
 ESCAPE: fee_shifting_phases → text (reason: no suffix-based type inference matched)
 ESCAPE: fee_shifting_asymmetry → text (reason: no suffix-based type inference matched)
@@ -83,87 +66,24 @@ ESCAPE: remedy_liquidated_multiplier → text (reason: no suffix-based type infe
 ESCAPE: remedy_liquidated_formula → text (reason: no suffix-based type inference matched)
 ESCAPE: mitigation_required_sources → text (reason: no suffix-based type inference matched)
 ESCAPE: after_acquired_evidence_effect → text (reason: no suffix-based type inference matched)
-ESCAPE: interest_provision_scope → text (reason: no suffix-based type inference matched)
-ESCAPE: preliminary_reinstatement_rule → text (reason: no suffix-based type inference matched)
-ESCAPE: preliminary_reinstatement_scope → text (reason: no suffix-based type inference matched)
-ESCAPE: burden_shifting_frameworks → text (reason: no suffix-based type inference matched)
-ESCAPE: same_decision_standard → text (reason: no suffix-based type inference matched)
-ESCAPE: employee_standard → text (reason: no suffix-based type inference matched)
 TAXONOMY-BIND: employee_standard → ws_employee_standard (select)
 ESCAPE: employment_classification_test → text (reason: no suffix-based type inference matched)
 ESCAPE: causation_standard_statutory_text → text (reason: no suffix-based type inference matched)
-ESCAPE: causation_standard → text (reason: no suffix-based type inference matched)
 TAXONOMY-BIND: causation_standard → ws_causation_standard (select)
-ESCAPE: causation_scope → text (reason: no suffix-based type inference matched)
-ESCAPE: employer_knowledge_scopes → text (reason: no suffix-based type inference matched)
 ESCAPE: employer_defenses → text (reason: no suffix-based type inference matched)
 TAXONOMY-BIND: employer_defenses → ws_employer_defense (multi_select)
 ESCAPE: presumption_effect → text (reason: no suffix-based type inference matched)
 APPROVED: has_bop_details → spec carries editorial-approval annotation
-ESCAPE: reward_discretion_scope → text (reason: no suffix-based type inference matched)
 ESCAPE: reward_discretion_formula → text (reason: no suffix-based type inference matched)
 ESCAPE: qui_tam_government_share → text (reason: no suffix-based type inference matched)
 ESCAPE: qui_tam_relator_share → text (reason: no suffix-based type inference matched)
-ESCAPE: civil_action_waiver_status → text (reason: no suffix-based type inference matched)
-ESCAPE: contractual_waiver_status → text (reason: no suffix-based type inference matched)
-ESCAPE: proper_defendant_rules → text (reason: no suffix-based type inference matched)
-ESCAPE: individual_liability_scopes → text (reason: no suffix-based type inference matched)
-ESCAPE: sovereign_immunity_status → text (reason: no suffix-based type inference matched)
 ESCAPE: sovereign_immunity_limits → text (reason: no suffix-based type inference matched)
-ESCAPE: sovereign_immunity_scope → text (reason: no suffix-based type inference matched)
-ESCAPE: sovereign_immunity_waiver_class → text (reason: no suffix-based type inference matched)
-ESCAPE: anti_slapp_protection_scopes → text (reason: no suffix-based type inference matched)
-ESCAPE: discovery_protection_scopes → text (reason: no suffix-based type inference matched)
-ESCAPE: settlement_restriction_scope → text (reason: no suffix-based type inference matched)
 ESCAPE: ref_materials → text (reason: no suffix-based type inference matched)
-POST-OBJECT: ref_materials → multiple=1, post_type=ws-reference
-ESCAPE: overruled_by_id → text (reason: no suffix-based type inference matched)
-POST-OBJECT: overruled_by_id → multiple=0
+POST-OBJECT: ref_materials → multiple=1
 ESCAPE: url → text (reason: no suffix-based type inference matched)
 ESCAPE: authority_reference → text (reason: no suffix-based type inference matched)
-ESCAPE: _disclosure_target_class → text (reason: no suffix-based type inference matched)
 ESCAPE: _related_agencies → text (reason: no suffix-based type inference matched)
-POST-OBJECT: _related_agencies → merged array (multiple=1)
-ESCAPE: court → text (reason: no suffix-based type inference matched)
-ESCAPE: scope → text (reason: no suffix-based type inference matched)
-ESCAPE: binding_strength → text (reason: no suffix-based type inference matched)
-ESCAPE: affected_jx → text (reason: no suffix-based type inference matched)
-ESCAPE: extended_taxonomies → text (reason: no suffix-based type inference matched)
-ESCAPE: suppressed_taxonomies → text (reason: no suffix-based type inference matched)
-ESCAPE: review_standard → text (reason: no suffix-based type inference matched)
-ESCAPE: election_of_remedies_rules → text (reason: no suffix-based type inference matched)
-POST-OBJECT: citation_ids → multiple=1, post_type=jx-citation
-POST-OBJECT: construction_ids → multiple=1, post_type=jx-construction
-POST-OBJECT: _precedent_ids → merged array (multiple=1)
-ESCAPE: precedent_common → text (reason: no suffix-based type inference matched)
-ESCAPE: doctrine_basis → text (reason: no suffix-based type inference matched)
-ESCAPE: public_policy_sources → text (reason: no suffix-based type inference matched)
-ESCAPE: recognition_status → text (reason: no suffix-based type inference matched)
-ESCAPE: election_of_remedies_rules → text (reason: no suffix-based type inference matched)
-ESCAPE: doctrine_ → text (reason: no suffix-based type inference matched)
-ESCAPE: class → text (reason: no suffix-based type inference matched)
-ESCAPE: status → text (reason: no suffix-based type inference matched)
-ESCAPE: binding_strength → text (reason: no suffix-based type inference matched)
-APPROVED: binding_strength → spec carries editorial-approval annotation
-ESCAPE: court → text (reason: no suffix-based type inference matched)
-ESCAPE: court_jx → text (reason: no suffix-based type inference matched)
-TAXONOMY-BIND: court_jx → ws_jurisdiction (multi_select)
-ESCAPE: scope → text (reason: no suffix-based type inference matched)
-ESCAPE: extended_taxonomies → text (reason: no suffix-based type inference matched)
-ESCAPE: suppressed_taxonomies → text (reason: no suffix-based type inference matched)
-ESCAPE: affected_jx → text (reason: no suffix-based type inference matched)
-TAXONOMY-BIND: affected_jx → ws_jurisdiction (multi_select)
-POST-OBJECT: statute_ids → multiple=1, post_type=jx-statute
-POST-OBJECT: comlaw_ids → multiple=1, post_type=jx-common-law
-ESCAPE: parent_weight → text (reason: no suffix-based type inference matched)
-ESCAPE: negative_treatment_class → text (reason: no suffix-based type inference matched)
-ESCAPE: superseded_by_statute_id → text (reason: no suffix-based type inference matched)
-POST-OBJECT: superseded_by_statute_id → multiple=0
-ESCAPE: authority_sources → text (reason: no suffix-based type inference matched)
-ESCAPE: review_standard → text (reason: no suffix-based type inference matched)
-POST-OBJECT: _parent_ids → merged array (multiple=1)
-APPROVED: is_en_banc → spec carries editorial-approval annotation
-ESCAPE: panel_composition_class → text (reason: no suffix-based type inference matched)
+POST-OBJECT: _related_agencies → multiple=1
 NO-HOOK: jurisdiction has no declared or inferred hook category
 NO-HOOK: official_name has no declared or inferred hook category
 NO-HOOK: common_name has no declared or inferred hook category
@@ -304,6 +224,7 @@ NO-HOOK: criminal_sanctions_context has no declared or inferred hook category
 DECLARED: process_types → impacts
 DECLARED: process_types → prerequisite
 DECLARED: primary_agency → filter
+DECLARED: primary_agency → derive
 DECLARED: local_agencies → filter
 DECLARED: federal_agencies → filter
 DECLARED: process_pathway_scope → impacts
@@ -327,6 +248,7 @@ NO-HOOK: jury_trial_context has no declared or inferred hook category
 DECLARED: fee_shifting_standard → required
 DECLARED: fee_shifting_scope → required
 DECLARED: has_fee_shifting_phases → auto-set
+LOGIC-DIRECT: has_fee_shifting_phases captured conditional logic from spec
 DECLARED: fee_shifting_phases → required
 LOGIC-DIRECT: fee_shifting_asymmetry captured conditional logic from spec
 NO-HOOK: fee_shifting_asymmetry has no declared or inferred hook category
@@ -483,68 +405,6 @@ NO-HOOK: overruled_by_id has no declared or inferred hook category
 NO-HOOK: url has no declared or inferred hook category
 NO-HOOK: url_is_pdf has no declared or inferred hook category
 NO-HOOK: authority_reference has no declared or inferred hook category
-NO-HOOK: court has no declared or inferred hook category
-NO-HOOK: scope has no declared or inferred hook category
-NO-HOOK: binding_strength has no declared or inferred hook category
-NO-HOOK: affected_jx has no declared or inferred hook category
-NO-HOOK: extended_taxonomies has no declared or inferred hook category
-NO-HOOK: suppressed_taxonomies has no declared or inferred hook category
-DECLARED: review_standard → required
-NO-HOOK: review_standard_details has no declared or inferred hook category
-LOGIC-DIRECT: review_standard_context captured conditional logic from spec
-NO-HOOK: review_standard_context has no declared or inferred hook category
-DECLARED: election_of_remedies_rules → required
-LOGIC-DIRECT: election_of_remedies_context captured conditional logic from spec
-NO-HOOK: election_of_remedies_context has no declared or inferred hook category
-NO-HOOK: citation_ids has no declared or inferred hook category
-NO-HOOK: construction_ids has no declared or inferred hook category
-NO-HOOK: precedent_common has no declared or inferred hook category
-NO-HOOK: doctrine_basis has no declared or inferred hook category
-NO-HOOK: public_policy_sources has no declared or inferred hook category
-LOGIC-DIRECT: policy_source_details captured conditional logic from spec
-NO-HOOK: policy_source_details has no declared or inferred hook category
-NO-HOOK: recognition_status has no declared or inferred hook category
-NO-HOOK: recognition_status_details has no declared or inferred hook category
-DECLARED: statutory_preclusion_context → required
-LOGIC-DIRECT: statutory_preclusion_context captured conditional logic from spec
-LOGIC-DIRECT: statutory_nexus_context captured conditional logic from spec
-NO-HOOK: statutory_nexus_context has no declared or inferred hook category
-NO-HOOK: election_of_remedies_rules has no declared or inferred hook category
-NO-HOOK: doctrine_ has no declared or inferred hook category
-NO-HOOK: class has no declared or inferred hook category
-NO-HOOK: class_details has no declared or inferred hook category
-NO-HOOK: status has no declared or inferred hook category
-NO-HOOK: binding_strength has no declared or inferred hook category
-DECLARED: court → filter
-NO-HOOK: court_details has no declared or inferred hook category
-NO-HOOK: court_jx has no declared or inferred hook category
-NO-HOOK: mandate_date has no declared or inferred hook category
-DECLARED: scope → verify
-DECLARED: extended_taxonomies → filter
-LOGIC-DIRECT: extended_taxonomies captured conditional logic from spec
-DECLARED: suppressed_taxonomies → filter
-LOGIC-DIRECT: suppressed_taxonomies captured conditional logic from spec
-NO-HOOK: has_affected_jx has no declared or inferred hook category
-DECLARED: affected_jx → filter
-LOGIC-DIRECT: affected_jx captured conditional logic from spec
-NO-HOOK: statute_ids has no declared or inferred hook category
-NO-HOOK: comlaw_ids has no declared or inferred hook category
-NO-HOOK: parent_weight has no declared or inferred hook category
-NO-HOOK: has_negative_treatment_class has no declared or inferred hook category
-LOGIC-DIRECT: negative_treatment_class captured conditional logic from spec
-NO-HOOK: negative_treatment_class has no declared or inferred hook category
-LOGIC-DIRECT: superseded_by_statute_id captured conditional logic from spec
-NO-HOOK: superseded_by_statute_id has no declared or inferred hook category
-NO-HOOK: authority_sources has no declared or inferred hook category
-NO-HOOK: authority_source_details has no declared or inferred hook category
-NO-HOOK: review_standard has no declared or inferred hook category
-NO-HOOK: review_standard_details has no declared or inferred hook category
-NO-HOOK: is_en_banc has no declared or inferred hook category
-LOGIC-DIRECT: panel_composition_class captured conditional logic from spec
-NO-HOOK: panel_composition_class has no declared or inferred hook category
-INFERRED: _disclosure_target_class → derive (reason: hidden scalar)
+DECLARED: _disclosure_target_class → derive
 INFERRED: _primary_agency_is_fed → derive (reason: hidden scalar)
 INFERRED: _related_agencies → merge (reason: hidden array)
-INFERRED: _parent_ids → merge (reason: hidden array)
-INFERRED: _precedent_ids → merge (reason: hidden array)
-INFERRED: _court_is_fed → derive (reason: hidden scalar)

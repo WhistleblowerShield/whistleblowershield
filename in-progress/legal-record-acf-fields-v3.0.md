@@ -135,16 +135,15 @@ Fields ordered: identification → related dates → scope → curated.
 - `jurisdiction`                   — (single-select taxonomy: `WS_JURISDICTION_TAXONOMY`)
 - `official_name`
 - `common_name`
-- `citation`                       — (statute citation / precedent case / case name; shared slot)
-- `date`                           — (enacted / ruling / decision date; shared slot)
-- `has_effective_date`             — (true only when `effective_date` is specified and differs from `date`)
+- `citation`
+- `date`
+- `has_effective_date`
 - `effective_date`
-- `effective_year`                 — (derived from `effective_date` if present, `date` if not; hook: butchers)
+- `effective_year`                 — (hook: butchers)
 - `retro_date`                     — (Sister to `retro_context`; hook: required)
 - `retro_context`                  — (conditional on `retroactive-date` in `legal_recognitions`)
-- `protection_scope`               — (select: `disclosure`|`retaliation`|`both`; internal editorial
-                                      classification; replaces former `ws_protection_scope` taxonomy)
-- `general_description`            — (brief; reserve full summary for `plain_english_wysiwyg`)
+- `protection_scope`               — (select: `disclosure`|`retaliation`|`both`; replaces former `ws_protection_scope` taxonomy)
+- `general_description`
 - `has_attach_flag`                — (special-case approved `has_*` bool; triggers `display_order`)
 - `display_order`                  — (conditional on `has_attach_flag` is true)
 - `last_reviewed_date`             — (must be last in Identity Tab after any insertions)
@@ -155,9 +154,7 @@ Fields ordered: identification → related dates → scope → curated.
 
 Fields ordered: legal_recognitions → activity standard → disclosure → classes → sectors → targets → recognitions.
 
-- `legal_recognitions`             — (taxonomy: `ws_legal_recognition`; recognition taxonomy for legal records.
-                                      Replaces all `*_recognized` booleans. See [Slug-to-Companion Map] in
-                                      `legal-record-acf-hooks-v1.0.md`; hook: impacts, excludes)
+- `legal_recognitions`             — (taxonomy: `ws_legal_recognition`; hook: impacts, excludes)
 - `manager_rule_exclusion_context` — (conditional on `manager-rule-exclusion` in `legal_recognitions`; hook: required)
 - `public_concern_required_context` — (conditional on `public-concern-required` in `legal_recognitions` AND
                                        `public-sector` in `employment_sectors`; hook: required)
@@ -293,9 +290,9 @@ Fields ordered: scope → adverse actions → recognitions → sanctions.
 Fields ordered: process → pathway → fee shifting → remedies → reinstatement.
 
 - `process_types`                  — (taxonomy: `ws_process_type`; hook: impacts, prerequisite)
-- `primary_agency`                 — (derived from first attached post_type[`ws-agency`] when empty; hook: filter)
-- `local_agencies`                 — (multi-select: post_type[`ws-agency`] filtered by jx; hook: filter)
-- `federal_agencies`               — (multi-select: post_type[`ws-agency`] filtered to jx=`us`; hook: filter)
+- `primary_agency`                 — (select: post_type; hook: filter, derive)
+- `local_agencies`                 — (multi-select: post_type; hook: filter)
+- `federal_agencies`               — (multi-select: post_type; hook: filter)
 - `process_pathway_scope`          — (Sister to `process_pathway_context`; select: `direct-agency`|
                                       `direct-court`|`either`|`hybrid-right-to-sue-on-inaction`|`see-context`; hook: impacts, required, excludes)
 - `process_pathway_limit`          — (Sister to `process_pathway_context`; select: `mandatory`|`permitted`|
@@ -303,10 +300,7 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
 - `is_agency_inaction_included`    — (conditional on `process_pathway_scope` is
                                       `hybrid-right-to-sue-on-inaction`)
 - `process_pathway_context`        — (conditional on `process-pathway` in `legal_recognitions`)
-- `enforcement_sequence`           — (freetext narrative tying enforcement agencies, sequence, and any
-                                      enforcement requirements together; associated with `process_types`,
-                                      `primary_agency`, `local_agencies`, `federal_agencies`,
-                                      `process_pathway_scope`, `process_pathway_limit`)
+- `enforcement_sequence`
 - `private_roa_context`            — (conditional on `private-right-of-action` in `legal_recognitions`; hook: required)
 - `pleading_standard_rule`         — (Sister to `pleading_standard_context`; select: `rule-8-notice`|
                                       `rule-9b-particularity`|`state-equivalent-notice`|
@@ -322,7 +316,7 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
                                       `prevailing-defendant-bad-faith`|`see-context`; hook: required)
 - `fee_shifting_scope`             — (Sister to `fee_shifting_standard_context`; select: `mandatory`|
                                       `discretionary`|`asymmetrical`; hook: required)
-- `has_fee_shifting_phases`        — (auto-set true conditional on `fee_shifting_standard` is
+- `has_fee_shifting_phases`        — (auto-set true; conditional on `fee_shifting_standard` is
                                       `none-american-rule`; approved auto-set with editorial flag; hook: auto-set)
 - `fee_shifting_phases`            — (repeater:
       ├── `phase`                        [select: `administrative`|`investigative`|`litigation`|`appeal`|
@@ -344,7 +338,7 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
        ├── `remedy_limit`                [select: `emotional-distress`|`punitive`|`compensatory`|`aggregate`|
        │                                  `employer-size-tiered`|`see-context`],
        ├── `employer_tier`               [conditional on `remedy_limit` is `employer-size-tiered`],
-       ├── `limit_amount`                [currency],
+       ├── `limit_amount`                [number],
        ├── `applies_to`                  [select: `single-claim`|`per-plaintiff`|`per-incident`|
        │                                  `aggregate-action`|`see-context`],
        └── `limit_context`               [conditional on `remedy_limit` is non-empty])
@@ -395,8 +389,7 @@ temporal presumption → detail overflow.
                                       `common-law-darden`|`abc-test`|`right-to-control`|`hybrid`|`see-context`; hook: required)
 - `employment_classification_context` — (conditional on `employment-classification-test` in `legal_recognitions`; hook: required)
 - `has_causation_standard_statutory_text` — (Sister to `causation_standard_context`)
-- `causation_standard_statutory_text` — (captures verbatim statutory text distinct from
-                                      `causation_standard_context`)
+- `causation_standard_statutory_text` — (distinct from `causation_standard_context`)
 - `causation_standard`             — (Sister to `causation_standard_context`; single-select taxonomy:
                                       `ws_causation_standard`; hook: required)
 - `causation_scope`                — (Sister to `causation_standard_context`; select: `liability`|
@@ -521,8 +514,8 @@ Fields ordered: contractual → recognitions → immunity → defendants.
 
 Fields ordered: reference → related legal records.
 
-- `ref_materials`                  — (array; post object; `ws-reference`)
-- `overruled_by_id`                — (post object; legal-record post_id)
+- `ref_materials`                  — (multi-select: post_type)
+- `overruled_by_id`
 
 ---
 
@@ -540,9 +533,9 @@ Fields ordered: source url → authority.
 
 Hidden fields have no tab and are prefixed with underscore. Fields ordered: id → derived.
 
-- `_disclosure_target_class`       — (derived from `disclosure_targets`; select: `internal`|`external`|`both`)
-- `_primary_agency_is_fed`         — (derived from `primary_agency` jx)
-- `_related_agencies`              — (merged array of `local_agencies` and `federal_agencies`)
+- `_disclosure_target_class`       — (select: `internal`|`external`|`both`; hook: derive)
+- `_primary_agency_is_fed`
+- `_related_agencies`              — (multi-select: post_type)
 
 ---
 
@@ -586,12 +579,12 @@ records:
 
 ##### Relationships Tab
 
-- `citation_ids`                   — (post object; array; `jx-citation`)
-- `construction_ids`               — (post object; array; `jx-construction`)
+- `citation_ids`
+- `construction_ids`
 
 ##### Hidden Fields
 
-- `_precedent_ids`                 — (merged array of `citation_ids` and `construction_ids`)
+- `_precedent_ids`
 
 ---
 
@@ -605,12 +598,11 @@ Statute records have no deltas. Future statute-only additions, if any, will be d
 
 #### Identity Tab (insert after `citation`)
 
-- `precedent_common`               — (common name for precedent case held in field `citation`)
+- `precedent_common`
 
 #### Classification Tab (insert after `excluded_class_details`)
 
-- `doctrine_basis`                 — (legal basis for the doctrine; reserve full summary for
-                                      `plain_english_wysiwyg`)
+- `doctrine_basis`
 - `public_policy_sources`          — (multi-select: `constitution`|`federal-law`|`statute`|`administrative-rule`|
                                       `case-law`|`executive`|`has-details`)
 - `policy_source_details`          — (conditional on `public_policy_sources` includes `has-details`)
@@ -644,23 +636,18 @@ decisions:
 - `class_details`
 - `status`                         — (select: `published`|`unpublished`|`memorandum`|`vacated`)
 - `binding_strength`               — (select: `binding`|`persuasive`|`mixed`|`distinguished`|`overruled`;
-                                      approved use of `mixed` where binding strength **is capable of** truly varying; needs
-                                      review with real-world data)
-- `court`                          — (select; filtered by jx; hook: filter)
+                                      approved use of `mixed` where binding strength **is capable of** truly varying)
+- `court`                          — (select: @matrix; hook: filter)
 - `court_details`
 - `court_jx`                       — (Sister to `court_details`; taxonomy: `WS_JURISDICTION_TAXONOMY`)
 
 #### Identity Tab (insert after `effective_year`)
 
-- `mandate_date`                   — (date the appellate court issues its mandate after a ruling becomes final
-                                      and operative; distinct from `date`, which captures the decision/ruling
-                                      date)
+- `mandate_date`                   — (distinct from `date`)
 
 #### Classification Tab (insert after `legal_recognitions`)
 
-- `scope`                          — (select: `favorable`|`adverse`|`neutral`|`dual-effect`; `neutral` means no
-                                      taxonomy effect; `dual-effect` means the ruling both extends and
-                                      suppresses different taxonomy terms; hook: verify)
+- `scope`                          — (select: `favorable`|`adverse`|`neutral`|`dual-effect`; hook: verify)
 - `extended_taxonomies`            — (conditional on `scope` is `favorable` OR `scope` is `dual-effect`;
                                       repeater:
       ├── `taxonomy`                     [select: taxonomy slug],
@@ -669,8 +656,7 @@ decisions:
                                       repeater:
       ├── `taxonomy`                     [select: taxonomy slug],
       └── `term`                         [select: taxonomy term]; hook: filter)
-- `has_affected_jx`                — (derived from `court` `ws_jx_codes`; true when affected jx differs from
-                                      precedent `jurisdiction`)
+- `has_affected_jx`                — (hook: derive)
 - `affected_jx`                    — (conditional on `has_affected_jx` is true; taxonomy: `WS_JURISDICTION_TAXONOMY`; hook: filter)
 
 ##### Eligible Taxonomy Allowlist for `extended_taxonomies` / `suppressed_taxonomies`
@@ -688,13 +674,13 @@ Excluded: `WS_JURISDICTION_TAXONOMY` (geographic, not classificatory); `ws_aorg_
 
 #### Relationships Tab
 
-- `statute_ids`                    — (post object; array; `jx-statute`)
-- `comlaw_ids`                     — (post object; array; `jx-common-law`)
+- `statute_ids`
+- `comlaw_ids`
 - `parent_weight`                  — (select: `primary`|`secondary`|`distinguishing-only`)
 - `has_negative_treatment_class`
 - `negative_treatment_class`       — (conditional on `has_negative_treatment_class` is true; select: `overruled`|
                                       `distinguished`|`limited`|`questioned`|`superseded-by-statute`)
-- `superseded_by_statute_id`       — (post_id; conditional on `negative_treatment_class` is
+- `superseded_by_statute_id`       — (conditional on `negative_treatment_class` is
                                       `superseded-by-statute`)
 
 #### Authority Tab (insert after `authority_reference`)
@@ -708,8 +694,8 @@ Excluded: `WS_JURISDICTION_TAXONOMY` (geographic, not classificatory); `ws_aorg_
 
 #### Hidden Fields
 
-- `_parent_ids`                    — (merged array of `statute_ids` and `comlaw_ids`)
-- `_court_is_fed`                  — (derived from `court` jx)
+- `_parent_ids`
+- `_court_is_fed`
 
 ---
 
@@ -724,8 +710,7 @@ will be documented here.
 
 #### Identity Tab
 
-- `is_en_banc`                     — (defaults true; when set to false triggers `panel_composition_class`;
-                                      approved use of `is_*` bool as trigger)
+- `is_en_banc`                     — (default true; false triggers `panel_composition_class`; approved is_* used as trigger)
 - `panel_composition_class`        — (conditional on `is_en_banc` is false; select: `three-judge`|`five-judge`|
                                       `seven-judge`|`nine-judge`|`expanded-panel`|`judge`)
 
