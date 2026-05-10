@@ -139,8 +139,8 @@ Fields ordered: identification → related dates → scope → curated.
 - `date`                           — (enacted / ruling / decision date; shared slot)
 - `has_effective_date`             — (true only when `effective_date` is specified and differs from `date`)
 - `effective_date`
-- `effective_year`                 — (derived from `effective_date` if present, `date` if not)
-- `retro_date`                     — (Sister to `retro_context`)
+- `effective_year`                 — (derived from `effective_date` if present, `date` if not; hook: butchers)
+- `retro_date`                     — (Sister to `retro_context`; hook: required)
 - `retro_context`                  — (conditional on `retroactive-date` in `legal_recognitions`)
 - `protection_scope`               — (select: `disclosure`|`retaliation`|`both`; internal editorial
                                       classification; replaces former `ws_protection_scope` taxonomy)
@@ -157,19 +157,19 @@ Fields ordered: legal_recognitions → activity standard → disclosure → clas
 
 - `legal_recognitions`             — (taxonomy: `ws_legal_recognition`; recognition taxonomy for legal records.
                                       Replaces all `*_recognized` booleans. See [Slug-to-Companion Map] in
-                                      `legal-record-acf-hooks-v1.0.md`.)
-- `manager_rule_exclusion_context` — (conditional on `manager-rule-exclusion` in `legal_recognitions`)
+                                      `legal-record-acf-hooks-v1.0.md`; hook: impacts, excludes)
+- `manager_rule_exclusion_context` — (conditional on `manager-rule-exclusion` in `legal_recognitions`; hook: required)
 - `public_concern_required_context` — (conditional on `public-concern-required` in `legal_recognitions` AND
-                                       `public-sector` in `employment_sectors`)
-- `manner_of_opposition_context`   — (conditional on `manner-of-opposition-standard` in `legal_recognitions`)
-- `bad_faith_exclusion_context`    — (conditional on `bad-faith-exclusion` in `legal_recognitions`)
-- `anonymity_protection_context`   — (conditional on `anonymity-protection` in `legal_recognitions`)
+                                       `public-sector` in `employment_sectors`; hook: required)
+- `manner_of_opposition_context`   — (conditional on `manner-of-opposition-standard` in `legal_recognitions`; hook: required)
+- `bad_faith_exclusion_context`    — (conditional on `bad-faith-exclusion` in `legal_recognitions`; hook: required)
+- `anonymity_protection_context`   — (conditional on `anonymity-protection` in `legal_recognitions`; hook: required)
 - `malicious_reporting_sanctions`  — (Sister to `malicious_reporting_context`; repeater:
       ├── `conduct_sanctioned`           [select: `knowingly-false`|`reckless-disregard`|`bad-faith-motive`|
       │                                   `see-context`],
       ├── `sanction_penalty`             [select: `civil-fine`|`remedy-forfeiture`|`attorney-fee-shift`|
       │                                   `felony`|`misdemeanor`|`see-context`],
-      └── `conduct_context`              [conditional on `conduct_sanctioned` is non-empty])
+      └── `conduct_context`              [conditional on `conduct_sanctioned` is non-empty]; hook: required)
 - `malicious_reporting_context`    — (conditional on `malicious-reporting-sanctions` in `legal_recognitions`)
 - `protected_action_standards`     — (Sister to `protected_action_context`; multi-select: `per-se-protected`|
                                       `actual-violation`|`reasonable-belief`|`good-faith`)
@@ -178,21 +178,21 @@ Fields ordered: legal_recognitions → activity standard → disclosure → clas
                                       `objective-only`|`subjective-only`|`dual-prong`|`see-context`)
 - `protected_action_sources`       — (Sister to `protected_action_context`; multi-select: `constitutional`|
                                       `statutory`|`judicial`|`regulatory`|`executive`|`see-context`)
-- `protected_actions`              — (Sister to `protected_action_context`; taxonomy: `ws_protected_action`)
+- `protected_actions`              — (Sister to `protected_action_context`; taxonomy: `ws_protected_action`; hook: required)
 - `protected_action_context`       — (conditional on `protected-action` in `legal_recognitions`)
 - `protected_disclosures`          — (taxonomy: `ws_protected_disclosure`)
-- `protected_classes`              — (taxonomy: `ws_protected_class`)
+- `protected_classes`              — (taxonomy: `ws_protected_class`; hook: impacts, prerequisite, excludes)
 - `former_employee_gloss`          — (conditional on `former-employee` in `protected_classes`)
 - `protected_class_details`
-- `excluded_classes`               — (Sister to `excluded_class_context`; taxonomy: `ws_excluded_class`)
-- `excluded_class_context`         — (conditional on `excluded-class` in `legal_recognitions`)
+- `excluded_classes`               — (Sister to `excluded_class_context`; taxonomy: `ws_excluded_class`; hook: required)
+- `excluded_class_context`         — (conditional on `excluded-class` in `legal_recognitions`; hook: required)
 - `excluded_class_details`
-- `employment_sectors`             — (taxonomy: `ws_employment_sector`)
+- `employment_sectors`             — (taxonomy: `ws_employment_sector`; hook: impacts)
 - `garcetti_exception_context`     — (conditional on `garcetti-exception` in `legal_recognitions` AND
-                                      `public-sector` in `employment_sectors`)
+                                      `public-sector` in `employment_sectors`; hook: required)
 - `disclosure_targets`             — (taxonomy: `ws_disclosure_target`)
 - `disclosure_channel_scope`       — (Sister to `disclosure_channel_context`; select: `any-channel`|
-                                      `approved-channel-only`|`mandatory-internal-first`|`see-context`)
+                                      `approved-channel-only`|`mandatory-internal-first`|`see-context`; hook: required)
 - `disclosure_format`              — (Sister to `disclosure_channel_context`; select: `written-only`|
                                       `oral-permitted`|`either`|`has-details`)
 - `disclosure_format_details`
@@ -209,7 +209,7 @@ Fields ordered: core SOL → modifiers → exhaustion → pathways → threshold
 - `sol_value`
 - `sol_unit`
 - `sol_triggers`                   — (multi-select: `accrual`|`constructive-discharge-accrual`|`discovery-rule`|
-                                      `filing-of-complaint`|`conclusion-of-admin-process`|`see-context`)
+                                      `filing-of-complaint`|`conclusion-of-admin-process`|`see-context`; hook: impacts, prerequisite)
 - `sol_trigger_discovery_gloss`    — (conditional on `sol_triggers` includes `discovery-rule`)
 - `sol_trigger_gloss`              — (conditional on `sol_triggers` is non-empty)
 - `is_sol_suspended_during_admin`
@@ -218,28 +218,28 @@ Fields ordered: core SOL → modifiers → exhaustion → pathways → threshold
 - `sop_value`                      — (Sister to `statute_of_repose_context`)
 - `sop_unit`
 - `is_sop_tolling_available`       — (Sister to `statute_of_repose_context`)
-- `statute_of_repose_context`      — (conditional on `statute-of-repose` in `legal_recognitions`)
-- `statutory_tolling_context`      — (conditional on `statutory-tolling` in `legal_recognitions`)
-- `equitable_tolling_context`      — (conditional on `equitable-tolling` in `legal_recognitions`)
-- `cba_preemption_context`         — (conditional on `cba-grievance-preemption` in `legal_recognitions`)
-- `amended_claim_context`          — (conditional on `amended-claim` in `legal_recognitions`)
+- `statute_of_repose_context`      — (conditional on `statute-of-repose` in `legal_recognitions`; hook: required)
+- `statutory_tolling_context`      — (conditional on `statutory-tolling` in `legal_recognitions`; hook: required)
+- `equitable_tolling_context`      — (conditional on `equitable-tolling` in `legal_recognitions`; hook: required)
+- `cba_preemption_context`         — (conditional on `cba-grievance-preemption` in `legal_recognitions`; hook: required)
+- `amended_claim_context`          — (conditional on `amended-claim` in `legal_recognitions`; hook: required)
 - `exhaustion_required_scope`      — (Sister to `exhaustion_required_context`; select: `jurisdictional`|
-                                      `claims-processing`|`waivable`|`see-context`)
-- `exhaustion_required_context`    — (conditional on `exhaustion-required` in `legal_recognitions`)
+                                      `claims-processing`|`waivable`|`see-context`; hook: required, excluded-by)
+- `exhaustion_required_context`    — (conditional on `exhaustion-required` in `legal_recognitions`; hook: excluded-by)
 - `filing_notice_required_value`   — (Sister to `filing_notice_required_context`)
 - `filing_notice_required_unit`
 - `filing_notice_required_targets` — (Sister to `filing_notice_required_context`; multi-select: `employer`|
-                                      `agency`|`attorney-general`|`labor-board`|`see-context`)
+                                      `agency`|`attorney-general`|`labor-board`|`see-context`; hook: required)
 - `filing_notice_required_context` — (conditional on `pre-filing-notice-required` in `legal_recognitions`)
 - `employer_threshold_compare`     — (Sister to `employer_threshold_context`; select: `gte`|`lte`|`gt`|`lt`|
-                                      `eq`)
+                                      `eq`; hook: required)
 - `employer_threshold_value`       — (Sister to `employer_threshold_context`)
 - `employer_threshold_model`       — (Sister to `employer_threshold_context`; select: `employees`|`workers`|
-                                      `contractors`|`fte`)
+                                      `contractors`|`fte`; hook: required)
 - `employer_threshold_context`     — (conditional on `employer-threshold-specified` in `legal_recognitions`)
 - `cure_period_value`              — (Sister to `cure_period_context`)
 - `cure_period_unit`
-- `cure_period_context`            — (conditional on `cure-period-specified` in `legal_recognitions`)
+- `cure_period_context`            — (conditional on `cure-period-specified` in `legal_recognitions`; hook: required)
 - `federal_state_interaction`      — (select: `express-preemption`|`savings-clause-preserves-state`|
                                       `concurrent-enforcement`|`field-preemption`|`state-exceeds-federal-floor`|
                                       `has-details`)
@@ -254,35 +254,35 @@ Fields ordered: core SOL → modifiers → exhaustion → pathways → threshold
 Fields ordered: scope → adverse actions → recognitions → sanctions.
 
 - `adverse_action_scope`              — (select: `termination-only`|`material-adverse`|
-                                         `broad-any-adverse-action`|`see-gloss`)
-- `adverse_action_scope_gloss`        — (conditional on `adverse_action_scope` is non-empty)
-- `adverse_actions`                   — (taxonomy: `ws_adverse_action`)
-- `anticipatory_retaliation_gloss`    — (conditional on `anticipatory-retaliation` in `adverse_actions`)
-- `threatened_retaliation_gloss`      — (conditional on `threatened-retaliation` in `adverse_actions`)
+                                         `broad-any-adverse-action`|`see-gloss`; hook: excludes)
+- `adverse_action_scope_gloss`        — (conditional on `adverse_action_scope` is non-empty; hook: override - see [Material Adverse Override])
+- `adverse_actions`                   — (taxonomy: `ws_adverse_action`; hook: impacts)
+- `anticipatory_retaliation_gloss`    — (conditional on `anticipatory-retaliation` in `adverse_actions`; hook: override - see [Material Adverse Override])
+- `threatened_retaliation_gloss`      — (conditional on `threatened-retaliation` in `adverse_actions`; hook: override - see [Material Adverse Override])
 - `adverse_action_details`
-- `facially_retaliatory_policy_context` — (conditional on `facially-retaliatory-policy` in `legal_recognitions`)
+- `facially_retaliatory_policy_context` — (conditional on `facially-retaliatory-policy` in `legal_recognitions`; hook: required)
 - `is_blacklisting_extended`          — (conditional on `blacklisting` in `adverse_actions`)
 - `preservation_deadline_value`       — (Sister to `evidence_preservation_context`)
 - `preservation_deadline_unit`
 - `preservation_requirement_scopes`   — (Sister to `evidence_preservation_context`; multi-select:
                                          `litigation-hold`|`statutory-hold`|`court-order`|`agency-request`|
-                                         `see-context`)
+                                         `see-context`; hook: required)
 - `evidence_preservation_context`     — (conditional on `evidence-preservation` in `legal_recognitions`)
 - `constructive_discharge_standard`   — (Sister to `constructive_discharge_context`; select: `dual-prong`|
-                                         `objective-intolerability`|`intent-required`|`see-context`)
+                                         `objective-intolerability`|`intent-required`|`see-context`; hook: required)
 - `constructive_discharge_context`    — (conditional on `constructive-discharge-standard`
                                          in `legal_recognitions`)
 - `is_evidence_collection_protected`
-- `cats_paw_liability_context`        — (conditional on `cats-paw-liability` in `legal_recognitions`)
+- `cats_paw_liability_context`        — (conditional on `cats-paw-liability` in `legal_recognitions`; hook: required)
 - `is_cats_paw_liability_extended`    — (Sister to `cats_paw_liability_context`; AND conditional on
-                                         any child-slug of `associates-of-whistleblower` in `protected_classes`)
+                                         any child-slug of `associates-of-whistleblower` in `protected_classes`; hook: verify)
 - `third_party_retaliation_context`   — (conditional on `third-party-retaliation` in `legal_recognitions` AND
-                                         any retaliation-slug in `adverse_actions`)
+                                         any retaliation-slug in `adverse_actions`; hook: required)
 - `criminal_sanctions`                — (Sister to `criminal_sanctions_context`; repeater:
       ├── `sanction_conduct`                [select: `retaliation`|`disclosure`|`false-report`|`obstruction`|
       │                                      `see-context`],
       ├── `sanction_level`                  [select: `misdemeanor`|`felony`|`see-context`],
-      └── `sanction_context`                [conditional on `sanction_conduct` is non-empty])
+      └── `sanction_context`                [conditional on `sanction_conduct` is non-empty]; hook: required)
 - `criminal_sanctions_context`        — (conditional on `criminal-sanctions` in `legal_recognitions` AND
                                          `criminal-referral` in `process_types`)
 
@@ -292,12 +292,12 @@ Fields ordered: scope → adverse actions → recognitions → sanctions.
 
 Fields ordered: process → pathway → fee shifting → remedies → reinstatement.
 
-- `process_types`                  — (taxonomy: `ws_process_type`)
-- `primary_agency`                 — (derived from first attached post_type[`ws-agency`] when empty)
-- `local_agencies`                 — (multi-select: post_type[`ws-agency`] filtered by jx)
-- `federal_agencies`               — (multi-select: post_type[`ws-agency`] filtered to jx=`us`)
+- `process_types`                  — (taxonomy: `ws_process_type`; hook: impacts, prerequisite)
+- `primary_agency`                 — (derived from first attached post_type[`ws-agency`] when empty; hook: filter)
+- `local_agencies`                 — (multi-select: post_type[`ws-agency`] filtered by jx; hook: filter)
+- `federal_agencies`               — (multi-select: post_type[`ws-agency`] filtered to jx=`us`; hook: filter)
 - `process_pathway_scope`          — (Sister to `process_pathway_context`; select: `direct-agency`|
-                                      `direct-court`|`either`|`hybrid-right-to-sue-on-inaction`|`see-context`)
+                                      `direct-court`|`either`|`hybrid-right-to-sue-on-inaction`|`see-context`; hook: impacts, required, excludes)
 - `process_pathway_limit`          — (Sister to `process_pathway_context`; select: `mandatory`|`permitted`|
                                       `conditional`|`unavailable`|`see-context`)
 - `is_agency_inaction_included`    — (conditional on `process_pathway_scope` is
@@ -307,23 +307,23 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
                                       enforcement requirements together; associated with `process_types`,
                                       `primary_agency`, `local_agencies`, `federal_agencies`,
                                       `process_pathway_scope`, `process_pathway_limit`)
-- `private_roa_context`            — (conditional on `private-right-of-action` in `legal_recognitions`)
+- `private_roa_context`            — (conditional on `private-right-of-action` in `legal_recognitions`; hook: required)
 - `pleading_standard_rule`         — (Sister to `pleading_standard_context`; select: `rule-8-notice`|
                                       `rule-9b-particularity`|`state-equivalent-notice`|
-                                      `state-equivalent-particularity`|`has-details`)
+                                      `state-equivalent-particularity`|`has-details`; hook: required)
 - `pleading_standard_details`
 - `pleading_standard_context`      — (conditional on `heightened-pleading-standard` in `legal_recognitions`)
 - `jury_trial_scope`               — (Sister to `jury_trial_context`; select: `all-claims`|`damages`|
-                                      `liability`|`see-context`)
+                                      `liability`|`see-context`; hook: required)
 - `jury_trial_context`             — (conditional on `private-right-of-action` AND `jury-trial` in
                                       `legal_recognitions`)
 - `fee_shifting_standard`          — (Sister to `fee_shifting_standard_context`; select:
                                       `bilateral-loser-pays`|`unilateral-pro-plaintiff`|`none-american-rule`|
-                                      `prevailing-defendant-bad-faith`|`see-context`)
+                                      `prevailing-defendant-bad-faith`|`see-context`; hook: required)
 - `fee_shifting_scope`             — (Sister to `fee_shifting_standard_context`; select: `mandatory`|
-                                      `discretionary`|`asymmetrical`)
+                                      `discretionary`|`asymmetrical`; hook: required)
 - `has_fee_shifting_phases`        — (auto-set true conditional on `fee_shifting_standard` is
-                                      `none-american-rule`; approved auto-set with editorial flag)
+                                      `none-american-rule`; approved auto-set with editorial flag; hook: auto-set)
 - `fee_shifting_phases`            — (repeater:
       ├── `phase`                        [select: `administrative`|`investigative`|`litigation`|`appeal`|
       │                                   `see-context`],
@@ -334,12 +334,12 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
       ├── `phase_asymmetry`              [conditional on `phase_scope` is `asymmetrical`; select: `two-way`|
       │                                   `one-way-plaintiff`|`one-way-defendant-frivolous`|`has-details`],
       ├── `asymmetry_details`            [conditional on `phase_asymmetry` is `has-details`],
-      └── `phase_context`                [conditional on `phase` is non-empty])
+      └── `phase_context`                [conditional on `phase` is non-empty]; hook: required)
 - `fee_shifting_asymmetry`         — (conditional on `fee_shifting_scope` is `asymmetrical`; select: `two-way`|
                                       `one-way-plaintiff`|`one-way-defendant-frivolous`|`has-details`)
 - `fee_shifting_asymmetry_details`
 - `fee_shifting_standard_context`  — (conditional on `fee-shifting-standard` in `legal_recognitions`)
-- `remedies`                       — (taxonomy: `ws_remedy`)
+- `remedies`                       — (taxonomy: `ws_remedy`; hook: impacts, prerequisite)
 - `remedy_limits`                  — (repeater; conditional on `has-limits` in `remedies`:
        ├── `remedy_limit`                [select: `emotional-distress`|`punitive`|`compensatory`|`aggregate`|
        │                                  `employer-size-tiered`|`see-context`],
@@ -355,22 +355,22 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
 - `remedy_liquidated_formula`      — (conditional on `remedy_liquidated_multiplier` is `statutory-formula`)
 - `remedy_liquidated_details`      — (conditional on `remedy_liquidated_multiplier` is `has-details`)
 - `mitigation_required_sources`     — (Sister to `mitigation_required_context`; multi-select: `yes-statutory`|
-                                      `yes-common-law`)
+                                      `yes-common-law`; hook: required)
 - `mitigation_required_context`    — (conditional on `mitigation-required` in `legal_recognitions`)
 - `mitigation_exception_context`   — (conditional on `mitigation-required` in `legal_recognitions` AND
-                                      `mitigation-exception` in `legal_recognitions`)
+                                      `mitigation-exception` in `legal_recognitions`; hook: required)
 - `after_acquired_evidence_effect` — (Sister to `after_acquired_evidence_context`; select: `bars-front-pay`|
-                                      `bars-reinstatement`|`bars-damages`|`bars-all`|`see-context`)
-- `after_acquired_evidence_context` — (conditional on `after-acquired-evidence` in `legal_recognitions`)
+                                      `bars-reinstatement`|`bars-damages`|`bars-all`|`see-context`; hook: required, excluded-by)
+- `after_acquired_evidence_context` — (conditional on `after-acquired-evidence` in `legal_recognitions`; hook: excluded-by)
 - `interest_provision_scope`       — (Sister to `interest_provision_context`; select:
                                       `pre-judgment-statutory`|`post-judgment`|`both`|`discretionary`|
-                                      `see-context`)
+                                      `see-context`; hook: required)
 - `interest_provision_context`     — (conditional on `equitable-interest-award` in `legal_recognitions`)
 - `preliminary_reinstatement_rule`         — (Sister to `preliminary_reinstatement_context`; select: `mandatory`|
-                                      `discretionary`|`has-details`)
+                                      `discretionary`|`has-details`; hook: required)
 - `preliminary_reinstatement_rule_details`
 - `preliminary_reinstatement_scope` — (Sister to `preliminary_reinstatement_context`; select: `admin-phase`|
-                                      `full-pendency`|`see-context`)
+                                      `full-pendency`|`see-context`; hook: required)
 - `preliminary_reinstatement_context` — (conditional on `preliminary-reinstatement` in `legal_recognitions` AND
                                       `reinstatement` OR `interim-reinstatement` in `remedies`)
 
@@ -382,31 +382,31 @@ Fields ordered: framework → employee standards → causation → employer defe
 temporal presumption → detail overflow.
 
 - `burden_shifting_frameworks`     — (Sister to `burden_shifting_context`; multi-select: `mcdonnell-douglas`|
-                                      `motivating-factor`|`but-for`|`mixed-motive`|`has-details`)
+                                      `motivating-factor`|`but-for`|`mixed-motive`|`has-details`; hook: required)
 - `burden_shifting_details`        — (conditional on `burden_shifting_frameworks` includes `has-details`)
 - `burden_shifting_context`        — (conditional on `burden-shifting-framework` in `legal_recognitions`)
 - `mixed_motive_remedy_gloss`      — (conditional on `burden_shifting_frameworks` includes `mixed-motive`)
 - `same_decision_standard`         — (Sister to `same_decision_context`; select: `preponderance`|
-                                      `clear-and-convincing`|`see-context`)
+                                      `clear-and-convincing`|`see-context`; hook: required)
 - `same_decision_context`          — (conditional on `same-decision-defense-standard` in `legal_recognitions`)
 - `employee_standard`              — (single-select taxonomy: `ws_employee_standard`)
 - `employee_standard_details`
 - `employment_classification_test` — (Sister to `employment_classification_context`; select: `economic-realities`|
-                                      `common-law-darden`|`abc-test`|`right-to-control`|`hybrid`|`see-context`)
-- `employment_classification_context` — (conditional on `employment-classification-test` in `legal_recognitions`)
+                                      `common-law-darden`|`abc-test`|`right-to-control`|`hybrid`|`see-context`; hook: required)
+- `employment_classification_context` — (conditional on `employment-classification-test` in `legal_recognitions`; hook: required)
 - `has_causation_standard_statutory_text` — (Sister to `causation_standard_context`)
 - `causation_standard_statutory_text` — (captures verbatim statutory text distinct from
                                       `causation_standard_context`)
 - `causation_standard`             — (Sister to `causation_standard_context`; single-select taxonomy:
-                                      `ws_causation_standard`)
+                                      `ws_causation_standard`; hook: required)
 - `causation_scope`                — (Sister to `causation_standard_context`; select: `liability`|
                                       `damages`|`both`|`see-context`)
-- `causation_standard_context`     — (conditional on `causation-standard-recognized` in `legal_recognitions`)
+- `causation_standard_context`     — (conditional on `causation-standard-recognized` in `legal_recognitions`; hook: required)
 - `causation_dual_standard_context`  — (conditional on `causation-dual-standard` in `legal_recognitions` AND
-                                        `causation-standard-recognized` in `legal_recognitions`)
+                                        `causation-standard-recognized` in `legal_recognitions`; hook: required)
 - `employer_knowledge_scopes`      — (Sister to `employer_knowledge_context`; multi-select:
                                       `actual-knowledge`|`constructive-knowledge`|`inferred-knowledge`|
-                                      `imputed-knowledge`|`has-details`)
+                                      `imputed-knowledge`|`has-details`; hook: required)
 - `employer_knowledge_scopes_details`
 - `employer_knowledge_context`     — (conditional on `employer-knowledge-required` in `legal_recognitions`)
 - `employer_defenses`              — (taxonomy: `ws_employer_defense`)
@@ -416,12 +416,12 @@ temporal presumption → detail overflow.
 - `presumption_window_value`       — (Sister to `temporal_presumption_context`)
 - `presumption_window_unit`
 - `presumption_effect`             — (Sister to `temporal_presumption_context`; select: `shifts-burden`|
-                                      `creates-inference`|`rebuttable-presumption`|`has-details`)
+                                      `creates-inference`|`rebuttable-presumption`|`has-details`; hook: required)
 - `presumption_effect_details`
 - `temporal_presumption_context`   — (conditional on `temporal-presumption-recognized` in `legal_recognitions`)
 - `temporal_proximity_value`       — (Sister to `temporal_proximity_context`)
 - `temporal_proximity_unit`
-- `temporal_proximity_context`     — (conditional on `temporal-proximity-sufficient` in `legal_recognitions`)
+- `temporal_proximity_context`     — (conditional on `temporal-proximity-sufficient` in `legal_recognitions`; hook: required)
 - `has_bop_details`                — (approved use of `*_details` on triiger)
 - `bop_details`
 
@@ -432,14 +432,14 @@ temporal presumption → detail overflow.
 Fields ordered: rewards → qui tam specifics.
 
 - `reward_discretion_scope`     — (Sister to `reward_context`; select: `mandatory`|`discretionary`|
-                                      `presumptive`|`formula-based`|`has-details`)
+                                      `presumptive`|`formula-based`|`has-details`; hook: required)
 - `reward_discretion_formula`      — (conditional on `reward_discretion_scope` is `formula-based`)
 - `reward_discretion_details`      — (conditional on `reward_discretion_scope` is `has-details`)
 - `reward_context`                 — (conditional on `reward-available` in `legal_recognitions`)
 - `qui_tam_government_share`       — (Sister to `qui_tam_share_context`)
 - `qui_tam_relator_share`          — (Sister to `qui_tam_share_context`)
 - `qui_tam_reduction_context`      — (Sister to `qui_tam_share_context`)
-- `qui_tam_share_context`          — (conditional on `qui-tam-action` in `legal_recognitions`)
+- `qui_tam_share_context`          — (conditional on `qui-tam-action` in `legal_recognitions`; hook: required)
 - `has_first_to_file_bar`          — (Sister to `qui_tam_share_context`; AND
                                       `bounty-qui-tam-award` in `remedies`)
 - `first_to_file_bar_details`
@@ -453,22 +453,22 @@ Fields ordered: rewards → qui tam specifics.
 
 Fields ordered: contractual → recognitions → immunity → defendants.
 
-- `all_waivers_blocked_context`    — (conditional on `all-plaintiff-waivers-void` in `legal_recognitions`)
+- `all_waivers_blocked_context`    — (conditional on `all-plaintiff-waivers-void` in `legal_recognitions`; hook: required)
 - `civil_action_waiver_status`      — (Sister to `civil_action_waiver_context`; select: `prohibited`|
-                                      `permitted-individual-only`|`permitted-collective`|`see-context`)
+                                      `permitted-individual-only`|`permitted-collective`|`see-context`; hook: required, excluded-by)
 - `civil_action_waiver_context`    — (conditional on `all-plaintiff-waivers-void` absent in
-                                      `legal_recognitions` AND `civil-action-waiver` in `legal_recognitions`)
+                                      `legal_recognitions` AND `civil-action-waiver` in `legal_recognitions`; hook: excluded-by)
 - `contractual_waiver_status`       — (Sister to `contractual_waiver_context`; select: `void`|`limited`|
                                       `enforceable`|`void-public-policy`|`void-as-to-whistleblowing`|
-                                      `enforceable-with-exceptions`|`see-context`)
+                                      `enforceable-with-exceptions`|`see-context`; hook: required, excluded-by)
 - `contractual_waiver_context`     — (conditional on `all-plaintiff-waivers-void` absent in
-                                      `legal_recognitions` AND `contractual-waiver` in `legal_recognitions`)
+                                      `legal_recognitions` AND `contractual-waiver` in `legal_recognitions`; hook: excluded-by)
 - `collateral_claims_waiver_context` — (conditional on `all-plaintiff-waivers-void` absent in
                                       `legal_recognitions` AND `collateral-claims-waiver` in
-                                      `legal_recognitions`)
+                                      `legal_recognitions`; hook: required, excluded-by)
 - `class_action_waiver_context`    — (conditional on `all-plaintiff-waivers-void` absent in
                                       `legal_recognitions` AND `class-action-permitted` absent in
-                                      `legal_recognitions` AND `class-action-waiver` in `legal_recognitions`)
+                                      `legal_recognitions` AND `class-action-waiver` in `legal_recognitions`; hook: required, excluded-by)
 - `proper_defendant_rules`         — (Sister to `proper_defendants_context`; repeater:
       ├── `defendant_class`              [select: `employer-entity`|`individual-supervisor`|`public-official`|
       │                                   `government-agency`|`contractor`|`successor-employer`|
@@ -476,44 +476,44 @@ Fields ordered: contractual → recognitions → immunity → defendants.
       │                                   `labor-organization`|`see-context`],
       ├── `defendant_limit`              [select: `mandatory`|`permitted`|`conditional`|`unavailable`|
       │                                   `exclusive`|`see-context`],
-      └── `defendant_context`            [conditional on `defendant_class` is non-empty])
+      └── `defendant_context`            [conditional on `defendant_class` is non-empty]; hook: required)
 - `proper_defendants_context`      — (conditional on `proper-defendants-specified` in `legal_recognitions`)
 - `individual_liability_scopes`    — (Sister to `individual_liability_context`; multi-select: `supervisor`|
-                                      `coworker`|`officer-director`|`any-individual-only`|`has-details`)
+                                      `coworker`|`officer-director`|`any-individual-only`|`has-details`; hook: required)
 - `individual_liability_details`   — (conditional on `individual_liability_scopes` includes `has-details`)
 - `individual_liability_context`   — (conditional on `individual-liability` in `legal_recognitions`)
 - `sovereign_immunity_status`      — (Sister to `sovereign_immunity_context`; select: `not-waived`|
-                                      `partially-waived`|`fully-waived`|`has-details`)
+                                      `partially-waived`|`fully-waived`|`has-details`; hook: required, excluded-by)
 - `sovereign_immunity_limits`      — (Sister to `sovereign_immunity_context`; multi-select: `cap-applies`|
-                                      `conditions-apply`|`tort-claims-act-gate`)
+                                      `conditions-apply`|`tort-claims-act-gate`; hook: excluded-by)
 - `sovereign_immunity_limit_gloss` — (conditional on `sovereign_immunity_limits` is non-empty)
 - `sovereign_immunity_scope`       — (Sister to `sovereign_immunity_context`; select: `all`|
                                       `instrumentalities-included`|`political-subdivisions-included`|
-                                      `state-exclusively`|`see-context`)
+                                      `state-exclusively`|`see-context`; hook: excluded-by)
 - `sovereign_immunity_waiver_class` — (Sister to `sovereign_immunity_context`; AND conditional on
                                       `sovereign_immunity_status` is non-empty AND is NOT `not-waived`;
-                                      select: `explicit-waiver`|`implied-waiver`)
+                                      select: `explicit-waiver`|`implied-waiver`; hook: required, excluded-by)
 - `sovereign_immunity_status_details`
-- `sovereign_immunity_context`     — (conditional on `sovereign-immunity-status` in `legal_recognitions`)
-- `nda_limits_context`             — (conditional on `nda-limitations` in `legal_recognitions`)
-- `anti_gag_provision_context`     — (conditional on `anti-gag-provision-present` in `legal_recognitions`)
-- `no_retaliatory_evidence_context` — (conditional on `no-retaliatory-evidence` in `legal_recognitions`)
-- `stay_of_discipline_context`     — (conditional on `stay-of-disciplinary-action` in `legal_recognitions`)
+- `sovereign_immunity_context`     — (conditional on `sovereign-immunity-status` in `legal_recognitions`; hook: excluded-by)
+- `nda_limits_context`             — (conditional on `nda-limitations` in `legal_recognitions`; hook: required)
+- `anti_gag_provision_context`     — (conditional on `anti-gag-provision-present` in `legal_recognitions`; hook: required)
+- `no_retaliatory_evidence_context` — (conditional on `no-retaliatory-evidence` in `legal_recognitions`; hook: required)
+- `stay_of_discipline_context`     — (conditional on `stay-of-disciplinary-action` in `legal_recognitions`; hook: required)
 - `anti_slapp_protection_scopes`   — (Sister to `anti_slapp_protection_context`; multi-select:
                                       `motion-to-strike`|`discovery-stay`|`fee-shift-on-motion`|
-                                      `full-procedural-only`|`see-context`)
+                                      `full-procedural-only`|`see-context`; hook: required)
 - `anti_slapp_protection_context`  — (conditional on `anti-slapp-protection` in `legal_recognitions`)
 - `discovery_protection_scopes`    — (Sister to `discovery_protection_context`; multi-select:
                                       `retaliatory-subpoenas`|`abusive-discovery`|`litigation-harassment`|
-                                      `see-context`)
+                                      `see-context`; hook: required)
 - `discovery_protection_context`   — (conditional on `discovery-protection` in `legal_recognitions`; distinct
                                       from anti-SLAPP)
 - `settlement_restriction_scope`   — (Sister to `settlement_restriction_context`; select: `amount`|`facts`|
-                                      `full-prohibition`|`agency-notification`|`see-context`)
+                                      `full-prohibition`|`agency-notification`|`see-context`; hook: required)
 - `settlement_restriction_context` — (conditional on `confidential-settlement-restriction` in
                                       `legal_recognitions`)
-- `successor_liability_context`    — (conditional on `successor-liability` in `legal_recognitions`)
-- `extraterritorial_context`       — (conditional on `extraterritorial-coverage` in `legal_recognitions`)
+- `successor_liability_context`    — (conditional on `successor-liability` in `legal_recognitions`; hook: required)
+- `extraterritorial_context`       — (conditional on `extraterritorial-coverage` in `legal_recognitions`; hook: required)
 
 ---
 
@@ -573,7 +573,7 @@ records:
 
 - `review_standard`          — (Sister to `review_standard_context`; select: `de-novo`|
                                       `substantial-evidence`|`arbitrary-capricious`|`abuse-of-discretion`|
-                                      `has-details`)
+                                      `has-details`; hook: required)
 - `review_standard_details`
 - `review_standard_context`        — (conditional on `civil-review-standard` in `legal_recognitions`)
 
@@ -581,7 +581,7 @@ records:
 
 - `election_of_remedies_rules`     — (Sister to `election_of_remedies_context`; multi-select:
                                       `administrative-bars-civil`|`state-bars-federal`|`remedy-exclusivity`|
-                                      `first-filed-controls`|`see-context`)
+                                      `first-filed-controls`|`see-context`; hook: required)
 - `election_of_remedies_context`   — (conditional on `remedy-election-required` in `legal_recognitions`)
 
 ##### Relationships Tab
@@ -620,7 +620,7 @@ Statute records have no deltas. Future statute-only additions, if any, will be d
 
 #### Statute of Limitations & Thresholds Tab (insert after `federal_state_interaction_details`)
 
-- `statutory_preclusion_context`   — (conditional on `statutory-preclusion` in `legal_recognitions`)
+- `statutory_preclusion_context`   — (conditional on `statutory-preclusion` in `legal_recognitions`; hook: required)
 
 #### Burden of Proof Tab (insert after `causation_standard_statutory_text`)
 
@@ -646,7 +646,7 @@ decisions:
 - `binding_strength`               — (select: `binding`|`persuasive`|`mixed`|`distinguished`|`overruled`;
                                       approved use of `mixed` where binding strength **is capable of** truly varying; needs
                                       review with real-world data)
-- `court`                          — (select; filtered by jx)
+- `court`                          — (select; filtered by jx; hook: filter)
 - `court_details`
 - `court_jx`                       — (Sister to `court_details`; taxonomy: `WS_JURISDICTION_TAXONOMY`)
 
@@ -660,18 +660,18 @@ decisions:
 
 - `scope`                          — (select: `favorable`|`adverse`|`neutral`|`dual-effect`; `neutral` means no
                                       taxonomy effect; `dual-effect` means the ruling both extends and
-                                      suppresses different taxonomy terms)
+                                      suppresses different taxonomy terms; hook: verify)
 - `extended_taxonomies`            — (conditional on `scope` is `favorable` OR `scope` is `dual-effect`;
                                       repeater:
       ├── `taxonomy`                     [select: taxonomy slug],
-      └── `term`                         [select: taxonomy term])
+      └── `term`                         [select: taxonomy term]; hook: filter)
 - `suppressed_taxonomies`          — (conditional on `scope` is `adverse` OR `scope` is `dual-effect`;
                                       repeater:
       ├── `taxonomy`                     [select: taxonomy slug],
-      └── `term`                         [select: taxonomy term])
+      └── `term`                         [select: taxonomy term]; hook: filter)
 - `has_affected_jx`                — (derived from `court` `ws_jx_codes`; true when affected jx differs from
                                       precedent `jurisdiction`)
-- `affected_jx`                    — (conditional on `has_affected_jx` is true; taxonomy: `WS_JURISDICTION_TAXONOMY`)
+- `affected_jx`                    — (conditional on `has_affected_jx` is true; taxonomy: `WS_JURISDICTION_TAXONOMY`; hook: filter)
 
 ##### Eligible Taxonomy Allowlist for `extended_taxonomies` / `suppressed_taxonomies`
 

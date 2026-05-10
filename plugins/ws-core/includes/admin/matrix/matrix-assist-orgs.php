@@ -23,8 +23,8 @@
  *           (whistleblowers.org contact page confirmed; old 1140 Connecticut Ave was stale)
  *         - PEER mailing_address: expanded 'PEER' abbreviation to full org name
  *         - GAP zip +4 (20006-2802): kept — USPS extended zip, not incorrect
- *         - WbAid secure_contact_url /signal/: kept — specific page confirmed live
- *         - POGO has_secure_channel: kept 0 — no live public secure channel confirmed
+ *         - WbAid secure contact tools: Signal-specific page confirmed live
+ *         - POGO secure_channel_status: kept none-found — no live public secure channel confirmed
  *         - TAF has_attorneys: kept 1 — staff page confirms 3 attorneys on staff
  *         - NWC/PEER contact_url from JSON was blank — kept existing matrix values
  *
@@ -43,7 +43,7 @@
  *         - TAF: re-branded from Taxpayers Against Fraud Education Fund
  *           to The Anti-Fraud Coalition; slug, internal_id, description,
  *           mailing address, and intake_url updated; gate bumped to 1.1.0
- *         - The Signals Network: has_secure_channel set to 1 (ProtonMail
+ *         - The Signals Network: secure_channel_status set to dedicated-secure-channel (ProtonMail
  *           confirmed); secure fields populated; protect@ email added to
  *           emails repeater; ProtonMail note removed from description;
  *           intake_url added
@@ -73,10 +73,12 @@ $_ws_assist_org_matrix = [
         'official_homepage_url' => 'https://whistleblower.org',
         'intake_url' => 'https://crm.whistleblower.org/form/online-intake-application',
         'contact_url' => '',
-        'phones' => '(202) 457-0034',
-        
-        'emails' => 'info@whistleblower.org',
-        
+        'phones' => [
+            [ 'type' => 'headquarters', 'number' => '(202) 457-0034' ],
+        ],
+        'emails' => [
+            [ 'type' => 'general', 'address' => 'info@whistleblower.org' ],
+        ],
         'secure_channel_status' => 'none-found',
         'secure_contact_tools' => [],
         'mailing_address' => 'Government Accountability Project, 1612 K St NW, Suite 808, Washington, DC 20006-2802',
@@ -132,10 +134,12 @@ $_ws_assist_org_matrix = [
         'official_homepage_url' => 'https://www.whistleblowers.org',
         'intake_url' => 'https://www.report-fraud-now.info/',
         'contact_url' => 'https://www.whistleblowers.org/contact-us/',
-        'phones' => '(202) 342-1903',
-        
-        'emails' => 'contact@whistleblowers.org',
-        
+        'phones' => [
+            [ 'type' => 'headquarters', 'number' => '(202) 342-1903' ],
+        ],
+        'emails' => [
+            [ 'type' => 'general', 'address' => 'contact@whistleblowers.org' ],
+        ],
         'secure_channel_status' => 'none-found',
         'secure_contact_tools' => [],
         'mailing_address' => 'National Whistleblower Center, 1800 M Street NW #33888, Washington, DC 20033',
@@ -188,8 +192,8 @@ $_ws_assist_org_matrix = [
         'official_homepage_url' => 'https://whistlebloweraid.org',
         'intake_url' => 'https://whistlebloweraid.org/become-a-whistleblower/',
         'contact_url' => '',
-        'phones' => '',
-        'emails' => '',
+        'phones' => [],
+        'emails' => [],
         'secure_channel_status' => 'dedicated-secure-channel',
         'secure_contact_tools' => [ 'signal' ],
         'mailing_address' => 'Whistleblower Aid, 1250 Connecticut Ave NW, Suite 700, Washington, DC 20036',
@@ -245,10 +249,12 @@ $_ws_assist_org_matrix = [
         'official_homepage_url' => 'https://www.pogo.org',
         'intake_url' => '',
         'contact_url' => 'https://www.pogo.org/contact-us',
-        'phones' => '(202) 347-1122',
-        
-        'emails' => 'info@pogo.org',
-        
+        'phones' => [
+            [ 'type' => 'headquarters', 'number' => '(202) 347-1122' ],
+        ],
+        'emails' => [
+            [ 'type' => 'general', 'address' => 'info@pogo.org' ],
+        ],
         'secure_channel_status' => 'none-found',
         'secure_contact_tools' => [],
         'mailing_address' => 'Project On Government Oversight, 1100 13th Street NW, Suite 800, Washington, DC 20005',
@@ -296,8 +302,8 @@ $_ws_assist_org_matrix = [
         'official_homepage_url' => 'https://www.taf.org',
         'intake_url' => 'https://www.taf.org/attorneys/find-an-attorney/',
         'contact_url' => '',
-        'phones' => '',
-        'emails' => '',
+        'phones' => [],
+        'emails' => [],
         'secure_channel_status' => 'none-found',
         'secure_contact_tools' => [],
         'mailing_address' => 'The Anti-Fraud Coalition, 1220 19th St NW, Ste 501, Washington, DC 20036',
@@ -345,10 +351,13 @@ $_ws_assist_org_matrix = [
         'official_homepage_url' => 'https://www.whistleblowersofamerica.org',
         'intake_url' => '',
         'contact_url' => 'https://www.whistleblowersofamerica.org/learn-more/peer-support',
-        'phones' => '202-643-1956',
-        
-        'emails' => 'info@whistleblowersofamerica.org',
-        
+        'phones' => [
+            [ 'type' => 'headquarters', 'number' => '202-643-1956' ],
+        ],
+        'emails' => [
+            [ 'type' => 'general', 'address' => 'info@whistleblowersofamerica.org' ],
+            [ 'type' => 'support', 'address' => 'peers@whistleblowersofamerica.org' ],
+        ],
         'secure_channel_status' => 'none-found',
         'secure_contact_tools' => [],
         'mailing_address' => 'Whistleblowers of America, 11130 Lillian Highway, Pensacola, FL 32506',
@@ -396,9 +405,10 @@ $_ws_assist_org_matrix = [
         'official_homepage_url' => 'https://whistleblowingnetwork.org/Home',
         'intake_url' => '',
         'contact_url' => 'https://whistleblowingnetwork.org/Contact-Us',
-        'phones' => '',
-        'emails' => 'info@whistleblowingnetwork.org',
-        
+        'phones' => [],
+        'emails' => [
+            [ 'type' => 'general', 'address' => 'info@whistleblowingnetwork.org' ],
+        ],
         'secure_channel_status' => 'none-found',
         'secure_contact_tools' => [],
         'mailing_address' => 'Whistleblowing International Network (WIN) c/o SCVO, Edward House, 199 Sauchiehall Street, Glasgow, G2 3EX',
@@ -445,10 +455,12 @@ $_ws_assist_org_matrix = [
         'official_homepage_url' => 'https://www.nelp.org',
         'intake_url' => '',
         'contact_url' => 'https://www.nelp.org/about-us/contact-us/',
-        'phones' => '(212) 285-3025',
-        
-        'emails' => 'nelp@nelp.org',
-        
+        'phones' => [
+            [ 'type' => 'headquarters', 'number' => '(212) 285-3025' ],
+        ],
+        'emails' => [
+            [ 'type' => 'general', 'address' => 'nelp@nelp.org' ],
+        ],
         'secure_channel_status' => 'none-found',
         'secure_contact_tools' => [],
         'mailing_address' => 'National Office: National Employment Law Project, PO Box 1779, New York, NY 10008',
@@ -492,10 +504,12 @@ $_ws_assist_org_matrix = [
         'official_homepage_url' => 'https://www.nela.org',
         'intake_url' => 'https://engagement.nela.org/NELA/findalawyer.aspx',
         'contact_url' => '',
-        'phones' => '(415) 296-7629',
-        
-        'emails' => 'nelahq@nelahq.org',
-        
+        'phones' => [
+            [ 'type' => 'headquarters', 'number' => '(415) 296-7629' ],
+        ],
+        'emails' => [
+            [ 'type' => 'general', 'address' => 'nelahq@nelahq.org' ],
+        ],
         'secure_channel_status' => 'none-found',
         'secure_contact_tools' => [],
         'mailing_address' => '1800 Sutter Street, Suite 210, Concord, CA 94520',
@@ -541,9 +555,10 @@ $_ws_assist_org_matrix = [
         'official_homepage_url' => 'https://www.lsc.gov',
         'intake_url' => 'https://www.lsc.gov/about-lsc/what-legal-aid/get-legal-help',
         'contact_url' => '',
-        'phones' => '(202) 295-1500',
-        
-        'emails' => '',
+        'phones' => [
+            [ 'type' => 'headquarters', 'number' => '(202) 295-1500' ],
+        ],
+        'emails' => [],
         'secure_channel_status' => 'none-found',
         'secure_contact_tools' => [],
         'mailing_address' => 'Legal Services Corporation, 3333 K Street NW, Washington, DC 20007',
@@ -590,9 +605,10 @@ $_ws_assist_org_matrix = [
         'official_homepage_url' => 'https://www.nlada.org',
         'intake_url' => '',
         'contact_url' => '',
-        'phones' => '(202) 452-0620',
-        
-        'emails' => '',
+        'phones' => [
+            [ 'type' => 'headquarters', 'number' => '(202) 452-0620' ],
+        ],
+        'emails' => [],
         'secure_channel_status' => 'none-found',
         'secure_contact_tools' => [],
         'mailing_address' => 'National Legal Aid and Defender Association, 1140 Connecticut Ave NW, Suite 900, Washington, DC 20036',
@@ -639,10 +655,12 @@ $_ws_assist_org_matrix = [
         'official_homepage_url' => 'https://www.whistleblowers.org',
         'intake_url' => 'https://www.whistleblowers.org/find-a-whisteblower-attorney/',
         'contact_url' => '',
-        'phones' => '(202) 342-1900',
-        
-        'emails' => 'info@whistleblowers.org',
-        
+        'phones' => [
+            [ 'type' => 'headquarters', 'number' => '(202) 342-1900' ],
+        ],
+        'emails' => [
+            [ 'type' => 'general', 'address' => 'info@whistleblowers.org' ],
+        ],
         'secure_channel_status' => 'none-found',
         'secure_contact_tools' => [],
         'mailing_address' => 'National Whistleblower Center, 2001 S Street NW, Washington, DC 20009',
@@ -689,10 +707,12 @@ $_ws_assist_org_matrix = [
         'official_homepage_url' => 'https://www.americanbar.org/groups/legal_services/',
         'intake_url' => 'https://www.americanbar.org/groups/legal_services/flh-home/',
         'contact_url' => '',
-        'phones' => '(800) 285-2221',
-        
-        'emails' => 'info@americanbar.org',
-        
+        'phones' => [
+            [ 'type' => 'headquarters', 'number' => '(800) 285-2221' ],
+        ],
+        'emails' => [
+            [ 'type' => 'general', 'address' => 'info@americanbar.org' ],
+        ],
         'secure_channel_status' => 'none-found',
         'secure_contact_tools' => [],
         'mailing_address' => 'American Bar Association, 321 N Clark St, Chicago, IL 60654',
@@ -739,10 +759,12 @@ $_ws_assist_org_matrix = [
         'official_homepage_url' => 'https://peer.org',
         'intake_url' => 'https://peer.org/contact-legal-team/',
         'contact_url' => 'https://peer.org/about-us/contact-us/',
-        'phones' => '(202) 265-7337',
-        
-        'emails' => 'info@peer.org',
-        
+        'phones' => [
+            [ 'type' => 'headquarters', 'number' => '(202) 265-7337' ],
+        ],
+        'emails' => [
+            [ 'type' => 'general', 'address' => 'info@peer.org' ],
+        ],
         'secure_channel_status' => 'none-found',
         'secure_contact_tools' => [],
         'mailing_address' => 'Public Employees for Environmental Responsibility, 962 Wayne Ave, Suite 610, Silver Spring, MD 20910',
@@ -790,8 +812,11 @@ $_ws_assist_org_matrix = [
         'official_homepage_url' => 'https://thesignalsnetwork.org',
         'intake_url' => 'https://thesignalsnetwork.org/whistleblower-protection-program/',
         'contact_url' => 'https://thesignalsnetwork.org/contact/',
-        'phones' => '',
-        'emails' => 'info@thesignalsnetwork.org, protect@thesignalsnetwork.org',
+        'phones' => [],
+        'emails' => [
+            [ 'type' => 'general', 'address' => 'info@thesignalsnetwork.org' ],
+            [ 'type' => 'intake', 'address' => 'protect@thesignalsnetwork.org' ],
+        ],
         'secure_channel_status' => 'dedicated-secure-channel',
         'secure_contact_tools' => [ 'protonmail' ],
         'mailing_address' => 'The Signals Network, 416 Florida Ave NW #26152, Washington, DC 20001',
@@ -1024,13 +1049,109 @@ function ws_matrix_required_array( array $org, string $key ): array {
 }
 
 /**
- * Converts yes/no/unclear status to the legacy boolean field shape.
+ * Reads and validates typed phone channel rows for ACF repeater storage.
  *
- * @param string $status Current status.
- * @return int
+ * @param array $org Matrix org row.
+ * @return array<int,array{type:string,number:string}>
  */
-function ws_matrix_status_bool( string $status ): int {
-    return $status === 'yes' ? 1 : 0;
+function ws_matrix_phone_channels( array $org ): array {
+    $rows = ws_matrix_required_array( $org, 'phones' );
+    $allowed = [ 'hotline', 'intake', 'headquarters', 'regional', 'tty', 'fax', 'other' ];
+    $label = (string) ( $org['slug'] ?? $org['official_name'] ?? 'unknown assist org' );
+    $out = [];
+
+    foreach ( $rows as $i => $row ) {
+        if ( ! is_array( $row ) ) {
+            ws_matrix_error( "Phone row {$i} must be an array for {$label}." );
+        }
+
+        $type = sanitize_key( (string) ( $row['type'] ?? '' ) );
+        $number = trim( (string) ( $row['number'] ?? '' ) );
+
+        if ( $type === '' || $number === '' ) {
+            ws_matrix_error( "Phone row {$i} requires type and number for {$label}." );
+        }
+
+        if ( ! in_array( $type, $allowed, true ) ) {
+            ws_matrix_error( "Invalid phone type '{$type}' in row {$i} for {$label}." );
+        }
+
+        $out[] = [
+            'type'   => $type,
+            'number' => $number,
+        ];
+    }
+
+    return $out;
+}
+
+/**
+ * Reads and validates typed email channel rows for ACF repeater storage.
+ *
+ * @param array $org Matrix org row.
+ * @return array<int,array{type:string,address:string}>
+ */
+function ws_matrix_email_channels( array $org ): array {
+    $rows = ws_matrix_required_array( $org, 'emails' );
+    $allowed = [ 'intake', 'general', 'legal', 'media', 'support', 'secure', 'other' ];
+    $label = (string) ( $org['slug'] ?? $org['official_name'] ?? 'unknown assist org' );
+    $out = [];
+
+    foreach ( $rows as $i => $row ) {
+        if ( ! is_array( $row ) ) {
+            ws_matrix_error( "Email row {$i} must be an array for {$label}." );
+        }
+
+        $type = sanitize_key( (string) ( $row['type'] ?? '' ) );
+        $address = sanitize_email( (string) ( $row['address'] ?? '' ) );
+
+        if ( $type === '' || $address === '' ) {
+            ws_matrix_error( "Email row {$i} requires type and a valid address for {$label}." );
+        }
+
+        if ( ! in_array( $type, $allowed, true ) ) {
+            ws_matrix_error( "Invalid email type '{$type}' in row {$i} for {$label}." );
+        }
+
+        $out[] = [
+            'type'    => $type,
+            'address' => $address,
+        ];
+    }
+
+    return $out;
+}
+
+/**
+ * Writes an ACF repeater directly from canonical matrix rows.
+ *
+ * The matrix is already canonical; this function only maps row keys to ACF's
+ * raw repeater meta keys and fails loudly if the row shape is malformed.
+ *
+ * @param int    $post_id       Post ID.
+ * @param string $field_name    ACF repeater field name.
+ * @param array  $rows          Canonical rows.
+ * @param array  $subfield_map  Canonical key => ACF subfield name.
+ * @return void
+ */
+function ws_matrix_write_repeater( int $post_id, string $field_name, array $rows, array $subfield_map ): void {
+    update_post_meta( $post_id, $field_name, count( $rows ) );
+
+    foreach ( $rows as $i => $row ) {
+        if ( ! is_array( $row ) ) {
+            ws_matrix_error( "Repeater '{$field_name}' row {$i} must be an array on post {$post_id}." );
+        }
+
+        foreach ( $subfield_map as $source_key => $acf_key ) {
+            if ( ! array_key_exists( $source_key, $row ) ) {
+                ws_matrix_error(
+                    "Repeater '{$field_name}' row {$i} missing required key '{$source_key}' on post {$post_id}."
+                );
+            }
+
+            update_post_meta( $post_id, "{$field_name}_{$i}_{$acf_key}", $row[ $source_key ] );
+        }
+    }
 }
 
 function ws_matrix_income_screening( array $org ): string {
@@ -1099,30 +1220,6 @@ function ws_matrix_secure_contact_tools( array $org ): array {
     }
 
     return array_values( array_unique( $normalized ) );
-}
-
-/**
- * Provides the old single text value for current secure_contact_tools rows.
- *
- * @param array $tools Current secure-contact tool slugs.
- * @return string
- */
-function ws_matrix_legacy_secure_tool( array $tools ): string {
-    $labels = [
-        'signal'              => 'Signal',
-        'protonmail'          => 'ProtonMail',
-        'tutanota'            => 'Tutanota',
-        'wire'                => 'Wire',
-        'keybase'             => 'Keybase',
-        'pgp-email'           => 'PGP Email',
-        'securedrop'          => 'SecureDrop',
-        'globaleaks'          => 'GlobaLeaks',
-        'encrypted-web-form'  => 'Encrypted Web Form',
-        'other'               => 'Other',
-    ];
-
-    $first = $tools[0] ?? '';
-    return $labels[ $first ] ?? '';
 }
 
 /**
@@ -1244,7 +1341,8 @@ function ws_seed_assist_org_matrix() {
         );
         $secure_channel_status = ws_matrix_secure_channel_status( $org );
         $secure_contact_tools = ws_matrix_secure_contact_tools( $org );
-        $secure_contact_tool = ws_matrix_legacy_secure_tool( $secure_contact_tools );
+        $phone_channels = ws_matrix_phone_channels( $org );
+        $email_channels = ws_matrix_email_channels( $org );
         $income_screening = ws_matrix_income_screening( $org );
         $anonymous_pre_consult_status = ws_matrix_required_enum(
             $org,
@@ -1319,8 +1417,6 @@ function ws_seed_assist_org_matrix() {
             'ws_aorg_service_depth'        => $service_depth,
             'ws_aorg_intake_commitment_class' => $intake_commitment_class,
             'ws_aorg_whistleblower_scope'  => ws_matrix_required( $org, 'whistleblower_scope' ),
-            'ws_aorg_phones'               => ws_matrix_optional( $org, 'phones' ),
-            'ws_aorg_emails'               => ws_matrix_optional( $org, 'emails' ),
         ];
 
         foreach ( $meta as $key => $value ) {
@@ -1329,9 +1425,29 @@ function ws_seed_assist_org_matrix() {
             }
         }
 
+        ws_matrix_write_repeater(
+            $post_id,
+            'ws_aorg_phones',
+            $phone_channels,
+            [
+                'type'   => 'ws_aorg_phone_type',
+                'number' => 'ws_aorg_phone_number',
+            ]
+        );
+
+        ws_matrix_write_repeater(
+            $post_id,
+            'ws_aorg_emails',
+            $email_channels,
+            [
+                'type'    => 'ws_aorg_email_type',
+                'address' => 'ws_aorg_email_address',
+            ]
+        );
+
         // ── Taxonomies ───────────────────────────────────────────────────────
 
-        // Organization model (single slug; currently stored in legacy ws_aorg_type taxonomy).
+        // Organization model (single slug; stored in ws_aorg_type taxonomy).
         if ( $organization_model !== '' ) {
             ws_matrix_assign_terms_strict( $post_id, [ $organization_model ], 'ws_aorg_type' );
         }
@@ -1361,6 +1477,9 @@ function ws_seed_assist_org_matrix() {
 
         // Employment sectors (array of ws_employment_sector slugs).
         ws_matrix_assign_terms_strict( $post_id, ws_matrix_required_array( $org, 'employment_sectors' ), 'ws_employment_sector' );
+
+        // Protected classes (array of ws_protected_class slugs).
+        ws_matrix_assign_terms_strict( $post_id, ws_matrix_required_array( $org, 'protected_classes' ), 'ws_protected_class' );
 
         // Language: English (all seeded national orgs operate in English).
         $default_languages = [ 'english' ];

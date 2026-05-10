@@ -86,6 +86,34 @@ function ws_q_normalize_channel_rows( $rows, $type_key, $value_key ) {
     return $out;
 }
 
+/**
+ * Reads assist-org channel repeaters from canonical raw ACF repeater meta.
+ *
+ * Matrix and ingest write this shape directly; query reads that shape directly.
+ *
+ * @param int    $post_id    Assist-org post ID.
+ * @param string $field_name Repeater field name.
+ * @param string $type_key   Row key for channel type.
+ * @param string $value_key  Row key for channel value.
+ * @return array<int,array{type:string,value:string}>
+ */
+function ws_q_get_channel_rows( int $post_id, string $field_name, string $type_key, string $value_key ): array {
+    $count = (int) get_post_meta( $post_id, $field_name, true );
+    if ( $count <= 0 ) {
+        return [];
+    }
+
+    $raw_rows = [];
+    for ( $i = 0; $i < $count; $i++ ) {
+        $raw_rows[] = [
+            $type_key  => get_post_meta( $post_id, "{$field_name}_{$i}_{$type_key}", true ),
+            $value_key => get_post_meta( $post_id, "{$field_name}_{$i}_{$value_key}", true ),
+        ];
+    }
+
+    return ws_q_normalize_channel_rows( $raw_rows, $type_key, $value_key );
+}
+
 
 /**
  * Builds the normalized return payload for a single assist-org post.
@@ -108,7 +136,7 @@ function ws_q_build_assist_org_row( $oid ) {
     $tax_languages         = ws_q_taxonomy_payload( $oid, 'ws_language' );
     $tax_cost_model        = ws_q_taxonomy_payload( $oid, 'ws_aorg_cost_model' );
 
-    $_nw  = (bool) get_post_meta( $oid, 'ws_aorg_serves_nationwide', true );
+    $_nw  = (bool) get_post_meta( $oid, 'ws_aorg_is_nationwide', true );
     $_jx  = $tax_jx['slugs'];
     $_fed = ( ! $_nw && count( $_jx ) === 1 && strtolower( (string) $_jx[0] ) === 'us' );
     $plain = ws_build_plain_english_array( $oid );
@@ -150,26 +178,23 @@ function ws_q_build_assist_org_row( $oid ) {
         'additional_services'  => (string) get_post_meta( $oid, 'ws_aorg_additional_services',        true ),
         'employment_sectors'   => $tax_employment['slugs'],
         'employment_sector_labels' => $tax_employment['names'],
-        'website_url'          => (string) get_post_meta( $oid, 'ws_aorg_website_url',                true ),
+        'official_homepage_url'=> (string) get_post_meta( $oid, 'ws_aorg_official_homepage_url',      true ),
         'intake_url'           => (string) get_post_meta( $oid, 'ws_aorg_intake_url',                 true ),
         'contact_url'          => (string) get_post_meta( $oid, 'ws_aorg_contact_url',                true ),
-        'phones'               => ws_q_normalize_channel_rows( get_field( 'ws_aorg_phones', $oid ), 'ws_aorg_phone_type', 'ws_aorg_phone_number' ),
-        'emails'               => ws_q_normalize_channel_rows( get_field( 'ws_aorg_emails', $oid ), 'ws_aorg_email_type', 'ws_aorg_email_address' ),
-        'has_secure_channel'   => (bool) get_post_meta( $oid, 'ws_aorg_has_secure_channel', true ),
-        'secure_contact_url'   => (string) get_post_meta( $oid, 'ws_aorg_secure_contact_url',        true ),
-        'secure_contact_tool'  => (string) get_post_meta( $oid, 'ws_aorg_secure_contact_tool',       true ),
-        'secure_contact_tool_other' => (string) get_post_meta( $oid, 'ws_aorg_secure_contact_tool_other', true ),
+        'phones'               => ws_q_get_channel_rows( $oid, 'ws_aorg_phones', 'ws_aorg_phone_type', 'ws_aorg_phone_number' ),
+        'emails'               => ws_q_get_channel_rows( $oid, 'ws_aorg_emails', 'ws_aorg_email_type', 'ws_aorg_email_address' ),
+        'secure_channel_status'=> (string) get_post_meta( $oid, 'ws_aorg_secure_channel_status', true ),
+        'secure_contact_tools' => (array) get_post_meta( $oid, 'ws_aorg_secure_contact_tools', true ),
         'mailing_address'      => (string) get_post_meta( $oid, 'ws_aorg_mailing_address',            true ),
         'languages'            => $tax_languages['slugs'],
         'language_labels'      => $tax_languages['names'],
         'additional_languages' => (string) get_post_meta( $oid, 'ws_aorg_additional_languages',       true ),
         'cost_model'           => $tax_cost_model['slugs'],
         'cost_model_labels'    => $tax_cost_model['names'],
-        'has_income_limit'     => (bool) get_post_meta( $oid, 'ws_aorg_has_income_limit',               true ),
-        'income_limit_details'   => (string) get_post_meta( $oid, 'ws_aorg_income_limit_details',         true ),
-        'has_anonymous'        => (bool) get_post_meta( $oid, 'ws_aorg_accepts_anonymous',   true ),
-        'eligibility_details'    => (string) get_post_meta( $oid, 'ws_aorg_eligibility_details',          true ),
-        'has_attorneys'   => (bool) get_post_meta( $oid, 'ws_aorg_licensed_attorneys',  true ),
+        'income_screening'     => (string) get_post_meta( $oid, 'ws_aorg_income_screening', true ),
+        'eligibility_status'   => (string) get_post_meta( $oid, 'ws_aorg_eligibility_status', true ),
+        'anonymous_pre_consult_status' => (string) get_post_meta( $oid, 'ws_aorg_anonymous_pre_consult_status', true ),
+        'has_attorneys'        => (string) get_post_meta( $oid, 'ws_aorg_has_attorneys', true ),
         'accreditation'        => (string) get_post_meta( $oid, 'ws_aorg_accreditation',              true ),
         'bar_states'           => (string) get_post_meta( $oid, 'ws_aorg_bar_states',                 true ),
         'legitimacy_url'       => $legitimacy_url,
@@ -248,7 +273,7 @@ function ws_get_nationwide_assist_org_data( $filters = [] ) {
         'meta_query'     => [
             'relation' => 'AND',
             [
-                'key'     => 'ws_aorg_serves_nationwide',
+                'key'     => 'ws_aorg_is_nationwide',
                 'value'   => '1',
                 'compare' => '=',
             ],

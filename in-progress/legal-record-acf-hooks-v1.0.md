@@ -382,8 +382,7 @@ When the override applies:
   `threatened-retaliation`.
 
 The hook **is only capable of confirming** the gloss field is non-empty. Editors are responsible for verifying that
-the gloss
-content actually justifies the override.
+the gloss content actually justifies the override.
 
 ### Auto-Set Boolean
 

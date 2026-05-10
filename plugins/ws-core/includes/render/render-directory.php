@@ -581,13 +581,9 @@ function ws_render_directory_card( array $org, int $position = 0, int $results_t
 
     $cost_slug  = is_array( $org['cost_model'] ) ? ( $org['cost_model'][0] ?? '' ) : '';
     $cost_label = ( $cost_slug === 'unclear' ) ? '' : ( $cost_labels[ $cost_slug ] ?? '' );
-    $has_secure_channel = ! empty( $org['has_secure_channel'] );
-    $secure_contact_url = trim( (string) ( $org['secure_contact_url'] ?? '' ) );
-    $secure_contact_tool = trim( (string) ( $org['secure_contact_tool'] ?? '' ) );
-    $secure_contact_tool_other = trim( (string) ( $org['secure_contact_tool_other'] ?? '' ) );
-    $secure_contact_tool_label = ( $secure_contact_tool === 'other' && $secure_contact_tool_other !== '' )
-        ? $secure_contact_tool_other
-        : $secure_contact_tool;
+    $secure_channel_status = (string) ( $org['secure_channel_status'] ?? '' );
+    $has_secure_channel = ! in_array( $secure_channel_status, [ '', 'none-found', 'unclear' ], true );
+    $secure_contact_tools = is_array( $org['secure_contact_tools'] ?? null ) ? $org['secure_contact_tools'] : [];
     $phones = is_array( $org['phones'] ?? null ) ? $org['phones'] : [];
     $emails = is_array( $org['emails'] ?? null ) ? $org['emails'] : [];
 
@@ -660,12 +656,12 @@ function ws_render_directory_card( array $org, int $position = 0, int $results_t
                         <?php echo esc_html( $cost_label ); ?>
                     </span>
                 <?php endif; ?>
-                <?php if ( ! empty( $org['has_attorneys'] ) ) : ?>
+                <?php if ( ( $org['has_attorneys'] ?? '' ) === 'yes' ) : ?>
                     <span class="ws-aorg-card__badge ws-aorg-card__badge--attorneys">
                         Licensed Attorneys
                     </span>
                 <?php endif; ?>
-                <?php if ( ! empty( $org['has_anonymous'] ) ) : ?>
+                <?php if ( ( $org['anonymous_pre_consult_status'] ?? '' ) === 'yes' ) : ?>
                     <span class="ws-aorg-card__badge ws-aorg-card__badge--anon">
                         Accepts Anonymous
                     </span>
@@ -712,8 +708,8 @@ function ws_render_directory_card( array $org, int $position = 0, int $results_t
         <?php endif; ?>
 
         <div class="ws-aorg-card__actions">
-            <?php if ( ! empty( $org['website_url'] ) ) : ?>
-                <a href="<?php echo esc_url( $org['website_url'] ); ?>"
+            <?php if ( ! empty( $org['official_homepage_url'] ) ) : ?>
+                <a href="<?php echo esc_url( $org['official_homepage_url'] ); ?>"
                    class="ws-btn ws-btn--secondary ws-btn--sm"
                    target="_blank"
                    rel="noopener noreferrer"
@@ -742,16 +738,6 @@ function ws_render_directory_card( array $org, int $position = 0, int $results_t
                     <span class="screen-reader-text">(opens in new tab)</span>
                 </a>
             <?php endif; ?>
-            <?php if ( $has_secure_channel && $secure_contact_url !== '' ) : ?>
-                <a href="<?php echo esc_url( $secure_contact_url ); ?>"
-                   class="ws-btn ws-btn--secure ws-btn--sm"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   aria-label="Open secure contact for <?php echo esc_attr( $org['title'] ); ?><?php echo $secure_contact_tool_label !== '' ? ' via ' . esc_attr( $secure_contact_tool_label ) : ''; ?> (opens in new tab)">
-                    Secure Contact
-                    <span class="screen-reader-text">(opens in new tab)</span>
-                </a>
-            <?php endif; ?>
             <?php if ( ! empty( $org['has_extended_profile'] ) && ! empty( $org['url'] ) ) : ?>
                 <a href="<?php echo esc_url( add_query_arg( [
                     'ws_from_dir'  => '1',
@@ -759,7 +745,7 @@ function ws_render_directory_card( array $org, int $position = 0, int $results_t
                     'ws_rel_score' => (int) ( $org['_rel_score'] ?? 0 ),
                     'ws_eng_score' => (int) ( $org['_eng_score'] ?? 0 ),
                     'ws_results_total' => max( 0, $results_total ),
-                    'ws_secure_badge'  => ! empty( $org['has_secure_channel'] ) ? '1' : '0',
+                    'ws_secure_badge'  => $has_secure_channel ? '1' : '0',
                 ], $org['url'] ) ); ?>"
                    class="ws-aorg-card__more-link"
                    aria-label="More about <?php echo esc_attr( $org['title'] ); ?>">

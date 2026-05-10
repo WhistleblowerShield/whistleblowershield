@@ -282,7 +282,7 @@ function ws_filter_score_org( array $org, array $context, bool $targeted = false
     // Attorney bonus — applies when stage signals legal need
     $attorney_stages = ws_filter_attorney_stages();
     if ( $context['stage'] !== null && in_array( $context['stage'], $attorney_stages, true ) ) {
-        if ( (bool) get_post_meta( $org['id'], 'ws_aorg_licensed_attorneys', true ) ) {
+        if ( get_post_meta( $org['id'], 'ws_aorg_has_attorneys', true ) === 'yes' ) {
             $score += (int) ( $w['has_attorneys_bonus'] ?? 4 );
         }
     }
