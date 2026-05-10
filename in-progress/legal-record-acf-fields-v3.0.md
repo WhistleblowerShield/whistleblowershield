@@ -433,10 +433,8 @@ Fields ordered: rewards → qui tam specifics.
 - `qui_tam_relator_share`       — (Sister to `qui_tam_share_context`)
 - `qui_tam_reduction_context`   — (Sister to `qui_tam_share_context`)
 - `qui_tam_share_context`       — (conditional on `qui-tam-action` in `legal_recognitions`; hook: required)
-- `has_first_to_file_bar`       — (Sister to `qui_tam_share_context`; AND `bounty-qui-tam-award` in
-                                   `remedies`; approved use of `has_*` as state bool)
-- `has_public_disclosure_bar`   — (Sister to `qui_tam_share_context`; AND `bounty-qui-tam-award` in
-                                   `remedies`; approved use of `has_*` as state bool) 
+- `first_to_file_bar`           — (Sister to `qui_tam_share_context`; AND `bounty-qui-tam-award` in `remedies`)
+- `public_disclosure_bar`       — (Sister to `qui_tam_share_context`; AND `bounty-qui-tam-award` in `remedies`) 
 ---
 
 ### Waiver & Scope Tab

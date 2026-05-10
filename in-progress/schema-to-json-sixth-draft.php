@@ -452,11 +452,12 @@ class WS_Statute_Compiler_Local {
     private static function infer_type_and_rules($n, &$field) {
         if (preg_match('/_(context|details|gloss)$/', $n)) return 'textarea';
         if (preg_match('/_?(has|is)_|(_is_)/', $n)) return 'true_false';
+        if (str_ends_with($n, '_bar')) return 'true_false';
         if ($n === 'date' || str_ends_with($n, '_date')) return 'date_picker';
 
         // Guidance-defined select suffixes (ws-acf-field-guidance-v1.0.md §Default Field Types).
         // Choices are domain-specific and must be declared in the annotation.
-        if (preg_match('/_(class|scope|status|rule|framework|weight|standard|application|bar)e?s?$/', $n)) {
+        if (preg_match('/_(class|scope|status|rule|framework|weight|standard|application)e?s?$/', $n)) {
             return 'select';
         }
 

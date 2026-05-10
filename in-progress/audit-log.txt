@@ -1,17 +1,17 @@
 ================================================================
 WS Statute Compiler Audit Log
 Generator version: 11.1.0
-Generated: 2026-05-10T16:19:17+00:00
-Spec checksum: e69126a9
-Tab fields: 216 | Hidden fields: 3
+Generated: 2026-05-10T18:37:08+00:00
+Spec checksum: 4e577b4e
+Tab fields: 214 | Hidden fields: 3
 ----------------------------------------------------------------
 Entry counts:
-  APPROVED             5
+  APPROVED             8
   DECLARED             113
   ESCAPE               45
   INFERRED             4
   LOGIC-DIRECT         86
-  NO-HOOK              121
+  NO-HOOK              119
   POST-OBJECT          5
   TAXONOMY-BIND        14
 ================================================================
@@ -72,11 +72,14 @@ ESCAPE: causation_standard_statutory_text → text (reason: no suffix-based type
 TAXONOMY-BIND: causation_standard → ws_causation_standard (select)
 ESCAPE: employer_defenses → text (reason: no suffix-based type inference matched)
 TAXONOMY-BIND: employer_defenses → ws_employer_defense (multi_select)
+APPROVED: rebuttable_presumption_details → spec carries editorial-approval annotation
 ESCAPE: presumption_effect → text (reason: no suffix-based type inference matched)
 APPROVED: has_bop_details → spec carries editorial-approval annotation
 ESCAPE: reward_discretion_formula → text (reason: no suffix-based type inference matched)
 ESCAPE: qui_tam_government_share → text (reason: no suffix-based type inference matched)
 ESCAPE: qui_tam_relator_share → text (reason: no suffix-based type inference matched)
+APPROVED: has_first_to_file_bar → spec carries editorial-approval annotation
+APPROVED: has_public_disclosure_bar → spec carries editorial-approval annotation
 ESCAPE: sovereign_immunity_limits → text (reason: no suffix-based type inference matched)
 ESCAPE: ref_materials → text (reason: no suffix-based type inference matched)
 POST-OBJECT: ref_materials → multiple=1
@@ -339,9 +342,7 @@ NO-HOOK: qui_tam_reduction_context has no declared or inferred hook category
 DECLARED: qui_tam_share_context → required
 LOGIC-DIRECT: qui_tam_share_context captured conditional logic from spec
 NO-HOOK: has_first_to_file_bar has no declared or inferred hook category
-NO-HOOK: first_to_file_bar_details has no declared or inferred hook category
 NO-HOOK: has_public_disclosure_bar has no declared or inferred hook category
-NO-HOOK: public_disclosure_bar_details has no declared or inferred hook category
 DECLARED: all_waivers_blocked_context → required
 LOGIC-DIRECT: all_waivers_blocked_context captured conditional logic from spec
 DECLARED: civil_action_waiver_status → required

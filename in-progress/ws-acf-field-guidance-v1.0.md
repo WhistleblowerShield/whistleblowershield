@@ -276,6 +276,7 @@ These defaults apply by naming convention unless the inline definition says othe
 - `*_formula` describes mandated calculations.
 - `*_sanctions` describes specified penalized conduct, **strictly** as a repeater.
 - `*_application` describes where or how a standard applies and is a select field.
+- `*_bar` is used for blocking doctrines or procedural bars and **must strictly** be select or boolean.
 - `select` means single-select unless multi-select is specified.
 
 ### Default Taxonomy Field Settings

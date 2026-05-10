@@ -32,9 +32,9 @@
     },
     "meta": {
         "_warning": "Per WS-Core Security Protocol 4.7.2, direct modification is prohibited. Hand-editing triggers automated disciplinary flaying. Intestines will be removed via the navel to preserve the audit trail.",
-        "checksum": "e69126a9",
+        "checksum": "4e577b4e",
         "cpt": "jx-statute",
-        "generated_timestamp": "2026-05-10T16:19:17+00:00",
+        "generated_timestamp": "2026-05-10T18:37:08+00:00",
         "generator_version": "11.1.0",
         "infix": "jx",
         "protocol_reference": "Security Protocol Manual (WS-SPM-4.7.2)",
@@ -1181,10 +1181,6 @@
         },
         "reward_tab": {
             "fields": {
-                "first_to_file_bar_details": {
-                    "name": "first_to_file_bar_details",
-                    "type": "textarea"
-                },
                 "has_first_to_file_bar": {
                     "name": "has_first_to_file_bar",
                     "type": "true_false"
@@ -1192,10 +1188,6 @@
                 "has_public_disclosure_bar": {
                     "name": "has_public_disclosure_bar",
                     "type": "true_false"
-                },
-                "public_disclosure_bar_details": {
-                    "name": "public_disclosure_bar_details",
-                    "type": "textarea"
                 },
                 "qui_tam_government_share": {
                     "name": "qui_tam_government_share",
