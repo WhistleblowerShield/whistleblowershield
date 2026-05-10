@@ -375,47 +375,47 @@ Fields ordered: process → pathway → fee shifting → remedies → reinstatem
 Fields ordered: framework → employee standards → causation → employer defenses → rebuttable presumption →
 temporal presumption → detail overflow.
 
-- `burden_shifting_frameworks`     — (Sister to `burden_shifting_context`; multi-select: `mcdonnell-douglas`|
-                                      `motivating-factor`|`but-for`|`mixed-motive`|`has-details`; hook: required)
-- `burden_shifting_details`        — (conditional on `burden_shifting_frameworks` includes `has-details`)
-- `burden_shifting_context`        — (conditional on `burden-shifting-framework` in `legal_recognitions`)
-- `mixed_motive_remedy_gloss`      — (conditional on `burden_shifting_frameworks` includes `mixed-motive`)
-- `same_decision_standard`         — (Sister to `same_decision_context`; select: `preponderance`|
-                                      `clear-and-convincing`|`see-context`; hook: required)
-- `same_decision_context`          — (conditional on `same-decision-defense-standard` in `legal_recognitions`)
-- `employee_standard`              — (single-select taxonomy: `ws_employee_standard`)
+- `burden_shifting_frameworks`      — (Sister to `burden_shifting_context`; multi-select: `mcdonnell-douglas`|
+                                       `motivating-factor`|`but-for`|`mixed-motive`|`has-details`; hook: required)
+- `burden_shifting_details`         — (conditional on `burden_shifting_frameworks` includes `has-details`)
+- `burden_shifting_context`         — (conditional on `burden-shifting-framework` in `legal_recognitions`)
+- `mixed_motive_remedy_gloss`       — (conditional on `burden_shifting_frameworks` includes `mixed-motive`)
+- `same_decision_standard`          — (Sister to `same_decision_context`; select: `preponderance`|
+                                       `clear-and-convincing`|`see-context`; hook: required)
+- `same_decision_context`           — (conditional on `same-decision-defense-standard` in `legal_recognitions`)
+- `employee_standard`               — (single-select taxonomy: `ws_employee_standard`)
 - `employee_standard_details`
-- `employment_classification_test` — (Sister to `employment_classification_context`; select: `economic-realities`|
-                                      `common-law-darden`|`abc-test`|`right-to-control`|`hybrid`|`see-context`; hook: required)
-- `employment_classification_context` — (conditional on `employment-classification-test` in `legal_recognitions`; hook: required)
-- `has_causation_standard_statutory_text` — (Sister to `causation_standard_context`)
-- `causation_standard_statutory_text` — (distinct from `causation_standard_context`)
-- `causation_standard`             — (Sister to `causation_standard_context`; single-select taxonomy:
-                                      `ws_causation_standard`; hook: required)
-- `causation_scope`                — (Sister to `causation_standard_context`; select: `liability`|
-                                      `damages`|`both`|`see-context`)
-- `causation_standard_context`     — (conditional on `causation-standard-recognized` in `legal_recognitions`; hook: required)
+- `employment_classification_test`  — (Sister to `employment_classification_context`; select: `economic-realities`|
+                                       `common-law-darden`|`abc-test`|`right-to-control`|`hybrid`|`see-context`; hook: required)
+- `employment_classification_context`  — (conditional on `employment-classification-test` in `legal_recognitions`; hook: required)
+- `has_causation_standard_statutory_text`  — (Sister to `causation_standard_context`)
+- `causation_standard_statutory_text`  — (distinct from `causation_standard_context`)
+- `causation_standard`              — (Sister to `causation_standard_context`; single-select taxonomy:
+                                       `ws_causation_standard`; hook: required)
+- `causation_scope`                 — (Sister to `causation_standard_context`; select: `liability`|
+                                       `damages`|`both`|`see-context`)
+- `causation_standard_context`      — (conditional on `causation-standard-recognized` in `legal_recognitions`; hook: required)
 - `causation_dual_standard_context`  — (conditional on `causation-dual-standard` in `legal_recognitions` AND
                                         `causation-standard-recognized` in `legal_recognitions`; hook: required)
-- `employer_knowledge_scopes`      — (Sister to `employer_knowledge_context`; multi-select:
-                                      `actual-knowledge`|`constructive-knowledge`|`inferred-knowledge`|
-                                      `imputed-knowledge`|`has-details`; hook: required)
+- `employer_knowledge_scopes`       — (Sister to `employer_knowledge_context`; multi-select:
+                                       `actual-knowledge`|`constructive-knowledge`|`inferred-knowledge`|
+                                       `imputed-knowledge`|`has-details`; hook: required)
 - `employer_knowledge_scopes_details`
-- `employer_knowledge_context`     — (conditional on `employer-knowledge-required` in `legal_recognitions`)
-- `employer_defenses`              — (taxonomy: `ws_employer_defense`)
+- `employer_knowledge_context`      — (conditional on `employer-knowledge-required` in `legal_recognitions`)
+- `employer_defenses`               — (taxonomy: `ws_employer_defense`)
 - `employer_defense_details`
 - `has_rebuttable_presumption`
-- `rebuttable_presumption_details`
-- `presumption_window_value`       — (Sister to `temporal_presumption_context`)
+- `rebuttable_presumption_details`  — (approved use of as `*_details` suffix)
+- `presumption_window_value`        — (Sister to `temporal_presumption_context`)
 - `presumption_window_unit`
-- `presumption_effect`             — (Sister to `temporal_presumption_context`; select: `shifts-burden`|
+- `presumption_effect`              — (Sister to `temporal_presumption_context`; select: `shifts-burden`|
                                       `creates-inference`|`rebuttable-presumption`|`has-details`; hook: required)
 - `presumption_effect_details`
-- `temporal_presumption_context`   — (conditional on `temporal-presumption-recognized` in `legal_recognitions`)
-- `temporal_proximity_value`       — (Sister to `temporal_proximity_context`)
+- `temporal_presumption_context`    — (conditional on `temporal-presumption-recognized` in `legal_recognitions`)
+- `temporal_proximity_value`        — (Sister to `temporal_proximity_context`)
 - `temporal_proximity_unit`
-- `temporal_proximity_context`     — (conditional on `temporal-proximity-sufficient` in `legal_recognitions`; hook: required)
-- `has_bop_details`                — (approved use of `*_details` on trigger)
+- `temporal_proximity_context`      — (conditional on `temporal-proximity-sufficient` in `legal_recognitions`; hook: required)
+- `has_bop_details`                 — (approved use of `*_details` on trigger)
 - `bop_details`
 
 ---
@@ -424,22 +424,19 @@ temporal presumption → detail overflow.
 
 Fields ordered: rewards → qui tam specifics.
 
-- `reward_discretion_scope`     — (Sister to `reward_context`; select: `mandatory`|`discretionary`|
-                                      `presumptive`|`formula-based`|`has-details`; hook: required)
-- `reward_discretion_formula`      — (conditional on `reward_discretion_scope` is `formula-based`)
-- `reward_discretion_details`      — (conditional on `reward_discretion_scope` is `has-details`)
-- `reward_context`                 — (conditional on `reward-available` in `legal_recognitions`)
-- `qui_tam_government_share`       — (Sister to `qui_tam_share_context`)
-- `qui_tam_relator_share`          — (Sister to `qui_tam_share_context`)
-- `qui_tam_reduction_context`      — (Sister to `qui_tam_share_context`)
-- `qui_tam_share_context`          — (conditional on `qui-tam-action` in `legal_recognitions`; hook: required)
-- `has_first_to_file_bar`          — (Sister to `qui_tam_share_context`; AND
-                                      `bounty-qui-tam-award` in `remedies`)
-- `first_to_file_bar_details`
-- `has_public_disclosure_bar`      — (Sister to `qui_tam_share_context`; AND
-                                      `bounty-qui-tam-award` in `remedies`)
-- `public_disclosure_bar_details`
-
+- `reward_discretion_scope`     — (Sister to `reward_context`; select: `mandatory`|`discretionary`|`presumptive`|
+                                   `formula-based`|`has-details`; hook: required)
+- `reward_discretion_formula`   — (conditional on `reward_discretion_scope` is `formula-based`)
+- `reward_discretion_details`   — (conditional on `reward_discretion_scope` is `has-details`)
+- `reward_context`              — (conditional on `reward-available` in `legal_recognitions`)
+- `qui_tam_government_share`    — (Sister to `qui_tam_share_context`)
+- `qui_tam_relator_share`       — (Sister to `qui_tam_share_context`)
+- `qui_tam_reduction_context`   — (Sister to `qui_tam_share_context`)
+- `qui_tam_share_context`       — (conditional on `qui-tam-action` in `legal_recognitions`; hook: required)
+- `has_first_to_file_bar`       — (Sister to `qui_tam_share_context`; AND `bounty-qui-tam-award` in
+                                   `remedies`; approved use of `has_*` as state bool)
+- `has_public_disclosure_bar`   — (Sister to `qui_tam_share_context`; AND `bounty-qui-tam-award` in
+                                   `remedies`; approved use of `has_*` as state bool) 
 ---
 
 ### Waiver & Scope Tab

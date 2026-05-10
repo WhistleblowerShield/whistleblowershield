@@ -67,8 +67,9 @@ Exception: `*_details`, `*_context`, and `*_gloss` are lexical labels and do not
 Boolean naming is limited to two roles:
 `has_*` is a *trigger boolean* — when true, it activates a conditional field. `has_field_name` implicitly triggers
   `field_name`; the companion *must immediately* follow the trigger in the field list. When `field_name` already
-   exists, `has_field_name` triggers `field_name_details`; `field_name_details` *must immediately* follow
-   `field_name`.
+   exists, `has_field_name` triggers `field_name_details`; *proximity* to `field_name` is the hard requirement
+   — *prioritize* placing it directly after `field_name`; use best editorial judgement when workflow requires
+   otherwise.
 `is_*` and `*_is_*` are *state booleans* — they describe a state and do not
   trigger companions.
 
