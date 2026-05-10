@@ -255,10 +255,10 @@ Fields ordered: scope → adverse actions → recognitions → sanctions.
 
 - `adverse_action_scope`              — (select: `termination-only`|`material-adverse`|
                                          `broad-any-adverse-action`|`see-gloss`; hook: excludes)
-- `adverse_action_scope_gloss`        — (conditional on `adverse_action_scope` is non-empty; hook: override - see [Material Adverse Override])
+- `adverse_action_scope_gloss`        — (conditional on `adverse_action_scope` is non-empty; hook: override)
 - `adverse_actions`                   — (taxonomy: `ws_adverse_action`; hook: impacts)
-- `anticipatory_retaliation_gloss`    — (conditional on `anticipatory-retaliation` in `adverse_actions`; hook: override - see [Material Adverse Override])
-- `threatened_retaliation_gloss`      — (conditional on `threatened-retaliation` in `adverse_actions`; hook: override - see [Material Adverse Override])
+- `anticipatory_retaliation_gloss`    — (conditional on `anticipatory-retaliation` in `adverse_actions`; hook: override)
+- `threatened_retaliation_gloss`      — (conditional on `threatened-retaliation` in `adverse_actions`; hook: override)
 - `adverse_action_details`
 - `facially_retaliatory_policy_context` — (conditional on `facially-retaliatory-policy` in `legal_recognitions`; hook: required)
 - `is_blacklisting_extended`          — (conditional on `blacklisting` in `adverse_actions`)
@@ -422,7 +422,7 @@ temporal presumption → detail overflow.
 - `temporal_proximity_value`       — (Sister to `temporal_proximity_context`)
 - `temporal_proximity_unit`
 - `temporal_proximity_context`     — (conditional on `temporal-proximity-sufficient` in `legal_recognitions`; hook: required)
-- `has_bop_details`                — (approved use of `*_details` on triiger)
+- `has_bop_details`                — (approved use of `*_details` on trigger)
 - `bop_details`
 
 ---
@@ -586,8 +586,8 @@ records:
 
 ##### Relationships Tab
 
-- `citation_ids`
-- `construction_ids`
+- `citation_ids`                   — (post object; array; `jx-citation`)
+- `construction_ids`               — (post object; array; `jx-construction`)
 
 ##### Hidden Fields
 
@@ -688,8 +688,8 @@ Excluded: `WS_JURISDICTION_TAXONOMY` (geographic, not classificatory); `ws_aorg_
 
 #### Relationships Tab
 
-- `statute_ids`
-- `comlaw_ids`
+- `statute_ids`                    — (post object; array; `jx-statute`)
+- `comlaw_ids`                     — (post object; array; `jx-common-law`)
 - `parent_weight`                  — (select: `primary`|`secondary`|`distinguishing-only`)
 - `has_negative_treatment_class`
 - `negative_treatment_class`       — (conditional on `has_negative_treatment_class` is true; select: `overruled`|

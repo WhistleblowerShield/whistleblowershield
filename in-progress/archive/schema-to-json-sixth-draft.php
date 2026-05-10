@@ -2,7 +2,7 @@
 /**
  * WS Core: Statute Markdown-to-JSON Compiler
  * Protocol: WS-SPM-4.7.2 (Final Behavioral Enforcement)
- * Version: 11.0.0
+ * Version: 11.1.0
  */
 
 // 1. Mock WordPress environment for local execution

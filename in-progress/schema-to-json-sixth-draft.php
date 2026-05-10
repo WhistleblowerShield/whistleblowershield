@@ -2,7 +2,7 @@
 /**
  * WS Core: Statute Markdown-to-JSON Compiler
  * Protocol: WS-SPM-4.7.2 (Final Behavioral Enforcement)
- * Version: 11.0.0
+ * Version: 11.1.0
  */
 
 // 1. Mock WordPress environment for local execution
@@ -89,6 +89,11 @@ class WS_Statute_Compiler_Local {
             'hidden' => []
         ];
 
+        // Truncate at the Rename Normalization section — everything after it is
+        // non-field content (rename table, notes) whose `- ` lines would be
+        // misread as field declarations.
+        $content = preg_split('/^## Rename Normalization/m', $content)[0];
+
         // Segment by Tab Headers
         $sections = preg_split('/^### /m', $content);
         array_shift($sections);
@@ -98,8 +103,22 @@ class WS_Statute_Compiler_Local {
             $tab_label = trim(array_shift($lines));
             $tab_key = strtolower(str_replace([' ', '&'], ['_', ''], $tab_label));
 
+            // Join continuation lines: append any non-field line to the preceding field
+            // line while its parenthetical annotation is still open (more ( than )).
+            $joined = [];
             foreach ($lines as $line) {
-                $line = trim($line);
+                $t = trim($line);
+                if (str_starts_with($t, '- ')) {
+                    $joined[] = $t;
+                } elseif ($t !== '' && !empty($joined)) {
+                    $last = $joined[count($joined) - 1];
+                    if (substr_count($last, '(') > substr_count($last, ')')) {
+                        $joined[count($joined) - 1] .= ' ' . $t;
+                    }
+                }
+            }
+
+            foreach ($joined as $line) {
                 if (!str_starts_with($line, '- ')) continue;
 
                 $field = self::parse_field_line($line, $registry);
@@ -167,20 +186,48 @@ class WS_Statute_Compiler_Local {
 
         $deltas = preg_split('/;\s*(?!AND|OR|NOT|absent in)/i', $delta_str);
 
+        // Post-object field detection (operates on full annotation string before delta loop).
+        // Pattern 1: post_type[`cpt-slug`] — used for agencies and similar relationship fields.
+        if (preg_match('/(?:(multi-select)[:\s]+)?post_type\[`([^`]+)`\]/', $delta_str, $m)) {
+            $field['type'] = 'post_object';
+            $field['post_type'] = $m[2];
+            $field['multiple'] = ($m[1] === 'multi-select') ? 1 : 0;
+            self::$audit_log[] = "POST-OBJECT: {$name} → post_type={$m[2]}, multiple={$field['multiple']}";
+        // Pattern 2: "post object" or "post_id" narrative annotation.
+        } elseif (str_contains($delta_str, 'post object') || preg_match('/\bpost_id\b/', $delta_str)) {
+            $field['type'] = 'post_object';
+            $field['multiple'] = str_contains($delta_str, 'array') ? 1 : 0;
+            if (preg_match('/post[\s_]object[^`]*`([^`]+)`/', $delta_str, $m)) {
+                $field['post_type'] = $m[1];
+            }
+            self::$audit_log[] = "POST-OBJECT: {$name} → multiple={$field['multiple']}" .
+                (isset($field['post_type']) ? ", post_type={$field['post_type']}" : '');
+        // Pattern 3: hidden merge target — "merged array of" sources.
+        } elseif (str_contains($delta_str, 'merged array')) {
+            $field['type'] = 'post_object';
+            $field['multiple'] = 1;
+            self::$audit_log[] = "POST-OBJECT: {$name} → merged array (multiple=1)";
+        }
+
         foreach ($deltas as $delta) {
             $delta = trim($delta);
 
-            if (preg_match('/(?:(single-select)\s+)?taxonomy:\s*([A-Z_a-z0-9]+)/', $delta, $m)) {
+            // PHP constants used as taxonomy names in the spec (e.g. WS_JURISDICTION_TAXONOMY)
+            $tax_constants = ['WS_JURISDICTION_TAXONOMY' => 'ws_jurisdiction'];
+
+            if (preg_match('/(?:(single-select)\s+)?taxonomy:\s*`?([A-Z_a-z0-9]+)`?/', $delta, $m)) {
+                $tax_slug = $tax_constants[$m[2]] ?? $m[2];
                 $field['type'] = 'taxonomy';
-                $field['taxonomy'] = $m[2];
+                $field['taxonomy'] = $tax_slug;
                 $field['field_type'] = ($m[1] === 'single-select') ? 'select' : 'multi_select';
-                if (!isset($registry[$m[2]])) wp_die("Taxonomy '{$m[2]}' missing from registry.");
-                self::$audit_log[] = "TAXONOMY-BIND: {$name} → {$m[2]} ({$field['field_type']})";
+                if (!isset($registry[$tax_slug])) wp_die("Taxonomy '{$tax_slug}' missing from registry.");
+                self::$audit_log[] = "TAXONOMY-BIND: {$name} → {$tax_slug} ({$field['field_type']})";
             }
 
-            if (preg_match('/select:\s*([^)]+)/', $delta, $m)) {
+            if (preg_match('/select:\s*([^;)]+)/', $delta, $m) && ($field['type'] ?? '') !== 'post_object') {
                 $field['type'] = 'select';
-                $field['choices'] = explode('|', $m[1]);
+                $raw_choices = explode('|', trim($m[1]));
+                $field['choices'] = array_map(fn($c) => trim($c, " \t`"), $raw_choices);
                 $field['multiple'] = str_contains($delta, 'multi-select') ? 1 : 0;
             }
 
@@ -328,7 +375,9 @@ class WS_Statute_Compiler_Local {
     }
 
     private static function validate_terms($name, $logic, $flat, $registry) {
-        if (preg_match_all("/'(.+?)' (?:in|absent in) '(.+?)'/", $logic, $matches, PREG_SET_ORDER)) {
+        // Logic strings use backtick notation: `slug` in `field`
+        // Use [^`]+ to prevent crossing backtick boundaries on compound AND conditions.
+        if (preg_match_all('/`([^`]+)` (?:in|absent in) `([^`]+)`/', $logic, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $m) {
                 $slug = $m[1]; $target = $m[2];
                 $tax = $flat[$target]['taxonomy'] ?? null;
@@ -343,12 +392,44 @@ class WS_Statute_Compiler_Local {
         if (!file_exists($file)) return [];
         $content = file_get_contents($file);
         $registry = [];
-        preg_match_all("/'([a-z0-9_]+)'\s*=>\s*\[\s*'terms'\s*=>\s*\[([^\]]+)\]/s", $content, $matches, PREG_SET_ORDER);
-        foreach ($matches as $m) {
-            $tax_slug = $m[1];
-            preg_match_all("/'([a-z0-9-]+)'\s*=>/", $m[2], $term_matches);
+
+        // Find each taxonomy entry by locating 'slug' => [ ... 'terms' => [ ... ] ... ]
+        // Use offset scanning to handle nested brackets in hierarchical term arrays.
+        if (!preg_match_all("/'([a-z0-9_]+)'\s*=>\s*\[/", $content, $slug_matches, PREG_OFFSET_CAPTURE)) {
+            return $registry;
+        }
+
+        foreach ($slug_matches[1] as $i => $slug_match) {
+            $tax_slug    = $slug_match[0];
+            $block_start = $slug_matches[0][$i][1] + strlen($slug_matches[0][$i][0]) - 1;
+
+            $depth = 0; $block_end = $block_start;
+            for ($pos = $block_start, $len = strlen($content); $pos < $len; $pos++) {
+                if ($content[$pos] === '[') $depth++;
+                elseif ($content[$pos] === ']') { $depth--; if ($depth === 0) { $block_end = $pos; break; } }
+            }
+
+            $block = substr($content, $block_start, $block_end - $block_start + 1);
+
+            if (!preg_match("/'terms'\s*=>\s*\[/", $block, $tm, PREG_OFFSET_CAPTURE)) {
+                // No literal terms array (e.g. function-generated). Register with empty terms
+                // so existence checks pass; individual slug validation is intentionally skipped.
+                $registry[$tax_slug] = ['terms' => []];
+                continue;
+            }
+
+            $terms_start = $tm[0][1] + strlen($tm[0][0]) - 1;
+            $depth = 0; $terms_end = $terms_start;
+            for ($pos = $terms_start, $len = strlen($block); $pos < $len; $pos++) {
+                if ($block[$pos] === '[') $depth++;
+                elseif ($block[$pos] === ']') { $depth--; if ($depth === 0) { $terms_end = $pos; break; } }
+            }
+
+            $terms_block = substr($block, $terms_start, $terms_end - $terms_start + 1);
+            preg_match_all("/'([a-z0-9-]+)'\s*=>/", $terms_block, $term_matches);
             $registry[$tax_slug] = ['terms' => array_fill_keys($term_matches[1], true)];
         }
+
         return $registry;
     }
 
@@ -369,6 +450,11 @@ class WS_Statute_Compiler_Local {
         if (str_ends_with($n, '_value') || str_ends_with($n, '_year')) return 'number';
         if (str_ends_with($n, '_url')) return 'url';
         
+        if (str_ends_with($n, '_ids')) {
+            $field['multiple'] = 1;
+            return 'post_object';
+        }
+
         self::$audit_log[] = "ESCAPE: {$n} → text (reason: no suffix-based type inference matched)";
         return 'text';
     }
@@ -378,3 +464,5 @@ class WS_Statute_Compiler_Local {
         foreach ($array as &$value) { if (is_array($value)) self::ksort_recursive($value); }
     }
 }
+
+echo WS_Statute_Compiler_Local::compile() . "\n";

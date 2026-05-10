@@ -1,0 +1,550 @@
+================================================================
+WS Statute Compiler Audit Log
+Generator version: 11.1.0
+Generated: 2026-05-10T12:58:55+00:00
+Spec checksum: 0f676449
+Tab fields: 264 | Hidden fields: 6
+----------------------------------------------------------------
+Entry counts:
+  APPROVED             7
+  DECLARED             119
+  ESCAPE               113
+  INFERRED             8
+  LOGIC-DIRECT         96
+  NO-HOOK              161
+  POST-OBJECT          13
+  TAXONOMY-BIND        16
+================================================================
+ESCAPE: jurisdiction → text (reason: no suffix-based type inference matched)
+TAXONOMY-BIND: jurisdiction → ws_jurisdiction (select)
+ESCAPE: official_name → text (reason: no suffix-based type inference matched)
+ESCAPE: common_name → text (reason: no suffix-based type inference matched)
+ESCAPE: citation → text (reason: no suffix-based type inference matched)
+ESCAPE: date → text (reason: no suffix-based type inference matched)
+ESCAPE: protection_scope → text (reason: no suffix-based type inference matched)
+ESCAPE: general_description → text (reason: no suffix-based type inference matched)
+APPROVED: has_attach_flag → spec carries editorial-approval annotation
+ESCAPE: display_order → text (reason: no suffix-based type inference matched)
+ESCAPE: legal_recognitions → text (reason: no suffix-based type inference matched)
+TAXONOMY-BIND: legal_recognitions → ws_legal_recognition (multi_select)
+ESCAPE: malicious_reporting_sanctions → text (reason: no suffix-based type inference matched)
+ESCAPE: protected_action_standards → text (reason: no suffix-based type inference matched)
+ESCAPE: reasonable_belief_scope → text (reason: no suffix-based type inference matched)
+ESCAPE: protected_action_sources → text (reason: no suffix-based type inference matched)
+ESCAPE: protected_actions → text (reason: no suffix-based type inference matched)
+TAXONOMY-BIND: protected_actions → ws_protected_action (multi_select)
+ESCAPE: protected_disclosures → text (reason: no suffix-based type inference matched)
+TAXONOMY-BIND: protected_disclosures → ws_protected_disclosure (multi_select)
+ESCAPE: protected_classes → text (reason: no suffix-based type inference matched)
+TAXONOMY-BIND: protected_classes → ws_protected_class (multi_select)
+ESCAPE: excluded_classes → text (reason: no suffix-based type inference matched)
+TAXONOMY-BIND: excluded_classes → ws_excluded_class (multi_select)
+ESCAPE: employment_sectors → text (reason: no suffix-based type inference matched)
+TAXONOMY-BIND: employment_sectors → ws_employment_sector (multi_select)
+ESCAPE: disclosure_targets → text (reason: no suffix-based type inference matched)
+TAXONOMY-BIND: disclosure_targets → ws_disclosure_target (multi_select)
+ESCAPE: disclosure_channel_scope → text (reason: no suffix-based type inference matched)
+APPROVED: disclosure_channel_scope → spec carries editorial-approval annotation
+ESCAPE: disclosure_format → text (reason: no suffix-based type inference matched)
+ESCAPE: sol_triggers → text (reason: no suffix-based type inference matched)
+APPROVED: has_sol_details → spec carries editorial-approval annotation
+ESCAPE: exhaustion_required_scope → text (reason: no suffix-based type inference matched)
+ESCAPE: filing_notice_required_targets → text (reason: no suffix-based type inference matched)
+ESCAPE: employer_threshold_model → text (reason: no suffix-based type inference matched)
+ESCAPE: federal_state_interaction → text (reason: no suffix-based type inference matched)
+ESCAPE: adverse_action_scope → text (reason: no suffix-based type inference matched)
+ESCAPE: adverse_actions → text (reason: no suffix-based type inference matched)
+TAXONOMY-BIND: adverse_actions → ws_adverse_action (multi_select)
+ESCAPE: preservation_requirement_scopes → text (reason: no suffix-based type inference matched)
+ESCAPE: constructive_discharge_standard → text (reason: no suffix-based type inference matched)
+ESCAPE: criminal_sanctions → text (reason: no suffix-based type inference matched)
+ESCAPE: process_types → text (reason: no suffix-based type inference matched)
+TAXONOMY-BIND: process_types → ws_process_type (multi_select)
+ESCAPE: primary_agency → text (reason: no suffix-based type inference matched)
+POST-OBJECT: primary_agency → post_type=ws-agency, multiple=0
+ESCAPE: local_agencies → text (reason: no suffix-based type inference matched)
+POST-OBJECT: local_agencies → post_type=ws-agency, multiple=0
+ESCAPE: federal_agencies → text (reason: no suffix-based type inference matched)
+POST-OBJECT: federal_agencies → post_type=ws-agency, multiple=0
+ESCAPE: process_pathway_scope → text (reason: no suffix-based type inference matched)
+ESCAPE: process_pathway_limit → text (reason: no suffix-based type inference matched)
+ESCAPE: enforcement_sequence → text (reason: no suffix-based type inference matched)
+ESCAPE: pleading_standard_rule → text (reason: no suffix-based type inference matched)
+ESCAPE: jury_trial_scope → text (reason: no suffix-based type inference matched)
+ESCAPE: fee_shifting_standard → text (reason: no suffix-based type inference matched)
+ESCAPE: fee_shifting_scope → text (reason: no suffix-based type inference matched)
+APPROVED: has_fee_shifting_phases → spec carries editorial-approval annotation
+ESCAPE: fee_shifting_phases → text (reason: no suffix-based type inference matched)
+ESCAPE: fee_shifting_asymmetry → text (reason: no suffix-based type inference matched)
+ESCAPE: remedies → text (reason: no suffix-based type inference matched)
+TAXONOMY-BIND: remedies → ws_remedy (multi_select)
+ESCAPE: remedy_limits → text (reason: no suffix-based type inference matched)
+ESCAPE: remedy_liquidated_multiplier → text (reason: no suffix-based type inference matched)
+ESCAPE: remedy_liquidated_formula → text (reason: no suffix-based type inference matched)
+ESCAPE: mitigation_required_sources → text (reason: no suffix-based type inference matched)
+ESCAPE: after_acquired_evidence_effect → text (reason: no suffix-based type inference matched)
+ESCAPE: interest_provision_scope → text (reason: no suffix-based type inference matched)
+ESCAPE: preliminary_reinstatement_rule → text (reason: no suffix-based type inference matched)
+ESCAPE: preliminary_reinstatement_scope → text (reason: no suffix-based type inference matched)
+ESCAPE: burden_shifting_frameworks → text (reason: no suffix-based type inference matched)
+ESCAPE: same_decision_standard → text (reason: no suffix-based type inference matched)
+ESCAPE: employee_standard → text (reason: no suffix-based type inference matched)
+TAXONOMY-BIND: employee_standard → ws_employee_standard (select)
+ESCAPE: employment_classification_test → text (reason: no suffix-based type inference matched)
+ESCAPE: causation_standard_statutory_text → text (reason: no suffix-based type inference matched)
+ESCAPE: causation_standard → text (reason: no suffix-based type inference matched)
+TAXONOMY-BIND: causation_standard → ws_causation_standard (select)
+ESCAPE: causation_scope → text (reason: no suffix-based type inference matched)
+ESCAPE: employer_knowledge_scopes → text (reason: no suffix-based type inference matched)
+ESCAPE: employer_defenses → text (reason: no suffix-based type inference matched)
+TAXONOMY-BIND: employer_defenses → ws_employer_defense (multi_select)
+ESCAPE: presumption_effect → text (reason: no suffix-based type inference matched)
+APPROVED: has_bop_details → spec carries editorial-approval annotation
+ESCAPE: reward_discretion_scope → text (reason: no suffix-based type inference matched)
+ESCAPE: reward_discretion_formula → text (reason: no suffix-based type inference matched)
+ESCAPE: qui_tam_government_share → text (reason: no suffix-based type inference matched)
+ESCAPE: qui_tam_relator_share → text (reason: no suffix-based type inference matched)
+ESCAPE: civil_action_waiver_status → text (reason: no suffix-based type inference matched)
+ESCAPE: contractual_waiver_status → text (reason: no suffix-based type inference matched)
+ESCAPE: proper_defendant_rules → text (reason: no suffix-based type inference matched)
+ESCAPE: individual_liability_scopes → text (reason: no suffix-based type inference matched)
+ESCAPE: sovereign_immunity_status → text (reason: no suffix-based type inference matched)
+ESCAPE: sovereign_immunity_limits → text (reason: no suffix-based type inference matched)
+ESCAPE: sovereign_immunity_scope → text (reason: no suffix-based type inference matched)
+ESCAPE: sovereign_immunity_waiver_class → text (reason: no suffix-based type inference matched)
+ESCAPE: anti_slapp_protection_scopes → text (reason: no suffix-based type inference matched)
+ESCAPE: discovery_protection_scopes → text (reason: no suffix-based type inference matched)
+ESCAPE: settlement_restriction_scope → text (reason: no suffix-based type inference matched)
+ESCAPE: ref_materials → text (reason: no suffix-based type inference matched)
+POST-OBJECT: ref_materials → multiple=1, post_type=ws-reference
+ESCAPE: overruled_by_id → text (reason: no suffix-based type inference matched)
+POST-OBJECT: overruled_by_id → multiple=0
+ESCAPE: url → text (reason: no suffix-based type inference matched)
+ESCAPE: authority_reference → text (reason: no suffix-based type inference matched)
+ESCAPE: _disclosure_target_class → text (reason: no suffix-based type inference matched)
+ESCAPE: _related_agencies → text (reason: no suffix-based type inference matched)
+POST-OBJECT: _related_agencies → merged array (multiple=1)
+ESCAPE: court → text (reason: no suffix-based type inference matched)
+ESCAPE: scope → text (reason: no suffix-based type inference matched)
+ESCAPE: binding_strength → text (reason: no suffix-based type inference matched)
+ESCAPE: affected_jx → text (reason: no suffix-based type inference matched)
+ESCAPE: extended_taxonomies → text (reason: no suffix-based type inference matched)
+ESCAPE: suppressed_taxonomies → text (reason: no suffix-based type inference matched)
+ESCAPE: review_standard → text (reason: no suffix-based type inference matched)
+ESCAPE: election_of_remedies_rules → text (reason: no suffix-based type inference matched)
+POST-OBJECT: citation_ids → multiple=1, post_type=jx-citation
+POST-OBJECT: construction_ids → multiple=1, post_type=jx-construction
+POST-OBJECT: _precedent_ids → merged array (multiple=1)
+ESCAPE: precedent_common → text (reason: no suffix-based type inference matched)
+ESCAPE: doctrine_basis → text (reason: no suffix-based type inference matched)
+ESCAPE: public_policy_sources → text (reason: no suffix-based type inference matched)
+ESCAPE: recognition_status → text (reason: no suffix-based type inference matched)
+ESCAPE: election_of_remedies_rules → text (reason: no suffix-based type inference matched)
+ESCAPE: doctrine_ → text (reason: no suffix-based type inference matched)
+ESCAPE: class → text (reason: no suffix-based type inference matched)
+ESCAPE: status → text (reason: no suffix-based type inference matched)
+ESCAPE: binding_strength → text (reason: no suffix-based type inference matched)
+APPROVED: binding_strength → spec carries editorial-approval annotation
+ESCAPE: court → text (reason: no suffix-based type inference matched)
+ESCAPE: court_jx → text (reason: no suffix-based type inference matched)
+TAXONOMY-BIND: court_jx → ws_jurisdiction (multi_select)
+ESCAPE: scope → text (reason: no suffix-based type inference matched)
+ESCAPE: extended_taxonomies → text (reason: no suffix-based type inference matched)
+ESCAPE: suppressed_taxonomies → text (reason: no suffix-based type inference matched)
+ESCAPE: affected_jx → text (reason: no suffix-based type inference matched)
+TAXONOMY-BIND: affected_jx → ws_jurisdiction (multi_select)
+POST-OBJECT: statute_ids → multiple=1, post_type=jx-statute
+POST-OBJECT: comlaw_ids → multiple=1, post_type=jx-common-law
+ESCAPE: parent_weight → text (reason: no suffix-based type inference matched)
+ESCAPE: negative_treatment_class → text (reason: no suffix-based type inference matched)
+ESCAPE: superseded_by_statute_id → text (reason: no suffix-based type inference matched)
+POST-OBJECT: superseded_by_statute_id → multiple=0
+ESCAPE: authority_sources → text (reason: no suffix-based type inference matched)
+ESCAPE: review_standard → text (reason: no suffix-based type inference matched)
+POST-OBJECT: _parent_ids → merged array (multiple=1)
+APPROVED: is_en_banc → spec carries editorial-approval annotation
+ESCAPE: panel_composition_class → text (reason: no suffix-based type inference matched)
+NO-HOOK: jurisdiction has no declared or inferred hook category
+NO-HOOK: official_name has no declared or inferred hook category
+NO-HOOK: common_name has no declared or inferred hook category
+NO-HOOK: citation has no declared or inferred hook category
+NO-HOOK: date has no declared or inferred hook category
+NO-HOOK: has_effective_date has no declared or inferred hook category
+NO-HOOK: effective_date has no declared or inferred hook category
+DECLARED: effective_year → butchers
+DECLARED: retro_date → required
+LOGIC-DIRECT: retro_context captured conditional logic from spec
+NO-HOOK: retro_context has no declared or inferred hook category
+NO-HOOK: protection_scope has no declared or inferred hook category
+NO-HOOK: general_description has no declared or inferred hook category
+NO-HOOK: has_attach_flag has no declared or inferred hook category
+LOGIC-DIRECT: display_order captured conditional logic from spec
+NO-HOOK: display_order has no declared or inferred hook category
+NO-HOOK: last_reviewed_date has no declared or inferred hook category
+DECLARED: legal_recognitions → impacts
+DECLARED: legal_recognitions → excludes
+DECLARED: manager_rule_exclusion_context → required
+LOGIC-DIRECT: manager_rule_exclusion_context captured conditional logic from spec
+DECLARED: public_concern_required_context → required
+LOGIC-DIRECT: public_concern_required_context captured conditional logic from spec
+DECLARED: manner_of_opposition_context → required
+LOGIC-DIRECT: manner_of_opposition_context captured conditional logic from spec
+DECLARED: bad_faith_exclusion_context → required
+LOGIC-DIRECT: bad_faith_exclusion_context captured conditional logic from spec
+DECLARED: anonymity_protection_context → required
+LOGIC-DIRECT: anonymity_protection_context captured conditional logic from spec
+DECLARED: malicious_reporting_sanctions → required
+LOGIC-DIRECT: malicious_reporting_context captured conditional logic from spec
+NO-HOOK: malicious_reporting_context has no declared or inferred hook category
+NO-HOOK: protected_action_standards has no declared or inferred hook category
+NO-HOOK: reasonable_belief_scope has no declared or inferred hook category
+NO-HOOK: protected_action_sources has no declared or inferred hook category
+DECLARED: protected_actions → required
+LOGIC-DIRECT: protected_action_context captured conditional logic from spec
+NO-HOOK: protected_action_context has no declared or inferred hook category
+NO-HOOK: protected_disclosures has no declared or inferred hook category
+DECLARED: protected_classes → impacts
+DECLARED: protected_classes → prerequisite
+DECLARED: protected_classes → excludes
+LOGIC-DIRECT: former_employee_gloss captured conditional logic from spec
+NO-HOOK: former_employee_gloss has no declared or inferred hook category
+NO-HOOK: protected_class_details has no declared or inferred hook category
+DECLARED: excluded_classes → required
+DECLARED: excluded_class_context → required
+LOGIC-DIRECT: excluded_class_context captured conditional logic from spec
+NO-HOOK: excluded_class_details has no declared or inferred hook category
+DECLARED: employment_sectors → impacts
+DECLARED: garcetti_exception_context → required
+LOGIC-DIRECT: garcetti_exception_context captured conditional logic from spec
+NO-HOOK: disclosure_targets has no declared or inferred hook category
+DECLARED: disclosure_channel_scope → required
+NO-HOOK: disclosure_format has no declared or inferred hook category
+NO-HOOK: disclosure_format_details has no declared or inferred hook category
+LOGIC-DIRECT: disclosure_channel_context captured conditional logic from spec
+NO-HOOK: disclosure_channel_context has no declared or inferred hook category
+LOGIC-DIRECT: ic_channel_sequence_gloss captured conditional logic from spec
+NO-HOOK: ic_channel_sequence_gloss has no declared or inferred hook category
+NO-HOOK: disclosure_target_details has no declared or inferred hook category
+NO-HOOK: sol_value has no declared or inferred hook category
+NO-HOOK: sol_unit has no declared or inferred hook category
+DECLARED: sol_triggers → impacts
+DECLARED: sol_triggers → prerequisite
+LOGIC-DIRECT: sol_trigger_discovery_gloss captured conditional logic from spec
+NO-HOOK: sol_trigger_discovery_gloss has no declared or inferred hook category
+LOGIC-DIRECT: sol_trigger_gloss captured conditional logic from spec
+NO-HOOK: sol_trigger_gloss has no declared or inferred hook category
+NO-HOOK: is_sol_suspended_during_admin has no declared or inferred hook category
+NO-HOOK: has_sol_details has no declared or inferred hook category
+NO-HOOK: sol_details has no declared or inferred hook category
+NO-HOOK: sop_value has no declared or inferred hook category
+NO-HOOK: sop_unit has no declared or inferred hook category
+NO-HOOK: is_sop_tolling_available has no declared or inferred hook category
+DECLARED: statute_of_repose_context → required
+LOGIC-DIRECT: statute_of_repose_context captured conditional logic from spec
+DECLARED: statutory_tolling_context → required
+LOGIC-DIRECT: statutory_tolling_context captured conditional logic from spec
+DECLARED: equitable_tolling_context → required
+LOGIC-DIRECT: equitable_tolling_context captured conditional logic from spec
+DECLARED: cba_preemption_context → required
+LOGIC-DIRECT: cba_preemption_context captured conditional logic from spec
+DECLARED: amended_claim_context → required
+LOGIC-DIRECT: amended_claim_context captured conditional logic from spec
+DECLARED: exhaustion_required_scope → required
+DECLARED: exhaustion_required_scope → excluded-by
+DECLARED: exhaustion_required_context → excluded-by
+LOGIC-DIRECT: exhaustion_required_context captured conditional logic from spec
+NO-HOOK: filing_notice_required_value has no declared or inferred hook category
+NO-HOOK: filing_notice_required_unit has no declared or inferred hook category
+DECLARED: filing_notice_required_targets → required
+LOGIC-DIRECT: filing_notice_required_context captured conditional logic from spec
+NO-HOOK: filing_notice_required_context has no declared or inferred hook category
+DECLARED: employer_threshold_compare → required
+NO-HOOK: employer_threshold_value has no declared or inferred hook category
+DECLARED: employer_threshold_model → required
+LOGIC-DIRECT: employer_threshold_context captured conditional logic from spec
+NO-HOOK: employer_threshold_context has no declared or inferred hook category
+NO-HOOK: cure_period_value has no declared or inferred hook category
+NO-HOOK: cure_period_unit has no declared or inferred hook category
+DECLARED: cure_period_context → required
+LOGIC-DIRECT: cure_period_context captured conditional logic from spec
+NO-HOOK: federal_state_interaction has no declared or inferred hook category
+LOGIC-DIRECT: savings_clause_preserves_gloss captured conditional logic from spec
+NO-HOOK: savings_clause_preserves_gloss has no declared or inferred hook category
+NO-HOOK: federal_state_interaction_details has no declared or inferred hook category
+DECLARED: adverse_action_scope → excludes
+DECLARED: adverse_action_scope_gloss → override
+LOGIC-DIRECT: adverse_action_scope_gloss captured conditional logic from spec
+DECLARED: adverse_actions → impacts
+DECLARED: anticipatory_retaliation_gloss → override
+LOGIC-DIRECT: anticipatory_retaliation_gloss captured conditional logic from spec
+DECLARED: threatened_retaliation_gloss → override
+LOGIC-DIRECT: threatened_retaliation_gloss captured conditional logic from spec
+NO-HOOK: adverse_action_details has no declared or inferred hook category
+DECLARED: facially_retaliatory_policy_context → required
+LOGIC-DIRECT: facially_retaliatory_policy_context captured conditional logic from spec
+LOGIC-DIRECT: is_blacklisting_extended captured conditional logic from spec
+NO-HOOK: is_blacklisting_extended has no declared or inferred hook category
+NO-HOOK: preservation_deadline_value has no declared or inferred hook category
+NO-HOOK: preservation_deadline_unit has no declared or inferred hook category
+DECLARED: preservation_requirement_scopes → required
+LOGIC-DIRECT: evidence_preservation_context captured conditional logic from spec
+NO-HOOK: evidence_preservation_context has no declared or inferred hook category
+DECLARED: constructive_discharge_standard → required
+LOGIC-DIRECT: constructive_discharge_context captured conditional logic from spec
+NO-HOOK: constructive_discharge_context has no declared or inferred hook category
+NO-HOOK: is_evidence_collection_protected has no declared or inferred hook category
+DECLARED: cats_paw_liability_context → required
+LOGIC-DIRECT: cats_paw_liability_context captured conditional logic from spec
+DECLARED: is_cats_paw_liability_extended → verify
+DECLARED: third_party_retaliation_context → required
+LOGIC-DIRECT: third_party_retaliation_context captured conditional logic from spec
+DECLARED: criminal_sanctions → required
+LOGIC-DIRECT: criminal_sanctions_context captured conditional logic from spec
+NO-HOOK: criminal_sanctions_context has no declared or inferred hook category
+DECLARED: process_types → impacts
+DECLARED: process_types → prerequisite
+DECLARED: primary_agency → filter
+DECLARED: local_agencies → filter
+DECLARED: federal_agencies → filter
+DECLARED: process_pathway_scope → impacts
+DECLARED: process_pathway_scope → required
+DECLARED: process_pathway_scope → excludes
+NO-HOOK: process_pathway_limit has no declared or inferred hook category
+LOGIC-DIRECT: is_agency_inaction_included captured conditional logic from spec
+NO-HOOK: is_agency_inaction_included has no declared or inferred hook category
+LOGIC-DIRECT: process_pathway_context captured conditional logic from spec
+NO-HOOK: process_pathway_context has no declared or inferred hook category
+NO-HOOK: enforcement_sequence has no declared or inferred hook category
+DECLARED: private_roa_context → required
+LOGIC-DIRECT: private_roa_context captured conditional logic from spec
+DECLARED: pleading_standard_rule → required
+NO-HOOK: pleading_standard_details has no declared or inferred hook category
+LOGIC-DIRECT: pleading_standard_context captured conditional logic from spec
+NO-HOOK: pleading_standard_context has no declared or inferred hook category
+DECLARED: jury_trial_scope → required
+LOGIC-DIRECT: jury_trial_context captured conditional logic from spec
+NO-HOOK: jury_trial_context has no declared or inferred hook category
+DECLARED: fee_shifting_standard → required
+DECLARED: fee_shifting_scope → required
+DECLARED: has_fee_shifting_phases → auto-set
+DECLARED: fee_shifting_phases → required
+LOGIC-DIRECT: fee_shifting_asymmetry captured conditional logic from spec
+NO-HOOK: fee_shifting_asymmetry has no declared or inferred hook category
+NO-HOOK: fee_shifting_asymmetry_details has no declared or inferred hook category
+LOGIC-DIRECT: fee_shifting_standard_context captured conditional logic from spec
+NO-HOOK: fee_shifting_standard_context has no declared or inferred hook category
+DECLARED: remedies → impacts
+DECLARED: remedies → prerequisite
+LOGIC-DIRECT: remedy_limits captured conditional logic from spec
+NO-HOOK: remedy_limits has no declared or inferred hook category
+NO-HOOK: remedy_details has no declared or inferred hook category
+LOGIC-DIRECT: remedy_liquidated_multiplier captured conditional logic from spec
+NO-HOOK: remedy_liquidated_multiplier has no declared or inferred hook category
+LOGIC-DIRECT: remedy_liquidated_formula captured conditional logic from spec
+NO-HOOK: remedy_liquidated_formula has no declared or inferred hook category
+LOGIC-DIRECT: remedy_liquidated_details captured conditional logic from spec
+NO-HOOK: remedy_liquidated_details has no declared or inferred hook category
+DECLARED: mitigation_required_sources → required
+LOGIC-DIRECT: mitigation_required_context captured conditional logic from spec
+NO-HOOK: mitigation_required_context has no declared or inferred hook category
+DECLARED: mitigation_exception_context → required
+LOGIC-DIRECT: mitigation_exception_context captured conditional logic from spec
+DECLARED: after_acquired_evidence_effect → required
+DECLARED: after_acquired_evidence_effect → excluded-by
+DECLARED: after_acquired_evidence_context → excluded-by
+LOGIC-DIRECT: after_acquired_evidence_context captured conditional logic from spec
+DECLARED: interest_provision_scope → required
+LOGIC-DIRECT: interest_provision_context captured conditional logic from spec
+NO-HOOK: interest_provision_context has no declared or inferred hook category
+DECLARED: preliminary_reinstatement_rule → required
+NO-HOOK: preliminary_reinstatement_rule_details has no declared or inferred hook category
+DECLARED: preliminary_reinstatement_scope → required
+LOGIC-DIRECT: preliminary_reinstatement_context captured conditional logic from spec
+NO-HOOK: preliminary_reinstatement_context has no declared or inferred hook category
+DECLARED: burden_shifting_frameworks → required
+LOGIC-DIRECT: burden_shifting_details captured conditional logic from spec
+NO-HOOK: burden_shifting_details has no declared or inferred hook category
+LOGIC-DIRECT: burden_shifting_context captured conditional logic from spec
+NO-HOOK: burden_shifting_context has no declared or inferred hook category
+LOGIC-DIRECT: mixed_motive_remedy_gloss captured conditional logic from spec
+NO-HOOK: mixed_motive_remedy_gloss has no declared or inferred hook category
+DECLARED: same_decision_standard → required
+LOGIC-DIRECT: same_decision_context captured conditional logic from spec
+NO-HOOK: same_decision_context has no declared or inferred hook category
+NO-HOOK: employee_standard has no declared or inferred hook category
+NO-HOOK: employee_standard_details has no declared or inferred hook category
+DECLARED: employment_classification_test → required
+DECLARED: employment_classification_context → required
+LOGIC-DIRECT: employment_classification_context captured conditional logic from spec
+NO-HOOK: has_causation_standard_statutory_text has no declared or inferred hook category
+NO-HOOK: causation_standard_statutory_text has no declared or inferred hook category
+DECLARED: causation_standard → required
+NO-HOOK: causation_scope has no declared or inferred hook category
+DECLARED: causation_standard_context → required
+LOGIC-DIRECT: causation_standard_context captured conditional logic from spec
+DECLARED: causation_dual_standard_context → required
+LOGIC-DIRECT: causation_dual_standard_context captured conditional logic from spec
+DECLARED: employer_knowledge_scopes → required
+NO-HOOK: employer_knowledge_scopes_details has no declared or inferred hook category
+LOGIC-DIRECT: employer_knowledge_context captured conditional logic from spec
+NO-HOOK: employer_knowledge_context has no declared or inferred hook category
+NO-HOOK: employer_defenses has no declared or inferred hook category
+NO-HOOK: employer_defense_details has no declared or inferred hook category
+NO-HOOK: has_rebuttable_presumption has no declared or inferred hook category
+NO-HOOK: rebuttable_presumption_details has no declared or inferred hook category
+NO-HOOK: presumption_window_value has no declared or inferred hook category
+NO-HOOK: presumption_window_unit has no declared or inferred hook category
+DECLARED: presumption_effect → required
+NO-HOOK: presumption_effect_details has no declared or inferred hook category
+LOGIC-DIRECT: temporal_presumption_context captured conditional logic from spec
+NO-HOOK: temporal_presumption_context has no declared or inferred hook category
+NO-HOOK: temporal_proximity_value has no declared or inferred hook category
+NO-HOOK: temporal_proximity_unit has no declared or inferred hook category
+DECLARED: temporal_proximity_context → required
+LOGIC-DIRECT: temporal_proximity_context captured conditional logic from spec
+NO-HOOK: has_bop_details has no declared or inferred hook category
+NO-HOOK: bop_details has no declared or inferred hook category
+DECLARED: reward_discretion_scope → required
+LOGIC-DIRECT: reward_discretion_formula captured conditional logic from spec
+NO-HOOK: reward_discretion_formula has no declared or inferred hook category
+LOGIC-DIRECT: reward_discretion_details captured conditional logic from spec
+NO-HOOK: reward_discretion_details has no declared or inferred hook category
+LOGIC-DIRECT: reward_context captured conditional logic from spec
+NO-HOOK: reward_context has no declared or inferred hook category
+NO-HOOK: qui_tam_government_share has no declared or inferred hook category
+NO-HOOK: qui_tam_relator_share has no declared or inferred hook category
+NO-HOOK: qui_tam_reduction_context has no declared or inferred hook category
+DECLARED: qui_tam_share_context → required
+LOGIC-DIRECT: qui_tam_share_context captured conditional logic from spec
+NO-HOOK: has_first_to_file_bar has no declared or inferred hook category
+NO-HOOK: first_to_file_bar_details has no declared or inferred hook category
+NO-HOOK: has_public_disclosure_bar has no declared or inferred hook category
+NO-HOOK: public_disclosure_bar_details has no declared or inferred hook category
+DECLARED: all_waivers_blocked_context → required
+LOGIC-DIRECT: all_waivers_blocked_context captured conditional logic from spec
+DECLARED: civil_action_waiver_status → required
+DECLARED: civil_action_waiver_status → excluded-by
+DECLARED: civil_action_waiver_context → excluded-by
+LOGIC-DIRECT: civil_action_waiver_context captured conditional logic from spec
+DECLARED: contractual_waiver_status → required
+DECLARED: contractual_waiver_status → excluded-by
+DECLARED: contractual_waiver_context → excluded-by
+LOGIC-DIRECT: contractual_waiver_context captured conditional logic from spec
+DECLARED: collateral_claims_waiver_context → required
+DECLARED: collateral_claims_waiver_context → excluded-by
+LOGIC-DIRECT: collateral_claims_waiver_context captured conditional logic from spec
+DECLARED: class_action_waiver_context → required
+DECLARED: class_action_waiver_context → excluded-by
+LOGIC-DIRECT: class_action_waiver_context captured conditional logic from spec
+DECLARED: proper_defendant_rules → required
+LOGIC-DIRECT: proper_defendants_context captured conditional logic from spec
+NO-HOOK: proper_defendants_context has no declared or inferred hook category
+DECLARED: individual_liability_scopes → required
+INFERRED: individual_liability_scopes → umbrella (reason: choice "any-individual-only")
+LOGIC-DIRECT: individual_liability_details captured conditional logic from spec
+NO-HOOK: individual_liability_details has no declared or inferred hook category
+LOGIC-DIRECT: individual_liability_context captured conditional logic from spec
+NO-HOOK: individual_liability_context has no declared or inferred hook category
+DECLARED: sovereign_immunity_status → required
+DECLARED: sovereign_immunity_status → excluded-by
+DECLARED: sovereign_immunity_limits → excluded-by
+LOGIC-DIRECT: sovereign_immunity_limit_gloss captured conditional logic from spec
+NO-HOOK: sovereign_immunity_limit_gloss has no declared or inferred hook category
+DECLARED: sovereign_immunity_scope → excluded-by
+DECLARED: sovereign_immunity_waiver_class → required
+DECLARED: sovereign_immunity_waiver_class → excluded-by
+NO-HOOK: sovereign_immunity_status_details has no declared or inferred hook category
+DECLARED: sovereign_immunity_context → excluded-by
+LOGIC-DIRECT: sovereign_immunity_context captured conditional logic from spec
+DECLARED: nda_limits_context → required
+LOGIC-DIRECT: nda_limits_context captured conditional logic from spec
+DECLARED: anti_gag_provision_context → required
+LOGIC-DIRECT: anti_gag_provision_context captured conditional logic from spec
+DECLARED: no_retaliatory_evidence_context → required
+LOGIC-DIRECT: no_retaliatory_evidence_context captured conditional logic from spec
+DECLARED: stay_of_discipline_context → required
+LOGIC-DIRECT: stay_of_discipline_context captured conditional logic from spec
+DECLARED: anti_slapp_protection_scopes → required
+INFERRED: anti_slapp_protection_scopes → umbrella (reason: choice "full-procedural-only")
+LOGIC-DIRECT: anti_slapp_protection_context captured conditional logic from spec
+NO-HOOK: anti_slapp_protection_context has no declared or inferred hook category
+DECLARED: discovery_protection_scopes → required
+LOGIC-DIRECT: discovery_protection_context captured conditional logic from spec
+NO-HOOK: discovery_protection_context has no declared or inferred hook category
+DECLARED: settlement_restriction_scope → required
+LOGIC-DIRECT: settlement_restriction_context captured conditional logic from spec
+NO-HOOK: settlement_restriction_context has no declared or inferred hook category
+DECLARED: successor_liability_context → required
+LOGIC-DIRECT: successor_liability_context captured conditional logic from spec
+DECLARED: extraterritorial_context → required
+LOGIC-DIRECT: extraterritorial_context captured conditional logic from spec
+NO-HOOK: ref_materials has no declared or inferred hook category
+NO-HOOK: overruled_by_id has no declared or inferred hook category
+NO-HOOK: url has no declared or inferred hook category
+NO-HOOK: url_is_pdf has no declared or inferred hook category
+NO-HOOK: authority_reference has no declared or inferred hook category
+NO-HOOK: court has no declared or inferred hook category
+NO-HOOK: scope has no declared or inferred hook category
+NO-HOOK: binding_strength has no declared or inferred hook category
+NO-HOOK: affected_jx has no declared or inferred hook category
+NO-HOOK: extended_taxonomies has no declared or inferred hook category
+NO-HOOK: suppressed_taxonomies has no declared or inferred hook category
+DECLARED: review_standard → required
+NO-HOOK: review_standard_details has no declared or inferred hook category
+LOGIC-DIRECT: review_standard_context captured conditional logic from spec
+NO-HOOK: review_standard_context has no declared or inferred hook category
+DECLARED: election_of_remedies_rules → required
+LOGIC-DIRECT: election_of_remedies_context captured conditional logic from spec
+NO-HOOK: election_of_remedies_context has no declared or inferred hook category
+NO-HOOK: citation_ids has no declared or inferred hook category
+NO-HOOK: construction_ids has no declared or inferred hook category
+NO-HOOK: precedent_common has no declared or inferred hook category
+NO-HOOK: doctrine_basis has no declared or inferred hook category
+NO-HOOK: public_policy_sources has no declared or inferred hook category
+LOGIC-DIRECT: policy_source_details captured conditional logic from spec
+NO-HOOK: policy_source_details has no declared or inferred hook category
+NO-HOOK: recognition_status has no declared or inferred hook category
+NO-HOOK: recognition_status_details has no declared or inferred hook category
+DECLARED: statutory_preclusion_context → required
+LOGIC-DIRECT: statutory_preclusion_context captured conditional logic from spec
+LOGIC-DIRECT: statutory_nexus_context captured conditional logic from spec
+NO-HOOK: statutory_nexus_context has no declared or inferred hook category
+NO-HOOK: election_of_remedies_rules has no declared or inferred hook category
+NO-HOOK: doctrine_ has no declared or inferred hook category
+NO-HOOK: class has no declared or inferred hook category
+NO-HOOK: class_details has no declared or inferred hook category
+NO-HOOK: status has no declared or inferred hook category
+NO-HOOK: binding_strength has no declared or inferred hook category
+DECLARED: court → filter
+NO-HOOK: court_details has no declared or inferred hook category
+NO-HOOK: court_jx has no declared or inferred hook category
+NO-HOOK: mandate_date has no declared or inferred hook category
+DECLARED: scope → verify
+DECLARED: extended_taxonomies → filter
+LOGIC-DIRECT: extended_taxonomies captured conditional logic from spec
+DECLARED: suppressed_taxonomies → filter
+LOGIC-DIRECT: suppressed_taxonomies captured conditional logic from spec
+NO-HOOK: has_affected_jx has no declared or inferred hook category
+DECLARED: affected_jx → filter
+LOGIC-DIRECT: affected_jx captured conditional logic from spec
+NO-HOOK: statute_ids has no declared or inferred hook category
+NO-HOOK: comlaw_ids has no declared or inferred hook category
+NO-HOOK: parent_weight has no declared or inferred hook category
+NO-HOOK: has_negative_treatment_class has no declared or inferred hook category
+LOGIC-DIRECT: negative_treatment_class captured conditional logic from spec
+NO-HOOK: negative_treatment_class has no declared or inferred hook category
+LOGIC-DIRECT: superseded_by_statute_id captured conditional logic from spec
+NO-HOOK: superseded_by_statute_id has no declared or inferred hook category
+NO-HOOK: authority_sources has no declared or inferred hook category
+NO-HOOK: authority_source_details has no declared or inferred hook category
+NO-HOOK: review_standard has no declared or inferred hook category
+NO-HOOK: review_standard_details has no declared or inferred hook category
+NO-HOOK: is_en_banc has no declared or inferred hook category
+LOGIC-DIRECT: panel_composition_class captured conditional logic from spec
+NO-HOOK: panel_composition_class has no declared or inferred hook category
+INFERRED: _disclosure_target_class → derive (reason: hidden scalar)
+INFERRED: _primary_agency_is_fed → derive (reason: hidden scalar)
+INFERRED: _related_agencies → merge (reason: hidden array)
+INFERRED: _parent_ids → merge (reason: hidden array)
+INFERRED: _precedent_ids → merge (reason: hidden array)
+INFERRED: _court_is_fed → derive (reason: hidden scalar)
