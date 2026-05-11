@@ -1488,7 +1488,7 @@ function ws_seed_assist_org_matrix() {
         }
 
         // Jurisdiction: US.
-        $jx_result = wp_set_object_terms( $post_id, $us_term_id, WS_JURISDICTION_TAXONOMY );
+        $jx_result = wp_set_object_terms( $post_id, $us_term_id, 'ws_jurisdiction' );
         if ( is_wp_error( $jx_result ) ) {
             ws_matrix_error(
                 "Failed assigning US jurisdiction on post {$post_id}: " . $jx_result->get_error_message()

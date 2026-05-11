@@ -38,7 +38,7 @@
     "meta": {
         "_warning": "Per WS-Core Security Protocol 4.7.2, direct modification is prohibited. Hand-editing triggers automated disciplinary flaying. Intestines will be removed via the navel to preserve the audit trail.",
         "checksum": "a8de07a8",
-        "cpt": "jx-statute",
+        "cpt": "jx-comlaw",
         "generated_timestamp": "2026-05-10T20:22:31+00:00",
         "generator_version": "11.1.0",
         "infix": "jx",
@@ -60,6 +60,9 @@
                     "type": "text"
                 },
                 "citation": {
+                    "type": "text"
+                },
+                "precedent_common": {
                     "type": "text"
                 },
                 "date": {
@@ -252,6 +255,41 @@
                 },
                 "excluded_class_details": {
                     "logic": "`has-details` in `excluded_classes`",
+                    "type": "textarea"
+                },
+                "doctrine_basis": {
+                    "type": "text"
+                },
+                "public_policy_sources": {
+                    "choices": [
+                        "constitution",
+                        "federal-law",
+                        "statute",
+                        "administrative-rule",
+                        "case-law",
+                        "executive",
+                        "has-details"
+                    ],
+                    "multiple": 1,
+                    "type": "select"
+                },
+                "policy_source_details": {
+                    "logic": "`public_policy_sources` includes `has-details`",
+                    "type": "textarea"
+                },
+                "recognition_status": {
+                    "choices": [
+                        "recognized",
+                        "limited",
+                        "uncertain",
+                        "rejected",
+                        "abrogated",
+                        "has-details"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "recognition_status_details": {
                     "type": "textarea"
                 },
                 "employment_sectors": {
@@ -533,6 +571,13 @@
                     "type": "textarea"
                 },
                 "federal_state_interaction_details": {
+                    "type": "textarea"
+                },
+                "statutory_preclusion_context": {
+                    "hook": [
+                        "required"
+                    ],
+                    "logic": "`statutory-preclusion` in `legal_recognitions`",
                     "type": "textarea"
                 }
             },
@@ -1112,6 +1157,10 @@
                 },
                 "causation_standard_statutory_text": {
                     "type": "text"
+                },
+                "statutory_nexus_context": {
+                    "logic": "`statutory-nexus-controls` in `legal_recognitions`",
+                    "type": "textarea"
                 },
                 "causation_standard": {
                     "field_type": "select",

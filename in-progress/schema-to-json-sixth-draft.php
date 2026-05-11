@@ -55,7 +55,7 @@ class WS_Statute_Compiler_Local {
         'verify'        => 'Validates data against a database or cross-reference.',
         'derive'        => 'String/Scalar calculation (usually hidden fields).',
         'merge'         => 'Array/Aggregation (usually hidden fields).',
-        'butchers'      => 'Ruthlessly overwrites existing value with system-generated data.',
+        'butchers'     => 'Ruthlessly overwrites existing value with system-generated data.',
         'stale-monitor' => 'Detects and flags values no longer valid due to a change in a controlling field.',
         'required'      => 'Enforces conditional requiredness (e.g., [R] in spec).',
         'prerequisite'  => 'Enforces that a selected value requires another value in the same field or another field.',
@@ -73,120 +73,96 @@ class WS_Statute_Compiler_Local {
         self::$audit_log = []; // Reset static state for repeatable runs
         $spec_file = './legal-record-acf-fields-v3.0.md';
         $tax_file  = './register-taxonomies.php';
-        
+
         if (!file_exists($spec_file)) wp_die("Spec file missing from local path.");
 
-        // Scavenge taxonomies without execution
         $registry = self::scavenge_taxonomies($tax_file);
+        $content  = file_get_contents($spec_file);
+        $mtime    = filemtime($spec_file);
 
-        $content = file_get_contents($spec_file);
-        $mtime   = filemtime($spec_file);
+        // Split common fields from per-type delta section; truncate delta at the next ## heading
+        $parts         = preg_split('/^## Specialized Fields By Legal Record Type/m', $content);
+        $base_content  = $parts[0];
+        $delta_content = preg_split('/^## /m', $parts[1] ?? '')[0];
 
-        $manifest = [
-            'meta' => [
-                '_warning' => "Per WS-Core Security Protocol 4.7.2, direct modification is prohibited. Hand-editing triggers automated disciplinary flaying. Intestines will be removed via the navel to preserve the audit trail.",
-                'protocol_reference' => "Security Protocol Manual (WS-SPM-4.7.2)",
-                'status'             => "pending",
-                'generator_version'  => self::VERSION,
-                'generated_timestamp'=> date('c', $mtime),
-                'cpt'                => "jx-statute",
-                'infix'              => "jx",
-                'checksum'           => hash_file('crc32b', $spec_file)
-            ],
-            'tabs'   => [],
-            'hidden' => []
+        $base_manifest = self::build_base($base_content, $registry, $mtime, $spec_file);
+        $deltas        = self::parse_specialized_section($delta_content, $registry);
+
+        $record_types = [
+            'statute'      => ['cpt' => 'jx-statute',      'infix' => 'jx', 'file' => './jx-statute.json'],
+            'comlaw'       => ['cpt' => 'jx-comlaw',        'infix' => 'jx', 'file' => './jx-comlaw.json'],
+            'citation'     => ['cpt' => 'jx-citation',      'infix' => 'jx', 'file' => './jx-citation.json'],
+            'construction' => ['cpt' => 'jx-construction',  'infix' => 'jx', 'file' => './jx-construction.json'],
         ];
 
-        // Truncate at the Specialized Fields section — this prototype targets
-        // statutes only; the per-CPT delta sections are parsed in a later pass.
-        $content = preg_split('/^## Specialized Fields By Legal Record Type/m', $content)[0];
+        $type_summaries = [];
 
-        // Segment by Tab Headers
-        $sections = preg_split('/^### /m', $content);
-        array_shift($sections);
+        foreach ($record_types as $rtype => $meta_def) {
+            self::$audit_log[] = "";
+            self::$audit_log[] = "── {$rtype} ─────────────────────────────────────────────────";
 
-        foreach ($sections as $section) {
-            $lines = explode("\n", $section);
-            $tab_label = trim(array_shift($lines));
-            $tab_key = preg_replace('/_+/', '_', strtolower(str_replace([' ', '&', '/'], ['_', '', ''], $tab_label)));
+            // Deep copy — safe for pure-array manifests
+            $manifest = unserialize(serialize($base_manifest));
+            $manifest['meta']['cpt']   = $meta_def['cpt'];
+            $manifest['meta']['infix'] = $meta_def['infix'];
 
-            // Join continuation lines: append any non-field line to the preceding field
-            // line while its parenthetical annotation is still open (more ( than )).
-            $joined = [];
-            foreach ($lines as $line) {
-                $t = trim($line);
-                if (str_starts_with($t, '- ')) {
-                    $joined[] = $t;
-                } elseif ($t !== '' && !empty($joined)) {
-                    $last = $joined[count($joined) - 1];
-                    if (substr_count($last, '(') > substr_count($last, ')')) {
-                        $joined[count($joined) - 1] .= ' ' . $t;
-                    }
-                }
+            $manifest = self::apply_deltas($manifest, $deltas[$rtype] ?? [], $rtype);
+            $manifest = self::resolve_and_purge($manifest, $registry);
+
+            // Deterministic Write — sort properties alphabetically, preserve spec tab and field order
+            $tab_order   = array_keys($manifest['tabs']);
+            $field_order = [];
+            foreach ($manifest['tabs'] as $tk => $tab) $field_order[$tk] = array_keys($tab['fields']);
+            self::ksort_recursive($manifest);
+            $ordered_tabs = [];
+            foreach ($tab_order as $tk) {
+                $ordered_fields = [];
+                foreach ($field_order[$tk] as $fk) $ordered_fields[$fk] = $manifest['tabs'][$tk]['fields'][$fk];
+                $manifest['tabs'][$tk]['fields'] = $ordered_fields;
+                $ordered_tabs[$tk] = $manifest['tabs'][$tk];
             }
+            $manifest['tabs'] = $ordered_tabs;
 
-            foreach ($joined as $line) {
-                if (!str_starts_with($line, '- ')) continue;
+            file_put_contents($meta_def['file'], json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
-                $field = self::parse_field_line($line, $registry);
-                
-                if (str_starts_with($field['name'], '_')) {
-                    $manifest['hidden'][$field['name']] = $field;
-                } else {
-                    $manifest['tabs'][$tab_key]['label'] = $tab_label;
-                    $manifest['tabs'][$tab_key]['fields'][$field['name']] = $field;
-                }
+            $tab_field_count = 0;
+            foreach ($manifest['tabs'] as $t) $tab_field_count += count($t['fields'] ?? []);
+            $type_summaries[] = sprintf(
+                "  %-14s  tab_fields=%-3d  hidden=%d  → %s",
+                $rtype, $tab_field_count, count($manifest['hidden']), $meta_def['file']
+            );
+        }
+
+        // Audit Log
+        $entry_counts = [];
+        foreach (self::$audit_log as $line) {
+            if (preg_match('/^([A-Z][A-Z\-]+):/', $line, $m)) {
+                $entry_counts[$m[1]] = ($entry_counts[$m[1]] ?? 0) + 1;
             }
         }
-
-        // Final Logic Resolution and Behavioral Classification
-        $manifest = self::resolve_and_purge($manifest, $registry);
-
-        // Deterministic Write — sort properties alphabetically, preserve spec tab and field order.
-        $tab_order = array_keys($manifest['tabs']);
-        $field_order = [];
-        foreach ($manifest['tabs'] as $tk => $tab) $field_order[$tk] = array_keys($tab['fields']);
-        self::ksort_recursive($manifest);
-        $ordered_tabs = [];
-        foreach ($tab_order as $tk) {
-            $ordered_fields = [];
-            foreach ($field_order[$tk] as $fk) $ordered_fields[$fk] = $manifest['tabs'][$tk]['fields'][$fk];
-            $manifest['tabs'][$tk]['fields'] = $ordered_fields;
-            $ordered_tabs[$tk] = $manifest['tabs'][$tk];
-        }
-        $manifest['tabs'] = $ordered_tabs;
-        file_put_contents('./jx-statute.json', json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-
-        // Audit Log: prepend summary header for at-a-glance review
-        $tab_field_count = 0;
-        foreach ($manifest['tabs'] as $t) {
-            $tab_field_count += count($t['fields'] ?? []);
-        }
-        $hidden_count = count($manifest['hidden']);
-        $entry_counts = array_count_values(array_map(
-            fn($line) => explode(':', $line, 2)[0],
-            self::$audit_log
-        ));
         ksort($entry_counts);
+
         $header = [
             "================================================================",
-            "WS Statute Compiler Audit Log",
+            "WS Legal Record Compiler Audit Log",
             "Generator version: " . self::VERSION,
-            "Generated: " . date('c', filemtime($spec_file)),
+            "Generated: " . date('c', $mtime),
             "Spec checksum: " . hash_file('crc32b', $spec_file),
-            "Tab fields: {$tab_field_count} | Hidden fields: {$hidden_count}",
             "----------------------------------------------------------------",
-            "Entry counts:",
+            "Output summary:",
         ];
+        $header = array_merge($header, $type_summaries);
+        $header[] = "----------------------------------------------------------------";
+        $header[] = "Entry counts:";
         foreach ($entry_counts as $type => $count) {
             $header[] = sprintf("  %-20s %d", $type, $count);
         }
         $header[] = "================================================================";
         $header[] = "";
-        $log_output = implode("\n", $header) . implode("\n", self::$audit_log) . "\n";
-        file_put_contents('./audit-log.txt', $log_output);
 
-        return "The stone is etched. Behavioral hooks verified. Matrix intact.";
+        file_put_contents('./audit-log.txt', implode("\n", $header) . "\n" . implode("\n", self::$audit_log) . "\n");
+
+        return "The stone is etched. Four record types compiled. Behavioral hooks verified. Matrix intact.";
     }
 
     private static function parse_field_line($line, $registry) {
@@ -226,8 +202,20 @@ class WS_Statute_Compiler_Local {
             self::$audit_log[] = "POST-OBJECT: {$name} → merged array (multiple=1)";
         }
 
+        // Repeater detection — set type before delta loop so sub-field tree lines are not parsed as choices.
+        if (preg_match('/\brepeater\b/i', $delta_str)) {
+            $field['type'] = 'repeater';
+            self::$audit_log[] = "REPEATER: {$name} → declared as repeater";
+        }
+
         foreach ($deltas as $delta) {
             $delta = trim($delta);
+            // Strip sub-field tree content — box-drawing characters (├ └ │) signal repeater row declarations.
+            // Truncate at the first tree character; keep any annotation prefix on the same delta (e.g. "conditional on X:").
+            if (preg_match('/[\x{251C}\x{2514}\x{2502}]/u', $delta)) {
+                $delta = rtrim(preg_replace('/\s*[\x{251C}\x{2514}\x{2502}].*/su', '', $delta), ': ');
+                if ($delta === '') continue;
+            }
 
             if (preg_match('/(?:(single-select)\s+)?taxonomy:\s*`?([A-Z_a-z0-9]+)`?/', $delta, $m)) {
                 $tax_slug = $m[2];
@@ -238,7 +226,7 @@ class WS_Statute_Compiler_Local {
                 self::$audit_log[] = "TAXONOMY-BIND: {$name} → {$tax_slug} ({$field['field_type']})";
             }
 
-            if (preg_match('/select:\s*([^;)]+)/', $delta, $m) && ($field['type'] ?? '') !== 'post_object') {
+            if (preg_match('/select:\s*([^;)]+)/', $delta, $m) && !in_array($field['type'] ?? '', ['post_object', 'repeater'], true)) {
                 $field['type'] = 'select';
                 $raw_choices = explode('|', trim($m[1]));
                 $choices = array_map(fn($c) => trim($c, " \t`"), $raw_choices);
@@ -395,7 +383,7 @@ class WS_Statute_Compiler_Local {
         $field['hook'] = array_values(array_unique($hooks));
 
         // 5. Over-Stamp: spec-declared hooks supersede cardinality-inferred siblings.
-        //    butchers (explicit overwrite) over-stamps derive (default scalar inference).
+        //    butchers (explicit butchers) over-stamps derive (default scalar inference).
         if (in_array('butchers', $field['hook'], true) && in_array('derive', $field['hook'], true)) {
             $field['hook'] = array_values(array_diff($field['hook'], ['derive']));
             self::$audit_log[] = "OVER-STAMPED: {$n} → derive removed by declared butchers";
@@ -524,6 +512,193 @@ class WS_Statute_Compiler_Local {
     private static function ksort_recursive(&$array) {
         ksort($array);
         foreach ($array as &$value) { if (is_array($value)) self::ksort_recursive($value); }
+    }
+
+    private static function build_base(string $content, array $registry, int $mtime, string $spec_file): array {
+        $manifest = [
+            'meta' => [
+                '_warning'            => "Per WS-Core Security Protocol 4.7.2, direct modification is prohibited. Hand-editing triggers automated disciplinary flaying. Intestines will be removed via the navel to preserve the audit trail.",
+                'protocol_reference'  => "Security Protocol Manual (WS-SPM-4.7.2)",
+                'status'              => "pending",
+                'generator_version'   => self::VERSION,
+                'generated_timestamp' => date('c', $mtime),
+                'cpt'                 => '',
+                'infix'               => '',
+                'checksum'            => hash_file('crc32b', $spec_file),
+            ],
+            'tabs'   => [],
+            'hidden' => [],
+        ];
+
+        $sections = preg_split('/^### /m', $content);
+        array_shift($sections);
+
+        foreach ($sections as $section) {
+            $lines     = explode("\n", $section);
+            $tab_label = trim(array_shift($lines));
+            $tab_key   = preg_replace('/_+/', '_', strtolower(str_replace([' ', '&', '/'], ['_', '', ''], $tab_label)));
+
+            $joined = [];
+            foreach ($lines as $line) {
+                $t = trim($line);
+                if (str_starts_with($t, '- ')) {
+                    $joined[] = $t;
+                } elseif ($t !== '' && !empty($joined)) {
+                    $last = $joined[count($joined) - 1];
+                    if (substr_count($last, '(') > substr_count($last, ')')) {
+                        $joined[count($joined) - 1] .= ' ' . $t;
+                    }
+                }
+            }
+
+            foreach ($joined as $line) {
+                if (!str_starts_with($line, '- ')) continue;
+                $field = self::parse_field_line($line, $registry);
+                if (str_starts_with($field['name'], '_')) {
+                    $manifest['hidden'][$field['name']] = $field;
+                } else {
+                    $manifest['tabs'][$tab_key]['label']                  = $tab_label;
+                    $manifest['tabs'][$tab_key]['fields'][$field['name']] = $field;
+                }
+            }
+        }
+
+        return $manifest;
+    }
+
+    private static function parse_specialized_section(string $content, array $registry): array {
+        $result = ['statute' => [], 'comlaw' => [], 'citation' => [], 'construction' => []];
+        $groups = preg_split('/^### /m', $content);
+        array_shift($groups);
+
+        foreach ($groups as $group) {
+            [$header_line, $body] = array_pad(explode("\n", $group, 2), 2, '');
+            $types = self::group_applies_to(trim($header_line));
+            if (empty($types)) continue;
+
+            $blocks = self::parse_delta_blocks($body, $registry);
+            foreach ($types as $rt) {
+                $result[$rt] = array_merge($result[$rt], $blocks);
+            }
+        }
+
+        return $result;
+    }
+
+    private static function group_applies_to(string $header): array {
+        if (stripos($header, 'Substantive-Record')   !== false) return ['statute', 'comlaw'];
+        if (stripos($header, 'Statute-Specific')      !== false) return ['statute'];
+        if (stripos($header, 'Common-Law-Specific')   !== false) return ['comlaw'];
+        if (stripos($header, 'Precedent-Record')      !== false) return ['citation', 'construction'];
+        if (stripos($header, 'Citation-Specific')     !== false) return ['citation'];
+        if (stripos($header, 'Construction-Specific') !== false) return ['construction'];
+        return [];
+    }
+
+    private static function parse_delta_blocks(string $body, array $registry): array {
+        $blocks       = [];
+        $raw_sections = preg_split('/^#{4,5} /m', $body);
+        array_shift($raw_sections);
+
+        foreach ($raw_sections as $section) {
+            [$header_line, $text] = array_pad(explode("\n", $section, 2), 2, '');
+            $header = trim($header_line);
+
+            // Strip annotation before skip checks so "(insert after `excluded_…`)" doesn't false-match
+            $bare = trim(preg_replace('/\s*\([^)]*\)$/', '', $header));
+
+            // Skip documentation/structural headers
+            if (preg_match('/Allowlist|Eligible\s+Taxonomy|^Fields\s+Excluded|^Substantive\s+Additions/i', $bare)) {
+                continue;
+            }
+
+            if (stripos($bare, 'Hidden Fields') !== false) {
+                $fields = self::parse_delta_field_lines($text, $registry);
+                if (!empty($fields)) {
+                    $blocks[] = ['tab' => 'hidden', 'insert_after' => null, 'fields' => $fields];
+                }
+                continue;
+            }
+
+            $insert_after = null;
+            if (preg_match('/\(insert after\s+`([^`]+)`\)/i', $header, $m)) {
+                $insert_after = $m[1];
+            }
+
+            // Normalize $bare (already stripped of annotation) — keep "Tab" so keys match base manifest
+            $tab_key = preg_replace('/_+/', '_', strtolower(str_replace([' ', '&', '/'], ['_', '', ''], $bare)));
+
+            $fields = self::parse_delta_field_lines($text, $registry);
+            if (!empty($fields)) {
+                $blocks[] = ['tab' => $tab_key, 'insert_after' => $insert_after, 'fields' => $fields];
+            }
+        }
+
+        return $blocks;
+    }
+
+    private static function parse_delta_field_lines(string $text, array $registry): array {
+        $lines  = explode("\n", $text);
+        $joined = [];
+        foreach ($lines as $line) {
+            $t = trim($line);
+            if (str_starts_with($t, '- ')) {
+                $joined[] = $t;
+            } elseif ($t !== '' && !empty($joined)) {
+                $last = $joined[count($joined) - 1];
+                if (substr_count($last, '(') > substr_count($last, ')')) {
+                    $joined[count($joined) - 1] .= ' ' . $t;
+                }
+            }
+        }
+
+        $fields = [];
+        foreach ($joined as $line) {
+            if (!str_starts_with($line, '- ')) continue;
+            $field = self::parse_field_line($line, $registry);
+            $fields[$field['name']] = $field;
+        }
+        return $fields;
+    }
+
+    private static function apply_deltas(array $manifest, array $blocks, string $rtype): array {
+        foreach ($blocks as $block) {
+            $tab_key      = $block['tab'];
+            $insert_after = $block['insert_after'];
+            $fields       = $block['fields'];
+
+            if ($tab_key === 'hidden') {
+                $manifest['hidden'] = array_merge($manifest['hidden'], $fields);
+                continue;
+            }
+
+            if (!isset($manifest['tabs'][$tab_key])) {
+                self::$audit_log[] = "WARN [{$rtype}]: delta references unknown tab '{$tab_key}' — skipped";
+                continue;
+            }
+
+            $existing = $manifest['tabs'][$tab_key]['fields'];
+
+            if ($insert_after === null) {
+                $manifest['tabs'][$tab_key]['fields'] = array_merge($existing, $fields);
+                continue;
+            }
+
+            $keys = array_keys($existing);
+            $pos  = array_search($insert_after, $keys, true);
+
+            if ($pos === false) {
+                self::$audit_log[] = "WARN [{$rtype}]: insert_after '{$insert_after}' not found in tab '{$tab_key}' — appending";
+                $manifest['tabs'][$tab_key]['fields'] = array_merge($existing, $fields);
+                continue;
+            }
+
+            $before = array_slice($existing, 0, $pos + 1, true);
+            $after  = array_slice($existing, $pos + 1, null, true);
+            $manifest['tabs'][$tab_key]['fields'] = array_merge($before, $fields, $after);
+        }
+
+        return $manifest;
     }
 }
 

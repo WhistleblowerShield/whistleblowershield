@@ -1,0 +1,374 @@
+{
+    "meta": {
+        "json_format_version": "2.0",
+        "source_method": "ai_research",
+        "source_name": "NotebookLM Reconciliation",
+        "jurisdiction_id": "US",
+        "generated_date": "2026-04-14",
+        "generated_by": "NotebookLM Legal Fact-Checker",
+        "nationwide_only": true,
+        "record_count": 3,
+        "json_run_notes": "Merged the three specified nationwide organizations from Gemini, Grok, and GPT outputs. Resolved mailing address conflicts, unioned taxonomy arrays, and addressed edge cases using Addendum v1.2.5 logic.",
+        "_json_run_researcher_notes": "Live web search was initiated asynchronously per user request, but because results are not yet imported, this merge relies on the static researcher JSON outputs provided. The prompt review identified a contradiction regarding 'disclosure_targets' fallback logic, which has been proposed as a rule correction in _reconciled_run_notes.",
+        "_reconciled_run_notes": "Web search initiated asynchronously; existing approved-source URLs retained for this merge per Addendum URL Policy. Removed invalid slug 'national-security' from Gemini's disclosure_types.\n\nProposed Rule\nTrigger: Prompt requires disclosure_targets to fallback to [\"has-details\"], but Addendum explicitly states disclosure_targets: [] is a valid empty field.\nConflict: EXPECTED fallback rule vs VALID EMPTY FIELDS rule.\nProposed Rule Text: When disclosure_targets is empty or cannot be confirmed, leave it as [] and do not apply the [\"has-details\"] fallback, aligning with Addendum.\nImpact: Prevents forced 'has-details' sentinels on assist-org records lacking target specificity.\nRisk if not adopted: Unnecessary schema validation noise and artificial data generation.\nScope: batch-level\nPriority: medium",
+        "source_chain": [
+            {
+                "model": "Gemini 2.0 Pro Experimental",
+                "role": "source-material"
+            },
+            {
+                "model": "Grok by xAI (current version as of 2026)",
+                "role": "source-material"
+            },
+            {
+                "model": "GPT-5.4 Thinking",
+                "role": "source-material"
+            },
+            {
+                "model": "NotebookLM",
+                "role": "merge-factcheck"
+            }
+        ],
+        "batch_completed": "2026-04-14 04:10 UTC",
+        "normalized_by": "normalize-assist-org.php",
+        "normalized_date": "2026-05-11",
+        "schema_version": "starting-point-refactor"
+    },
+    "records": [
+        {
+            "official_name": "Whistleblowers of America",
+            "official_homepage_url": "https://www.whistleblowersofamerica.org/",
+            "general_description": "Whistleblowers of America (WoA) is a nonprofit organization assisting whistleblowers who have suffered retaliation after having identified harm to individuals or the public. It provides support, advocacy, research and training for whistleblowers and advocates. The primary mission is to provide evidence-based peer support that matches mentors and mentees who follow a WoA whistleblower strategic plan designed to reduce the stress on the whistleblower and assist in problem-solving and decision-making. WoA also engages in legislative advocacy, public campaigns, education on retaliation tactics, and mediation services.",
+            "common_name": "WoA",
+            "homepage_verified_date": "2026-04-14",
+            "protected_disclosures": [
+                "general-wrongdoing"
+            ],
+            "protected_classes": [
+                "federal-employee",
+                "state-employee",
+                "local-gov-staff",
+                "military-personnel",
+                "non-profit-staff",
+                "corporate-staff",
+                "all-employees",
+                "has-details"
+            ],
+            "protected_class_details": "Serves whistleblowers who have suffered retaliation (including federal employees and others who identified harm to individuals or the public); no explicit exhaustive list of protected classes stated.",
+            "languages": [
+                "english"
+            ],
+            "language_details": "TTY Relay 711 available for hearing-impaired callers",
+            "organization_model": "nonprofit",
+            "employment_sectors": [
+                "federal-employee",
+                "state-local-employee",
+                "private-sector",
+                "military-defense",
+                "nonprofit-ngo"
+            ],
+            "cost_models": [
+                "free",
+                "unclear"
+            ],
+            "services": [
+                "peer-support",
+                "mental-health",
+                "consultation",
+                "advocacy",
+                "referral",
+                "additional"
+            ],
+            "process_types": [
+                "internal-disclosure"
+            ],
+            "case_stages": [
+                "pre-report",
+                "retaliation-active"
+            ],
+            "disclosure_targets": [
+                "internal-management",
+                "public-media",
+                "attorney-counsel",
+                "has-details"
+            ],
+            "disclosure_target_details": "Site states the organization helps whistleblowers figure out what to report and to whom, but does not clearly structure disclosure-target coverage into the available taxonomy.",
+            "whistleblower_scope": 3,
+            "whistleblower_scope_details": "Our primary mission is to provide evidence-based peer support that matches mentors and mentees who follow a WoA whistleblower strategic plan designed to reduce the stress on the whistleblower and assist in problem-solving and decision-making.",
+            "intake_url": "https://www.whistleblowersofamerica.org/peer-support",
+            "contact_url": "https://www.whistleblowersofamerica.org/contact-us",
+            "phones": [
+                {
+                    "type": "headquarters",
+                    "number": "(202) 643-1956"
+                }
+            ],
+            "emails": [
+                {
+                    "type": "general",
+                    "address": "info@whistleblowersofamerica.org"
+                },
+                {
+                    "type": "support",
+                    "address": "peers@whistleblowersofamerica.org"
+                }
+            ],
+            "mailing_address": "11130 Lillian Highway, Pensacola, FL 32506",
+            "income_screening": "not-required",
+            "secure_channel_status": "none-found",
+            "anonymous_pre_consult_status": "unclear",
+            "has_attorneys": "unclear",
+            "_review_notes": "[Gemini] Organization focuses primarily on peer-mentorship and recovery. Cost structure is categorized as 'unclear' because while they are a nonprofit, the site does not explicitly guarantee 'free' services for all strategy development sessions. [Grok] Peer support and mental health focus emphasized; no dedicated legal representation confirmed. [GPT-5.4 Thinking] Dedicated help path is the peer-support email/contact flow on the org’s contact page. Site clearly offers whistleblower support and advocacy, but legal-service details are limited compared with GAP or NWC. Nationwide scope is supported by broad all-worker language rather than a direct 'nationwide' statement.",
+            "organization_status": "unclear",
+            "public_directory_status": "draft-review",
+            "editor_confidence": "low",
+            "whistleblower_fit": "unclear",
+            "service_depth": "unclear",
+            "intake_commitment_class": "unclear",
+            "intake_status": "unclear",
+            "expected_response_time": "unclear",
+            "eligibility_status": "unclear",
+            "membership_requirement": "none",
+            "confidentiality_claimed": "unclear",
+            "secure_contact_tools": [],
+            "attorney_role": "unclear",
+            "legal_representation_status": "unclear",
+            "attorney_client_relationship_status": "unclear",
+            "_post_content_seed": {
+                "nationwide_example": "Whistleblowers of America assists whistleblowers nationally who have suffered retaliation after having identified harm to individuals or the public.",
+                "additional_services": "Research, training, education, roundtables, and resilience-focused programming for whistleblowers and advocates.",
+                "eligibility_notes": "Open to whistleblowers suffering retaliation; no specific income or other constraints stated."
+            },
+            "is_nationwide": 1
+        },
+        {
+            "official_name": "Government Accountability Project",
+            "official_homepage_url": "https://whistleblower.org/",
+            "general_description": "The Government Accountability Project (GAP) is a non-partisan, public interest nonprofit that promotes government and corporate accountability by providing legal representation and support to whistleblowers. It advances occupational free speech and empowers citizen activists through investigations, litigation, advocacy, and education. GAP operates specialized programs covering corporate/financial, environmental, government, national security, public health, immigration, and international whistleblower issues.",
+            "common_name": "GAP",
+            "homepage_verified_date": "2026-04-14",
+            "protected_disclosures": [
+                "public-corruption-ethics",
+                "food-drug-safety",
+                "environmental-protection",
+                "general-wrongdoing"
+            ],
+            "protected_classes": [
+                "federal-employee",
+                "state-employee",
+                "local-gov-staff",
+                "corporate-staff",
+                "military-personnel",
+                "non-profit-staff",
+                "former-employee",
+                "has-details"
+            ],
+            "protected_class_details": "Intake form expressly covers current or former federal employees, private-sector employees, not-for-profit employees, current or former state or local government employees, members of the armed forces/uniformed services, and employees or contractors for intergovernmental organizations.",
+            "languages": [
+                "english"
+            ],
+            "organization_model": "nonprofit",
+            "employment_sectors": [
+                "federal-employee",
+                "state-local-employee",
+                "private-sector",
+                "military-defense",
+                "nonprofit-ngo"
+            ],
+            "cost_models": [
+                "pro-bono",
+                "contingency",
+                "sliding-scale",
+                "fee-for-service"
+            ],
+            "services": [
+                "legal-rep",
+                "consultation",
+                "advocacy",
+                "hotline",
+                "media",
+                "referral",
+                "retaliation"
+            ],
+            "process_types": [
+                "civil-lawsuit",
+                "administrative-complaint",
+                "congressional-disclosure",
+                "internal-disclosure",
+                "regulatory-tip"
+            ],
+            "case_stages": [
+                "pre-report",
+                "post-report",
+                "retaliation-active",
+                "litigation"
+            ],
+            "disclosure_targets": [
+                "internal-management",
+                "agency-federal",
+                "legislative-federal",
+                "public-media",
+                "attorney-counsel",
+                "law-enforcement",
+                "public-nonprofit",
+                "has-details"
+            ],
+            "disclosure_target_details": "Helps with protected disclosures in various contexts, including to agencies, courts, and internally.",
+            "whistleblower_scope": 3,
+            "whistleblower_scope_details": "Since 1977, Government Accountability Project has worked to promote government and corporate accountability by working with whistleblowers—employees who feel compelled to speak up after discovering illegality, gross mismanagement or waste of funds, and threats to health, safety and the environment in order to affect change.",
+            "intake_url": "https://crm.whistleblower.org/form/online-intake-application",
+            "contact_url": "https://whistleblower.org/contact/",
+            "phones": [
+                {
+                    "type": "headquarters",
+                    "number": "(202) 457-0034"
+                }
+            ],
+            "emails": [
+                {
+                    "type": "general",
+                    "address": "info@whistleblower.org"
+                }
+            ],
+            "mailing_address": "1612 K St. NW, Suite 1100, Washington, DC 20006",
+            "income_screening": "not-required",
+            "secure_channel_status": "none-found",
+            "anonymous_pre_consult_status": "yes",
+            "has_attorneys": "yes",
+            "_review_notes": "[Gemini] Primary intake is an HTTPS web form; has_secure_channel is set to no because a standard form does not meet the schema's encrypted tool requirement despite site recommendations for Signal for sensitive tips. [Grok] Online intake form requires detailed case info and may take up to a month for review; no guaranteed representation. Disclaimer notes submissions do not create attorney-client relationship until retainer. [GPT-5.4 Thinking] The assistance page describes SSL, confidentiality, and attorney-prospective-client privilege, but that does not satisfy the prompt’s dedicated encrypted-tool rule for has_secure_channel.",
+            "organization_status": "unclear",
+            "public_directory_status": "draft-review",
+            "editor_confidence": "low",
+            "whistleblower_fit": "unclear",
+            "service_depth": "unclear",
+            "intake_commitment_class": "unclear",
+            "intake_status": "unclear",
+            "expected_response_time": "unclear",
+            "eligibility_status": "unclear",
+            "membership_requirement": "none",
+            "confidentiality_claimed": "unclear",
+            "secure_contact_tools": [],
+            "attorney_role": "unclear",
+            "legal_representation_status": "unclear",
+            "attorney_client_relationship_status": "unclear",
+            "_post_content_seed": {
+                "nationwide_example": "From corporations to the U.S. military to the United Nations, Government Accountability Project works to protect whistleblowers from all industries.",
+                "eligibility_notes": "Intake reviews cases for potential representation; considers ability to pay fees/expenses but public interest focus; no strict income cutoff stated."
+            },
+            "is_nationwide": 1
+        },
+        {
+            "official_name": "National Whistleblower Center",
+            "official_homepage_url": "https://www.whistleblowers.org/",
+            "general_description": "The National Whistleblower Center (NWC) is a leading nonprofit working with whistleblowers to fight corruption, protect people and the environment, and advocate for strong whistleblower laws. It operates a free Attorney Referral Program connecting whistleblowers with experienced private attorneys for cases involving retaliation and disclosures under various federal and state laws. NWC also engages in policy advocacy, education on whistleblower rights, and public awareness efforts.",
+            "common_name": "NWC",
+            "homepage_verified_date": "2026-04-14",
+            "protected_disclosures": [
+                "securities-commodities-fraud",
+                "tax-evasion-fraud",
+                "healthcare-medicare-fraud",
+                "procurement-spending-fraud",
+                "environmental-protection",
+                "public-corruption-ethics",
+                "general-wrongdoing"
+            ],
+            "protected_classes": [
+                "all-employees",
+                "federal-employee",
+                "corporate-staff",
+                "contractor-gig",
+                "has-details"
+            ],
+            "protected_class_details": "Attorney referral materials expressly mention government and private-sector whistleblowers and coverage for matters arising under numerous federal and state laws.",
+            "languages": [
+                "english"
+            ],
+            "organization_model": "nonprofit",
+            "employment_sectors": [
+                "federal-employee",
+                "state-local-employee",
+                "private-sector",
+                "military-defense",
+                "nonprofit-ngo"
+            ],
+            "cost_models": [
+                "free"
+            ],
+            "services": [
+                "referral",
+                "advocacy",
+                "consultation"
+            ],
+            "process_types": [
+                "qui-tam",
+                "regulatory-tip",
+                "civil-lawsuit",
+                "administrative-complaint"
+            ],
+            "case_stages": [
+                "pre-report",
+                "retaliation-active",
+                "litigation",
+                "has-details"
+            ],
+            "case_stage_details": "Focuses on connecting to attorneys for ongoing cases; educates potential whistleblowers pre-disclosure.",
+            "disclosure_targets": [
+                "agency-federal",
+                "agency-state",
+                "attorney-counsel",
+                "has-details"
+            ],
+            "disclosure_target_details": "Supports disclosures under multiple laws; referrals for cases involving agency, court, or other filings.",
+            "whistleblower_scope": 3,
+            "whistleblower_scope_details": "Helping Whistleblowers Find an Attorney is Central to NWC's Mission.",
+            "intake_url": "https://www.whistleblowers.org/find-a-whisteblower-attorney/",
+            "contact_url": "https://www.whistleblowers.org/contact-us/",
+            "phones": [
+                {
+                    "type": "headquarters",
+                    "number": "(202) 342-1903"
+                }
+            ],
+            "emails": [
+                {
+                    "type": "general",
+                    "address": "info@whistleblowers.org"
+                }
+            ],
+            "mailing_address": "1800 M Street, NW #33888, Washington, DC 20033",
+            "income_screening": "not-required",
+            "secure_channel_status": "none-found",
+            "anonymous_pre_consult_status": "yes",
+            "has_attorneys": "yes",
+            "_review_notes": "[Gemini] Intake for the Attorney Referral Program (ARP) is through a confidential HTTPS web form... [Grok] Provides referrals to private attorneys via confidential intake form (protected by attorney-client privilege to fullest extent); does not provide direct legal advice or representation. [GPT-5.4 Thinking] NWC and the National Whistleblower Legal Defense and Education Fund describe the intake as secure, confidential, and attorney-client privileged, but the prompt requires a dedicated encrypted tool before has_secure_channel can be marked yes. Anonymous_pre_consult_possible was marked yes because NWC’s contact form explicitly says users may use a pseudonym.",
+            "organization_status": "unclear",
+            "public_directory_status": "draft-review",
+            "editor_confidence": "low",
+            "whistleblower_fit": "unclear",
+            "service_depth": "unclear",
+            "intake_commitment_class": "unclear",
+            "intake_status": "unclear",
+            "expected_response_time": "unclear",
+            "eligibility_status": "unclear",
+            "membership_requirement": "none",
+            "confidentiality_claimed": "unclear",
+            "secure_contact_tools": [],
+            "attorney_role": "unclear",
+            "legal_representation_status": "unclear",
+            "attorney_client_relationship_status": "unclear",
+            "_post_content_seed": {
+                "nationwide_example": "National Whistleblower Center (NWC) is a non-profit organization... assisting whistleblowers globally in exposing corruption and protecting their rights.",
+                "additional_services": "Attorney referral program for whistleblower cases (retaliation, qui tam, etc.); education and training on whistleblower law.",
+                "eligibility_notes": "Attorney referral program open to whistleblowers with qualifying cases; no income details stated. No phone legal advice."
+            },
+            "is_nationwide": 1
+        }
+    ],
+    "integrity": {
+        "with_errors": true,
+        "error_details": [
+            "[Government Accountability Project]: Removed invalid slug 'national-security' from disclosure_types — does not exist in ws_disclosure_type taxonomy."
+        ],
+        "error_count": 1
+    }
+}

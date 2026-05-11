@@ -1,5 +1,11 @@
 {
     "hidden": {
+        "_court_is_fed": {
+            "hook": [
+                "derive"
+            ],
+            "type": "true_false"
+        },
         "_disclosure_target_class": {
             "choices": [
                 "internal",
@@ -12,7 +18,7 @@
             "multiple": 0,
             "type": "select"
         },
-        "_precedent_ids": {
+        "_parent_ids": {
             "hook": [
                 "merge"
             ],
@@ -38,7 +44,7 @@
     "meta": {
         "_warning": "Per WS-Core Security Protocol 4.7.2, direct modification is prohibited. Hand-editing triggers automated disciplinary flaying. Intestines will be removed via the navel to preserve the audit trail.",
         "checksum": "a8de07a8",
-        "cpt": "jx-statute",
+        "cpt": "jx-citation",
         "generated_timestamp": "2026-05-10T20:22:31+00:00",
         "generator_version": "11.1.0",
         "infix": "jx",
@@ -62,6 +68,56 @@
                 "citation": {
                     "type": "text"
                 },
+                "class": {
+                    "choices": [
+                        "case-law",
+                        "statute",
+                        "regulatory",
+                        "secondary",
+                        "has-details"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "class_details": {
+                    "type": "textarea"
+                },
+                "status": {
+                    "choices": [
+                        "published",
+                        "unpublished",
+                        "memorandum",
+                        "vacated"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "binding_strength": {
+                    "choices": [
+                        "binding",
+                        "persuasive",
+                        "mixed",
+                        "distinguished",
+                        "overruled"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "court": {
+                    "hook": [
+                        "filter"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "court_details": {
+                    "type": "textarea"
+                },
+                "court_jx": {
+                    "field_type": "multi_select",
+                    "taxonomy": "ws_jurisdiction",
+                    "type": "taxonomy"
+                },
                 "date": {
                     "type": "date_picker"
                 },
@@ -76,6 +132,9 @@
                         "butchers"
                     ],
                     "type": "number"
+                },
+                "mandate_date": {
+                    "type": "date_picker"
                 },
                 "retro_date": {
                     "hook": [
@@ -121,6 +180,48 @@
                         "excludes"
                     ],
                     "taxonomy": "ws_legal_recognition",
+                    "type": "taxonomy"
+                },
+                "scope": {
+                    "choices": [
+                        "favorable",
+                        "adverse",
+                        "neutral",
+                        "dual-effect"
+                    ],
+                    "hook": [
+                        "verify"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "extended_taxonomies": {
+                    "hook": [
+                        "filter"
+                    ],
+                    "logic": "`scope` is `favorable` OR `scope` is `dual-effect`",
+                    "type": "repeater"
+                },
+                "suppressed_taxonomies": {
+                    "hook": [
+                        "filter"
+                    ],
+                    "logic": "`scope` is `adverse` OR `scope` is `dual-effect`",
+                    "type": "repeater"
+                },
+                "has_affected_jx": {
+                    "hook": [
+                        "derive"
+                    ],
+                    "type": "true_false"
+                },
+                "affected_jx": {
+                    "field_type": "multi_select",
+                    "hook": [
+                        "filter"
+                    ],
+                    "logic": "`has_affected_jx` is true",
+                    "taxonomy": "ws_jurisdiction",
                     "type": "taxonomy"
                 },
                 "manager_rule_exclusion_context": {
@@ -575,24 +676,6 @@
                     "logic": "`anticipatory-retaliation` in `adverse_actions`",
                     "type": "textarea"
                 },
-                "election_of_remedies_rules": {
-                    "choices": [
-                        "administrative-bars-civil",
-                        "state-bars-federal",
-                        "remedy-exclusivity",
-                        "first-filed-controls",
-                        "see-context"
-                    ],
-                    "hook": [
-                        "required"
-                    ],
-                    "multiple": 1,
-                    "type": "select"
-                },
-                "election_of_remedies_context": {
-                    "logic": "`remedy-election-required` in `legal_recognitions`",
-                    "type": "textarea"
-                },
                 "threatened_retaliation_gloss": {
                     "hook": [
                         "override"
@@ -815,27 +898,6 @@
                 },
                 "jury_trial_context": {
                     "logic": "`private-right-of-action` AND `jury-trial` in `legal_recognitions`",
-                    "type": "textarea"
-                },
-                "review_standard": {
-                    "choices": [
-                        "de-novo",
-                        "substantial-evidence",
-                        "arbitrary-capricious",
-                        "abuse-of-discretion",
-                        "has-details"
-                    ],
-                    "hook": [
-                        "required"
-                    ],
-                    "multiple": 0,
-                    "type": "select"
-                },
-                "review_standard_details": {
-                    "type": "textarea"
-                },
-                "review_standard_context": {
-                    "logic": "`civil-review-standard` in `legal_recognitions`",
                     "type": "textarea"
                 },
                 "fee_shifting_standard": {
@@ -1574,13 +1636,43 @@
                     "post_type": true,
                     "type": "post_object"
                 },
-                "citation_ids": {
+                "statute_ids": {
                     "multiple": 1,
                     "post_type": true,
                     "type": "post_object"
                 },
-                "construction_ids": {
+                "comlaw_ids": {
                     "multiple": 1,
+                    "post_type": true,
+                    "type": "post_object"
+                },
+                "parent_weight": {
+                    "choices": [
+                        "primary",
+                        "secondary",
+                        "distinguishing-only"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "has_negative_treatment_class": {
+                    "type": "true_false"
+                },
+                "negative_treatment_class": {
+                    "choices": [
+                        "overruled",
+                        "distinguished",
+                        "limited",
+                        "questioned",
+                        "superseded-by-statute"
+                    ],
+                    "logic": "`has_negative_treatment_class` is true",
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "superseded_by_statute_id": {
+                    "logic": "`negative_treatment_class` is `superseded-by-statute`",
+                    "multiple": 0,
                     "post_type": true,
                     "type": "post_object"
                 }
@@ -1597,6 +1689,35 @@
                 },
                 "authority_reference": {
                     "type": "text"
+                },
+                "authority_sources": {
+                    "choices": [
+                        "constitutional",
+                        "legislative",
+                        "judicial",
+                        "regulatory",
+                        "executive",
+                        "has-details"
+                    ],
+                    "multiple": 1,
+                    "type": "select"
+                },
+                "authority_source_details": {
+                    "type": "textarea"
+                },
+                "review_standard": {
+                    "choices": [
+                        "de-novo",
+                        "substantial-evidence",
+                        "arbitrary-capricious",
+                        "abuse-of-discretion",
+                        "has-details"
+                    ],
+                    "multiple": 0,
+                    "type": "select"
+                },
+                "review_standard_details": {
+                    "type": "textarea"
                 }
             },
             "label": "Authority Tab"
