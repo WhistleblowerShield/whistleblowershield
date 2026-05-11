@@ -130,7 +130,7 @@ Matrix rules:
 - Missing required keys throw clear errors.
 - Invalid enum values throw clear errors.
 - Missing taxonomy slugs throw clear errors.
-- Sentinels are not seedable data.
+- Sentinels are not data.
 
 Sentinels such as `has-details`, `see-context`, and similar flags mean unresolved classification work remains.
 They are useful before review. They are not canonical data. By admin review and before publish, unresolved prose

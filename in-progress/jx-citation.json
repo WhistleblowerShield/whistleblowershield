@@ -458,7 +458,7 @@
                     "type": "true_false"
                 },
                 "has_sol_details": {
-                    "type": "textarea"
+                    "type": "true_false"
                 },
                 "sol_details": {
                     "type": "textarea"
@@ -1295,7 +1295,7 @@
                     "type": "textarea"
                 },
                 "has_bop_details": {
-                    "type": "textarea"
+                    "type": "true_false"
                 },
                 "bop_details": {
                     "type": "textarea"

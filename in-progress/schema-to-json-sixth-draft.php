@@ -471,9 +471,9 @@ class WS_Statute_Compiler_Local {
             self::$audit_log[] = "[WARN] BARE-SHAPE: '{$n}' matches a data-shape suffix without underscore context; type inferred by exact-name guard.";
         }
 
-        if (preg_match('/_(context|details|gloss)$/', $n)) return 'textarea';
         if (preg_match('/_?(has|is)_|(_is_)/', $n)) return 'true_false';
         if (str_ends_with($n, '_bar')) return 'true_false';
+        if (preg_match('/_(context|details|gloss)$/', $n)) return 'textarea';
         if ($n === 'date' || str_ends_with($n, '_date')) return 'date_picker';
 
         // Guidance-defined select suffixes (ws-acf-field-guidance-v1.0.md §Default Field Types).
