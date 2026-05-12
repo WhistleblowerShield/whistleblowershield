@@ -20,7 +20,7 @@ authoritative for everything else this doc references.
 
 `extended_taxonomies` and `suppressed_taxonomies` use filtered taxonomy-term choices. `taxonomy` choices come
 from the allowlist of legal-record taxonomies that precedent records **are capable of** realistically extending or
-suppress (see
+suppressing (see
 the eligible-taxonomy allowlist in the field spec). `term` choices are filtered by the selected `taxonomy` in the
 same repeater row.
 
@@ -41,7 +41,7 @@ Editor instructions on `primary_agency`: when empty, show "Attach one ws-agency 
 non-empty, show "Override primary_agency with any currently attached local or federal agency."
 
 Future agency filtering is expected to intersect `ws_process_type`, `ws_disclosure_target`, and
-`ws_protected_disclosure`taxonomies.
+`ws_protected_disclosure` taxonomies.
 
 ---
 

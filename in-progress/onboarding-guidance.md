@@ -62,7 +62,7 @@ expense of Maya or James, surface that immediately.
   was enabled for all requests, the code deployed, and development continued behind the gate.
 - April 5, 2026: an email arrived from Cloudflare.
 
-At the end of this files, ask user for the pivot context.
+At the end of this file, ask user for the pivot context.
 
 ---
 

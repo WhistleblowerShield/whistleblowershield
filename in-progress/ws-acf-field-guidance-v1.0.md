@@ -259,6 +259,57 @@ Drop annotations that read as data-entry guidance for editors (what to type, exa
 underlying domain concept). Editor guidance belongs in ACF instruction text on the field itself, not in this
 spec.
 
+### Hook Annotation Rules
+
+Field specs may identify hook behavior only by hook class. Inline hook annotations are structural labels for the
+compiler and downstream implementers; they are not editor-facing notes and must not explain behavior in prose.
+Detailed hook behavior belongs in the domain hook spec.
+
+Use this inline form:
+
+- `hook: class`
+- `hook: class, class`
+
+Hook annotations must be the last delta in the inline definition. When a field has shape, conditional, sister, or
+approval annotations, write those first and end with the hook annotation.
+
+Correct:
+
+- `field_name` — (Sister to `field_context`; select: `a`|`b`; hook: required)
+- `hidden_field` — (select: @hook; hook: filter, derive)
+
+Incorrect:
+
+- `field_name` — (hook: required; Sister to `field_context`; select: `a`|`b`)
+- `field_name` — (hook: required because editors must fill this when the doctrine is active)
+
+Domain hook specs must document what the hook class means for that field or field family: triggering field/value,
+affected field/value, blocking or write behavior, validation message requirements, and any cross-field table row
+that drives implementation. If the hook creates an exception to general hook doctrine, the domain hook spec must
+name the exception and the reason.
+
+Allowed hook classes:
+
+| Class | Meaning |
+|---|---|
+| `filter` | Restricts selection choices based on external data or record context. |
+| `verify` | Validates data against a database, taxonomy, relationship, or cross-reference. |
+| `derive` | Computes or synchronizes a scalar value, usually for hidden fields or derived public helpers. |
+| `merge` | Computes or synchronizes an array or aggregation, usually for hidden relationship fields. |
+| `butchers` | Ruthlessly overwrites an existing value with system-generated data; stronger than `derive`. |
+| `temporal` | Validates date or time relationships, including impossible chronology and future-date review cases. |
+| `stale-monitor` | Detects and flags values no longer valid after a controlling field changes. |
+| `required` | Enforces conditional requiredness, including `[R]` slug-map requirements. |
+| `prerequisite` | Enforces that a selected value requires another value in the same field or another field. |
+| `paired` | Enforces value-pair rules where two values or fields must travel together. |
+| `excludes` | Enforces mutual exclusivity or cluster blocking caused by this field or value. |
+| `excluded-by` | Marks a value or field cluster blocked by another selected value. |
+| `impacts` | Directly triggers visibility, state, or downstream validation changes. |
+| `umbrella` | Handles `-only` values that exclude granular sibling values in the same multi-value field. |
+| `negation` | Enforces rules for explicit negation values where an empty value cannot express the result. |
+| `auto-set` | Sets a field based on explicit editorial intent expressed elsewhere in the record. |
+| `override` | Allows documented exception logic to bypass standard classification or exclusion rules. |
+
 ### Default Field Types
 
 **Default rule.** Any field whose shape is not specified by the conventions below or by an inline definition is a
