@@ -1,11 +1,11 @@
-# WS ACF Field Guidance MR (v1.0)
+# WS ACF Field Guidance MR (v0.1)
 ## Machine-Readable Field Guidance
 ### Expansion Rules For Pre-Compiler Normalization
 
 ---
 artifact:
   id: ws_acf_field_guidance_mr
-  version: "1.0"
+  version: "0.1"
   status: draft
   source_guidance: ws-acf-field-guidance-v1.0.md
   scope:
@@ -19,7 +19,6 @@ artifact:
       - sister_expansion
       - repeater_expansion
       - recognition_taxonomy_expansion
-      - record_type_double_role_expansion
       - sentinel_expansion
       - conditional_annotation_parsing
       - hook_annotation_parsing
@@ -116,18 +115,11 @@ name_rules:
       forbidden_joiners:
         - "_and_"
       suffix: "_tab"
-  reserved_prefixes:
-    ws_auto_:
-      reserved_for: auto_stamp_workflow_fields
-      written_by: hook_logic_only
-      forbidden_for: content_fields
 
 default_type_rules:
   default:
     field_type: text
     source: default_untyped_field
-    audit_required: true
-    audit_event: type_fell_through_to_default
   ordered_rules:
     - id: suffix_context
       match_suffix: "_context"
@@ -189,7 +181,6 @@ default_type_rules:
       match_suffix: "_unit"
       field_type: select
       choices: [days, weeks, months, years]
-      enforce_choices_strictly: true
     - id: suffix_formula
       match_suffix: "_formula"
       field_type: text
@@ -197,7 +188,6 @@ default_type_rules:
     - id: suffix_sanctions
       match_suffix: "_sanctions"
       field_type: repeater
-      note: convention_inferable_may_be_overridden_by_inline_declaration
     - id: suffix_application
       match_suffix: "_application"
       field_type: select
@@ -214,17 +204,9 @@ default_type_rules:
     - id: suffix_email
       match_suffix: "_email"
       field_type: email
-    - id: suffix_ids_plural
-      match_suffix: "_ids"
-      field_type: post_object
-      storage_cardinality: multi
-      acf_cardinality: multi
-      ordering_note: must_be_checked_before_suffix_id_singular
-    - id: suffix_id_singular
+    - id: suffix_id
       match_suffix: "_id"
-      field_type: post_object
-      storage_cardinality: single
-      acf_cardinality: single
+      field_type: text
 
 cardinality_rules:
   default_storage_cardinality: single
@@ -250,13 +232,6 @@ cardinality_rules:
     - details
     - context
     - gloss
-  pluralization_to_cardinality:
-    policy: explicit_declaration_required
-    note: |
-      field names ending in s do not automatically imply multi-cardinality;
-      multi-cardinality must come from an explicit type rule, taxonomy binding,
-      multi-select annotation, or repeater declaration. exceptions for specific
-      plural suffixes (_ids, _sanctions, etc.) are listed in default_type_rules.
   duration_pair:
     value_suffix: "_value"
     unit_suffix: "_unit"
@@ -349,39 +324,19 @@ recognition_taxonomy_rules:
       companion_required: true
       preferred_companion_suffix: "_context"
   cluster_trigger_requirement:
-    multi_field_cluster_must_anchor_on_recognition_slug: true
+    legal_or_doctrinal_cluster_must_anchor_on_recognition_slug: true
     core_classificatory_field_must_not_directly_anchor_doctrinal_cluster: true
     core_classificatory_field_may_require_corresponding_recognition_slug: true
-  non_recognition_anchor_exception:
+  non_legal_bool_exception:
     allowed: true
     must_be_audited_when_multi_field_cluster: true
     omit_context_when_structured_data_is_sufficient: true
-    note: |
-      record-status fields (record self-description) may anchor multi-field
-      clusters without migrating to the recognition taxonomy. doctrinal-state
-      fields cannot.
   prerequisite_markers:
     P:
       meaning: prerequisite_slug_required
     P_plus:
       meaning: paired_or_mutual_requirement
       must_cross_document_in_hook_spec: true
-
-record_type_double_roles:
-  status: explicitly_approved
-  pattern: |
-    the same canonical meta key may carry record-type-specific behavior when
-    the underlying concept is identical but the structural requirements of
-    each cpt differ. example: review_standard acts as a sister field in
-    substantive records and as a standalone field in precedent records.
-  precompiler_handling:
-    emit_per_cpt: true
-    record_type_origin_must_be_preserved_in_source_provenance: true
-    sister_relationship_may_vary_by_cpt: true
-    do_not_force_uniform_role_across_cpts: true
-  validation:
-    same_key_different_type_is_error: true
-    same_key_different_role_is_allowed: true
 
 sentinel_rules:
   trigger_sentinels:
@@ -401,10 +356,7 @@ sentinel_rules:
   reserved_sentinels:
     see-details:
       active_use_allowed: false
-      reason: |
-        the see-* prefix is reserved for redirect sentinels; see-details would
-        collide with the prefix even though no current redirect uses it. reserved
-        status documents the collision and prevents future misuse.
+      reason: see_prefix_reserved_for_redirects_but_details_redirect_not_implemented
   ambiguous_values:
     forbidden_active_choices:
       - other
@@ -475,11 +427,6 @@ conditional_grammar:
         op: pseudo_class_present
         field: "{taxonomy_field}"
         pseudo_class: "{pseudo_class}"
-      note: |
-        pseudo_class is a literal label preserved by the pre-compiler; the
-        actual member-slug resolution is performed by the hook implementation
-        layer, not the pre-compiler. a registry of accepted pseudo_class labels
-        belongs in the domain hook spec.
     - id: boolean_true
       text_pattern: "conditional on {bool_field} is true"
       ast:
@@ -512,80 +459,54 @@ hook_annotation_rules:
     classes_only: true
     must_be_last_delta: true
     prose_disallowed: true
-    purpose: structural_labels_for_compiler_and_downstream_implementers
-    not_editor_facing: true
   allowed_classes:
     filter:
       meaning: restricts_selection_choices_based_on_external_data_or_record_context
     verify:
       meaning: validates_data_against_database_taxonomy_relationship_or_cross_reference
     derive:
-      meaning: computes_or_synchronizes_scalar_value_usually_for_hidden_fields_or_derived_public_helpers
+      meaning: computes_or_synchronizes_scalar_value
     merge:
-      meaning: computes_or_synchronizes_array_or_aggregation_usually_for_hidden_relationship_fields
+      meaning: computes_or_synchronizes_array_or_aggregation
     butchers:
-      meaning: ruthlessly_overwrites_existing_value_with_system_generated_data
-      stronger_than: derive
-      supersedes_in_override_pass: derive
+      meaning: overwrites_existing_value_with_system_generated_data
+      supersedes: derive
     temporal:
-      meaning: validates_date_or_time_relationships_including_impossible_chronology_and_future_date_review
+      meaning: validates_date_or_time_relationships
     stale-monitor:
-      meaning: detects_and_flags_values_no_longer_valid_after_controlling_field_changes
+      meaning: detects_and_flags_values_invalidated_by_controlling_field_change
     required:
-      meaning: enforces_conditional_requiredness_including_R_slug_map_requirements
+      meaning: enforces_conditional_requiredness
     prerequisite:
-      meaning: enforces_selected_value_requires_another_value_in_same_field_or_another_field
+      meaning: enforces_selected_value_requires_another_value
     paired:
-      meaning: enforces_value_pair_rules_where_two_values_or_fields_must_travel_together
+      meaning: enforces_values_or_fields_must_travel_together
     excludes:
-      meaning: enforces_mutual_exclusivity_or_cluster_blocking_caused_by_this_field_or_value
+      meaning: enforces_mutual_exclusivity_or_cluster_blocking_caused_by_this_field
     excluded-by:
-      meaning: marks_value_or_field_cluster_blocked_by_another_selected_value
+      meaning: marks_value_or_cluster_blocked_by_another_selected_value
     impacts:
-      meaning: directly_triggers_visibility_state_or_downstream_validation_changes
+      meaning: triggers_visibility_state_or_downstream_validation_changes
     umbrella:
-      meaning: handles_only_suffix_excluding_granular_sibling_values_in_same_multi_value_field
+      meaning: handles_only_suffix_excluding_granular_siblings
       infer_from_choice_suffix: "-only"
-      inference_requires:
-        storage_cardinality: multi
     negation:
-      meaning: enforces_rules_for_explicit_negation_values_where_empty_cannot_express_result
+      meaning: handles_explicit_negation_values
       infer_from_values:
         - none
         - "none-*"
         - "no-*"
-      inference_requires:
-        storage_cardinality: multi
-      side_effect_when_inferred:
-        set_field_required: true
     auto-set:
-      meaning: sets_field_based_on_explicit_editorial_intent_expressed_elsewhere_in_record
+      meaning: sets_field_based_on_explicit_editorial_intent_elsewhere
     override:
-      meaning: allows_documented_exception_logic_to_bypass_standard_classification_or_exclusion_rules
-      requires_spec_side_case_statement: true
-      formal_description_intentionally_absent: true
+      meaning: allows_documented_exception_to_standard_rule
   validation:
-    unknown_hook_class:
-      severity: error
-      reason: hook_classes_must_appear_in_allowed_classes_registry
-    hook_before_other_delta:
-      severity: error
-      reason: hook_annotation_must_be_last_delta_in_inline_definition
-    hook_with_prose:
-      severity: error
-      reason: hook_annotations_must_not_explain_behavior_in_prose
-    butchers_and_derive_both_present:
+    unknown_hook_class: error
+    hook_before_other_delta: error
+    hook_with_prose: error
+    butchers_and_derive:
       action: remove_derive
-      reason: butchers_is_stronger_form_of_derive
-  domain_hook_spec_responsibilities:
-    must_document_per_hook_class_application:
-      - triggering_field_or_value
-      - affected_field_or_value
-      - blocking_or_write_behavior
-      - validation_message_requirements
-      - cross_field_table_row_when_applicable
-    must_name_exceptions_to_general_hook_doctrine: true
-    must_state_reason_for_each_exception: true
+      reason: butchers_is_stronger_derive
 
 inline_annotation_rules:
   delimiter: ";"
@@ -607,14 +528,5 @@ inline_annotation_rules:
     conditional_before_hook: true
     sister_before_hook: true
     repeater_structure_before_hook: true
-    shape_before_hook: true
-    approval_before_hook: true
-  examples:
-    correct:
-      - "field_name — (Sister to field_context; select: a|b; hook: required)"
-      - "hidden_field — (select: @hook; hook: filter, derive)"
-    incorrect:
-      - "field_name — (hook: required; Sister to field_context; select: a|b)"
-      - "field_name — (hook: required because editors must fill this when the doctrine is active)"
 
 ...
