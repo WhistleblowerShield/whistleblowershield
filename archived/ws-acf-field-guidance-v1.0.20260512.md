@@ -17,6 +17,17 @@ example is the vehicle.
 Casing is strict. ACF field `name` values (meta keys) use `snake_case`. Select choice values and taxonomy term
 slugs use `kebab-case`.
 
+### Umbrella Choice Values
+
+Umbrella values in multi-value fields end with `-only` when the value represents a blanket selection that excludes
+granular sibling values in the same field. Do not use `-only` with values that don't carry blanket semantics; find
+alternatives.
+
+Hooks targeting an umbrella `-only` value must flag granular siblings when present. Sentinels such as `has-details`
+and `see-context` are not granular values and **are permitted to** coexist with an umbrella value.
+
+Examples: `all-sectors-only`, `all-employees-only`.
+
 ### CPT Prefix and Infix
 
 Canonical field names in domain specs are prefix-free. CPT-specific prefixes are applied during ACF rewrite, not
@@ -50,44 +61,6 @@ versus `*_statuses`. When a field's base concept changes from plural to companio
 infix singular: `disclosure_targets` becomes `disclosure_target_details` or `disclosure_target_context`.
 
 Exception: `*_details`, `*_context`, and `*_gloss` are lexical labels and do not track cardinality.
-
-### Data Shape Suffixes
-
-Use a data-shape suffix only when the field data is the appropriate shape: `*_url`, `*_date`, `*_email`, `*_id`,
-`*_value` (integer), `*_unit` (select; **strictly limited to** calendar units `days`, `weeks`, `months`, `years`).
-
-**Duration pair.** When a duration is captured, use a `*_value` plus `*_unit` pair. Both fields are sisters of the
-cluster's `_context`; both are visible together when the cluster is active and required together; neither field
-is visibility-conditional on the other. New duration fields follow this shape without inline annotation. Where
-both fields are a required pair, only `*_value` needs to be annotated; `*_unit` silently inherits the annotation.
-
-### Avoided Names
-
-Discouraged but not forbidden:
-
-- `*_type` — deemed too generic; use a more precise suffix when one fits (prefer `*_class`, `*_scope`, `*_status`,
-  `*_rule`, `*_framework`, `*_weight`, `*_strength`, `*_standard`, `*_source`, or another appropriate suffix). Use
-  of `*_type` when no better suffix fits does not require annotation or approval.
-- `*_limitation` — deemed too long; use `*_limit` for brevity.
-
-Pluralize suffixes to match cardinality (e.g., `*_classes`, `*_scopes`, `*_statuses`). Use `statuses` as the
-plural of `status`. The modified-key infix **must** always be singular (e.g., `protected_actions` becomes
-`protected_action_standards` or `protected_action_sources`).
-
-### Record-Type Double Roles
-
-Explicitly approved: The same meta key is permitted to carry record-type-specific behavior (e.g., `review_standard` acts as a sister field in substantive records, but as a standalone field in precedent records). This is a valid pattern when the underlying concept is identical but the structural requirements of the CPT differ.
-
-### Umbrella Choice Values
-
-Umbrella values in multi-value fields end with `-only` when the value represents a blanket selection that excludes
-granular sibling values in the same field. Do not use `-only` with values that don't carry blanket semantics; find
-alternatives.
-
-Hooks targeting an umbrella `-only` value must flag granular siblings when present. Sentinels such as `has-details`
-and `see-context` are not granular values and **are permitted to** coexist with an umbrella value.
-
-Examples: `all-sectors-only`, `all-employees-only`.
 
 ### Booleans
 
@@ -125,7 +98,7 @@ specific sister value rather
 than the cluster as a whole; in that role, it does not become the cluster anchor.
 
 All `*_context` and `*_gloss` conditionals must declare their trigger field and trigger value. Other companion
-shapes — `*_limits`, `*_phases`, or any companion — **are authorized to** rely on naming convention only when
+shapes — `*_limits`, `*_phases`, or any `*_companion` — **are authorized to** rely on naming convention only when
 the trigger and
 companion share the same base name (e.g., `has_field_name_limits` triggers `field_name_limits`; `has-phases` in
 `field_name` triggers `field_name_phases`). When trigger and companion do not share a base name, document the
@@ -175,20 +148,8 @@ Sisters **must** be revealed in proximity of their sibling. Use the editorial ju
 ### Recognition Taxonomy Pattern
 
 A *recognition taxonomy* is a controlled vocabulary whose terms each represent a bool-true-on-presence state for
-the record. This pattern is intentionally domain-agnostic: one domain-specific taxonomy (for example, `legal_recognitions` in
-legal records) can be reused as a model for other domains where multiple related bools and triggers belong together.
-
-Use a recognition taxonomy when a record needs a stable set of state flags or condition anchors that are better
-expressed as taxonomy terms than as a collection of separate `has_*` booleans. It is especially useful when many
-related triggers, companion fields, or visibility conditions would otherwise clutter the field set.
-
-- Choose a domain-appropriate taxonomy name, not a generic field name. Examples: `legal_recognitions`, `org_statuses`, `service_eligibility`, `protection_states`.
-- Treat each slug as a presence-based boolean. The term exists or it does not; the taxonomy is not a free-form label list.
-- Use a recognition taxonomy to hide multiple related bools or conditional triggers behind a single, stable table.
-- Do not use this pattern for unrelated multi-select choices or ad hoc tags.
-
-Each domain (legal records, assist-orgs, etc.) may define at most one recognition taxonomy that acts as its primary
-state-of-record signal.
+the record. Each domain (legal records, assist-orgs, etc.) defines at most one recognition taxonomy that acts as
+its primary state-of-record signal.
 
 Recognition taxonomy slugs serve two roles:
 
@@ -206,11 +167,14 @@ consistent: every term in the recognition taxonomy answers a bool-state question
 
 A *triggered companion* is one conditional field revealed by one trigger.
 
-A *triggered cluster* is a companion plus one or more sister fields revealed by the same primary gate. Domain specs may anchor doctrinal clusters in a stable recognition taxonomy or other qualified-bool system appropriate to that record type.
+A *triggered cluster* is a companion plus one or more sister fields revealed by the same primary gate. For legal and doctrinal concepts, clusters
+**must strictly** be rooted in the record's recognition taxonomy because these "qualified-bools" (recognition slugs) are the stable
+bool-state layer for the doctrines or operational states the record describes.
 
-When a condition reveals more than one field beyond its companion, it becomes a *triggered cluster*. If a core classificatory field
-(which stores a controlling value rather than a bool-state) needs to trigger a cluster, the domain spec should define the stable
-anchor mechanism for the cluster.
+When a condition reveals more than one field beyond its companion, it becomes a *triggered cluster*. For any legal or doctrinal concept, the cluster
+**must strictly** be anchored on a recognition taxonomy slug (a qualified-bool), without exception. If a core classificatory field
+(which stores a controlling value rather than a bool-state) needs to trigger a doctrinal cluster, it **must** fire off a
+corresponding term presence in the recognition taxonomy to serve as the stable bool-state anchor.
 
 **Exception for Non-Legal Bools:** A non-doctrine bool (e.g., `has_negative_treatment`) that represents a pure operational state of the record itself, rather than a legal doctrine, is exempt from the recognition taxonomy anchor requirement. However, any multi-field cluster triggered by a non-legal bool **must be strictly audited**. The knee-jerk pattern of automatically pairing a freetext companion with structured sister fields is prohibited here; if the non-legal state is sufficiently captured by structured data alone, omit the narrative glue. Non-empty field gates are only allowed for single-field conditionals.
 
@@ -221,6 +185,36 @@ must always appear together), or when the pairing is with a non-empty taxonomy f
 Single-field conditionals (`*_gloss` companion only) **are permitted to** remain outside the recognition taxonomy.
 If they migrate
 into the recognition taxonomy, rename the freetext companion from `*_gloss` to `*_context`.
+
+### Avoided Names
+
+Discouraged but not forbidden:
+
+- `*_recognized` and other legal-state bools — deemed unnecessary; add as a term to the record's recognition
+  taxonomy whenever possible.
+- `*_type` — deemed too generic; use a more precise suffix when one fits (prefer `*_class`, `*_scope`, `*_status`,
+  `*_rule`, `*_framework`, `*_weight`, `*_strength`, `*_standard`, `*_source`, or another appropriate suffix). Use
+  of `*_type` when no better suffix fits does not require annotation or approval.
+- `*_limitation` — deemed too long; use `*_limit` for brevity.
+
+Pluralize suffixes to match cardinality (e.g., `*_classes`, `*_scopes`, `*_statuses`). `status` is both singular
+and plural in some traditions, but in this codebase the plural is `statuses`. Other forms (`stati`, etc.) are not
+accepted. The modified-key infix **must** always be singular (e.g., `protected_actions` becomes
+`protected_action_standards` or `protected_action_sources`).
+
+### Record-Type Double Roles
+
+Explicitly approved: The same meta key is permitted to carry record-type-specific behavior (e.g., `review_standard` acts as a sister field in substantive records, but as a standalone field in precedent records). This is a valid pattern when the underlying concept is identical but the structural requirements of the CPT differ.
+
+### Data Shape Suffixes
+
+Use a data-shape suffix only when the field data is the appropriate shape: `*_url`, `*_date`, `*_email`, `*_id`,
+`*_value` (integer), `*_unit` (select; **strictly limited to** calendar units `days`, `weeks`, `months`, `years`).
+
+**Duration pair.** When a duration is captured, use a `*_value` plus `*_unit` pair. Both fields are sisters of the
+cluster's `_context`; both are visible together when the cluster is active and required together; neither field
+is visibility-conditional on the other. New duration fields follow this shape without inline annotation. Where
+both fields are a required pair, only `*_value` needs to be annotated; `*_unit` silently inherits the annotation.
 
 ---
 
@@ -233,11 +227,13 @@ needs additional explanation and no already-triggered `*_context` or `*_gloss` c
 taxonomy-term trigger sentinels must use the `has-*` prefix; in hierarchical taxonomy tables, new `has-*` terms
 must nest under `has-parent` to keep the hierarchy navigable.
 
-**Redirect sentinels.** `see-context`, `see-details` and `see-gloss` do not create new companions. They point the editor to a
+**Redirect sentinels.** `see-context` and `see-gloss` do not create new companions. They point the editor to a
 companion field that is already visible. Use `see-context` when the available companion is a cluster `*_context`
 field. Use `see-gloss` when the available companion is a single-field `*_gloss`.
 
-**Reserved sentinels.** The `see-*` prefix is reserved for redirect sentinels. Domain specs may document active redirect sentinel values only when supported by their own implementation.
+**Reserved sentinels.** `see-details` has no live implementation. The `see-*` prefix is reserved for redirect
+sentinels, so `see-details` cannot be used as an active value even though no current redirect uses it. Reserved
+status documents the collision and prevents future misuse.
 
 **Non-standard sentinels.** Domain specs **are permitted to** define non-standard sentinels for
 record-type-specific patterns. Each
@@ -296,7 +292,7 @@ name the exception and the reason.
 Allowed hook classes:
 
 | Class | Meaning |
-| --- | --- |
+|---|---|
 | `filter` | Restricts selection choices based on external data or record context. |
 | `verify` | Validates data against a database, taxonomy, relationship, or cross-reference. |
 | `derive` | Computes or synchronizes a scalar value, usually for hidden fields or derived public helpers. |
@@ -330,11 +326,10 @@ These defaults apply by naming convention unless the inline definition says othe
 - `*_value` is an integer or number field.
 - `*_unit` is a select field — calendar unit unless stated otherwise.
 - `*_formula` describes mandated calculations.
+- `*_sanctions` describes specified penalized conduct, **strictly** as a repeater.
 - `*_application` describes where or how a standard applies and is a select field.
-
-### Default Select Behavior
-
-A plain `select` field is single-select by default. Multi-select must be explicitly specified in the field definition.
+- `*_bar` is used for blocking doctrines or procedural bars and **must strictly** be select or boolean.
+- `select` means single-select unless multi-select is specified.
 
 ### Default Taxonomy Field Settings
 
@@ -364,8 +359,8 @@ multi-select.
 any term in the taxonomy field. Documentation prose may describe this as "any-slug" for readability, but the
 actual conditional is always written `taxonomy_field is non-empty`. Conditionals cannot test for `any-slug` directly; any selected slug
 makes the field non-empty.
-Annotation **is formally redundant and should be omitted** for `*_details`, `*_limits`, `*_phases`, and similar
-companions when the naming convention
+Annotation **is formally redundant and should be omitted** for `*_details`, `*_limits`, `*_phases`, and
+`*_companions` when the naming convention
 makes the trigger unambiguous. It is required for all other conditional fields. `*_context` and `*_gloss` fields
 must always declare their trigger field and trigger value. When using `AND`, `OR`, or `NOT`, omit "conditional on"
 while using accepted conditional notation.

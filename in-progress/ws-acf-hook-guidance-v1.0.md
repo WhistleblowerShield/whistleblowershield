@@ -18,9 +18,7 @@ sentinels, and conditional annotation forms. Hook behavior assumes those rules a
 violated, a stale value lingers in a hidden field — the hook **must** block save and surface a validation error
 naming both the causal field/value and the affected field/value. The hook **must never** silently clear, rewrite,
 or
-auto-resolve the conflict. Editors are responsible for resolution because legal-record correctness (and similar
-domain correctness) depends on editorial judgment that hooks cannot replicate. Validation errors **must** read as
-editorial guidance rather than terse failure messages.
+auto-resolve the conflict. Editors are responsible for resolution because domain correctness depends on editorial judgment that hooks cannot replicate. Validation errors **must** read as editorial guidance rather than terse failure messages.
 
 This rule has two consequences. First, hook implementations that previously cleared values on conflict are
 deprecated; rewrite them to flag instead. Second, validation errors must always identify *both ends* of the
@@ -36,7 +34,7 @@ value and the empty required field.
 **Authorship boundary.** Derived and merged fields are written by hooks only. Editors **must never** be asked to
 maintain hidden derived fields manually; if an editor finds themselves doing so, the hook is missing.
 
-**Auto-Set Exceptions.** General hook doctrine favors validation over cleanup or automatic setting. However, derived/guard-field exceptions are approved when explicit editorial intent directly forces a structural state (e.g., `has_fee_shifting_phases` is approved to auto-set true when `fee_shifting_standard` is `none-american-rule`).
+**Auto-Set Exceptions.** General hook doctrine favors validation over cleanup or automatic setting. However, derived/guard-field exceptions are approved when explicit editorial intent directly forces a structural state.
 
 **Hook organization.** Prefer one hook per behavior family with a small rules table over many one-off hooks. A
 rules table keeps the legitimate variations greppable and the inert ones obvious. Reuse hook logic wherever
@@ -131,9 +129,7 @@ required fields where an empty value cannot express the legal or operational res
 value is currently active across the codebase; domain specs **are the exclusive authority to** activate one with
 explicit documentation.
 
-**Domain-specific exceptions.** Some legal terms read as negations but are not generic sentinels (e.g.,
-`none-american-rule` in legal-record fee-shifting fields). These are permitted as actual values, not sentinels,
-and must be documented in their domain spec.
+**Domain-specific exceptions.** Some domain-specific values read as negations but are not generic sentinels. These are permitted as actual values, not sentinels, and must be documented in their domain spec.
 
 ### Repeaters
 

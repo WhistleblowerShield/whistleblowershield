@@ -73,6 +73,21 @@ precompiler_contract:
     - validation
     - source
 
+agent_review_guidance:
+  hook_spec_completeness:
+    description: "When generating the precompiler artifact, check whether hook classes referenced in field specs have corresponding hook spec coverage. Missing coverage should be logged without making the compiler infer behavior."
+    severity: warning
+    agent_only: true
+    missing_action: log
+    applicable_to:
+      - hook_annotation_rules
+      - hook_class_validation
+  recognition_taxonomy_definition:
+    description: "Verify referenced recognition taxonomy names are explicitly defined in the domain spec. Missing definitions should be flagged for review, not inferred by the compiler."
+    severity: warning
+    agent_only: true
+    missing_action: log
+
 name_rules:
   canonical_spec_field_name:
     case: snake_case
@@ -121,6 +136,45 @@ name_rules:
       reserved_for: auto_stamp_workflow_fields
       written_by: hook_logic_only
       forbidden_for: content_fields
+
+cardinality_rules:
+  default_storage_cardinality: single
+  default_acf_cardinality: single
+  taxonomy_default:
+    field_type: taxonomy
+    storage_cardinality: multi
+    acf_cardinality: multi
+    load_terms: true
+    save_terms: true
+  select_default:
+    field_type: select
+    storage_cardinality: single
+    acf_cardinality: single
+  multi_select_annotation:
+    storage_cardinality: multi
+    acf_cardinality: multi
+  repeater_default:
+    storage_cardinality: multi
+    acf_cardinality: repeater
+    field_name_must_be_plural: true
+  lexical_non_cardinality_suffixes:
+    - details
+    - context
+    - gloss
+  pluralization_to_cardinality:
+    policy: explicit_declaration_required
+    note: |
+      field names ending in s do not automatically imply multi-cardinality;
+      multi-cardinality must come from an explicit type rule, taxonomy binding,
+      multi-select annotation, or repeater declaration. exceptions for specific
+      plural suffixes (_ids, _sanctions, etc.) are listed in default_type_rules.
+  duration_pair:
+    value_suffix: "_value"
+    unit_suffix: "_unit"
+    unit_choices: [days, weeks, months, years]
+    both_visible_together: true
+    both_required_together: true
+    unit_inherits_value_annotation: true
 
 default_type_rules:
   default:
@@ -214,56 +268,9 @@ default_type_rules:
     - id: suffix_email
       match_suffix: "_email"
       field_type: email
-    - id: suffix_ids_plural
-      match_suffix: "_ids"
-      field_type: post_object
-      storage_cardinality: multi
-      acf_cardinality: multi
-      ordering_note: must_be_checked_before_suffix_id_singular
     - id: suffix_id_singular
       match_suffix: "_id"
       field_type: post_object
-      storage_cardinality: single
-      acf_cardinality: single
-
-cardinality_rules:
-  default_storage_cardinality: single
-  default_acf_cardinality: single
-  taxonomy_default:
-    field_type: taxonomy
-    storage_cardinality: multi
-    acf_cardinality: multi
-    load_terms: true
-    save_terms: true
-  select_default:
-    field_type: select
-    storage_cardinality: single
-    acf_cardinality: single
-  multi_select_annotation:
-    storage_cardinality: multi
-    acf_cardinality: multi
-  repeater_default:
-    storage_cardinality: multi
-    acf_cardinality: repeater
-    field_name_must_be_plural: true
-  lexical_non_cardinality_suffixes:
-    - details
-    - context
-    - gloss
-  pluralization_to_cardinality:
-    policy: explicit_declaration_required
-    note: |
-      field names ending in s do not automatically imply multi-cardinality;
-      multi-cardinality must come from an explicit type rule, taxonomy binding,
-      multi-select annotation, or repeater declaration. exceptions for specific
-      plural suffixes (_ids, _sanctions, etc.) are listed in default_type_rules.
-  duration_pair:
-    value_suffix: "_value"
-    unit_suffix: "_unit"
-    unit_choices: [days, weeks, months, years]
-    both_visible_together: true
-    both_required_together: true
-    unit_inherits_value_annotation: true
 
 companion_rules:
   details:
@@ -398,13 +405,6 @@ sentinel_rules:
     see-gloss:
       reveals_field: false
       points_to_companion_suffix: "_gloss"
-  reserved_sentinels:
-    see-details:
-      active_use_allowed: false
-      reason: |
-        the see-* prefix is reserved for redirect sentinels; see-details would
-        collide with the prefix even though no current redirect uses it. reserved
-        status documents the collision and prevents future misuse.
   ambiguous_values:
     forbidden_active_choices:
       - other
@@ -577,15 +577,6 @@ hook_annotation_rules:
     butchers_and_derive_both_present:
       action: remove_derive
       reason: butchers_is_stronger_form_of_derive
-  domain_hook_spec_responsibilities:
-    must_document_per_hook_class_application:
-      - triggering_field_or_value
-      - affected_field_or_value
-      - blocking_or_write_behavior
-      - validation_message_requirements
-      - cross_field_table_row_when_applicable
-    must_name_exceptions_to_general_hook_doctrine: true
-    must_state_reason_for_each_exception: true
 
 inline_annotation_rules:
   delimiter: ";"

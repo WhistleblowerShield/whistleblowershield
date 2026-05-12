@@ -14,6 +14,11 @@ authoritative for everything else this doc references.
   examples.
 - `legal-record-acf-fields-v3.0.md` — field declarations, tab structure, prompt-schema mapping for legal records.
 
+**Legal-record hook notes.**
+
+- `has_fee_shifting_phases` is approved to auto-set true when `fee_shifting_standard` is `none-american-rule` in the legal-record domain.
+- In legal records, `none-american-rule` is a domain-specific value and not a generic `none-*` sentinel; that exception is documented in the legal-record companion spec.
+
 ---
 
 ## Precedent Taxonomy Mapping

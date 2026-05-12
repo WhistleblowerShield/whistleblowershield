@@ -18,6 +18,16 @@ clarify ACF build behavior (taxonomy, select choices, conditional logic, sister 
 [Annotation Discipline] rule in the field-guidance doc. Annotations do not provide editor data-entry guidance —
 that lives in ACF instruction text on the field itself.
 
+## Legal-record Naming Notes
+
+Legal records may use suffix meanings that are specific to this domain. For this spec:
+
+- `*_sanctions` describes specified penalized conduct and is implemented as a repeater in legal-record sanction fields.
+- `*_bar` is used for blocking doctrines or procedural bars and is implemented as either a select or boolean field.
+- `*_recognized` and other legal-state bools should generally be represented as a term in `legal_recognitions` rather than as standalone bool fields.
+- `see-details` is treated as a reserved redirect sentinel in the legal-record domain only when no redirect implementation exists for it.
+- Doctrinal clusters in legal records are anchored on `legal_recognitions` terms. When a controlling field stores a value rather than a bool-state and it triggers a doctrinal cluster, a corresponding `legal_recognitions` slug must serve as the stable bool-state anchor.
+
 ---
 
 ## Attached Workflow Group Rules
