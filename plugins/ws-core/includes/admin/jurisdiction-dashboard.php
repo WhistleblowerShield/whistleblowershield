@@ -31,7 +31,7 @@
  *
  * @package WhistleblowerShield
  * @since   2.1.0
- * @version 3.12.0
+ * @version    3.20.0
  */
 
 if (!defined('ABSPATH')) {

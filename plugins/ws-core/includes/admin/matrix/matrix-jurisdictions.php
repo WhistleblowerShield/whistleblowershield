@@ -4,7 +4,7 @@
  *
  * @package    WhistleblowerShield
  * @since      1.0.0
- * @version    3.17.0
+ * @version    3.20.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -938,7 +938,36 @@ $_ws_jx_matrix = [
 
 ]; // end $_ws_jx_matrix
 
+function ws_jurisdiction_matrix_taxonomy_terms() {
+    global $_ws_jx_matrix;
 
+    // ── Step 1: Seed taxonomy terms ───────────────────────────────────────
+
+    $term_map = []; // slug → name
+
+    foreach ( $_ws_jx_matrix as $code => $jx ) {
+
+        $slug = strtolower( $code );
+        $name = $jx['title'];
+
+/*         $existing = term_exists( $slug, WS_JURISDICTION_TAXONOMY );
+
+        if ( $existing ) {
+            $term_id = is_array( $existing ) ? (int) $existing['term_id'] : (int) $existing;
+        } else {
+            $result = wp_insert_term( $name, WS_JURISDICTION_TAXONOMY, [ 'slug' => $slug ] );
+            if ( is_wp_error( $result ) ) {
+                continue;
+            }
+            $term_id = (int) $result['term_id'];
+        }
+ */
+        $term_map[ $slug ] = $name;
+
+    }
+
+    return $term_map;
+}
 // ════════════════════════════════════════════════════════════════════════════
 // Seeder: ws_seed_jurisdiction_matrix
 //
@@ -956,7 +985,7 @@ $_ws_jx_matrix = [
 function ws_seed_jurisdiction_matrix() {
     global $_ws_jx_matrix;
 
-    // ── Step 1: Seed taxonomy terms ───────────────────────────────────────
+/*     // ── Step 1: Seed taxonomy terms ───────────────────────────────────────
 
     $term_map = []; // slug → term_id
 
@@ -965,7 +994,7 @@ function ws_seed_jurisdiction_matrix() {
         $slug = strtolower( $code );
         $name = $jx['title'];
 
-        $existing = term_exists( $slug, WS_JURISDICTION_TAXONOMY );
+/*         $existing = term_exists( $slug, WS_JURISDICTION_TAXONOMY );
 
         if ( $existing ) {
             $term_id = is_array( $existing ) ? (int) $existing['term_id'] : (int) $existing;
@@ -976,10 +1005,10 @@ function ws_seed_jurisdiction_matrix() {
             }
             $term_id = (int) $result['term_id'];
         }
+ *//*
+        $term_map[ $slug ] = $name;
 
-        $term_map[ $slug ] = $term_id;
-
-    }
+    } */
 
     // ── Step 2: Create/update jurisdiction posts ──────────────────────────
 

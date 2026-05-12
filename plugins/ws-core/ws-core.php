@@ -21,7 +21,7 @@
  * Plugin Name:  WhistleblowerShield Core
  * Description:  Core architecture for WhistleblowerShield.org. Assembles
  *               public whistleblower protection pages for 57 U.S. jurisdictions.
- * Version:      3.18.0
+ * Version:      3.20.0
  * Author:       Whistleblower Shield
  * Author URI:   https://whistleblowershield.org
  *
@@ -29,7 +29,7 @@
  *
  * @package    WhistleblowerShield
  * @since      1.0.0
- * @version    3.18.0
+ * @version    3.20.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -40,13 +40,13 @@ defined( 'ABSPATH' ) || exit;
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-define( 'WS_CORE_VERSION', '3.18.0' );
+define( 'WS_CORE_VERSION', '3.20.0' );
 define( 'WS_CORE_PATH',    plugin_dir_path( __FILE__ ) );
 define( 'WS_CORE_URL',     plugin_dir_url( __FILE__ ) );
 
 // The registered taxonomy slug. Passed wherever WordPress expects a taxonomy
 // identifier — wp_get_post_terms(), has_term(), tax_query 'taxonomy' key, etc.
-define( 'WS_JURISDICTION_TAXONOMY', 'WS_JURISDICTION_TAXONOMY' );
+define( 'WS_JURISDICTION_TAXONOMY', 'ws_jurisdiction' );
 
 // Transient keys for the two jurisdiction-level query caches. Both are
 // invalidated together by ws_invalidate_jurisdiction_caches() whenever a

@@ -27,7 +27,7 @@
  *
  * @package       WhistleblowerShield
  * @since         2.1.0
- * @version       3.20.0 [3.20 locked — never been deployed, no live data, bump patch only] — [Do not bump gates]
+ * @version    3.20.0 [3.20 locked — never been deployed, no live data, bump patch only] — [Do not bump gates]
  * @author        Whistleblower Shield
  * @link          https://whistleblowershield.org
  * @copyright     Copyright (c) 2026 Whistleblower Shield

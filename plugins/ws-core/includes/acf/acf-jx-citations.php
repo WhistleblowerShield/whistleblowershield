@@ -98,7 +98,7 @@
  *
  * @package    WhistleblowerShield
  * @since      2.3.0
- * @version    3.17.4
+ * @version    3.20.0
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield

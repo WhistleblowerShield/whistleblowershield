@@ -24,7 +24,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.15.0
- * @version    3.15.1
+ * @version    3.20.0
  *
  * @uses       Included by ws-core.php at core_init() — loaded before any
  *             renderer, query builder, or shortcode that needs the constants

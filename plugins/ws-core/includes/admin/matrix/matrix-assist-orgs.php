@@ -4,7 +4,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.0.0
- * @version    3.19.0
+ * @version    3.20.0
  *
  * VERSION
  * -------
