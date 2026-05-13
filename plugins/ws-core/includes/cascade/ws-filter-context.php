@@ -262,8 +262,8 @@ function ws_filter_score_org( array $org, array $context, bool $targeted = false
     if ( $context['sector'] !== null ) {
         $org_sectors = wp_get_object_terms( $org['id'], 'ws_employment_sector', [ 'fields' => 'slugs' ] );
         if ( ! is_wp_error( $org_sectors ) ) {
-            // all-sectors orgs match any sector filter but get half weight
-            if ( in_array( 'all-sectors', (array) $org_sectors, true ) ) {
+            // all-sectors-only orgs match any sector filter but get half weight
+            if ( in_array( 'all-sectors-only', (array) $org_sectors, true ) ) {
                 $score += (int) floor( ( $w['sector_match'] ?? 5 ) / 2 );
             } elseif ( in_array( $context['sector'], (array) $org_sectors, true ) ) {
                 $score += (int) ( $w['sector_match'] ?? 5 );

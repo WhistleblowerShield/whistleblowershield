@@ -37,6 +37,7 @@ defined('ABSPATH') || exit;
 
 require_once WS_CORE_PATH . 'includes/admin/matrix/matrix-jurisdictions.php';
 
+global $_ws_taxonomy_registry;
 $_ws_taxonomy_registry = [
 
 // —— 1. Disclosure Categories ———————————————————————————————————————————————
@@ -230,7 +231,7 @@ $_ws_taxonomy_registry = [
                 'associates-immediate-family'    => 'Immediate Family of Whistleblower',
                 'associates-household-family'    => 'Household Family of Whistleblower',
                 'associates-close'               => 'Close Associates of Whistleblower',
-            'all-sectors'                  => ['All Sectors', 1],
+            'all-sectors-parent'           => ['All Sectors', 1],
                 'all-employees-only'             => 'All Employees Only',
             'has-parent'                   => ['Has Sentinels', 1],
                 'has-details'                    => 'Has Details',

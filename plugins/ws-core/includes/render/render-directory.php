@@ -248,7 +248,7 @@ function ws_render_directory_taxonomy_guide( array $context ): string {
                         'private-sector'       => 'Private company',
                         'nonprofit-ngo'        => 'Nonprofit or NGO',
                         'military-defense'     => 'Military or defense',
-                        'all-sectors'          => 'Not sure or other sector',
+                        'all-sectors-only'     => 'Not sure or other sector',
                                     ];
                     foreach ( $sector_options as $slug => $label ) :
                         $checked = ( $context['sector'] === $slug ) ? 'checked' : '';

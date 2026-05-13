@@ -162,7 +162,7 @@ $_ws_assist_org_matrix = [
         'employment_sectors' => [
             'all-sectors-only',
         ],
-        'protected_classes' => [ 'all-employees' ],
+        'protected_classes' => [ 'all-employees-only' ],
         'protected_disclosures' => [
             'securities-commodities-fraud',
             'tax-evasion-fraud',
@@ -325,7 +325,7 @@ $_ws_assist_org_matrix = [
         'employment_sectors' => [
             'all-sectors-only',
         ],
-        'protected_classes' => [ 'all-employees' ],
+        'protected_classes' => [ 'all-employees-only' ],
         'protected_disclosures' => [
             'securities-commodities-fraud',
             'healthcare-medicare-fraud',
@@ -381,7 +381,7 @@ $_ws_assist_org_matrix = [
         'employment_sectors' => [
             'all-sectors-only',
         ],
-        'protected_classes' => [ 'all-employees' ],
+        'protected_classes' => [ 'all-employees-only' ],
         'protected_disclosures' => [
             'general-wrongdoing',
             'occupational-health-safety',
@@ -430,7 +430,7 @@ $_ws_assist_org_matrix = [
         'employment_sectors' => [
             'all-sectors-only',
         ],
-        'protected_classes'       => [ 'all-employees' ],
+        'protected_classes'       => [ 'all-employees-only' ],
         'protected_disclosures' => [
             'public-corruption-ethics',
             'election-integrity',
@@ -530,7 +530,7 @@ $_ws_assist_org_matrix = [
         'employment_sectors' => [
             'all-sectors-only',
         ],
-        'protected_classes'       => [ 'all-employees' ],
+        'protected_classes'       => [ 'all-employees-only' ],
         'protected_disclosures' => [
             'wage-hour-violations',
             'occupational-health-safety',
@@ -579,7 +579,7 @@ $_ws_assist_org_matrix = [
         'employment_sectors' => [
             'all-sectors-only',
         ],
-        'protected_classes'       => [ 'all-employees' ],
+        'protected_classes'       => [ 'all-employees-only' ],
         'protected_disclosures' => [
             'wage-hour-violations',
             'occupational-health-safety',
@@ -630,7 +630,7 @@ $_ws_assist_org_matrix = [
         'employment_sectors' => [
             'all-sectors-only',
         ],
-        'protected_classes'       => [ 'all-employees', 'agricultural-worker' ],
+        'protected_classes'       => [ 'all-employees-only', 'agricultural-worker' ],
         'protected_disclosures' => [
             'wage-hour-violations',
             'occupational-health-safety',
@@ -733,7 +733,7 @@ $_ws_assist_org_matrix = [
         'employment_sectors' => [
             'all-sectors-only',
         ],
-        'protected_classes'       => [ 'all-employees' ],
+        'protected_classes'       => [ 'all-employees-only' ],
         'protected_disclosures' => [
             'wage-hour-violations',
             'occupational-health-safety',
@@ -839,7 +839,7 @@ $_ws_assist_org_matrix = [
         'employment_sectors' => [
             'all-sectors-only',
         ],
-        'protected_classes' => [ 'all-employees' ],
+        'protected_classes' => [ 'all-employees-only' ],
         'protected_disclosures' => [
             'general-wrongdoing',
             'public-corruption-ethics',

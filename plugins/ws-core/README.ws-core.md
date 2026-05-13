@@ -104,7 +104,7 @@ These attach to `jx-statute`, `jx-common-law`, `jx-citation`, and
 | Slug | Type | Notes |
 |---|---|---|
 | `ws_protected_disclosure` | hierarchical | 6 parents, 26 children |
-| `ws_protected_class` | hierarchical | 4 parents, 12 children + `has-details` + super slug `all-employees` |
+| `ws_protected_class` | hierarchical | 4 parents, 12 children + `has-details` + super slug `all-employees-only` |
 | `ws_disclosure_target` | hierarchical | 5 parents, 13 children + `has-details` |
 | `ws_adverse_action` | flat | 14 terms + `has-details` |
 | `ws_process_type` | flat | 9 terms |
@@ -112,7 +112,7 @@ These attach to `jx-statute`, `jx-common-law`, `jx-citation`, and
 | `ws_fee_shifting_rule` | flat | 4 terms |
 | `ws_employer_defense` | flat | 6 terms + `has-details` |
 | `ws_employee_standard` | flat | 6 terms + `has-details` |
-| `ws_employment_sector` | flat | 6 terms + includes super slug `all-sectors` |
+| `ws_employment_sector` | flat | 6 terms + includes super slug `all-sectors-only` |
 
 
 ### has-details sentinel pattern

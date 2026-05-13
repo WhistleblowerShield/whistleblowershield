@@ -131,7 +131,7 @@ function ws_filter_allowed_map(): array {
             'private-sector'       => 'private-sector',
             'nonprofit-ngo'        => 'nonprofit-ngo',
             'military-defense'     => 'military-defense',
-            'all-sectors'          => 'all-sectors',
+            'all-sectors-only'     => 'all-sectors-only',
         ],
 
         WS_FILTER_PARAM_TARGET => [

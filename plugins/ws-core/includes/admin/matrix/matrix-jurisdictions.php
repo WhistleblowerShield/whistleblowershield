@@ -938,10 +938,16 @@ $_ws_jx_matrix = [
 
 ]; // end $_ws_jx_matrix
 
+// ════════════════════════════════════════════════════════════════════════════
+// ws_jurisdiction_matrix_taxonomy_terms
+//
+// Feeds slug → name to taxonomy registry
+// ════════════════════════════════════════════════════════════════════════════
+
 function ws_jurisdiction_matrix_taxonomy_terms() {
     global $_ws_jx_matrix;
 
-    // ── Step 1: Seed taxonomy terms ───────────────────────────────────────
+    // ── Step 1: Feed taxonomy terms ───────────────────────────────────────
 
     $term_map = []; // slug → name
 
@@ -950,24 +956,13 @@ function ws_jurisdiction_matrix_taxonomy_terms() {
         $slug = strtolower( $code );
         $name = $jx['title'];
 
-/*         $existing = term_exists( $slug, WS_JURISDICTION_TAXONOMY );
-
-        if ( $existing ) {
-            $term_id = is_array( $existing ) ? (int) $existing['term_id'] : (int) $existing;
-        } else {
-            $result = wp_insert_term( $name, WS_JURISDICTION_TAXONOMY, [ 'slug' => $slug ] );
-            if ( is_wp_error( $result ) ) {
-                continue;
-            }
-            $term_id = (int) $result['term_id'];
-        }
- */
         $term_map[ $slug ] = $name;
 
     }
 
     return $term_map;
 }
+
 // ════════════════════════════════════════════════════════════════════════════
 // Seeder: ws_seed_jurisdiction_matrix
 //
@@ -985,30 +980,32 @@ function ws_jurisdiction_matrix_taxonomy_terms() {
 function ws_seed_jurisdiction_matrix() {
     global $_ws_jx_matrix;
 
-/*     // ── Step 1: Seed taxonomy terms ───────────────────────────────────────
+    // ── Step 1: Set term_map ───────────────────────────────────────
 
     $term_map = []; // slug → term_id
 
     foreach ( $_ws_jx_matrix as $code => $jx ) {
 
         $slug = strtolower( $code );
-        $name = $jx['title'];
 
-/*         $existing = term_exists( $slug, WS_JURISDICTION_TAXONOMY );
+        $existing = term_exists( $slug, WS_JURISDICTION_TAXONOMY );
 
         if ( $existing ) {
-            $term_id = is_array( $existing ) ? (int) $existing['term_id'] : (int) $existing;
-        } else {
-            $result = wp_insert_term( $name, WS_JURISDICTION_TAXONOMY, [ 'slug' => $slug ] );
-            if ( is_wp_error( $result ) ) {
-                continue;
+                $term_id = is_array( $existing ) ? (int) $existing['term_id'] : (int) $existing;
+            } else {
+                error_log( sprintf(
+                    '[ws-core jurisdiction matrix] Missing SLUG in WS_JURISDICTION_TAXONOMY (expected %s, referenced from %s line %d)',
+                    $slug,
+                    __FILE__,
+                    __LINE__
+                ) );
+                wp_die("You_Fuq'd_Up! — see the log");
             }
-            $term_id = (int) $result['term_id'];
-        }
- *//*
-        $term_map[ $slug ] = $name;
 
-    } */
+        $term_map[ $slug ] = $term_id;
+
+    }
+
 
     // ── Step 2: Create/update jurisdiction posts ──────────────────────────
 
