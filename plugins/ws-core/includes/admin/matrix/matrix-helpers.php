@@ -15,6 +15,38 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 
 // ════════════════════════════════════════════════════════════════════════════
+// ws_matrix_build_assist_org_internal_id()
+//
+// Builds the canonical assist-org internal ID from jurisdiction + post slug.
+// The ID is derived data; seed rows and ingest batches must not carry their
+// own independent internal-ID value.
+//
+// @param string $jx_slug  Jurisdiction slug, such as "us".
+// @param string $org_slug Canonical assist-org post slug.
+// @return string
+// ════════════════════════════════════════════════════════════════════════════
+
+function ws_matrix_build_assist_org_internal_id( string $jx_slug, string $org_slug ): string {
+    $jx_slug  = sanitize_key( strtolower( trim( $jx_slug ) ) );
+    $org_slug = sanitize_title( $org_slug );
+
+    if ( $jx_slug === '' ) {
+        throw new RuntimeException( 'Cannot build assist-org internal ID without jurisdiction slug.' );
+    }
+
+    if ( $org_slug === '' ) {
+        throw new RuntimeException( 'Cannot build assist-org internal ID without assist-org slug.' );
+    }
+
+    if ( str_starts_with( $org_slug, $jx_slug . '-' ) ) {
+        return $org_slug;
+    }
+
+    return $jx_slug . '-' . $org_slug;
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
 // ws_matrix_assign_terms()
 //
 // Resolves an array of term slugs to term IDs and assigns them to a post

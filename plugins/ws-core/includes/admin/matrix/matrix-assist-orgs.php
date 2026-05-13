@@ -66,10 +66,8 @@ defined( 'ABSPATH' ) || exit;
 global $_ws_assist_org_matrix;
 $_ws_assist_org_matrix = [
     [
-        '_id' => 'us-gov-act-proj',
         'common_name' => 'GAP',
         'official_name' => 'Government Accountability Project',
-        'slug' => 'government-accountability-project',
         'official_homepage_url' => 'https://whistleblower.org',
         'intake_url' => 'https://crm.whistleblower.org/form/online-intake-application',
         'contact_url' => '',
@@ -127,10 +125,8 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_id' => 'nat-wb-ctr-us',
         'common_name' => 'NWC',
         'official_name' => 'National Whistleblower Center',
-        'slug' => 'national-whistleblower-center',
         'official_homepage_url' => 'https://www.whistleblowers.org',
         'intake_url' => 'https://www.report-fraud-now.info/',
         'contact_url' => 'https://www.whistleblowers.org/contact-us/',
@@ -185,10 +181,8 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_id' => 'wb-aid-us',
         'common_name' => '',
         'official_name' => 'Whistleblower Aid',
-        'slug' => 'whistleblower-aid',
         'official_homepage_url' => 'https://whistlebloweraid.org',
         'intake_url' => 'https://whistlebloweraid.org/become-a-whistleblower/',
         'contact_url' => '',
@@ -242,10 +236,8 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_id' => 'proj-on-gov-oversight-us',
         'common_name' => 'POGO',
         'official_name' => 'Project On Government Oversight',
-        'slug' => 'project-on-government-oversight',
         'official_homepage_url' => 'https://www.pogo.org',
         'intake_url' => '',
         'contact_url' => 'https://www.pogo.org/contact-us',
@@ -295,10 +287,8 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_id' => 'anti-fraud-coal-us',
         'common_name' => 'TAF',
         'official_name' => 'The Anti-Fraud Coalition',
-        'slug' => 'the-anti-fraud-coalition',
         'official_homepage_url' => 'https://www.taf.org',
         'intake_url' => 'https://www.taf.org/attorneys/find-an-attorney/',
         'contact_url' => '',
@@ -344,10 +334,8 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_id' => 'wb-america-us',
         'common_name' => 'WoA',
         'official_name' => 'Whistleblowers of America',
-        'slug' => 'whistleblowers-of-america',
         'official_homepage_url' => 'https://www.whistleblowersofamerica.org',
         'intake_url' => '',
         'contact_url' => 'https://www.whistleblowersofamerica.org/learn-more/peer-support',
@@ -398,10 +386,8 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_id' => 'wb-intl-net-us',
         'common_name' => 'WIN',
         'official_name' => 'Whistleblowing International Network',
-        'slug' => 'whistleblowing-international-network',
         'official_homepage_url' => 'https://whistleblowingnetwork.org/Home',
         'intake_url' => '',
         'contact_url' => 'https://whistleblowingnetwork.org/Contact-Us',
@@ -448,10 +434,8 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_id' => 'nat-emp-law-proj-us',
         'common_name' => 'NELP',
         'official_name' => 'National Employment Law Project',
-        'slug' => 'national-employment-law-project',
         'official_homepage_url' => 'https://www.nelp.org',
         'intake_url' => '',
         'contact_url' => 'https://www.nelp.org/about-us/contact-us/',
@@ -497,10 +481,8 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_id' => 'nat-emp-lawyers-assoc-us',
         'common_name' => 'NELA',
         'official_name' => 'National Employment Lawyers Association',
-        'slug' => 'national-employment-lawyers-association',
         'official_homepage_url' => 'https://www.nela.org',
         'intake_url' => 'https://engagement.nela.org/NELA/findalawyer.aspx',
         'contact_url' => '',
@@ -548,10 +530,8 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_id' => 'legal-svc-corp-find-legal-aid-us',
         'common_name' => 'LSC',
         'official_name' => 'Legal Services Corporation - Find Legal Aid',
-        'slug' => 'legal-services-corporation-find-legal-aid',
         'official_homepage_url' => 'https://www.lsc.gov',
         'intake_url' => 'https://www.lsc.gov/about-lsc/what-legal-aid/get-legal-help',
         'contact_url' => '',
@@ -598,10 +578,8 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_id' => 'nat-legal-aid-defender-assoc-us',
         'common_name' => 'NLADA',
         'official_name' => 'National Legal Aid and Defender Association',
-        'slug' => 'national-legal-aid-and-defender-association',
         'official_homepage_url' => 'https://www.nlada.org',
         'intake_url' => '',
         'contact_url' => '',
@@ -648,10 +626,8 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_id' => 'nat-wb-ctr-att-ref-prog-us',
         'common_name' => 'NWC Referral',
         'official_name' => 'National Whistleblower Center — Attorney Referral Program',
-        'slug' => 'national-whistleblower-center-attorney-referral',
         'official_homepage_url' => 'https://www.whistleblowers.org',
         'intake_url' => 'https://www.whistleblowers.org/find-a-whisteblower-attorney/',
         'contact_url' => '',
@@ -700,10 +676,8 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_id' => 'american-bar-assoc-find-legal-help-us',
         'common_name' => 'ABA',
         'official_name' => 'American Bar Association — Find Legal Help',
-        'slug' => 'american-bar-association-find-legal-help',
         'official_homepage_url' => 'https://www.americanbar.org/groups/legal_services/',
         'intake_url' => 'https://www.americanbar.org/groups/legal_services/flh-home/',
         'contact_url' => '',
@@ -752,10 +726,8 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_id' => 'pub-emp-environmental-responsibility-us',
         'common_name' => 'PEER',
         'official_name' => 'Public Employees for Environmental Responsibility',
-        'slug' => 'public-employees-for-environmental-responsibility',
         'official_homepage_url' => 'https://peer.org',
         'intake_url' => 'https://peer.org/contact-legal-team/',
         'contact_url' => 'https://peer.org/about-us/contact-us/',
@@ -805,10 +777,8 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
-        '_id' => 'signals-net-us',
         'common_name' => 'TSN',
         'official_name' => 'The Signals Network',
-        'slug' => 'the-signals-network',
         'official_homepage_url' => 'https://thesignalsnetwork.org',
         'intake_url' => 'https://thesignalsnetwork.org/whistleblower-protection-program/',
         'contact_url' => 'https://thesignalsnetwork.org/contact/',
@@ -859,114 +829,6 @@ $_ws_assist_org_matrix = [
 // ════════════════════════════════════════════════════════════════════════════
 // Seeder: ws_seed_assist_org_matrix
 // ════════════════════════════════════════════════════════════════════════════
-
-/**
- * Builds a normalized assist-org internal ID using the ingest ruleset.
- *
- * This keeps matrix-seeded IDs consistent with ingest-generated IDs.
- *
- * @param array  $org     Matrix org row.
- * @param string $jx_slug Jurisdiction slug suffix (typically 'us').
- * @return string
- */
-function ws_matrix_build_assist_org_internal_id( array $org, string $jx_slug = '' ): string {
-    $org_name = trim( (string) ws_matrix_required( $org, 'official_name' ) );
-    $homepage = trim( (string) ws_matrix_required( $org, 'official_homepage_url' ) );
-    $jx_slug  = strtolower( trim( (string) $jx_slug ) );
-
-    $host = strtolower( (string) wp_parse_url( $homepage, PHP_URL_HOST ) );
-    if ( str_starts_with( $host, 'www.' ) ) {
-        $host = substr( $host, 4 );
-    }
-
-    $seed = $org_name !== '' ? $org_name : $host;
-    if ( $seed === '' ) {
-        $seed = 'assist-org';
-    }
-
-    $normalized = strtolower( $seed );
-    $normalized = str_replace( '&', ' ', $normalized );
-
-    if ( $jx_slug !== '' && defined( 'WS_JURISDICTION_TAXONOMY' ) ) {
-        $jx_term = get_term_by( 'slug', $jx_slug, WS_JURISDICTION_TAXONOMY );
-        if ( $jx_term && ! is_wp_error( $jx_term ) ) {
-            $jx_name = strtolower( trim( (string) $jx_term->name ) );
-            if ( $jx_name !== '' ) {
-                $jx_name_rx = preg_quote( $jx_name, '/' );
-                $normalized = preg_replace( '/\b' . $jx_name_rx . '\b/u', ' ' . $jx_slug . ' ', $normalized );
-            }
-        }
-    }
-
-    $normalized = preg_replace( '/\b(?:and|the|for|of|in|at|to|a|an)\b/u', ' ', $normalized );
-
-    // IMPORTANT: Keep this ruleset in sync with
-    // ws_ingest_build_aorg_internal_id() in tool-ingest.php.
-    // If these diverge, seeded/internal IDs will drift over time.
-    $abbrev_rules = [
-        '/\bwhistle[\s\-]*blow(?:er|ers|ing)\b/u' => 'wb',
-        '/\bglobal\b/u'                              => 'intl',
-        '/\binternational\b/u'                       => 'intl',
-        '/\bnationals?\b/u'                          => 'nat',
-        '/\borganizations?\b/u'                      => 'org',
-        '/\borganisations?\b/u'                      => 'org',
-        '/\bassociations?\b/u'                       => 'assoc',
-        '/\bcoalitions?\b/u'                         => 'coal',
-        '/\balliances?\b/u'                          => 'all',
-        '/\bcommittees?\b/u'                         => 'cmte',
-        '/\bcouncils?\b/u'                           => 'cncl',
-        '/\binstitutions?\b/u'                       => 'inst',
-        '/\binstitutes?\b/u'                         => 'inst',
-        '/\bbureaus?\b/u'                            => 'bur',
-        '/\boffices?\b/u'                            => 'ofc',
-        '/\bemployees?\b/u'                          => 'emp',
-        '/\bemployment\b/u'                          => 'emp',
-        '/\bprotections?\b/u'                        => 'prot',
-        '/\badvocacy\b/u'                            => 'adv',
-        '/\brights\b/u'                              => 'rts',
-        '/\bpublic\b/u'                              => 'pub',
-        '/\bpolicy\b/u'                              => 'pol',
-        '/\beducational\b/u'                         => 'edu',
-        '/\beducation\b/u'                           => 'edu',
-        '/\bresearch\b/u'                            => 'rsch',
-        '/\battorneys?\b/u'                          => 'att',
-        '/\breferrals?\b/u'                          => 'ref',
-        '/\bfederal\b/u'                             => 'fed',
-        '/\bgovernmental\b/u'                        => 'gov',
-        '/\bgovernments?\b/u'                        => 'gov',
-        '/\bdepartments?\b/u'                        => 'dept',
-        '/\bcommissions?\b/u'                        => 'comm',
-        '/\bcorporations?\b/u'                       => 'corp',
-        '/\bfoundations?\b/u'                        => 'fdn',
-        '/\bcenters?\b/u'                            => 'ctr',
-        '/\bcentres?\b/u'                            => 'ctr',
-        '/\bservices?\b/u'                           => 'svc',
-        '/\bnetworks?\b/u'                           => 'net',
-        '/\bprograms?\b/u'                           => 'prog',
-        '/\bprojects?\b/u'                           => 'proj',
-        '/\binitiatives?\b/u'                        => 'init',
-        '/\bresources?\b/u'                          => 'res',
-        '/\baccountability\b/u'                      => 'acct',
-    ];
-
-    foreach ( $abbrev_rules as $pattern => $replacement ) {
-        $normalized = preg_replace( $pattern, ' ' . $replacement . ' ', $normalized );
-    }
-
-    $normalized = preg_replace( '/[^a-z0-9]+/u', '-', $normalized );
-    $normalized = trim( (string) $normalized, '-' );
-    $normalized = preg_replace( '/-+/', '-', (string) $normalized );
-
-    if ( $normalized === '' ) {
-        $normalized = $host !== '' ? sanitize_title( $host ) : 'assist-org';
-    }
-
-    if ( $jx_slug !== '' && ! preg_match( '/(^|-)' . preg_quote( $jx_slug, '/' ) . '($|-)/', $normalized ) ) {
-        $normalized .= '-' . $jx_slug;
-    }
-
-    return $normalized;
-}
 
 /**
  * Throws a clear matrix-shape error instead of silently tolerating bad seed data.
@@ -1285,12 +1147,12 @@ function ws_seed_assist_org_matrix() {
 
     foreach ( $_ws_assist_org_matrix as $org ) {
 
-        $internal_id = ws_matrix_build_assist_org_internal_id( $org, 'us' );
+        $slug = sanitize_title( (string) ws_matrix_required( $org, 'slug' ) );
+        $internal_id = ws_matrix_build_assist_org_internal_id( 'us', $slug );
         if ( $internal_id === '' ) {
             ws_matrix_error( "Failed building internal ID for '{$org['slug']}'." );
         }
 
-        $slug = sanitize_title( (string) ws_matrix_required( $org, 'slug' ) );
         $official_name = trim( (string) ws_matrix_required( $org, 'official_name' ) );
         $description = '';
 
@@ -1299,7 +1161,6 @@ function ws_seed_assist_org_matrix() {
 
         $post_data = [
             'post_title'   => $official_name,
-            'post_name'    => $slug,
             'post_type'    => 'ws-assist-org',
             'post_status'  => 'publish',
             'post_content' => $content,
@@ -1316,6 +1177,8 @@ function ws_seed_assist_org_matrix() {
             $message = is_wp_error( $post_id ) ? $post_id->get_error_message() : 'empty post ID';
             ws_matrix_error( "Failed creating/updating assist-org post '{$slug}': {$message}." );
         }
+
+        
 
         // ── ACF meta fields ──────────────────────────────────────────────────
         //

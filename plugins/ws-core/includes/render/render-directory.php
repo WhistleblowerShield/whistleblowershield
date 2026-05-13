@@ -65,7 +65,7 @@ function ws_render_directory_page( array $targeted, array $nationwide, array $co
     <div class="ws-directory">
 
         <?php // ── Filter panel (left or top depending on layout) ─────────── ?>
-        <?php echo ws_render_directory_taxonomy_guide( $context ); // phpcs:ignore ?>
+        <?php //+ echo ws_render_directory_taxonomy_guide( $context ); // phpcs:ignore ?>
 
         <div class="ws-directory__results">
 

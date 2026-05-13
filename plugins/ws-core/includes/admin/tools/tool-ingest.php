@@ -1428,112 +1428,6 @@ function ws_ingest_build_assist_org_seed_append( array $record ): string {
     return "\n\n---\n" . implode( "\n\n---\n", array_map( 'trim', $blocks ) );
 }
 
-function ws_ingest_build_aorg_internal_id( array $record, string $jx_slug = '' ): string {
-    $org_name = trim( (string) ( $record['official_name'] ?? '' ) );
-    $com_name = trim( (string) ( $record['common_name'] ?? '' ) );
-    $homepage = trim( (string) ( $record['official_homepage_url'] ?? '' ) );
-    $jx_slug  = strtolower( trim( (string) $jx_slug ) );
-
-    $host = strtolower( (string) wp_parse_url( $homepage, PHP_URL_HOST ) );
-    if ( str_starts_with( $host, 'www.' ) ) {
-        $host = substr( $host, 4 );
-    }
-    if ( str_ends_with( $host, '.com' ) ) {
-        $host = substr( $host, 0, -4 );
-    }
-    if ( str_ends_with( $host, '.net' ) ) {
-        $host = substr( $host, 0, -4 );
-    }
-    if ( str_ends_with( $host, '.org' ) ) {
-        $host = substr( $host, 0, -4 );
-    }
-
-    // Ingest always generates assist-org internal IDs; never trust batch-supplied IDs.
-    $seed = $com_name !== '' ? $com_name : ( $host !== '' ? $host : $org_name );
-    if ( $seed === '' ) {
-        $seed = "who_returns_an_assist_org_without_a_fuq'n_org_name";
-    }
-
-    $normalized = strtolower( $seed );
-    // & handled in stop-word strip above.
-
-    // Swap jurisdiction display name to compact jurisdiction ID token.
-    if ( $jx_slug !== '' && defined( 'WS_JURISDICTION_TAXONOMY' ) ) {
-        $jx_term = get_term_by( 'slug', $jx_slug, WS_JURISDICTION_TAXONOMY );
-        if ( $jx_term && ! is_wp_error( $jx_term ) ) {
-            $jx_name = strtolower( trim( (string) $jx_term->name ) );
-            if ( $jx_name !== '' ) {
-                $jx_name_rx = preg_quote( $jx_name, '/' );
-                $normalized = preg_replace( '/\b' . $jx_name_rx . '\b/u', ' ' . $jx_slug . ' ', $normalized );
-            }
-        }
-    }
-
-    // Human-readable abbreviation pass (no hard length cap).
-    $abbrev_rules = [
-        '/\bwhistle[\s\-]*blow(?:er|ers|ing)\b/u' => 'wb',
-        '/\bglobal\b/u'                              => 'intl',
-        '/\binternational\b/u'                       => 'intl',
-        '/\bnationals?\b/u'                          => 'nat',
-        '/\borganizations?\b/u'                      => 'org',
-        '/\borganisations?\b/u'                      => 'org',
-        '/\bassociations?\b/u'                       => 'assoc',
-        '/\bcoalitions?\b/u'                         => 'coal',
-        '/\balliances?\b/u'                          => 'all',
-        '/\bcommittees?\b/u'                         => 'cmte',
-        '/\bcouncils?\b/u'                           => 'cncl',
-        '/\binstitutions?\b/u'                       => 'inst',
-        '/\binstitutes?\b/u'                         => 'inst',
-        '/\bbureaus?\b/u'                            => 'bur',
-        '/\boffices?\b/u'                            => 'ofc',
-        '/\bemployees?\b/u'                          => 'emp',
-        '/\bemployment\b/u'                          => 'emp',
-        '/\bprotections?\b/u'                        => 'prot',
-        '/\badvocacy\b/u'                            => 'adv',
-        '/\brights\b/u'                              => 'rts',
-        '/\bpublic\b/u'                              => 'pub',
-        '/\bpolicy\b/u'                              => 'pol',
-        '/\beducational\b/u'                         => 'edu',
-        '/\beducation\b/u'                           => 'edu',
-        '/\bresearch\b/u'                            => 'rsch',
-        '/\battorneys?\b/u'                          => 'att',
-        '/\breferrals?\b/u'                          => 'ref',
-        '/\bfederal\b/u'                             => 'fed',
-        '/\bgovernmental\b/u'                        => 'gov',
-        '/\bgovernments?\b/u'                        => 'gov',
-        '/\bdepartments?\b/u'                        => 'dept',
-        '/\bcommissions?\b/u'                        => 'comm',
-        '/\bcorporations?\b/u'                       => 'corp',
-        '/\bfoundations?\b/u'                        => 'fdn',
-        '/\bcenters?\b/u'                            => 'ctr',
-        '/\bcentres?\b/u'                            => 'ctr',
-        '/\bservices?\b/u'                           => 'svc',
-        '/\bnetworks?\b/u'                           => 'net',
-        '/\bprograms?\b/u'                           => 'prog',
-        '/\bprojects?\b/u'                           => 'proj',
-        '/\binitiatives?\b/u'                        => 'init',
-        '/\bresources?\b/u'                          => 'res',
-        '/\baccountability\b/u'                      => 'acct',
-    ];
-    foreach ( $abbrev_rules as $pattern => $replacement ) {
-        $normalized = preg_replace( $pattern, ' ' . $replacement . ' ', $normalized );
-    }
-
-    $normalized = preg_replace( '/[^a-z0-9]+/u', '-', $normalized );
-    $normalized = trim( (string) $normalized, '-' );
-    $normalized = preg_replace( '/-+/', '-', (string) $normalized );
-
-    if ( $normalized === '' ) {
-        $normalized = $host !== '' ? sanitize_title( $host ) : "how_da_fuq_did_the_default_seed_fail";
-    }
-
-    if ( $jx_slug !== '' && ! preg_match( '/(^|-)' . preg_quote( $jx_slug, '/' ) . '($|-)/', $normalized ) ) {
-        $normalized = $jx_slug . '-' . $normalized;
-    }
-
-    return $normalized;
-}
-
 function ws_ingest_find_assist_org_post_id( string $record_key, string $aorg_id, string $homepage_url ): int {
     if ( $record_key !== '' ) {
         $existing = get_posts( [
@@ -3824,7 +3718,14 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
     $org_name = $org_name !== '' ? $org_name : 'UNKNOWN';
     $jx_slug  = strtolower( trim( (string) ( $meta['jurisdiction_id'] ?? '' ) ) );
     $homepage = esc_url_raw( (string) ( $flat['official_homepage_url'] ?? '' ) );
-    $aorg_id = ws_ingest_build_aorg_internal_id( $flat, $jx_slug );
+    $org_slug = sanitize_title( (string) ( $flat['slug'] ?? '' ) );
+    if ( $org_slug === '' ) {
+        $org_slug = sanitize_title( (string) ( $flat['common_name'] ?? '' ) );
+    }
+    if ( $org_slug === '' ) {
+        $org_slug = sanitize_title( (string) ( $flat['official_name'] ?? '' ) );
+    }
+    $aorg_id = ws_matrix_build_assist_org_internal_id( $jx_slug, $org_slug );
     $record_key  = $jx_slug !== '' ? strtolower( $jx_slug . '|assist-org|' . $aorg_id ) : '';
 
     $existing_id = ws_ingest_find_assist_org_post_id( $record_key, $aorg_id, $homepage );
@@ -3837,6 +3738,7 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
         'post_type'    => 'ws-assist-org',
         'post_status'  => 'draft',
         'post_title'   => sanitize_text_field( $org_name ),
+        'post_name'    => $org_slug,
         'post_content' => wp_kses_post( (string) ( $flat['general_description'] ?? '' ) ),
         'post_author'  => get_current_user_id(),
     ] );
