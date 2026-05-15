@@ -142,7 +142,7 @@ workflow within each tab.
 
 Fields ordered: identification → related dates → scope → curated.
 
-- `jurisdiction`                   — (single-select taxonomy: `ws_jurisdiction`)
+- `jurisdiction`                   — (single-select taxonomy: `WS_JURISDICTION_TAXONOMY`)
 - `official_name`
 - `common_name`
 - `citation`
@@ -645,7 +645,7 @@ decisions:
                                       approved use of `mixed` where binding strength **is capable of** truly varying)
 - `court`                          — (select: @matrix; hook: filter)
 - `court_details`
-- `court_jx`                       — (Sister to `court_details`; taxonomy: `ws_jurisdiction`)
+- `court_jx`                       — (Sister to `court_details`; taxonomy: `WS_JURISDICTION_TAXONOMY`)
 
 #### Identity Tab (insert after `effective_year`)
 
@@ -663,7 +663,7 @@ decisions:
       ├── `taxonomy`                     [select: taxonomy slug],
       └── `term`                         [select: taxonomy term]; hook: filter)
 - `has_affected_jx`                — (hook: derive)
-- `affected_jx`                    — (conditional on `has_affected_jx` is true; taxonomy: `ws_jurisdiction`; hook: filter)
+- `affected_jx`                    — (conditional on `has_affected_jx` is true; taxonomy: `WS_JURISDICTION_TAXONOMY`; hook: filter)
 
 ##### Eligible Taxonomy Allowlist for `extended_taxonomies` / `suppressed_taxonomies`
 
@@ -675,7 +675,7 @@ Eligible: `ws_legal_recognition`, `ws_protected_disclosure`, `ws_protected_class
 `ws_employment_sector`, `ws_disclosure_target`, `ws_protected_action`, `ws_adverse_action`, `ws_employer_defense`,
 `ws_remedy`, `ws_process_type`, `ws_employee_standard`, `ws_causation_standard`.
 
-Excluded: `ws_jurisdiction` (geographic, not classificatory); `ws_aorg_*`, `ws_language`, `ws_case_stage`,
+Excluded: `WS_JURISDICTION_TAXONOMY` (geographic, not classificatory); `ws_aorg_*`, `ws_language`, `ws_case_stage`,
 `ws_procedure_type` (not attached to legal-record CPTs).
 
 #### Relationships Tab

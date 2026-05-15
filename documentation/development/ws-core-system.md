@@ -156,9 +156,9 @@ All constants are defined in `ws-core.php` before the bootstrap runs.
 | `WS_CORE_VERSION` | `'3.19.0'` | Plugin version — used as asset enqueue version string |
 | `WS_CORE_PATH` | `plugin_dir_path()` | Absolute filesystem path to plugin root |
 | `WS_CORE_URL` | `plugin_dir_url()` | URL to plugin root for asset enqueues |
-| `WS_JURISDICTION_TAXONOMY` | `'WS_JURISDICTION_TAXONOMY'` | Canonical taxonomy slug — use everywhere WordPress expects a taxonomy identifier |
+| `WS_JURISDICTION_TAXONOMY` | `'ws_jurisdiction'` | Canonical taxonomy slug — use everywhere WordPress expects a taxonomy identifier |
 | `WS_CACHE_ALL_JURISDICTIONS` | `'ws_all_jurisdictions_cache_'` | Transient key for full jurisdiction list cache |
-| `WS_JURISDICTION_TAXONOMY` | `'ws_jurisdiction'` | Canonical taxonomy slug — use everywhere WordPress expects a taxonomy identifier || `WS_CACHE_LEGAL_UPDATES_SITEWIDE` | `'ws_legal_updates_sitewide_'` | Transient key for sitewide legal updates cache (up to 100 items) |
+| `WS_CACHE_LEGAL_UPDATES_SITEWIDE` | `'ws_legal_updates_sitewide_'` | Transient key for sitewide legal updates cache (up to 100 items) |
 | `WS_REF_PARENT_TYPES` | `['jx-statute', 'jx-common-law', 'jx-citation', 'jx-construction']` | CPT slugs that support reference parent relationships |
 | `WS_SOURCE_MATRIX_SEED` | `'matrix_seed'` | Source method: created by matrix seeder |
 | `WS_SOURCE_AI_RESEARCH` | `'ai_research'` | Source method: created with AI assistance |

@@ -114,9 +114,9 @@ function aorg_find_existing(string $homepage_url): ?int {
 function aorg_get_us_term_id(): int {
     static $id = null;
     if ($id !== null) return $id;
-    $term = get_term_by('slug', 'us', 'ws_jurisdiction');
+    $term = get_term_by('slug', 'us', WS_JURISDICTION_TAXONOMY);
     if (!$term || is_wp_error($term)) {
-        aorg_die("Couldn't find 'us' term in ws_jurisdiction — taxonomy not seeded. Fix that shitshow first.");
+        aorg_die("Couldn't find 'us' term in WS_JURISDICTION_TAXONOMY — taxonomy not seeded. Fix that sh!tshow first.");
     }
     $id = (int) $term->term_id;
     return $id;
@@ -255,7 +255,7 @@ function aorg_ingest_record(array $record, int $us_term_id): void {
 
     // Jurisdiction: US (all batch records are US-nationwide)
     if ((int)($record['is_nationwide'] ?? 0) === 1) {
-        $jx_result = wp_set_object_terms($post_id, $us_term_id, 'ws_jurisdiction');
+        $jx_result = wp_set_object_terms($post_id, $us_term_id, WS_JURISDICTION_TAXONOMY);
         if (is_wp_error($jx_result)) {
             aorg_die("Jurisdiction sh!tstorm on post {$post_id}: " . $jx_result->get_error_message());
         }
