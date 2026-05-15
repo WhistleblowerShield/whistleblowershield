@@ -807,12 +807,11 @@ function ws_seed_assist_org_matrix() {
     // Resolve the US jurisdiction term ID.
     $us_term = ws_jx_term_by_code( 'us' );
     if ( ! $us_term || is_wp_error( $us_term ) ) {
-                error_log( sprintf(
-                    '[ws-core assist-org matrix] Missing \'us\' SLUG in WS_JURISDICTION_TAXONOMY (referenced from %s line %d)',
-                    __FILE__,
-                    __LINE__
-                ) );
-                wp_die("You_Fuq'd_Up! — see the log");
+                wp_die(
+                    esc_html( "[ws-core assist-org matrix] Missing 'us' SLUG in WS_JURISDICTION_TAXONOMY." ),
+                    esc_html__( 'Assist-org matrix seed failed', 'whistleblowershield' ),
+                    [ 'response' => 500 ]
+                );
             }
 
     $us_term_id = (int) $us_term->term_id;
@@ -856,7 +855,12 @@ function ws_seed_assist_org_matrix() {
         }
 
         if ( is_wp_error( $post_id ) || ! $post_id ) {
-            continue;
+            $message = is_wp_error( $post_id ) ? $post_id->get_error_message() : 'empty post ID';
+            wp_die(
+                esc_html( "[ws-core assist-org matrix] Cannot create ws-assist-org post for '{$official_name}': {$message}. The matrix seed cannot continue." ),
+                esc_html__( 'Assist-org matrix seed failed', 'whistleblowershield' ),
+                [ 'response' => 500 ]
+            );
         }
 
         update_post_meta( $post_id, 'ws_aorg_official_name', $official_name );
@@ -879,7 +883,11 @@ function ws_seed_assist_org_matrix() {
 
         $post = get_post( (int) $post_id );
         if ( ! $post || $post->post_name === '' ) {
-            continue;
+            wp_die(
+                esc_html( "[ws-core assist-org matrix] WordPress did not return a canonical post_name for '{$official_name}' after post #{$post_id}. The matrix seed cannot continue." ),
+                esc_html__( 'Assist-org matrix seed failed', 'whistleblowershield' ),
+                [ 'response' => 500 ]
+            );
         }
 
         update_post_meta(
