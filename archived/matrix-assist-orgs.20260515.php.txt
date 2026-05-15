@@ -580,7 +580,6 @@ $_ws_assist_org_matrix = [
         ],
         'disclosure_targets' => [
             'court-filing',
-            
         ],
         'case_stages' => [
             'post-report',
@@ -809,7 +808,6 @@ $_ws_assist_org_matrix = [
         ],
         'disclosure_targets' => [
             'court-filing',
-            
         ],
         'case_stages' => [
             'pre-report',
