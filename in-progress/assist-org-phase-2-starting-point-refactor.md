@@ -67,7 +67,7 @@ Field names are prefix-free here. ACF registration applies the `ws_aorg_` prefix
   `temporarily-hidden`|`do-not-publish`
 - `editor_confidence` - select: `high`|`medium`|`low`|`do-not-use`
 - `editor_confidence_notes`
-- `organization_model` - select: `nonprofit`|`legal-aid`|`law-firm`|`bar-program`|`advocacy`|
+- `organization_model` - single term: `nonprofit`|`legal-aid`|`law-firm`|`bar-program`|`advocacy`|
   `oversight-office`|`union`|`government-office`|`coalition`|`program`|`mixed`
 
 Why now: these fields prevent research records from silently becoming recommendations before a human is ready to
@@ -181,7 +181,7 @@ Fields keeping their base names (with prefix applied at registration):
 - `cost_models`
 - `languages`
 
-*Note: `aorg_type` is fully retired and replaced by `organization_model`.*
+*Note: `aorg_type` is retired as a field/concept name and replaced by `organization_model`; the registered taxonomy is now `ws_organization_model`.*
 *Note: `legitimacy_url` is deferred from the starting point as it was modeled as a repeater in Codex.*
 
 ---

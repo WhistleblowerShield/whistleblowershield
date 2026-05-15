@@ -202,7 +202,7 @@ Fields ordered: identity -> classification -> public display -> directory status
 - `organization_status_details`
 - `logo`
 - `general_description`
-- `assistance_class`              - single-select taxonomy: `ws_organization_model`
+- `assistance_class`              - single-select taxonomy: `ws_aorg_type`
 - `assistance_class_details`      - conditional on `assistance_class` is `mixed`
 - `public_directory_status`       - select: `draft-review`|`publish-ready`|`needs-verification`|`temporarily-hidden`|`do-not-publish`|`has-details`
 - `public_directory_status_details`
@@ -505,7 +505,7 @@ Use existing registry tables first:
 - `ws_process_type`
 - `ws_case_stage`
 - `ws_language`
-- `ws_organization_model`
+- `ws_aorg_type`
 - `ws_employment_sector`
 - `ws_aorg_cost_model`
 - `ws_aorg_service`
@@ -581,7 +581,7 @@ with the canonical draft, or were structurally redesigned.
 - `ws_agency_common_name` / `ws_aorg_common_name` -> `common_name`
 - `ws_agency_logo` / `ws_aorg_logo`     -> `logo`
 - `ws_agency_mission` / `ws_aorg_description` -> `general_description`
-- `ws_organization_model`                       -> `assistance_class`
+- `ws_aorg_type`                       -> `assistance_class`
 - `ws_agency_url` / `ws_aorg_website_url` -> `official_homepage_url`
 - `ws_agency_reporting_url` / `ws_aorg_intake_url` -> `intake_url`
 - `ws_aorg_contact_url`                -> `contact_url`

@@ -65,7 +65,7 @@ function ws_prompt_taxonomy_descriptions(): array {
         'ws_process_type'         => 'Procedural routes navigated',
         'ws_case_stage'           => 'Legal stages supported',
         'ws_language'             => 'Languages confirmed by source',
-        'ws_aorg_type'            => 'Primary org classification',
+        'ws_organization_model'   => 'Primary org classification',
         'ws_employment_sector'    => 'Sectors served',
         'ws_aorg_cost_model'      => 'Cost structure',
         'ws_aorg_service'         => 'Services offered',
@@ -80,7 +80,7 @@ function ws_prompt_taxonomy_descriptions(): array {
 function ws_prompt_taxonomies_for_record_type( string $record_type ): array {
     switch ( $record_type ) {
         case 'assist-org':
-            return [ 'ws_protected_disclosure', 'ws_protected_class', 'ws_disclosure_target', 'ws_process_type', 'ws_case_stage', 'ws_language', 'ws_aorg_type', 'ws_employment_sector', 'ws_aorg_cost_model', 'ws_aorg_service' ];
+            return [ 'ws_protected_disclosure', 'ws_protected_class', 'ws_disclosure_target', 'ws_process_type', 'ws_case_stage', 'ws_language', 'ws_organization_model', 'ws_employment_sector', 'ws_aorg_cost_model', 'ws_aorg_service' ];
         case 'statute':
         case 'common-law':
             return [ 'ws_protected_disclosure', 'ws_protected_class', 'ws_disclosure_target', 'ws_employment_sector', 'ws_adverse_action', 'ws_process_type', 'ws_remedy', 'ws_fee_shifting_rule', 'ws_employer_defense', 'ws_employee_standard' ];

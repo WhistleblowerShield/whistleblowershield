@@ -125,7 +125,7 @@ function ws_q_build_assist_org_row( $oid ) {
 
     $oid  = (int) $oid;
     $tax_jx                = ws_q_taxonomy_payload( $oid, WS_JURISDICTION_TAXONOMY );
-    $tax_aorg_type         = ws_q_taxonomy_payload( $oid, 'ws_aorg_type' );
+    $tax_organization_model = ws_q_taxonomy_payload( $oid, 'ws_organization_model' );
     $tax_protected_disclosure   = ws_q_taxonomy_payload( $oid, 'ws_protected_disclosure' );
     $tax_disclosure_target = ws_q_taxonomy_payload( $oid, 'ws_disclosure_target' );
     $tax_protected_class   = ws_q_taxonomy_payload( $oid, 'ws_protected_class' );
@@ -149,8 +149,8 @@ function ws_q_build_assist_org_row( $oid ) {
         'status'        => get_post_status( $oid ),
         'official_name'        => (string) get_post_meta( $oid, 'ws_aorg_official_name',             true ),
         'common_name'          => (string) get_post_meta( $oid, 'ws_aorg_common_name',               true ),
-        'type'                 => (string) ( $tax_aorg_type['slugs'][0] ?? '' ),
-        'type_label'           => (string) ( $tax_aorg_type['names'][0] ?? '' ),
+        'model'                 => (string) ( $tax_organization_model['slugs'][0] ?? '' ),
+        'model_label'           => (string) ( $tax_organization_model['names'][0] ?? '' ),
         'description'          => (string) get_post_meta( $oid, 'ws_aorg_description',               true ),
         'whistleblower_scope'  => (int) get_post_meta( $oid, 'ws_aorg_whistleblower_scope', true ),
         'whistleblower_scope_details' => (string) get_post_meta( $oid, 'ws_aorg_whistleblower_scope_details', true ),
@@ -204,7 +204,7 @@ function ws_q_build_assist_org_row( $oid ) {
         'has_extended_profile' => ! empty( $plain['is_reviewed'] ),
         'taxonomies' => [
             'jurisdiction'           => $tax_jx,
-            'aorg_type'              => $tax_aorg_type,
+            'organization_model'     => $tax_organization_model,
             'protected_disclosures'  => $tax_protected_disclosure,
             'disclosure_targets'     => $tax_disclosure_target,
             'protected_classes'      => $tax_protected_class,

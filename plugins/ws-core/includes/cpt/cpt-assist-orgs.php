@@ -94,7 +94,7 @@ function ws_register_cpt_assist_org() {
             'ws_disclosure_target',
             'ws_case_stage',
             'ws_language',
-            'ws_aorg_type',
+            'ws_organization_model',
             'ws_employment_sector',
             'ws_aorg_cost_model',
             'ws_aorg_service',

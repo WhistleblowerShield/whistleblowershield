@@ -230,9 +230,9 @@ function aorg_ingest_record(array $record, int $us_term_id): void {
 
     // ── Taxonomies ────────────────────────────────────────────────────────────
 
-    // organization_model → ws_aorg_type (single value as array)
+    // organization_model → ws_organization_model (single value as array)
     if (!empty($record['organization_model'])) {
-        aorg_assign_terms($post_id, [$record['organization_model']], 'ws_aorg_type');
+        aorg_assign_terms($post_id, [$record['organization_model']], 'ws_organization_model');
     }
 
     $taxonomy_fields = [
@@ -257,7 +257,7 @@ function aorg_ingest_record(array $record, int $us_term_id): void {
     if ((int)($record['is_nationwide'] ?? 0) === 1) {
         $jx_result = wp_set_object_terms($post_id, $us_term_id, 'ws_jurisdiction');
         if (is_wp_error($jx_result)) {
-            aorg_die("Jurisdiction shitstorm on post {$post_id}: " . $jx_result->get_error_message());
+            aorg_die("Jurisdiction sh!tstorm on post {$post_id}: " . $jx_result->get_error_message());
         }
     }
 

@@ -5,51 +5,6 @@
  * @package    WhistleblowerShield
  * @since      3.0.0
  * @version    3.20.0
- *
- * VERSION
- * -------
- * 3.19.0  Gap-fill for remaining 7 orgs (WIN, NELP, NELA, LSC, NLADA,
- *         NWC Referral, ABA) — nationwide_example and protected_classes
- *         added to all 7; protected_class_details added to all 7.
- *         NWC Referral: whistleblower_scope corrected 3→2 (referral
- *         program, not full-service org); cost_models corrected
- *         fee-for-service→free (ARP is explicitly free to whistleblowers).
- *         Gate bumped to 1.2.0.
- *
- * VERSION
- * -------
- * 3.18.1  Factual conflict resolution after live-site verification:
- *         - NWC mailing_address corrected to 1800 M Street NW #33888, DC 20033
- *           (whistleblowers.org contact page confirmed; old 1140 Connecticut Ave was stale)
- *         - PEER mailing_address: expanded 'PEER' abbreviation to full org name
- *         - GAP zip +4 (20006-2802): kept — USPS extended zip, not incorrect
- *         - WbAid secure contact tools: Signal-specific page confirmed live
- *         - POGO secure_channel_status: kept none-found — no live public secure channel confirmed
- *         - TAF has_attorneys: kept 1 — staff page confirms 3 attorneys on staff
- *         - NWC/PEER contact_url from JSON was blank — kept existing matrix values
- *
- * 3.18.0  Gap-fill from Grok research batches (US-0-Assist-org-Grok-4-matrix-updates*.json).
- *         Filled ws_aorg_contact_url where empty: NWC, POGO.
- *         (GAP, WbAid, TAF had no Grok contact_url to fill from.)
- *         Inserted nationwide_example after whistleblower_scope_details for all 8 orgs.
- *         Inserted protected_classes and protected_class_details after sectors
- *         for all 8 researched orgs. No existing values overwritten.
- *
- * 3.17.1  Data corrections from deep research pass:
- *         - GAP: corrected mailing address to 1612 K St NW Suite 808;
- *           updated intake_url to /how-to-request-assistance/
- *         - Whistleblower Aid: corrected mailing address to
- *           1250 Connecticut Ave NW Suite 700 (Charity Navigator confirmed)
- *         - TAF: re-branded from Taxpayers Against Fraud Education Fund
- *           to The Anti-Fraud Coalition; slug, internal_id, description,
- *           mailing address, and intake_url updated; gate bumped to 1.1.0
- *         - The Signals Network: secure_channel_status set to dedicated-secure-channel (ProtonMail
- *           confirmed); secure fields populated; protect@ email added to
- *           emails repeater; ProtonMail note removed from description;
- *           intake_url added
- *         - WIN: removed invalid public-general slug from disclosure_targets
- *         - POGO: whistleblower_scope corrected from 3 to 1 (investigative
- *           watchdog, not direct help org)
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -83,6 +38,7 @@ $_ws_assist_org_matrix = [
         'income_screening' => 'not-required',
         'organization_model' => 'nonprofit',
         'cost_models' => [ 'pro-bono' ],
+        'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'yes',
         'has_attorneys' => 'yes',
@@ -142,6 +98,7 @@ $_ws_assist_org_matrix = [
         'income_screening' => 'not-required',
         'organization_model' => 'nonprofit',
         'cost_models' => [ 'unclear' ],
+        'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'yes',
         'has_attorneys' => 'yes',
@@ -194,6 +151,7 @@ $_ws_assist_org_matrix = [
         'income_screening' => 'not-required',
         'organization_model' => 'legal-aid',
         'cost_models' => [ 'pro-bono' ],
+        'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'yes',
         'has_attorneys' => 'yes',
@@ -253,6 +211,7 @@ $_ws_assist_org_matrix = [
         'income_screening' => 'not-required',
         'organization_model' => 'advocacy',
         'cost_models' => [ 'free' ],
+        'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'yes',
         'has_attorneys' => 'no',
@@ -300,6 +259,7 @@ $_ws_assist_org_matrix = [
         'income_screening' => 'not-required',
         'organization_model' => 'advocacy',
         'cost_models' => [ 'unclear' ],
+        'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'no',
         'has_attorneys' => 'yes',
@@ -352,6 +312,7 @@ $_ws_assist_org_matrix = [
         'income_screening' => 'not-required',
         'organization_model' => 'advocacy',
         'cost_models' => [ 'unclear' ],
+        'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'yes',
         'has_attorneys' => 'no',
@@ -401,6 +362,7 @@ $_ws_assist_org_matrix = [
         'income_screening' => 'not-required',
         'organization_model' => 'advocacy',
         'cost_models' => [ 'free' ],
+        'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'no',
         'has_attorneys' => 'no',
@@ -451,6 +413,7 @@ $_ws_assist_org_matrix = [
         'income_screening' => 'not-required',
         'organization_model' => 'advocacy',
         'cost_models' => [ 'free' ],
+        'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'no',
         'has_attorneys' => 'no',
@@ -498,6 +461,7 @@ $_ws_assist_org_matrix = [
         'income_screening' => 'not-required',
         'organization_model' => 'bar-program',
         'cost_models' => [ 'fee-for-service' ],
+        'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'no',
         'has_attorneys' => 'no',
@@ -545,6 +509,7 @@ $_ws_assist_org_matrix = [
         'income_screening' => 'required',
         'organization_model' => 'legal-aid',
         'cost_models' => [ 'free' ],
+        'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'no',
         'has_attorneys' => 'no',
@@ -593,6 +558,7 @@ $_ws_assist_org_matrix = [
         'income_screening' => 'not-required',
         'organization_model' => 'advocacy',
         'cost_models' => [ 'free' ],
+        'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'no',
         'has_attorneys' => 'no',
@@ -643,6 +609,7 @@ $_ws_assist_org_matrix = [
         'income_screening' => 'not-required',
         'organization_model' => 'bar-program',
         'cost_models' => [ 'free' ],
+        'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'no',
         'has_attorneys' => 'no',
@@ -693,6 +660,7 @@ $_ws_assist_org_matrix = [
         'income_screening' => 'required',
         'organization_model' => 'bar-program',
         'cost_models' => [ 'fee-for-service' ],
+        'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'no',
         'has_attorneys' => 'no',
@@ -743,6 +711,7 @@ $_ws_assist_org_matrix = [
         'income_screening' => 'not-required',
         'organization_model' => 'nonprofit',
         'cost_models' => [ 'pro-bono' ],
+        'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'yes',
         'has_attorneys' => 'yes',
@@ -793,6 +762,7 @@ $_ws_assist_org_matrix = [
         'income_screening' => 'not-required',
         'organization_model' => 'nonprofit',
         'cost_models' => [ 'free' ],
+        'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'yes',
         'has_attorneys' => 'yes',
@@ -830,306 +800,6 @@ $_ws_assist_org_matrix = [
 // Seeder: ws_seed_assist_org_matrix
 // ════════════════════════════════════════════════════════════════════════════
 
-/**
- * Throws a clear matrix-shape error instead of silently tolerating bad seed data.
- *
- * @param string $message Error detail.
- * @return void
- */
-function ws_matrix_error( string $message ): void {
-    throw new RuntimeException( $message . ' This canonical matrix row is bullsh!t.' );
-}
-
-/**
- * Reads a required canonical matrix key.
- *
- * @param array  $org Matrix org row.
- * @param string $key Canonical key name.
- * @return mixed
- */
-function ws_matrix_required( array $org, string $key ) {
-    if ( ! array_key_exists( $key, $org ) ) {
-        $label = (string) ( $org['slug'] ?? $org['official_name'] ?? 'unknown assist org' );
-        ws_matrix_error( "Missing required matrix key '{$key}' for {$label}." );
-    }
-
-    return $org[ $key ];
-}
-
-/**
- * Reads an explicitly optional canonical matrix key.
- *
- * @param array  $org     Matrix org row.
- * @param string $key     Canonical key name.
- * @param mixed  $default Default value.
- * @return mixed
- */
-function ws_matrix_optional( array $org, string $key, $default = '' ) {
-    return array_key_exists( $key, $org ) ? $org[ $key ] : $default;
-}
-
-/**
- * Requires a value from an allowed set.
- *
- * @param array  $org     Matrix org row.
- * @param string $key     Canonical key name.
- * @param array  $allowed Allowed values.
- * @return string
- */
-function ws_matrix_required_enum( array $org, string $key, array $allowed ): string {
-    $value = sanitize_key( (string) ws_matrix_required( $org, $key ) );
-
-    if ( $value === 'has-details' ) {
-        $label = (string) ( $org['slug'] ?? $org['official_name'] ?? 'unknown assist org' );
-        ws_matrix_error( "Editorial flag 'has-details' is not seedable data for '{$key}' in {$label}." );
-    }
-
-    if ( ! in_array( $value, $allowed, true ) ) {
-        $label = (string) ( $org['slug'] ?? $org['official_name'] ?? 'unknown assist org' );
-        ws_matrix_error( "Invalid value '{$value}' for matrix key '{$key}' in {$label}." );
-    }
-
-    return $value;
-}
-
-/**
- * Reads a required canonical array key.
- *
- * @param array  $org Matrix org row.
- * @param string $key Canonical key name.
- * @return array
- */
-function ws_matrix_required_array( array $org, string $key ): array {
-    $value = ws_matrix_required( $org, $key );
-
-    if ( ! is_array( $value ) ) {
-        $label = (string) ( $org['slug'] ?? $org['official_name'] ?? 'unknown assist org' );
-        ws_matrix_error( "Matrix key '{$key}' must be an array for {$label}." );
-    }
-
-    return $value;
-}
-
-/**
- * Reads and validates typed phone channel rows for ACF repeater storage.
- *
- * @param array $org Matrix org row.
- * @return array<int,array{type:string,number:string}>
- */
-function ws_matrix_phone_channels( array $org ): array {
-    $rows = ws_matrix_required_array( $org, 'phones' );
-    $allowed = [ 'hotline', 'intake', 'headquarters', 'regional', 'tty', 'fax', 'other' ];
-    $label = (string) ( $org['slug'] ?? $org['official_name'] ?? 'unknown assist org' );
-    $out = [];
-
-    foreach ( $rows as $i => $row ) {
-        if ( ! is_array( $row ) ) {
-            ws_matrix_error( "Phone row {$i} must be an array for {$label}." );
-        }
-
-        $type = sanitize_key( (string) ( $row['type'] ?? '' ) );
-        $number = trim( (string) ( $row['number'] ?? '' ) );
-
-        if ( $type === '' || $number === '' ) {
-            ws_matrix_error( "Phone row {$i} requires type and number for {$label}." );
-        }
-
-        if ( ! in_array( $type, $allowed, true ) ) {
-            ws_matrix_error( "Invalid phone type '{$type}' in row {$i} for {$label}." );
-        }
-
-        $out[] = [
-            'type'   => $type,
-            'number' => $number,
-        ];
-    }
-
-    return $out;
-}
-
-/**
- * Reads and validates typed email channel rows for ACF repeater storage.
- *
- * @param array $org Matrix org row.
- * @return array<int,array{type:string,address:string}>
- */
-function ws_matrix_email_channels( array $org ): array {
-    $rows = ws_matrix_required_array( $org, 'emails' );
-    $allowed = [ 'intake', 'general', 'legal', 'media', 'support', 'secure', 'other' ];
-    $label = (string) ( $org['slug'] ?? $org['official_name'] ?? 'unknown assist org' );
-    $out = [];
-
-    foreach ( $rows as $i => $row ) {
-        if ( ! is_array( $row ) ) {
-            ws_matrix_error( "Email row {$i} must be an array for {$label}." );
-        }
-
-        $type = sanitize_key( (string) ( $row['type'] ?? '' ) );
-        $address = sanitize_email( (string) ( $row['address'] ?? '' ) );
-
-        if ( $type === '' || $address === '' ) {
-            ws_matrix_error( "Email row {$i} requires type and a valid address for {$label}." );
-        }
-
-        if ( ! in_array( $type, $allowed, true ) ) {
-            ws_matrix_error( "Invalid email type '{$type}' in row {$i} for {$label}." );
-        }
-
-        $out[] = [
-            'type'    => $type,
-            'address' => $address,
-        ];
-    }
-
-    return $out;
-}
-
-/**
- * Writes an ACF repeater directly from canonical matrix rows.
- *
- * The matrix is already canonical; this function only maps row keys to ACF's
- * raw repeater meta keys and fails loudly if the row shape is malformed.
- *
- * @param int    $post_id       Post ID.
- * @param string $field_name    ACF repeater field name.
- * @param array  $rows          Canonical rows.
- * @param array  $subfield_map  Canonical key => ACF subfield name.
- * @return void
- */
-function ws_matrix_write_repeater( int $post_id, string $field_name, array $rows, array $subfield_map ): void {
-    update_post_meta( $post_id, $field_name, count( $rows ) );
-
-    foreach ( $rows as $i => $row ) {
-        if ( ! is_array( $row ) ) {
-            ws_matrix_error( "Repeater '{$field_name}' row {$i} must be an array on post {$post_id}." );
-        }
-
-        foreach ( $subfield_map as $source_key => $acf_key ) {
-            if ( ! array_key_exists( $source_key, $row ) ) {
-                ws_matrix_error(
-                    "Repeater '{$field_name}' row {$i} missing required key '{$source_key}' on post {$post_id}."
-                );
-            }
-
-            update_post_meta( $post_id, "{$field_name}_{$i}_{$acf_key}", $row[ $source_key ] );
-        }
-    }
-}
-
-function ws_matrix_income_screening( array $org ): string {
-    return ws_matrix_required_enum(
-        $org,
-        'income_screening',
-        [ 'required', 'not-required', 'possible', 'unclear' ]
-    );
-}
-
-function ws_matrix_secure_channel_status( array $org ): string {
-    return ws_matrix_required_enum(
-        $org,
-        'secure_channel_status',
-        [
-            'dedicated-secure-channel',
-            'standard-web-form',
-            'secure-tip-only',
-            'leak-drop-only',
-            'none-found',
-            'unclear',
-        ]
-    );
-}
-
-/**
- * Normalizes secure contact tools to current multi-select slugs.
- *
- * @param array $org Matrix org row.
- * @return array
- */
-function ws_matrix_secure_contact_tools( array $org ): array {
-    $tools = ws_matrix_required_array( $org, 'secure_contact_tools' );
-
-    $map = [
-        'signal'       => 'signal',
-        'protonmail'   => 'protonmail',
-        'proton-mail'  => 'protonmail',
-        'tutanota'     => 'tutanota',
-        'wire'         => 'wire',
-        'keybase'      => 'keybase',
-        'pgp'          => 'pgp-email',
-        'pgp-email'    => 'pgp-email',
-        'securedrop'   => 'securedrop',
-        'secure-drop'  => 'securedrop',
-        'globaleaks'   => 'globaleaks',
-        'global-leaks' => 'globaleaks',
-        'encrypted-web-form' => 'encrypted-web-form',
-        'other'        => 'other',
-    ];
-
-    $normalized = [];
-    foreach ( $tools as $tool ) {
-        $slug = sanitize_key( (string) $tool );
-        if ( $slug === 'has-details' ) {
-            $label = (string) ( $org['slug'] ?? $org['official_name'] ?? 'unknown assist org' );
-            ws_matrix_error( "Editorial flag 'has-details' is not seedable data for {$label}." );
-        }
-
-        if ( ! isset( $map[ $slug ] ) ) {
-            $label = (string) ( $org['slug'] ?? $org['official_name'] ?? 'unknown assist org' );
-            ws_matrix_error( "Invalid secure contact tool '{$slug}' for {$label}." );
-        }
-
-        $normalized[] = $map[ $slug ];
-    }
-
-    return array_values( array_unique( $normalized ) );
-}
-
-/**
- * Assigns terms for the assist-org matrix and fails loudly on bad slugs.
- *
- * @param int    $post_id  Post ID.
- * @param array  $slugs    Term slugs.
- * @param string $taxonomy Taxonomy slug.
- * @return void
- */
-function ws_matrix_assign_terms_strict( int $post_id, array $slugs, string $taxonomy ): void {
-    if ( ! taxonomy_exists( $taxonomy ) ) {
-        ws_matrix_error( "Missing taxonomy '{$taxonomy}' while seeding post {$post_id}." );
-    }
-
-    if ( empty( $slugs ) ) {
-        ws_matrix_error( "No term slugs provided for taxonomy '{$taxonomy}' on post {$post_id}." );
-    }
-
-    $term_ids = [];
-    foreach ( $slugs as $slug ) {
-        $slug = sanitize_key( (string) $slug );
-        if ( $slug === '' ) {
-            ws_matrix_error( "Blank term slug passed for taxonomy '{$taxonomy}' on post {$post_id}." );
-        }
-
-        if ( $slug === 'has-details' ) {
-            ws_matrix_error(
-                "Editorial flag 'has-details' is not seedable data for taxonomy '{$taxonomy}' on post {$post_id}."
-            );
-        }
-
-        $term = get_term_by( 'slug', $slug, $taxonomy );
-        if ( ! $term || is_wp_error( $term ) ) {
-            ws_matrix_error( "Missing term slug '{$slug}' in taxonomy '{$taxonomy}' on post {$post_id}." );
-        }
-
-        $term_ids[] = (int) $term->term_id;
-    }
-
-    $result = wp_set_object_terms( $post_id, $term_ids, $taxonomy );
-    if ( is_wp_error( $result ) ) {
-        ws_matrix_error(
-            "Failed assigning taxonomy '{$taxonomy}' on post {$post_id}: " . $result->get_error_message()
-        );
-    }
-}
-
 function ws_seed_assist_org_matrix() {
 
     global $_ws_assist_org_matrix;
@@ -1137,7 +807,7 @@ function ws_seed_assist_org_matrix() {
     // Resolve the US jurisdiction term ID.
     $us_term = ws_jx_term_by_code( 'us' );
     if ( ! $us_term || is_wp_error( $us_term ) ) {
-        ws_matrix_error( 'US jurisdiction term is missing; assist-org matrix cannot seed.' );
+        return; // Taxonomy terms not yet seeded — bail.
     }
     $us_term_id = (int) $us_term->term_id;
 
@@ -1147,218 +817,96 @@ function ws_seed_assist_org_matrix() {
 
     foreach ( $_ws_assist_org_matrix as $org ) {
 
-        $slug = sanitize_title( (string) ws_matrix_required( $org, 'slug' ) );
-        $internal_id = ws_matrix_build_assist_org_internal_id( 'us', $slug );
-        if ( $internal_id === '' ) {
-            ws_matrix_error( "Failed building internal ID for '{$org['slug']}'." );
-        }
+        $official_name = trim( (string) $org['official_name'] );
 
-        $official_name = trim( (string) ws_matrix_required( $org, 'official_name' ) );
-        $description = '';
+        $existing_posts = get_posts( [
+            'post_type'      => 'ws-assist-org',
+            'post_status'    => 'any',
+            'posts_per_page' => 2,
+            'title'          => $official_name,
+            'fields'         => 'ids',
+            'no_found_rows'  => true,
+        ] );
 
-        $existing = get_page_by_path( $slug, OBJECT, 'ws-assist-org' );
-        $content  = '';
-
-        $post_data = [
-            'post_title'   => $official_name,
-            'post_type'    => 'ws-assist-org',
-            'post_status'  => 'publish',
-            'post_content' => $content,
-        ];
-
-        if ( $existing ) {
-            $post_data['ID'] = $existing->ID;
-            $post_id = wp_update_post( $post_data );
-        } else {
-            $post_id = wp_insert_post( $post_data );
-        }
-
-        if ( is_wp_error( $post_id ) || ! $post_id ) {
-            $message = is_wp_error( $post_id ) ? $post_id->get_error_message() : 'empty post ID';
-            ws_matrix_error( "Failed creating/updating assist-org post '{$slug}': {$message}." );
-        }
-
-        
-
-        // ── ACF meta fields ──────────────────────────────────────────────────
-        //
-        // String/URL fields: skipped if empty (no point storing blank strings).
-        // Boolean fields (0/1) and array fields always write — 0 is meaningful.
-
-        $organization_model = ws_matrix_required_enum(
-            $org,
-            'organization_model',
-            [
-                'nonprofit',
-                'legal-aid',
-                'law-firm',
-                'bar-program',
-                'advocacy',
-                'oversight-office',
-                'union',
-                'government-office',
-                'coalition',
-                'program',
-                'mixed',
-            ]
-        );
-        $secure_channel_status = ws_matrix_secure_channel_status( $org );
-        $secure_contact_tools = ws_matrix_secure_contact_tools( $org );
-        $phone_channels = ws_matrix_phone_channels( $org );
-        $email_channels = ws_matrix_email_channels( $org );
-        $income_screening = ws_matrix_income_screening( $org );
-        $anonymous_pre_consult_status = ws_matrix_required_enum(
-            $org,
-            'anonymous_pre_consult_status',
-            [ 'yes', 'no', 'unclear' ]
-        );
-        $has_attorneys = ws_matrix_required_enum(
-            $org,
-            'has_attorneys',
-            [ 'yes', 'no', 'unclear' ]
-        );
-        $whistleblower_fit = ws_matrix_required_enum(
-            $org,
-            'whistleblower_fit',
-            [ 'primary-focus', 'significant-program', 'adjacent-help', 'not-specific', 'none', 'unclear' ]
-        );
-        $service_depth = ws_matrix_required_enum(
-            $org,
-            'service_depth',
-            [
-                'information-only',
-                'triage-only',
-                'brief-advice',
-                'document-review',
-                'limited-scope-help',
-                'direct-representation',
-                'referral-only',
-                'warm-handoff',
-                'peer-support',
-                'ongoing-support',
-                'unclear',
-            ]
-        );
-        $intake_commitment_class = ws_matrix_required_enum(
-            $org,
-            'intake_commitment_class',
-            [
-                'personal-help-request',
-                'screening-form',
-                'referral-request',
-                'peer-support-request',
-                'general-contact-only',
-                'tip-submission-only',
-                'leak-drop-only',
-                'information-only',
-                'unclear',
-            ]
-        );
-        $eligibility_status = ws_matrix_required_enum(
-            $org,
-            'eligibility_status',
-            [ 'open-to-public', 'screening-required', 'restricted', 'members-only', 'referral-only', 'unclear' ]
-        );
-
-        $meta = [
-            '_ws_aorg_id'                  => $internal_id,
-            'ws_aorg_official_name'        => $official_name,
-            'ws_aorg_common_name'          => ws_matrix_optional( $org, 'common_name' ),
-            'ws_aorg_official_homepage_url'=> ws_matrix_required( $org, 'official_homepage_url' ),
-            'ws_aorg_intake_url'           => ws_matrix_optional( $org, 'intake_url' ),
-            'ws_aorg_contact_url'          => ws_matrix_optional( $org, 'contact_url' ),
-            'ws_aorg_organization_model'   => $organization_model,
-            'ws_aorg_secure_channel_status' => $secure_channel_status,
-            'ws_aorg_secure_contact_tools' => $secure_contact_tools,
-            'ws_aorg_mailing_address'      => ws_matrix_optional( $org, 'mailing_address' ),
-            'ws_aorg_income_screening'     => $income_screening,
-            'ws_aorg_eligibility_status'   => $eligibility_status,
-            'ws_aorg_is_nationwide'        => ws_matrix_required( $org, 'is_nationwide' ),
-            'ws_aorg_anonymous_pre_consult_status' => $anonymous_pre_consult_status,
-            'ws_aorg_has_attorneys'        => $has_attorneys,
-            'ws_aorg_whistleblower_fit'    => $whistleblower_fit,
-            'ws_aorg_service_depth'        => $service_depth,
-            'ws_aorg_intake_commitment_class' => $intake_commitment_class,
-            'ws_aorg_whistleblower_scope'  => ws_matrix_required( $org, 'whistleblower_scope' ),
-        ];
-
-        foreach ( $meta as $key => $value ) {
-            if ( $value !== '' ) {
-                update_post_meta( $post_id, $key, $value );
-            }
-        }
-
-        ws_matrix_write_repeater(
-            $post_id,
-            'ws_aorg_phones',
-            $phone_channels,
-            [
-                'type'   => 'ws_aorg_phone_type',
-                'number' => 'ws_aorg_phone_number',
-            ]
-        );
-
-        ws_matrix_write_repeater(
-            $post_id,
-            'ws_aorg_emails',
-            $email_channels,
-            [
-                'type'    => 'ws_aorg_email_type',
-                'address' => 'ws_aorg_email_address',
-            ]
-        );
-
-        // ── Taxonomies ───────────────────────────────────────────────────────
-
-        // Organization model (single slug; stored in ws_aorg_type taxonomy).
-        if ( $organization_model !== '' ) {
-            ws_matrix_assign_terms_strict( $post_id, [ $organization_model ], 'ws_aorg_type' );
-        }
-
-        // Cost models (array of slugs — must match ws_aorg_cost_model seeder).
-        ws_matrix_assign_terms_strict( $post_id, ws_matrix_required_array( $org, 'cost_models' ), 'ws_aorg_cost_model' );
-
-        // Protected disclosures (array of slugs — must match ws_protected_disclosure seeder).
-        ws_matrix_assign_terms_strict(
-            $post_id,
-            ws_matrix_required_array( $org, 'protected_disclosures' ),
-            'ws_protected_disclosure'
-        );
-
-        // Optional disclosure targets (array of slugs).
-        ws_matrix_assign_terms_strict(
-            $post_id,
-            ws_matrix_required_array( $org, 'disclosure_targets' ),
-            'ws_disclosure_target'
-        );
-
-        // Case stages (array of slugs).
-        ws_matrix_assign_terms_strict( $post_id, ws_matrix_required_array( $org, 'case_stages' ), 'ws_case_stage' );
-
-        // Services offered (array of ws_aorg_service slugs — must match seeder).
-        ws_matrix_assign_terms_strict( $post_id, ws_matrix_required_array( $org, 'services' ), 'ws_aorg_service' );
-
-        // Employment sectors (array of ws_employment_sector slugs).
-        ws_matrix_assign_terms_strict( $post_id, ws_matrix_required_array( $org, 'employment_sectors' ), 'ws_employment_sector' );
-
-        // Protected classes (array of ws_protected_class slugs).
-        ws_matrix_assign_terms_strict( $post_id, ws_matrix_required_array( $org, 'protected_classes' ), 'ws_protected_class' );
-
-        // Language: English (all seeded national orgs operate in English).
-        $default_languages = [ 'english' ];
-        if ( ! empty( $default_languages ) ) {
-            ws_matrix_assign_terms_strict( $post_id, $default_languages, 'ws_language' );
-        }
-
-        // Jurisdiction: US.
-        $jx_result = wp_set_object_terms( $post_id, $us_term_id, 'ws_jurisdiction' );
-        if ( is_wp_error( $jx_result ) ) {
-            ws_matrix_error(
-                "Failed assigning US jurisdiction on post {$post_id}: " . $jx_result->get_error_message()
+        if ( count( $existing_posts ) > 1 ) {
+            wp_die(
+                esc_html( "[ws-core assist-org matrix] Multiple ws-assist-org posts found for '{$official_name}'." ),
+                esc_html__( 'Assist-org matrix seed failed', 'whistleblowershield' ),
+                [ 'response' => 500 ]
             );
         }
 
-        // ── Seeder stamp ─────────────────────────────────────────────────────
+        $existing = ! empty( $existing_posts ) ? get_post( (int) $existing_posts[0] ) : null;
+
+        if ( $existing ) {
+            $post_id = $existing->ID;
+        } else {
+            $post_id = wp_insert_post( [
+                'post_title'   => $official_name,
+                'post_type'    => 'ws-assist-org',
+                'post_status'  => 'publish',
+                'post_content' => '',
+            ] );
+        }
+
+        if ( is_wp_error( $post_id ) || ! $post_id ) {
+            continue;
+        }
+
+        update_post_meta( $post_id, 'ws_aorg_official_name', $official_name );
+        update_post_meta( $post_id, 'ws_aorg_common_name', $org['common_name'] );
+        update_post_meta( $post_id, 'ws_aorg_official_homepage_url', $org['official_homepage_url'] );
+        update_post_meta( $post_id, 'ws_aorg_intake_url', $org['intake_url'] );
+        update_post_meta( $post_id, 'ws_aorg_contact_url', $org['contact_url'] );
+        update_post_meta( $post_id, 'ws_aorg_secure_channel_status', $org['secure_channel_status'] );
+        update_post_meta( $post_id, 'ws_aorg_secure_contact_tools', $org['secure_contact_tools'] );
+        update_post_meta( $post_id, 'ws_aorg_mailing_address', $org['mailing_address'] );
+        update_post_meta( $post_id, 'ws_aorg_income_screening', $org['income_screening'] );
+        update_post_meta( $post_id, 'ws_aorg_eligibility_status', $org['eligibility_status'] );
+        update_post_meta( $post_id, 'ws_aorg_is_nationwide', $org['is_nationwide'] );
+        update_post_meta( $post_id, 'ws_aorg_anonymous_pre_consult_status', $org['anonymous_pre_consult_status'] );
+        update_post_meta( $post_id, 'ws_aorg_has_attorneys', $org['has_attorneys'] );
+        update_post_meta( $post_id, 'ws_aorg_whistleblower_fit', $org['whistleblower_fit'] );
+        update_post_meta( $post_id, 'ws_aorg_service_depth', $org['service_depth'] );
+        update_post_meta( $post_id, 'ws_aorg_intake_commitment_class', $org['intake_commitment_class'] );
+        update_post_meta( $post_id, 'ws_aorg_whistleblower_scope', $org['whistleblower_scope'] );
+
+        $post = get_post( (int) $post_id );
+        if ( ! $post || $post->post_name === '' ) {
+            continue;
+        }
+
+        update_post_meta(
+            $post_id,
+            '_ws_aorg_id',
+            ws_matrix_build_assist_org_internal_id( 'us', (string) $post->post_name )
+        );
+
+        $phones = $org['phones'];
+        update_post_meta( $post_id, 'ws_aorg_phones', count( $phones ) );
+        foreach ( $phones as $i => $phone ) {
+            update_post_meta( $post_id, "ws_aorg_phones_{$i}_ws_aorg_phone_type", $phone['type'] );
+            update_post_meta( $post_id, "ws_aorg_phones_{$i}_ws_aorg_phone_number", $phone['number'] );
+        }
+
+        $emails = $org['emails'];
+        update_post_meta( $post_id, 'ws_aorg_emails', count( $emails ) );
+        foreach ( $emails as $i => $email ) {
+            update_post_meta( $post_id, "ws_aorg_emails_{$i}_ws_aorg_email_type", $email['type'] );
+            update_post_meta( $post_id, "ws_aorg_emails_{$i}_ws_aorg_email_address", $email['address'] );
+        }
+
+        wp_set_object_terms( $post_id, [ $org['organization_model'] ], 'ws_organization_model' );
+        wp_set_object_terms( $post_id, $org['cost_models'], 'ws_aorg_cost_model' );
+        wp_set_object_terms( $post_id, $org['protected_disclosures'], 'ws_protected_disclosure' );
+        wp_set_object_terms( $post_id, $org['disclosure_targets'], 'ws_disclosure_target' );
+        wp_set_object_terms( $post_id, $org['case_stages'], 'ws_case_stage' );
+        wp_set_object_terms( $post_id, $org['services'], 'ws_aorg_service' );
+        wp_set_object_terms( $post_id, $org['employment_sectors'], 'ws_employment_sector' );
+        wp_set_object_terms( $post_id, $org['protected_classes'], 'ws_protected_class' );
+        wp_set_object_terms( $post_id, $org['languages'], 'ws_language' );
+        wp_set_object_terms( $post_id, $us_term_id, WS_JURISDICTION_TAXONOMY );
+
         update_post_meta( $post_id, 'ws_matrix_source', 'matrix-assist-orgs' );
     }
 }
@@ -1368,16 +916,7 @@ function ws_seed_assist_org_matrix() {
 
 add_action( 'admin_init', function() {
     if ( get_option( 'ws_seeded_assist_org_matrix' ) !== '1.0.0' ) {
-        try {
-            ws_seed_assist_org_matrix();
-        } catch ( RuntimeException $e ) {
-            wp_die(
-                esc_html( '[ws-core assist-org matrix] ' . $e->getMessage() ),
-                esc_html__( 'Assist-org matrix seed failed', 'whistleblowershield' ),
-                [ 'response' => 500 ]
-            );
-        }
-
+        ws_seed_assist_org_matrix();
         update_option( 'ws_seeded_assist_org_matrix', '1.0.0' );
     }
 } );

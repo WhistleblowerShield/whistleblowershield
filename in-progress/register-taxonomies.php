@@ -27,7 +27,7 @@
  *
  * @package       WhistleblowerShield
  * @since         2.1.0
- * @version    3.20.0 [3.20 locked — never been deployed, no live data, bump patch only] — [Do not bump gates]
+ * @version       3.20.0 [3.20 locked — never been deployed, no live data, bump patch only] — [Do not bump gates]
  * @author        Whistleblower Shield
  * @link          https://whistleblowershield.org
  * @copyright     Copyright (c) 2026 Whistleblower Shield
@@ -37,6 +37,7 @@ defined('ABSPATH') || exit;
 
 require_once WS_CORE_PATH . 'includes/admin/matrix/matrix-jurisdictions.php';
 
+global $_ws_taxonomy_registry;
 $_ws_taxonomy_registry = [
 
 // —— 1. Disclosure Categories ———————————————————————————————————————————————
@@ -230,7 +231,7 @@ $_ws_taxonomy_registry = [
                 'associates-immediate-family'    => 'Immediate Family of Whistleblower',
                 'associates-household-family'    => 'Household Family of Whistleblower',
                 'associates-close'               => 'Close Associates of Whistleblower',
-            'all-sectors'                  => ['All Sectors', 1],
+            'all-sectors-parent'           => ['All Sectors', 1],
                 'all-employees-only'             => 'All Employees Only',
             'has-parent'                   => ['Has Sentinels', 1],
                 'has-details'                    => 'Has Details',
@@ -492,9 +493,9 @@ $_ws_taxonomy_registry = [
         ]
     ],
 
-// —— 12. Organization Types —————————————————————————————————————————————————
+// —— 12. Organization Models ————————————————————————————————————————————————
 /**
- * Assigns ws_aorg_type with its flat term structure.
+ * Assigns ws_organization_model with its flat term structure.
  *
  * 'oversight-office' acts as the term for "Government Oversight Office"
  * (more legible to laypeople than 'ombudsman').
@@ -502,11 +503,11 @@ $_ws_taxonomy_registry = [
  * @todo assist_prompt — set instruction string.
  * 
  */
-    'ws_aorg_type'  => [
+    'ws_organization_model'  => [
         'cpts'           => ['ws-assist-org'],
-        'plural'         => 'Organization Types',
-        'singular'       => 'Organization Type',
-        'menu_name'      => 'Org Types',
+        'plural'         => 'Organization Models',
+        'singular'       => 'Organization Model',
+        'menu_name'      => 'Org Models',
         'seed_version'   => '1.0.0',
         'record'         => ['assist'],
         'assist_prompt'  => '',
@@ -518,7 +519,10 @@ $_ws_taxonomy_registry = [
             'advocacy'          => 'Advocacy Organization',
             'oversight-office'  => 'Government Oversight Office',
             'union'             => 'Labor Union',
-            'mixed'             => 'Mixed Organization Type',
+            'government-office' => 'Government Office',
+            'coalition'         => 'Coalition',
+            'program'           => 'Program',
+            'mixed'             => 'Mixed Organization Model',
         ]
     ],
 

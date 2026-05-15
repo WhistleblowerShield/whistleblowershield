@@ -463,7 +463,7 @@ fields DO attach.
 | `_ws_aorg_id` | text | Internal reference code |
 | `ws_aorg_official_name` | text | Organization's Official Name |
 | `ws_aorg_common_name` | text | Widely recognized common name or acronym |
-| `ws_aorg_type` | taxonomy | `ws_aorg_type` terms; radio UI; `save_terms: 1` |
+| `ws_aorg_organization_model` | taxonomy | `ws_organization_model` terms; radio UI; `save_terms: 1` |
 | `ws_aorg_description` | textarea | Organization description |
 | `ws_aorg_logo` | image | Organization logo |
 

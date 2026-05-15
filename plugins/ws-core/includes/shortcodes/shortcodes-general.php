@@ -187,20 +187,20 @@ add_shortcode( 'ws_jurisdiction_index', function() {
 //
 // Usage:
 //   [ws_assist_org_directory]                              — all organizations
-//   [ws_assist_org_directory type="nonprofit"]             — filtered by type
+//   [ws_assist_org_directory model="nonprofit"]            — filtered by model
 //   [ws_assist_org_directory sector="federal" stage="retaliation"]
 //   [ws_assist_org_directory cost_model="pro_bono"]
 //
 // URL query params override shortcode attributes, enabling deep-links from
 // jurisdiction pages to arrive with pre-applied filter state:
 //
-//   ?aorg_type=legal-aid&aorg_stage=retaliation
+//   ?aorg_model=legal-aid&aorg_stage=retaliation
 //
 // URL param names:
-//   aorg_type     — ws_aorg_type slug
-//   aorg_sector   — employment sector slug
+//   aorg_model    — ws_organization_model slug
+//   aorg_sector   — ws_employment_sector slug
 //   aorg_stage    — ws_case_stage slug
-//   aorg_cost     — cost model value
+//   aorg_cost     — ws_aorg_cost_model slug
 
 add_shortcode( 'ws_assist_org_directory', 'ws_shortcode_assist_org_directory' );
 /**

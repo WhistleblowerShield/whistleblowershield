@@ -17,7 +17,7 @@
  * Identity tab:
  *   ws_aorg_internal_id                    Internal ID Code (text, required, slug-safe, lowercase-hyphen, abbreviated-by-table)
  *   ws_aorg_official_name                  Official Organization Name (text, required)
- *   ws_aorg_type                           Organization Type (radio, required)
+ *   ws_aorg_organization_model             Organization Model (radio, required)
  *   ws_aorg_description                    Organization Description (textarea, optional)
  *   ws_aorg_common_name                    Common Name / Acronym (text, optional)
  *   ws_aorg_logo                           Organization Logo (image, optional)
@@ -204,11 +204,11 @@ function ws_register_acf_assist_org() {
 
 
             [
-                'key'           => 'field_aorg_type',
-                'label'         => 'Organization Type',
-                'name'          => 'ws_aorg_type',
+                'key'           => 'field_aorg_organization_model',
+                'label'         => 'Organization Model',
+                'name'          => 'ws_aorg_organization_model',
                 'type'          => 'taxonomy',
-                'taxonomy'      => 'ws_aorg_type',
+                'taxonomy'      => 'ws_organization_model',
                 'instructions'  => 'Select the category that best describes this organization. Use "Mixed Organization Type" when an organization genuinely fits multiple categories and cannot be reasonably classified under a single type.',
                 'required'      => 1,
                 'field_type'    => 'radio',

@@ -118,7 +118,7 @@ are multi-select are always plural.
 | `ws_disclosure_target` | Disclosure Targets | ✓ | — | `jx-statute`, `ws-assist-org` | multi-select |
 | `ws_fee_shifting_rule` | Fee Shifting Rules | — | — | `jx-statute` | multi-select |
 | `ws_employer_defense` | Employer Defense Standards | — | — | `jx-statute` | multi-select |
-| `ws_aorg_type` | Organization Types | — | — | `ws-assist-org` | single-select |
+| `ws_organization_model` | Organization Types | — | — | `ws-assist-org` | single-select |
 | `ws_employment_sector` | Employment Sectors | — | — | `ws-assist-org` | multi-select |
 | `ws_aorg_cost_model` | Cost Structure | — | — | `ws-assist-org` | multi-select |
 | `ws_aorg_service` | Services Offered | — | — | `ws-assist-org` | multi-select |
