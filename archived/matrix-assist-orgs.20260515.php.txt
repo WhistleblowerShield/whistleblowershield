@@ -25,7 +25,6 @@ $_ws_assist_org_matrix = [
         'official_name' => 'Government Accountability Project',
         'official_homepage_url' => 'https://whistleblower.org',
         'intake_url' => 'https://crm.whistleblower.org/form/online-intake-application',
-        'lawyers_url' => '',
         'contact_url' => 'https://whistleblower.org/contact-us/',
         'social_presence' => 1,
         'social_links' => [
@@ -93,7 +92,6 @@ $_ws_assist_org_matrix = [
         'official_name' => 'National Whistleblower Center',
         'official_homepage_url' => 'https://www.whistleblowers.org',
         'intake_url' => 'https://report-fraud-now.info/intake/',
-        'lawyers_url' => 'https://www.whistleblowers.org/find-a-whisteblower-attorney/',
         'contact_url' => 'https://www.whistleblowers.org/contact-us/',
         'social_presence' => 1,
         'social_links' => [
@@ -121,7 +119,7 @@ $_ws_assist_org_matrix = [
         'has_attorneys' => 1,
         'whistleblower_scope' => 3,
         'service_depth' => 'referral-only',
-        'intake_commitment_class' => 'screening-form',
+        'intake_commitment_class' => 'tip-submission-only',
         'eligibility_status' => 'open-to-public',
         'services' => [
             'referral',
@@ -158,7 +156,6 @@ $_ws_assist_org_matrix = [
         'official_name' => 'Whistleblower Aid',
         'official_homepage_url' => 'https://whistlebloweraid.org',
         'intake_url' => '',
-        'lawyers_url' => '',
         'contact_url' => 'https://whistlebloweraid.org/become-a-whistleblower/',
         'social_presence' => 1,
         'social_links' => [
@@ -232,7 +229,6 @@ $_ws_assist_org_matrix = [
         'official_name' => 'Project On Government Oversight',
         'official_homepage_url' => 'https://www.pogo.org',
         'intake_url' => '',
-        'lawyers_url' => 'https://www.pogo.org/legal-and-advocacy-resources-for-whistleblowers#law-firms',
         'contact_url' => 'https://www.pogo.org/contact-us',
         'social_presence' => 1,
         'social_links' => [
@@ -250,7 +246,6 @@ $_ws_assist_org_matrix = [
         'emails' => [
             [ 'type' => 'general', 'address' => 'info@pogo.org', 'url' => 'https://www.pogo.org/contact-us' ],
             [ 'type' => 'secure', 'address' => 'pogotips@proton.me', 'url' => 'https://www.pogo.org/investigates/send-us-a-tip' ],
-            [ 'type' => 'media', 'address' => 'caitlin.macneal@pogo.org', 'url' => 'https://www.pogo.org/contact-us' ],
         ],
         'secure_channel' => 1,
         'secure_channels' => [
@@ -273,7 +268,7 @@ $_ws_assist_org_matrix = [
                 'class' => 'tip-drop',
             ],
         ],
-        'mailing_address' => 'Project On Government Oversight, PO Box 34758, Washington, DC 20043-4758',
+        'mailing_address' => 'Project On Government Oversight, 1100 13th Street NW, Suite 800, Washington, DC 20005',
         'income_screening' => 'not-required',
         'organization_model' => 'advocacy',
         'cost_models' => [ 'free' ],
@@ -316,7 +311,6 @@ $_ws_assist_org_matrix = [
         'official_name' => 'The Anti-Fraud Coalition',
         'official_homepage_url' => 'https://www.taf.org',
         'intake_url' => 'https://www.taf.org/member-directory/',
-        'lawyers_url' => 'https://www.taf.org/member-directory/',
         'contact_url' => '',
         'social_presence' => 1,
         'social_links' => [
@@ -373,7 +367,6 @@ $_ws_assist_org_matrix = [
         'official_name' => 'Whistleblowers of America',
         'official_homepage_url' => 'https://www.whistleblowersofamerica.org',
         'intake_url' => 'https://www.whistleblowersofamerica.org/learn-more/peer-support',
-        'lawyers_url' => '',
         'contact_url' => 'https://www.whistleblowersofamerica.org/contact-us',
         'social_presence' => 1,
         'social_links' => [
@@ -430,12 +423,11 @@ $_ws_assist_org_matrix = [
             'retaliation-active',
         ],
     ],
-/*     [
+    [
         'common_name' => 'WIN',
         'official_name' => 'Whistleblowing International Network',
         'official_homepage_url' => 'https://whistleblowingnetwork.org/Home',
         'intake_url' => '',
-        'lawyers_url' => '',
         'contact_url' => 'https://whistleblowingnetwork.org/Contact-Us',
         'social_presence' => 1,
         'social_links' => [
@@ -483,13 +475,12 @@ $_ws_assist_org_matrix = [
             'pre-report',
             'post-report',
         ],
-    ], */
+    ],
     [
         'common_name' => 'NELP',
         'official_name' => 'National Employment Law Project',
         'official_homepage_url' => 'https://www.nelp.org',
         'intake_url' => '',
-        'lawyers_url' => '',
         'contact_url' => 'https://www.nelp.org/about-us/contact-us/',
         'social_presence' => 1,
         'social_links' => [
@@ -545,8 +536,7 @@ $_ws_assist_org_matrix = [
         'common_name' => 'NELA',
         'official_name' => 'National Employment Lawyers Association',
         'official_homepage_url' => 'https://www.nela.org',
-        'intake_url' => '',
-        'lawyers_url' => 'https://engagement.nela.org/NELA/findalawyer.aspx',
+        'intake_url' => 'https://engagement.nela.org/NELA/findalawyer.aspx',
         'contact_url' => 'https://www.nela.org/about/staff/',
         'social_presence' => 1,
         'social_links' => [
@@ -602,8 +592,7 @@ $_ws_assist_org_matrix = [
         'common_name' => 'LSC',
         'official_name' => 'Legal Services Corporation - Find Legal Aid',
         'official_homepage_url' => 'https://www.lsc.gov',
-        'intake_url' => '',
-        'lawyers_url' => 'https://www.lsc.gov/about-lsc/what-legal-aid/get-legal-help',
+        'intake_url' => 'https://www.lsc.gov/about-lsc/what-legal-aid/get-legal-help',
         'contact_url' => 'https://www.lsc.gov/contact-us',
         'social_presence' => 1,
         'social_links' => [
@@ -661,7 +650,6 @@ $_ws_assist_org_matrix = [
         'official_name' => 'National Legal Aid and Defender Association',
         'official_homepage_url' => 'https://www.nlada.org',
         'intake_url' => '',
-        'lawyers_url' => '',
         'contact_url' => 'https://www.nlada.org/contact-us',
         'social_presence' => 1,
         'social_links' => [
@@ -714,11 +702,68 @@ $_ws_assist_org_matrix = [
         ],
     ],
     [
+        'common_name' => 'NWC Referral',
+        'official_name' => 'National Whistleblower Center — Attorney Referral Program',
+        'official_homepage_url' => 'https://www.whistleblowers.org',
+        'intake_url' => 'https://www.whistleblowers.org/find-a-whisteblower-attorney/',
+        'contact_url' => 'https://www.whistleblowers.org/contact-us/',
+        'social_presence' => 1,
+        'social_links' => [
+            [ 'platform' => 'linked-in', 'url' => 'https://www.linkedin.com/company/national-whistleblowers-center/', 'is_contact' => 0 ],
+            [ 'platform' => 'twitter', 'url' => 'https://x.com/StopFraud', 'is_contact' => 0 ],
+            [ 'platform' => 'youtube', 'url' => 'https://www.youtube.com/@NationalWhistleblowerCenterDC', 'is_contact' => 0 ],
+            [ 'platform' => 'facebook', 'url' => 'https://www.facebook.com/NationalWhistleblowerCenter', 'is_contact' => 0 ],
+            [ 'platform' => 'instagram', 'url' => 'https://www.instagram.com/nationalwhistleblowercenter/', 'is_contact' => 0 ],
+        ],
+        'phones' => [
+            [ 'type' => 'headquarters', 'number' => '(202) 342-1903', 'url' => 'https://www.whistleblowers.org/attorney-referral-program/' ],
+        ],
+        'emails' => [
+            [ 'type' => 'general', 'address' => 'info@whistleblowers.org', 'url' => 'https://www.whistleblowers.org/contact-us/' ],
+        ],
+        'secure_channel' => 0,
+        'secure_channels' => [],
+        'mailing_address' => 'National Whistleblower Center, 1800 M Street NW #33888, Washington, DC 20033',
+        'income_screening' => 'not-required',
+        'organization_model' => 'bar-program',
+        'cost_models' => [ 'free' ],
+        'languages' => [ 'english' ],
+        'is_nationwide' => 1,
+        'anonymous_pre_consult_status' => 0,
+        'has_attorneys' => 0,
+        'whistleblower_scope' => 2,
+        'service_depth' => 'referral-only',
+        'intake_commitment_class' => 'referral-request',
+        'eligibility_status' => 'referral-only',
+        'services' => [
+            'referral',
+        ],
+        'employment_sectors' => [
+            'all-sectors-only',
+        ],
+        'protected_classes'       => [ 'federal-employee', 'corporate-staff', 'contractor-gig' ],
+        'protected_disclosures' => [
+            'securities-commodities-fraud',
+            'tax-evasion-fraud',
+            'public-corruption-ethics',
+            'procurement-spending-fraud',
+            'healthcare-medicare-fraud',
+        ],
+        'disclosure_targets' => [
+            'agency-federal',
+            'court-filing',
+        ],
+        'case_stages' => [
+            'pre-report',
+            'post-report',
+            'litigation',
+        ],
+    ],
+    [
         'common_name' => 'ABA',
         'official_name' => 'American Bar Association — Find Legal Help',
         'official_homepage_url' => 'https://www.americanbar.org/groups/legal_services/',
-        'intake_url' => '',
-        'lawyers_url' => 'https://www.americanbar.org/groups/legal_services/flh-home/',
+        'intake_url' => 'https://www.americanbar.org/groups/legal_services/flh-home/',
         'contact_url' => 'https://www.americanbar.org/about_the_aba/contact/',
         'social_presence' => 1,
         'social_links' => [
@@ -777,7 +822,6 @@ $_ws_assist_org_matrix = [
         'official_name' => 'Public Employees for Environmental Responsibility',
         'official_homepage_url' => 'https://peer.org',
         'intake_url' => 'https://peer.org/contact-legal-team/',
-        'lawyers_url' => '',
         'contact_url' => 'https://peer.org/about-us/contact-us/',
         'social_presence' => 1,
         'social_links' => [
@@ -837,7 +881,6 @@ $_ws_assist_org_matrix = [
         'official_name' => 'The Signals Network',
         'official_homepage_url' => 'https://thesignalsnetwork.org',
         'intake_url' => 'https://thesignalsnetwork.org/whistleblower-protection-program/',
-        'lawyers_url' => '',
         'contact_url' => 'https://thesignalsnetwork.org/contact/',
         'social_presence' => 1,
         'social_links' => [
@@ -906,87 +949,11 @@ $_ws_assist_org_matrix = [
             'retaliation-active',
         ],
     ],
-    [
-        'common_name' => 'WtTF',
-        'official_name' => 'Walk the Talk Foundation',
-        'official_homepage_url' => 'https://walkthetalkfoundation.org',
-        'intake_url' => 'https://walkthetalkfoundation.org/contact-us/',
-        'lawyers_url' => '',
-        'contact_url' => 'https://walkthetalkfoundation.org/contact-us/',
-        'social_presence' => 0,
-        'social_links' => [],
-        'phones' => [],
-        'emails' => [
-            [ 'type' => 'general', 'address' => 'info@walkthetalkfoundation.org', 'url' => 'https://walkthetalkfoundation.org/contact-us/' ],
-        ],
-        'secure_channel' => 0,
-        'secure_channels' => [],
-        'mailing_address' => 'Walk the Talk Foundation, Wilmington, DE',
-        'income_screening' => 'not-required',
-        'organization_model' => 'nonprofit',
-        'cost_models' => [ 'free' ],
-        'languages' => [ 'english' ],
-        'is_nationwide' => 1,
-        'anonymous_pre_consult_status' => 0,
-        'has_attorneys' => 1,
-        'whistleblower_scope' => 3,
-        'service_depth' => 'ongoing-support',
-        'intake_commitment_class' => 'personal-help-request',
-        'eligibility_status' => 'open-to-public',
-        'services' => [
-            'consultation',
-            'advocacy',
-            'media',
-            'retaliation',
-            'peer-support',
-        ],
-        'employment_sectors' => [
-            'federal-employee',
-            'military-defense',
-        ],
-        'protected_classes' => [
-            'military-personnel',
-            'federal-employee',
-        ],
-        'protected_disclosures' => [
-            'military-defense-reporting',
-            'public-corruption-ethics',
-            'general-wrongdoing',
-        ],
-        'disclosure_targets' => [
-            'internal-management',
-            'agency-federal',
-            'legislative-federal',
-            'public-media',
-        ],
-        'case_stages' => [
-            'pre-report',
-            'post-report',
-            'retaliation-active',
-        ],
-    ],
 ];
 
 // ════════════════════════════════════════════════════════════════════════════
 // Seeder: ws_seed_assist_org_matrix
 // ════════════════════════════════════════════════════════════════════════════
-
-function ws_assist_org_matrix_fail( string $message, array $context = [] ): void {
-    $details = '';
-
-    foreach ( $context as $key => $value ) {
-        if ( $value === '' || $value === null ) {
-            continue;
-        }
-        $details .= sprintf( ' %s=%s;', $key, (string) $value );
-    }
-
-    wp_die(
-        esc_html( "[ws-core assist-org matrix] Gawd-damm-it! Seed operation terminated. Canonical data condition was not satisfied. {$message}{$details}" ),
-        esc_html__( 'Assist-org matrix seed failed', 'whistleblowershield' ),
-        [ 'response' => 500 ]
-    );
-}
 
 function ws_seed_assist_org_matrix() {
 
@@ -995,14 +962,12 @@ function ws_seed_assist_org_matrix() {
     // Resolve the US jurisdiction term ID.
     $us_term = ws_jx_term_by_code( 'us' );
     if ( ! $us_term || is_wp_error( $us_term ) ) {
-        ws_assist_org_matrix_fail(
-            'Required jurisdiction term is unavailable.',
-            [
-                'taxonomy' => 'WS_JURISDICTION_TAXONOMY',
-                'slug'     => 'us',
-            ]
-        );
-    }
+                wp_die(
+                    esc_html( "[ws-core assist-org matrix] Missing 'us' SLUG in WS_JURISDICTION_TAXONOMY." ),
+                    esc_html__( 'Assist-org matrix seed failed', 'whistleblowershield' ),
+                    [ 'response' => 500 ]
+                );
+            }
 
     $us_term_id = (int) $us_term->term_id;
 
@@ -1024,12 +989,10 @@ function ws_seed_assist_org_matrix() {
         ] );
 
         if ( count( $existing_posts ) > 1 ) {
-            ws_assist_org_matrix_fail(
-                'Multiple existing ws-assist-org posts match the canonical official name.',
-                [
-                    'official_name' => $official_name,
-                    'matches'       => count( $existing_posts ),
-                ]
+            wp_die(
+                esc_html( "[ws-core assist-org matrix] Multiple ws-assist-org posts found for '{$official_name}'." ),
+                esc_html__( 'Assist-org matrix seed failed', 'whistleblowershield' ),
+                [ 'response' => 500 ]
             );
         }
 
@@ -1048,12 +1011,10 @@ function ws_seed_assist_org_matrix() {
 
         if ( is_wp_error( $post_id ) || ! $post_id ) {
             $message = is_wp_error( $post_id ) ? $post_id->get_error_message() : 'empty post ID';
-            ws_assist_org_matrix_fail(
-                'Canonical post creation failed.',
-                [
-                    'official_name' => $official_name,
-                    'reason'        => $message,
-                ]
+            wp_die(
+                esc_html( "[ws-core assist-org matrix] Cannot create ws-assist-org post for '{$official_name}': {$message}. The matrix seed cannot continue." ),
+                esc_html__( 'Assist-org matrix seed failed', 'whistleblowershield' ),
+                [ 'response' => 500 ]
             );
         }
 
@@ -1061,10 +1022,14 @@ function ws_seed_assist_org_matrix() {
         update_post_meta( $post_id, 'ws_aorg_common_name', $org['common_name'] );
         update_post_meta( $post_id, 'ws_aorg_official_homepage_url', $org['official_homepage_url'] );
         update_post_meta( $post_id, 'ws_aorg_intake_url', $org['intake_url'] );
-        update_post_meta( $post_id, 'ws_aorg_lawyers_url', $org['lawyers_url'] );
         update_post_meta( $post_id, 'ws_aorg_contact_url', $org['contact_url'] );
         update_post_meta( $post_id, 'ws_aorg_social_presence', $org['social_presence'] );
         update_post_meta( $post_id, 'ws_aorg_has_secure_channel', $org['secure_channel'] );
+        update_post_meta(
+            $post_id,
+            'ws_aorg_secure_contact_tools',
+            array_values( array_unique( array_column( $org['secure_channels'], 'tool' ) ) )
+        );
         update_post_meta( $post_id, 'ws_aorg_mailing_address', $org['mailing_address'] );
         update_post_meta( $post_id, 'ws_aorg_income_screening', $org['income_screening'] );
         update_post_meta( $post_id, 'ws_aorg_eligibility_status', $org['eligibility_status'] );
@@ -1077,12 +1042,10 @@ function ws_seed_assist_org_matrix() {
 
         $post = get_post( (int) $post_id );
         if ( ! $post || $post->post_name === '' ) {
-            ws_assist_org_matrix_fail(
-                'WordPress did not return a canonical post_name after post resolution.',
-                [
-                    'official_name' => $official_name,
-                    'post_id'       => (int) $post_id,
-                ]
+            wp_die(
+                esc_html( "[ws-core assist-org matrix] WordPress did not return a canonical post_name for '{$official_name}' after post #{$post_id}. The matrix seed cannot continue." ),
+                esc_html__( 'Assist-org matrix seed failed', 'whistleblowershield' ),
+                [ 'response' => 500 ]
             );
         }
 

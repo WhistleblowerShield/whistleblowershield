@@ -67,8 +67,7 @@ Field names are prefix-free here. ACF registration applies the `ws_aorg_` prefix
   `temporarily-hidden`|`do-not-publish`
 - `editor_confidence` - select: `high`|`medium`|`low`|`do-not-use`
 - `editor_confidence_notes`
-- `organization_model` - single term: `nonprofit`|`legal-aid`|`law-firm`|`bar-program`|`advocacy`|
-  `oversight-office`|`union`|`government-office`|`coalition`|`program`|`mixed`
+- `organization_model` - taxonomy: `ws_organization_model`
 
 Why now: these fields prevent research records from silently becoming recommendations before a human is ready to
 stand behind the routing. `organization_model` replaces the working concept behind `aorg_type`; it describes the
@@ -102,11 +101,23 @@ second modeling campaign.
 
 ### Intake and Contact
 
+- `intake_url` - direct path for requesting help, screening, or formal two-way support.
+- `lawyers_url` - in-house lawyer directory, attorney-referral, or lawyer-finder path when that path is separate
+  from the organization's main intake. This is not a generic referral URL and does not make the organization a
+  law firm.
+- `contact_url` - general contact page when separate from intake.
+- `phones` - repeater: `type`, `number`, `url`
+- `emails` - repeater: `type`, `address`, `url`
+- `social_presence` - bool
+- `social_links` - repeater: `platform`, `url`, `is_contact`
 - `intake_status` - select: `open`|`limited`|`waitlist`|`closed`
 - `expected_response_time` - select: `same-day`|`one-to-three-days`|`one-week`|`over-one-week`|
   `not-stated`
 
 Why now: Maya and James need to know whether a path is likely to produce help, not just whether a URL exists.
+Phone and email rows require a source URL so monitor tooling has a starting page for later verification. Social
+links are collected for editor context only; the public renderer should not surface them. `social_links.is_contact`
+marks rare cases where social accounts are the closest available public contact route.
 
 ### Eligibility and Cost
 
@@ -123,14 +134,14 @@ Those facts affect whether the result is useful now or only theoretically releva
 
 - `anonymous_pre_consult_status` - bool
 - `confidentiality_claimed` - bool
-- `secure_channel_status` - bool
-- `secure_contact_tools` - multi-select: `signal`|`protonmail`|`tutanota`|`wire`|`keybase`|
-  `pgp-email`|`securedrop`|`globaleaks`|`encrypted-web-form`|`other`
-- `secure_contact_tool_details` - conditional on `secure_contact_tools` includes `other`
+- `secure_channel` - bool
+- `secure_channels` - repeater: `tool`, `url`, `label`, `class`
 - `public_warning_notes`
 
 Why now: HTTPS intake, pseudonym use, SecureDrop, Signal, and privilege/confidentiality claims are different facts.
-Collapsing them makes the directory less safe.
+Collapsing them makes the directory less safe. `secure_channel` answers whether any verified secure path exists.
+`secure_channels` stores each actual path. `class` distinguishes paths such as `two-way-support` from `tip-drop`;
+SecureDrop and Signal are not interchangeable.
 
 ### Legal Capacity
 
@@ -161,9 +172,14 @@ Fields keeping their base names (with prefix applied at registration):
 - `whistleblower_scope`
 - `whistleblower_scope_details`
 - `intake_url`
+- `lawyers_url`
 - `contact_url`
-- `phones` (kept as scalar/text for starting-point to avoid repeater churn)
-- `emails` (kept as scalar/text for starting-point to avoid repeater churn)
+- `phones`
+- `emails`
+- `social_presence`
+- `social_links`
+- `secure_channel`
+- `secure_channels`
 - `mailing_address`
 - `jurisdictions`
 - `protected_disclosures`
@@ -202,6 +218,9 @@ Overflow promotes only when the fact is both recurring and routing-relevant.
 Promote now:
 
 - secure contact quality;
+- source-backed phone and email rows;
+- lawyer-finder paths that are separate from intake;
+- social links when they are editor-useful, especially when no conventional contact path exists;
 - personal assistance versus leak drop or information-only contact;
 - direct representation versus referral or policy-only role;
 - eligibility gates;
@@ -212,6 +231,7 @@ Promote now:
 Keep in notes for now:
 
 - exact program descriptions;
+- social links for public rendering;
 - one-off certifications;
 - relationship-building details;
 - broad mission phrasing;
@@ -233,7 +253,8 @@ Positive signals:
 - `intake_commitment_class = personal-help-request` bonus.
 - `intake_commitment_class = peer-support-request` bonus for retaliation-active or post-report users.
 - `intake_status = open` bonus.
-- `secure_channel_status = dedicated-secure-channel` small safety bonus.
+- `secure_channel = true` small safety bonus when at least one `secure_channels` row is classed as
+  `two-way-support`.
 - `anonymous_pre_consult_status = true` small safety bonus for pre-report users.
 - `attorney_role = direct-representation` or `consultation-only` bonus when legal help is sought.
 
@@ -246,8 +267,7 @@ Warning or downgrade signals:
 - `intake_commitment_class = leak-drop-only` blocks ordinary help routing.
 - `intake_commitment_class = tip-submission-only` blocks ordinary help routing.
 - `intake_commitment_class = information-only` downgrades for James.
-- `secure_channel_status = secure-tip-only` requires public warning if shown.
-- `secure_channel_status = leak-drop-only` requires public warning if shown.
+- `secure_channels.class = tip-drop` requires public warning if shown as a disclosure path.
 - `legal_representation_status = referral-only` should not be labeled as direct legal help.
 
 Do not let engagement scoring overpower fit. A hotline is useful only when the organization is otherwise relevant.
@@ -262,8 +282,10 @@ The prompt should ask researchers to distinguish these facts explicitly:
 - What is the 0-3 `whistleblower_scope` score, and what evidence supports it?
 - How deep is the help?
 - Does the intake path request personal assistance, screen for possible help, refer out, or only accept tips?
+- Is there a separate in-house lawyer directory or lawyer-finder path that belongs in `lawyers_url`?
 - Can a user begin without giving their legal name?
-- Is there a dedicated secure channel, or only a normal HTTPS form?
+- Is there a dedicated secure channel, and is it two-way support or only a tip/drop path?
+- What source page supports each phone, email, social link, and secure channel?
 - Does the organization provide direct legal representation, consultation, referral, or policy advocacy only?
 - Are there eligibility gates, income gates, membership gates, or subject-matter limits?
 - Is there any user-facing warning that should appear before recommending the org?
@@ -282,11 +304,12 @@ For the old tri-state or legacy fields that require conceptual mapping during JS
 
 - `assistance_type` -> `organization_model` (JSON must translate legacy types to new models)
 - `anonymous_pre_consult_possible` -> `anonymous_pre_consult_status`
-- `has_secure_channel` -> `secure_channel_status` (JSON must not map `has_secure_channel = true` to `dedicated-secure-channel` without verifying a secure tool or URL exists)
+- `has_secure_channel` -> `secure_channel`
 - `has_attorneys` -> `has_attorneys`
 - `income_eligibility_required` -> `income_screening`
 
-Ingest must not map a normal HTTPS intake form to `dedicated-secure-channel`; it maps to `standard-web-form`.
+Ingest must not map a normal HTTPS intake form to `secure_channel = true`. A secure channel requires at least one
+verified `secure_channels` row with a real tool and URL.
 
 Ingest should preserve `_review_notes`, `_reconciled_notes`, and `_schema_gap_notes` for audit. Those fields are
 not routing inputs.
@@ -311,6 +334,21 @@ Defer these until after the directory path works with real records:
 - full rename normalization.
 
 These are not rejected. They are simply not part of the Phase 2 starting point.
+
+---
+
+## Current Matrix Decisions
+
+- NWC and NWC Referral are one organization. NWC keeps `intake_url` for Report Fraud Now and uses `lawyers_url`
+  for the NWC attorney-finder path.
+- WIN is not a durable assist-org target for this matrix; it should remain out unless a later review proves a
+  concrete U.S.-user support path.
+- Walk the Talk Foundation fills the active-duty / uniformed-service support gap and belongs in the assist-org
+  matrix as a nonprofit support organization.
+- POGO remains an assist-adjacent investigative/tip path, not a direct intake org. Secure tip paths belong in
+  `secure_channels`, not `intake_url`.
+- Private law firm sites and lead-generation microsites stay out of assist-org records. Track them separately in
+  `future-law-firms.md` or the exclusion short list.
 
 ---
 

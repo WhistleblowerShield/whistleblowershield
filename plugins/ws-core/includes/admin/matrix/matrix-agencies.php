@@ -44,7 +44,7 @@ $_ws_agency_matrix = [
         'slug'               => 'office-of-special-counsel',
         'official_name'     => 'U.S. Office of Special Counsel',
         'common_name'  => 'OSC',
-        'url'      => 'https://osc.gov',
+        'url'      => 'https://www.osc.gov/services/disclosure-of-wrongdoing/overview/',
         'mission'  => 'Receives disclosures from federal employees, investigates prohibited personnel practices, and enforces the Whistleblower Protection Act.',
     ],
 
@@ -100,6 +100,15 @@ $_ws_agency_matrix = [
         'common_name'        => 'DOJ',
         'url'      => 'https://www.justice.gov/civil/false-claims-act',
         'mission'  => 'Pursues False Claims Act qui tam actions. Relators (whistleblowers) may receive 15–30% of government recoveries under 31 U.S.C. § 3730.',
+    ],
+
+    [
+        'title'              => 'Department of Defense Office of Inspector General — Whistleblower Reprisal Investigations',
+        'slug'               => 'dod-oig-whistleblower-reprisal-investigations',
+        'official_name'      => 'Department of Defense Office of Inspector General — Whistleblower Reprisal Investigations Directorate',
+        'common_name'        => 'DoD OIG WRI',
+        'url'      => 'https://www.dodig.mil/Components/Administrative-Investigations/Whistleblower-Reprisal-Investigations/',
+        'mission'  => 'Investigates whistleblower reprisal and communication-restriction complaints involving Armed Forces members, DoD civilian and intelligence-community employees, classified-access employees, defense contractors, nonappropriated fund employees, grantees, personal services contractors, and privatized military housing tenants.',
     ],
 
 ];
