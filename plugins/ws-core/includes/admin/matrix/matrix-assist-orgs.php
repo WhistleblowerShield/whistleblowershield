@@ -807,8 +807,15 @@ function ws_seed_assist_org_matrix() {
     // Resolve the US jurisdiction term ID.
     $us_term = ws_jx_term_by_code( 'us' );
     if ( ! $us_term || is_wp_error( $us_term ) ) {
-        return; // Taxonomy terms not yet seeded — bail.
-    }
+                error_log( sprintf(
+                    '[ws-core assist-org matrix] Missing \'us\' SLUG in WS_JURISDICTION_TAXONOMY (expected %s, referenced from %s line %d)',
+                    $slug,
+                    __FILE__,
+                    __LINE__
+                ) );
+                wp_die("You_Fuq'd_Up! — see the log");
+            }
+
     $us_term_id = (int) $us_term->term_id;
 
     if ( ! defined( 'WS_MATRIX_SEEDING_IN_PROGRESS' ) ) {

@@ -456,7 +456,7 @@ function ws_tax_audit_extract_seed_taxonomy( $body ) {
                 return $resolved;
             }
         }
-        if ( $constant_name === WS_JURISDICTION_TAXONOMY ) {
+        if ( $constant_name === 'WS_JURISDICTION_TAXONOMY' ) {
             return WS_JURISDICTION_TAXONOMY;
         }
     }
