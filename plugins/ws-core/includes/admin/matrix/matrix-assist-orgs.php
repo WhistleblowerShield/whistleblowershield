@@ -97,7 +97,7 @@ $_ws_assist_org_matrix = [
         'mailing_address' => 'National Whistleblower Center, 1800 M Street NW #33888, Washington, DC 20033',
         'income_screening' => 'not-required',
         'organization_model' => 'nonprofit',
-        'cost_models' => [ 'unclear' ],
+        'cost_models' => [ 'free' ],
         'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'yes',
@@ -258,7 +258,7 @@ $_ws_assist_org_matrix = [
         'mailing_address' => 'The Anti-Fraud Coalition, 1220 19th St NW, Ste 501, Washington, DC 20036',
         'income_screening' => 'not-required',
         'organization_model' => 'advocacy',
-        'cost_models' => [ 'unclear' ],
+        'cost_models' => [ 'free', 'contingency' ],
         'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'no',
@@ -311,7 +311,7 @@ $_ws_assist_org_matrix = [
         'mailing_address' => 'Whistleblowers of America, 11130 Lillian Highway, Pensacola, FL 32506',
         'income_screening' => 'not-required',
         'organization_model' => 'advocacy',
-        'cost_models' => [ 'unclear' ],
+        'cost_models' => [ 'free', 'fee-for-service' ],
         'languages' => [ 'english' ],
         'is_nationwide' => 1,
         'anonymous_pre_consult_status' => 'yes',
@@ -808,8 +808,7 @@ function ws_seed_assist_org_matrix() {
     $us_term = ws_jx_term_by_code( 'us' );
     if ( ! $us_term || is_wp_error( $us_term ) ) {
                 error_log( sprintf(
-                    '[ws-core assist-org matrix] Missing \'us\' SLUG in WS_JURISDICTION_TAXONOMY (expected %s, referenced from %s line %d)',
-                    $slug,
+                    '[ws-core assist-org matrix] Missing \'us\' SLUG in WS_JURISDICTION_TAXONOMY (referenced from %s line %d)',
                     __FILE__,
                     __LINE__
                 ) );
