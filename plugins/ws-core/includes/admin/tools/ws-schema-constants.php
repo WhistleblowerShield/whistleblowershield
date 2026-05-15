@@ -79,6 +79,7 @@ define( 'WS_SCHEMA_PHONE_TYPE', [
     'regional',      // Geographic branch or field office line
     'tty',           // TTY/TDD accessibility line
     'fax',           // Fax; still relevant in legal/administrative contexts
+    'secure',        // Secure contact number for secure messaging
     'other',         // Fallback — requires note in prompt _review_notes
 ] );
 
@@ -117,7 +118,7 @@ define( 'WS_SCHEMA_URL_STATUS', [
 
 
 // ════════════════════════════════════════════════════════════════════════════
-// Tri-State
+// Tri-State — Only for use as a researcher response. Meta is boolean.
 //
 // Valid values for required boolean-ish fields that must allow an honest
 // "cannot confirm" answer without failing the record:
@@ -206,12 +207,15 @@ define( 'WS_SCHEMA_WHISTLEBLOWER_SCOPE_MAX', 3 );
 // ════════════════════════════════════════════════════════════════════════════
 
 define( 'WS_SCHEMA_SECURE_TOOL', [
-    //'SecureDrop',    // Freedom of the Press Foundation SecureDrop
-    'Signal',        // Signal encrypted messaging
-    'ProtonMail',    // ProtonMail encrypted email
-    'Tutanota',      // Tutanota encrypted email
-    'Wire',          // Wire encrypted messaging
-    'Keybase',       // Keybase encrypted messaging/file sharing
+    'securedrop',    // Freedom of the Press Foundation SecureDrop
+    'globaleaks',    // GlobaLeaks secure drop software
+    'signal',        // Signal encrypted messaging
+    'protonmail',    // ProtonMail encrypted email
+    'tutanota',      // Tutanota encrypted email
+    'pgp-email',     // Generic PGP/GPG encrypted email
+    'wire',          // Wire encrypted messaging
+    'keybase',       // Keybase encrypted messaging/file sharing
+    'encrypted-web-form', // Generic encrypted web form
     'other',         // Fallback — describe in _review_notes
 ] );
 

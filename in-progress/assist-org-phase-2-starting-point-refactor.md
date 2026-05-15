@@ -62,7 +62,7 @@ Field names are prefix-free here. ACF registration applies the `ws_aorg_` prefix
 
 ### Identity and Publishing
 
-- `organization_status` - select: `active`|`inactive`|`merged`|`closed`|`unclear`
+- `organization_status` - select: `active`|`inactive`|`merged`|`closed`
 - `public_directory_status` - select: `draft-review`|`publish-ready`|`needs-verification`|
   `temporarily-hidden`|`do-not-publish`
 - `editor_confidence` - select: `high`|`medium`|`low`|`do-not-use`
@@ -76,24 +76,22 @@ kind of organization, not whether the organization is a good whistleblower match
 
 ### Service Fit
 
-- `whistleblower_fit` - select: `primary-focus`|`significant-program`|`adjacent-help`|`not-specific`|
-  `none`|`unclear`
-- `whistleblower_scope` - integer/select score: `0`|`1`|`2`|`3`
+- `whistleblower_scope` - integer: `0`|`1`|`2`|`3`
 - `whistleblower_scope_details`
 - `service_depth` - select: `information-only`|`triage-only`|`brief-advice`|`document-review`|
   `limited-scope-help`|`direct-representation`|`referral-only`|`warm-handoff`|`peer-support`|
-  `ongoing-support`|`unclear`
+  `ongoing-support`
 - `intake_commitment_class` - select: `personal-help-request`|`screening-form`|`referral-request`|
-  `peer-support-request`|`general-contact-only`|`tip-submission-only`|`leak-drop-only`|`information-only`|
-  `unclear`
+  `peer-support-request`|`general-contact-only`|`tip-submission-only`|`leak-drop-only`|`information-only`
 - `service_limits` - textarea
 
 Why now: current overflow repeatedly distinguishes direct help, referral, screening, general information, peer
 support, and legal representation. These are not decoration; they change who should be shown first.
 
-`whistleblower_scope` remains the 0-3 scoring spine already used by the cascade and seeded records:
+`whistleblower_scope` is the single field for organization-level whistleblower relevance. Do not duplicate it
+with a label field; labels can be derived from the integer when needed:
 
-- `0` - no meaningful whistleblower service;
+- `0` - no meaningful whistleblower-specific service;
 - `1` - adjacent or weak whistleblower relevance;
 - `2` - significant whistleblower program or subject-matter subset;
 - `3` - primary or broad whistleblower support.
@@ -104,17 +102,17 @@ second modeling campaign.
 
 ### Intake and Contact
 
-- `intake_status` - select: `open`|`limited`|`waitlist`|`closed`|`unclear`
+- `intake_status` - select: `open`|`limited`|`waitlist`|`closed`
 - `expected_response_time` - select: `same-day`|`one-to-three-days`|`one-week`|`over-one-week`|
-  `not-stated`|`unclear`
+  `not-stated`
 
 Why now: Maya and James need to know whether a path is likely to produce help, not just whether a URL exists.
 
 ### Eligibility and Cost
 
 - `eligibility_status` - select: `open-to-public`|`screening-required`|`restricted`|`members-only`|
-  `referral-only`|`unclear`
-- `income_screening` - select: `required`|`not-required`|`possible`|`unclear`
+  `referral-only`
+- `income_screening` - select: `required`|`not-required`|`possible`
 - `membership_requirement` - select: `none`|`union-members-only`|`profession-members-only`|
   `program-members-only`
 
@@ -123,10 +121,9 @@ Those facts affect whether the result is useful now or only theoretically releva
 
 ### Safety and Privacy
 
-- `anonymous_pre_consult_status` - select: `yes`|`no`|`unclear`
-- `confidentiality_claimed` - select: `yes`|`no`|`unclear`
-- `secure_channel_status` - select: `dedicated-secure-channel`|`standard-web-form`|`secure-tip-only`|
-  `leak-drop-only`|`none-found`|`unclear`
+- `anonymous_pre_consult_status` - bool
+- `confidentiality_claimed` - bool
+- `secure_channel_status` - bool
 - `secure_contact_tools` - multi-select: `signal`|`protonmail`|`tutanota`|`wire`|`keybase`|
   `pgp-email`|`securedrop`|`globaleaks`|`encrypted-web-form`|`other`
 - `secure_contact_tool_details` - conditional on `secure_contact_tools` includes `other`
@@ -137,13 +134,11 @@ Collapsing them makes the directory less safe.
 
 ### Legal Capacity
 
-- `has_attorneys` - select: `yes`|`no`|`unclear`
+- `has_attorneys` - bool
 - `attorney_role` - select: `direct-representation`|`consultation-only`|`referral-panel`|
-  `supervised-clinic`|`policy-only`|`unclear`
-- `legal_representation_status` - select: `available`|`limited`|`referral-only`|`not-available`|
-  `unclear`
-- `attorney_client_relationship_status` - select: `may-form`|`does-not-form`|`not-stated`|
-  `unclear`
+  `supervised-clinic`|`policy-only`
+- `legal_representation_status` - select: `available`|`limited`|`referral-only`|`not-available`
+- `attorney_client_relationship_status` - select: `may-form`|`does-not-form`|`not-stated`
 
 Why now: "has attorneys" is too blunt. The directory needs to distinguish direct representation from referral
 panels, policy shops, and standard forms that expressly do not create an attorney-client relationship.
@@ -232,14 +227,14 @@ Keep the existing scoring structure. Add only small, explainable modifiers.
 Positive signals:
 
 - `whistleblower_scope` remains the base score.
-- `whistleblower_fit = primary-focus` strong bonus.
-- `whistleblower_fit = significant-program` moderate bonus.
+- `whistleblower_scope = 3` strong bonus.
+- `whistleblower_scope = 2` moderate bonus.
 - `service_depth = direct-representation`, `warm-handoff`, `peer-support`, or `ongoing-support` bonus.
 - `intake_commitment_class = personal-help-request` bonus.
 - `intake_commitment_class = peer-support-request` bonus for retaliation-active or post-report users.
 - `intake_status = open` bonus.
 - `secure_channel_status = dedicated-secure-channel` small safety bonus.
-- `anonymous_pre_consult_status = yes` small safety bonus for pre-report users.
+- `anonymous_pre_consult_status = true` small safety bonus for pre-report users.
 - `attorney_role = direct-representation` or `consultation-only` bonus when legal help is sought.
 
 Warning or downgrade signals:
@@ -247,8 +242,6 @@ Warning or downgrade signals:
 - `organization_status` not `active` blocks public recommendation.
 - `public_directory_status` not `publish-ready` blocks public recommendation.
 - `editor_confidence = do-not-use` blocks public recommendation.
-- `whistleblower_fit = none` blocks public recommendation.
-- `whistleblower_fit = unclear` keeps record visible only as low-confidence fallback.
 - `whistleblower_scope = 0` blocks public recommendation.
 - `intake_commitment_class = leak-drop-only` blocks ordinary help routing.
 - `intake_commitment_class = tip-submission-only` blocks ordinary help routing.
@@ -276,7 +269,8 @@ The prompt should ask researchers to distinguish these facts explicitly:
 - Is there any user-facing warning that should appear before recommending the org?
 
 The prompt should not require researchers to invent a structured value when the source does not support one.
-Use `unclear` when the question matters but the answer is not stated.
+Leave fields empty when the source does not support a structured value. Use `none` only where an explicit
+negative value is materially different from an empty value.
 
 ---
 
@@ -288,7 +282,7 @@ For the old tri-state or legacy fields that require conceptual mapping during JS
 
 - `assistance_type` -> `organization_model` (JSON must translate legacy types to new models)
 - `anonymous_pre_consult_possible` -> `anonymous_pre_consult_status`
-- `has_secure_channel` -> `secure_channel_status` (JSON must not map `has_secure_channel = yes` to `dedicated-secure-channel` without verifying a secure tool or URL exists)
+- `has_secure_channel` -> `secure_channel_status` (JSON must not map `has_secure_channel = true` to `dedicated-secure-channel` without verifying a secure tool or URL exists)
 - `has_attorneys` -> `has_attorneys`
 - `income_eligibility_required` -> `income_screening`
 
