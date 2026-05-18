@@ -289,6 +289,7 @@ function aorg_ingest_record( array $record, string $batch_id, int $us_term_id ):
     $post_content  = aorg_ingest_build_post_content( $record );
     $post_data     = [
         'post_title'  => $official_name,
+        'post_name'   => sanitize_title( $official_name ),
         'post_type'   => WS_AORG_POST_TYPE,
         'post_status' => 'draft',
     ];
@@ -416,10 +417,26 @@ function aorg_ingest_record( array $record, string $batch_id, int $us_term_id ):
 
     $post = get_post( (int) $post_id );
     if ( ! $post || $post->post_name === '' ) {
-        aorg_ingest_fail( 'WordPress did not return a usable post_name for internal ID.', [
-            'post_id'       => (int) $post_id,
-            'official_name' => $official_name,
-        ] );
+        $slug_result = wp_update_post( [
+            'ID'        => (int) $post_id,
+            'post_name' => sanitize_title( $official_name ),
+        ], true );
+
+        if ( is_wp_error( $slug_result ) ) {
+            aorg_ingest_fail( 'WordPress did not accept a draft post_name for internal ID.', [
+                'post_id'       => (int) $post_id,
+                'official_name' => $official_name,
+                'reason'        => $slug_result->get_error_message(),
+            ] );
+        }
+
+        $post = get_post( (int) $post_id );
+        if ( ! $post || $post->post_name === '' ) {
+            aorg_ingest_fail( 'WordPress did not return a usable post_name for internal ID.', [
+                'post_id'       => (int) $post_id,
+                'official_name' => $official_name,
+            ] );
+        }
     }
 
     update_post_meta(

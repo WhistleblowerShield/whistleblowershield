@@ -114,6 +114,125 @@ function ws_q_get_channel_rows( int $post_id, string $field_name, string $type_k
     return ws_q_normalize_channel_rows( $raw_rows, $type_key, $value_key );
 }
 
+/**
+ * Returns yes/no from canonical boolean-ish meta.
+ *
+ * @param int    $post_id Post ID.
+ * @param string $key     Meta key.
+ * @return string
+ */
+function ws_q_bool_meta_yes_no( int $post_id, string $key ): string {
+    return (bool) get_post_meta( $post_id, $key, true ) ? 'yes' : 'no';
+}
+
+/**
+ * Reads assist-org social link repeater rows from canonical raw ACF meta.
+ *
+ * @param int $post_id Assist-org post ID.
+ * @return array<int,array{platform:string,url:string,is_contact:bool}>
+ */
+function ws_q_get_social_link_rows( int $post_id ): array {
+    $field_name = 'ws_aorg_social_links';
+    $count      = (int) get_post_meta( $post_id, $field_name, true );
+    if ( $count <= 0 ) {
+        return [];
+    }
+
+    $out = [];
+    for ( $i = 0; $i < $count; $i++ ) {
+        $platform = strtolower( trim( (string) get_post_meta( $post_id, "{$field_name}_{$i}_social_platform", true ) ) );
+        $url      = trim( (string) get_post_meta( $post_id, "{$field_name}_{$i}_social_url", true ) );
+        if ( $platform === '' || $url === '' ) {
+            continue;
+        }
+
+        $out[] = [
+            'platform'   => $platform,
+            'url'        => $url,
+            'is_contact' => (bool) get_post_meta( $post_id, "{$field_name}_{$i}_social_is_contact", true ),
+        ];
+    }
+
+    return $out;
+}
+
+/**
+ * Reads assist-org secure channel repeater rows from canonical raw ACF meta.
+ *
+ * @param int $post_id Assist-org post ID.
+ * @return array<int,array{tool:string,url:string,label:string,class:string}>
+ */
+function ws_q_get_secure_channel_rows( int $post_id ): array {
+    $field_name = 'ws_aorg_secure_channels';
+    $count      = (int) get_post_meta( $post_id, $field_name, true );
+    if ( $count <= 0 ) {
+        return [];
+    }
+
+    $out = [];
+    for ( $i = 0; $i < $count; $i++ ) {
+        $tool = strtolower( trim( (string) get_post_meta( $post_id, "{$field_name}_{$i}_channel_tool", true ) ) );
+        $url  = trim( (string) get_post_meta( $post_id, "{$field_name}_{$i}_channel_url", true ) );
+        if ( $tool === '' && $url === '' ) {
+            continue;
+        }
+
+        $out[] = [
+            'tool'  => $tool,
+            'url'   => $url,
+            'label' => trim( (string) get_post_meta( $post_id, "{$field_name}_{$i}_channel_label", true ) ),
+            'class' => trim( (string) get_post_meta( $post_id, "{$field_name}_{$i}_channel_class", true ) ),
+        ];
+    }
+
+    return $out;
+}
+
+/**
+ * Sorts assist-org rows for the no-cascade default directory.
+ *
+ * @param array<int,array<string,mixed>> $rows Assist-org query rows.
+ * @return array<int,array<string,mixed>>
+ */
+function ws_q_sort_assist_org_rows( array $rows ): array {
+    $rank = [
+        'us-wb-aid'            => 10,
+        'us-psst'              => 20,
+        'us-gap'               => 30,
+        'us-peer'              => 40,
+        'us-nsc'               => 50,
+        'us-tsn'               => 60,
+        'us-lasst'             => 70,
+        'us-nwc'               => 80,
+        'us-aiwi'              => 90,
+        'us-wttf'              => 100,
+        'us-woa'               => 110,
+        'us-taf'               => 120,
+        'us-whisper'           => 130,
+        'us-empowr'            => 140,
+        'us-nlada'             => 150,
+        'us-nelp'              => 160,
+        'us-lsc-find-law-aid'  => 170,
+        'us-nela'              => 180,
+        'us-aba-find-law-help' => 190,
+    ];
+
+    usort( $rows, static function( array $a, array $b ) use ( $rank ): int {
+        $a_id = (string) ( $a['internal_id'] ?? '' );
+        $b_id = (string) ( $b['internal_id'] ?? '' );
+        $a_rank = $rank[ $a_id ] ?? 999;
+        $b_rank = $rank[ $b_id ] ?? 999;
+
+        if ( $a_rank !== $b_rank ) {
+            return $a_rank <=> $b_rank;
+        }
+
+        return strcasecmp( (string) ( $a['title'] ?? '' ), (string) ( $b['title'] ?? '' ) );
+    } );
+
+    return $rows;
+}
+
 
 /**
  * Builds the normalized return payload for a single assist-org post.
@@ -130,7 +249,6 @@ function ws_q_build_assist_org_row( $oid ) {
     $tax_disclosure_target = ws_q_taxonomy_payload( $oid, 'ws_disclosure_target' );
     $tax_protected_class   = ws_q_taxonomy_payload( $oid, 'ws_protected_class' );
     $tax_case_stage        = ws_q_taxonomy_payload( $oid, 'ws_case_stage' );
-    $tax_process_type      = ws_q_taxonomy_payload( $oid, 'ws_process_type' );
     $tax_services          = ws_q_taxonomy_payload( $oid, 'ws_aorg_service' );
     $tax_employment        = ws_q_taxonomy_payload( $oid, 'ws_employment_sector' );
     $tax_languages         = ws_q_taxonomy_payload( $oid, 'ws_language' );
@@ -141,9 +259,13 @@ function ws_q_build_assist_org_row( $oid ) {
     $_fed = ( ! $_nw && count( $_jx ) === 1 && strtolower( (string) $_jx[0] ) === 'us' );
     $plain = ws_build_plain_english_array( $oid );
     $legitimacy_url = (string) get_post_meta( $oid, 'ws_aorg_legitimacy_url', true );
+    $secure_channels = ws_q_get_secure_channel_rows( $oid );
+    $has_secure_channel = (bool) get_post_meta( $oid, 'ws_aorg_has_secure_channel', true );
+    $secure_tools = array_values( array_unique( array_filter( array_column( $secure_channels, 'tool' ) ) ) );
 
     return [
         'id'            => $oid,
+        'internal_id'   => (string) get_post_meta( $oid, '_ws_aorg_id', true ),
         'title'         => get_the_title( $oid ),
         'url'           => get_permalink( $oid ),
         'status'        => get_post_status( $oid ),
@@ -151,6 +273,8 @@ function ws_q_build_assist_org_row( $oid ) {
         'common_name'          => (string) get_post_meta( $oid, 'ws_aorg_common_name',               true ),
         'model'                 => (string) ( $tax_organization_model['slugs'][0] ?? '' ),
         'model_label'           => (string) ( $tax_organization_model['names'][0] ?? '' ),
+        'type'                  => (string) ( $tax_organization_model['slugs'][0] ?? '' ),
+        'type_label'            => (string) ( $tax_organization_model['names'][0] ?? '' ),
         'description'          => (string) get_post_meta( $oid, 'ws_aorg_description',               true ),
         'whistleblower_scope'  => (int) get_post_meta( $oid, 'ws_aorg_whistleblower_scope', true ),
         'whistleblower_scope_details' => (string) get_post_meta( $oid, 'ws_aorg_whistleblower_scope_details', true ),
@@ -171,8 +295,6 @@ function ws_q_build_assist_org_row( $oid ) {
         'case_stages'          => $tax_case_stage['slugs'],
         'case_stage_labels'    => $tax_case_stage['names'],
         'case_stage_details'   => (string) get_post_meta( $oid, 'ws_aorg_case_stage_details', true ),
-        'process_types'        => $tax_process_type['slugs'],
-        'process_type_labels'  => $tax_process_type['names'],
         'service_labels'       => $tax_services['names'], // render-facing labels
         'services'             => $tax_services['slugs'],
         'additional_services'  => (string) get_post_meta( $oid, 'ws_aorg_additional_services',        true ),
@@ -180,21 +302,29 @@ function ws_q_build_assist_org_row( $oid ) {
         'employment_sector_labels' => $tax_employment['names'],
         'official_homepage_url'=> (string) get_post_meta( $oid, 'ws_aorg_official_homepage_url',      true ),
         'intake_url'           => (string) get_post_meta( $oid, 'ws_aorg_intake_url',                 true ),
+        'lawyers_url'          => (string) get_post_meta( $oid, 'ws_aorg_lawyers_url',                true ),
         'contact_url'          => (string) get_post_meta( $oid, 'ws_aorg_contact_url',                true ),
-        'phones'               => ws_q_get_channel_rows( $oid, 'ws_aorg_phones', 'ws_aorg_phone_type', 'ws_aorg_phone_number' ),
-        'emails'               => ws_q_get_channel_rows( $oid, 'ws_aorg_emails', 'ws_aorg_email_type', 'ws_aorg_email_address' ),
-        'secure_channel_status'=> (string) get_post_meta( $oid, 'ws_aorg_secure_channel_status', true ),
-        'secure_contact_tools' => (array) get_post_meta( $oid, 'ws_aorg_secure_contact_tools', true ),
+        'social_presence'      => (bool) get_post_meta( $oid, 'ws_aorg_social_presence', true ),
+        'social_links'         => ws_q_get_social_link_rows( $oid ),
+        'phones'               => ws_q_get_channel_rows( $oid, 'ws_aorg_phones', 'phone_type', 'phone_number' ),
+        'emails'               => ws_q_get_channel_rows( $oid, 'ws_aorg_emails', 'email_type', 'email_address' ),
+        'has_secure_channel'   => $has_secure_channel,
+        'secure_channel_status'=> $has_secure_channel ? 'available' : 'none-found',
+        'secure_channels'      => $secure_channels,
+        'secure_contact_tools' => $secure_tools,
         'mailing_address'      => (string) get_post_meta( $oid, 'ws_aorg_mailing_address',            true ),
         'languages'            => $tax_languages['slugs'],
         'language_labels'      => $tax_languages['names'],
-        'additional_languages' => (string) get_post_meta( $oid, 'ws_aorg_additional_languages',       true ),
+        'language_details'     => (string) get_post_meta( $oid, 'ws_aorg_language_details',           true ),
+        'additional_languages' => (string) get_post_meta( $oid, 'ws_aorg_language_details',           true ),
         'cost_model'           => $tax_cost_model['slugs'],
         'cost_model_labels'    => $tax_cost_model['names'],
         'income_screening'     => (string) get_post_meta( $oid, 'ws_aorg_income_screening', true ),
         'eligibility_status'   => (string) get_post_meta( $oid, 'ws_aorg_eligibility_status', true ),
-        'anonymous_pre_consult_status' => (string) get_post_meta( $oid, 'ws_aorg_anonymous_pre_consult_status', true ),
-        'has_attorneys'        => (string) get_post_meta( $oid, 'ws_aorg_has_attorneys', true ),
+        'anonymous_pre_consult_status' => ws_q_bool_meta_yes_no( $oid, 'ws_aorg_anonymous_pre_consult_status' ),
+        'has_attorneys'        => ws_q_bool_meta_yes_no( $oid, 'ws_aorg_has_attorneys' ),
+        'attorney_role'        => (string) get_post_meta( $oid, 'ws_aorg_attorney_role', true ),
+        'legal_representation_status' => (string) get_post_meta( $oid, 'ws_aorg_legal_representation_status', true ),
         'accreditation'        => (string) get_post_meta( $oid, 'ws_aorg_accreditation',              true ),
         'bar_states'           => (string) get_post_meta( $oid, 'ws_aorg_bar_states',                 true ),
         'legitimacy_url'       => $legitimacy_url,
@@ -209,7 +339,6 @@ function ws_q_build_assist_org_row( $oid ) {
             'disclosure_targets'     => $tax_disclosure_target,
             'protected_classes'      => $tax_protected_class,
             'case_stages'            => $tax_case_stage,
-            'process_types'          => $tax_process_type,
             'aorg_services'          => $tax_services,
             'employment_sectors'     => $tax_employment,
             'languages'              => $tax_languages,
@@ -253,7 +382,7 @@ function ws_get_assist_org_data( $jx_term_id ) {
     }
     wp_reset_postdata();
 
-    return $rows;
+    return ws_q_sort_assist_org_rows( $rows );
 }
 
 
@@ -327,6 +456,6 @@ function ws_get_nationwide_assist_org_data( $filters = [] ) {
     }
     wp_reset_postdata();
 
-    return $rows;
+    return ws_q_sort_assist_org_rows( $rows );
 }
 

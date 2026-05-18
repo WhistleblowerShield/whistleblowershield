@@ -627,11 +627,9 @@
 }
 
 .ws-aorg-card__header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.45rem;
     margin-bottom: 0.6rem;
 }
 
@@ -639,6 +637,8 @@
     margin: 0;
     font-size: 1.50rem;
     font-weight: 700;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
 }
 
 .ws-aorg-card__badges {
@@ -646,6 +646,9 @@
     flex-wrap: wrap;
     gap: 0.35rem;
     align-items: center;
+    justify-content: flex-end;
+    justify-self: end;
+    max-width: 100%;
 }
 
 .ws-aorg-card__badge {
@@ -657,6 +660,24 @@
     text-transform: uppercase;
     letter-spacing: 0.03em;
     white-space: nowrap;
+}
+
+.ws-aorg-card__badge-link {
+    text-decoration: none;
+}
+
+.ws-aorg-card__badge-link:hover,
+.ws-aorg-card__badge-link:focus {
+    text-decoration: underline;
+}
+
+.ws-aorg-card__badge-link:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+.ws-aorg-card__badge-link.is-active {
+    box-shadow: inset 0 0 0 2px currentColor;
 }
 
 .ws-aorg-card__badge--type    { background: #e8f0fe; color: #1a56b0; }

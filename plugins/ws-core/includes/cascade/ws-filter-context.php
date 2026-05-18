@@ -52,6 +52,7 @@ add_filter( 'query_vars', function( $vars ) {
     $vars[] = WS_FILTER_PARAM_CONCERN;
     $vars[] = WS_FILTER_PARAM_SECTOR;
     $vars[] = WS_FILTER_PARAM_TARGET;
+    $vars[] = WS_FILTER_PARAM_BADGE;
     return $vars;
 } );
 
@@ -78,6 +79,7 @@ function ws_resolve_filter_context( bool $log_request = true ): array {
         WS_FILTER_PARAM_CONCERN => sanitize_key( (string) ( get_query_var( WS_FILTER_PARAM_CONCERN, '' ) ?: wp_unslash( $_GET[ WS_FILTER_PARAM_CONCERN ] ?? '' ) ) ),
         WS_FILTER_PARAM_SECTOR  => sanitize_key( (string) ( get_query_var( WS_FILTER_PARAM_SECTOR,  '' ) ?: wp_unslash( $_GET[ WS_FILTER_PARAM_SECTOR  ] ?? '' ) ) ),
         WS_FILTER_PARAM_TARGET  => sanitize_key( (string) ( get_query_var( WS_FILTER_PARAM_TARGET,  '' ) ?: wp_unslash( $_GET[ WS_FILTER_PARAM_TARGET  ] ?? '' ) ) ),
+        WS_FILTER_PARAM_BADGE   => sanitize_key( (string) ( get_query_var( WS_FILTER_PARAM_BADGE,   '' ) ?: wp_unslash( $_GET[ WS_FILTER_PARAM_BADGE   ] ?? '' ) ) ),
     ];
 
     // ── 2. Validate against allowed values ───────────────────────────────
@@ -86,6 +88,7 @@ function ws_resolve_filter_context( bool $log_request = true ): array {
     $concern = ws_filter_validate( $raw[ WS_FILTER_PARAM_CONCERN ], WS_FILTER_PARAM_CONCERN );
     $sector  = ws_filter_validate( $raw[ WS_FILTER_PARAM_SECTOR  ], WS_FILTER_PARAM_SECTOR  );
     $target  = ws_filter_validate( $raw[ WS_FILTER_PARAM_TARGET  ], WS_FILTER_PARAM_TARGET  );
+    $badge   = ws_filter_validate_badge_priority( $raw[ WS_FILTER_PARAM_BADGE ] );
 
     // ── 3. Route concern to correct taxonomy ─────────────────────────────
     // Pre-report / research / null → ws_protected_disclosure
@@ -109,6 +112,7 @@ function ws_resolve_filter_context( bool $log_request = true ): array {
         'concern_tax' => $concern_tax,
         'sector'      => $sector,
         'target'      => $target,
+        'badge'       => $badge,
         'has_filters' => $has_filters,
         'is_research' => $is_research,
         'raw'         => $raw,
@@ -120,6 +124,28 @@ function ws_resolve_filter_context( bool $log_request = true ): array {
     }
 
     return $context;
+}
+
+/**
+ * Validates the soft badge-priority sort parameter.
+ *
+ * @param string $value Raw sanitized value.
+ * @return string|null
+ */
+function ws_filter_validate_badge_priority( string $value ): ?string {
+    if ( $value === '' ) {
+        return null;
+    }
+
+    if ( in_array( $value, [ 'secure', 'attorneys', 'anonymous' ], true ) ) {
+        return $value;
+    }
+
+    if ( preg_match( '/^(model|cost)-[a-z0-9-]+$/', $value ) ) {
+        return $value;
+    }
+
+    return null;
 }
 
 

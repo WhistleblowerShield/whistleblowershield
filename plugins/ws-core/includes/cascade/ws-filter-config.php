@@ -49,6 +49,7 @@ define( 'WS_FILTER_PARAM_STAGE',   'ws_stage'   ); // ws_case_stage
 define( 'WS_FILTER_PARAM_CONCERN', 'ws_concern' ); // ws_protected_disclosure or ws_adverse_action
 define( 'WS_FILTER_PARAM_SECTOR',  'ws_sector'  ); // ws_employment_sector
 define( 'WS_FILTER_PARAM_TARGET',  'ws_target'  ); // ws_disclosure_target (optional)
+define( 'WS_FILTER_PARAM_BADGE',   'ws_badge'   ); // soft-priority badge sort
 
 // Profile view telemetry log (directory -> single org profile).
 define( 'WS_FILTER_PROFILE_LOG', WP_CONTENT_DIR . '/logs/ws-filter/profile-views.log' );

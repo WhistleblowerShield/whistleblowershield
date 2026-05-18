@@ -354,6 +354,22 @@ function ws_filter_sort_orgs( array $orgs, array $context, bool $targeted ): arr
         return [];
     }
 
+    $badge_priority = (string) ( $context['badge'] ?? '' );
+
+    if ( empty( $context['has_filters'] ) ) {
+        foreach ( $orgs as &$org ) {
+            $org['_rel_score'] = 0;
+            $org['_eng_score'] = ws_filter_score_engagement( $org );
+        }
+        unset( $org );
+
+        $orgs = array_values( $orgs );
+
+        return $badge_priority !== ''
+            ? ws_filter_prioritize_badge( $orgs, $badge_priority )
+            : $orgs;
+    }
+
     // Score each org
     $scored = [];
     foreach ( $orgs as $org ) {
@@ -380,7 +396,66 @@ function ws_filter_sort_orgs( array $orgs, array $context, bool $targeted ): arr
         );
     } );
 
-    return array_column( $scored, 'org' );
+    $sorted = array_column( $scored, 'org' );
+
+    return $badge_priority !== ''
+        ? ws_filter_prioritize_badge( $sorted, $badge_priority )
+        : $sorted;
+}
+
+/**
+ * Moves orgs matching the selected badge to the top without hiding others.
+ *
+ * @param array<int,array<string,mixed>> $orgs  Sorted org rows.
+ * @param string                         $badge Valid badge-priority token.
+ * @return array<int,array<string,mixed>>
+ */
+function ws_filter_prioritize_badge( array $orgs, string $badge ): array {
+    $matches = [];
+    $rest    = [];
+
+    foreach ( $orgs as $org ) {
+        if ( ws_filter_org_matches_badge( $org, $badge ) ) {
+            $matches[] = $org;
+        } else {
+            $rest[] = $org;
+        }
+    }
+
+    return array_merge( $matches, $rest );
+}
+
+/**
+ * Returns true when an org row matches a soft badge-priority token.
+ *
+ * @param array<string,mixed> $org   Org row.
+ * @param string              $badge Badge-priority token.
+ * @return bool
+ */
+function ws_filter_org_matches_badge( array $org, string $badge ): bool {
+    if ( $badge === 'secure' ) {
+        return ! empty( $org['has_secure_channel'] );
+    }
+
+    if ( $badge === 'attorneys' ) {
+        return (string) ( $org['has_attorneys'] ?? '' ) === 'yes';
+    }
+
+    if ( $badge === 'anonymous' ) {
+        return (string) ( $org['anonymous_pre_consult_status'] ?? '' ) === 'yes';
+    }
+
+    if ( str_starts_with( $badge, 'model-' ) ) {
+        return (string) ( $org['model'] ?? '' ) === substr( $badge, 6 );
+    }
+
+    if ( str_starts_with( $badge, 'cost-' ) ) {
+        $cost = is_array( $org['cost_model'] ?? null ) ? $org['cost_model'] : [];
+
+        return in_array( substr( $badge, 5 ), $cost, true );
+    }
+
+    return false;
 }
 
 
@@ -552,6 +627,53 @@ function ws_render_directory_listing( $items, int $results_total = 0 ) {
     return ob_get_clean();
 }
 
+/**
+ * Renders a clickable badge that soft-prioritizes matching orgs.
+ *
+ * @param string $badge        Badge-priority token.
+ * @param string $label        Visible badge label.
+ * @param string $class_suffix Badge modifier suffix.
+ * @param string $active_badge Active badge-priority token.
+ * @return string HTML output.
+ */
+function ws_render_directory_badge_link( string $badge, string $label, string $class_suffix, string $active_badge ): string {
+    $badge = sanitize_key( $badge );
+    $label = trim( $label );
+    $class_suffix = sanitize_html_class( $class_suffix );
+
+    if ( $badge === '' || $label === '' || ! defined( 'WS_FILTER_PARAM_BADGE' ) ) {
+        return '';
+    }
+
+    $is_active = ( $active_badge === $badge );
+    $url       = $is_active
+        ? remove_query_arg( WS_FILTER_PARAM_BADGE )
+        : add_query_arg( WS_FILTER_PARAM_BADGE, $badge );
+
+    $classes = [
+        'ws-aorg-card__badge',
+        'ws-aorg-card__badge--' . $class_suffix,
+        'ws-aorg-card__badge-link',
+    ];
+    if ( $is_active ) {
+        $classes[] = 'is-active';
+    }
+
+    ob_start();
+    ?>
+    <a href="<?php echo esc_url( $url ); ?>"
+       class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>"
+       <?php echo $is_active ? 'aria-current="true"' : ''; ?>
+       aria-label="<?php echo esc_attr( $is_active ? 'Remove priority sorting for ' . $label : 'Prioritize organizations with ' . $label ); ?>">
+        <?php echo esc_html( $label ); ?>
+        <span class="screen-reader-text">
+            <?php echo esc_html( $is_active ? ' currently prioritized. Activate to clear.' : '. Activate to move matching organizations to the top.' ); ?>
+        </span>
+    </a>
+    <?php
+    return trim( ob_get_clean() );
+}
+
 
 // ════════════════════════════════════════════════════════════════════════════
 // ws_render_directory_card()  — unchanged from v3.7.1
@@ -586,6 +708,9 @@ function ws_render_directory_card( array $org, int $position = 0, int $results_t
     $secure_contact_tools = is_array( $org['secure_contact_tools'] ?? null ) ? $org['secure_contact_tools'] : [];
     $phones = is_array( $org['phones'] ?? null ) ? $org['phones'] : [];
     $emails = is_array( $org['emails'] ?? null ) ? $org['emails'] : [];
+    $active_badge = defined( 'WS_FILTER_PARAM_BADGE' )
+        ? sanitize_key( (string) ( get_query_var( WS_FILTER_PARAM_BADGE, '' ) ?: wp_unslash( $_GET[ WS_FILTER_PARAM_BADGE ] ?? '' ) ) )
+        : '';
 
     $card_phone = '';
     foreach ( $phones as $row ) {
@@ -646,30 +771,19 @@ function ws_render_directory_card( array $org, int $position = 0, int $results_t
             <h2 class="ws-aorg-card__name"><?php echo esc_html( $org['title'] ); ?></h2>
             <div class="ws-aorg-card__badges" aria-label="<?php echo esc_attr( $org['title'] ); ?> details">
                 <?php if ( $type_name ) : ?>
-                    <span class="ws-aorg-card__badge ws-aorg-card__badge--type"
-                          data-slug="<?php echo esc_attr( $type_slug ); ?>">
-                        <?php echo esc_html( $type_name ); ?>
-                    </span>
+                    <?php echo ws_render_directory_badge_link( 'model-' . $type_slug, $type_name, 'type', $active_badge ); // phpcs:ignore ?>
                 <?php endif; ?>
                 <?php if ( $cost_label ) : ?>
-                    <span class="ws-aorg-card__badge ws-aorg-card__badge--cost">
-                        <?php echo esc_html( $cost_label ); ?>
-                    </span>
+                    <?php echo ws_render_directory_badge_link( 'cost-' . $cost_slug, $cost_label, 'cost', $active_badge ); // phpcs:ignore ?>
                 <?php endif; ?>
                 <?php if ( ( $org['has_attorneys'] ?? '' ) === 'yes' ) : ?>
-                    <span class="ws-aorg-card__badge ws-aorg-card__badge--attorneys">
-                        Licensed Attorneys
-                    </span>
+                    <?php echo ws_render_directory_badge_link( 'attorneys', 'Licensed Attorneys', 'attorneys', $active_badge ); // phpcs:ignore ?>
                 <?php endif; ?>
                 <?php if ( ( $org['anonymous_pre_consult_status'] ?? '' ) === 'yes' ) : ?>
-                    <span class="ws-aorg-card__badge ws-aorg-card__badge--anon">
-                        Accepts Anonymous
-                    </span>
+                    <?php echo ws_render_directory_badge_link( 'anonymous', 'Accepts Anonymous', 'anon', $active_badge ); // phpcs:ignore ?>
                 <?php endif; ?>
                 <?php if ( $has_secure_channel ) : ?>
-                    <span class="ws-aorg-card__badge ws-aorg-card__badge--secure">
-                        Secure Channel
-                    </span>
+                    <?php echo ws_render_directory_badge_link( 'secure', 'Secure Channel', 'secure', $active_badge ); // phpcs:ignore ?>
                 <?php endif; ?>
             </div>
         </div>
@@ -735,6 +849,16 @@ function ws_render_directory_card( array $org, int $position = 0, int $results_t
                    rel="noopener noreferrer"
                    aria-label="Start intake with <?php echo esc_attr( $org['title'] ); ?> (opens in new tab)">
                     Start Intake
+                    <span class="screen-reader-text">(opens in new tab)</span>
+                </a>
+            <?php endif; ?>
+            <?php if ( ! empty( $org['lawyers_url'] ) ) : ?>
+                <a href="<?php echo esc_url( $org['lawyers_url'] ); ?>"
+                   class="ws-btn <?php echo empty( $org['intake_url'] ) ? 'ws-btn--primary' : 'ws-btn--secondary'; ?> ws-btn--sm"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Open lawyer referral resource for <?php echo esc_attr( $org['title'] ); ?> (opens in new tab)">
+                    <?php echo empty( $org['intake_url'] ) ? 'Find a Lawyer' : 'Lawyer Referral'; ?>
                     <span class="screen-reader-text">(opens in new tab)</span>
                 </a>
             <?php endif; ?>
