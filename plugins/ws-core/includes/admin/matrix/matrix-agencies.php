@@ -189,8 +189,8 @@ function ws_seed_agency_matrix() {
 // ── Gate ──────────────────────────────────────────────────────────────────────
 
 add_action( 'admin_init', function() {
-    if ( get_option( 'ws_seeded_agency_matrix' ) !== '1.3.2' ) {
+    if ( get_option( 'ws_seeded_agency_matrix' ) !== '1.0.0' ) {
         ws_seed_agency_matrix();
-        update_option( 'ws_seeded_agency_matrix', '1.3.2' );
+        update_option( 'ws_seeded_agency_matrix', '1.0.0' );
     }
 } );

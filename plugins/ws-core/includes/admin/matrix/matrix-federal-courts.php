@@ -330,7 +330,7 @@ $_ws_federal_court_matrix = [
 // ════════════════════════════════════════════════════════════════════════════
 
 add_action( 'admin_init', function() {
-    if ( get_option( 'ws_seeded_federal_court_matrix' ) !== '1.3.2' ) {
-        update_option( 'ws_seeded_federal_court_matrix', '1.3.2' );
+    if ( get_option( 'ws_seeded_federal_court_matrix' ) !== '1.0.0' ) {
+        update_option( 'ws_seeded_federal_court_matrix', '1.0.0' );
     }
 } );
