@@ -117,7 +117,7 @@ Ternary fields use 'unclear' as the fallback. It is the expected value for many 
 [RECORDS ARRAY: SECURITY]
 - has_secure_channel (TERNARY): yes | no | unclear. ('yes' requires a dedicated encrypted 'contact' tool like Signal/ProtonMail. Standard HTTPS or SecureDrop is 'no').
 - secure_contact_url (CONDITIONAL): URL to secure tool or instructions. Required if 'yes'.
-- secure_contact_tool (CONDITIONAL): Signal | ProtonMail | Tutanota | Wire | Keybase | other. Use "other" if mutliple tools available. Required if 'yes'.
+- secure_contact_tool (CONDITIONAL): Signal | ProtonMail | Tutanota | Wire | Keybase | other. Use "other" if multiple tools available. Required if 'yes'.
 - secure_contact_tool_other (CONDITIONAL): Free text. Required if tool is 'other'. (use || separator for multiple).
 - anonymous_pre_consult_possible (TERNARY): yes | no | unclear. (SecureDrop qualifies as 'yes' here).
 - has_attorneys (TERNARY): yes | no | unclear. ('yes' when licensed attorneys available for intake or representation)
