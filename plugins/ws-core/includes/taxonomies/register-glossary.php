@@ -558,14 +558,14 @@ function ws_glossary_collect_text_nodes( DOMNode $node, array $skip_tags, array 
 // ════════════════════════════════════════════════════════════════════════════
 // Seed Execution Gate
 //
-// Unified Option-Gate Method — key: ws_seeded_glossary / version: '1.0.0'
+// Unified Option-Gate Method — key: ws_seeded_glossary / version: '1.3.2'
 // Runs once on first admin_init after plugin activation.
 // ════════════════════════════════════════════════════════════════════════════
 
 add_action( 'admin_init', function() {
-    if ( get_option( 'ws_seeded_glossary' ) !== '1.0.0' ) {
+    if ( get_option( 'ws_seeded_glossary' ) !== '1.3.2' ) {
         ws_seed_glossary_taxonomy();
-        update_option( 'ws_seeded_glossary', '1.0.0' );
+        update_option( 'ws_seeded_glossary', '1.3.2' );
     }
 } );
 

@@ -132,7 +132,7 @@ function ws_health_check_admin_notice() {
     // failure worth surfacing in admin notices.
 
     $proc_seed_gate = (string) get_option( 'ws_seeded_procedure_matrix', '' );
-    if ( $proc_seed_gate === '' || version_compare( $proc_seed_gate, '1.0.0', '<' ) ) {
+    if ( $proc_seed_gate === '' || version_compare( $proc_seed_gate, '1.3.2', '<' ) ) {
         $issues[] = "Procedure seeder gate incomplete: <code>ws_seeded_procedure_matrix</code> expected <code>1.0.0</code>, found <code>" . esc_html( $proc_seed_gate ?: '(not set)' ) . '</code>.';
     } else {
         $proc_counts = wp_count_posts( 'ag-procedure' );
