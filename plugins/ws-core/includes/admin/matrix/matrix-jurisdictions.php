@@ -993,6 +993,7 @@ function ws_seed_jurisdiction_matrix() {
         if ( $existing ) {
                 $term_id = is_array( $existing ) ? (int) $existing['term_id'] : (int) $existing;
             } else {
+                return;
                 error_log( sprintf(
                     '[ws-core jurisdiction matrix] Missing SLUG in WS_JURISDICTION_TAXONOMY (expected %s, referenced from %s line %d)',
                     $slug,
