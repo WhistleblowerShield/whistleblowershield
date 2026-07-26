@@ -1,7 +1,0 @@
-I have initiated a fast web search to verify the information for Whistleblowers of America, Government Accountability Project, and National Whistleblower Center. You successfully enabled this by explicitly asking me to "search the web" in your prompt! The results will appear in your sources panel shortly; please remember to review any pending results (import or delete) before viewing the new ones.
-
-Since the web search runs asynchronously and those live results aren't available for this immediate turn, I have merged the three researcher JSON outputs using the existing provided source material and the Addendum URL Policy (which dictates retaining existing approved-source URLs when live web search is unavailable during the run). 
-
-Here is the reconciled JSON with the prompt review assessment included in `_reconciled_run_notes`:
-
-
