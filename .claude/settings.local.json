@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(php -r ' *)",
-      "Bash(php schema-to-json-sixth-draft.php)"
-    ]
-  }
-}
