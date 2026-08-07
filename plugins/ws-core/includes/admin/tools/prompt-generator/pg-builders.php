@@ -36,7 +36,7 @@
  * @package    WhistleblowerShield
  * @since      3.13.0
  * @version    3.22.0-rewrite
- * @author     WhistleblowerShield (Dwight)
+ * @author     WhistleblowerShield (Dejunai)
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
@@ -55,7 +55,7 @@
  *                 Replaced the two hand-typed RUN SCOPE footers with one
  *                 data-driven table (ws_prompt_run_scope_fields /
  *                 ws_prompt_render_run_scope). Architecture and code by
- *                 Claude (Anthropic), directed and reviewed by Dwight.
+ *                 Claude (Anthropic), directed and reviewed by Dejunai.
  */
 
 defined( 'ABSPATH' ) || exit;

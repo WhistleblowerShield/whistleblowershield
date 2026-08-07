@@ -658,7 +658,22 @@ function ws_get_jx_statute_prompt_package(): array {
 
 /**
  * Build a simple default prompt instruction from field args.
- * 
+//
+// json_key is NOT the canonical schema name.
+//
+// It exists solely for research-agent interoperability.
+//
+// Most fields should omit json_key entirely.
+// When omitted, the canonical field name is used.
+//
+// json_key should only be specified when:
+//   1. The canonical field name is ambiguous to an LLM.
+//   2. Research sources overwhelmingly use different terminology.
+//   3. A stable ingest contract requires alternate naming.
+//
+// Canonical schema always wins.
+// json_key is an external alias, not a second schema. * 
+//
  */
 function ws_build_jx_statute_prompt_instruction( array $field ): string {
     $name = $field['json_key'] ?? $field['name'];

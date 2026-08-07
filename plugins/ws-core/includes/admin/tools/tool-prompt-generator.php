@@ -59,7 +59,7 @@
  * @package    WhistleblowerShield
  * @since      3.13.0
  * @version    3.22.0-rewrite
- * @author     WhistleblowerShield (Dwight)
+ * @author     WhistleblowerShield (Dejunai)
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
@@ -74,12 +74,12 @@
  *                 common-law/citation/construction schema blocks now
  *                 throw with real information instead of returning
  *                 placeholder text. Architecture and code by Claude
- *                 (Anthropic), directed and reviewed by Dwight.
+ *                 (Anthropic), directed and reviewed by Dejunai.
  * 3.21.0-rewrite  pg-* consolidation pass. One builder instead of two,
  *                 data-driven RUN SCOPE footer, direct-DB-call annotations,
  *                 $_POST scatter collected into one function, dependency
  *                 map added above. Architecture and code by Claude
- *                 (Anthropic), directed and reviewed by Dwight.
+ *                 (Anthropic), directed and reviewed by Dejunai.
  *                 See prompt-generator/README.pg.md for full rationale.
  */
 

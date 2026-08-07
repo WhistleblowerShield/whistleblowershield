@@ -73,7 +73,7 @@
  * @package    WhistleblowerShield
  * @since      3.23.0
  * @version    3.23.1
- * @author     WhistleblowerShield (Dwight)
+ * @author     WhistleblowerShield (Dejunai)
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
@@ -86,7 +86,7 @@
  *         and every query/render-layer file remain unconverted — see the
  *         rollout plan in README.fail-loud.md for current state.
  * 3.23.0  Initial release. Architecture and code by Claude (Anthropic),
- *         directed and reviewed by Dwight. NOT yet wired into
+ *         directed and reviewed by Dejunai. NOT yet wired into
  *         admin-health-check.php, admin-url-monitor.php, tool-ingest.php,
  *         or any query/render-layer file — see the rollout plan in
  *         README.fail-loud.md for the honest next-steps list.

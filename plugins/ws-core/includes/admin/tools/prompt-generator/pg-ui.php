@@ -42,7 +42,7 @@
  * @package    WhistleblowerShield
  * @since      3.13.0
  * @version    3.22.0-rewrite
- * @author     WhistleblowerShield (Dwight)
+ * @author     WhistleblowerShield (Dejunai)
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
@@ -62,7 +62,7 @@
  *                 builder names to ws_generate_prompt(). Reconstructed
  *                 (unverified) JS toggle functions — see note above.
  *                 Architecture and code by Claude (Anthropic), directed
- *                 and reviewed by Dwight.
+ *                 and reviewed by Dejunai.
  */
 
 defined( 'ABSPATH' ) || exit;

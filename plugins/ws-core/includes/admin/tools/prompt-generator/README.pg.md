@@ -122,7 +122,7 @@ Architecture and code for the 3.21.0 and 3.22.0 rewrite passes — the
 builder consolidation, the data-driven RUN SCOPE footer, the
 query-layer-exception annotations, the `$_POST` collection fix, the
 live ACF-driven statute schema, and the loud-fail validation pass — by
-**Claude (Anthropic)**, directed and reviewed by **Dwight**, for
+**Claude (Anthropic)**, directed and reviewed by **Dejunai**, for
 WhistleblowerShield.org.
 
 Final decisions, as always on this project, are human-directed. This

@@ -50,7 +50,7 @@
  * @package    WhistleblowerShield
  * @since      3.13.0
  * @version    3.22.0-rewrite
- * @author     WhistleblowerShield (Dwight)
+ * @author     WhistleblowerShield (Dejunai)
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
@@ -64,7 +64,7 @@
  *                 in-progress/compiler/*.json files as the likely (but
  *                 unconfirmed) source of truth for whoever builds it.
  *                 Architecture and code by Claude (Anthropic), directed
- *                 and reviewed by Dwight.
+ *                 and reviewed by Dejunai.
  * 3.21.0-rewrite  statute branch: fixed brace-matching bug, field names
  *                 unchanged (superseded by 3.22.0-rewrite above — kept
  *                 in changelog for the record, not because it's still

@@ -31,8 +31,6 @@ work on it now would be wasted effort.
   `$admin_files`, which loads too late — matrix seeders need it too). Get this
   wrong and every `ws_fail_loud()` call in a matrix seeder fatals with an
   undefined-function error instead of a clean `WS_Loud_Failure`.
-  **Superseded 2026-08-07 — see "Post-pass finding" below: this placement was
-  itself still wrong, just less wrong than before.**
 
 ### Stage 1 — `admin-health-check.php`, `admin-url-monitor.php`, `admin-feed-monitor.php`
 Kept each file's own internal logic (options, notices, email digests, lock/TTL
@@ -207,68 +205,15 @@ legitimate empty-state handling. No changes needed.
   actually returns `WP_Error` (only `WP_Term|false`), so the `is_wp_error()`
   branch there is unreachable dead code, not a silent-fail bug.
 
-### Post-pass finding: `ws-fail-loud.php` was itself admin-only until 2026-08-07
-
-A separate, later fine-tooth-comb review of `query-jurisdiction.php`
-(user-requested, not part of the systematic pass above) turned up something
-that undermined this entire rollout: **`ws-fail-loud.php` was `require_once`
-only inside `if ( is_admin() )` in `loader.php`.** Stage 3 and Stage 4 above
-added `ws_log_loud_failure()` / `ws_render_or_fail_loud()` calls to
-`query-jurisdiction.php`, `query-agencies.php`, `query-directory.php`
-(Universal Layer — frontend *and* admin) and to `render-jurisdiction.php`,
-`render-agency.php`, `ws-statute-bold.php`, `shortcodes-general.php` (Assembly
-Layer — frontend-only). None of those run inside `is_admin()`.
-`ws_render_or_fail_loud()` in particular is the *unconditional* wrapper
-around the jurisdiction page render and the directory shortcode, not an
-error-branch-only call — so this was a fatal `Call to undefined function` on
-every real page view once deployed, not a rare edge case.
-
-Fixed in `loader.php` (now `@version 3.20.2`): `ws-fail-loud.php` now loads at
-the top of the Universal Layer, before the CPT layer, so it's defined
-everywhere it's called. The redundant admin-only require (added at Stage 0,
-described above) was removed. `matrix-federal-courts.php` /
-`matrix-state-courts.php` moved the same way and for the same underlying
-reason — see below.
-
-**Lesson for future stages:** when adding a `ws_fail_loud()`/
-`ws_log_loud_failure()`/`ws_render_or_fail_loud()` call to a *new* file, check
-which layer that file actually loads in before assuming the mechanism is
-already available there. It wasn't, for half the plugin, for the entire
-length of this rollout.
-
-### Other findings from the same fine-tooth-comb pass (`query-jurisdiction.php`)
-
-- **Fatal `ArgumentCountError` in `ws_get_jx_common_law_data()`** — its
-  `$fetch` closure requires two parameters (`$tid, $is_fed`); the call site
-  passed only one. Fatal on every jurisdiction with a published common-law
-  record. Fixed: now passes `false` explicitly (common law has no federal
-  counterpart, unlike statute/citation/construction) and restored the row's
-  `'is_fed'` key, which had been commented out — matching the file's own
-  documented return-shape contract.
-- **Construction "court" label never resolved on the frontend** —
-  `ws_court_lookup()` depends on globals populated only by
-  `matrix-federal-courts.php`/`matrix-state-courts.php`, which loaded only in
-  `is_admin()`. Every real visitor got the raw internal court key instead of
-  the human-readable label, unconditionally, on every construction record.
-  Fixed by moving those two files to the Universal Layer in `loader.php`
-  (see above).
-- **Dead/wrong meta key in `ws_get_jurisdiction_data()`** — `'jx_term_id'`
-  read `ws_jurisdiction_jx` (the ACF taxonomy field's own raw meta value)
-  instead of `ws_jx_term_id` (the plain-int convenience key the
-  `save_post_jurisdiction` hook actually writes), so it always returned `0`.
-  No caller consumed this key yet, so it was silently wrong rather than
-  visibly broken. Fixed: now derived from the same `wp_get_post_terms()` call
-  already used for `'code'`, with the same WP_Error-vs-empty split used
-  elsewhere in this file.
-
 ---
 
 ## Status: what's left
 
-Nothing known. Stages 0 through 5 are all complete, and the post-pass
-findings above are fixed too. The pattern to keep applying to any new code —
-loud, not silent, and verify the fail-loud mechanism is actually loaded in
-whatever layer the new code runs in — is captured below for reference.
+Nothing. Stages 0 through 5 are all complete — every file in `includes/`
+except `pg-*.php` (out of scope per standing instruction, already converted
+in an earlier pass) and `tool-ingest.php` (explicitly deferred pending its
+rewrite) has been read function-by-function and fixed where the recurring
+bug shapes below were found.
 
 ---
 
@@ -296,13 +241,6 @@ of how often each one turned up:
    somewhere in this codebase before this pass. The `admin-procedure-watch.php`
    `wp_update_post()` case was the most serious instance found overall — a
    post that was supposed to be demoted stayed live and published.
-4. **Argument-count/signature drift from copy-paste** — a closure or function
-   signature that no longer matches its call site after one call site was
-   edited (e.g. federal-append logic removed) but the other wasn't updated to
-   match. Fatal in PHP 7.1+ for user-defined functions, not just a warning.
-   Found once (`ws_get_jx_common_law_data()`) but worth grep'ing for any other
-   place a shared closure pattern was copied across the four legal-record
-   dataset functions and only partially adapted.
 
 ## Judgment calls made throughout (for consistency if continuing)
 
@@ -326,8 +264,3 @@ of how often each one turned up:
   per-request tracking, or reliance on existing request-level caching) before
   adding a log call, specifically to avoid flooding the 100-entry rolling log
   in `ws_loud_failure_log` from a single bad request.
-- **Any file calling into the fail-loud mechanism must actually load in a
-  context where that mechanism is defined.** This sounds obvious and was
-  still missed for the length of an entire rollout — see the post-pass
-  finding above. Check `loader.php`'s layer placement, not just whether the
-  function exists in the codebase somewhere.

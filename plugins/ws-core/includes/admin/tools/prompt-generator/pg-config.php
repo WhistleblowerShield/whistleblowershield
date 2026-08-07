@@ -22,7 +22,7 @@
  * @package    WhistleblowerShield
  * @since      3.13.0
  * @version    3.22.0-rewrite
- * @author     WhistleblowerShield (Dwight)
+ * @author     WhistleblowerShield (Dejunai)
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *

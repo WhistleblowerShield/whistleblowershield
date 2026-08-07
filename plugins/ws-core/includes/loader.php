@@ -109,13 +109,16 @@
  *
  *      matrix-federal-courts.php
  *      matrix-state-courts.php
- *          Define the $ws_court_matrix and $_ws_state_court_matrix
+ *          Define the $_ws_federal_court_matrix and $_ws_state_court_matrix
  *          in-memory arrays only. NO posts are created. These are
  *          PHP variable definitions — no database writes, no admin_init
- *          gate. They must load before acf-jx-constructions.php and
- *          query-jurisdiction.php consume ws_court_lookup(), but since
- *          those files are in the ACF and Universal layers respectively,
- *          loading courts here in the matrix block satisfies that need.
+ *          gate. They live in includes/admin/matrix/ but are NOT part of
+ *          the admin-only Matrix Layer load below — they're required at
+ *          the top of the Universal Layer instead (see COURT MATRICES
+ *          comment there). ws_court_lookup() (query-helpers.php) and
+ *          ws_get_jx_construction_data() (query-jurisdiction.php) are
+ *          Universal-Layer/frontend-facing; loading these admin-only left
+ *          both globals empty on every real page view (fixed 2026-08-07).
  *
  *      matrix-assist-orgs.php
  *          Seeds ws-assist-org posts. Depends on: us term.
@@ -174,10 +177,30 @@
  *         are a primary consumer of ws_fail_loud() per the Matrix Doctrine
  *         in onboarding-guidance.md ("no silent errors, invalid enum values
  *         throw clear errors"). Corrected before any seeder actually called it.
+ * 3.20.2  ws-fail-loud.php moved again — from the top of the is_admin() block
+ *         to the top of the Universal Layer. Stage 3 (query layer) and
+ *         Stage 4 (render/shortcode layer) of the loud-failure rollout added
+ *         ws_log_loud_failure() / ws_render_or_fail_loud() calls to
+ *         query-jurisdiction.php, query-agencies.php, query-directory.php
+ *         (Universal Layer), and render-jurisdiction.php, render-agency.php,
+ *         ws-statute-bold.php, shortcodes-general.php (Assembly Layer,
+ *         frontend-only) — none of which run inside is_admin(). The
+ *         admin-only require left every one of those undefined on the
+ *         frontend; ws_render_or_fail_loud() is the unconditional wrapper
+ *         around the jurisdiction page render and the directory shortcode,
+ *         not an error-branch-only call, so this was a fatal
+ *         undefined-function error on every real page view, not an edge
+ *         case. Also moved matrix-federal-courts.php / matrix-state-courts.php
+ *         from the admin-only Matrix Layer to the Universal Layer for the
+ *         same reason — ws_court_lookup() needs their globals on the
+ *         frontend too, and always got null there, silently showing raw
+ *         court keys instead of resolved labels on every construction
+ *         record. Found during a fine-tooth-comb review of
+ *         query-jurisdiction.php.
  *
  * @package WhistleblowerShield
  * @since   2.1.0
- * @version    3.20.1
+ * @version    3.20.2
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -201,6 +224,75 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				__FILE__,
 				__LINE__
 			) );
+		}
+
+		// ws-fail-loud.php MUST load in the Universal Layer, not admin-only.
+		// ws_fail_loud() / ws_log_loud_failure() / ws_render_or_fail_loud() are
+		// called from query-jurisdiction.php, query-agencies.php, and
+		// query-directory.php (Universal Layer — frontend AND admin) and from
+		// render-jurisdiction.php, render-agency.php, ws-statute-bold.php, and
+		// shortcodes-general.php (Assembly Layer — frontend only). None of
+		// those run inside is_admin(). Loading this admin-only (the original
+		// Stage 0 placement) left every one of those calls undefined on the
+		// frontend — ws_render_or_fail_loud() in particular is the
+		// unconditional wrapper around the jurisdiction page render and the
+		// directory shortcode, not an error-branch-only call, so that was a
+		// fatal "Call to undefined function" on every real page view once
+		// deployed, not an edge case.
+		$ws_fail_loud_path = WS_CORE_PATH . 'includes/admin/ws-fail-loud.php';
+		if ( file_exists( $ws_fail_loud_path ) ) {
+			require_once $ws_fail_loud_path;
+		} else {
+			error_log( sprintf(
+				'[ws-core] Missing ws-fail-loud.php (expected at %s, referenced from %s line %d) — every ws_fail_loud() / ws_log_loud_failure() / ws_render_or_fail_loud() call anywhere in the plugin will fatal with an undefined-function error instead of a clean WS_Loud_Failure.',
+				$ws_fail_loud_path,
+				__FILE__,
+				__LINE__
+			) );
+			add_action( 'admin_notices', function() {
+				echo '<div class="notice notice-error"><p>';
+				echo '<strong>WhistleblowerShield:</strong> Missing <code>ws-fail-loud.php</code> — check error log for details.';
+				echo '</p></div>';
+			} );
+		}
+
+		// COURT MATRICES: In-memory federal/state court reference data — no DB
+		// writes, no admin_init gate, just PHP array definitions
+		// ($_ws_federal_court_matrix / $_ws_state_court_matrix). Must load in
+		// the Universal Layer, not the admin-only Matrix Layer below, because
+		// ws_court_lookup() (query-helpers.php) and the construction dataset
+		// (query-jurisdiction.php's ws_get_jx_construction_data()) are
+		// Universal-Layer/frontend-facing and resolve a human-readable court
+		// label for every visitor's jurisdiction page. Loading these
+		// admin-only left both globals permanently empty on the frontend, so
+		// ws_court_lookup() always returned null there and every construction
+		// record silently fell back to showing its raw internal court key
+		// instead of the resolved short label — on every real page view, not
+		// as an occasional edge case.
+		$court_matrix_files = [
+			'matrix-federal-courts', 'matrix-state-courts',
+		];
+		foreach ( $court_matrix_files as $file ) {
+			$path = WS_CORE_PATH . "includes/admin/matrix/{$file}.php";
+			if ( file_exists( $path ) ) {
+				require_once $path;
+			} else {
+				error_log( sprintf(
+					'[ws-core] Missing COURT MATRIX file: %s (expected at %s, referenced from %s line %d)',
+					$file . '.php',
+					$path,
+					__FILE__,
+					__LINE__
+				) );
+				add_action( 'admin_notices', function() use ( $file ) {
+					echo '<div class="notice notice-error"><p>';
+					printf(
+						'<strong>WhistleblowerShield:</strong> Missing COURT MATRIX file: <code>%s.php</code> — check error log for details.',
+						esc_html( $file )
+					);
+					echo '</p></div>';
+				} );
+			}
 		}
 
 	// CPT Layer: Must load everywhere so WordPress understands the URLs
@@ -352,29 +444,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 */
 if ( is_admin() ) {
 
-    // ws-fail-loud MUST load before anything else in the Admin Layer,
-    // including the Matrix Layer below — matrix seeders are exactly where
-    // "no silent errors, invalid enum values throw clear errors" doctrine
-    // applies (see onboarding-guidance.md's Matrix Doctrine), so
-    // ws_fail_loud()/WS_Loud_Failure must already be defined by the time
-    // the first seeder runs. Loading it inside $admin_files below would be
-    // too late — that array loads AFTER the Matrix and ACF layers.
-    $ws_fail_loud_path = WS_CORE_PATH . 'includes/admin/ws-fail-loud.php';
-    if ( file_exists( $ws_fail_loud_path ) ) {
-        require_once $ws_fail_loud_path;
-    } else {
-        error_log( sprintf(
-            '[ws-core] Missing ws-fail-loud.php (expected at %s, referenced from %s line %d) — every ws_fail_loud() / ws_log_loud_failure() call in the Matrix, ACF, and Admin layers will fatal with an undefined-function error instead of a clean WS_Loud_Failure.',
-            $ws_fail_loud_path,
-            __FILE__,
-            __LINE__
-        ) );
-        add_action( 'admin_notices', function() {
-            echo '<div class="notice notice-error"><p>';
-            echo '<strong>WhistleblowerShield:</strong> Missing <code>ws-fail-loud.php</code> — check error log for details.';
-            echo '</p></div>';
-        } );
-    }
+    // ws-fail-loud.php now loads at the very top of the Universal Layer
+    // (see above) — it is needed by frontend Assembly/Universal-Layer code
+    // too, not just the Matrix Layer below. Do not require it again here.
 
     // MATRIX LAYER LOAD ORDER — NON-NEGOTIABLE
 	//
@@ -386,18 +458,21 @@ if ( is_admin() ) {
 	//                           all other seeders depend on 'us' term
 	//   matrix-fed-statutes   — seeds jx-statute posts;
 	//                           matrix-ag-procedures depends on these
-	//   matrix-federal-courts — IN-MEMORY ONLY ($_ws_federal_court_matrix array)
-	//   matrix-state-courts   — IN-MEMORY ONLY ($_ws_state_court_matrix array)
 	//   matrix-assist-orgs    — seeds ws-assist-org posts; depends on us term
 	//   matrix-agencies       — seeds ws-agency posts;
 	//                           matrix-ag-procedures depends on these
 	//   matrix-ag-procedures  — depends on BOTH fed-statutes AND agencies matrices seeded.
 	//   admin-matrix-watch    — divergence detection only; must be last
 	//
+	// matrix-federal-courts / matrix-state-courts moved to the Universal
+	// Layer above — they're pure in-memory data with frontend consumers
+	// (ws_court_lookup()), not admin-only seeders. See the COURT MATRICES
+	// comment near the top of this file.
+	//
 	// MATRIX Layer: Loaded from /includes/admin/matrix/
  	$matrix_files = [
 		'matrix-helpers',        // Shared helpers — must load before all seeders.
-		'matrix-jurisdictions', 'matrix-fed-statutes', 'matrix-federal-courts', 'matrix-state-courts',
+		'matrix-jurisdictions', 'matrix-fed-statutes',
 		'matrix-assist-orgs',   'matrix-agencies', 'matrix-ag-procedures',
 		'admin-matrix-watch',
 	];

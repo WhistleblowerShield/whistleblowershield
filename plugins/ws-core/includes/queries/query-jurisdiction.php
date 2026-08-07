@@ -94,7 +94,7 @@
  *
  * @package    WhistleblowerShield
  * @since      1.0.0
- * @version    3.20.0
+ * @version    3.20.2
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -137,6 +137,33 @@
  *         the federal-law append from every jurisdiction page sitewide);
  *         and the jurisdiction-index cache-fill loop (a failure here
  *         silently drops one jurisdiction from the index for 24 hours).
+ * 3.20.2  Fine-tooth-comb bug pass. Three fixes:
+ *         (1) ws_get_jx_common_law_data() called its own $fetch closure with
+ *         one argument against a two-parameter signature — a fatal
+ *         ArgumentCountError on every jurisdiction with any published
+ *         common-law record. Now passes is_fed explicitly as false (common
+ *         law has no federal counterpart, unlike statute/citation/
+ *         construction) and the row's 'is_fed' key — previously
+ *         commented out — is restored, matching this file's own documented
+ *         return-shape contract at the top of this docblock.
+ *         (2) ws_get_jx_construction_data()'s 'court' label resolution via
+ *         ws_court_lookup() always fell back to the raw internal court key
+ *         on the frontend, because matrix-federal-courts.php /
+ *         matrix-state-courts.php — the source of the globals it reads —
+ *         loaded only in is_admin() context (fixed in loader.php; both now
+ *         load in the Universal Layer).
+ *         (3) ws_get_jurisdiction_data()'s 'jx_term_id' read the wrong post
+ *         meta key ('ws_jurisdiction_jx', the ACF taxonomy field's own raw
+ *         value) instead of 'ws_jx_term_id' (the plain-int convenience key
+ *         the save_post_jurisdiction hook actually writes), always
+ *         returning 0. No caller consumed this key yet, so it was silently
+ *         wrong rather than visibly broken. Now derived from the same
+ *         wp_get_post_terms() call as 'code', with the same WP_Error-vs-
+ *         empty split used elsewhere in this file.
+ *         All three found during a user-requested fine-tooth-comb review;
+ *         fixing (1) surfaced that ws-fail-loud.php itself was admin-only
+ *         in loader.php despite Stage 3/4 adding frontend call sites —
+ *         corrected there, not here.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -391,8 +418,22 @@ function ws_get_jurisdiction_data( $input = null ) {
     }
 
     $flag_id  = (int) get_post_meta( $post_id, 'ws_jx_flag', true );
-    $jx_terms = wp_get_post_terms( $post_id, WS_JURISDICTION_TAXONOMY, [ 'fields' => 'slugs' ] );
-    $jx_code  = ( ! is_wp_error( $jx_terms ) && ! empty( $jx_terms ) ) ? strtoupper( $jx_terms[0] ) : '';
+    $jx_terms = wp_get_post_terms( $post_id, WS_JURISDICTION_TAXONOMY );
+
+    if ( is_wp_error( $jx_terms ) ) {
+        // A genuine query failure here previously produced the same blank
+        // 'code' and 0 'jx_term_id' as a jurisdiction post that legitimately
+        // has no term assigned yet — indistinguishable, and unlogged.
+        ws_log_loud_failure( new WS_Loud_Failure( 'query-jurisdiction', "wp_get_post_terms() failed resolving the jurisdiction term for post {$post_id} in ws_get_jurisdiction_data() — 'code' and 'jx_term_id' will both be empty/0 for this request.", [
+            'post_id' => $post_id,
+            'error'   => $jx_terms->get_error_message(),
+        ] ) );
+        $jx_term = null;
+    } else {
+        $jx_term = ! empty( $jx_terms ) ? $jx_terms[0] : null;
+    }
+
+    $jx_code = $jx_term ? strtoupper( $jx_term->slug ) : '';
 
     return [
 
@@ -401,10 +442,14 @@ function ws_get_jurisdiction_data( $input = null ) {
         'name'       => get_the_title( $post_id ),
         'class'      => get_field( 'ws_jurisdiction_class', $post_id ),
         'code'       => $jx_code,
-        // ws_jx_term_id is the WS_JURISDICTION_TAXONOMY taxonomy term ID written by
-        // the seeder and save_post_jurisdiction hook. Returned here for
-        // callers that need the term ID directly without a get_term_by() call.
-        'jx_term_id' => (int) get_post_meta( $post_id, 'ws_jurisdiction_jx', true ),
+        // Resolved from the same wp_get_post_terms() call as 'code' above —
+        // NOT from the 'ws_jx_term_id' post meta convenience cache the
+        // save_post_jurisdiction hook (below) writes. This previously read
+        // the wrong meta key ('ws_jurisdiction_jx', the ACF taxonomy field's
+        // own raw/serialized value) and always returned 0; no caller
+        // actually consumed this key yet, so it was silently wrong rather
+        // than visibly broken.
+        'jx_term_id' => $jx_term ? (int) $jx_term->term_id : 0,
 
         // ── Flag ─────────────────────────────────────────────────────────────
         // ACF returns the raw attachment ID for image fields in some contexts;
@@ -1187,7 +1232,7 @@ function ws_get_jx_common_law_data( $jx_term_id ) {
                 'status'  => get_post_status( $rid ),
                 'content' => get_post_field( 'post_content', $rid ),
                 'order'   => (int) get_post_meta( $rid, 'ws_jx_comlaw_display_order', true ),
-                //'is_fed'  => $is_fed,
+                'is_fed'  => $is_fed,
 
                 // ── Legal Basis ───────────────────────────────────────────
                 'doctrine_name'          => get_post_meta( $rid, 'ws_jx_comlaw_doctrine_name',          true ),
@@ -1260,9 +1305,13 @@ function ws_get_jx_common_law_data( $jx_term_id ) {
     };
 
     $results = [];
+    // Common law has no federal counterpart (unlike statute/citation/construction) —
+    // only the requested jurisdiction's own term is ever fetched. is_fed is still
+    // passed explicitly as false, not omitted, so this dataset's row shape matches
+    // the other three record types' documented 'is_fed' boolean key.
     $terms_to_fetch = array_values( array_unique( [ $term_id ] ) );
     foreach ( $terms_to_fetch as $tid ) {
-        $results = array_merge( $results, $fetch( $tid ) );
+        $results = array_merge( $results, $fetch( $tid, false ) );
     }
 
     return $results;
