@@ -86,10 +86,18 @@
  * 3.10.0  ag-procedure added to $ws_stamp_cpts and ws_source_verify_post_types().
  * 3.10.1  Header documentation refresh for current cross-CPT responsibilities.
  * 3.10.2  Shared phone format validator added for assist-org and agency ACF fields.
+ * 3.20.1  Loud-failure pass. ws_sync_additional_languages_term() and
+ *         ws_sync_additional_services_term() no longer silently bail when
+ *         the 'additional' sentinel term is missing, or silently swallow a
+ *         wp_set_object_terms()/wp_remove_object_terms() WP_Error.
+ *         ws_set_source_method() now calls ws_fail_loud() instead of
+ *         silently no-op'ing on an unrecognized method value — a caller
+ *         passing a bad constant previously left ws_auto_source_method
+ *         unset with no indication why.
  *
  * @package    WhistleblowerShield
  * @since      2.1.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -754,7 +762,16 @@ function ws_sync_additional_languages_term( $post_id ) {
 
     $additional_term = get_term_by( 'slug', 'additional', 'ws_language' );
     if ( ! $additional_term || is_wp_error( $additional_term ) ) {
-        return; // Taxonomy not yet seeded — bail silently.
+        // Previously a silent bail. The 'additional' sentinel term is
+        // seeded by ws_language's own registry entry — if it's missing,
+        // every record with free-text additional-language content silently
+        // fails to become filterable by that sentinel, with zero record of
+        // why. A missing seeded term is a broken-install condition, not a
+        // legitimate absence.
+        ws_log_loud_failure( new WS_Loud_Failure( 'admin-hooks', "The 'additional' ws_language term does not exist — cannot sync additional-language sentinel for post {$post_id}.", [
+            'post_id' => $post_id,
+        ] ) );
+        return;
     }
 
     $value = trim( (string) get_post_meta( $post_id, $meta_key, true ) );
@@ -762,11 +779,19 @@ function ws_sync_additional_languages_term( $post_id ) {
     if ( $value !== '' ) {
         $result = wp_set_object_terms( $post_id, $additional_term->term_id, 'ws_language', true );
         if ( is_wp_error( $result ) ) {
+            ws_log_loud_failure( new WS_Loud_Failure( 'admin-hooks', "Failed to assign the 'additional' ws_language term to post {$post_id}.", [
+                'post_id' => $post_id,
+                'error'   => $result->get_error_message(),
+            ] ) );
             return;
         }
     } else {
         $result = wp_remove_object_terms( $post_id, $additional_term->term_id, 'ws_language' );
         if ( is_wp_error( $result ) ) {
+            ws_log_loud_failure( new WS_Loud_Failure( 'admin-hooks', "Failed to remove the 'additional' ws_language term from post {$post_id}.", [
+                'post_id' => $post_id,
+                'error'   => $result->get_error_message(),
+            ] ) );
             return;
         }
     }
@@ -796,15 +821,32 @@ function ws_sync_additional_services_term( $post_id ) {
 
     $additional_term = get_term_by( 'slug', 'additional', 'ws_aorg_service' );
     if ( ! $additional_term || is_wp_error( $additional_term ) ) {
-        return; // Taxonomy not yet seeded — bail silently.
+        // See ws_sync_additional_languages_term() above for why this is
+        // logged rather than silently bailing — same sentinel-term pattern.
+        ws_log_loud_failure( new WS_Loud_Failure( 'admin-hooks', "The 'additional' ws_aorg_service term does not exist — cannot sync additional-services sentinel for post {$post_id}.", [
+            'post_id' => $post_id,
+        ] ) );
+        return;
     }
 
     $value = trim( (string) get_post_meta( $post_id, 'ws_aorg_additional_services', true ) );
 
     if ( $value !== '' ) {
-        wp_set_object_terms( $post_id, $additional_term->term_id, 'ws_aorg_service', true );
+        $result = wp_set_object_terms( $post_id, $additional_term->term_id, 'ws_aorg_service', true );
+        if ( is_wp_error( $result ) ) {
+            ws_log_loud_failure( new WS_Loud_Failure( 'admin-hooks', "Failed to assign the 'additional' ws_aorg_service term to post {$post_id}.", [
+                'post_id' => $post_id,
+                'error'   => $result->get_error_message(),
+            ] ) );
+        }
     } else {
-        wp_remove_object_terms( $post_id, $additional_term->term_id, 'ws_aorg_service' );
+        $result = wp_remove_object_terms( $post_id, $additional_term->term_id, 'ws_aorg_service' );
+        if ( is_wp_error( $result ) ) {
+            ws_log_loud_failure( new WS_Loud_Failure( 'admin-hooks', "Failed to remove the 'additional' ws_aorg_service term from post {$post_id}.", [
+                'post_id' => $post_id,
+                'error'   => $result->get_error_message(),
+            ] ) );
+        }
     }
 }
 
@@ -1353,8 +1395,22 @@ function ws_set_source_method( $post_id, $method ) {
         WS_SOURCE_HUMAN_CREATED,
     ];
 
+    // Previously a silent no-op: an invalid $method (typo, stale constant
+    // name, whatever) meant the post simply never got ws_auto_source_method
+    // set at all — and every downstream consumer of that field (editorial
+    // workflow, source-verify gates, the audit trail) treats an empty value
+    // as its own distinct "not yet classified" state, so the caller's
+    // mistake was invisible. This is a caller programming error — matrix
+    // seeders, bulk import, and ingest tooling are all expected to pass one
+    // of the WS_SOURCE_* constants; per the matrix doctrine ("no silent
+    // errors, invalid enum values throw clear errors"), this is a
+    // loud-fail candidate.
     if ( ! in_array( $method, $allowed, true ) ) {
-        return;
+        ws_fail_loud( 'admin-hooks', 'ws_set_source_method() called with an unrecognized method value.', [
+            'post_id'        => $post_id,
+            'received_value' => $method,
+            'allowed_values' => $allowed,
+        ] );
     }
 
     // Immutability guard.

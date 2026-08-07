@@ -48,7 +48,17 @@
  *
  * @package    WhistleblowerShield
  * @since      3.10.1
- * @version    3.20.0
+ * @version    3.20.1
+ *
+ * VERSION LOG
+ * -----------
+ * 3.20.1  Loud-failure pass. All three preg_* calls (preg_replace_callback
+ *         x2, preg_split) had unchecked failure returns. The worst of the
+ *         three: a null from the bare-citation preg_replace_callback() was
+ *         concatenated directly into $result, silently deleting that text
+ *         segment from visitor-facing output — not a cosmetic issue, actual
+ *         content loss. All three now fail open (keep original text/HTML)
+ *         and log via ws_log_loud_failure() instead.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -88,7 +98,7 @@ function ws_apply_statute_bold( $html, $jx_name = '' ) {
 
         $matched_named = [];
 
-        $html = preg_replace_callback(
+        $named_result = preg_replace_callback(
             $pattern_named,
             function( $m ) use ( &$matched_named ) {
                 $cite = $m[1];
@@ -101,6 +111,22 @@ function ws_apply_statute_bold( $html, $jx_name = '' ) {
             },
             $html
         );
+
+        // preg_replace_callback() returns null on a PCRE engine failure
+        // (e.g. pcre.backtrack_limit exceeded on unusually long content).
+        // Previously assigned straight back to $html — a null there would
+        // have silently wiped the entire shortcode's rendered output for a
+        // real visitor. Fail open to the original, unbolded HTML instead;
+        // losing the bold styling on statute citations is a cosmetic
+        // degrade, not a broken page.
+        if ( $named_result === null ) {
+            ws_log_loud_failure( new WS_Loud_Failure( 'statute-bold', 'preg_replace_callback() failed on the named-citation pattern — returning unbolded HTML for this render.', [
+                'jx_name'     => $jx_name,
+                'pcre_error'  => preg_last_error_msg(),
+            ] ) );
+        } else {
+            $html = $named_result;
+        }
     }
 
     // ── Pattern 2: Bare cite ──────────────────────────────────────────────
@@ -116,7 +142,20 @@ function ws_apply_statute_bold( $html, $jx_name = '' ) {
 
     $pattern_bare = '/(§{1,2}\s*[\d]+[\d.\-()\w]*(?<![.]))/u';
 
-    $parts  = preg_split( '/(<strong>.*?<\/strong>)/us', $html, -1, PREG_SPLIT_DELIM_CAPTURE );
+    $parts = preg_split( '/(<strong>.*?<\/strong>)/us', $html, -1, PREG_SPLIT_DELIM_CAPTURE );
+
+    if ( $parts === false ) {
+        // preg_split() failure — previously unchecked. Falling through with
+        // $parts = false would throw when the foreach below runs. Fail open
+        // to the HTML as it stood after the named-citation pass rather than
+        // losing the whole section.
+        ws_log_loud_failure( new WS_Loud_Failure( 'statute-bold', 'preg_split() failed splitting on <strong> blocks — skipping the bare-citation pass for this render.', [
+            'jx_name'    => $jx_name,
+            'pcre_error' => preg_last_error_msg(),
+        ] ) );
+        return $html;
+    }
+
     $result = '';
 
     foreach ( $parts as $i => $part ) {
@@ -125,13 +164,27 @@ function ws_apply_statute_bold( $html, $jx_name = '' ) {
             $result .= $part;
         } else {
             // Even index — plain text segment, apply bare cite pattern.
-            $result .= preg_replace_callback(
+            $bare_result = preg_replace_callback(
                 $pattern_bare,
                 function( $m ) {
                     return '<strong>' . $m[1] . '</strong>';
                 },
                 $part
             );
+
+            // Same null-on-failure risk as the named pass above, but worse
+            // here: $result .= null silently drops this entire text segment
+            // from the visitor-facing output — actual content loss, not just
+            // a cosmetic un-bolding. Fail open to the original segment text.
+            if ( $bare_result === null ) {
+                ws_log_loud_failure( new WS_Loud_Failure( 'statute-bold', 'preg_replace_callback() failed on the bare-citation pattern for one text segment — using the unbolded original instead of dropping it.', [
+                    'jx_name'    => $jx_name,
+                    'pcre_error' => preg_last_error_msg(),
+                ] ) );
+                $result .= $part;
+            } else {
+                $result .= $bare_result;
+            }
         }
     }
 

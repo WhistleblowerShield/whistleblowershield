@@ -67,7 +67,13 @@
  *
  * @package WhistleblowerShield
  * @since   2.1.0
- * @version    3.20.0
+ * @version    3.20.1
+ *
+ * VERSION (cont.)
+ * ----------------
+ * 3.20.1  ws_get_attached_citation_count() now distinguishes a genuine
+ *         wp_get_post_terms() failure from a legitimate "no jurisdiction
+ *         term assigned" state — both previously returned 0 indistinguishably.
  */
 if (!defined('ABSPATH')) {
     exit;
@@ -240,7 +246,21 @@ function ws_get_attached_citation_count( $post_id ) {
 
     $terms = wp_get_post_terms( $post_id, WS_JURISDICTION_TAXONOMY );
 
-    if ( empty( $terms ) || is_wp_error( $terms ) ) {
+    // A genuine query failure (WP_Error) is not the same thing as "no
+    // jurisdiction term assigned yet" — both previously returned 0 with no
+    // way to tell them apart. This helper feeds a badge on the jurisdiction
+    // dashboard health matrix and the admin list column, both read as
+    // ground truth by the editor; a real query error silently reporting as
+    // "0 citations" is a wrong count, not an honest empty one.
+    if ( is_wp_error( $terms ) ) {
+        ws_log_loud_failure( new WS_Loud_Failure( 'admin-navigation', 'wp_get_post_terms() failed while counting attached citations — reporting 0, but this is an unknown count, not a verified zero.', [
+            'post_id' => $post_id,
+            'error'   => $terms->get_error_message(),
+        ] ) );
+        return 0;
+    }
+
+    if ( empty( $terms ) ) {
         return 0;
     }
 

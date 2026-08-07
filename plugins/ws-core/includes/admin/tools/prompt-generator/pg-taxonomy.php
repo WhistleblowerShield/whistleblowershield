@@ -1,10 +1,46 @@
 <?php
 /**
- * Prompt Generator - Taxonomy Rendering
+ * pg-taxonomy.php
+ *
+ * Prompt Generator — Taxonomy Rendering
+ *
+ * PURPOSE
+ * -------
+ * Reads live taxonomy terms and renders them into the two-column slug
+ * tables that appear in every research prompt. This is the mechanism
+ * that keeps prompt vocabulary synchronized with production taxonomy —
+ * if a term is added or renamed in register-taxonomies.php, the next
+ * generated prompt reflects it automatically. No dependencies on other
+ * pg-* files.
+ *
+ * @package    WhistleblowerShield
+ * @since      3.13.0
+ * @version    3.22.0-rewrite
+ * @author     WhistleblowerShield (Dwight)
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
+ *
+ * VERSION LOG
+ * -----------
+ * 3.22.0-rewrite  ws_prompt_taxonomies_for_record_type() now throws for
+ *                 an unrecognized record_type instead of returning an
+ *                 empty array — a silent empty result here previously
+ *                 meant "print a schema with zero taxonomy tables,"
+ *                 which is a plausible-looking wrong prompt, not an
+ *                 obvious failure.
+ * 3.21.0-rewrite  Docblock pass. Annotated the direct get_terms() call
+ *                 per the admin-tool query-layer exception rule.
+ *                 No logic changes.
  */
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Admin-only query-layer exception: reads live taxonomy terms directly
+ * via get_terms(). This is the entire point of this tool — prompt
+ * accuracy depends on *current* term state, not a cached or rendered
+ * view of it. Never do this in render/query-layer code.
+ */
 function ws_prompt_get_taxonomy_terms_no_parents( string $taxonomy ): array {
     $terms = get_terms( [
         'taxonomy'   => $taxonomy,
@@ -28,7 +64,7 @@ function ws_prompt_get_taxonomy_terms_no_parents( string $taxonomy ): array {
     foreach ( $terms as $term ) {
         $tid = (int) $term->term_id;
         if ( isset( $parent_ids[ $tid ] ) ) {
-            continue;
+            continue; // Parent terms are intentionally excluded — see prompt text.
         }
         $out[] = [ 'slug' => (string) $term->slug ];
     }
@@ -77,7 +113,16 @@ function ws_prompt_taxonomy_descriptions(): array {
     ];
 }
 
+/**
+ * Which taxonomy tables get printed for which record type. This is the
+ * one place to edit if a record type needs a different taxonomy set —
+ * do not special-case this list anywhere else.
+ *
+ * @throws WS_Loud_Failure if $record_type isn't a known type.
+ */
 function ws_prompt_taxonomies_for_record_type( string $record_type ): array {
+    ws_prompt_assert_valid_record_type( $record_type );
+
     switch ( $record_type ) {
         case 'assist-org':
             return [ 'ws_protected_disclosure', 'ws_protected_class', 'ws_disclosure_target', 'ws_process_type', 'ws_case_stage', 'ws_language', 'ws_organization_model', 'ws_employment_sector', 'ws_aorg_cost_model', 'ws_aorg_service' ];
@@ -87,9 +132,11 @@ function ws_prompt_taxonomies_for_record_type( string $record_type ): array {
         case 'citation':
         case 'construction':
             return [ 'ws_protected_disclosure', 'ws_protected_class', 'ws_disclosure_target', 'ws_employment_sector', 'ws_adverse_action', 'ws_process_type', 'ws_remedy', 'ws_employer_defense', 'ws_employee_standard' ];
-        default:
-            return [];
     }
+
+    // Unreachable — ws_prompt_assert_valid_record_type() already threw
+    // for anything not covered above. No default case on purpose.
+    ws_fail_loud( 'prompt-generator', "Unreachable: '{$record_type}' passed validation but has no taxonomy list. This is a bug in ws_prompt_taxonomies_for_record_type() itself — fix the switch statement.", [ 'record_type' => $record_type ] );
 }
 
 function ws_prompt_dynamic_taxonomy_tables( string $record_type ): string {
@@ -109,4 +156,3 @@ function ws_prompt_dynamic_taxonomy_tables( string $record_type ): string {
 
     return $out;
 }
-

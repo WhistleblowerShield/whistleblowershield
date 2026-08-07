@@ -40,13 +40,22 @@
  *
  * @package    WhistleblowerShield
  * @since      3.9.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
  * VERSION
  * -------
+ * 3.20.1 Loud-failure pass. Missing 'us' term now calls ws_fail_loud()
+ *        instead of silently returning. A missing agency_slug match (which
+ *        per the SEEDER RULES above should not happen under normal load
+ *        order) now logs which procedure was skipped instead of vanishing
+ *        with only a code comment explaining the retry mechanism. Unresolved
+ *        statute slugs in ws_ag_procedure_matrix_resolve_statute_ids() are
+ *        now logged too — expected gaps (NLRB/CFTC/IRS/EPA per the STATUTE
+ *        LINKS note above) will still show up in the log, which is fine;
+ *        the point is visibility, not silence.
  * 3.9.0  Initial. Seeds 10 procedures across 9 federal agencies.
  * 3.10.0 ws_procedure_type removed from scalar meta write. Procedure type now
  *        assigned via wp_set_object_terms( 'ws_procedure_type' ). Data array
@@ -388,12 +397,25 @@ $_ws_ag_procedure_matrix = [
 // ════════════════════════════════════════════════════════════════════════════
 
 function ws_ag_procedure_matrix_resolve_statute_ids( array $slugs ) {
-    $ids = [];
+    $ids     = [];
+    $missing = [];
     foreach ( $slugs as $slug ) {
         $post = get_page_by_path( $slug, OBJECT, 'jx-statute' );
         if ( $post && ! is_wp_error( $post ) ) {
             $ids[] = (int) $post->ID;
+        } else {
+            $missing[] = $slug;
         }
+    }
+    if ( ! empty( $missing ) ) {
+        // Still doesn't fatal — a procedure linking to several statutes
+        // shouldn't lose all of its links because one slug doesn't resolve
+        // yet — but a silently-skipped link previously left zero record of
+        // which statute_slugs entries in the seed data never matched a
+        // real post.
+        ws_log_loud_failure( new WS_Loud_Failure( 'matrix-ag-procedures', "Unresolved statute slug(s) — these will not be linked to their parent procedure until the seeder is re-run: " . implode( ', ', $missing ), [
+            'missing_slugs' => $missing,
+        ] ) );
     }
     return $ids;
 }
@@ -408,9 +430,11 @@ function ws_seed_procedure_matrix() {
     global $_ws_ag_procedure_matrix;
 
     // Resolve the US jurisdiction term — all seeded procedures are federal.
+    // Depends on matrix-jurisdictions having already run — see
+    // matrix-agencies.php for the same fix and rationale.
     $us_term = ws_jx_term_by_code( 'us' );
     if ( ! $us_term || is_wp_error( $us_term ) ) {
-        return; // Jurisdiction taxonomy terms not yet seeded — bail.
+        ws_fail_loud( 'matrix-ag-procedures', "The 'us' jurisdiction term does not exist — cannot seed the procedure matrix. matrix-jurisdictions.php must run first." );
     }
     $us_term_id = (int) $us_term->term_id;
 
@@ -424,8 +448,18 @@ function ws_seed_procedure_matrix() {
 
         $agency = get_page_by_path( $proc['agency_slug'], OBJECT, 'ws-agency' );
         if ( ! $agency || is_wp_error( $agency ) ) {
-            // statute agency not seeded yet — skip this procedure.
-            // Bumping the gate version re-runs the seeder, which will retry.
+            // Per the MATRIX LAYER DEPENDENCY CHAIN (loader.php), matrix-agencies
+            // seeds before this file runs, so this should not normally happen.
+            // If it does — a typo'd agency_slug in the procedure matrix, or a
+            // genuine load-order regression — this procedure is silently
+            // skipped FOREVER once the gate reaches 1.0.0, since nothing
+            // re-runs the seeder automatically. Previously logged nowhere;
+            // "bumping the gate version re-runs it" only helps if someone
+            // notices a procedure is missing in the first place.
+            ws_log_loud_failure( new WS_Loud_Failure( 'matrix-ag-procedures', "Agency slug '{$proc['agency_slug']}' not found — procedure '{$proc['slug']}' was skipped and will not exist until the seeder is re-run.", [
+                'procedure_slug' => $proc['slug'],
+                'agency_slug'    => $proc['agency_slug'],
+            ] ) );
             continue;
         }
         $agency_id = (int) $agency->ID;

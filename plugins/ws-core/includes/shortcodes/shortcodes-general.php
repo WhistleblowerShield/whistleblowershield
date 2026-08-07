@@ -8,7 +8,16 @@
  *
  * @package WhistleblowerShield
  * @since   2.1.3
- * @version    3.20.0
+ * @version    3.20.1
+ *
+ * VERSION LOG
+ * -----------
+ * 3.20.1  ws_shortcode_assist_org_directory() now wraps its
+ *         ws_render_directory_page() call in ws_render_or_fail_loud() —
+ *         the jurisdiction and agency page assemblers already had this
+ *         safety net (render-jurisdiction.php, render-agency.php); the
+ *         directory shortcode was the one visitor-facing top-level
+ *         render path without it.
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -237,7 +246,18 @@ function ws_shortcode_assist_org_directory( $atts ) {
     $nationwide = ws_get_nationwide_assist_org_data( [] );
 
     // ── Render ───────────────────────────────────────────────────────────
-    return ws_render_directory_page( $targeted, $nationwide, $context );
+    // Wrapped in ws_render_or_fail_loud() — this is the live Phase 2
+    // directory's entry point, the same treatment given the jurisdiction
+    // and agency page assemblers in render-jurisdiction.php/render-agency.php.
+    // An uncaught exception here must never reach a real visitor as a fatal
+    // white screen, especially on the page currently taking the most direct
+    // "who can help me" traffic on the site.
+    return ws_render_or_fail_loud(
+        function() use ( $targeted, $nationwide, $context ) {
+            return ws_render_directory_page( $targeted, $nationwide, $context );
+        },
+        'shortcodes-general'
+    );
 }
 
 

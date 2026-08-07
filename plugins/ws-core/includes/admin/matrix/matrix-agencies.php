@@ -4,11 +4,17 @@
  *
  * @package    WhistleblowerShield
  * @since      3.0.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
- * 
+ *
+ * VERSION LOG
+ * -----------
+ * 3.20.1  Missing 'us' jurisdiction term now calls ws_fail_loud() instead of
+ *         silently returning — see matrix-jurisdictions.php 3.20.1 for the
+ *         same fix and full rationale (a bad dependency-chain break should
+ *         not read as a quiet "not ready yet" state).
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -122,10 +128,15 @@ function ws_seed_agency_matrix() {
 
     global $_ws_agency_matrix;
 
-    // Resolve the US jurisdiction term ID.
+    // Resolve the US jurisdiction term ID. This seeder depends on
+    // matrix-jurisdictions having already run (see the MATRIX LAYER
+    // DEPENDENCY CHAIN in loader.php) — a missing 'us' term here means that
+    // dependency chain is broken, not that this is a normal early-install
+    // state to quietly wait out. Previously silently skipped the entire
+    // agency matrix with zero indication why.
     $us_term = ws_jx_term_by_code( 'us' );
     if ( ! $us_term || is_wp_error( $us_term ) ) {
-        return; // Taxonomy terms not yet seeded — bail.
+        ws_fail_loud( 'matrix-agencies', "The 'us' jurisdiction term does not exist — cannot seed the agency matrix. matrix-jurisdictions.php must run first." );
     }
     $us_term_id = (int) $us_term->term_id;
 

@@ -18,7 +18,7 @@
  *
  * @package WhistleblowerShield
  * @since   2.1.0
- * @version    3.20.0
+ * @version    3.20.1
  *
  * VERSION
  * -------
@@ -26,6 +26,12 @@
  * 3.0.0   Taxonomy-based scoping replaces relationship fields.
  * 3.8.0   Dispatcher refactor: ws_render_jx_curated() extracted.
  *         ws_render_jx_filtered() stub + Phase 2 dispatch hook point added.
+ * 3.20.1  ws_handle_jurisdiction_render() now wraps ws_render_jx_curated()
+ *         in ws_render_or_fail_loud() — the first use of that primitive
+ *         anywhere in the codebase. This is the top-level the_content
+ *         filter for every jurisdiction page; an uncaught exception here
+ *         previously had no safety net between it and a fatal white screen
+ *         for a real visitor.
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -119,7 +125,19 @@ function ws_handle_jurisdiction_render( $content ) {
     //     return ws_render_jx_filtered( $post, $jx_term_id, $filter_context );
     // }
 
-    $output       = ws_render_jx_curated( $post, $jx_term_id );
+    // Wrapped in ws_render_or_fail_loud() — this is the top-level the_content
+    // filter for every jurisdiction page. A raw uncaught exception here
+    // (from any do_shortcode() call inside ws_render_jx_curated(), now or as
+    // more of the codebase adopts ws_fail_loud()) would produce a fatal
+    // white-screen for a real visitor — unacceptable on a public-interest
+    // safety site. Catches, logs, and degrades to the calm "this section is
+    // temporarily unavailable" notice instead.
+    $output = ws_render_or_fail_loud(
+        function() use ( $post, $jx_term_id ) {
+            return ws_render_jx_curated( $post, $jx_term_id );
+        },
+        'render-jurisdiction'
+    );
     $is_rendering = false;
     return $output;
 }

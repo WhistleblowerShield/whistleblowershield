@@ -699,7 +699,17 @@ function ws_jx_cite_no_citations_notice() {
 
     // Get the WS_JURISDICTION_TAXONOMY taxonomy term assigned to this jx-summary.
     $terms = wp_get_post_terms( $post->ID, WS_JURISDICTION_TAXONOMY );
-    if ( empty( $terms ) || is_wp_error( $terms ) ) return;
+
+    if ( is_wp_error( $terms ) ) {
+        ws_log_loud_failure( new WS_Loud_Failure(
+            'acf-jx-citations',
+            "wp_get_post_terms() failed for jx-summary {$post->ID} — the zero-attached-citations warning cannot be evaluated for this edit screen.",
+            [ 'post_id' => $post->ID, 'error' => $terms->get_error_message() ]
+        ) );
+        return;
+    }
+
+    if ( empty( $terms ) ) return;
 
     $term_id = $terms[0]->term_id;
 

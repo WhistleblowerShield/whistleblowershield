@@ -31,7 +31,16 @@
  *
  * @package WhistleblowerShield
  * @since   2.1.0
- * @version    3.20.0
+ * @version    3.20.1
+ *
+ * VERSION (cont.)
+ * ----------------
+ * 3.20.1  A wp_get_post_terms() failure resolving a jurisdiction's own term
+ *         previously fell through to term_id = 0 silently, identically to
+ *         a jurisdiction that genuinely has no term — rendering that row
+ *         as completely empty/missing across all eight columns on a
+ *         dashboard specifically built to be trusted as ground truth. Now
+ *         logged.
  */
 
 if (!defined('ABSPATH')) {
@@ -116,8 +125,23 @@ function ws_render_jurisdiction_dashboard() {
     foreach ( $jurisdictions as $jx ) {
 
         // Resolve WS_JURISDICTION_TAXONOMY term for this jurisdiction post.
-        $terms   = wp_get_post_terms( $jx->ID, WS_JURISDICTION_TAXONOMY );
-        $term_id = ( ! is_wp_error( $terms ) && ! empty( $terms ) ) ? (int) $terms[0]->term_id : 0;
+        $terms = wp_get_post_terms( $jx->ID, WS_JURISDICTION_TAXONOMY );
+        if ( is_wp_error( $terms ) ) {
+            // Every count helper below treats term_id = 0 as "no term, show
+            // 0/missing for everything" — the same fallback a jurisdiction
+            // with genuinely no term would get. A query failure here would
+            // render an entire jurisdiction's row as completely empty across
+            // all eight columns, which is exactly the kind of false signal
+            // this dashboard exists to prevent someone from acting on.
+            ws_log_loud_failure( new WS_Loud_Failure( 'jurisdiction-dashboard', "wp_get_post_terms() failed for jurisdiction post {$jx->ID} ({$jx->post_title}) — its dashboard row will show as entirely missing/empty, which may not reflect its real data state.", [
+                'post_id' => $jx->ID,
+                'title'   => $jx->post_title,
+                'error'   => $terms->get_error_message(),
+            ] ) );
+            $term_id = 0;
+        } else {
+            $term_id = ! empty( $terms ) ? (int) $terms[0]->term_id : 0;
+        }
 
         echo '<tr>';
         echo '<td><strong>' . esc_html( $jx->post_title ) . '</strong></td>';

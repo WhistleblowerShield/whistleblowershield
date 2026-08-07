@@ -4,11 +4,19 @@
  *
  * @package    WhistleblowerShield
  * @since      3.4.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
- * 
+ *
+ * VERSION LOG
+ * -----------
+ * 3.20.1  Raw RuntimeException throws converted to ws_fail_loud() so matrix
+ *         build/abbreviation failures get the same central log/notice as
+ *         everything else. ws_matrix_assign_terms() no longer silently
+ *         drops unresolved slugs with zero record — still doesn't fatal
+ *         (a seeder run with one bad slug shouldn't abort every other
+ *         assignment on the same post), but every skip is now logged.
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -32,11 +40,15 @@ function ws_matrix_build_assist_org_internal_id( string $jx_slug, string $org_sl
     $org_slug = sanitize_title( $org_slug );
 
     if ( $jx_slug === '' ) {
-        throw new RuntimeException( 'Cannot build assist-org internal ID without jurisdiction slug.' );
+        ws_fail_loud( 'matrix-helpers', 'Cannot build assist-org internal ID without jurisdiction slug.', [
+            'org_slug' => $org_slug,
+        ] );
     }
 
     if ( $org_slug === '' ) {
-        throw new RuntimeException( 'Cannot build assist-org internal ID without assist-org slug.' );
+        ws_fail_loud( 'matrix-helpers', 'Cannot build assist-org internal ID without assist-org slug.', [
+            'jx_slug' => $jx_slug,
+        ] );
     }
 
     if ( str_starts_with( $org_slug, $jx_slug . '-' ) ) {
@@ -60,7 +72,7 @@ function ws_matrix_abbreviate_assist_org_slug( string $org_slug ): string {
     $org_slug = sanitize_title( $org_slug );
 
     if ( $org_slug === '' ) {
-        throw new RuntimeException( 'Cannot abbreviate blank assist-org slug.' );
+        ws_fail_loud( 'matrix-helpers', 'Cannot abbreviate blank assist-org slug.' );
     }
 
     $known = [
@@ -208,7 +220,9 @@ function ws_matrix_abbreviate_assist_org_slug( string $org_slug ): string {
     $slug = trim( (string) $slug, '-' );
 
     if ( $slug === '' ) {
-        throw new RuntimeException( 'Assist-org abbreviation pass produced a blank slug.' );
+        ws_fail_loud( 'matrix-helpers', 'Assist-org abbreviation pass produced a blank slug.', [
+            'original_org_slug' => $org_slug,
+        ] );
     }
 
     return $slug;
@@ -219,8 +233,10 @@ function ws_matrix_abbreviate_assist_org_slug( string $org_slug ): string {
 // ws_matrix_assign_terms()
 //
 // Resolves an array of term slugs to term IDs and assigns them to a post
-// via wp_set_object_terms(). Silently skips any slug that does not exist
-// in the given taxonomy — seeders will not fatal if a term is missing.
+// via wp_set_object_terms(). Does not fatal when a slug does not exist in
+// the given taxonomy — a seeder run with one bad slug should not abort
+// every other assignment on the same post — but every skipped slug is now
+// logged through the unified log rather than vanishing with zero record.
 //
 // @param int    $post_id   Post to assign terms to.
 // @param array  $slugs     Term slugs to resolve and assign.
@@ -229,11 +245,21 @@ function ws_matrix_abbreviate_assist_org_slug( string $org_slug ): string {
 
 function ws_matrix_assign_terms( $post_id, array $slugs, $taxonomy ) {
     $term_ids = [];
+    $missing  = [];
     foreach ( $slugs as $slug ) {
         $term = get_term_by( 'slug', $slug, $taxonomy );
         if ( $term && ! is_wp_error( $term ) ) {
             $term_ids[] = (int) $term->term_id;
+        } else {
+            $missing[] = $slug;
         }
+    }
+    if ( ! empty( $missing ) ) {
+        ws_log_loud_failure( new WS_Loud_Failure( 'matrix-helpers', "Skipped " . count( $missing ) . " unresolved slug(s) in taxonomy '{$taxonomy}' for post {$post_id} — a matrix seed row references a term that doesn't exist.", [
+            'post_id'       => $post_id,
+            'taxonomy'      => $taxonomy,
+            'missing_slugs' => $missing,
+        ] ) );
     }
     if ( ! empty( $term_ids ) ) {
         $result = wp_set_object_terms( $post_id, $term_ids, $taxonomy );

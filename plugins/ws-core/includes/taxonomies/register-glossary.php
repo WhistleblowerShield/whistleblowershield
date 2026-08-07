@@ -19,11 +19,23 @@
  *
  * @package       WhistleblowerShield
  * @since         3.2.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author        Whistleblower Shield
  * @link          https://whistleblowershield.org
  * @copyright     Copyright (c) 2026 Whistleblower Shield
- * 
+ *
+ * VERSION LOG (3.20.1)
+ * ---------------------
+ * Loud-failure pass. ws_get_glossary_lookup() no longer conflates a genuine
+ * get_terms() failure with "no glossary terms yet" — both previously
+ * silently disabled tooltip scanning sitewide for 5 minutes. The scanner's
+ * catch (Exception $e) widened to catch (\Throwable $e) — Exception alone
+ * does not catch Error/TypeError, which the DOMDocument manipulation in
+ * this visitor-facing filter can plausibly throw; an uncaught Error
+ * previously had no safety net here. ws_seed_glossary_taxonomy() now logs
+ * (does not throw) a failed wp_insert_term() instead of silently skipping
+ * that term. Removed an @-suppressed unchecked file_put_contents() in
+ * ws_glossary_debug_log().
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -173,7 +185,19 @@ function ws_get_glossary_lookup() {
         'number'     => 0,
     ] );
 
-    if ( is_wp_error( $terms ) || empty( $terms ) ) {
+    if ( is_wp_error( $terms ) ) {
+        // A genuine get_terms() failure previously fell through to the same
+        // "cache empty, no terms yet" path as a legitimately-empty glossary
+        // — silently disabling the entire tooltip system sitewide for 5
+        // minutes with zero record of why.
+        ws_log_loud_failure( new WS_Loud_Failure( 'register-glossary', 'get_terms() failed building the glossary lookup — tooltip scanning is disabled for the next 5 minutes.', [
+            'error' => $terms->get_error_message(),
+        ] ) );
+        set_transient( 'ws_glossary_cache_', [], 5 * MINUTE_IN_SECONDS );
+        return [];
+    }
+
+    if ( empty( $terms ) ) {
         // Cache empty result briefly to avoid hammering get_terms() on
         // every page load when no terms exist yet.
         set_transient( 'ws_glossary_cache_', [], 5 * MINUTE_IN_SECONDS );
@@ -506,13 +530,24 @@ function ws_apply_glossary_tooltips( $html ) {
 
 		return $result ?: $html;
 
-	} catch ( Exception $e ) {
+	} catch ( \Throwable $e ) {
+		// Previously catch (Exception $e) — does not catch Error/TypeError,
+		// which DOMDocument manipulation can plausibly throw on malformed
+		// input. An uncaught Error here would have been a fatal white
+		// screen for a real visitor, since this filter runs on visitor-facing
+		// content (jx-summary, limitations). Widened to Throwable so nothing
+		// escapes this catch, and now also logged through the unified log —
+		// error_log() alone left no record in the ws-fail-loud admin notice.
 		error_log( sprintf(
 			'[ws-core] Glossary scanner exception: %s (in %s line %d)',
 			$e->getMessage(),
 			__FILE__,
 			__LINE__
 		) );
+		ws_log_loud_failure( new WS_Loud_Failure( 'register-glossary', 'Glossary scanner threw during ws_apply_glossary_tooltips() — returning original HTML unmodified.', [
+			'error'             => $e->getMessage(),
+			'exception_class'   => get_class( $e ),
+		] ) );
 		return $html;
 
 	} finally {
@@ -732,7 +767,16 @@ function ws_seed_glossary_taxonomy() {
                 'slug'        => $slug,
                 'description' => $data['desc'],
             ] );
-            if ( ! is_wp_error( $result ) && ! empty( $data['aliases'] ) ) {
+            if ( is_wp_error( $result ) ) {
+                // Previously silent — a failed insert meant this glossary
+                // term (and its aliases) simply never existed, with nothing
+                // recorded anywhere. Logged, not thrown: one bad term
+                // shouldn't abort seeding the other ~24.
+                ws_log_loud_failure( new WS_Loud_Failure( 'register-glossary', "Failed to seed glossary term '{$slug}'.", [
+                    'slug'  => $slug,
+                    'error' => $result->get_error_message(),
+                ] ) );
+            } elseif ( ! empty( $data['aliases'] ) ) {
                 update_term_meta( $result['term_id'], 'ws_glossary_aliases', $data['aliases'] );
             }
         }
@@ -791,7 +835,16 @@ function ws_glossary_debug_log( $message ) {
     }
 
     // Use append + lock to keep lines coherent under concurrent requests.
-    @file_put_contents( $log_file, $line, FILE_APPEND | LOCK_EX );
+    // Error suppression (@) removed — a failed write here was previously
+    // both silenced and unrecorded. This is a different log destination
+    // (options table + wp-content/logs/ws-core-error.log) than the file
+    // being written here, so routing the failure through it carries no
+    // recursion risk.
+    if ( file_put_contents( $log_file, $line, FILE_APPEND | LOCK_EX ) === false ) {
+        ws_log_loud_failure( new WS_Loud_Failure( 'register-glossary', 'Failed to write glossary scan debug log line.', [
+            'log_file' => $log_file,
+        ] ) );
+    }
 }
 
 /**

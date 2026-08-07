@@ -1,6 +1,68 @@
 <?php
 /**
- * Prompt Generator - Admin UI and Request Handling
+ * pg-ui.php
+ *
+ * Prompt Generator — Admin UI and Request Handling
+ *
+ * PURPOSE
+ * -------
+ * Registers the admin page, collects and validates form input, dispatches
+ * to ws_generate_prompt(), writes the output file, and renders the form.
+ *
+ * REWRITE NOTE — THE $_POST SCATTER FIX
+ * --------------------------------------
+ * Prior to 3.21.0, both ws_handle_prompt_generation() and
+ * ws_render_prompt_generator_page() read $_POST directly, in different
+ * places, with slightly different sanitization each time. That's not a
+ * PHP global in the language-keyword sense, but it behaves like one for
+ * debugging purposes: rename a form field and you have to grep every
+ * function in this file to find every place that reads it, with no
+ * single place that declares "here's what this form actually produces."
+ *
+ * This rewrite adds ws_prompt_collect_form_input(): array as the ONLY
+ * place in this file that touches $_POST. Every other function receives
+ * that array as a parameter. If a field name ever changes, there is
+ * exactly one line to edit.
+ *
+ * ⚠ JS FUNCTIONS RECONSTRUCTED, NOT VERIFIED ⚠
+ * -----------------------------------------------
+ * The original form HTML calls wsPromptToggleFields() (on record_type
+ * change) and wsPromptApplyJxFromSelect() (on jurisdiction dropdown
+ * change), but no <script> block defining them was recovered during
+ * this rewrite pass. The versions below are reconstructed from the
+ * ws-field-* class names already present in the form markup (a standard
+ * show/hide-by-class pattern) and are low-risk if wrong — worst case is
+ * a UI toggle behaving oddly, not a data-integrity problem. Please test
+ * these against the real form before trusting them, and replace with
+ * the original if it turns out to differ.
+ *
+ * Depends on: pg-config.php, pg-exclusions.php, pg-builders.php (for
+ * ws_generate_prompt), pg-taxonomy.php (indirectly, via ws_generate_prompt).
+ *
+ * @package    WhistleblowerShield
+ * @since      3.13.0
+ * @version    3.22.0-rewrite
+ * @author     WhistleblowerShield (Dwight)
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
+ *
+ * VERSION LOG
+ * -----------
+ * 3.22.0-rewrite  ws_handle_prompt_generation() now validates record_type
+ *                 explicitly via ws_prompt_assert_valid_record_type()
+ *                 before anything else runs, and wraps the entire
+ *                 generation pipeline (jurisdiction resolution, exclusion
+ *                 building, prompt generation) in one try/catch instead
+ *                 of several scattered ones — a throw anywhere in that
+ *                 chain now surfaces as a clear admin notice with the
+ *                 real refusal message, never a fatal white screen and
+ *                 never a silently-written wrong file.
+ * 3.21.0-rewrite  Added ws_prompt_collect_form_input() as the single
+ *                 $_POST read point. Updated dispatch from the two old
+ *                 builder names to ws_generate_prompt(). Reconstructed
+ *                 (unverified) JS toggle functions — see note above.
+ *                 Architecture and code by Claude (Anthropic), directed
+ *                 and reviewed by Dwight.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -18,10 +80,39 @@ function ws_register_prompt_generator_page() {
     );
 }
 
-function ws_handle_prompt_generation(): array {
+/**
+ * THE ONLY function in this file that reads $_POST. Every other function
+ * receives this array's return value as a parameter. If you're chasing
+ * a "where does this form field come from" bug, start and end here.
+ */
+function ws_prompt_collect_form_input(): array {
+    $record_type = sanitize_text_field( (string) ( $_POST['record_type'] ?? 'statute' ) );
+    $posted_jx   = strtoupper( sanitize_text_field( (string) ( $_POST['jx_id'] ?? '' ) ) );
+
+    return [
+        'is_submit'                  => isset( $_POST['submit'] ),
+        'is_refresh_exclusions'      => isset( $_POST['ws_refresh_exclusions'] ),
+        'nonce'                      => (string) ( $_POST['ws_prompt_nonce'] ?? '' ),
+        'record_type'                => $record_type,
+        'jx_id'                      => $posted_jx,
+        'records_requested'          => max( 0, (int) ( $_POST['records_requested'] ?? 0 ) ),
+        'proposal_count'             => max( 0, (int) ( $_POST['proposal_count'] ?? 0 ) ),
+        'assist_org_nationwide'      => ! empty( $_POST['assist_org_nationwide'] ),
+        'assist_org_focus_notes'     => sanitize_textarea_field( (string) ( $_POST['assist_org_focus_notes'] ?? '' ) ),
+        'scope_details'              => sanitize_textarea_field( (string) ( $_POST['scope_details'] ?? '' ) ),
+        'min_quality'                => sanitize_text_field( (string) ( $_POST['min_quality'] ?? 'moderate' ) ),
+        'statute_type'               => sanitize_text_field( (string) ( $_POST['statute_type'] ?? 'state' ) ),
+        'disable_exclusion_list'     => ! empty( $_POST['disable_exclusion_list'] ),
+        'exclusion_list_auto'        => sanitize_textarea_field( (string) ( $_POST['exclusion_list_auto'] ?? '' ) ),
+        'exclusion_list_auto_edited' => ! empty( $_POST['exclusion_list_auto_edited'] ),
+        'exclusion_list_manual'      => sanitize_textarea_field( (string) ( $_POST['exclusion_list_manual'] ?? ( $_POST['exclusion_list'] ?? '' ) ) ),
+    ];
+}
+
+function ws_handle_prompt_generation( array $input ): array {
     $result = [ 'success' => false, 'message' => '', 'filename' => '', 'path' => '' ];
 
-    if ( empty( $_POST['ws_prompt_nonce'] ) || ! wp_verify_nonce( $_POST['ws_prompt_nonce'], 'ws_generate_prompt' ) ) {
+    if ( empty( $input['nonce'] ) || ! wp_verify_nonce( $input['nonce'], 'ws_generate_prompt' ) ) {
         $result['message'] = 'Security check failed.';
         return $result;
     }
@@ -30,66 +121,78 @@ function ws_handle_prompt_generation(): array {
         return $result;
     }
 
-    $record_type = sanitize_text_field( $_POST['record_type'] ?? '' );
-    $jx_id       = strtoupper( sanitize_text_field( $_POST['jx_id'] ?? '' ) );
-    $records_requested = max( 0, (int) ( $_POST['records_requested'] ?? 0 ) );
-    $proposal_count    = max( 0, (int) ( $_POST['proposal_count'] ?? 0 ) );
+    $record_type = $input['record_type'];
+    $jx_id       = $input['jx_id'];
 
-    if ( ! $record_type || ! preg_match( '/^[A-Z]{2}$/', $jx_id ) ) {
-        $result['message'] = 'Record type and a valid two-letter jurisdiction code are required.';
+    if ( ! preg_match( '/^[A-Z]{2}$/', $jx_id ) ) {
+        $result['message'] = 'A valid two-letter jurisdiction code is required.';
         return $result;
     }
 
-    if ( $record_type === 'assist-org' ) {
-        $records_requested = $proposal_count;
-    }
+    // Everything from here on either produces a real result or throws.
+    // One wide catch, not several scattered ones — every function this
+    // pipeline calls (jurisdiction resolution, exclusion building, prompt
+    // generation) validates record_type independently and refuses to
+    // guess, per project rule. Catching broadly here just means a refusal
+    // anywhere in the chain surfaces as one clear admin notice instead of
+    // a fatal white screen, without papering over what actually failed.
+    try {
+        ws_prompt_assert_valid_record_type( $record_type );
 
-    $jx_context = ws_prompt_resolve_jx_context( $jx_id );
+        $records_requested = ( $record_type === 'assist-org' ) ? $input['proposal_count'] : $input['records_requested'];
 
-    $scope_details = sanitize_textarea_field( (string) ( $_POST['scope_details'] ?? '' ) );
-    if ( $scope_details === '' && in_array( $record_type, [ 'statute', 'common-law' ], true ) ) {
-        $scope_details = sanitize_key( (string) ( $jx_context['jx_type'] ?? 'state' ) ) . '-level whistleblower laws and protections';
-    }
+        $jx_context = ws_prompt_resolve_jx_context( $jx_id );
 
-    $disable_exclusions = ! empty( $_POST['disable_exclusion_list'] );
-    $auto_exclusions = ws_prompt_get_auto_exclusions( $record_type, $jx_id );
-    $auto_exclusions_text = ws_prompt_resolve_auto_exclusions_text( $_POST, $auto_exclusions );
+        $scope_details = $input['scope_details'];
+        if ( $scope_details === '' && in_array( $record_type, [ 'statute', 'common-law' ], true ) ) {
+            $scope_details = sanitize_key( (string) ( $jx_context['jx_type'] ?? 'state' ) ) . '-level whistleblower laws and protections';
+        }
 
-    $exclusion_list = '';
-    if ( ! $disable_exclusions ) {
-        $exclusion_list = ws_prompt_merge_exclusions(
-            (string) ( $_POST['exclusion_list_manual'] ?? ( $_POST['exclusion_list'] ?? '' ) ),
-            ws_prompt_split_lines( $auto_exclusions_text )
-        );
-    }
+        $auto_exclusions      = ws_prompt_get_auto_exclusions( $record_type, $jx_id );
+        $auto_exclusions_text = $input['exclusion_list_auto_edited']
+            ? $input['exclusion_list_auto']
+            : implode( "\n", $auto_exclusions );
 
-    $scope = [
-        'jx_id'                  => $jx_id,
-        'jx_name'                => (string) $jx_context['jx_name'],
-        'legislature_url'        => (string) $jx_context['legislature_url'],
-        'records_requested'      => $records_requested,
-        'proposal_count'         => $proposal_count,
-        'scope_details'          => $scope_details,
-        'assist_org_focus_notes' => sanitize_textarea_field( (string) ( $_POST['assist_org_focus_notes'] ?? '' ) ),
-        'nationwide_only'        => ! empty( $_POST['assist_org_nationwide'] ) ? 1 : 0,
-        'exclusion_list'         => $exclusion_list,
-        'min_quality'            => sanitize_text_field( (string) ( $_POST['min_quality'] ?? 'moderate' ) ),
-        'statute_type'           => sanitize_text_field( (string) ( $_POST['statute_type'] ?? 'state' ) ),
-    ];
+        $exclusion_list = '';
+        if ( ! $input['disable_exclusion_list'] ) {
+            $exclusion_list = ws_prompt_merge_exclusions(
+                $input['exclusion_list_manual'],
+                ws_prompt_split_lines( $auto_exclusions_text )
+            );
+        }
 
-    switch ( $record_type ) {
-        case 'assist-org':
-            $prompt = ws_generate_assist_org_prompt( $scope );
-            break;
-        case 'statute':
-        case 'common-law':
-        case 'citation':
-        case 'construction':
-            $prompt = ws_generate_legal_prompt( $record_type, $scope );
-            break;
-        default:
-            $result['message'] = 'Unknown record type.';
-            return $result;
+        $scope = [
+            'jx_id'                  => $jx_id,
+            'jx_name'                => (string) $jx_context['jx_name'],
+            'legislature_url'        => (string) $jx_context['legislature_url'],
+            'records_requested'      => $records_requested,
+            'proposal_count'         => $input['proposal_count'],
+            'scope_details'          => $scope_details,
+            'assist_org_focus_notes' => $input['assist_org_focus_notes'],
+            'nationwide_only'        => $input['assist_org_nationwide'] ? 1 : 0,
+            'exclusion_list'         => $exclusion_list,
+            'min_quality'            => $input['min_quality'],
+            'statute_type'           => $input['statute_type'],
+        ];
+
+        $prompt = ws_generate_prompt( $record_type, $scope );
+    } catch ( \Throwable $e ) {
+        // Loud to the human (visible red admin notice), not silently
+        // wrong and not a fatal white screen. No file is written when
+        // this happens — a caught exception here means something in the
+        // pipeline refused to guess, and that refusal should reach you
+        // with its real message, not get swallowed or generalized away.
+        //
+        // ws_fail_loud() (in ws-fail-loud.php, the plugin-wide unified
+        // failure primitive) already logged this to
+        // wp-content/logs/ws-core-error.log and the admin-visible rolling
+        // log before it reached here — this catch only controls what the
+        // prompt-generator's OWN admin page shows inline, in addition to
+        // that. If $e is a WS_Loud_Failure, prefix with its $context so
+        // it's clear which subsystem refused.
+        $prefix = ( $e instanceof \WS_Loud_Failure ) ? "[{$e->context}] " : '';
+        $result['message'] = "Refused: {$prefix}" . $e->getMessage();
+        return $result;
     }
 
     $dir      = ws_prompt_output_dir();
@@ -109,37 +212,33 @@ function ws_handle_prompt_generation(): array {
 }
 
 function ws_render_prompt_generator_page() {
-    $result = null;
-    if ( isset( $_POST['submit'] ) ) {
-        $result = ws_handle_prompt_generation();
-    }
+    $input = ws_prompt_collect_form_input();
 
-    $record_type = sanitize_text_field( $_POST['record_type'] ?? 'statute' );
-    $proposal_count_value = max( 0, (int) ( $_POST['proposal_count'] ?? 0 ) );
-    $assist_org_nationwide = ! empty( $_POST['assist_org_nationwide'] );
-    $disable_exclusions = ! empty( $_POST['disable_exclusion_list'] );
-    $posted_jx = strtoupper( sanitize_text_field( $_POST['jx_id'] ?? '' ) );
-    $assist_org_focus_notes = sanitize_textarea_field( (string) ( $_POST['assist_org_focus_notes'] ?? '' ) );
+    $result = $input['is_submit'] ? ws_handle_prompt_generation( $input ) : null;
 
-    $auto_exclusions = ( $posted_jx && $record_type ) ? ws_prompt_get_auto_exclusions( $record_type, $posted_jx ) : [];
-    $auto_exclusions_text = ws_prompt_resolve_auto_exclusions_text( $_POST, $auto_exclusions );
+    $record_type = $input['record_type'];
+    $posted_jx   = $input['jx_id'];
+
+    $auto_exclusions      = ( $posted_jx && $record_type ) ? ws_prompt_get_auto_exclusions( $record_type, $posted_jx ) : [];
+    $auto_exclusions_text = $input['exclusion_list_auto_edited']
+        ? $input['exclusion_list_auto']
+        : implode( "\n", $auto_exclusions );
 
     $default_scope_details = 'state-level whistleblower laws and protections';
     if ( $posted_jx !== '' ) {
         $ctx = ws_prompt_resolve_jx_context( $posted_jx );
         $default_scope_details = sanitize_key( (string) ( $ctx['jx_type'] ?? 'state' ) ) . '-level whistleblower laws and protections';
     }
-    $scope_details_value = sanitize_textarea_field( (string) ( $_POST['scope_details'] ?? '' ) );
+    $scope_details_value = $input['scope_details'];
     if ( $scope_details_value === '' && in_array( $record_type, [ 'statute', 'common-law' ], true ) ) {
         $scope_details_value = $default_scope_details;
     }
 
-    $manual_exclusions = sanitize_textarea_field( (string) ( $_POST['exclusion_list_manual'] ?? ( $_POST['exclusion_list'] ?? '' ) ) );
-    $auto_count = count( ws_prompt_split_lines( $auto_exclusions_text ) );
-    $manual_count = count( ws_prompt_split_lines( $manual_exclusions ) );
-    $merged_count = $disable_exclusions
+    $auto_count   = count( ws_prompt_split_lines( $auto_exclusions_text ) );
+    $manual_count = count( ws_prompt_split_lines( $input['exclusion_list_manual'] ) );
+    $merged_count = $input['disable_exclusion_list']
         ? 0
-        : count( ws_prompt_split_lines( ws_prompt_merge_exclusions( $manual_exclusions, ws_prompt_split_lines( $auto_exclusions_text ) ) ) );
+        : count( ws_prompt_split_lines( ws_prompt_merge_exclusions( $input['exclusion_list_manual'], ws_prompt_split_lines( $auto_exclusions_text ) ) ) );
 
     $jx_terms = get_terms( [
         'taxonomy'   => WS_JURISDICTION_TAXONOMY,
@@ -194,19 +293,19 @@ function ws_render_prompt_generator_page() {
                 </tr>
                 <tr class="ws-field-statute ws-field-common-law">
                     <th scope="row"><label for="records_requested">Records Requested</label></th>
-                    <td><input type="number" name="records_requested" id="records_requested" value="<?php echo esc_attr( $_POST['records_requested'] ?? 0 ); ?>" class="small-text" min="0" max="20"></td>
+                    <td><input type="number" name="records_requested" id="records_requested" value="<?php echo esc_attr( $input['records_requested'] ); ?>" class="small-text" min="0" max="20"></td>
                 </tr>
                 <tr class="ws-field-assist-org" style="display:none;">
                     <th scope="row"><label for="proposal_count">Proposal Count</label></th>
-                    <td><input type="number" name="proposal_count" id="proposal_count" value="<?php echo esc_attr( $proposal_count_value ); ?>" class="small-text" min="0" max="20"></td>
+                    <td><input type="number" name="proposal_count" id="proposal_count" value="<?php echo esc_attr( $input['proposal_count'] ); ?>" class="small-text" min="0" max="20"></td>
                 </tr>
                 <tr class="ws-field-assist-org" style="display:none;">
                     <th scope="row"><label for="assist_org_nationwide">Nationwide Only</label></th>
-                    <td><label><input type="checkbox" name="assist_org_nationwide" id="assist_org_nationwide" value="1" <?php checked( $assist_org_nationwide ); ?>> Restrict to nationwide or clearly multi-state organizations.</label></td>
+                    <td><label><input type="checkbox" name="assist_org_nationwide" id="assist_org_nationwide" value="1" <?php checked( $input['assist_org_nationwide'] ); ?>> Restrict to nationwide or clearly multi-state organizations.</label></td>
                 </tr>
                 <tr class="ws-field-assist-org" style="display:none;">
                     <th scope="row"><label for="assist_org_focus_notes">Assist-Org Focus Notes</label></th>
-                    <td><textarea name="assist_org_focus_notes" id="assist_org_focus_notes" rows="3" class="large-text"><?php echo esc_textarea( $assist_org_focus_notes ); ?></textarea></td>
+                    <td><textarea name="assist_org_focus_notes" id="assist_org_focus_notes" rows="3" class="large-text"><?php echo esc_textarea( $input['assist_org_focus_notes'] ); ?></textarea></td>
                 </tr>
                 <tr class="ws-field-statute ws-field-common-law">
                     <th scope="row"><label for="scope_details">Scope Details</label></th>
@@ -217,15 +316,15 @@ function ws_render_prompt_generator_page() {
                 </tr>
                 <tr class="ws-field-citation ws-field-construction" style="display:none;">
                     <th scope="row"><label for="scope_details_citations">Statutes to Research</label></th>
-                    <td><textarea name="scope_details" id="scope_details_citations" rows="5" class="large-text"><?php echo esc_textarea( $_POST['scope_details'] ?? '' ); ?></textarea></td>
+                    <td><textarea name="scope_details" id="scope_details_citations" rows="5" class="large-text"><?php echo esc_textarea( $input['scope_details'] ); ?></textarea></td>
                 </tr>
                 <tr class="ws-field-citation ws-field-construction" style="display:none;">
                     <th scope="row"><label for="min_quality">Minimum Quality</label></th>
                     <td>
                         <select name="min_quality" id="min_quality">
-                            <option value="low"      <?php selected( $_POST['min_quality'] ?? 'moderate', 'low' ); ?>>Low (include all)</option>
-                            <option value="moderate" <?php selected( $_POST['min_quality'] ?? 'moderate', 'moderate' ); ?>>Moderate (appellate+)</option>
-                            <option value="high"     <?php selected( $_POST['min_quality'] ?? 'moderate', 'high' ); ?>>High (supreme courts only)</option>
+                            <option value="low"      <?php selected( $input['min_quality'], 'low' ); ?>>Low (include all)</option>
+                            <option value="moderate" <?php selected( $input['min_quality'], 'moderate' ); ?>>Moderate (appellate+)</option>
+                            <option value="high"     <?php selected( $input['min_quality'], 'high' ); ?>>High (supreme courts only)</option>
                         </select>
                     </td>
                 </tr>
@@ -233,14 +332,14 @@ function ws_render_prompt_generator_page() {
                     <th scope="row"><label for="statute_type">Statute Type</label></th>
                     <td>
                         <select name="statute_type" id="statute_type">
-                            <option value="state"   <?php selected( $_POST['statute_type'] ?? 'state', 'state' ); ?>>State statute</option>
-                            <option value="federal" <?php selected( $_POST['statute_type'] ?? 'state', 'federal' ); ?>>Federal statute</option>
+                            <option value="state"   <?php selected( $input['statute_type'], 'state' ); ?>>State statute</option>
+                            <option value="federal" <?php selected( $input['statute_type'], 'federal' ); ?>>Federal statute</option>
                         </select>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="disable_exclusion_list">Exclusions</label></th>
-                    <td><label><input type="checkbox" name="disable_exclusion_list" id="disable_exclusion_list" value="1" <?php checked( $disable_exclusions ); ?>> Disable exclusion list for this run.</label></td>
+                    <td><label><input type="checkbox" name="disable_exclusion_list" id="disable_exclusion_list" value="1" <?php checked( $input['disable_exclusion_list'] ); ?>> Disable exclusion list for this run.</label></td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="exclusion_list_auto">Auto Exclusions (Drafts)</label></th>
@@ -252,7 +351,7 @@ function ws_render_prompt_generator_page() {
                 <tr>
                     <th scope="row"><label for="exclusion_list_manual">Manual Exclusions (Optional)</label></th>
                     <td>
-                        <textarea name="exclusion_list_manual" id="exclusion_list_manual" rows="4" class="large-text"><?php echo esc_textarea( $manual_exclusions ); ?></textarea>
+                        <textarea name="exclusion_list_manual" id="exclusion_list_manual" rows="4" class="large-text"><?php echo esc_textarea( $input['exclusion_list_manual'] ); ?></textarea>
                         <p class="description"><strong>Merged exclusions:</strong> <?php echo (int) $merged_count; ?> unique (<?php echo (int) $auto_count; ?> auto + <?php echo (int) $manual_count; ?> manual before dedupe).</p>
                     </td>
                 </tr>
@@ -265,5 +364,36 @@ function ws_render_prompt_generator_page() {
         </form>
     </div>
 
+    <script>
+    /**
+     * ⚠ RECONSTRUCTED, NOT VERIFIED — see file header docblock.
+     * Standard show/hide-by-class pattern inferred from the ws-field-*
+     * classes already present in the form markup above. Test against
+     * the real form before trusting.
+     */
+    function wsPromptToggleFields() {
+        var recordType = document.getElementById('record_type').value;
+        var allFieldRows = document.querySelectorAll(
+            '.ws-field-statute, .ws-field-common-law, .ws-field-citation, .ws-field-construction, .ws-field-assist-org'
+        );
+        allFieldRows.forEach(function (row) {
+            row.style.display = 'none';
+        });
+        var showClass = '.ws-field-' + recordType;
+        document.querySelectorAll(showClass).forEach(function (row) {
+            row.style.display = '';
+        });
+    }
+
+    function wsPromptApplyJxFromSelect() {
+        var select = document.getElementById('jx_select');
+        var jxInput = document.getElementById('jx_id');
+        if (select && jxInput && select.value) {
+            jxInput.value = select.value;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', wsPromptToggleFields);
+    </script>
     <?php
 }

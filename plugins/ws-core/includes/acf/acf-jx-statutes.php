@@ -755,7 +755,18 @@ function ws_jx_legal_get_post_jurisdiction_term( $post_id ) {
     }
 
     $terms = wp_get_post_terms( $post_id, WS_JURISDICTION_TAXONOMY );
-    if ( is_wp_error( $terms ) || empty( $terms ) ) {
+
+    if ( is_wp_error( $terms ) ) {
+        ws_log_loud_failure( new WS_Loud_Failure(
+            'acf-jx-statutes',
+            "wp_get_post_terms() failed for post {$post_id} — agency relationship-picker fields will fall back to an unscoped list for this edit screen.",
+            [ 'post_id' => $post_id, 'error' => $terms->get_error_message() ]
+        ) );
+        $cache[ $post_id ] = null;
+        return $cache[ $post_id ];
+    }
+
+    if ( empty( $terms ) ) {
         $cache[ $post_id ] = null;
         return $cache[ $post_id ];
     }

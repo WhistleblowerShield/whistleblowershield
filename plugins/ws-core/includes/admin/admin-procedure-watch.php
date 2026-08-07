@@ -32,11 +32,18 @@
  *
  * @package WhistleblowerShield
  * @since   3.9.0
- * @version    3.20.0
+ * @version    3.20.1
  *
  * VERSION
  * -------
  * 3.9.0   Initial release. Phase 3 of ag-procedure feature build.
+ * 3.20.1  Loud-failure pass. Three wp_get_object_terms() calls previously
+ *         treated a genuine WP_Error identically to a legitimate empty
+ *         result — now logged separately. Most importantly: wp_update_post()
+ *         demoting a flagged procedure to draft had its return value
+ *         unchecked entirely — if that call failed, the post remained
+ *         published with a detected authority-link mismatch while the
+ *         admin notice claimed it had been demoted. Now checked and logged.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -120,6 +127,15 @@ function ws_ag_procedure_check_parent_links( $post_id ) {
 
     $procedure_disc_types = wp_get_object_terms( $post_id, 'ws_protected_disclosure', [ 'fields' => 'ids' ] );
     if ( is_wp_error( $procedure_disc_types ) ) {
+        // Previously silently treated as "no protected disclosures set,"
+        // identical to the legitimate case. A genuine query failure here
+        // pushes every procedure it touches into the broad-scope advisory
+        // path (or worse, masks a real mismatch check below), for a reason
+        // that has nothing to do with the procedure's actual data.
+        ws_log_loud_failure( new WS_Loud_Failure( 'procedure-watch', "wp_get_object_terms() failed reading ws_protected_disclosure for procedure {$post_id} — treating as empty, which may misclassify this save as broad-scope.", [
+            'post_id' => $post_id,
+            'error'   => $procedure_disc_types->get_error_message(),
+        ] ) );
         $procedure_disc_types = [];
     }
 
@@ -149,7 +165,20 @@ function ws_ag_procedure_check_parent_links( $post_id ) {
 
         $statute_disc_types = wp_get_object_terms( $statute_id, 'ws_protected_disclosure', [ 'fields' => 'ids' ] );
 
-        if ( is_wp_error( $statute_disc_types ) || empty( $statute_disc_types ) ) {
+        if ( is_wp_error( $statute_disc_types ) ) {
+            // Distinct from "linked record legitimately has no terms" —
+            // a genuine query failure was previously skipped identically,
+            // silently disabling the mismatch check for this statute link
+            // on a save where the underlying data may be fine.
+            ws_log_loud_failure( new WS_Loud_Failure( 'procedure-watch', "wp_get_object_terms() failed reading ws_protected_disclosure for linked statute {$statute_id} — mismatch check skipped for this link on procedure {$post_id}.", [
+                'post_id'    => $post_id,
+                'statute_id' => $statute_id,
+                'error'      => $statute_disc_types->get_error_message(),
+            ] ) );
+            continue;
+        }
+
+        if ( empty( $statute_disc_types ) ) {
             continue; // Skip: linked record has no protected disclosures — data incomplete on linked-record side.
         }
 
@@ -175,7 +204,16 @@ function ws_ag_procedure_check_parent_links( $post_id ) {
 
         $comlaw_disc_types = wp_get_object_terms( $comlaw_id, 'ws_protected_disclosure', [ 'fields' => 'ids' ] );
 
-        if ( is_wp_error( $comlaw_disc_types ) || empty( $comlaw_disc_types ) ) {
+        if ( is_wp_error( $comlaw_disc_types ) ) {
+            ws_log_loud_failure( new WS_Loud_Failure( 'procedure-watch', "wp_get_object_terms() failed reading ws_protected_disclosure for linked common-law record {$comlaw_id} — mismatch check skipped for this link on procedure {$post_id}.", [
+                'post_id'   => $post_id,
+                'comlaw_id' => $comlaw_id,
+                'error'     => $comlaw_disc_types->get_error_message(),
+            ] ) );
+            continue;
+        }
+
+        if ( empty( $comlaw_disc_types ) ) {
             continue; // Skip: linked record has no protected disclosures — data incomplete on linked-record side.
         }
 
@@ -208,8 +246,20 @@ function ws_ag_procedure_check_parent_links( $post_id ) {
             static $demoting = false;
             if ( ! $demoting ) {
                 $demoting = true;
-                wp_update_post( [ 'ID' => $post_id, 'post_status' => 'draft' ] );
+                $demote_result = wp_update_post( [ 'ID' => $post_id, 'post_status' => 'draft' ], true );
                 $demoting = false;
+                if ( is_wp_error( $demote_result ) ) {
+                    // This is the serious one: the mismatch flag is now set
+                    // and the admin notice below will say "This Procedure Is
+                    // Saved as a Draft" — but if this call failed, the post
+                    // is still live, published, right now, with data the
+                    // system just determined is mismatched. Previously
+                    // unchecked entirely.
+                    ws_log_loud_failure( new WS_Loud_Failure( 'procedure-watch', "Failed to demote flagged procedure {$post_id} to draft — it remains PUBLISHED with a detected authority-link mismatch.", [
+                        'post_id' => $post_id,
+                        'error'   => $demote_result->get_error_message(),
+                    ] ) );
+                }
             }
         }
 

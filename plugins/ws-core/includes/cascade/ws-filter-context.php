@@ -33,10 +33,18 @@
  *
  * @package    WhistleblowerShield
  * @since      3.15.0
- * @version    3.20.0
+ * @version    3.20.1
  *
  * VERSION LOG
  * -----------
+ * 3.20.1  Loud-failure pass. Six failure points across
+ *         ws_filter_log_profile_view() and ws_filter_log_request() (log-dir
+ *         creation, .htaccess write, log-line append) previously only
+ *         recorded via error_log() gated on WP_DEBUG — silent on the live
+ *         site, which runs with WP_DEBUG off. Now log unconditionally via
+ *         ws_log_loud_failure(). Low severity (telemetry, not visitor-facing
+ *         correctness) but a broken filter-logging pipeline on the live
+ *         Phase 2 directory was previously invisible.
  * 3.15.1  Added engagement scoring helper and profile-view logging helper.
  * 3.15.0  Initial release. GET param resolution, concern taxonomy routing,
  *         validation, logging, and scoring helper.
@@ -391,15 +399,21 @@ function ws_filter_log_profile_view( int $org_id, array $context, array $click_m
 
     $log_dir = WP_CONTENT_DIR . '/logs/ws-filter';
     if ( ! is_dir( $log_dir ) && ! wp_mkdir_p( $log_dir ) ) {
-        if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-            error_log( '[ws-core] ws_filter_log_profile_view(): failed to create log directory: ' . $log_dir );
-        }
+        // Previously only recorded via error_log() when WP_DEBUG is on —
+        // silent on the live site, which runs with WP_DEBUG off. A broken
+        // filter-telemetry pipeline on the live Phase 2 directory has been
+        // invisible until now.
+        ws_log_loud_failure( new WS_Loud_Failure( 'filter-context', 'Failed to create ws-filter log directory — profile-view telemetry is not being recorded.', [
+            'log_dir' => $log_dir,
+        ] ) );
         return;
     }
     if ( is_dir( $log_dir ) && ! file_exists( $log_dir . '/.htaccess' ) ) {
         $htaccess_written = file_put_contents( $log_dir . '/.htaccess', "Deny from all\n", LOCK_EX );
-        if ( false === $htaccess_written && defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-            error_log( '[ws-core] ws_filter_log_profile_view(): failed to write .htaccess in ' . $log_dir );
+        if ( false === $htaccess_written ) {
+            ws_log_loud_failure( new WS_Loud_Failure( 'filter-context', 'Failed to write .htaccess guard in ws-filter log directory — directory is not blocked at the application level.', [
+                'log_dir' => $log_dir,
+            ] ) );
         }
     }
 
@@ -419,9 +433,9 @@ function ws_filter_log_profile_view( int $org_id, array $context, array $click_m
 
     $write_ok = file_put_contents( $path, $line, FILE_APPEND | LOCK_EX );
     if ( false === $write_ok ) {
-        if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-            error_log( '[ws-core] ws_filter_log_profile_view(): failed to append log line to ' . $path );
-        }
+        ws_log_loud_failure( new WS_Loud_Failure( 'filter-context', 'Failed to append profile-view log line — this click event was not recorded.', [
+            'path' => $path,
+        ] ) );
         return;
     }
 
@@ -452,15 +466,19 @@ function ws_filter_log_request( array $context ): void {
     if ( $log_dir === null ) {
         $log_dir = WP_CONTENT_DIR . '/logs/ws-filter';
         if ( ! is_dir( $log_dir ) && ! wp_mkdir_p( $log_dir ) ) {
-            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                error_log( '[ws-core] ws_filter_log_request(): failed to create log directory: ' . $log_dir );
-            }
+            // Same fix as ws_filter_log_profile_view() above — previously
+            // WP_DEBUG-gated, silent on the live site.
+            ws_log_loud_failure( new WS_Loud_Failure( 'filter-context', 'Failed to create ws-filter log directory — directory-request telemetry is not being recorded.', [
+                'log_dir' => $log_dir,
+            ] ) );
             return;
         }
         if ( is_dir( $log_dir ) && ! file_exists( $log_dir . '/.htaccess' ) ) {
             $htaccess_written = file_put_contents( $log_dir . '/.htaccess', "Deny from all\n", LOCK_EX );
-            if ( false === $htaccess_written && defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                error_log( '[ws-core] ws_filter_log_request(): failed to write .htaccess in ' . $log_dir );
+            if ( false === $htaccess_written ) {
+                ws_log_loud_failure( new WS_Loud_Failure( 'filter-context', 'Failed to write .htaccess guard in ws-filter log directory — directory is not blocked at the application level.', [
+                    'log_dir' => $log_dir,
+                ] ) );
             }
         }
     }
@@ -479,9 +497,9 @@ function ws_filter_log_request( array $context ): void {
 
     $write_ok = file_put_contents( $path, $line, FILE_APPEND | LOCK_EX );
     if ( false === $write_ok ) {
-        if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-            error_log( '[ws-core] ws_filter_log_request(): failed to append log line to ' . $path );
-        }
+        ws_log_loud_failure( new WS_Loud_Failure( 'filter-context', 'Failed to append directory-request log line — this request was not recorded.', [
+            'path' => $path,
+        ] ) );
         return;
     }
 

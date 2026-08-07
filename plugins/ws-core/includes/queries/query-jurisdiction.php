@@ -125,6 +125,18 @@
  * 3.10.4  Assist-org datasets moved to query-directory.php.
  * 3.10.5  Cross-cutting legal updates/reference functions moved to
  *         query-general.php.
+ * 3.20.1  Loud-failure pass (query layer, per README.fail-loud.md Stage 3).
+ *         Left "no results" returns untouched throughout — a jurisdiction
+ *         with no jx-summary, no attach-flagged statutes, etc. is a
+ *         legitimate empty state, not a bug. Fixed three places that
+ *         previously conflated a genuine WP_Error with a legitimate empty
+ *         result, identically: ws_get_jx_term_id() (called by every
+ *         shortcode before invoking dataset functions — a query failure
+ *         here previously rendered an entire jurisdiction page as if it had
+ *         no content); ws_get_us_term_id() (a failure here silently drops
+ *         the federal-law append from every jurisdiction page sitewide);
+ *         and the jurisdiction-index cache-fill loop (a failure here
+ *         silently drops one jurisdiction from the index for 24 hours).
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -639,7 +651,22 @@ function ws_get_jx_statute_data( $jx_term_id ) {
 
 function ws_get_jx_term_id( $post_id ) {
     $terms = wp_get_post_terms( $post_id, WS_JURISDICTION_TAXONOMY );
-    if ( empty( $terms ) || is_wp_error( $terms ) ) {
+    if ( is_wp_error( $terms ) ) {
+        // Distinct from a jurisdiction post that legitimately has no term
+        // assigned yet. This function is the term_id resolver every
+        // shortcode calls before invoking dataset functions — if this
+        // returns 0 because of a genuine query failure rather than a
+        // missing assignment, every dataset function downstream returns
+        // empty/false in turn, and the entire jurisdiction page renders as
+        // if the jurisdiction has no content at all, on live visitor
+        // traffic, with nothing recorded anywhere about why.
+        ws_log_loud_failure( new WS_Loud_Failure( 'query-jurisdiction', "wp_get_post_terms() failed resolving the jurisdiction term for post {$post_id} — returning 0, but this is an unknown state, not a verified 'no term assigned.'", [
+            'post_id' => $post_id,
+            'error'   => $terms->get_error_message(),
+        ] ) );
+        return 0;
+    }
+    if ( empty( $terms ) ) {
         return 0;
     }
     return (int) $terms[0]->term_id;
@@ -665,7 +692,22 @@ function ws_get_us_term_id() {
     }
 
     $term = ws_jx_term_by_code( 'us' );
-    $us_term_id = ( $term && ! is_wp_error( $term ) ) ? (int) $term->term_id : 0;
+    if ( ! $term || is_wp_error( $term ) ) {
+        // The 'us' term is foundational — every one of the 57 seeded
+        // jurisdictions depends on it existing (see matrix-jurisdictions.php),
+        // and every statute/citation/construction/common-law dataset
+        // function uses this to append federal records. If it can't
+        // resolve, EVERY jurisdiction page on the site silently loses its
+        // federal-law section, all at once, with nothing recorded anywhere.
+        // This should fire effectively never on a healthy install — that's
+        // exactly why it's worth being loud rather than quietly caching a 0
+        // for the rest of the request.
+        ws_log_loud_failure( new WS_Loud_Failure( 'query-jurisdiction', "The 'us' jurisdiction term could not be resolved — every jurisdiction page's federal-law append will be silently empty for this request." ) );
+        $us_term_id = 0;
+        return $us_term_id;
+    }
+
+    $us_term_id = (int) $term->term_id;
     return $us_term_id;
 }
 
@@ -991,7 +1033,21 @@ function ws_get_jurisdiction_index_data() {
 
                 $jx_terms = wp_get_post_terms( $post->ID, WS_JURISDICTION_TAXONOMY );
 
-                if ( is_wp_error( $jx_terms ) || empty( $jx_terms ) ) {
+                if ( is_wp_error( $jx_terms ) ) {
+                    // This loop runs once per 24-hour cache fill across all
+                    // 57 jurisdictions. A genuine query failure here means
+                    // one jurisdiction silently vanishes from the sitewide
+                    // index page for the next 24 hours — indistinguishable
+                    // from "this jurisdiction has no term," which was the
+                    // only case previously logged (nowhere).
+                    ws_log_loud_failure( new WS_Loud_Failure( 'query-jurisdiction', "wp_get_post_terms() failed for jurisdiction post {$post->ID} while building the index cache — it will be excluded from the jurisdiction index for the next 24 hours.", [
+                        'post_id' => $post->ID,
+                        'error'   => $jx_terms->get_error_message(),
+                    ] ) );
+                    continue;
+                }
+
+                if ( empty( $jx_terms ) ) {
                     continue;
                 }
 

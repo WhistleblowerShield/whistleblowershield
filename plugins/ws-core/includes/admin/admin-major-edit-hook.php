@@ -4,7 +4,17 @@
  *
  * @package WhistleblowerShield
  * @since   3.2.0
- * @version    3.20.0
+ * @version    3.20.1
+ *
+ * VERSION (cont.)
+ * ----------------
+ * 3.20.1  wp_insert_post() failure now also logs through ws_log_loud_failure()
+ *         (previously only error_log() + this file's own transient notice).
+ *         A missing jurisdiction term on the source post, or a failed
+ *         wp_set_post_terms() call, previously silently produced a
+ *         legal-update post with no jurisdiction term at all — invisible to
+ *         every per-jurisdiction query even though it exists sitewide. Both
+ *         are now logged.
  */
 
 add_action( 'acf/save_post', 'ws_acf_log_major_edit', 20 );
@@ -79,6 +89,14 @@ function ws_acf_log_major_edit( $post_id ) {
 			__FILE__,
 			__LINE__
 		) );
+		// Also route through the unified log — this file already surfaces
+		// the failure via its own admin_notices transient, but not in the
+		// ONE consolidated ws-fail-loud banner other subsystems share.
+		ws_log_loud_failure( new WS_Loud_Failure( 'major-edit', 'wp_insert_post() failed while creating a ws-legal-update record for a flagged major edit.', [
+			'source_post_id' => $post_id,
+			'source_post_type' => $post_type,
+			'error' => $update_id->get_error_message(),
+		] ) );
 		set_transient(
 			'ws_major_edit_notice_' . $user_id,
 			'insert_failed',
@@ -97,7 +115,25 @@ function ws_acf_log_major_edit( $post_id ) {
 	// Write to taxonomy table (save_terms=1 on the ACF field) so tax_query works.
 	$jx_terms = wp_get_post_terms( $post_id, WS_JURISDICTION_TAXONOMY, [ 'fields' => 'ids' ] );
 	if ( ! is_wp_error( $jx_terms ) && ! empty( $jx_terms ) ) {
-		wp_set_post_terms( $update_id, [ (int) $jx_terms[0] ], WS_JURISDICTION_TAXONOMY );
+		$term_result = wp_set_post_terms( $update_id, [ (int) $jx_terms[0] ], WS_JURISDICTION_TAXONOMY );
+		if ( is_wp_error( $term_result ) ) {
+			// A legal-update post with no jurisdiction term is invisible to
+			// every per-jurisdiction query (ws_get_legal_updates_data($jx_id))
+			// — it still exists sitewide, but silently vanishes from the one
+			// jurisdiction page it was actually about.
+			ws_log_loud_failure( new WS_Loud_Failure( 'major-edit', "Failed to assign jurisdiction term to legal-update post {$update_id} — it will not appear on its source jurisdiction's page.", [
+				'update_id' => $update_id,
+				'source_post_id' => $post_id,
+				'error' => $term_result->get_error_message(),
+			] ) );
+		}
+	} else {
+		// Source post has no jurisdiction term of its own — same visibility
+		// consequence as above, different root cause.
+		ws_log_loud_failure( new WS_Loud_Failure( 'major-edit', "Source post {$post_id} has no jurisdiction term — legal-update post {$update_id} was created without one and will not appear on any jurisdiction page.", [
+			'update_id' => $update_id,
+			'source_post_id' => $post_id,
+		] ) );
 	}
 
 	// ── Update date and type ──────────────────────────────────────────────────

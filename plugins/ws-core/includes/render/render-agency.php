@@ -17,11 +17,16 @@
  *
  * @package WhistleblowerShield
  * @since   3.9.0
- * @version    3.20.0
+ * @version    3.20.1
  *
  * VERSION
  * -------
  * 3.9.0   Initial release. Phase 2 of ag-procedure feature build.
+ * 3.20.1  ws_handle_agency_render() now wraps both the ws-agency and
+ *         ag-procedure render paths in ws_render_or_fail_loud() — same
+ *         rationale as render-jurisdiction.php 3.20.1. These are top-level
+ *         the_content filters serving real visitors on pages carrying
+ *         actual filing deadlines.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -126,15 +131,31 @@ function ws_handle_agency_render( $content ) {
 
     $is_rendering = true;
 
+    // Both branches wrapped in ws_render_or_fail_loud() — same rationale as
+    // ws_handle_jurisdiction_render() in render-jurisdiction.php: this is a
+    // top-level the_content filter running for real visitors on live agency
+    // and procedure pages (the "what do I do next" answer, with real filing
+    // deadlines). An uncaught exception here must never reach a visitor as
+    // a fatal white screen.
     if ( $post->post_type === 'ws-agency' ) {
-        $procedures   = ws_get_agency_procedures( $post->ID );
-        $proc_section = ws_render_agency_procedures( $procedures );
+        $proc_section = ws_render_or_fail_loud(
+            function() use ( $post ) {
+                $procedures = ws_get_agency_procedures( $post->ID );
+                return ws_render_agency_procedures( $procedures );
+            },
+            'render-agency'
+        );
         $is_rendering = false;
         return $content . $proc_section;
     }
 
     if ( $post->post_type === 'ag-procedure' ) {
-        $rendered     = ws_render_single_agency_procedure_page( $post->ID );
+        $rendered = ws_render_or_fail_loud(
+            function() use ( $post ) {
+                return ws_render_single_agency_procedure_page( $post->ID );
+            },
+            'render-agency'
+        );
         $is_rendering = false;
         return $rendered ?: $content;
     }

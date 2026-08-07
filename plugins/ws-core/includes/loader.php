@@ -166,10 +166,18 @@
  *         query-jurisdiction.php.
  * 3.13.5  query-assist-orgs renamed to query-directory for assembly-facing
  *         directory terminology consistency.
+ * 3.20.1  ws-fail-loud required directly at the top of the is_admin() block,
+ *         before the Matrix Layer — Stage 0 of the unified loud-failure
+ *         rollout (see README.fail-loud.md). Originally placed as the first
+ *         entry in $admin_files, which turned out to be too late: the Matrix
+ *         and ACF layers both load before $admin_files, and matrix seeders
+ *         are a primary consumer of ws_fail_loud() per the Matrix Doctrine
+ *         in onboarding-guidance.md ("no silent errors, invalid enum values
+ *         throw clear errors"). Corrected before any seeder actually called it.
  *
  * @package WhistleblowerShield
  * @since   2.1.0
- * @version    3.20.0
+ * @version    3.20.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -344,6 +352,30 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 */
 if ( is_admin() ) {
 
+    // ws-fail-loud MUST load before anything else in the Admin Layer,
+    // including the Matrix Layer below — matrix seeders are exactly where
+    // "no silent errors, invalid enum values throw clear errors" doctrine
+    // applies (see onboarding-guidance.md's Matrix Doctrine), so
+    // ws_fail_loud()/WS_Loud_Failure must already be defined by the time
+    // the first seeder runs. Loading it inside $admin_files below would be
+    // too late — that array loads AFTER the Matrix and ACF layers.
+    $ws_fail_loud_path = WS_CORE_PATH . 'includes/admin/ws-fail-loud.php';
+    if ( file_exists( $ws_fail_loud_path ) ) {
+        require_once $ws_fail_loud_path;
+    } else {
+        error_log( sprintf(
+            '[ws-core] Missing ws-fail-loud.php (expected at %s, referenced from %s line %d) — every ws_fail_loud() / ws_log_loud_failure() call in the Matrix, ACF, and Admin layers will fatal with an undefined-function error instead of a clean WS_Loud_Failure.',
+            $ws_fail_loud_path,
+            __FILE__,
+            __LINE__
+        ) );
+        add_action( 'admin_notices', function() {
+            echo '<div class="notice notice-error"><p>';
+            echo '<strong>WhistleblowerShield:</strong> Missing <code>ws-fail-loud.php</code> — check error log for details.';
+            echo '</p></div>';
+        } );
+    }
+
     // MATRIX LAYER LOAD ORDER — NON-NEGOTIABLE
 	//
 	// See MATRIX LAYER DEPENDENCY CHAIN in the docblock above for the full
@@ -459,6 +491,10 @@ if ( is_admin() ) {
     }
 
     // Admin Layer — includes/admin/
+    //
+    // ws-fail-loud.php is NOT in this list — it's required directly at the
+    // top of the is_admin() block above, before the Matrix Layer, since
+    // matrix seeders need ws_fail_loud() too. Do not add it back here.
 	$admin_files = [
 		'admin-navigation', // MUST load first — defines ws_get_attached_citation_count()
 		                    // which is called by admin-columns.php and jurisdiction-dashboard.php.

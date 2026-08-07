@@ -19,7 +19,19 @@
  *
  * @package WhistleblowerShield
  * @since   3.14.2
- * @version    3.20.0
+ * @version    3.20.1
+ *
+ * VERSION LOG
+ * -----------
+ * 3.20.1  Loud-failure pass. get_terms() failures in the three live-map
+ *         builders previously fell through to a silent continue, causing
+ *         every seeded slug for that taxonomy to misreport as "missing"
+ *         instead of "the query failed" — now logged. ws_tax_audit_get_seed_map()
+ *         now throws when register-taxonomies.php is missing/unreadable
+ *         instead of returning [] (which made every live term misreport as
+ *         "extra"); the admin-page caller catches it. Removed @-suppressed,
+ *         unchecked file_put_contents() calls in ws_tax_audit_log_dir() and
+ *         ws_tax_audit_write_php_log().
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -51,11 +63,22 @@ function ws_render_taxonomy_term_audit_page() {
     $scan_requested = isset( $_POST['ws_tax_audit_run'] );
     $results        = null;
     $log_file       = '';
+    $run_error      = '';
 
     if ( $scan_requested ) {
         check_admin_referer( 'ws_tax_audit_nonce', 'ws_tax_audit_nonce' );
-        $results  = ws_tax_audit_run();
-        $log_file = ws_tax_audit_write_php_log( $results );
+        // ws_tax_audit_run() (via ws_tax_audit_get_seed_map()) now throws
+        // WS_Loud_Failure when register-taxonomies.php is missing/unreadable
+        // — a state that means the plugin itself is broken, not that this
+        // one admin action failed harmlessly. Caught here at the admin-page
+        // boundary so it surfaces as a clear notice instead of a fatal
+        // white screen, matching the pg-ui.php reference pattern.
+        try {
+            $results  = ws_tax_audit_run();
+            $log_file = ws_tax_audit_write_php_log( $results );
+        } catch ( WS_Loud_Failure $e ) {
+            $run_error = $e->getMessage();
+        }
     }
 
     ?>
@@ -71,6 +94,10 @@ function ws_render_taxonomy_term_audit_page() {
             <input type="hidden" name="ws_tax_audit_run" value="1" />
             <?php submit_button( 'Run Taxonomy Audit', 'primary', 'submit', false ); ?>
         </form>
+
+        <?php if ( $run_error !== '' ) : ?>
+            <div class="notice notice-error"><p><strong>Audit could not run:</strong> <?php echo esc_html( $run_error ); ?></p></div>
+        <?php endif; ?>
 
         <?php if ( is_array( $results ) ) : ?>
             <?php
@@ -239,6 +266,17 @@ function ws_tax_audit_get_live_map() {
         ] );
 
         if ( is_wp_error( $terms ) ) {
+            // Previously a silent continue — the taxonomy was simply dropped
+            // from the live map. Every seeded slug for it then reads as
+            // "missing" in the audit report, which is the wrong diagnosis:
+            // the real cause was a failed get_terms() query, not an absent
+            // term. Logged, not thrown — this is a read-only diagnostic loop
+            // over many taxonomies and one bad query shouldn't abort the
+            // whole audit run.
+            ws_log_loud_failure( new WS_Loud_Failure( 'taxonomy-audit', "get_terms() failed for '{$taxonomy}' — this taxonomy was excluded from the live map, so its seeded slugs will incorrectly show as 'missing'.", [
+                'taxonomy' => $taxonomy,
+                'error'    => $terms->get_error_message(),
+            ] ) );
             continue;
         }
 
@@ -279,6 +317,17 @@ function ws_tax_audit_get_live_label_map() {
         ] );
 
         if ( is_wp_error( $terms ) ) {
+            // Previously a silent continue — the taxonomy was simply dropped
+            // from the live map. Every seeded slug for it then reads as
+            // "missing" in the audit report, which is the wrong diagnosis:
+            // the real cause was a failed get_terms() query, not an absent
+            // term. Logged, not thrown — this is a read-only diagnostic loop
+            // over many taxonomies and one bad query shouldn't abort the
+            // whole audit run.
+            ws_log_loud_failure( new WS_Loud_Failure( 'taxonomy-audit', "get_terms() failed for '{$taxonomy}' — this taxonomy was excluded from the live map, so its seeded slugs will incorrectly show as 'missing'.", [
+                'taxonomy' => $taxonomy,
+                'error'    => $terms->get_error_message(),
+            ] ) );
             continue;
         }
 
@@ -315,6 +364,17 @@ function ws_tax_audit_get_live_parent_map() {
         ] );
 
         if ( is_wp_error( $terms ) ) {
+            // Previously a silent continue — the taxonomy was simply dropped
+            // from the live map. Every seeded slug for it then reads as
+            // "missing" in the audit report, which is the wrong diagnosis:
+            // the real cause was a failed get_terms() query, not an absent
+            // term. Logged, not thrown — this is a read-only diagnostic loop
+            // over many taxonomies and one bad query shouldn't abort the
+            // whole audit run.
+            ws_log_loud_failure( new WS_Loud_Failure( 'taxonomy-audit', "get_terms() failed for '{$taxonomy}' — this taxonomy was excluded from the live map, so its seeded slugs will incorrectly show as 'missing'.", [
+                'taxonomy' => $taxonomy,
+                'error'    => $terms->get_error_message(),
+            ] ) );
             continue;
         }
 
@@ -343,13 +403,24 @@ function ws_tax_audit_get_live_parent_map() {
 
 function ws_tax_audit_get_seed_map() {
     $file = WS_CORE_PATH . 'includes/taxonomies/register-taxonomies.php';
+    // register-taxonomies.php is required unconditionally by loader.php — if
+    // it's missing or unreadable here, the plugin itself is broken, not
+    // "there is no seed data." A silent [] previously made EVERY live
+    // taxonomy term report as "extra" (nothing in seed to compare against),
+    // which is a completely wrong diagnosis for a completely different
+    // problem. Throws — this only runs when an admin explicitly clicks
+    // "Run Taxonomy Audit," and the caller wraps it in a try/catch.
     if ( ! file_exists( $file ) ) {
-        return [];
+        ws_fail_loud( 'taxonomy-audit', 'register-taxonomies.php does not exist at the expected path — cannot build the seed map.', [
+            'expected_path' => $file,
+        ] );
     }
 
     $source = file_get_contents( $file );
     if ( ! is_string( $source ) || $source === '' ) {
-        return [];
+        ws_fail_loud( 'taxonomy-audit', 'register-taxonomies.php exists but could not be read, or is empty — cannot build the seed map.', [
+            'expected_path' => $file,
+        ] );
     }
 
     $functions = ws_tax_audit_extract_seed_function_bodies( $source );
@@ -596,8 +667,17 @@ function ws_tax_audit_php_escape( $value ) {
 function ws_tax_audit_log_dir() {
     $dir = WP_CONTENT_DIR . '/logs/ws-taxonomy-audit';
     if ( ! file_exists( $dir ) ) {
-        wp_mkdir_p( $dir );
-        file_put_contents( $dir . '/.htaccess', "Deny from all\n" );
+        if ( ! wp_mkdir_p( $dir ) ) {
+            ws_log_loud_failure( new WS_Loud_Failure( 'taxonomy-audit', 'Failed to create taxonomy audit log directory.', [
+                'dir' => $dir,
+            ] ) );
+            return $dir;
+        }
+        if ( file_put_contents( $dir . '/.htaccess', "Deny from all\n" ) === false ) {
+            ws_log_loud_failure( new WS_Loud_Failure( 'taxonomy-audit', 'Failed to write .htaccess guard in taxonomy audit log directory.', [
+                'dir' => $dir,
+            ] ) );
+        }
     }
 
     return $dir;
@@ -625,12 +705,24 @@ function ws_tax_audit_write_php_log( $results ) {
     }
 
     // Write the immutable run file once; never rewrite historical files.
-    if ( @file_put_contents( $path, $payload, LOCK_EX ) === false ) {
+    // Error suppression (@) removed — a failed write was previously both
+    // silenced and unrecorded; the caller only sees an empty $log_file
+    // string with no indication anything went wrong.
+    if ( file_put_contents( $path, $payload, LOCK_EX ) === false ) {
+        ws_log_loud_failure( new WS_Loud_Failure( 'taxonomy-audit', 'Failed to write taxonomy audit run log.', [
+            'path' => $path,
+        ] ) );
         return '';
     }
 
-    // Update rolling latest pointer copy for convenience.
-    @file_put_contents( $latest, $payload, LOCK_EX );
+    // Update rolling latest pointer copy for convenience. Failure here does
+    // not affect the immutable run file above, so it doesn't block the
+    // return — but it's still logged rather than silently swallowed by @.
+    if ( file_put_contents( $latest, $payload, LOCK_EX ) === false ) {
+        ws_log_loud_failure( new WS_Loud_Failure( 'taxonomy-audit', 'Failed to update taxonomy-audit-latest.php.txt pointer copy.', [
+            'path' => $latest,
+        ] ) );
+    }
 
     return $path;
 }

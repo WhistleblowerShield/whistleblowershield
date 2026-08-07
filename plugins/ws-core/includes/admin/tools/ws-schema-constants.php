@@ -39,13 +39,17 @@
  *
  * @package    WhistleblowerShield
  * @since      3.16.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
  * VERSION LOG
  * -----------
+ * 3.20.1  ws_schema_allowed() now calls ws_fail_loud() instead of silently
+ *         returning [] when passed a non-array — a broken schema reference
+ *         previously made every ws_schema_valid() check quietly false
+ *         instead of surfacing that the schema itself never loaded.
  * 3.16.0  Initial release.
  *         WS_SCHEMA_PHONE_TYPE          — phone scope for ws-assist-org and ws-agency
  *         WS_SCHEMA_EMAIL_TYPE          — email scope for ws-assist-org and ws-agency
@@ -235,11 +239,22 @@ define( 'WS_SCHEMA_SECURE_TOOL', [
  * Returns the allowed values array for a schema constant.
  *
  * @param  mixed $constant  The schema constant value (e.g. WS_SCHEMA_PHONE_TYPE).
- * @return array            Allowed values, or empty array if not recognized.
+ * @return array            Allowed values.
+ * @throws WS_Loud_Failure  When $constant is not an array — a caller passing
+ *                          a non-array here (e.g. an undefined constant name
+ *                          that PHP resolved to its own string, or a typo'd
+ *                          reference) previously got a silent [] back, which
+ *                          makes every subsequent ws_schema_valid() check
+ *                          false without any indication the schema itself
+ *                          was never actually loaded — every value looks
+ *                          "invalid" for the wrong reason.
  */
 function ws_schema_allowed( $constant ): array {
     if ( ! is_array( $constant ) ) {
-        return [];
+        ws_fail_loud( 'schema-constants', 'ws_schema_allowed() called with a non-array constant — the schema constant was not resolved correctly.', [
+            'received_type'  => gettype( $constant ),
+            'received_value' => is_scalar( $constant ) ? $constant : '(non-scalar)',
+        ] );
     }
     return $constant;
 }

@@ -61,7 +61,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.2.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -69,6 +69,19 @@
  * VERSION
  * -------
  * 3.2.0  Initial release.
+ * 3.20.1 Stage 1 of the unified loud-failure rollout (README.fail-loud.md):
+ *        existing internal logic (options, notices, email digests, lock/TTL
+ *        recovery) unchanged. Added ws_log_loud_failure() calls for four
+ *        previously-silent failure points: wp_schedule_event() return value
+ *        was never checked (a failed schedule meant the monitor silently
+ *        never ran again); a lock held past its TTL window fell through to
+ *        the same silent skip as a normal in-window overlap; the
+ *        catch(Throwable) block recorded to its own $error_option but not
+ *        the unified log; and wp_mail() return value was never checked in
+ *        any of the three digest senders (a misconfigured mail transport
+ *        meant the one mechanism built to notify admins of a problem could
+ *        itself fail without anyone knowing). Added
+ *        ws_url_monitor_send_mail_and_log() to centralize the last one.
  * 3.2.1  Added inline comment to direct meta read in monitor loop explaining
  *        why the query layer is not used in WP-Cron context.
  * 3.2.2  Added admin_notices banner surfacing active URL failures to all
@@ -137,10 +150,23 @@ add_action( 'admin_init', 'ws_url_monitor_schedule' );
  */
 function ws_url_monitor_schedule() {
     if ( ! wp_next_scheduled( 'ws_url_health_check' ) ) {
-        wp_schedule_event( time(), 'ws_every_ten_days', 'ws_url_health_check' );
+        $scheduled = wp_schedule_event( time(), 'ws_every_ten_days', 'ws_url_health_check' );
+        // wp_schedule_event() returns true on success, false or WP_Error on failure.
+        // An unscheduled standard check is a silent failure: the monitor simply
+        // never runs again and nothing tells anyone why.
+        if ( true !== $scheduled ) {
+            ws_log_loud_failure( new WS_Loud_Failure( 'url-monitor', 'Failed to schedule ws_url_health_check.', [
+                'result' => is_wp_error( $scheduled ) ? $scheduled->get_error_message() : $scheduled,
+            ] ) );
+        }
     }
     if ( ! wp_next_scheduled( 'ws_url_priority_health_check' ) ) {
-        wp_schedule_event( time(), 'ws_every_three_days', 'ws_url_priority_health_check' );
+        $scheduled = wp_schedule_event( time(), 'ws_every_three_days', 'ws_url_priority_health_check' );
+        if ( true !== $scheduled ) {
+            ws_log_loud_failure( new WS_Loud_Failure( 'url-monitor', 'Failed to schedule ws_url_priority_health_check.', [
+                'result' => is_wp_error( $scheduled ) ? $scheduled->get_error_message() : $scheduled,
+            ] ) );
+        }
     }
 }
 
@@ -212,11 +238,12 @@ function ws_url_monitor_run_check_for_map( array $monitor_map, $scope = 'standar
 
     if ( ! add_option( $lock_option, time(), '', false ) ) {
         $locked_at = (int) get_option( $lock_option, 0 );
+        $lock_age  = ( $locked_at > 0 ) ? max( 0, $now - $locked_at ) : 0;
         update_option( $stats_option, [
             'status'         => 'skipped_locked',
             'scope'          => $scope,
             'timestamp'      => $now,
-            'lock_age'       => ( $locked_at > 0 ) ? max( 0, $now - $locked_at ) : 0,
+            'lock_age'       => $lock_age,
             'checked_urls'   => 0,
             'unreachable'    => 0,
             'scanned_posts'  => 0,
@@ -224,6 +251,19 @@ function ws_url_monitor_run_check_for_map( array $monitor_map, $scope = 'standar
             'failures'       => 0,
             'recoveries'     => 0,
         ] );
+        // A lock skip inside the TTL is expected under normal overlap and is
+        // not logged. A lock skip that survived a full TTL window (the "if
+        // stale, delete it" branch above should have already cleared it —
+        // reaching here anyway means add_option() raced or something is
+        // still legitimately running long past its expected window) is worth
+        // central visibility rather than silently repeating forever.
+        if ( $lock_age > $lock_ttl ) {
+            ws_log_loud_failure( new WS_Loud_Failure( 'url-monitor', "URL monitor ({$scope}) skipped — lock held past its TTL window.", [
+                'scope'    => $scope,
+                'lock_age' => $lock_age,
+                'lock_ttl' => $lock_ttl,
+            ] ) );
+        }
         return;
     }
 
@@ -443,6 +483,17 @@ function ws_url_monitor_run_check_for_map( array $monitor_map, $scope = 'standar
         if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
             error_log( '[ws-core][url-monitor][' . $scope . '] ' . $e->getMessage() );
         }
+
+        // Additionally route through the unified log so a run-aborting
+        // exception shows up in the ONE consolidated ws-fail-loud notice,
+        // not just this monitor's own $error_option string. Logged, not
+        // thrown — ws_fail_loud() would propagate past this catch and this
+        // cron handler has no further boundary to catch it, which would turn
+        // a recorded, handled error into an unhandled fatal.
+        ws_log_loud_failure( new WS_Loud_Failure( 'url-monitor', 'Run aborted: ' . $e->getMessage(), [
+            'scope'                     => $scope,
+            'original_exception_class'  => get_class( $e ),
+        ] ) );
     } finally {
         delete_option( $lock_option );
     }
@@ -526,9 +577,7 @@ function ws_url_monitor_send_failure_email( array $failures, array $warnings ) {
     $body .= "WhistleblowerShield URL Health Monitor\n";
     $body .= get_bloginfo( 'url' ) . "\n";
 
-    foreach ( $emails as $email ) {
-        wp_mail( $email, $subject, $body );
-    }
+    ws_url_monitor_send_mail_and_log( $emails, $subject, $body, 'failure-digest' );
 }
 
 
@@ -565,9 +614,7 @@ function ws_url_monitor_send_recovery_email( array $recoveries ) {
     $body .= "WhistleblowerShield URL Health Monitor\n";
     $body .= get_bloginfo( 'url' ) . "\n";
 
-    foreach ( $emails as $email ) {
-        wp_mail( $email, $subject, $body );
-    }
+    ws_url_monitor_send_mail_and_log( $emails, $subject, $body, 'recovery-digest' );
 }
 
 
@@ -605,8 +652,50 @@ function ws_url_monitor_send_transport_alert_email( array $stats ) {
     $body .= "WhistleblowerShield URL Health Monitor\n";
     $body .= get_bloginfo( 'url' ) . "\n";
 
+    ws_url_monitor_send_mail_and_log( $emails, $subject, $body, 'transport-alert' );
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// Private Helper: Send Mail And Log Delivery Failures
+//
+// wp_mail() returns bool and is silent on failure by default — a
+// misconfigured mail transport means the ONE mechanism meant to tell an
+// admin about a problem (the digest email) fails without anyone knowing.
+// Centralizes the send-and-check loop used by all three digest senders
+// above so delivery failures get the same unified-log visibility as the
+// conditions the digests themselves report.
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Sends $body to every address in $emails, logging once (not per-address)
+ * if any send failed.
+ *
+ * @param string[] $emails   Recipient addresses.
+ * @param string   $subject  Email subject.
+ * @param string   $body     Email body.
+ * @param string   $digest   Short label for which digest this is — used only
+ *                           in the log entry, not shown to any recipient.
+ * @return void
+ */
+function ws_url_monitor_send_mail_and_log( array $emails, string $subject, string $body, string $digest ): void {
+    $failed = [];
+
     foreach ( $emails as $email ) {
-        wp_mail( $email, $subject, $body );
+        if ( ! wp_mail( $email, $subject, $body ) ) {
+            $failed[] = $email;
+        }
+    }
+
+    if ( ! empty( $failed ) ) {
+        ws_log_loud_failure( new WS_Loud_Failure( 'url-monitor', "wp_mail() failed for {$digest} digest — " . count( $failed ) . ' of ' . count( $emails ) . ' recipient(s) did not receive it.', [
+            'digest'          => $digest,
+            'failed_count'    => count( $failed ),
+            'total_recipients'=> count( $emails ),
+            // Addresses, not message content — enough to diagnose a bad
+            // mailbox without logging the digest body itself.
+            'failed_emails'   => $failed,
+        ] ) );
     }
 }
 

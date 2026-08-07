@@ -35,12 +35,16 @@
  *
  * @package    WhistleblowerShield
  * @since      3.6.1
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Dejunai
  *
  * VERSION
  * -------
  * 3.6.1  Initial release.
+ * 3.20.1 Routed newly-appeared issues through ws_log_loud_failure() so they
+ *        surface in the unified ws-fail-loud admin notice too, without
+ *        duplicating on every page load (see ws_health_check_log_new_issues()).
+ *        Existing $issues-array-then-one-notice behavior unchanged.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -142,6 +146,17 @@ function ws_health_check_admin_notice() {
         }
     }
 
+    // ── Route to unified loud-failure log ────────────────────────────────
+    //
+    // This hook fires on every admin_notices load for every administrator —
+    // logging unconditionally here would flood ws_loud_failure_log with a
+    // duplicate entry per page view. ws_health_check_log_new_issues() only
+    // logs an issue the first time it appears; once it clears, a later
+    // recurrence is logged again as new. This does not replace the banner
+    // below — it makes these failures visible in the ONE consolidated
+    // ws-fail-loud notice too, per the Stage 1 rollout plan.
+    ws_health_check_log_new_issues( $issues );
+
     // ── Render ────────────────────────────────────────────────────────────
 
     if ( empty( $issues ) ) {
@@ -157,4 +172,37 @@ function ws_health_check_admin_notice() {
     }
 
     echo '</ul></div>';
+}
+
+/**
+ * Logs newly-appeared health-check issues through the unified loud-failure
+ * log ({@see ws_log_loud_failure()}), without re-logging issues already
+ * recorded on a previous run.
+ *
+ * Does not throw — this runs unconditionally on every admin page load, so
+ * ws_fail_loud() (which always throws) would break every admin screen the
+ * moment any single dependency check failed. Logging directly via a
+ * manually-built WS_Loud_Failure is the correct primitive here; see the
+ * "TWO PRIMITIVES" note in ws-fail-loud.php for why ws_fail_loud() is
+ * reserved for code paths a caller can and will catch.
+ *
+ * @param string[] $issues Current issue strings (may contain inline HTML
+ *                         for the admin_notices render — stripped before
+ *                         logging as plain text).
+ * @return void
+ */
+function ws_health_check_log_new_issues( array $issues ): void {
+    $previously_logged = get_option( 'ws_health_check_logged_issues', [] );
+    if ( ! is_array( $previously_logged ) ) {
+        $previously_logged = [];
+    }
+
+    $current_plain = array_map( 'wp_strip_all_tags', $issues );
+    $new_issues    = array_diff( $current_plain, $previously_logged );
+
+    foreach ( $new_issues as $issue ) {
+        ws_log_loud_failure( new WS_Loud_Failure( 'health-check', $issue ) );
+    }
+
+    update_option( 'ws_health_check_logged_issues', array_values( $current_plain ) );
 }

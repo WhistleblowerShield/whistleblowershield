@@ -1,6 +1,36 @@
 <?php
 /**
- * Prompt Generator - Shared Prompt Blocks
+ * pg-blocks-shared.php
+ *
+ * Prompt Generator — Shared Prompt Blocks
+ *
+ * PURPOSE
+ * -------
+ * Block functions used by every record type: the opening role/stakes
+ * framing, the global omission policy, the meta block, the new-terms
+ * proposal guidance, the integrity block, and the closing contract line.
+ * No dependencies on other pg-* files.
+ *
+ * A NOTE ON TONE
+ * --------------
+ * ws_prompt_shared_intro_block()'s error-path strings ("This_is_a_fuq'n_error")
+ * are intentional loud-failure sentinels, not a bug — if you see one in
+ * generated output, a record_type reached this function that shouldn't
+ * have. Per project convention, brutal-humor sentinels stay during active
+ * development and get swapped for calm equivalents in a dedicated pass
+ * before anything here ships to a researcher who isn't Dwight.
+ *
+ * @package    WhistleblowerShield
+ * @since      3.13.0
+ * @version    3.21.0-rewrite
+ * @author     WhistleblowerShield (Dwight)
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
+ *
+ * VERSION LOG
+ * -----------
+ * 3.21.0-rewrite  Docblock pass only. No logic changes — every block
+ *                 function here is byte-identical to 3.13.0.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -41,6 +71,7 @@ function ws_prompt_shared_intro_block( string $record_type, int $records = 0 ): 
 
     return $block;
 }
+
 function ws_prompt_shared_policy_block(): string {
     return "--------------------------------------------------------------------------------\n"
         . "GLOBAL OMISSION & SCHEMA POLICY\n\n"
@@ -106,4 +137,3 @@ function ws_prompt_integrity_block(): string {
 function ws_prompt_final_contract(): string {
     return "Produce the complete JSON object now, inside a single code block. Do not include any commentary outside _json_run_researcher_notes or the code block.\n";
 }
-

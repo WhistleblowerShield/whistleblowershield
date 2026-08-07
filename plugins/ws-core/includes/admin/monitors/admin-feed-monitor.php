@@ -34,11 +34,24 @@
  *
  * @package WhistleblowerShield
  * @since   3.2.0
- * @version    3.20.0
+ * @version    3.20.1
  *
  * VERSION
  * -------
  * 3.2.0   Initial release.
+ * 3.20.1  Stage 1 of the unified loud-failure rollout (README.fail-loud.md).
+ *         ws_feed_monitor_set_error() — the existing single choke point for
+ *         this file's own error option/notice — now also calls
+ *         ws_log_loud_failure(), and the three network/HTTP/response
+ *         failure branches in ws_feed_monitor_poll() were switched from a
+ *         direct update_option() call to that same helper for consistency.
+ *         Fixed two previously-silent failures with no existing signal at
+ *         all: wp_mkdir_p()/file_put_contents() return values were
+ *         unchecked in ws_feed_monitor_ensure_data_dir(); wp_insert_post()
+ *         failure and jurisdiction-term resolution failure in
+ *         ws_feed_ingest_item() were both silently swallowed (a bad jx_code
+ *         produced a statute post with no jurisdiction term at all, with
+ *         nothing recorded anywhere).
  * 3.8.1   LOCK_EX added to file writes. Feed staged pruning added.
  *         ws_feed_monitor_default_jx_code filter added.
  * 3.10.1  Header documentation sync.
@@ -123,14 +136,29 @@ add_action( 'admin_init', 'ws_feed_monitor_ensure_data_dir' );
 function ws_feed_monitor_ensure_data_dir() {
     $dir = ws_feed_data_dir();
     if ( ! file_exists( $dir ) ) {
-        wp_mkdir_p( $dir );
+        // wp_mkdir_p() return value was previously unchecked. A failed mkdir
+        // here means every subsequent read/write in this file fails too, but
+        // silently — nothing distinguishes "directory missing" from
+        // "directory exists but empty." Logged, not thrown: this runs on
+        // admin_init for every admin page load, and a thrown exception here
+        // would break every admin screen rather than just Feed Monitor.
+        if ( ! wp_mkdir_p( $dir ) ) {
+            ws_log_loud_failure( new WS_Loud_Failure( 'feed-monitor', 'Failed to create feed data directory.', [
+                'dir' => $dir,
+            ] ) );
+            return;
+        }
     }
 
     // .htaccess blocks direct HTTP access on Apache. Nginx requires separate
     // server-level configuration to protect this path.
     $htaccess = $dir . '.htaccess';
     if ( ! file_exists( $htaccess ) ) {
-        file_put_contents( $htaccess, "Deny from all\n" );
+        if ( false === file_put_contents( $htaccess, "Deny from all\n" ) ) {
+            ws_log_loud_failure( new WS_Loud_Failure( 'feed-monitor', 'Failed to write .htaccess guard in feed data directory — directory access is not blocked at the application level.', [
+                'dir' => $dir,
+            ] ) );
+        }
     }
 }
 
@@ -208,14 +236,17 @@ function ws_feed_monitor_poll() {
     ] );
 
     if ( is_wp_error( $response ) ) {
-        update_option( 'ws_feed_monitor_last_error', 'Network error — ' . $response->get_error_message() );
+        // Routed through ws_feed_monitor_set_error() (was a direct
+        // update_option() call) so this failure also reaches the unified
+        // ws-fail-loud log, consistent with every other error path in this
+        // file.
+        ws_feed_monitor_set_error( 'Network error — ' . $response->get_error_message() );
         return -1;
     }
 
     $code = wp_remote_retrieve_response_code( $response );
     if ( (int) $code !== 200 ) {
-        // Store the error code for display in the admin UI.
-        update_option( 'ws_feed_monitor_last_error', "HTTP {$code}" );
+        ws_feed_monitor_set_error( "HTTP {$code}" );
         return -1;
     }
 
@@ -223,7 +254,7 @@ function ws_feed_monitor_poll() {
     $data = json_decode( $body, true );
 
     if ( ! isset( $data['items'] ) || ! is_array( $data['items'] ) ) {
-        update_option( 'ws_feed_monitor_last_error', 'Invalid API response — no items key.' );
+        ws_feed_monitor_set_error( 'Invalid API response — no items key.' );
         return -1;
     }
 
@@ -382,7 +413,9 @@ function ws_feed_ingest_item( $guid ) {
 
     // ── Resolve WS_JURISDICTION_TAXONOMY term ──────────────────────────────────────
 
-    $term = ws_jx_term_by_code( sanitize_text_field( $entry['jx_code'] ?? 'US' ) );
+    $jx_code = sanitize_text_field( $entry['jx_code'] ?? 'US' );
+    $term    = ws_jx_term_by_code( $jx_code );
+
     // ── Create post ───────────────────────────────────────────────────────
 
     $post_id = wp_insert_post( [
@@ -393,6 +426,15 @@ function ws_feed_ingest_item( $guid ) {
     ] );
 
     if ( is_wp_error( $post_id ) || ! $post_id ) {
+        // Previously silent — returning false here gave no indication of
+        // *why* ingest failed for this item, and the caller
+        // (ws_feed_monitor_render_page()) only shows a generic "Ingest
+        // failed" notice either way.
+        ws_log_loud_failure( new WS_Loud_Failure( 'feed-monitor', 'wp_insert_post() failed while ingesting a staged feed item.', [
+            'guid'  => $entry['guid'] ?? '',
+            'title' => $entry['title'] ?? '',
+            'error' => is_wp_error( $post_id ) ? $post_id->get_error_message() : 'wp_insert_post() returned falsy without a WP_Error.',
+        ] ) );
         return false;
     }
 
@@ -401,6 +443,16 @@ function ws_feed_ingest_item( $guid ) {
     if ( $term && ! is_wp_error( $term ) ) {
         wp_set_object_terms( $post_id, $term->term_id, WS_JURISDICTION_TAXONOMY );
         update_post_meta( $post_id, 'ws_jx_term_id', $term->term_id );
+    } else {
+        // Previously silent — the post was created and ingested with
+        // ws_needs_review = 1 regardless, but with no WS_JURISDICTION_TAXONOMY term
+        // assigned at all. That is a jx_code the reviewer typed into the
+        // Feed Monitor edit box that didn't resolve to a real jurisdiction —
+        // worth surfacing rather than quietly leaving the post unscoped.
+        ws_log_loud_failure( new WS_Loud_Failure( 'feed-monitor', "Ingested statute post {$post_id} has no jurisdiction term — '{$jx_code}' did not resolve to a jurisdiction.", [
+            'post_id' => $post_id,
+            'jx_code' => $jx_code,
+        ] ) );
     }
 
     // ── Write ingest meta ─────────────────────────────────────────────────
@@ -533,12 +585,20 @@ function ws_feed_monitor_write_staged( array $staged ) {
 }
 
 /**
- * Stores a monitor error message for display in admin UI.
+ * Stores a monitor error message for display in admin UI, and routes it
+ * through the unified loud-failure log so it also surfaces in the ONE
+ * consolidated ws-fail-loud notice, not just this file's own admin_notices
+ * banner. This is the single choke point every feed-monitor error already
+ * passes through — read/write/lock failures in
+ * ws_feed_monitor_read_staged()/ws_feed_monitor_write_staged(), and now the
+ * network/HTTP/response failures in ws_feed_monitor_poll() as well.
  *
  * @param string $message Error message text.
  */
 function ws_feed_monitor_set_error( $message ) {
-    update_option( 'ws_feed_monitor_last_error', sanitize_text_field( $message ) );
+    $clean = sanitize_text_field( $message );
+    update_option( 'ws_feed_monitor_last_error', $clean );
+    ws_log_loud_failure( new WS_Loud_Failure( 'feed-monitor', $clean ) );
 }
 
 

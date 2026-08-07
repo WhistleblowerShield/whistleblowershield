@@ -4,11 +4,15 @@
  *
  * @package    WhistleblowerShield
  * @since      3.0.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
- * 
+ *
+ * VERSION LOG
+ * -----------
+ * 3.20.1  Missing 'us' jurisdiction term now calls ws_fail_loud() instead of
+ *         silently returning — see matrix-jurisdictions.php 3.20.1.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -200,10 +204,13 @@ function ws_seed_fed_statutes_matrix() {
 
     global $_ws_fed_statutes_matrix;
 
-    // Resolve the US jurisdiction term ID.
+    // Resolve the US jurisdiction term ID. Depends on matrix-jurisdictions
+    // having already run — see matrix-agencies.php for the same fix and
+    // rationale (a missing 'us' term here means the dependency chain is
+    // broken, not a normal state to quietly wait out).
     $us_term = ws_jx_term_by_code( 'us' );
     if ( ! $us_term || is_wp_error( $us_term ) ) {
-        return; // Taxonomy terms not yet seeded — bail.
+        ws_fail_loud( 'matrix-fed-statutes', "The 'us' jurisdiction term does not exist — cannot seed the federal statutes matrix. matrix-jurisdictions.php must run first." );
     }
     $us_term_id = (int) $us_term->term_id;
 

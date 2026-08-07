@@ -4,11 +4,18 @@
  *
  * @package    WhistleblowerShield
  * @since      3.0.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
- * 
+ *
+ * VERSION LOG
+ * -----------
+ * 3.20.1  ws_assist_org_matrix_fail() now routes through ws_fail_loud()
+ *         instead of calling wp_die() directly — this file was already the
+ *         loudest matrix seeder in the codebase (hard-blocking on multiple
+ *         canonical-data conditions), it just wasn't logged anywhere
+ *         persistent. Same loudness, now with a central record.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -1308,21 +1315,17 @@ $_ws_assist_org_matrix = [
 // Seeder: ws_seed_assist_org_matrix
 // ════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Previously called wp_die() directly — loud, correct in spirit, but its
+ * own bespoke shape: no entry in the unified rolling log or error log file,
+ * nothing left behind after the admin closes that one die() screen. Routed
+ * through ws_fail_loud() so this matrix's failures get the same persistent,
+ * centralized record every other subsystem's failures now get, while
+ * remaining exactly as loud — an uncaught WS_Loud_Failure still halts the
+ * request; nothing here got quieter.
+ */
 function ws_assist_org_matrix_fail( string $message, array $context = [] ): void {
-    $details = '';
-
-    foreach ( $context as $key => $value ) {
-        if ( $value === '' || $value === null ) {
-            continue;
-        }
-        $details .= sprintf( ' %s=%s;', $key, (string) $value );
-    }
-
-    wp_die(
-        esc_html( "[ws-core assist-org matrix] Gawd-damm-it! Seed operation terminated. Canonical data condition was not satisfied. {$message}{$details}" ),
-        esc_html__( 'Assist-org matrix seed failed', 'whistleblowershield' ),
-        [ 'response' => 500 ]
-    );
+    ws_fail_loud( 'matrix-assist-orgs', $message, $context );
 }
 
 function ws_seed_assist_org_matrix() {

@@ -27,7 +27,24 @@
  *
  * @package       WhistleblowerShield
  * @since         2.1.0
- * @version       3.20.0 [3.20 locked — never been deployed, no live data, bump patch only] — [Do not bump gates]
+ * @version       3.20.1 [3.20 locked — never been deployed, no live data, bump patch only] — [Do not bump gates]
+ *
+ * VERSION LOG (3.20.1)
+ * ---------------------
+ * Loud-failure pass. All wp_die() calls in ws_seed_all_taxonomies() and
+ * ws_seed_taxonomy() converted to ws_fail_loud() for the same reason
+ * matrix-assist-orgs.php's ws_assist_org_matrix_fail() was converted:
+ * wp_die() alone leaves no persistent record after the admin closes that
+ * one screen. Also fixed a real ambiguity: a hyphenated taxonomy slug
+ * previously triggered trigger_error(..., E_USER_ERROR) — fatal by
+ * default — immediately followed by a `continue`, which is either
+ * unreachable dead code or (if a custom error handler, e.g. Sentry,
+ * intercepts without halting) a silent per-taxonomy skip with no
+ * structured record. Confirmed ws_fail_loud() is available by the time
+ * these fire: ws_seed_all_taxonomies()/ws_seed_taxonomy() only run on the
+ * admin_init hook, which fires only in is_admin() context, by which point
+ * loader.php's Admin Layer (where ws-fail-loud.php loads first) has
+ * already executed synchronously within the same plugins_loaded call.
  * @author        Whistleblower Shield
  * @link          https://whistleblowershield.org
  * @copyright     Copyright (c) 2026 Whistleblower Shield
@@ -1053,15 +1070,30 @@ function ws_seed_all_taxonomies()
     foreach ($_ws_taxonomy_registry as $slug => $config) {
         if (! empty($config['terms'])) {
             // Strict configuration check: Taxonomies must be snake_case
+            //
+            // Previously trigger_error(..., E_USER_ERROR) followed by continue —
+            // E_USER_ERROR is fatal by default, which makes the continue
+            // unreachable dead code unless a custom error handler (this
+            // project runs Sentry) intercepts it without halting, in which
+            // case the continue silently skips this taxonomy with no
+            // structured record. Either way the two statements contradict
+            // each other about whether this is fatal. ws_fail_loud() removes
+            // the ambiguity — this is a registry configuration bug (a
+            // developer error in $_ws_taxonomy_registry, not user input), the
+            // same class of "no silent errors" case the matrix doctrine
+            // already covers for seeders.
             if (strpos($slug, '-') !== false) {
-                trigger_error("WS Core: Taxonomy slug '{$slug}' contains a hyphen — must be snake_case.", E_USER_ERROR);
-                continue;
+                ws_fail_loud('register-taxonomies', "Taxonomy slug '{$slug}' contains a hyphen — must be snake_case.", [
+                    'slug' => $slug,
+                ]);
             }
 
             // Auto-generate gate key: ws_protected_disclosure -> ws_seeded_protected_disclosure
             $gate = 'ws_seeded_' . substr($slug, 3);
             if (empty($config['seed_version'])) {
-                wp_die("This is a FuQ'n Error! Taxonomy '{$slug}' is missing 'seed_version' in the registry.");
+                ws_fail_loud('register-taxonomies', "Taxonomy '{$slug}' is missing 'seed_version' in the registry.", [
+                    'slug' => $slug,
+                ]);
             }
             $version = $config['seed_version'];
 
@@ -1084,6 +1116,12 @@ function ws_seed_all_taxonomies()
             foreach ($all_errors as $err) {
                 error_log('WS Core Error: ' . $err);
             }
+            // Also route through the unified log so per-term insert/update
+            // failures show up in the ONE consolidated ws-fail-loud notice,
+            // not just the error_log + this file's own admin_notices banner.
+            ws_log_loud_failure(new WS_Loud_Failure('register-taxonomies', count($all_errors) . ' taxonomy term insert/update failure(s) during seeding — see error_log for per-term detail.', [
+                'errors' => $all_errors,
+            ]));
             add_action('admin_notices', function () {
                 echo '<div class="notice notice-error is-dismissible"><p>WS Core: Taxonomy tables were updated, but errors were reported! See PHP error_log.</p></div>';
             });
@@ -1111,13 +1149,19 @@ add_action('admin_init', 'ws_seed_all_taxonomies');
 function ws_seed_taxonomy($taxonomy, $terms, $option_label, $version = '1.0.0', $ordered = false)
 {
     if (empty($taxonomy) || !is_string($taxonomy)) {
-        wp_die("This is a FuQ'n Error! ws_seed_taxonomy() called with an invalid \$taxonomy argument.");
+        ws_fail_loud('register-taxonomies', 'ws_seed_taxonomy() called with an invalid $taxonomy argument.', [
+            'taxonomy' => $taxonomy,
+        ]);
     }
     if (!is_array($terms) || empty($terms)) {
-        wp_die("This is a FuQ'n Error! ws_seed_taxonomy() called with invalid \$terms for '{$taxonomy}'.");
+        ws_fail_loud('register-taxonomies', "ws_seed_taxonomy() called with invalid \$terms for '{$taxonomy}'.", [
+            'taxonomy' => $taxonomy,
+        ]);
     }
     if (empty($option_label) || !is_string($option_label)) {
-        wp_die("This is a FuQ'n Error! ws_seed_taxonomy() called with an invalid \$option_label for '{$taxonomy}'.");
+        ws_fail_loud('register-taxonomies', "ws_seed_taxonomy() called with an invalid \$option_label for '{$taxonomy}'.", [
+            'taxonomy' => $taxonomy,
+        ]);
     }
 
     $errors = [];
@@ -1136,7 +1180,10 @@ function ws_seed_taxonomy($taxonomy, $terms, $option_label, $version = '1.0.0', 
                     $current_parent_id = 0; // Ensure the parent itself is inserted at the top-level root
                 } else {
                     $invalid_val = var_export($data[1], true);
-                    wp_die("Taxonomy seeding error in '{$taxonomy}': Invalid flag {$invalid_val} for term '{$slug}'. Only integer 1 is permitted.");
+                    ws_fail_loud('register-taxonomies', "Invalid flag {$invalid_val} for term '{$slug}' in taxonomy '{$taxonomy}' — only integer 1 is permitted.", [
+                        'taxonomy' => $taxonomy,
+                        'slug'     => $slug,
+                    ]);
                 }
             }
         }

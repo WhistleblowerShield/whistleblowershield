@@ -557,6 +557,18 @@ function ws_ag_procedure_scope_parent_ids( $args, $field, $post_id ) {
     $jx_terms   = wp_get_post_terms( $post_id, WS_JURISDICTION_TAXONOMY,  [ 'fields' => 'ids' ] );
     $disc_types = wp_get_object_terms( $post_id, 'ws_protected_disclosure',    [ 'fields' => 'ids' ] );
 
+    if ( is_wp_error( $jx_terms ) || is_wp_error( $disc_types ) ) {
+        ws_log_loud_failure( new WS_Loud_Failure(
+            'acf-ag-procedures',
+            "Term lookup failed while scoping the statute/common-law relationship picker for ag-procedure {$post_id} — the picker will fall back to an unscoped list.",
+            [
+                'post_id'          => $post_id,
+                'jx_terms_error'   => is_wp_error( $jx_terms ) ? $jx_terms->get_error_message() : null,
+                'disc_types_error' => is_wp_error( $disc_types ) ? $disc_types->get_error_message() : null,
+            ]
+        ) );
+    }
+
     $tax_query  = [ 'relation' => 'AND' ];
     $has_filter = false;
 

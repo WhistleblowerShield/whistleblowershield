@@ -41,13 +41,18 @@
  *
  * @package    WhistleblowerShield
  * @since      3.9.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
  *
  * VERSION HISTORY
  * ---------------
+ * 3.20.1 Loud-failure pass. ws_build_agency_procedure_row() previously
+ *        conflated a genuine wp_get_post_terms()/wp_get_object_terms()
+ *        failure with "this procedure legitimately has no jurisdiction or
+ *        protected-disclosure terms" — both produced the same silent empty
+ *        array on a visitor-facing procedure card. Now logged separately.
  * 3.9.0  Initial. ws_get_agency_procedures() + per-agency transient cache.
  *        Phase 2 of ag-procedure feature build.
  * 3.10.0 ws_proc_type get_post_meta() reads replaced with wp_get_object_terms()
@@ -203,6 +208,25 @@ function ws_build_agency_procedure_row( $pid ) {
     // or posts with no terms assigned.
     $jx_terms    = wp_get_post_terms( $pid, WS_JURISDICTION_TAXONOMY );
     $disc_types  = wp_get_object_terms( $pid, 'ws_protected_disclosure' );
+
+    // A genuine query error here is not the same as "this procedure legitimately
+    // has no jurisdiction/disclosure terms yet" — both previously produced the
+    // same empty array silently. This row feeds visitor-facing procedure cards
+    // on agency pages; an error-caused empty scope reads identically to a
+    // real one, with nothing recorded about which it was.
+    if ( is_wp_error( $jx_terms ) ) {
+        ws_log_loud_failure( new WS_Loud_Failure( 'query-agencies', "wp_get_post_terms() failed reading jurisdiction terms for procedure {$pid}.", [
+            'procedure_id' => $pid,
+            'error'        => $jx_terms->get_error_message(),
+        ] ) );
+    }
+    if ( is_wp_error( $disc_types ) ) {
+        ws_log_loud_failure( new WS_Loud_Failure( 'query-agencies', "wp_get_object_terms() failed reading protected-disclosure terms for procedure {$pid}.", [
+            'procedure_id' => $pid,
+            'error'        => $disc_types->get_error_message(),
+        ] ) );
+    }
+
     $jx_slugs    = ( ! is_wp_error( $jx_terms ) && is_array( $jx_terms ) ) ? array_values( array_unique( array_map( function( $t ) { return (string) $t->slug; }, $jx_terms ) ) ) : [];
     $disc_slugs  = ( ! is_wp_error( $disc_types ) && is_array( $disc_types ) ) ? array_values( array_unique( array_map( function( $t ) { return (string) $t->slug; }, $disc_types ) ) ) : [];
 

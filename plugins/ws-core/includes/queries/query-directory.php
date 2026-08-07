@@ -18,7 +18,17 @@
  *
  * @package WhistleblowerShield
  * @since   3.10.4
- * @version    3.20.0
+ * @version    3.20.1
+ *
+ * VERSION LOG
+ * -----------
+ * 3.20.1  ws_q_taxonomy_payload() — the central taxonomy reader for every
+ *         assist-org directory row — now logs (deduped per taxonomy per
+ *         request) when wp_get_object_terms() genuinely fails, instead of
+ *         silently returning the same empty payload as "no terms assigned."
+ *         This is the live Phase 2 directory's data source; an error here
+ *         previously made an org invisible to filter-cascade scoring with
+ *         zero record of why.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -32,7 +42,32 @@ defined( 'ABSPATH' ) || exit;
  */
 function ws_q_taxonomy_payload( $post_id, $taxonomy ) {
     $terms = wp_get_object_terms( (int) $post_id, (string) $taxonomy );
-    if ( is_wp_error( $terms ) || ! is_array( $terms ) ) {
+    if ( is_wp_error( $terms ) ) {
+        // This is the central taxonomy reader for every assist-org directory
+        // row — called ~10x per org (jurisdiction, organization_model,
+        // protected_disclosure, disclosure_target, protected_class,
+        // case_stage, services, employment, languages, cost_model). A
+        // genuine failure here previously produced the exact same empty
+        // payload as "this org legitimately has no terms," which makes the
+        // org invisible to the live Phase 2 filter cascade's scoring
+        // (ws_filter_score_org() reads these same taxonomy assignments) with
+        // no way to tell a real data gap from a query error. Deduped per
+        // taxonomy per request — a failure here is almost always systemic
+        // (e.g. a deregistered taxonomy), so it would otherwise repeat once
+        // per org per taxonomy and could fill the 100-entry rolling log in
+        // a single bad directory page load.
+        static $logged = [];
+        if ( empty( $logged[ $taxonomy ] ) ) {
+            $logged[ $taxonomy ] = true;
+            ws_log_loud_failure( new WS_Loud_Failure( 'query-directory', "wp_get_object_terms() failed for taxonomy '{$taxonomy}' — assist-org rows will show this taxonomy as empty for the rest of this request.", [
+                'taxonomy' => $taxonomy,
+                'post_id'  => $post_id,
+                'error'    => $terms->get_error_message(),
+            ] ) );
+        }
+        return [ 'ids' => [], 'slugs' => [], 'names' => [] ];
+    }
+    if ( ! is_array( $terms ) ) {
         return [ 'ids' => [], 'slugs' => [], 'names' => [] ];
     }
 

@@ -1,10 +1,43 @@
 <?php
 /**
- * Prompt Generator - Exclusion Helpers
+ * pg-exclusions.php
+ *
+ * Prompt Generator — Exclusion Helpers
+ *
+ * PURPOSE
+ * -------
+ * Builds and merges the "already have this, don't re-research it"
+ * exclusion list shown to research AI models. Auto-exclusions are pulled
+ * from live post data; manual exclusions come from the operator's textarea
+ * on the admin form.
+ *
+ * Depends on: pg-config.php (ws_prompt_record_type_to_post_type,
+ * ws_prompt_extract_record_identifier).
+ *
+ * @package    WhistleblowerShield
+ * @since      3.13.0
+ * @version    3.21.0-rewrite
+ * @author     WhistleblowerShield (Dwight)
+ * @link       https://whistleblowershield.org
+ * @copyright  Copyright (c) Whistleblower Shield
+ *
+ * VERSION LOG
+ * -----------
+ * 3.21.0-rewrite  Docblock pass. Annotated the direct-DB calls in this
+ *                 file per the admin-tool query-layer exception rule.
+ *                 No logic changes.
  */
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Admin-only query-layer exception: uses get_posts()/get_post_meta()
+ * directly to compute which records already exist for a jurisdiction, so
+ * the research prompt can tell the AI not to duplicate them. This never
+ * renders to a visitor — worst case on a stale read is redundant AI
+ * research output, not a wrong published fact. Never do this in
+ * render/query-layer code.
+ */
 function ws_prompt_get_auto_exclusions( string $record_type, string $jx_id ): array {
     $post_type = ws_prompt_record_type_to_post_type( $record_type );
     if ( $post_type === '' || $jx_id === '' ) {
@@ -137,4 +170,3 @@ function ws_prompt_render_exclusion_list( string $excludes, string $label ): str
     }
     return $out . "\n";
 }
-

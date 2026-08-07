@@ -4,11 +4,21 @@
  *
  * @package    WhistleblowerShield
  * @since      1.0.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
- * 
+ *
+ * VERSION LOG
+ * -----------
+ * 3.20.1  Fixed a real bug in ws_seed_jurisdiction_matrix(): a bare `return;`
+ *         sat before the error_log()/wp_die() meant to fire when a
+ *         jurisdiction's taxonomy term is missing, making that error
+ *         handling permanently unreachable dead code. One missing term (out
+ *         of 57) silently aborted seeding for every jurisdiction with zero
+ *         indication why. Now calls ws_fail_loud() instead — requires
+ *         ws-fail-loud.php to load before the Matrix Layer in loader.php
+ *         (see that file's 3.20.1 entry).
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -991,17 +1001,21 @@ function ws_seed_jurisdiction_matrix() {
         $existing = term_exists( $slug, WS_JURISDICTION_TAXONOMY );
 
         if ( $existing ) {
-                $term_id = is_array( $existing ) ? (int) $existing['term_id'] : (int) $existing;
-            } else {
-                return;
-                error_log( sprintf(
-                    '[ws-core jurisdiction matrix] Missing SLUG in WS_JURISDICTION_TAXONOMY (expected %s, referenced from %s line %d)',
-                    $slug,
-                    __FILE__,
-                    __LINE__
-                ) );
-                wp_die("You_Fuq'd_Up! — see the log");
-            }
+            $term_id = is_array( $existing ) ? (int) $existing['term_id'] : (int) $existing;
+        } else {
+            // Previously: a bare `return;` sat BEFORE the error_log()/wp_die()
+            // below, making them dead code. A single missing taxonomy term —
+            // out of 57 — silently aborted the ENTIRE jurisdiction seeder with
+            // zero indication why: no error, no post created or updated for
+            // any of the 57 jurisdictions, nothing in any log. This is
+            // exactly the failure mode the Matrix Doctrine in
+            // onboarding-guidance.md exists to prevent ("no silent errors,
+            // missing taxonomy slugs throw clear errors").
+            ws_fail_loud( 'matrix-jurisdictions', "Missing '{$slug}' term in the " . WS_JURISDICTION_TAXONOMY . ' taxonomy — cannot seed jurisdiction matrix.', [
+                'slug' => $slug,
+                'code' => $code,
+            ] );
+        }
 
         $term_map[ $slug ] = $term_id;
 

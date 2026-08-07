@@ -881,11 +881,22 @@ function ws_jx_construction_auto_populate_affected_jx( $post_id ) {
 
     // Resolve each USPS code to a WS_JURISDICTION_TAXONOMY term ID.
     $term_ids = [];
+    $skipped  = [];
     foreach ( $jx_codes as $code ) {
         $term = ws_jx_term_by_code( $code );
         if ( $term && ! is_wp_error( $term ) ) {
             $term_ids[] = $term->term_id;
+        } else {
+            $skipped[] = $code;
         }
+    }
+
+    if ( ! empty( $skipped ) ) {
+        ws_log_loud_failure( new WS_Loud_Failure(
+            'acf-jx-constructions',
+            "ws_jx_term_by_code() could not resolve " . count( $skipped ) . " jurisdiction code(s) for construction {$post_id} — affected_jx will be missing these jurisdictions: " . implode( ', ', $skipped ),
+            [ 'post_id' => $post_id, 'skipped_codes' => $skipped, 'court_key' => $court_key ]
+        ) );
     }
     if( count($term_ids) > 1 ) {
         update_post_meta( $post_id, 'ws_jx_construction_has_affected_jx', true );
