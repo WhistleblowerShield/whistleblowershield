@@ -110,7 +110,7 @@ Suggested starting structure:
 documentation/
     documentation.readme.md
 
-documentation/start-here/
+documentation/-start-here-/
     architecture-overview.md
     design-principles.md
 
@@ -119,7 +119,7 @@ documentation/concepts/
     glossary-concept-layer.proposal.md
 ```
 
-The `start-here` files should contain settled or carefully qualified truths.
+The `-start-here-` files should contain settled or carefully qualified truths.
 
 The `concepts` folder is where useful but unsettled ideas belong.
 
