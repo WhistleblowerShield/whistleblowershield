@@ -54,8 +54,8 @@ function ws_get_jx_statute_acf_tabs(): array {
             'fields' => [
                 [ 'name' => 'jurisdiction', 'label' => 'Jurisdiction', 'type' => 'taxonomy', 'taxonomy' => WS_JURISDICTION_TAXONOMY, 'field_type' => 'radio', 'required' => 1, 'group' => 1 ],
                 [ 'name' => 'official_name', 'required' => 1, 'group' => 1 ],
-                [ 'name' => 'common_name', 'json_key' => 'title', 'group' => 5 ],
-                [ 'name' => 'citation', 'json_key' => 'official_citation', 'label' => 'Citation', 'required' => 1, 'group' => 1 ],
+                [ 'name' => 'common_name', 'prompt_key' => 'title', 'group' => 5 ],
+                [ 'name' => 'citation', 'prompt_key' => 'official_citation', 'label' => 'Citation', 'required' => 1, 'group' => 1 ],
                 [ 'name' => 'protection_scope', 'type' => 'taxonomy', 'taxonomy' => 'ws_protection_scope', 'field_type' => 'select', 'group' => 2 ],
                 [ 'name' => 'general_description', 'type' => 'textarea', 'rows' => 4, 'group' => 2 ],
                 [ 'name' => 'has_attach_flag', 'group' => 0 ],
@@ -66,7 +66,7 @@ function ws_get_jx_statute_acf_tabs(): array {
         'effective_date' => [
             'label'  => 'Effective Date',
             'fields' => [
-                [ 'name' => 'date', 'json_key' => 'enacted_date', 'type' => 'date_picker', 'group' => 2 ],
+                [ 'name' => 'date', 'prompt_key' => 'enacted_date', 'type' => 'date_picker', 'group' => 2 ],
                 [ 'name' => 'has_effective_date', 'group' => 0 ],
                 [ 'name' => 'effective_date', 'type' => 'date_picker', 'group' => 4, 'conditional' => [ 'field' => 'has_effective_date', 'operator' => '==', 'value' => '1' ] ],
                 [ 'name' => 'effective_year', 'type' => 'number', 'group' => 0, 'readonly' => 1 ],
@@ -92,7 +92,7 @@ function ws_get_jx_statute_acf_tabs(): array {
                 [ 'name' => 'reasonable_belief_scope', 'type' => 'select', 'choices' => [ 'objective-only', 'subjective-only', 'dual-prong', 'see-context' ], 'group' => 4, 'sister' => 'reasonable_belief_context' ],
                 [ 'name' => 'reasonable_belief_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'protected_action_standard', 'operator' => '==', 'value' => 'reasonable-belief' ] ],
                 [ 'name' => 'protected_action_source', 'type' => 'select', 'multiple' => 1, 'choices' => [ 'constitutional', 'statutory', 'judicial', 'regulatory', 'executive', 'see-context' ], 'group' => 4, 'sister' => 'protected_action_context' ],
-                [ 'name' => 'protected_actions', 'json_key' => 'protected_activities', 'type' => 'taxonomy', 'taxonomy' => 'ws_protected_action', 'group' => 4, 'sister' => 'protected_action_context' ],
+                [ 'name' => 'protected_actions', 'prompt_key' => 'protected_activities', 'type' => 'taxonomy', 'taxonomy' => 'ws_protected_action', 'group' => 4, 'sister' => 'protected_action_context' ],
                 [ 'name' => 'protected_action_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'protected-action' ] ],
                 [ 'name' => 'protected_disclosures', 'type' => 'taxonomy', 'taxonomy' => 'ws_protected_disclosure', 'group' => 2 ],
                 [ 'name' => 'protected_classes', 'type' => 'taxonomy', 'taxonomy' => 'ws_protected_class', 'group' => 2 ],
@@ -101,7 +101,7 @@ function ws_get_jx_statute_acf_tabs(): array {
                 [ 'name' => 'excluded_classes', 'type' => 'taxonomy', 'taxonomy' => 'ws_excluded_class', 'group' => 4, 'sister' => 'excluded_class_context' ],
                 [ 'name' => 'excluded_class_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'excluded-class' ] ],
                 [ 'name' => 'excluded_class_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'excluded_classes', 'taxonomy' => 'ws_excluded_class', 'slug' => 'has-details' ] ],
-                [ 'name' => 'employment_sectors', 'json_key' => 'covered_sector', 'type' => 'taxonomy', 'taxonomy' => 'ws_employment_sector', 'group' => 2 ],
+                [ 'name' => 'employment_sectors', 'prompt_key' => 'covered_sector', 'type' => 'taxonomy', 'taxonomy' => 'ws_employment_sector', 'group' => 2 ],
                 [ 'name' => 'disclosure_targets', 'type' => 'taxonomy', 'taxonomy' => 'ws_disclosure_target', 'group' => 2 ],
                 [ 'name' => 'disclosure_channel_scope', 'type' => 'select', 'choices' => [ 'any-channel', 'approved-channel-only', 'mandatory-internal-first', 'see-context' ], 'group' => 4, 'sister' => 'disclosure_channel_context' ],
                 [ 'name' => 'disclosure_format', 'type' => 'select', 'choices' => [ 'written-only', 'oral-permitted', 'either', 'has-details' ], 'group' => 4, 'sister' => 'disclosure_channel_context' ],
@@ -115,13 +115,13 @@ function ws_get_jx_statute_acf_tabs(): array {
         'sol' => [
             'label'  => 'Statute of Limitations & Thresholds',
             'fields' => [
-                [ 'name' => 'sol_value', 'json_key' => 'statute_of_limitations', 'type' => 'number', 'group' => 2 ],
-                [ 'name' => 'sol_unit', 'json_key' => 'limit_unit', 'type' => 'select', 'choices' => [ 'days', 'weeks', 'months', 'years' ], 'group' => 2 ],
-                [ 'name' => 'sol_trigger', 'json_key' => 'limit_trigger', 'type' => 'select', 'choices' => [ 'filing-of-complaint', 'accrual', 'discovery-actual', 'discovery-constructive', 'discovery-notice', 'conclusion-of-admin-process', 'see-context' ], 'group' => 2 ],
+                [ 'name' => 'sol_value', 'prompt_key' => 'statute_of_limitations', 'type' => 'number', 'group' => 2 ],
+                [ 'name' => 'sol_unit', 'prompt_key' => 'limit_unit', 'type' => 'select', 'choices' => [ 'days', 'weeks', 'months', 'years' ], 'group' => 2 ],
+                [ 'name' => 'sol_trigger', 'prompt_key' => 'limit_trigger', 'type' => 'select', 'choices' => [ 'filing-of-complaint', 'accrual', 'discovery-actual', 'discovery-constructive', 'discovery-notice', 'conclusion-of-admin-process', 'see-context' ], 'group' => 2 ],
                 [ 'name' => 'sol_trigger_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'sol_trigger', 'operator' => '!=empty' ] ],
                 [ 'name' => 'sol_trigger_event', 'type' => 'select', 'choices' => [ 'notice-of-action', 'occurrence-of-action', 'discovery-of-harm', 'constructive-discharge-accrual' ], 'group' => 3 ],
-                [ 'name' => 'has_sol_details', 'json_key' => 'limit_ambiguous', 'group' => 0 ],
-                [ 'name' => 'sol_details', 'json_key' => 'limit_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_sol_details', 'operator' => '==', 'value' => '1' ] ],
+                [ 'name' => 'has_sol_details', 'prompt_key' => 'limit_ambiguous', 'group' => 0 ],
+                [ 'name' => 'sol_details', 'prompt_key' => 'limit_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_sol_details', 'operator' => '==', 'value' => '1' ] ],
                 [ 'name' => 'sop_value', 'type' => 'number', 'group' => 4, 'sister' => 'statute_of_repose_context' ],
                 [ 'name' => 'sop_unit', 'type' => 'select', 'choices' => [ 'days', 'weeks', 'months', 'years' ], 'group' => 4, 'sister' => 'statute_of_repose_context' ],
                 [ 'name' => 'is_sop_tolling_available', 'group' => 4, 'sister' => 'statute_of_repose_context' ],
@@ -131,7 +131,7 @@ function ws_get_jx_statute_acf_tabs(): array {
                 [ 'name' => 'cba_preemption_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'cba-grievance-preemption' ] ],
                 [ 'name' => 'amended_claim_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'amended-claim' ] ],
                 [ 'name' => 'exhaustion_required_class', 'type' => 'select', 'choices' => [ 'jurisdictional', 'claims-processing', 'waivable', 'see-context' ], 'group' => 4, 'sister' => 'exhaustion_required_context' ],
-                [ 'name' => 'exhaustion_required_context', 'json_key' => 'exhaustion_pathway', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'exhaustion-required' ] ],
+                [ 'name' => 'exhaustion_required_context', 'prompt_key' => 'exhaustion_pathway', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'legal_recognitions', 'taxonomy' => 'ws_legal_recognition', 'slug' => 'exhaustion-required' ] ],
                 [ 'name' => 'filing_notice_required_value', 'type' => 'number', 'group' => 4, 'sister' => 'filing_notice_required_context' ],
                 [ 'name' => 'filing_notice_required_unit', 'type' => 'select', 'choices' => [ 'days', 'weeks', 'months', 'years' ], 'group' => 4, 'sister' => 'filing_notice_required_context' ],
                 [ 'name' => 'filing_notice_required_target', 'type' => 'select', 'choices' => [ 'employer', 'agency', 'attorney-general', 'labor-board', 'see-context' ], 'group' => 4, 'sister' => 'filing_notice_required_context' ],
@@ -193,7 +193,7 @@ function ws_get_jx_statute_acf_tabs(): array {
                 [ 'name' => 'fee_shifting_phases', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_fee_shifting_phases', 'operator' => '==', 'value' => '1' ] ],
                 [ 'name' => 'fee_shifting_asymmetry', 'type' => 'select', 'choices' => [ 'none', 'two-way', 'one-way-plaintiff', 'one-way-defendant-frivolous', 'see-context' ], 'group' => 2, 'sister' => 'fee_shifting_standard_context' ],
                 [ 'name' => 'fee_shifting_standard_context', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'fee_shifting_standard', 'operator' => '!=empty' ] ],
-                [ 'name' => 'remedies', 'json_key' => 'available_remedies', 'type' => 'taxonomy', 'taxonomy' => 'ws_remedy', 'group' => 2 ],
+                [ 'name' => 'remedies', 'prompt_key' => 'available_remedies', 'type' => 'taxonomy', 'taxonomy' => 'ws_remedy', 'group' => 2 ],
                 [ 'name' => 'remedy_limits', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'remedies', 'taxonomy' => 'ws_remedy', 'slug' => 'has-limits' ] ],
                 [ 'name' => 'remedy_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'remedies', 'taxonomy' => 'ws_remedy', 'slug' => 'has-details' ] ],
                 [ 'name' => 'remedy_liquidated_multiplier', 'type' => 'select', 'choices' => [ 'double', 'treble', '2x-back-pay', '2x-wages-lost', 'statutory-formula', 'statutory-daily-fine', 'up-to-double', 'up-to-treble', 'has-details' ], 'group' => 4, 'conditional' => [ 'field' => 'remedies', 'taxonomy' => 'ws_remedy', 'slug' => 'liquidated-damages' ] ],
@@ -263,7 +263,7 @@ function ws_get_jx_statute_acf_tabs(): array {
                 [ 'name' => 'employer_defenses', 'type' => 'taxonomy', 'taxonomy' => 'ws_employer_defense', 'group' => 2 ],
                 [ 'name' => 'employer_defense_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'employer_defenses', 'taxonomy' => 'ws_employer_defense', 'slug' => 'has-details' ] ],
                 [ 'name' => 'has_rebuttable_presumption', 'group' => 0 ],
-                [ 'name' => 'rebuttable_presumption_details', 'json_key' => 'rebuttable_presumption', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_rebuttable_presumption', 'operator' => '==', 'value' => '1' ] ],
+                [ 'name' => 'rebuttable_presumption_details', 'prompt_key' => 'rebuttable_presumption', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_rebuttable_presumption', 'operator' => '==', 'value' => '1' ] ],
                 [ 'name' => 'has_temporal_presumption', 'group' => 0 ],
                 [ 'name' => 'presumption_window_value', 'type' => 'number', 'group' => 4, 'sister' => 'temporal_presumption_details' ],
                 [ 'name' => 'presumption_window_unit', 'type' => 'select', 'choices' => [ 'days', 'weeks', 'months', 'years' ], 'group' => 4, 'sister' => 'temporal_presumption_details' ],
@@ -271,14 +271,14 @@ function ws_get_jx_statute_acf_tabs(): array {
                 [ 'name' => 'presumption_effect_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'presumption_effect', 'operator' => '==', 'value' => 'has-details' ] ],
                 [ 'name' => 'temporal_presumption_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_temporal_presumption', 'operator' => '==', 'value' => '1' ] ],
                 [ 'name' => 'has_bop_details', 'group' => 0 ],
-                [ 'name' => 'bop_details', 'json_key' => 'burden_of_proof_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_bop_details', 'operator' => '==', 'value' => '1' ] ],
+                [ 'name' => 'bop_details', 'prompt_key' => 'burden_of_proof_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'has_bop_details', 'operator' => '==', 'value' => '1' ] ],
             ],
         ],
 
         'reward' => [
             'label'  => 'Reward',
             'fields' => [
-                [ 'name' => 'has_reward', 'json_key' => 'has_reward_available', 'group' => 0 ],
+                [ 'name' => 'has_reward', 'prompt_key' => 'has_reward_available', 'group' => 0 ],
                 [ 'name' => 'reward_discretion_scope', 'type' => 'select', 'choices' => [ 'mandatory', 'discretionary', 'presumptive', 'formula-based', 'has-details' ], 'group' => 4, 'sister' => 'reward_details' ],
                 [ 'name' => 'reward_discretion_formula', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'reward_discretion_scope', 'operator' => '==', 'value' => 'formula-based' ] ],
                 [ 'name' => 'reward_discretion_details', 'type' => 'textarea', 'rows' => 3, 'group' => 4, 'conditional' => [ 'field' => 'reward_discretion_scope', 'operator' => '==', 'value' => 'has-details' ] ],
@@ -308,7 +308,7 @@ function ws_get_jx_statute_acf_tabs(): array {
             'label'  => 'Source / Audit',
             'fields' => [
                 [ 'name' => 'last_reviewed_date', 'type' => 'date_picker', 'group' => 0 ],
-                [ 'name' => 'url', 'json_key' => 'statute_url', 'type' => 'url', 'group' => 2 ],
+                [ 'name' => 'url', 'prompt_key' => 'statute_url', 'type' => 'url', 'group' => 2 ],
                 [ 'name' => 'url_is_pdf', 'group' => 3 ],
                 [ 'name' => 'authority_reference', 'type' => 'textarea', 'rows' => 3, 'group' => 3 ],
             ],
@@ -341,8 +341,8 @@ function ws_get_jx_statute_acf_fields(): array {
     foreach ( $tabs as $tab_key => &$tab ) {
         foreach ( $tab['fields'] as &$field ) {
             $field['tab']          = $field['tab'] ?? $tab_key;
-            $field['json_key']     = $field['name'];
-            $field['json_path']    = $field['json_path'] ?? $field['tab'] . '.' . $field['json_key'];
+            $field['prompt_key']   = $field['name'];
+            $field['json_path']    = $field['json_path'] ?? $field['tab'] . '.' . $field['prompt_key'];
             $field['prompt_group'] = (int) ( $field['group'] ?? 0 );
         }
         unset( $field );
@@ -623,7 +623,13 @@ function ws_get_jx_statute_prompt_package(): array {
             $prompt_field = [
                 'name'          => $field['name'],
                 'json_path'     => $field['json_path'],
-                'json_key'      => $field['json_key'] ?? null,
+                // Output key intentionally left as 'json_key', not 'prompt_key' —
+                // pg-blocks-legal.php (line ~107) reads this exact key from this
+                // exact returned array and is explicitly out of scope for this
+                // rename pass. The VALUE now comes from the renamed internal
+                // 'prompt_key' field. Update both together when pg-* is next
+                // touched, not before.
+                'json_key'      => $field['prompt_key'] ?? null,
                 'tab'           => $field['tab'],
                 'tab_label'     => $tab['label'],
                 'group'         => $prompt_group,
@@ -659,24 +665,26 @@ function ws_get_jx_statute_prompt_package(): array {
 /**
  * Build a simple default prompt instruction from field args.
 //
-// json_key is NOT the canonical schema name.
+// prompt_key is NOT the canonical schema name.
 //
-// It exists solely for research-agent interoperability.
+// It exists solely for research-agent interoperability. Named 'prompt_key',
+// not 'json_key' — JSON is only the current transport shape for the LLM
+// research pass, not the concept itself, and that isn't guaranteed to hold.
 //
-// Most fields should omit json_key entirely.
+// Most fields should omit prompt_key entirely.
 // When omitted, the canonical field name is used.
 //
-// json_key should only be specified when:
+// prompt_key should only be specified when:
 //   1. The canonical field name is ambiguous to an LLM.
 //   2. Research sources overwhelmingly use different terminology.
 //   3. A stable ingest contract requires alternate naming.
 //
 // Canonical schema always wins.
-// json_key is an external alias, not a second schema. * 
+// prompt_key is an external alias, not a second schema. *
 //
  */
 function ws_build_jx_statute_prompt_instruction( array $field ): string {
-    $name = $field['json_key'] ?? $field['name'];
+    $name = $field['prompt_key'] ?? $field['name'];
     $type = $field['type'] ?? ws_infer_acf_field_type( $name );
 
     if ( 'taxonomy' === $type ) {

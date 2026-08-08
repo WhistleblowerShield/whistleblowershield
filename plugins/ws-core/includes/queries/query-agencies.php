@@ -41,7 +41,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.9.0
- * @version    3.20.1
+ * @version    3.20.2
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -53,11 +53,18 @@
  *        failure with "this procedure legitimately has no jurisdiction or
  *        protected-disclosure terms" — both produced the same silent empty
  *        array on a visitor-facing procedure card. Now logged separately.
+ * 3.20.2 Same conflation missed on ws_procedure_type in both
+ *        ws_build_agency_procedure_row() and ws_get_procedures_for_record()
+ *        — a genuine failure resolving the single-value procedure-type term
+ *        (disclosure/retaliation/both) previously produced the same '' as
+ *        a legitimately unset type, silently mis-sorting or dropping the
+ *        procedure card with no record of why. Found during a fine-tooth-
+ *        comb pass across the query layer siblings of query-jurisdiction.php.
  * 3.9.0  Initial. ws_get_agency_procedures() + per-agency transient cache.
  *        Phase 2 of ag-procedure feature build.
  * 3.10.0 ws_proc_type get_post_meta() reads replaced with wp_get_object_terms()
  *        on ws_procedure_type in both ws_build_agency_procedure_row() and
- *        ws_get_procedures_for_parent(). Returns first term slug as plain
+ *        ws_get_procedures_for_record(). Returns first term slug as plain
  *        string; empty string when no term assigned.
  * 3.10.1 Query hardening + field coverage sync:
  *        - procedure rows now expose parent_ids (normalized)
@@ -109,7 +116,7 @@ function ws_is_legal_parent_id( $post_id ) {
 //   title                  string  Procedure post title.
 //   url                    string  Permalink to the individual procedure post.
 //   type                   string  'disclosure' | 'retaliation' | 'both'
-//   jurisdiction           array   WP_Term[] from WS_JURISDICTION_TAXONOMY taxonomy.
+//   jurisdictions          array   WP_Term[] from WS_JURISDICTION_TAXONOMY taxonomy.
 //   protected_disclosures  array   WP_Term[] from ws_protected_disclosure taxonomy.
 //   entry_point            string  How the filer initiates: online/mail/phone/in_person/multi
 //   intake_url             string  Direct link to the intake form/portal for this procedure.
@@ -234,7 +241,20 @@ function ws_build_agency_procedure_row( $pid ) {
     // so render-agency.php can use it as an array key without further
     // processing. Empty string when no term is assigned (draft/incomplete).
     $proc_type_terms = wp_get_object_terms( $pid, 'ws_procedure_type', [ 'fields' => 'slugs' ] );
-    $proc_type       = ( ! is_wp_error( $proc_type_terms ) && ! empty( $proc_type_terms ) )
+
+    // Same conflation risk as jx_terms/disc_types above: ws_procedure_type
+    // decides which group (disclosure/retaliation/both) this procedure card
+    // renders under. A genuine query failure here previously produced the
+    // same '' as "type genuinely not set yet," silently mis-sorting or
+    // dropping the card with no record of why.
+    if ( is_wp_error( $proc_type_terms ) ) {
+        ws_log_loud_failure( new WS_Loud_Failure( 'query-agencies', "wp_get_object_terms() failed reading ws_procedure_type for procedure {$pid}.", [
+            'procedure_id' => $pid,
+            'error'        => $proc_type_terms->get_error_message(),
+        ] ) );
+    }
+
+    $proc_type = ( ! is_wp_error( $proc_type_terms ) && ! empty( $proc_type_terms ) )
                        ? $proc_type_terms[0]
                        : '';
 
@@ -376,6 +396,14 @@ function ws_get_procedures_for_record( $record_id ) {
 
         // ws_procedure_type is single-value — take first slug, empty string if unset.
         $pt_terms = wp_get_object_terms( $pid, 'ws_procedure_type', [ 'fields' => 'slugs' ] );
+
+        if ( is_wp_error( $pt_terms ) ) {
+            ws_log_loud_failure( new WS_Loud_Failure( 'query-agencies', "wp_get_object_terms() failed reading ws_procedure_type for procedure {$pid} while building the 'Filing Procedures Under This Statute' panel.", [
+                'procedure_id' => $pid,
+                'error'        => $pt_terms->get_error_message(),
+            ] ) );
+        }
+
         $pt_slug  = ( ! is_wp_error( $pt_terms ) && ! empty( $pt_terms ) ) ? $pt_terms[0] : '';
 
         $rows[] = [

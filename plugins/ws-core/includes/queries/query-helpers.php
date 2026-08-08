@@ -29,7 +29,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.6.0
- * @version    3.20.0
+ * @version    3.20.2
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -41,6 +41,13 @@
  * 3.9.0  ws_jx_term_by_code() and ws_court_lookup() moved here from
  *        matrix-helpers.php. Both are called from the Universal Layer
  *        (query-jurisdiction.php) and must be available on the frontend.
+ *        (loader.php did not actually satisfy that "must be available on
+ *        the frontend" requirement until 2026-08-07 — see below.)
+ * 3.20.2 ws_court_lookup()'s docblock corrected: matrix-federal-courts.php
+ *        and matrix-state-courts.php moved to the Universal Layer in
+ *        loader.php, so this function's globals are no longer permanently
+ *        empty on the frontend. The comment here previously documented the
+ *        admin-only limitation as expected behavior rather than a bug.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -105,9 +112,14 @@ function ws_jx_term_by_code( $code ) {
 // Returns null if the key is not found in either matrix.
 //
 // The court matrices are populated by matrix-federal-courts.php and
-// matrix-state-courts.php, which are admin-only. On the frontend these
-// globals are empty and this function always returns null — call sites
-// must handle null gracefully (the query layer falls back to the raw key).
+// matrix-state-courts.php, both loaded in the Universal Layer (loader.php)
+// so these globals are populated on both frontend and admin. Prior to
+// 2026-08-07 those two files loaded admin-only, so this function always
+// returned null on the frontend and every construction record's court
+// silently fell back to its raw internal key instead of the resolved
+// label — fixed in loader.php. Call sites must still handle null
+// gracefully for a genuinely unrecognized court key (the query layer
+// falls back to the raw key in that case).
 //
 // ws_jx_codes CONTRACT
 // --------------------
