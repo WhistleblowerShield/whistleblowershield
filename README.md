@@ -1,158 +1,197 @@
 # WhistleblowerShield
 
-U.S. whistleblower law is complicated, scattered across federal and state
-statutes, and written in language that assumes the reader already knows
-what they are looking at. Most people who need it most do not.
+WhistleblowerShield is a public-interest legal reference project that translates whistleblower-law material into plain language and helps people find organizations that may be able to help.
 
-WhistleblowerShield is a public-interest legal reference platform built
-to change that. It covers whistleblower protections across all 57 U.S.
-jurisdictions — 50 states, the District of Columbia, five U.S.
-territories, and the federal level — and presents that information in
-plain-english grounded in primary legal sources.
+It does not provide legal advice. It does not decide whether a reader is protected. It does not tell someone what action to take.
 
----
+Its job is narrower and more useful:
 
-## Who It Is For
+```text
+explain the legal terrain
+preserve the source trail
+surface relevant deadlines, processes, and concepts
+connect people-in-need to support options that appear relevant
+```
 
-The platform is designed primarily for two kinds of people:
+The project exists because whistleblower law is scattered across statutes, cases, doctrines, agencies, procedures, and jurisdiction-specific rules. People who need this information most are often least able to spend days reconstructing it from primary sources.
 
-**Someone considering coming forward.** They have witnessed wrongdoing
-and are trying to understand whether the law protects them before they
-decide what to do. They may be searching from their phone. They need a
-clear answer to "am I protected?" without reading a law review article
-to get it.
+WhistleblowerShield tries to make that terrain legible.
 
-**Someone already facing retaliation.** They reported misconduct and
-something has happened to them — a demotion, a termination, a threat.
-They need to know which agency to file with, how long they have, and
-what happens next. Filing deadlines for retaliation complaints can be
-as short as 30 days. The platform treats that as the highest-priority
-content on every relevant page.
+## Who It Serves
 
-A third audience — journalists, policy researchers, law students, and
-legal advocates — is also served. They need accurate, well-cited
-information they can rely on and attribute. The platform is built to
-hold up under that scrutiny.
+The project is organized around two primary reader situations.
 
-The platform is designed to answer two questions, kept structurally
-separate: **"Who can help me?"** (answered through the assist
-organization directory) and **"What do I do next?"** (answered through
-agency filing procedures). Combining them on the same page creates
-noise at the moment when clarity matters most.
+### Maya
 
----
+Maya is considering whether to report wrongdoing.
 
-## What This Repository Is
+She has not acted yet. She is trying to understand whether the law may protect her, what kinds of disclosures matter, who she might report to, and what risks or deadlines she should know before deciding what to do.
 
-This repository contains the `ws-core` WordPress plugin — the custom
-plugin that implements the entire data model, editorial workflow, and
-public-facing output for WhistleblowerShield.org. The plugin is a
-complete ground-up build, not a theme or a collection of third-party
-plugins stitched together.
+### James
 
-The platform is in active development in a staging environment. It has
-not yet been deployed to a live server with real user data. The
-development-only notice in `ws-core.php` will be removed at launch.
+James already reported something and is now facing retaliation or pressure.
 
----
+He needs to understand what may count as retaliation, what processes or deadlines may matter, what remedies may exist, and which organizations may be able to help.
 
-## Architecture in Brief
+A third reader exists too: Daniel, the researcher or casual user. Daniel matters, but Daniel does not drive product decisions. Maya and James do.
 
-The `ws-core` plugin is organized into six conceptual layers:
+## What the Project Builds
 
-**Data layer** — 10 Custom Post Types, 16 taxonomies, 14 ACF Pro field
-groups. Legal information is structured data: statutes, citations, court
-constructions, agencies, filing procedures, and assist organizations
-are discrete entities with explicit relationships, not paragraphs of text.
+WhistleblowerShield does not treat a jurisdiction page as one hand-written article.
 
-**Matrix layer** — Idempotent seeders that populate the canonical
-dataset on first install: 57 jurisdiction posts and taxonomy terms,
-federal statutes, court matrices, agencies, filing procedures, and
-assist organizations. All seeded records are versioned and monitored
-for post-install drift.
+It models smaller records and assembles them into useful views.
 
-**Query layer** — The only layer that reads from the database. Returns
-normalized PHP arrays. Shortcodes and render functions never call
-`get_field()`, `get_post_meta()`, or `WP_Query` directly. This is the
-most important architectural rule in the codebase — it is documented,
-enforced in code review, and the reason the output layer is maintainable.
+Current or active record types include:
 
-**Admin layer** — ACF field registration, audit trail, editorial stamp
-fields, source verification workflow, procedure statute link validation,
-URL health monitoring, Inoreader feed monitor, and a jurisdiction
-completion dashboard.
+- jurisdictions
+- jurisdiction summaries
+- statutes
+- common-law doctrines
+- citations
+- constructions
+- assist organizations
+- controlled vocabularies
+- glossary terms
 
-**Assembly layer** — Render functions and shortcodes that transform
-query layer output into HTML. Jurisdiction pages and agency pages are
-assembled automatically from available published datasets — no manual
-shortcode placement required in posts.
+Some future or partial layers also exist in code, such as agencies and procedures. They should not be treated as the current documentation focus unless a specific doc says so.
 
-**Frontend assets** — Two conditionally loaded CSS files and one
-JavaScript file. Jurisdiction-specific styles load only on jurisdiction
-pages.
+## The Core Model
 
-The `WS_JURISDICTION_TAXONOMY` taxonomy is the canonical join key across every
-content type. A statute that belongs to California carries the `ca`
-term. There is no post meta join, no relationship field join. The USPS
-code slug is the whole relationship.
+The law does not always live in the first statute someone finds.
 
----
+A current answer may depend on:
 
-## Documentation
+```text
+statute
+    + later citation
+    + later construction
+    + common-law doctrine
+    + jurisdiction-specific procedure
+```
 
-Full documentation is in [`/documentation/`](documentation/README.md).
+The reader should not have to understand that machinery.
 
-The documentation covers the project overview, user personas, system
-architecture, the legal data model, all ACF field groups, the query
-layer API, the output layer, every audit and integrity system, editorial
-standards, the guidance model, source handling and transparency
-practices, and the current development roadmap including the pre-launch
-checklist and deferred features.
+The system does.
 
-Read [`documentation/README.md`](documentation/README.md) first. It
-maps the six documentation areas and explains the four key architectural
-concepts a contributor needs to understand before reading any code.
+A statute may be the starting point. A later case or construction may modify the practical meaning. The public page can show the statute first because that is how humans usually read. Internally, the system still preserves the modification chain.
 
----
+## Current Implementation
 
-## Development Context
+The project is implemented primarily through the `ws-core` WordPress plugin.
 
-This is a solo-founder project built by an independent researcher and
-self-taught developer. AI tools are used throughout — for code,
-documentation, and design iteration. All system design and final
-decisions are human-directed. The codebase is explicitly commented and
-architectural decisions are documented with rationale so the reasoning
-behind each choice is recoverable without asking.
+Current stack:
 
-The project is public for transparency and as a reference for anyone
-building similar public-interest legal infrastructure.
+- WordPress
+- ACF Pro
+- PHP
+- custom post types
+- controlled taxonomies
+- matrix seeders
+- query-layer data contracts
+- render and shortcode assembly
+- prompt and ingest tooling under active development
 
----
+This project is still pre-launch in the important sense: there is no precious hand-entered production database that must be protected with compatibility layers or migration shims. If that changes, the documentation must change with it.
 
-## Contributing
+Some public-facing or beta-facing material may exist. That does not automatically mean every internal layer is settled.
 
-The project is not currently running a formal contribution process.
-If you find this repository and have something genuine to offer —
-legal research expertise, editorial review, technical work — you are
-welcome to reach out at admin@whistleblowershield.org. No promises,
-but the door is open.
+## Current Doctrine
 
----
+These are not slogans. They are rules learned from the project’s own mistakes and refactors.
 
-## License
+### Read the Code Before Rewriting the Docs
 
-Copyright © WhistleblowerShield. All rights reserved.
+Documentation can drift. Code can also be transitional. When they disagree, inspect the live code first.
 
-This repository is public for transparency and reference. No
-open-source license is granted. If you want to discuss use of any
-part of this work, contact admin@whistleblowershield.org.
+A document should not state something as current reality unless the code supports it.
 
----
+### Keep Retrieval Out of Rendering
 
-## Disclaimer
+Render functions and shortcodes should not call `get_field()`, `get_post_meta()`, or `WP_Query` directly.
 
-WhistleblowerShield provides legal information, not legal advice.
-Nothing in this repository or on the platform constitutes legal advice
-or creates an attorney-client relationship. Laws vary by jurisdiction,
-change over time, and apply differently depending on individual facts.
-If you are facing a real legal situation, consult a qualified attorney.
+Data retrieval belongs in the query layer.
+
+This prevents the presentation layer from quietly learning storage details and producing five versions of the same data shape.
+
+### Fail Loud
+
+Silent failures are dangerous in a legal reference system.
+
+A failed lookup, missing term, invalid enum, skipped write, or swallowed exception should not quietly become plausible output.
+
+A legitimate empty state is fine.
+
+A software failure pretending to be an empty state is not.
+
+### Controlled Vocabularies Matter
+
+Taxonomies in this project are not casual WordPress tags.
+
+They are controlled vocabularies used to make legal concepts, reader situations, and organization metadata queryable.
+
+Free text is necessary for nuance. It should not replace structure when structure is possible.
+
+### Attribution Is Not Audit
+
+Visible credit and hidden chain-of-custody answer different questions.
+
+An administrator fixing a typo should not necessarily become the credited editor of a record.
+
+The audit trail should still know who touched the data.
+
+Both truths matter.
+
+## Documentation Status
+
+The documentation set is being reconciled.
+
+Some files describe current implementation. Some describe design intent. Some preserve historical reasoning. Some are draft notes or archived proposals.
+
+Those categories must not be merged silently.
+
+A useful document should make clear whether it is describing:
+
+```text
+current reality
+current design intent
+historical rationale
+```
+
+If it cannot do that, it is not ready to become canonical.
+
+## Contributors
+
+WhistleblowerShield is currently maintained as a very small project, often functionally by one person.
+
+That is a constraint, not a membership policy.
+
+Thoughtful contributors are welcome. Useful help may come from:
+
+- legal researchers
+- whistleblower attorneys
+- labor and public-accountability advocates
+- accessibility-minded writers
+- WordPress developers
+- data modelers
+- taxonomy and ontology people
+- public-interest technologists
+
+This project is opinionated. Contributors are not expected to agree with every decision. They are expected to care about accuracy, sources, plain language, and the people the project serves.
+
+This is not a pitch deck. It is not written for investors. If funding ever helps, it does not get to rewrite the mission.
+
+## Where to Start
+
+Recommended first files:
+
+```text
+README.md
+documentation/README.documentation.md
+documentation/-start-here-/architecture-overview.md
+documentation/-start-here-/design-principles.md
+plugins/ws-core/includes/loader.php
+plugins/ws-core/includes/queries/
+plugins/ws-core/includes/taxonomies/register-taxonomies.php
+```
+
+If an older document disagrees with these files or with live code, do not patch from memory. Verify first.

@@ -1,109 +1,216 @@
-# WhistleblowerShield — Documentation
+# Documentation README
 
-This directory contains the working documentation for WhistleblowerShield.org
-— a public-interest legal reference platform covering U.S. whistleblower
-protections across 57 jurisdictions.
+**Status:** Published. 
+**Purpose:** Explain how the WhistleblowerShield documentation set is organized, what counts as current, and how to avoid converting old notes into false certainty.
 
-Documentation is organized into six areas. Read them in order if you are
-new to the project. Jump directly to the relevant area if you are not.
+This file is the entry point for project documentation. It is not a product overview and not a public-facing explanation of whistleblower law.
 
----
+WhistleblowerShield documentation exists to preserve:
 
-## Areas
+```text
+what the system does
+why it does it that way
+what was tried
+what failed
+what survived
+what is still unsettled
+```
 
-### `/project/`
-Start here. Covers what the platform is, who it is for, and why it is
-built the way it is.
+If the documentation cannot answer those questions, it is not doing its job.
 
-- `project-overview.md` — mission, scope, the two core user questions,
-  development context, and project principles
-- `user-personas.md` — the three primary audiences: Maya (considering
-  coming forward), James (facing retaliation), Daniel (researcher).
-  Defines design priorities and the intentional ordering of those priorities.
+## Documentation Rule One
 
-### `/architecture/`
-Covers the conceptual structure of the system — how legal information is
-modeled, how the layers relate to each other, and the key design decisions
-that shaped the current implementation.
+Live code wins over stale documentation.
 
-- `system-architecture.md` — layer overview, data flow, separation of
-  concerns, the query-layer contract
-- `legal-system-model.md` — how legal concepts, jurisdictions, statutes,
-  citations, and constructions are modeled as structured data
+That does not mean code is always conceptually correct. It means code is the current implementation until changed.
 
-### `/development/`
-Technical reference for the ws-core plugin — the WordPress plugin that
-implements the entire platform. Required reading before touching any code.
+When a document and the code disagree:
 
-- `ws-core-system.md` — plugin overview, file structure, CPT inventory,
-  taxonomy inventory, constants, naming conventions, load order
-- `ws-core-data-layer.md` — ACF field group documentation for all 14
-  field groups; field names, meta keys, types, conditional logic
-- `ws-core-query-layer.md` — query layer function reference; return
-  shapes, caching, invalidation patterns
-- `ws-core-output-layer.md` — render functions, shortcodes, assembly
-  pattern, CSS architecture
-- `ws-core-audit-and-integrity.md` — audit trail, major edit logger,
-  matrix divergence watch, procedure statute link validation, URL health
-  monitor, Inoreader feed monitor, jurisdiction dashboard, runtime health check
+1. inspect the code;
+2. determine whether the code is settled or transitional;
+3. update the documentation only after the disagreement is understood.
 
-### `/editorial/`
-Standards and guidelines for content creation and maintenance.
+Do not resolve a contradiction by choosing the paragraph that sounds better.
 
-- `editorial-system.md` — writing standards, content structure, the
-  plain-english layer, the layered content model
-- `research-and-transparency.md` — source handling, primary vs. secondary
-  sources, construction standards, transparency practices
+## Three Kinds of Truth
 
-### `/product/`
-User-facing design and guidance principles.
+Every major claim in the documentation should belong to one of these categories.
 
-- `guidance-system.md` — how legal information is translated into
-  practical guidance; the two-question model; jurisdiction and agency
-  page structure; the curated vs. filtered render paths; Phase 2
-  situation-based entry and what remains to activate it
+### Current Reality
 
-### `/proposals/`
-The living roadmap. Documents current development status, what is
-built and working, what is structurally in place but not yet active,
-deferred items with rationale, the pre-launch checklist, and known
-technical debt.
+True in the code now.
 
-- `current-proposals.md` — Phase 2 filter cascade spec, pre-launch
-  checklist, deferred features, known technical debt
+A current-reality claim should be backed by a file, function, or visible behavior.
 
----
+Example:
 
-## Key Concepts
+```text
+The query layer is loaded in the Universal Layer.
+```
 
-**The query layer contract:** All data retrieval goes through the query
-layer (`includes/queries/`). Shortcodes, render functions, and admin
-surfaces never call `get_field()`, `get_post_meta()`, or `WP_Query`
-directly. This is the most important architectural rule in the codebase.
-Violations produce fragile, unmaintainable output code.
+This is a current-reality claim if `loader.php` does it.
 
-**The taxonomy join:** All content CPTs are scoped to jurisdictions via
-the `WS_JURISDICTION_TAXONOMY` taxonomy, not post meta. The USPS code slug (e.g.
-`ca`, `us`, `tx`) is the canonical join key across every content type.
+### Current Design Intent
 
-**The attach-flag pattern:** Statutes, citations, and constructions each
-carry an `attach_flag` boolean. Flagged records are editorially curated
-highlights surfaced on the jurisdiction summary page. The flag does not
-control visibility — unflagged records are fully accessible via filtering.
-It controls what appears in the curated summary view.
+A plan or direction that may not be fully built.
 
-**The two-question split:** "Who can help me?" and "What do I do next?"
-are answered on separate pages by design. Assist organizations answer the
-first question. Agency filing procedures answer the second. This separation
-is structural, not editorial.
+Example:
 
----
+```text
+The legal-record schema is moving toward a shared canonical field model.
+```
 
-## What This Documentation Is Not
+This may be true as design intent even if only one record type fully implements it today.
 
-This documentation describes the current state of the system as built.
-It is not a tutorial or a style guide for the public-facing site. Future
-feature specs live in `/proposals/current-proposals.md`, not scattered
-through the technical documents. Version history lives in the individual
-plugin files — docblocks carry a full changelog. This documentation
-describes what is true now, not the path that got here.
+### Historical Rationale
+
+Why a decision was made, including failed attempts.
+
+Example:
+
+```text
+Fail-loud handling moved earlier in the loader because the first placement was not available to every file that needed it.
+```
+
+Historical rationale should be preserved when it prevents the same mistake from being repeated.
+
+## What This Folder Is Not
+
+This documentation folder is not the public site.
+
+Do not duplicate public-facing legal explanations here unless they are needed to explain the system.
+
+This folder is for maintaining and extending WhistleblowerShield, not for advising readers about their rights.
+
+## Current Documentation Priorities
+
+The current priority is reconciliation.
+
+That means:
+
+```text
+read code
+identify stale docs
+separate current reality from design intent
+preserve useful history
+delete or archive misleading duplicates
+```
+
+Do not rewrite everything at once.
+
+A bad rewrite can make old confusion look official.
+
+## First-Pass Canonical Set
+
+The first documentation pass should establish a small set of files that other documents can point to.
+
+Suggested starting structure:
+
+```text
+documentation/
+    README.documentation.md
+
+documentation/-start-here-/
+    architecture-overview.md
+    design-principles.md
+```
+
+The `-start-here-` files should contain settled or carefully qualified truths.
+
+## File Naming
+
+Use distinctive filenames.
+
+Prefer:
+
+```text
+README.documentation.md
+architecture-overview.md
+design-principles.md
+```
+
+Avoid creating a dozen generic files named:
+
+```text
+README.md
+todo.md
+notes.md
+overview.md
+```
+
+Generic names are convenient for five minutes and annoying for years.
+
+## Drafts and Staging Notes
+
+Drafts, chat captures, and temporary review notes should stay outside the project tree until promoted deliberately.
+
+Reason:
+
+Another agent or future reviewer may treat any file inside the project folder as canonical or actionable.
+
+A staging note is evidence.
+
+A canonical doc is instruction.
+
+Do not confuse them.
+
+## Archive Policy
+
+Archive files that preserve useful historical reasoning.
+
+Delete files only when they are:
+
+- duplicated elsewhere,
+- no longer accurate,
+- and contain no unique reasoning worth preserving.
+
+Old documents are not automatically bad. Silent stale documents are.
+
+## Rejection Checklist
+
+Before promoting a documentation draft, check:
+
+- Does it state a proposal as fact?
+- Does it describe code that has not been read?
+- Does it blur current reality, design intent, and historical rationale?
+- Does it explain what was done without explaining why it mattered?
+- Does it sound like marketing?
+- Does it reach beyond the current scope without labeling that move?
+- Does it use project jargon without explaining what mistake the jargon prevents?
+- Does it duplicate public-facing site content unnecessarily?
+- Does it use a generic filename likely to collide with other files?
+
+If yes, revise before promoting.
+
+## Current Scope for This Documentation Pass
+
+The current documentation pass should focus on:
+
+```text
+57 jurisdictions
+legal records
+controlled vocabularies
+query and assembly structure
+plain-English and verification workflows
+assist organizations
+documentation governance
+```
+
+Agencies and procedures exist in the codebase but should not become the center of this pass unless a specific review confirms their current role.
+
+Prompt and ingest tooling should be documented carefully because parts are active, parts are transitional, and parts are intentionally deferred.
+
+## What Good Documentation Should Preserve
+
+A good WhistleblowerShield document should preserve the record.
+
+That includes:
+
+- why a design exists;
+- what problem it solved;
+- what failed before it worked;
+- where the current implementation lives;
+- what remains unsettled;
+- what future maintainers should not accidentally undo.
+
+If the document only describes the final shape and hides the reasoning, it is incomplete.

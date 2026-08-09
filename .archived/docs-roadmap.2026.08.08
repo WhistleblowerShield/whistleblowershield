@@ -1,0 +1,206 @@
+🤣 Fair. Then I can be brutally honest about my own paperwork.
+
+The Gen 2 docs were written after we'd already fought through most of the important arguments. The older docs were trying to describe the project. The newer docs are trying to preserve understanding.
+
+Looking at the set, I'd divide them into:
+
+Eliminate / Merge
+project-overview.md → DELETE
+
+Everything important here is already covered better in:
+
+README.md
+design-principles.md
+architecture-overview.md
+
+It has the old "tell me about the project" energy. README now does that job better and with better boundaries.
+
+I don't see much unique doctrine worth preserving.
+
+project-status.md → DELETE and Replace
+
+This is the most dangerous file in the set.
+
+It contains:
+
+stale versions
+stale milestone reporting
+stale deployment status
+stale roadmap assumptions
+
+Your reconciliation doc already identifies multiple areas where reality outran it.
+
+I would not rewrite it.
+
+I would replace it with something like:
+
+documentation/project/project-status.md
+
+
+that is explicitly a current-state tracker and nothing else.
+
+Current file is trying to be:
+
+changelog
+roadmap
+status report
+architecture summary
+
+all at once.
+
+Collapse into One
+guidance-system.md
+editorial-system.md
+user-personas.md
+
+I think these three are really one document.
+
+All three answer:
+
+Who are we serving?
+How do we write for them?
+How do we organize information for them?
+
+
+I'd seriously consider a single document:
+
+reader-model.md
+
+
+or
+
+maya-james-doctrine.md
+
+
+with sections:
+
+Personas
+Guidance Philosophy
+Editorial Standards
+
+
+They overlap constantly.
+
+Heavy Rewrite, Not Delete
+legal-system-model.md
+
+Keep.
+
+But rewrite in Gen 2 voice.
+
+This document is genuinely important.
+
+It's basically:
+
+What entities exist?
+Why do they exist?
+How do they relate?
+
+
+I would move it into:
+
+documentation/concepts/
+
+
+and rewrite as a conceptual model.
+
+research-and-transparency.md
+
+Keep.
+
+But shorten dramatically.
+
+Half of it is system behavior.
+
+Half is editorial doctrine.
+
+Pull doctrine upward.
+
+Push implementation downward.
+
+Keep as Technical References
+
+These are not startup docs.
+
+These are reference manuals.
+
+Keep them.
+
+ws-core-system.md
+ws-core-data-layer.md
+ws-core-query-layer.md
+ws-core-output-layer.md
+ws-core-audit-and-integrity.md
+
+But mark them clearly as:
+
+Reference Documentation
+
+
+not architecture.
+
+The One I'd Promote
+documentation.todo.md
+
+The funniest thing in this whole pile is that the most useful document may be the one called "todo."
+
+I'd rename it to something like:
+
+documentation-reconciliation.md
+
+
+or
+
+documentation-governance.md
+
+
+Because it contains actual doctrine:
+
+How truth is determined.
+How conflicts are resolved.
+When to ask.
+When not to guess.
+
+
+That's bigger than a todo list.
+
+My First-Pass Kill List
+
+If I were doing the cleanup tomorrow:
+
+Delete outright
+
+project-overview.md
+
+Retire and replace
+
+project-status.md
+
+Merge
+
+guidance-system.md
+editorial-system.md
+user-personas.md
+
+Rewrite
+
+legal-system-model.md
+research-and-transparency.md
+current-proposals.md
+
+Keep
+
+README.md
+README.documentation.md
+architecture-overview.md
+design-principles.md
+all ws-core reference manuals
+documentation.todo.md (under a better name)
+
+Honestly, after reading everything, the biggest insight is this:
+
+You don't have too little documentation. You have two competing documentation philosophies.
+
+The mission now isn't writing more docs.
+
+It's converting Generation 1 into the language and discipline of Generation 2. The four docs in /-start-here-/ are the pattern everybody else should be learning from. 😄
