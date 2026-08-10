@@ -69,6 +69,11 @@ defined( 'ABSPATH' ) || exit;
 
 add_action( 'admin_menu', 'ws_register_prompt_generator_page' );
 
+/**
+ * Register prompt generator page.
+ *
+ * @return mixed Return description.
+ */
 function ws_register_prompt_generator_page() {
     add_submenu_page(
         'tools.php',
@@ -109,6 +114,12 @@ function ws_prompt_collect_form_input(): array {
     ];
 }
 
+/**
+ * Handle prompt generation.
+ *
+ * @param array $input Parameter description.
+ * @return array Return description.
+ */
 function ws_handle_prompt_generation( array $input ): array {
     $result = [ 'success' => false, 'message' => '', 'filename' => '', 'path' => '' ];
 
@@ -211,6 +222,11 @@ function ws_handle_prompt_generation( array $input ): array {
     return $result;
 }
 
+/**
+ * Render prompt generator page.
+ *
+ * @return mixed Return description.
+ */
 function ws_render_prompt_generator_page() {
     $input = ws_prompt_collect_form_input();
 
@@ -385,6 +401,11 @@ function ws_render_prompt_generator_page() {
         });
     }
 
+    /**
+     * Wspromptapplyjxfromselect.
+     *
+     * @return mixed Return description.
+     */
     function wsPromptApplyJxFromSelect() {
         var select = document.getElementById('jx_select');
         var jxInput = document.getElementById('jx_id');

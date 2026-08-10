@@ -232,7 +232,10 @@ add_action( 'delete_ws_glossary',  'ws_glossary_invalidate_cache' );
 
 /**
  * Deletes the glossary transient cache.
- * 
+ *
+ * Called automatically when glossary terms are created, edited, or deleted.
+ *
+ * @return void
  */
 function ws_glossary_invalidate_cache() {
     delete_transient( 'ws_glossary_cache_' );

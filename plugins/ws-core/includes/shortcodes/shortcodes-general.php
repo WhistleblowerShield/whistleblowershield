@@ -71,6 +71,14 @@ add_shortcode( 'ws_footer', function() {
 //   Shows the last 100 updates of all types across all jurisdictions.
 
 
+/**
+ * Shortcode callback to render legal updates.
+ *
+ * Supported attributes: 'jx' (USPS code or jurisdiction post ID), 'count' (number of updates).
+ *
+ * @param array $atts Shortcode attributes.
+ * @return string HTML output of the legal updates list.
+ */
 add_shortcode( 'ws_legal_updates', 'ws_shortcode_legal_updates' );
 function ws_shortcode_legal_updates( $atts ) {
 
@@ -111,6 +119,15 @@ function ws_shortcode_legal_updates( $atts ) {
 
 // ── [ws_reference_page] + URL helper ───────────────────────────────────────
 
+/**
+ * Helper to build the reference page URL.
+ *
+ * Appends query args for the post_id and target section to the reference-materials page URL.
+ *
+ * @param int $post_id The post ID of the legal record.
+ * @param string $section Optional section selector.
+ * @return string Resolved reference page URL.
+ */
 function ws_get_reference_page_url( $post_id, $section = '' ) {
     $slug = apply_filters( 'ws_reference_page_slug', 'reference-materials' );
     $page = get_page_by_path( $slug );
@@ -123,6 +140,14 @@ function ws_get_reference_page_url( $post_id, $section = '' ) {
 }
 
 
+/**
+ * Shortcode callback to render the reference materials page.
+ *
+ * A single page with [ws_reference_page] serves all records using URL query parameters.
+ *
+ * @param array $atts Shortcode attributes.
+ * @return string HTML output of the reference materials page.
+ */
 add_shortcode( 'ws_reference_page', 'ws_shortcode_reference_page' );
 function ws_shortcode_reference_page( $atts ) {
 

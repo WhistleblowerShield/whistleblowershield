@@ -152,6 +152,11 @@ define( 'WS_INGEST_CONFIRM_TTL',   30 * MINUTE_IN_SECONDS );
 
 add_action( 'admin_menu', 'ws_register_ingest_tool_page' );
 
+/**
+ * Register ingest tool page.
+ *
+ * @return mixed Return description.
+ */
 function ws_register_ingest_tool_page() {
     add_submenu_page(
         'tools.php',
@@ -166,6 +171,11 @@ function ws_register_ingest_tool_page() {
 
 // ── Log directory bootstrap ───────────────────────────────────────────────────
 
+/**
+ * Ingest bootstrap log dir.
+ *
+ * @return void Return description.
+ */
 function ws_ingest_bootstrap_log_dir(): void {
     if ( ! is_dir( WS_INGEST_LOG_DIR ) ) {
         if ( ! wp_mkdir_p( WS_INGEST_LOG_DIR ) ) {
@@ -203,6 +213,11 @@ function ws_ingest_bootstrap_log_dir(): void {
     }
 }
 
+/**
+ * Ingest get inbox files.
+ *
+ * @return array Return description.
+ */
 function ws_ingest_get_inbox_files(): array {
     ws_ingest_bootstrap_log_dir();
 
@@ -216,6 +231,12 @@ function ws_ingest_get_inbox_files(): array {
     return $files;
 }
 
+/**
+ * Ingest decode json payload.
+ *
+ * @param string $raw Parameter description.
+ * @return array Return description.
+ */
 function ws_ingest_decode_json_payload( string $raw ): array {
     $data = json_decode( $raw, true );
     if ( json_last_error() !== JSON_ERROR_NONE ) {
@@ -235,6 +256,14 @@ function ws_ingest_decode_json_payload( string $raw ): array {
     ];
 }
 
+/**
+ * Ingest archive json file.
+ *
+ * @param string $source_path Parameter description.
+ * @param string $filename Parameter description.
+ * @param array $data Parameter description.
+ * @return array Return description.
+ */
 function ws_ingest_archive_json_file( string $source_path, string $filename, array $data ): array {
     ws_ingest_bootstrap_log_dir();
 
@@ -262,6 +291,13 @@ function ws_ingest_archive_json_file( string $source_path, string $filename, arr
     return [ 'ok' => true, 'path' => $target_path, 'error' => '' ];
 }
 
+/**
+ * Ingest archive raw file.
+ *
+ * @param string $source_path Parameter description.
+ * @param string $filename Parameter description.
+ * @return array Return description.
+ */
 function ws_ingest_archive_raw_file( string $source_path, string $filename ): array {
     ws_ingest_bootstrap_log_dir();
 
@@ -334,6 +370,11 @@ function ws_ingest_delete_confirm_payload( string $token ): void {
 
 // ── Proposed terms log ────────────────────────────────────────────────────────
 
+/**
+ * Ingest load proposed terms log.
+ *
+ * @return array Return description.
+ */
 function ws_ingest_load_proposed_terms_log(): array {
     if ( ! file_exists( WS_PROPOSED_TERMS_LOG ) ) {
         return [ 'proposed_terms' => [] ];
@@ -343,6 +384,12 @@ function ws_ingest_load_proposed_terms_log(): array {
     return is_array( $log ) ? $log : [ 'proposed_terms' => [] ];
 }
 
+/**
+ * Ingest save proposed terms log.
+ *
+ * @param array $log Parameter description.
+ * @return bool Return description.
+ */
 function ws_ingest_save_proposed_terms_log( array $log ): bool {
     return file_put_contents(
         WS_PROPOSED_TERMS_LOG,
@@ -1428,6 +1475,14 @@ function ws_ingest_build_assist_org_seed_append( array $record ): string {
     return "\n\n---\n" . implode( "\n\n---\n", array_map( 'trim', $blocks ) );
 }
 
+/**
+ * Ingest find assist org post id.
+ *
+ * @param string $record_key Parameter description.
+ * @param string $aorg_id Parameter description.
+ * @param string $homepage_url Parameter description.
+ * @return int Return description.
+ */
 function ws_ingest_find_assist_org_post_id( string $record_key, string $aorg_id, string $homepage_url ): int {
     if ( $record_key !== '' ) {
         $existing = get_posts( [
@@ -2655,6 +2710,13 @@ function ws_ingest_create_citation_stubs_for_common_law( int $comlaw_post_id, ar
 
 // ── Post title builder ────────────────────────────────────────────────────────
 
+/**
+ * Ingest build post title.
+ *
+ * @param array $record Parameter description.
+ * @param string $jx_slug Parameter description.
+ * @return string Return description.
+ */
 function ws_ingest_build_post_title( array $record, string $jx_slug ): string {
     $jx      = strtoupper( $jx_slug );
     $sid     = $record['statute_id']    ?? '';
@@ -2667,6 +2729,13 @@ function ws_ingest_build_post_title( array $record, string $jx_slug ): string {
     return trim( "$jx — $name" );
 }
 
+/**
+ * Ingest build common law post title.
+ *
+ * @param array $record Parameter description.
+ * @param string $jx_slug Parameter description.
+ * @return string Return description.
+ */
 function ws_ingest_build_common_law_post_title( array $record, string $jx_slug ): string {
     $jx      = strtoupper( $jx_slug );
     $name    = (string) ( $record['doctrine_name'] ?? '' );
@@ -4073,6 +4142,13 @@ function ws_ingest_extract_batch_count_from_filename( string $filename ): int {
     return 0;
 }
 
+/**
+ * Ingest write run log.
+ *
+ * @param array $result Parameter description.
+ * @param mixed  Parameter description.
+ * @return bool Return description.
+ */
 function ws_ingest_write_run_log( array $result, string $batch_filename = '' ): bool {
     ws_ingest_bootstrap_log_dir();
 
@@ -4236,6 +4312,13 @@ function ws_ingest_log_agency_breadcrumbs( string $filename, string $jx, string 
     return file_put_contents( $path, implode( PHP_EOL, $lines ) . PHP_EOL, FILE_APPEND | LOCK_EX ) !== false;
 }
 
+/**
+ * Ingest process batch data.
+ *
+ * @param array $data Parameter description.
+ * @param string $batch_filename Parameter description.
+ * @return array Return description.
+ */
 function ws_ingest_process_batch_data( array $data, string $batch_filename ): array {
     $result = [
         'phase'            => 'processing',
@@ -4372,6 +4455,11 @@ function ws_ingest_process_batch_data( array $data, string $batch_filename ): ar
     return $result;
 }
 
+/**
+ * Handle ingest folder submission.
+ *
+ * @return array Return description.
+ */
 function ws_handle_ingest_folder_submission(): array {
     $result = [
         'phase'            => 'folder-processing',
@@ -4542,6 +4630,11 @@ function ws_handle_ingest_folder_submission(): array {
 
 // ── Main handler ──────────────────────────────────────────────────────────────
 
+/**
+ * Handle ingest submission.
+ *
+ * @return array Return description.
+ */
 function ws_handle_ingest_submission(): array {
     $result = [
         'phase'     => '',
@@ -4639,6 +4732,11 @@ function ws_handle_ingest_submission(): array {
 
 // ── Admin page renderer ───────────────────────────────────────────────────────
 
+/**
+ * Render ingest tool page.
+ *
+ * @return mixed Return description.
+ */
 function ws_render_ingest_tool_page() {
     if ( ! current_user_can( 'manage_options' ) ) {
         wp_die( 'Access denied.' );

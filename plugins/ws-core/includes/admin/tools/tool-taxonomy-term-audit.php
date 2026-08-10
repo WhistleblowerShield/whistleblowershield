@@ -184,6 +184,11 @@ function ws_tax_audit_render_rows_table( $rows ) {
     echo '</tbody></table>';
 }
 
+/**
+ * Tax audit run.
+ *
+ * @return mixed Return description.
+ */
 function ws_tax_audit_run() {
     $seed_map    = ws_tax_audit_get_seed_map();
     $live_map    = ws_tax_audit_get_live_map();
@@ -247,6 +252,11 @@ function ws_tax_audit_run() {
     ];
 }
 
+/**
+ * Tax audit get live map.
+ *
+ * @return mixed Return description.
+ */
 function ws_tax_audit_get_live_map() {
     $map = [];
     $taxonomies = get_taxonomies( [], 'names' );
@@ -298,6 +308,11 @@ function ws_tax_audit_get_live_map() {
     return $map;
 }
 
+/**
+ * Tax audit get live label map.
+ *
+ * @return mixed Return description.
+ */
 function ws_tax_audit_get_live_label_map() {
     $map = [];
     $taxonomies = get_taxonomies( [], 'names' );
@@ -345,6 +360,11 @@ function ws_tax_audit_get_live_label_map() {
     return $map;
 }
 
+/**
+ * Tax audit get live parent map.
+ *
+ * @return mixed Return description.
+ */
 function ws_tax_audit_get_live_parent_map() {
     $map = [];
     $taxonomies = get_taxonomies( [], 'names' );
@@ -401,6 +421,11 @@ function ws_tax_audit_get_live_parent_map() {
     return $map;
 }
 
+/**
+ * Tax audit get seed map.
+ *
+ * @return mixed Return description.
+ */
 function ws_tax_audit_get_seed_map() {
     $file = WS_CORE_PATH . 'includes/taxonomies/register-taxonomies.php';
     // register-taxonomies.php is required unconditionally by loader.php — if
@@ -450,6 +475,12 @@ function ws_tax_audit_get_seed_map() {
     return $map;
 }
 
+/**
+ * Tax audit extract seed function bodies.
+ *
+ * @param mixed $source Parameter description.
+ * @return mixed Return description.
+ */
 function ws_tax_audit_extract_seed_function_bodies( $source ) {
     $tokens    = token_get_all( $source );
     $functions = [];
@@ -513,6 +544,12 @@ function ws_tax_audit_extract_seed_function_bodies( $source ) {
     return $functions;
 }
 
+/**
+ * Tax audit extract seed taxonomy.
+ *
+ * @param mixed $body Parameter description.
+ * @return mixed Return description.
+ */
 function ws_tax_audit_extract_seed_taxonomy( $body ) {
     if ( preg_match( '/\$taxonomy\s*=\s*\'((?:ws_)[a-z0-9_]+)\'/', $body, $m ) ) {
         return (string) $m[1];
@@ -543,6 +580,12 @@ function ws_tax_audit_extract_seed_taxonomy( $body ) {
     return '';
 }
 
+/**
+ * Tax audit extract slugs from seed body.
+ *
+ * @param mixed $body Parameter description.
+ * @return mixed Return description.
+ */
 function ws_tax_audit_extract_slugs_from_seed_body( $body ) {
     $slugs = [];
     $skip_keys = [ 'name', 'children', 'slug', 'taxonomy', 'terms', 'parent' ];
@@ -601,6 +644,12 @@ function ws_tax_audit_extract_slugs_from_seed_body( $body ) {
     return $slugs;
 }
 
+/**
+ * Tax audit build php block.
+ *
+ * @param mixed $results Parameter description.
+ * @return mixed Return description.
+ */
 function ws_tax_audit_build_php_block( $results ) {
     $php = "<?php\n";
     $php .= '// WS Taxonomy Audit (paste-ready slug => label rows)' . "\n";
@@ -660,10 +709,21 @@ function ws_tax_audit_build_php_block( $results ) {
     return $php;
 }
 
+/**
+ * Tax audit php escape.
+ *
+ * @param mixed $value Parameter description.
+ * @return mixed Return description.
+ */
 function ws_tax_audit_php_escape( $value ) {
     return str_replace( [ '\\', "'" ], [ '\\\\', "\\'" ], (string) $value );
 }
 
+/**
+ * Tax audit log dir.
+ *
+ * @return mixed Return description.
+ */
 function ws_tax_audit_log_dir() {
     $dir = WP_CONTENT_DIR . '/logs/ws-taxonomy-audit';
     if ( ! file_exists( $dir ) ) {
@@ -683,6 +743,12 @@ function ws_tax_audit_log_dir() {
     return $dir;
 }
 
+/**
+ * Tax audit write php log.
+ *
+ * @param mixed $results Parameter description.
+ * @return mixed Return description.
+ */
 function ws_tax_audit_write_php_log( $results ) {
     $dir = ws_tax_audit_log_dir();
     if ( ! file_exists( $dir ) || ! is_dir( $dir ) ) {

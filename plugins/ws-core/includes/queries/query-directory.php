@@ -380,6 +380,14 @@ function ws_q_build_assist_org_row( $oid ) {
 // Dataset: Assist Organizations
 // ════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Retrieves assist organization data for a specific jurisdiction.
+ *
+ * Runs a query for 'ws-assist-org' posts tagged with the jurisdiction term.
+ *
+ * @param int $jx_term_id The jurisdiction taxonomy term ID.
+ * @return array List of normalized and sorted assist organization rows.
+ */
 function ws_get_assist_org_data( $jx_term_id ) {
 
     $term_id = (int) $jx_term_id;
@@ -415,6 +423,12 @@ function ws_get_assist_org_data( $jx_term_id ) {
 // Dataset: Nationwide Assist Organizations (Directory)
 // ════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Retrieves assist organization data for nationwide organizations.
+ *
+ * @param array $filters Optional filters to apply to the directory query.
+ * @return array List of normalized nationwide assist organization rows.
+ */
 function ws_get_nationwide_assist_org_data( $filters = [] ) {
 
     $query_args = [

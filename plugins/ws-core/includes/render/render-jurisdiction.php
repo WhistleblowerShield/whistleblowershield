@@ -247,38 +247,16 @@ function ws_render_jx_curated( $post, $jx_term_id ) {
 
 
 // ════════════════════════════════════════════════════════════════════════════
-// ws_render_jx_filtered()
-//
-// !! PHASE 2 PRIORITY — DO NOT REMOVE !!
-//
-// Filtered render path — parallel sibling to ws_render_jx_curated().
-// Invoked by ws_handle_jurisdiction_render() when $_GET contains taxonomy
-// filter params resolved by ws_resolve_filter_context() (Phase 2).
-//
-// Contrast with ws_render_jx_curated():
-//   Curated:  attach_flag = true gates all datasets — editorial curation.
-//   Filtered: attach_flag ignored — all published records are candidates;
-//             $filter_context constrains results via taxonomy cascade instead.
-//
-// Implementation notes (Phase 2):
-//   - $filter_context is an array of resolved taxonomy term IDs built from
-//     the plain-english question panel ($_GET params on page load).
-//     Example: [ 'ws_industry' => [12, 47], 'ws_protected_disclosure' => [8] ]
-//   - Output includes statutes, citations, constructions, limitations, and
-//     ws-assist-org records matched by the filter context. ws-assist-org and
-//     ws-agency records are not on the curated page — they appear here only.
-//   - Render order mirrors the curated path; assist-orgs append last.
-//   - PHP-only: standard GET form. No AJAX required for core functionality;
-//     JS may be layered on for UX polish.
-//   - Filtered URLs are bookmarkable and shareable
-//     (e.g. /california/?industry=12&disclosure=8).
-//
-// @param  WP_Post  $post           The jurisdiction post object.
-// @param  int|null $jx_term_id     The WS_JURISDICTION_TAXONOMY term ID for this post.
-// @param  array    $filter_context Taxonomy term IDs resolved from $_GET params.
-// @return string                   HTML for the filtered jurisdiction page.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Filtered render path (Phase 2) — parallel sibling to ws_render_jx_curated().
+ *
+ * Invoked by ws_handle_jurisdiction_render() when $_GET contains taxonomy filter params.
+ *
+ * @param WP_Post  $post           The jurisdiction post object.
+ * @param int|null $jx_term_id     The WS_JURISDICTION_TAXONOMY term ID for this post.
+ * @param array    $filter_context Taxonomy term IDs resolved from $_GET params.
+ * @return string                   HTML for the filtered jurisdiction page.
+ */
 function ws_render_jx_filtered( $post, $jx_term_id, $filter_context ) {
     // Phase 2: Taxonomy cascade filter render — see block comment above.
     return '';

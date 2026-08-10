@@ -47,6 +47,13 @@ defined( 'ABSPATH' ) || exit;
 
 add_action( 'init', 'ws_register_cpt_common_law' );
 
+/**
+ * Registers the 'jx-common-law' custom post type.
+ *
+ * Hooked to 'init'.
+ *
+ * @return void
+ */
 function ws_register_cpt_common_law() {
 
     $labels = [

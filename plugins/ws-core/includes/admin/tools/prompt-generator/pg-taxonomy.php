@@ -72,6 +72,12 @@ function ws_prompt_get_taxonomy_terms_no_parents( string $taxonomy ): array {
     return $out;
 }
 
+/**
+ * Prompt render slug columns.
+ *
+ * @param array $terms Parameter description.
+ * @return string Return description.
+ */
 function ws_prompt_render_slug_columns( array $terms ): string {
     if ( empty( $terms ) ) {
         return "(no terms found)\n\n";
@@ -93,6 +99,11 @@ function ws_prompt_render_slug_columns( array $terms ): string {
     return $lines . "\n";
 }
 
+/**
+ * Prompt taxonomy descriptions.
+ *
+ * @return array Return description.
+ */
 function ws_prompt_taxonomy_descriptions(): array {
     return [
         'ws_protected_disclosure' => 'Subject matter of disclosure',
@@ -139,6 +150,12 @@ function ws_prompt_taxonomies_for_record_type( string $record_type ): array {
     ws_fail_loud( 'prompt-generator', "Unreachable: '{$record_type}' passed validation but has no taxonomy list. This is a bug in ws_prompt_taxonomies_for_record_type() itself — fix the switch statement.", [ 'record_type' => $record_type ] );
 }
 
+/**
+ * Prompt dynamic taxonomy tables.
+ *
+ * @param string $record_type Parameter description.
+ * @return string Return description.
+ */
 function ws_prompt_dynamic_taxonomy_tables( string $record_type ): string {
     $taxonomies = ws_prompt_taxonomies_for_record_type( $record_type );
     $descs = ws_prompt_taxonomy_descriptions();

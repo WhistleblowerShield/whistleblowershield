@@ -117,6 +117,12 @@ function ws_prompt_get_auto_exclusions( string $record_type, string $jx_id ): ar
     return $ids;
 }
 
+/**
+ * Prompt split lines.
+ *
+ * @param string $text Parameter description.
+ * @return array Return description.
+ */
 function ws_prompt_split_lines( string $text ): array {
     $lines = [];
     foreach ( explode( "\n", $text ) as $line ) {
@@ -131,6 +137,13 @@ function ws_prompt_split_lines( string $text ): array {
     return $lines;
 }
 
+/**
+ * Prompt merge exclusions.
+ *
+ * @param string $manual_exclusions Parameter description.
+ * @param array $auto_exclusions Parameter description.
+ * @return string Return description.
+ */
 function ws_prompt_merge_exclusions( string $manual_exclusions, array $auto_exclusions ): string {
     $merged = [];
 
@@ -149,6 +162,13 @@ function ws_prompt_merge_exclusions( string $manual_exclusions, array $auto_excl
     return implode( "\n", $merged );
 }
 
+/**
+ * Prompt resolve auto exclusions text.
+ *
+ * @param array $post Parameter description.
+ * @param array $computed_auto_exclusions Parameter description.
+ * @return string Return description.
+ */
 function ws_prompt_resolve_auto_exclusions_text( array $post, array $computed_auto_exclusions ): string {
     $posted = isset( $post['exclusion_list_auto'] )
         ? sanitize_textarea_field( (string) $post['exclusion_list_auto'] )
@@ -158,6 +178,13 @@ function ws_prompt_resolve_auto_exclusions_text( array $post, array $computed_au
     return $edited ? $posted : implode( "\n", $computed_auto_exclusions );
 }
 
+/**
+ * Prompt render exclusion list.
+ *
+ * @param string $excludes Parameter description.
+ * @param string $label Parameter description.
+ * @return string Return description.
+ */
 function ws_prompt_render_exclusion_list( string $excludes, string $label ): string {
     $lines = ws_prompt_split_lines( $excludes );
     if ( empty( $lines ) ) {

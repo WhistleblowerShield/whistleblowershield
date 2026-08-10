@@ -11,6 +11,13 @@ defined( 'ABSPATH' ) || exit;
 
 add_action( 'init', 'ws_register_cpt_ag_procedures' );
 
+/**
+ * Registers the 'ag-procedure' custom post type.
+ *
+ * Hooked to 'init'.
+ *
+ * @return void
+ */
 function ws_register_cpt_ag_procedures() {
 
     $labels = [

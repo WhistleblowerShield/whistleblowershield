@@ -27,9 +27,15 @@ defined( 'ABSPATH' ) || exit;
 
 
 // ════════════════════════════════════════════════════════════════════════════
-// Legal Updates
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Retrieves legal updates data.
+ *
+ * Scopes updates to a specific jurisdiction if $jx_id is non-zero. Otherwise returns sitewide updates.
+ *
+ * @param int $jx_id Optional jurisdiction taxonomy term ID.
+ * @param int $count Optional count of updates to retrieve.
+ * @return array List of normalized legal update rows.
+ */
 function ws_get_legal_updates_data( $jx_id = 0, $count = 0 ) {
 
     if ( ! $count ) {
@@ -138,6 +144,14 @@ add_action( 'before_delete_post', function( $post_id ) {
 // Reference Materials
 // ════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Retrieves reference materials associated with a specific post.
+ *
+ * Looks up the corresponding reference relationship field depending on the post type.
+ *
+ * @param int $post_id The post ID of the statute, citation, construction, or common law post.
+ * @return array List of normalized reference material arrays.
+ */
 function ws_get_ref_materials( $post_id ) {
     $post_id = (int) $post_id;
     if ( ! $post_id ) return [];
@@ -185,6 +199,12 @@ function ws_get_ref_materials( $post_id ) {
 }
 
 
+/**
+ * Retrieves data for generating a reference page associated with a parent post.
+ *
+ * @param int $parent_post_id Parent post ID of the legal record.
+ * @return array|null Normalized data array for reference rendering, or null on error.
+ */
 function ws_get_reference_page_data( $parent_post_id ) {
     $parent_post_id = (int) $parent_post_id;
     if ( ! $parent_post_id ) return null;

@@ -51,6 +51,13 @@ defined( 'ABSPATH' ) || exit;
 
 add_action( 'init', 'ws_register_cpt_legal_update' );
 
+/**
+ * Registers the 'ws-legal-update' custom post type.
+ *
+ * Hooked to 'init'.
+ *
+ * @return void
+ */
 function ws_register_cpt_legal_update() {
 
     $labels = [

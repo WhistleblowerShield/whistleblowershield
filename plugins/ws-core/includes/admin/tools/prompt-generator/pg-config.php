@@ -75,6 +75,13 @@ function ws_prompt_assert_valid_record_type( string $record_type ): void {
     }
 }
 
+/**
+ * Returns the output directory for generated prompts.
+ *
+ * Creates the directory and writes an .htaccess restriction if not present.
+ *
+ * @return string Prompt output directory path.
+ */
 function ws_prompt_output_dir(): string {
     $dir = WP_CONTENT_DIR . '/logs/ws-prompts';
     if ( ! file_exists( $dir ) ) {
@@ -158,7 +165,11 @@ function ws_prompt_resolve_jx_context( string $jx_id ): array {
 }
 
 /**
- * @throws WS_Loud_Failure if $record_type isn't a known type.
+ * Resolves a prompt record type string into the corresponding WordPress custom post type slug.
+ *
+ * @param string $record_type Prompt record type (e.g. 'statute', 'assist-org').
+ * @return string Custom post type slug.
+ * @throws WS_Loud_Failure if the record type is invalid.
  */
 function ws_prompt_record_type_to_post_type( string $record_type ): string {
     ws_prompt_assert_valid_record_type( $record_type );

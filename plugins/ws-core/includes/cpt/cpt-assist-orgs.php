@@ -19,6 +19,13 @@ defined( 'ABSPATH' ) || exit;
 
 add_action( 'init', 'ws_register_cpt_assist_org' );
 
+/**
+ * Registers the 'ws-assist-org' custom post type.
+ *
+ * Hooked to 'init'.
+ *
+ * @return void
+ */
 function ws_register_cpt_assist_org() {
 
     $labels = [

@@ -194,9 +194,11 @@ function ws_shortcode_jx_statutes() {
 
 add_shortcode( 'ws_jx_common_law', 'ws_shortcode_jx_common_law' );
 /**
- * Renders jurisdiction common law section.
+ * Renders the jurisdiction common law section shortcode callback.
  *
- * @return string
+ * Fetches attached jx-common-law records via the query layer and renders them.
+ *
+ * @return string HTML output of the common law section.
  */
 function ws_shortcode_jx_common_law() {
 
@@ -267,9 +269,11 @@ function ws_shortcode_jx_common_law() {
 
 add_shortcode( 'ws_jx_citation', 'ws_shortcode_jx_citation' );
 /**
- * Renders jurisdiction citation section.
+ * Renders the jurisdiction citations section shortcode callback.
  *
- * @return string
+ * Fetches attached citations via the query layer and formats footnote lists.
+ *
+ * @return string HTML output of the citation section.
  */
 function ws_shortcode_jx_citation() {
 
@@ -368,9 +372,11 @@ function ws_shortcode_jx_citation() {
 
 add_shortcode( 'ws_jx_construction_', 'ws_shortcode_jx_construction_' );
 /**
- * Renders jurisdiction construction section.
+ * Renders the jurisdiction construction section shortcode callback.
  *
- * @return string
+ * Queries published jx-construction records and delegates rendering to section template.
+ *
+ * @return string HTML output of the construction section.
  */
 function ws_shortcode_jx_construction_() {
 
@@ -396,9 +402,11 @@ function ws_shortcode_jx_construction_() {
 
 add_shortcode( 'ws_jx_limitations', 'ws_shortcode_jx_limitations' );
 /**
- * Renders summary limitations section.
+ * Renders the jurisdiction summary limitations section shortcode callback.
  *
- * @return string
+ * Reads the limitations metadata and calls the limitations section renderer.
+ *
+ * @return string HTML output of the limitations section.
  */
 function ws_shortcode_jx_limitations() {
 

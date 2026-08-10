@@ -19,6 +19,13 @@ defined( 'ABSPATH' ) || exit;
 
 add_action( 'init', 'ws_register_cpt_jx_construction_' );
 
+/**
+ * Registers the 'jx-construction' custom post type.
+ *
+ * Hooked to 'init'.
+ *
+ * @return void
+ */
 function ws_register_cpt_jx_construction_() {
 
     $labels = [

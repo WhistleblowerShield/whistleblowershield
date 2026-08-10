@@ -187,16 +187,15 @@ function ws_get_id_by_code( $jx_code ) {
 // ════════════════════════════════════════════════════════════════════════════
 // Input Resolver
 //
-// Resolves a mixed $input (numeric post ID or two-letter USPS code string)
-// to a jurisdiction post ID integer. Used by all dataset retrieval functions
-// to eliminate the repeated is_numeric ternary.
-//
-// For callers that need a term ID rather than a post ID, use
-// ws_get_term_id_by_code() directly.
-//
-// Returns 0 if input is empty or the code cannot be resolved.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Resolves a mixed input (numeric post ID or two-letter USPS code string) to a jurisdiction post ID integer.
+ *
+ * Used by all dataset retrieval functions to eliminate the repeated is_numeric ternary.
+ * For callers that need a term ID rather than a post ID, use ws_get_term_id_by_code() directly.
+ *
+ * @param mixed $input Numeric post ID or two-letter USPS code string.
+ * @return int Jurisdiction post ID, or 0 if input is empty or unresolved.
+ */
 function ws_resolve_jx_id( $input ) {
     if ( ! $input ) return 0;
     return is_numeric( $input ) ? (int) $input : (int) ws_get_id_by_code( (string) $input );
@@ -321,22 +320,17 @@ function ws_q_normalize_text_list( $value, $sanitize = 'sanitize_text_field' ) {
 }
 
 
-// ════════════════════════════════════════════════════════════════════════════
-// Master Jurisdiction Data Fetcher
-//
-// Accepts either a numeric post ID or a two-letter USPS code string.
-// Falls back to the global $post if no input is provided.
-//
-// Returns a structured array of all jurisdiction metadata, or false if the
-// post cannot be resolved or is not a jurisdiction CPT record.
-//
-// Flag data is retrieved as an array from ACF (return_format: array)
-// and destructured here for consistent downstream access.
-//
-// Record management fields use unprefixed stamp meta keys via get_post_meta(),
-// consistent with all other dataset functions.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Master Jurisdiction Data Fetcher.
+ *
+ * Accepts either a numeric post ID or a two-letter USPS code string.
+ * Falls back to the global $post if no input is provided.
+ * Flag data is retrieved as an array from ACF and destructured here for consistent downstream access.
+ * Record management fields use unprefixed stamp meta keys via get_post_meta().
+ *
+ * @param mixed $input Optional. Numeric post ID or two-letter USPS code string.
+ * @return array|false Structured array of all jurisdiction metadata, or false on failure.
+ */
 function ws_get_jurisdiction_data( $input = null ) {
 
     if ( ! $input ) {
@@ -416,19 +410,15 @@ function ws_get_jurisdiction_data( $input = null ) {
 }
 
 
-// ════════════════════════════════════════════════════════════════════════════
-// Dataset: Summary
-//
-// Retrieves the jx-summary post assigned to the given WS_JURISDICTION_TAXONOMY term
-// and returns a fully-hydrated data array.
-//
-// jx-summary is inherently plain-english. It does not use the has_plain_english
-// / plain_reviewed workflow and carries no summarized_by / summarized_date
-// stamps.
-//
-// Returns false if no jx-summary is found for the term.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Retrieves the jx-summary post assigned to the given WS_JURISDICTION_TAXONOMY term.
+ *
+ * Returns a fully-hydrated data array. jx-summary is inherently plain-english.
+ * It does not use the has_plain_english/plain_reviewed workflow and carries no summarized_by/summarized_date stamps.
+ *
+ * @param int $jx_term_id The jurisdiction taxonomy term ID.
+ * @return array|false Structured summary data array, or false if not found.
+ */
 function ws_get_jx_summary_data( $jx_term_id ) {
 
     $term_id = (int) $jx_term_id;
@@ -477,24 +467,16 @@ function ws_get_jx_summary_data( $jx_term_id ) {
 }
 
 
-// ════════════════════════════════════════════════════════════════════════════
-// Dataset: Statutes
-//
-// Returns the editorially curated jx-statute records for the jurisdiction
-// summary page — published records assigned to the given WS_JURISDICTION_TAXONOMY
-// taxonomy term that have attach_flag = true, sorted by order ASC.
-//
-// attach_flag is NOT a publish gate. It marks the 3–5 statutes an editor
-// has chosen to highlight on the summary page. All other statutes remain
-// fully accessible via taxonomy-driven user queries.
-//
-// Accepts a taxonomy term ID integer as scope ($jx_term_id).
-// Returns an array of statute data arrays, or empty array if none found.
-//
-// Federal append logic: if the requested jurisdiction is not US, US-scoped
-// statutes are appended with is_fed = true.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Returns the editorially curated jx-statute records for the jurisdiction summary page.
+ *
+ * Fetches published records assigned to the given WS_JURISDICTION_TAXONOMY taxonomy term
+ * that have attach_flag = true, sorted by order ASC. If the requested jurisdiction is not US,
+ * US-scoped statutes are appended with is_fed = true.
+ *
+ * @param int $jx_term_id The jurisdiction taxonomy term ID.
+ * @return array List of statute data arrays, or empty array if none found.
+ */
 function ws_get_jx_statute_data( $jx_term_id ) {
 
     $term_id    = (int) $jx_term_id;
@@ -625,8 +607,15 @@ function ws_get_jx_statute_data( $jx_term_id ) {
 // functions without making taxonomy calls inside the shortcode itself.
 //
 // Returns 0 if the post has no term assigned.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Retrieves the jurisdiction term ID assigned to a given post.
+ *
+ * Distinct from a post that legitimately has no term assigned yet.
+ * Logs a loud failure if the post terms query fails.
+ *
+ * @param int $post_id The post ID to look up.
+ * @return int The jurisdiction taxonomy term ID, or 0 on failure/none.
+ */
 function ws_get_jx_term_id( $post_id ) {
     $terms = wp_get_post_terms( $post_id, WS_JURISDICTION_TAXONOMY );
     if ( is_wp_error( $terms ) ) {
@@ -651,18 +640,15 @@ function ws_get_jx_term_id( $post_id ) {
 }
 
 
-// ════════════════════════════════════════════════════════════════════════════
-// US Term ID Helper
-//
-// Returns the WS_JURISDICTION_TAXONOMY taxonomy term ID for the 'us' term.
-// Result is cached in a static variable — one DB read per request.
-//
-// Always resolved by literal slug/code ('us') to avoid relying on seeded
-// option state.
-//
-// Used by data functions to mark federal rows consistently.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * US Term ID Helper.
+ *
+ * Returns the WS_JURISDICTION_TAXONOMY taxonomy term ID for the 'us' term.
+ * Result is cached in a static variable — one DB read per request.
+ * Always resolved by literal slug/code ('us') to avoid relying on option state.
+ *
+ * @return int The US jurisdiction taxonomy term ID.
+ */
 function ws_get_us_term_id() {
     static $us_term_id = null;
     if ( $us_term_id !== null ) {
@@ -691,23 +677,16 @@ function ws_get_us_term_id() {
 
 
 // ════════════════════════════════════════════════════════════════════════════
-// Dataset: Citations
-//
-// Returns the editorially curated jx-citation records for the jurisdiction
-// summary page — published records assigned to the given WS_JURISDICTION_TAXONOMY
-// taxonomy term that have attach_flag = true, sorted by order ASC.
-//
-// attach_flag is NOT a publish gate. It marks the 3–5 citations an editor
-// has chosen to highlight on the summary page. All other citations remain
-// fully accessible via taxonomy-driven user queries.
-//
-// Accepts a taxonomy term ID integer as scope ($jx_term_id).
-// Returns an array of citation arrays, or empty array if none found.
-//
-// Federal append logic: if the requested jurisdiction is not US, US-scoped
-// citations are appended with is_fed = true.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Returns the editorially curated jx-citation records for the jurisdiction summary page.
+ *
+ * Fetches published records assigned to the given WS_JURISDICTION_TAXONOMY taxonomy term
+ * that have attach_flag = true, sorted by order ASC. If the requested jurisdiction is not US,
+ * US-scoped citations are appended with is_fed = true.
+ *
+ * @param int $jx_term_id The jurisdiction taxonomy term ID.
+ * @return array List of citation data arrays, or empty array if none found.
+ */
 function ws_get_jx_citation_data( $jx_term_id ) {
 
     $term_id    = (int) $jx_term_id;
@@ -803,26 +782,16 @@ function ws_get_jx_citation_data( $jx_term_id ) {
 }
 
 
-// ════════════════════════════════════════════════════════════════════════════
-// Dataset: constructions
-//
-// Returns the editorially curated jx-construction records for the
-// jurisdiction summary page — published records assigned to the given
-// WS_JURISDICTION_TAXONOMY taxonomy term that have attach_flag = true, sorted by
-// order ASC.
-//
-// attach_flag is NOT a publish gate. It marks the 3–5 constructions an
-// editor has chosen to highlight on the summary page. All others remain
-// fully accessible via taxonomy-driven user queries.
-//
-// Accepts a taxonomy term ID integer as scope ($jx_term_id).
-// Returns an array of construction data arrays, or empty array if none found.
-//
-// *NOTE:* constructions are US federal court decisions. When querying a
-// non-US jurisdiction, local records are returned first and US-scoped records
-// are appended with is_fed = true.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Returns the editorially curated jx-construction records for the jurisdiction summary page.
+ *
+ * Fetches published records assigned to the given WS_JURISDICTION_TAXONOMY taxonomy term
+ * that have attach_flag = true, sorted by order ASC. Local records are returned first, and
+ * US-scoped records are appended with is_fed = true.
+ *
+ * @param int $jx_term_id The jurisdiction taxonomy term ID.
+ * @return array List of construction data arrays, or empty array if none found.
+ */
 function ws_get_jx_construction_data( $jx_term_id ) {
 
     $term_id    = (int) $jx_term_id;
@@ -919,17 +888,13 @@ function ws_get_jx_construction_data( $jx_term_id ) {
 }
 
 
-// ════════════════════════════════════════════════════════════════════════════
-// Get All Jurisdictions
-//
-// Returns a list of all published jurisdiction post objects ordered
-// alphabetically by title. Result is cached for 12 hours.
-//
-// Used for bulk operations and administrative views where full post objects
-// are needed. For index display use ws_get_jurisdiction_index_data() which
-// includes type counts and structured metadata.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Returns a list of all published jurisdiction post objects.
+ *
+ * Ordered alphabetically by title. Result is cached for 12 hours.
+ *
+ * @return array List of jurisdiction post objects.
+ */
 function ws_get_all_jurisdictions() {
 
     $cache_key     = WS_CACHE_ALL_JURISDICTIONS;
@@ -956,31 +921,15 @@ function ws_get_all_jurisdictions() {
 }
 
 
-// ════════════════════════════════════════════════════════════════════════════
-// Get Jurisdiction Index Data
-//
-// Returns a structured array containing all jurisdictions as index items
-// plus a count breakdown by type. Used to power the jurisdiction index
-// shortcode and any type-filtered display views.
-//
-// SUMMARY GATE
-// ------------
-// A published jurisdiction post with no linked jx-summary is a stub —
-// it has no useful content for end users. Only jurisdictions with a
-// linked jx-summary are included in the index. Jurisdictions that have
-// not yet been summarized are silently excluded.
-//
-// Return shape:
-//      [
-//          'items'  => [ [ 'name', 'code', 'type', 'url' ], ... ],
-//          'counts' => [ 'all', 'state', 'territory', 'district', 'federal' ]
-//      ]
-//
-// Result is cached for 24 hours — invalidated on jurisdiction/jx-summary
-// saves and jx-summary deletes. The summary check per jurisdiction runs
-// only at cache fill time.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Returns a structured array containing all jurisdictions as index items plus a count breakdown by type.
+ *
+ * Used to power the jurisdiction index shortcode and any type-filtered display views.
+ * Stubs (jurisdiction posts without a summary) are excluded from the index.
+ * Result is cached for 24 hours.
+ *
+ * @return array Structured array with keys 'items' and 'counts'.
+ */
 function ws_get_jurisdiction_index_data() {
 
     $cache_key = WS_CACHE_JX_INDEX;
@@ -1078,8 +1027,11 @@ function ws_get_jurisdiction_index_data() {
 // Also writes ws_jx_term_id post meta, providing a direct post->term_id
 // mapping for seeders and admin tooling without a get_term_by() call at
 // runtime.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Invalidates the all-jurisdictions list cache and the jurisdiction index cache.
+ *
+ * @return void
+ */
 function ws_invalidate_jurisdiction_list_and_index_caches() {
     delete_transient( WS_CACHE_ALL_JURISDICTIONS );
     delete_transient( WS_CACHE_JX_INDEX );
@@ -1115,18 +1067,14 @@ add_action( 'before_delete_post', function( $post_id ) {
 } );
 
 
-// ════════════════════════════════════════════════════════════════════════════
-// Common Law Protection Data
-//
-// Returns all attached jx-common-law records for a jurisdiction, appending
-// federal common law doctrine records the same way ws_get_jx_statute_data()
-// appends federal statutes.
-//
-// @param int $jx_term_id  The WS_JURISDICTION_TAXONOMY term ID for the jurisdiction.
-// @return array           Flat array of common law doctrine row arrays.
-//                         Empty array if no records exist.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Returns all attached jx-common-law records for a jurisdiction.
+ *
+ * Appends federal common law doctrine records the same way ws_get_jx_statute_data() appends federal statutes.
+ *
+ * @param int $jx_term_id The WS_JURISDICTION_TAXONOMY term ID for the jurisdiction.
+ * @return array Flat array of common law doctrine row arrays, or empty array if no records exist.
+ */
 function ws_get_jx_common_law_data( $jx_term_id ) {
 
     $term_id    = (int) $jx_term_id;

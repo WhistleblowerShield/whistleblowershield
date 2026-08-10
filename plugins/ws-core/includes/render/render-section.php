@@ -259,18 +259,16 @@ function ws_render_jx_summary_section( $content, $review_html = '' ) {
 }
 
 
-// ════════════════════════════════════════════════════════════════════════════
-// Trust Badge (plain_reviewed)
-//
-// Renders the plain-english review status badge for a summary record.
-// Legal review badge system was removed in Phase 9.0.
-//
-// @param  bool   $plain_reviewed  True if a human has reviewed the plain-english content.
-// @param  string $reviewer_name   Display name of the reviewer, or empty.
-// @param  string $reviewed_date   Date review was completed (Y-m-d), or empty.
-// @return string                  HTML badge span.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Renders the plain-english review status badge for a summary record.
+ *
+ * Legal review badge system was removed in Phase 9.0.
+ *
+ * @param bool   $plain_reviewed  True if a human has reviewed the plain-english content.
+ * @param string $reviewer_name   Display name of the reviewer, or empty.
+ * @param string $reviewed_date   Date review was completed (Y-m-d), or empty.
+ * @return string                  HTML badge span.
+ */
 function ws_render_plain_english_reviewed_badge( $plain_reviewed, $reviewer_name = '', $reviewed_date = '' ) {
     if ( $plain_reviewed ) {
         $parts = [];
@@ -519,28 +517,15 @@ function ws_render_jx_limitations( $limitations ) {
 }
 
 
-// ════════════════════════════════════════════════════════════════════════════
-// ws_render_statute_procedures( $procedures )
-//
-// Renders a compact cross-reference panel beneath a statute block on the
-// jurisdiction page: "Filing Procedures Under This Statute". Called from
-// the $build_statute_chunk closure in shortcodes-jurisdiction.php.
-//
-// Deliberately compact — shows enough for the end-user to recognize the
-// path forward and link to the full procedure card on the agency page.
-// Not a full procedure card render (that lives in render-agency.php).
-//
-// Sections per item:
-//   — Procedure title (linked to individual procedure permalink)
-//   — Agency name (linked to agency page)
-//   — Type badge (disclosure / retaliation / both)
-//   — Filing deadline if set (e.g. "180-day deadline")
-//   — "Intake Only" badge if intake_only is true
-//
-// @param  array  $procedures  Rows from ws_get_procedures_for_statute().
-// @return string  HTML block, or '' when $procedures is empty.
-// ════════════════════════════════════════════════════════════════════════════
-
+/**
+ * Renders a compact cross-reference panel beneath a statute block on the jurisdiction page.
+ *
+ * Shows enough for the end-user to recognize the path forward and link to the full procedure card.
+ *
+ * @param array  $procedures  Rows from ws_get_procedures_for_statute().
+ * @param string $record_type The post type context ('statute' or other).
+ * @return string  HTML block, or '' when $procedures is empty.
+ */
 function ws_render_record_procedures( $procedures, $record_type = 'statute' ) {
 
     if ( empty( $procedures ) ) {
