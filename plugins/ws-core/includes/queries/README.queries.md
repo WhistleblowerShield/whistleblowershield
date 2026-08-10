@@ -124,3 +124,45 @@ The current attach flag meta keys are:
 path (`ws_render_jx_filtered()`) bypasses `attach_flag` entirely and
 queries all published records. `attach_flag` is an editorial curation
 tool, not a visibility gate.
+
+---
+
+## Query Layer Version History
+
+### `query-jurisdiction.php`
+* **1.0.0:** Initial release.
+* **2.1.0:** ws-core architecture refactor.
+* **2.3.1:** Content keys normalized to raw `post_content`.
+* **3.0.0:** Replaced post meta join with `WS_JURISDICTION_TAXONOMY` taxonomy lookups.
+* **3.1.0:** Added stamp-field unprefixing and `record` sub-array.
+* **3.2.0:** Overhauled legal update system and added jurisdiction filters.
+* **3.3.2:** Stripped all `ws_` and `ws_auto_` prefixes from return keys.
+* **3.5.0:** Statute query rebuilt for schema ingest alignment.
+* **3.6.0:** Split query layer into helpers, shared, jurisdiction, and agencies.
+* **3.7.0:** Introduced assist-org directory query functions (later extracted).
+* **3.8.0:** Added `ws_court_lookup()` label resolution and reference anchor support.
+* **3.9.0:** Added index summary gate, repeater fallback, and taxonomy services.
+* **3.10.0:** Added `ws_procedure_type` taxonomy reads.
+* **3.10.3:** Added normalization helpers and defensively handled taxonomy lookups/mixed relationships.
+* **3.10.4:** Moved assist-org directory queries to `query-directory.php`.
+* **3.10.5:** Moved legal updates and reference queries to `query-general.php`.
+* **3.20.1:** Added Sentry logging to `ws_get_jx_term_id()`, `ws_get_us_term_id()`, and index cache-fill.
+* **3.20.2:** Restored `is_fed` signature logic for common law queries; corrected court label resolving for frontend; aligned jurisdiction taxonomy key reading.
+
+### `query-directory.php`
+* **3.20.1:** Added Sentry logging to `ws_q_taxonomy_payload()` for term retrieval failures.
+
+### `query-helpers.php`
+* **3.6.0:** Extracted display name resolution helper from `query-jurisdiction.php`.
+* **3.9.0:** Relocated `ws_jx_term_by_code()` and `ws_court_lookup()` from matrix helpers.
+* **3.20.2:** Updated court matrices loader dependency notes.
+
+### `query-shared.php`
+* **3.6.0:** Extracted `ws_build_author_array()`, `ws_build_plain_english_array()`, and `ws_build_source_verify_array()` from `query-jurisdiction.php`.
+
+### `query-agencies.php`
+* **3.9.0:** Initial release of agency procedures query function and transient cache.
+* **3.10.0:** Migrated `ws_procedure_type` to `wp_get_object_terms()`.
+* **3.10.1:** Hardened relationships query normalization; exposed parent details.
+* **3.20.1:** Separated real `wp_get_object_terms()` query errors from empty assignments.
+* **3.20.2:** Added error checking to single-value procedure type lookups.

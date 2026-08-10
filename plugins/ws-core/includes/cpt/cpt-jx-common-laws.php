@@ -41,10 +41,6 @@
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
- *
- * VERSION
- * -------
- * 3.13.0  Initial release.
  */
 
 defined( 'ABSPATH' ) || exit;

@@ -25,16 +25,6 @@
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
- *
- * VERSION
- * -------
- * 1.0.0  Initial release.
- * 2.1.0  Refactored for ws-core architecture. CPT slug standardized
- *         to hyphenated convention: jx-statute.
- * 3.2.0  ws_employer_defense taxonomy added to taxonomies array.
- * 3.7.0  Taxonomies array corrected — deprecated slugs removed
- *         (ws_remedy_type, ws_coverage_scope, ws_retaliation_forms);
- *         all current taxonomy slugs confirmed present.
  */
 
 defined( 'ABSPATH' ) || exit;

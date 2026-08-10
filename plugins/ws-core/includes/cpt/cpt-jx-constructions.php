@@ -13,11 +13,6 @@
  * @package WhistleblowerShield
  * @since   2.4.0
  * @version    3.20.0
- *
- * VERSION
- * -------
- * 2.4.0   Initial release.
- * 2.4.1   menu_position corrected from 28 to 29.
  */
 
 defined( 'ABSPATH' ) || exit;

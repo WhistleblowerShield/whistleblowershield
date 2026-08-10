@@ -55,30 +55,6 @@
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
- *
- * VERSION HISTORY
- * ---------------
- * 2.1.0  Initial section renderer implementation (as section-renderer.php).
- * 2.1.1  ws_render_legal_updates() @param docblock updated to match the
- *        expanded return array from ws_get_legal_updates_data() v3.2.0.
- * 3.3.2  ws_render_jx_summary_footer() updated to match simplified query
- *        layer return keys (query-jurisdiction.php v3.3.2).
- * 3.6.0  Renamed section-renderer.php → render-section.php for naming
- *        convention alignment (verb-noun, matches render-jurisdiction.php).
- *        General-purpose renderers (ws_render_not_legal_advice_disclaimer, ws_render_footer,
- *        ws_render_legal_updates, ws_render_jurisdiction_index) moved to
- *        render-general.php. This file now contains jurisdiction-page
- *        section renderers only.
- * 3.9.0  ws_render_jx_limitations() updated: now accepts a repeater array
- *        instead of a sanitized HTML string. Renders label + description
- *        rows as <p><strong>Label:</strong> text</p>. h2 heading moved
- *        into this function (previously lived inside the wysiwyg content).
- * 3.10.1 ws_render_jx_limitations(): text field switched from sanitize_text_field/
- *        esc_html to wp_kses_post; glossary scan applied to assembled $items
- *        before section wrapper. Labels remain esc_html (identifiers, not prose).
- * 3.7.0  ws_render_jx_construction_s() added. Renders court construction
- *        cards (case name, court/year/citation, favorable indicator, summary,
- *        External References button). Called by [ws_jx_construction_].
  */
 
 defined( 'ABSPATH' ) || exit;

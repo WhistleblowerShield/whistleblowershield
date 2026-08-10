@@ -5,16 +5,6 @@
  * @package WhistleblowerShield
  * @since   3.2.0
  * @version    3.20.1
- *
- * VERSION (cont.)
- * ----------------
- * 3.20.1  wp_insert_post() failure now also logs through ws_log_loud_failure()
- *         (previously only error_log() + this file's own transient notice).
- *         A missing jurisdiction term on the source post, or a failed
- *         wp_set_post_terms() call, previously silently produced a
- *         legal-update post with no jurisdiction term at all — invisible to
- *         every per-jurisdiction query even though it exists sitewide. Both
- *         are now logged.
  */
 
 add_action( 'acf/save_post', 'ws_acf_log_major_edit', 20 );

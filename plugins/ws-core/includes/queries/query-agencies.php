@@ -45,31 +45,6 @@
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
- *
- * VERSION HISTORY
- * ---------------
- * 3.20.1 Loud-failure pass. ws_build_agency_procedure_row() previously
- *        conflated a genuine wp_get_post_terms()/wp_get_object_terms()
- *        failure with "this procedure legitimately has no jurisdiction or
- *        protected-disclosure terms" — both produced the same silent empty
- *        array on a visitor-facing procedure card. Now logged separately.
- * 3.20.2 Same conflation missed on ws_procedure_type in both
- *        ws_build_agency_procedure_row() and ws_get_procedures_for_record()
- *        — a genuine failure resolving the single-value procedure-type term
- *        (disclosure/retaliation/both) previously produced the same '' as
- *        a legitimately unset type, silently mis-sorting or dropping the
- *        procedure card with no record of why. Found during a fine-tooth-
- *        comb pass across the query layer siblings of query-jurisdiction.php.
- * 3.9.0  Initial. ws_get_agency_procedures() + per-agency transient cache.
- *        Phase 2 of ag-procedure feature build.
- * 3.10.0 ws_proc_type get_post_meta() reads replaced with wp_get_object_terms()
- *        on ws_procedure_type in both ws_build_agency_procedure_row() and
- *        ws_get_procedures_for_record(). Returns first term slug as plain
- *        string; empty string when no term assigned.
- * 3.10.1 Query hardening + field coverage sync:
- *        - procedure rows now expose parent_ids (normalized)
- *        - procedure rows now expose parent_override
- *        - relationship ID normalization aligned with query-jurisdiction helpers
  */
 
 defined( 'ABSPATH' ) || exit;

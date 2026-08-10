@@ -310,3 +310,11 @@ Returns `array|false`:
 - `content`, `sources`, `limitations`
 - `plain_english_reviewed`
 - `plain` (payload), `verify` (payload), `author` (payload)
+
+---
+
+## Shortcodes Version History
+
+### `shortcodes-general.php`
+* **2.1.3:** Initial release.
+* **3.20.1:** Integrated `ws_render_or_fail_loud()` safety net in `ws_shortcode_assist_org_directory()` to handle exceptions from the directory rendering pipeline.

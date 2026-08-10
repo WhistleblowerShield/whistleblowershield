@@ -32,15 +32,6 @@
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
- *
- * VERSION HISTORY
- * ---------------
- * 3.6.0  Extracted from section-renderer.php as part of render-layer split.
- *        ws_render_not_legal_advice_disclaimer(), ws_render_footer(), ws_render_legal_updates(),
- *        and ws_render_jurisdiction_index() previously defined in that file.
- * 3.8.1  Contact email in ws_render_footer() wrapped in
- *        apply_filters( 'ws_contact_email', 'admin@whistleblowershield.org' ).
- *        Overridable from a theme or mu-plugin without editing plugin files.
  */
 
 defined( 'ABSPATH' ) || exit;

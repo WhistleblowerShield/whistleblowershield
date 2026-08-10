@@ -45,14 +45,6 @@
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
- *
- * VERSION
- * -------
- * 1.0.0  Initial release.
- * 1.9.0  Renamed from legal-update to ws-legal-update.
- * 2.1.0  Refactored for ws-core architecture. CPT slug standardized
- *         to hyphenated convention: ws-legal-update. File renamed
- *         from cpt-legal-update.php to cpt-ws-legal-update.php.
  */
 
 defined( 'ABSPATH' ) || exit;

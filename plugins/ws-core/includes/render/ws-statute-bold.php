@@ -49,16 +49,6 @@
  * @package    WhistleblowerShield
  * @since      3.10.1
  * @version    3.20.1
- *
- * VERSION LOG
- * -----------
- * 3.20.1  Loud-failure pass. All three preg_* calls (preg_replace_callback
- *         x2, preg_split) had unchecked failure returns. The worst of the
- *         three: a null from the bare-citation preg_replace_callback() was
- *         concatenated directly into $result, silently deleting that text
- *         segment from visitor-facing output — not a cosmetic issue, actual
- *         content loss. All three now fail open (keep original text/HTML)
- *         and log via ws_log_loud_failure() instead.
  */
 
 defined( 'ABSPATH' ) || exit;

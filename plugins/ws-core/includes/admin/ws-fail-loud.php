@@ -76,20 +76,6 @@
  * @author     WhistleblowerShield (Dejunai)
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
- *
- * VERSION LOG
- * -----------
- * 3.23.1  Stage 0 (wired into loader.php, first file in the Admin Layer)
- *         and Stage 1 (admin-health-check.php, admin-url-monitor.php,
- *         admin-feed-monitor.php now also route their existing failure
- *         patterns through ws_log_loud_failure()) complete. tool-ingest.php
- *         and every query/render-layer file remain unconverted — see the
- *         rollout plan in README.fail-loud.md for current state.
- * 3.23.0  Initial release. Architecture and code by Claude (Anthropic),
- *         directed and reviewed by Dejunai. NOT yet wired into
- *         admin-health-check.php, admin-url-monitor.php, tool-ingest.php,
- *         or any query/render-layer file — see the rollout plan in
- *         README.fail-loud.md for the honest next-steps list.
  */
 
 defined( 'ABSPATH' ) || exit;

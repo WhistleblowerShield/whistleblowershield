@@ -38,19 +38,6 @@
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
- *
- * VERSION
- * -------
- * 3.4.0  Initial release. Centralizes plain-english fields previously
- *        duplicated across four individual CPT ACF files.
- * 3.5.0  Group key renamed: group_ws_plain_english_fields → group_plain_english_metadata.
- * 3.6.0  Stamp field meta keys prefixed with ws_auto_.
- * 3.16.0 ws-assist-org added to shared Plain-English workflow.
- *        Semantic intent:
- *          - ws_plain_english_wysiwyg is the enriched public profile body
- *          - ws_plain_english_reviewed gates the "More about this organization" link
- *          - ws_has_plain_english defaults on for assist-org ingest writes
- *        Reuse of this workflow group for assist-org is intentional.
  */
 
 defined( 'ABSPATH' ) || exit;

@@ -93,3 +93,34 @@ The Phase 2 dispatch block is commented out in the assembler pending
 before Phase 2 is implemented. Assist org cards render differently
 in the directory context than in the jurisdiction page context, and
 the Phase 2 filter cascade will need to call them independently.
+
+---
+
+## Render Layer Version History
+
+### `render-jurisdiction.php`
+* **2.1.0:** Initial release.
+* **3.0.0:** Switched to taxonomy-based scoping instead of relationship fields.
+* **3.8.0:** Extracted `ws_render_jx_curated()` dispatcher.
+* **3.20.1:** Wrapped `ws_render_jx_curated()` execution in the `ws_render_or_fail_loud()` safety net.
+
+### `ws-statute-bold.php`
+* **3.10.1:** Initial release.
+* **3.20.1:** Added failure-open fallback logic to regular expression callbacks to prevent content truncation on errors.
+
+### `render-agency.php`
+* **3.9.0:** Initial release.
+* **3.20.1:** Integrated `ws_render_or_fail_loud()` safety net around the agency and procedure page assemblers.
+
+### `render-general.php`
+* **3.6.0:** Extracted general page components from `section-renderer.php`.
+* **3.8.1:** Wrapped contact email in `ws_contact_email` filter hook.
+
+### `render-section.php`
+* **2.1.0:** Initial release of the unified section renderer (`section-renderer.php`).
+* **2.1.1:** Updated legal updates params docblock to sync with v3.2.0 queries.
+* **3.3.2:** Synced summary footer keys with v3.3.2 query layer modifications.
+* **3.6.0:** Renamed `section-renderer.php` to `render-section.php` and moved general components to `render-general.php`.
+* **3.7.0:** Added `ws_render_jx_construction_s()` to render court construction cards.
+* **3.9.0:** Updated limitations renderer to consume a repeater array.
+* **3.10.1:** Enabled `wp_kses_post` on limitations description; integrated glossary tooltips scan.

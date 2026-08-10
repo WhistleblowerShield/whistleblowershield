@@ -80,3 +80,39 @@ Admin sidebar positions are allocated to keep related CPTs adjacent:
 If adding a new CPT, check this table before assigning a position
 to avoid collision with WordPress core menu items (80, 85, 90, 99)
 and existing CPTs.
+
+---
+
+## CPT Component Version History
+
+### `cpt-jurisdictions.php`
+* **1.0.0:** Initial release.
+* **2.1.0:** ws-core architecture refactor.
+
+### `cpt-jx-common-laws.php`
+* **3.13.0:** Initial release.
+
+### `cpt-assist-orgs.php`
+* **1.0.0:** Initial release.
+* **1.0.1:** corrected menu_position from 31 to 30.
+* **3.7.0:** added `ws_employment_sector` taxonomy.
+* **3.11.0:** expanded local taxonomy declarations to include process type, case stage, languages, disclosure targets, org type, employment sector, cost model, services, and jurisdiction.
+
+### `cpt-jx-citations.php`
+* **2.3.0:** Initial release.
+* **3.0.0:** retired `ws_jx_code` join; migrated to `WS_JURISDICTION_TAXONOMY` taxonomy queries.
+
+### `cpt-jx-constructions.php`
+* **2.4.0:** Initial release.
+* **2.4.1:** corrected menu_position from 28 to 29.
+
+### `cpt-jx-statutes.php`
+* **1.0.0:** Initial release.
+* **2.1.0:** ws-core architecture refactor. CPT slug standardized to hyphenated convention `jx-statute`.
+* **3.2.0:** added `ws_employer_defense` taxonomy.
+* **3.7.0:** corrected taxonomies array, removing deprecated slugs (`ws_remedy_type`, `ws_coverage_scope`, `ws_retaliation_forms`).
+
+### `cpt-legal-updates.php`
+* **1.0.0:** Initial release.
+* **1.9.0:** renamed CPT from `legal-update` to `ws-legal-update`.
+* **2.1.0:** ws-core architecture refactor; standardized slug to `ws-legal-update`, renamed file from `cpt-legal-update.php` to `cpt-ws-legal-update.php`.

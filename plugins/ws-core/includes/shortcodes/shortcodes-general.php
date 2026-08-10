@@ -9,15 +9,6 @@
  * @package WhistleblowerShield
  * @since   2.1.3
  * @version    3.20.1
- *
- * VERSION LOG
- * -----------
- * 3.20.1  ws_shortcode_assist_org_directory() now wraps its
- *         ws_render_directory_page() call in ws_render_or_fail_loud() —
- *         the jurisdiction and agency page assemblers already had this
- *         safety net (render-jurisdiction.php, render-agency.php); the
- *         directory shortcode was the one visitor-facing top-level
- *         render path without it.
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;

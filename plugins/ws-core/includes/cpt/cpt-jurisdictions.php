@@ -9,11 +9,6 @@
  * @package WhistleblowerShield
  * @since   1.0.0
  * @version    3.20.0
- *
- * VERSION
- * -------
- * 1.0.0   Initial release.
- * 2.1.0   ws-core refactor.
  */
 
 defined( 'ABSPATH' ) || exit;

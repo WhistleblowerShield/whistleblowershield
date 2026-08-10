@@ -19,16 +19,6 @@
  * @package WhistleblowerShield
  * @since   3.10.4
  * @version    3.20.1
- *
- * VERSION LOG
- * -----------
- * 3.20.1  ws_q_taxonomy_payload() — the central taxonomy reader for every
- *         assist-org directory row — now logs (deduped per taxonomy per
- *         request) when wp_get_object_terms() genuinely fails, instead of
- *         silently returning the same empty payload as "no terms assigned."
- *         This is the live Phase 2 directory's data source; an error here
- *         previously made an org invisible to filter-cascade scoring with
- *         zero record of why.
  */
 
 defined( 'ABSPATH' ) || exit;

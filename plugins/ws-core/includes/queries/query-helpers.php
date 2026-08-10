@@ -33,21 +33,6 @@
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
- *
- * VERSION HISTORY
- * ---------------
- * 3.6.0  Extracted from query-jurisdiction.php as part of query-layer split.
- *        ws_resolve_display_name() previously defined at top of that file.
- * 3.9.0  ws_jx_term_by_code() and ws_court_lookup() moved here from
- *        matrix-helpers.php. Both are called from the Universal Layer
- *        (query-jurisdiction.php) and must be available on the frontend.
- *        (loader.php did not actually satisfy that "must be available on
- *        the frontend" requirement until 2026-08-07 — see below.)
- * 3.20.2 ws_court_lookup()'s docblock corrected: matrix-federal-courts.php
- *        and matrix-state-courts.php moved to the Universal Layer in
- *        loader.php, so this function's globals are no longer permanently
- *        empty on the frontend. The comment here previously documented the
- *        admin-only limitation as expected behavior rather than a bug.
  */
 
 defined( 'ABSPATH' ) || exit;

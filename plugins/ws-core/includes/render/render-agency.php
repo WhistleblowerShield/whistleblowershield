@@ -18,15 +18,6 @@
  * @package WhistleblowerShield
  * @since   3.9.0
  * @version    3.20.1
- *
- * VERSION
- * -------
- * 3.9.0   Initial release. Phase 2 of ag-procedure feature build.
- * 3.20.1  ws_handle_agency_render() now wraps both the ws-agency and
- *         ag-procedure render paths in ws_render_or_fail_loud() — same
- *         rationale as render-jurisdiction.php 3.20.1. These are top-level
- *         the_content filters serving real visitors on pages carrying
- *         actual filing deadlines.
  */
 
 defined( 'ABSPATH' ) || exit;

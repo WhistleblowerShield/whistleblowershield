@@ -272,3 +272,5 @@ value. To re-run a seeder, bump its version string — never delete the option.
 | 3.16.0 | Cascade taxonomy filter developed |
 | 3.17.0 | Naming rules extended, refactor applied |
 | 3.18.0 | Schema additions: employment sectors + employer threshold fields across legal records, agencies, procedures, query layer, and prompt generator |
+| 3.20.1 | Wired `ws-fail-loud` into `loader.php` at the top of the `is_admin()` block. |
+| 3.20.2 | Moved `ws-fail-loud.php` and court matrices to the Universal Layer so they are available on the frontend. |

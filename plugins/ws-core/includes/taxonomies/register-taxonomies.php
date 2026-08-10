@@ -28,23 +28,6 @@
  * @package       WhistleblowerShield
  * @since         2.1.0
  * @version       3.20.1 [3.20 locked — never been deployed, no live data, bump patch only] — [Do not bump gates]
- *
- * VERSION LOG (3.20.1)
- * ---------------------
- * Loud-failure pass. All wp_die() calls in ws_seed_all_taxonomies() and
- * ws_seed_taxonomy() converted to ws_fail_loud() for the same reason
- * matrix-assist-orgs.php's ws_assist_org_matrix_fail() was converted:
- * wp_die() alone leaves no persistent record after the admin closes that
- * one screen. Also fixed a real ambiguity: a hyphenated taxonomy slug
- * previously triggered trigger_error(..., E_USER_ERROR) — fatal by
- * default — immediately followed by a `continue`, which is either
- * unreachable dead code or (if a custom error handler, e.g. Sentry,
- * intercepts without halting) a silent per-taxonomy skip with no
- * structured record. Confirmed ws_fail_loud() is available by the time
- * these fire: ws_seed_all_taxonomies()/ws_seed_taxonomy() only run on the
- * admin_init hook, which fires only in is_admin() context, by which point
- * loader.php's Admin Layer (where ws-fail-loud.php loads first) has
- * already executed synchronously within the same plugins_loaded call.
  * @author        Whistleblower Shield
  * @link          https://whistleblowershield.org
  * @copyright     Copyright (c) 2026 Whistleblower Shield

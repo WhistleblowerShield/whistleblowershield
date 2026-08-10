@@ -289,3 +289,13 @@ Each debug line format:
 
 Set `WS_GLOSSARY_SCAN_DEBUG` to `false` in production once the scanner is
 validated. The constant check is inlined directly — no wrapper function.
+
+---
+
+## Taxonomy Seeding and Registry Version History
+
+### `register-taxonomies.php`
+* **3.20.1:** Loud-failure pass. Migrated `wp_die()` calls in `ws_seed_all_taxonomies()` and `ws_seed_taxonomy()` to `ws_fail_loud()`.
+
+### `register-glossary.php`
+* **3.20.1:** Loud-failure pass. Fixed conflation in `ws_get_glossary_lookup()` where term failures disabled scanning; widened try/catch block to `\Throwable` to catch DOMDocument errors; logged wp_insert_term failures.

@@ -10,11 +10,6 @@
  * @package WhistleblowerShield
  * @since   2.3.0
  * @version    3.20.0
- *
- * VERSION
- * -------
- * 2.3.0   Initial release.
- * 3.0.0   ws_jx_code join retired; WS_JURISDICTION_TAXONOMY taxonomy used throughout.
  */
 
 defined( 'ABSPATH' ) || exit;

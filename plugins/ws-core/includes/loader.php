@@ -144,60 +144,6 @@
  *          flag the seeders above as divergences — the
  *          WS_MATRIX_SEEDING_IN_PROGRESS constant guards this.
  *
- *
- * VERSION
- * -------
- * 2.1.0   Modular loader introduced.
- * 2.3.1   Taxonomy layer moved to Universal Layer.
- * 2.4.1   Error reporting added to all load calls.
- * 3.0.0   acf-source-verify added to ACF load list.
- * 3.4.0   acf-stamp-fields and acf-plain-english-fields added.
- * 3.6.0   Query layer load order: helpers → shared → jurisdiction.
- * 3.6.1   admin-health-check added.
- * 3.7.0   matrix-state-courts added.
- * 3.9.0   cpt/query/acf/render/admin files for ag-procedure added.
- * 3.10.0  TAXONOMY TWO-PHASE BEHAVIOR and MATRIX LAYER DEPENDENCY CHAIN
- *         sections added. acf/workflow/ and admin/monitors/ subdirectory
- *         load blocks added.
- * 3.10.2  ws-statute-bold added to render files.
- * 3.13.0  cpt-jx-common-law and acf-jx-common-law added.
- * 3.13.1  tool-prompt-generator added to tools load block.
- * 3.13.2  tool-taxonomy-term-audit added to tools load block.
- * 3.13.3  query-assist-orgs added; assist-org query functions extracted from
- *         query-jurisdiction.php.
- * 3.13.4  query-general added; legal-updates/reference queries extracted from
- *         query-jurisdiction.php.
- * 3.13.5  query-assist-orgs renamed to query-directory for assembly-facing
- *         directory terminology consistency.
- * 3.20.1  ws-fail-loud required directly at the top of the is_admin() block,
- *         before the Matrix Layer — Stage 0 of the unified loud-failure
- *         rollout (see README.fail-loud.md). Originally placed as the first
- *         entry in $admin_files, which turned out to be too late: the Matrix
- *         and ACF layers both load before $admin_files, and matrix seeders
- *         are a primary consumer of ws_fail_loud() per the Matrix Doctrine
- *         in onboarding-guidance.md ("no silent errors, invalid enum values
- *         throw clear errors"). Corrected before any seeder actually called it.
- * 3.20.2  ws-fail-loud.php moved again — from the top of the is_admin() block
- *         to the top of the Universal Layer. Stage 3 (query layer) and
- *         Stage 4 (render/shortcode layer) of the loud-failure rollout added
- *         ws_log_loud_failure() / ws_render_or_fail_loud() calls to
- *         query-jurisdiction.php, query-agencies.php, query-directory.php
- *         (Universal Layer), and render-jurisdiction.php, render-agency.php,
- *         ws-statute-bold.php, shortcodes-general.php (Assembly Layer,
- *         frontend-only) — none of which run inside is_admin(). The
- *         admin-only require left every one of those undefined on the
- *         frontend; ws_render_or_fail_loud() is the unconditional wrapper
- *         around the jurisdiction page render and the directory shortcode,
- *         not an error-branch-only call, so this was a fatal
- *         undefined-function error on every real page view, not an edge
- *         case. Also moved matrix-federal-courts.php / matrix-state-courts.php
- *         from the admin-only Matrix Layer to the Universal Layer for the
- *         same reason — ws_court_lookup() needs their globals on the
- *         frontend too, and always got null there, silently showing raw
- *         court keys instead of resolved labels on every construction
- *         record. Found during a fine-tooth-comb review of
- *         query-jurisdiction.php.
- *
  * @package WhistleblowerShield
  * @since   2.1.0
  * @version    3.20.2

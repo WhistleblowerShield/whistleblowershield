@@ -94,76 +94,9 @@
  *
  * @package    WhistleblowerShield
  * @since      1.0.0
- * @version    3.20.2
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
- *
- * VERSION
- * -------
- * 1.0.0   Initial release.
- * 2.1.0   Refactored for ws-core architecture.
- * 2.3.1   Content keys normalized to raw post_content.
- * 3.0.0   Taxonomy-based lookups throughout; post meta join removed.
- * 3.1.0   record sub-array added; stamp fields unprefixed in return keys.
- * 3.2.0   Legal update system overhaul; tax_query jurisdiction filter.
- * 3.3.2   ws_/ws_auto_ prefixes stripped from all query layer return keys.
- * 3.5.0   ws_get_jx_statute_data() rebuilt for ingest alignment.
- * 3.6.0   Query layer split: helpers → shared → jurisdiction → agencies.
- * 3.7.0   Assist-org directory dataset introduced (later extracted).
- * 3.8.0   Court label resolution via ws_court_lookup(). Reference page anchor support.
- * 3.9.0   Summary gate on index. Frontend repeater fallback. Services via taxonomy.
- * 3.10.0  ws_procedure_type taxonomy reads added.
- * 3.10.3  Query hardening + schema sync pass:
- *         - added normalization helpers for mixed scalar/array/object/meta payloads
- *         - aligned statute/common-law/citation/construction datasets with current
- *           non-hidden ACF fields (including relationship/detail fields)
- *         - removed stale statute bop_standard key read; employee_standard taxonomy
- *           is now the canonical burden standard source
- *         - added defensive handling for WP_Error taxonomy lookups and mixed
- *           ws_ref_materials relationship return shapes
- * 3.10.4  Assist-org datasets moved to query-directory.php.
- * 3.10.5  Cross-cutting legal updates/reference functions moved to
- *         query-general.php.
- * 3.20.1  Loud-failure pass (query layer, per README.fail-loud.md Stage 3).
- *         Left "no results" returns untouched throughout — a jurisdiction
- *         with no jx-summary, no attach-flagged statutes, etc. is a
- *         legitimate empty state, not a bug. Fixed three places that
- *         previously conflated a genuine WP_Error with a legitimate empty
- *         result, identically: ws_get_jx_term_id() (called by every
- *         shortcode before invoking dataset functions — a query failure
- *         here previously rendered an entire jurisdiction page as if it had
- *         no content); ws_get_us_term_id() (a failure here silently drops
- *         the federal-law append from every jurisdiction page sitewide);
- *         and the jurisdiction-index cache-fill loop (a failure here
- *         silently drops one jurisdiction from the index for 24 hours).
- * 3.20.2  Fine-tooth-comb bug pass. Three fixes:
- *         (1) ws_get_jx_common_law_data() called its own $fetch closure with
- *         one argument against a two-parameter signature — a fatal
- *         ArgumentCountError on every jurisdiction with any published
- *         common-law record. Now passes is_fed explicitly as false (common
- *         law has no federal counterpart, unlike statute/citation/
- *         construction) and the row's 'is_fed' key — previously
- *         commented out — is restored, matching this file's own documented
- *         return-shape contract at the top of this docblock.
- *         (2) ws_get_jx_construction_data()'s 'court' label resolution via
- *         ws_court_lookup() always fell back to the raw internal court key
- *         on the frontend, because matrix-federal-courts.php /
- *         matrix-state-courts.php — the source of the globals it reads —
- *         loaded only in is_admin() context (fixed in loader.php; both now
- *         load in the Universal Layer).
- *         (3) ws_get_jurisdiction_data()'s 'jx_term_id' read the wrong post
- *         meta key ('ws_jurisdiction_jx', the ACF taxonomy field's own raw
- *         value) instead of 'ws_jx_term_id' (the plain-int convenience key
- *         the save_post_jurisdiction hook actually writes), always
- *         returning 0. No caller consumed this key yet, so it was silently
- *         wrong rather than visibly broken. Now derived from the same
- *         wp_get_post_terms() call as 'code', with the same WP_Error-vs-
- *         empty split used elsewhere in this file.
- *         All three found during a user-requested fine-tooth-comb review;
- *         fixing (1) surfaced that ws-fail-loud.php itself was admin-only
- *         in loader.php despite Stage 3/4 adding frontend call sites —
- *         corrected there, not here.
  */
 
 defined( 'ABSPATH' ) || exit;

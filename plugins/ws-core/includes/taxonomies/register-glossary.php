@@ -23,19 +23,6 @@
  * @author        Whistleblower Shield
  * @link          https://whistleblowershield.org
  * @copyright     Copyright (c) 2026 Whistleblower Shield
- *
- * VERSION LOG (3.20.1)
- * ---------------------
- * Loud-failure pass. ws_get_glossary_lookup() no longer conflates a genuine
- * get_terms() failure with "no glossary terms yet" — both previously
- * silently disabled tooltip scanning sitewide for 5 minutes. The scanner's
- * catch (Exception $e) widened to catch (\Throwable $e) — Exception alone
- * does not catch Error/TypeError, which the DOMDocument manipulation in
- * this visitor-facing filter can plausibly throw; an uncaught Error
- * previously had no safety net here. ws_seed_glossary_taxonomy() now logs
- * (does not throw) a failed wp_insert_term() instead of silently skipping
- * that term. Removed an @-suppressed unchecked file_put_contents() in
- * ws_glossary_debug_log().
  */
 
 defined( 'ABSPATH' ) || exit;

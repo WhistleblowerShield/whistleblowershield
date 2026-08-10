@@ -89,3 +89,18 @@ Admin files read post meta directly for three reasons:
 
 Any direct meta read in an admin file that is not self-evident
 carries an inline comment explaining why the query layer is not used.
+
+---
+
+## Admin and Failure Handling Version History
+
+### `admin-procedure-watch.php`
+* **3.9.0:** Initial release of the procedure validation and publish gate.
+* **3.20.1:** Loud-failure pass. Checked the return value of `wp_update_post()` demoting mismatched procedures to draft and logged failure details.
+
+### `admin-major-edit-hook.php`
+* **3.20.1:** Added Sentry logging via `ws_log_loud_failure()` for `wp_insert_post()` and `wp_set_post_terms()` errors.
+
+### `ws-fail-loud.php`
+* **3.23.0:** Initial release of the Unified Loud Failure system context and exception structures.
+* **3.23.1:** Integrated `ws-fail-loud.php` into the core loader and wired health check, URL monitor, and feed monitor failures to route through Sentry.

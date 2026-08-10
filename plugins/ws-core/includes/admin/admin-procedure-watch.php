@@ -33,17 +33,6 @@
  * @package WhistleblowerShield
  * @since   3.9.0
  * @version    3.20.1
- *
- * VERSION
- * -------
- * 3.9.0   Initial release. Phase 3 of ag-procedure feature build.
- * 3.20.1  Loud-failure pass. Three wp_get_object_terms() calls previously
- *         treated a genuine WP_Error identically to a legitimate empty
- *         result — now logged separately. Most importantly: wp_update_post()
- *         demoting a flagged procedure to draft had its return value
- *         unchecked entirely — if that call failed, the post remained
- *         published with a detected authority-link mismatch while the
- *         admin notice claimed it had been demoted. Now checked and logged.
  */
 
 defined( 'ABSPATH' ) || exit;

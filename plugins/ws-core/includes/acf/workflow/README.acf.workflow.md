@@ -84,3 +84,13 @@ Three write paths for `ws_auto_source_method`:
 `ws_verification_status` cannot be set to `verified` unless
 `ws_auto_source_name` is non-empty — enforced server-side by
 `ws_enforce_source_verify_roles()` in `admin-hooks.php` at priority 20.
+
+---
+
+## Workflow ACF Fields Version History
+
+### `acf-plain-english-fields.php`
+* **3.4.0:** Initial release. Centralized Plain-English fields previously duplicated across CPT-specific ACF files.
+* **3.5.0:** Group key renamed `group_ws_plain_english_fields` to `group_plain_english_metadata`.
+* **3.6.0:** Prefix `ws_auto_` added to stamp metadata keys.
+* **3.16.0:** Added `ws-assist-org` to the shared Plain-English workflow.

@@ -38,12 +38,6 @@
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
- *
- * VERSION HISTORY
- * ---------------
- * 3.6.0  Extracted from query-jurisdiction.php as part of query-layer split.
- *        ws_build_author_array(), ws_build_plain_english_array(), and
- *        ws_build_source_verify_array() previously defined in that file.
  */
 
 defined( 'ABSPATH' ) || exit;
