@@ -47,6 +47,8 @@ Presentation
 
 These layer names are useful only if they prevent mistakes. They are not decoration.
 
+Some implementation details, such as agencies, filing procedures, and common-law rendering, are present in the codebase but remain a partial or transitional capability. Unless a document explicitly confirms their current status, they should not be treated as the settled center of this documentation pass.
+
 ## 1. Vocabulary Layer
 
 The vocabulary layer defines controlled terms the rest of the system relies on.

@@ -196,7 +196,9 @@ assist organizations
 documentation governance
 ```
 
-Agencies and procedures exist in the codebase but should not become the center of this pass unless a specific review confirms their current role.
+Agencies and procedures exist in the codebase and are part of the current model, but they remain a partial, transitional layer. They should not become the center of this pass unless a specific review confirms their current implementation status and public-facing role.
+
+Common-law support is also present in the data layer; its public rendering may still be incomplete and should be documented carefully as such.
 
 Prompt and ingest tooling should be documented carefully because parts are active, parts are transitional, and parts are intentionally deferred.
 
