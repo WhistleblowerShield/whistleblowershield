@@ -5,7 +5,7 @@ model, editorial workflow, and public-facing output for the platform.
 
 **Stack:** WordPress + ACF Pro
 **Requires:** PHP 8.0+, WordPress 6.0+, ACF Pro
-**Version:** 3.20.0
+**Version:** 3.20.1
 
 Full project documentation is in `/documentation/`. This file covers the
 rules a developer needs open while writing code.

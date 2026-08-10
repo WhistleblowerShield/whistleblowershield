@@ -31,9 +31,9 @@ Subdirectories:
 |---|---|
 | `tools/tool-prompt-generator.php` | Generates AI research prompts from live taxonomy data. Writes to `wp-content/logs/ws-prompts/` |
 | `tools/tool-ingest.php` | Processes validated JSON batches for `jx-statute`, `jx-common-law`, `jx-citation`, and `jx-construction`. Writes ledger logs to `wp-content/logs/ws-ingest/` and detailed run logs to `wp-content/logs/ws-ingest/ingested/` |
-
-**Ingest log files** (`wp-content/logs/ws-ingest/`):
-
+| `tools/tool-taxonomy-term-audit.php` | Compares live `ws_*` taxonomy terms to seed declarations and reports drift in admin |
+| `tools/ws-schema-constants.php` | Canonical schema enumerations used by prompt generation and ingest validation |
+| `tools/prompt-generator/` | Prompt-generator implementation folder, loaded by `tool-prompt-generator.php` |
 | File | Content |
 |---|---|
 | `preflight-errors.log` | Append-only. One line per failed preflight with filename and reason |
