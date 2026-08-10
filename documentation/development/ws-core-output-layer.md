@@ -60,7 +60,8 @@ render/
 ├── render-section.php      Jurisdiction-page section renderers
 ├── render-jurisdiction.php The jurisdiction assembler
 ├── render-directory.php    Assist org directory renderers
-└── render-agency.php       Agency page assembler + procedure card renderers
+├── render-agency.php       Agency page assembler + procedure card renderers
+└── ws-statute-bold.php     Helper that wraps citations in <strong> tags
 
 shortcodes/
 ├── shortcodes-jurisdiction.php  Jurisdiction shortcodes

@@ -21,7 +21,7 @@ This document does not describe individual field groups (see
 |---|---|
 | Plugin Name | WhistleblowerShield Core |
 | Plugin File | `ws-core/ws-core.php` |
-| Current Version | 3.14.0 |
+| Current Version | 3.20.2 |
 | Requires | WordPress 6.0+, ACF Pro |
 | Text Domain | `ws-core` |
 
@@ -43,16 +43,19 @@ ws-core/
 │
 └── includes/
     ├── loader.php                  Centralized file loader — all layers
+    ├── sentry_init.php             Sentry telemetry initialization bridge
     │
-    ├── cpt/                        Custom Post Type registrations (10 files)
+    ├── cpt/                        Custom Post Type registrations (11 files)
     ├── taxonomies/                 Taxonomy registrations + seeders (2 files)
-    ├── acf/                        ACF field group registrations (14 files)
-    ├── queries/                    Query layer — data retrieval API (4 files)
-    ├── render/                     Assembly layer — HTML output (5 files)
+    ├── acf/                        ACF field group registrations (15 files)
+    ├── queries/                    Query layer — data retrieval API (6 files)
+    ├── render/                     Assembly layer — HTML output (6 files)
     ├── shortcodes/                 Shortcode registrations (2 files)
-    └── admin/                      Admin layer (12 files + matrix/ monitors/ tools/ subdirectory)
-        └── matrix/                 Matrix seeders + divergence watch (9 files)
-        └── monitors/               Cron job invoked monitors (URL and feed) (2 files)
+    ├── cascade/                    Situation-based filter cascade (2 files)
+    └── admin/                      Admin layer (10 files + matrix/ monitors/ tools/ subdirectory)
+        ├── ws-fail-loud.php        Loud error reporting framework (Phase 1 universal)
+        ├── matrix/                 Matrix seeders + divergence watch (9 files)
+        ├── monitors/               Cron job invoked monitors (URL and feed) (2 files)
         └── tools/                  Admin utility tools + schema constants (4 files + prompt-generator/ subdirectory)
             └── prompt-generator/   Prompt-Generator config + functions (8 files)
 ```
@@ -61,7 +64,7 @@ ws-core/
 
 ## Custom Post Types
 
-Ten CPTs are registered. The `jx-` prefix denotes jurisdiction addendum
+Eleven CPTs are registered. The `jx-` prefix denotes jurisdiction addendum
 CPTs (non-public, scoped to a parent jurisdiction). The `ws-` prefix
 denotes site-wide or directory CPTs.
 
@@ -70,6 +73,7 @@ denotes site-wide or directory CPTs.
 | `jurisdiction` | Jurisdiction | ✓ | `/jurisdictions/{slug}/` | Primary page for each of the 57 jurisdictions |
 | `jx-summary` | Jurisdiction Summary | — | — | Plain-English overview of protections; one per jurisdiction |
 | `jx-statute` | Statute | — | — | Individual statute or regulation record |
+| `jx-common-law` | Common Law Protection | — | — | Judicially recognized doctrine providing protection |
 | `jx-citation` | Jurisdiction Citation | — | — | Case law citation; attach-flag for curation |
 | `jx-construction` | Statute construction | — | — | Court-specific statutory construction |
 | `ws-agency` | Agency | ✓ | `/agencies/` | Government agency with whistleblower jurisdiction |
@@ -81,7 +85,7 @@ denotes site-wide or directory CPTs.
 **Notes:**
 - `jurisdiction` has no archive — the jurisdictions index is a standard
   WordPress page using the `[ws_jurisdiction_index]` shortcode.
-- `jx-summary`, `jx-statute`, `jx-citation`, `jx-construction`, and
+- `jx-summary`, `jx-statute`, `jx-common-law`, `jx-citation`, `jx-construction`, and
   `ws-legal-update` are non-public. Their content is rendered exclusively
   through the query layer and assembly layer on parent pages.
 - `ws-agency` is publicly queryable so individual agencies
@@ -153,7 +157,7 @@ All constants are defined in `ws-core.php` before the bootstrap runs.
 
 | Constant | Value | Purpose |
 |---|---|---|
-| `WS_CORE_VERSION` | `'3.19.0'` | Plugin version — used as asset enqueue version string |
+| `WS_CORE_VERSION` | `'3.20.2'` | Plugin version — used as asset enqueue version string |
 | `WS_CORE_PATH` | `plugin_dir_path()` | Absolute filesystem path to plugin root |
 | `WS_CORE_URL` | `plugin_dir_url()` | URL to plugin root for asset enqueues |
 | `WS_JURISDICTION_TAXONOMY` | `'ws_jurisdiction'` | Canonical taxonomy slug — use everywhere WordPress expects a taxonomy identifier |
@@ -166,7 +170,7 @@ All constants are defined in `ws-core.php` before the bootstrap runs.
 | `WS_SOURCE_FEED_IMPORT` | `'feed_import'` | Source method: created via feed monitor |
 | `WS_SOURCE_HUMAN_CREATED` | `'human_created'` | Source method: created directly by a human editor |
 | `WS_SOURCE_NAME_DIRECT` | `'Direct'` | Source name value for matrix_seed and human_created posts where source and method are the same |
-| `WS_LEGAL_UPDATE_SUMMARY_TYPES` | `['statute','common-law','citation','summary','construction','regulation','policy']` | Legal update types that appear on public-facing pages; `internal` and `other` are excluded |
+| `WS_LEGAL_UPDATE_SUMMARY_TYPES` | `['summary','statute','common-law','citation','construction','agency','procedure','regulation','policy']` | Legal update types that appear on public-facing pages; `internal` and `other` are excluded |
 
 ---
 
@@ -292,9 +296,8 @@ into three phases. The order within each phase is non-negotiable.
 Loads on every request. Required for WordPress to understand CPT URLs,
 taxonomy associations, and the query API.
 
-1. **CPT Layer** — all ten CPT registration files
-2. **Query Layer** — `query-helpers` → `query-shared` →
-   `query-jurisdiction` → `query-directory` → `query-agencies`
+1. **CPT Layer** — all eleven CPT registration files
+2. **Query Layer** — `query-helpers` → `query-shared` → `query-jurisdiction` → `query-general` → `query-directory` → `query-agencies`
    *(strict dependency order — do not reorder)*
 3. **Taxonomy Layer** — `register-taxonomies` → `register-glossary`
    *(registers taxonomy functions on `init`; terms are seeded on
@@ -319,10 +322,10 @@ and admin tooling are never present on the frontend.
 | `matrix-ag-procedures` | Post seeder | Agency posts + statute posts must exist |
 | `admin-matrix-watch` | Hook registration | Must be last — watches for post edits after seeding |
 
-**ACF Layer** — 14 field group files, all loaded after matrix so
+**ACF Layer** — 15 field group files, all loaded after matrix so
 taxonomy terms exist when ACF fields render.
 
-**Admin tools** — 12 files. `admin-navigation.php` must load first
+**Admin tools** — 10 files. `admin-navigation.php` must load first
 as it defines `ws_get_attached_citation_count()`, which
 `admin-columns.php` and `jurisdiction-dashboard.php` both call.
 
@@ -330,10 +333,8 @@ as it defines `ws_get_attached_citation_count()`, which
 
 Loads only on the frontend. Never present in the admin.
 
-- **Render files** — `render-general` → `render-section` →
-  `render-jurisdiction` → `render-directory` → `render-agency`
-- **Shortcode files** — `shortcodes-jurisdiction` →
-  `shortcodes-general`
+- **Render files** — `render-general` → `render-section` → `render-jurisdiction` → `render-directory` → `render-agency` → `ws-statute-bold`
+- **Shortcode files** — `shortcodes-jurisdiction` → `shortcodes-general`
 
 Missing files in this layer are logged to the error log but do not
 trigger `admin_notices` — the block runs only on `! is_admin()`.

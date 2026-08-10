@@ -9,7 +9,7 @@ It is a reference for understanding the legal model that underpins Whistleblower
 It is not a technical specification of the database schema. That belongs to the development and reference documentation.
 
 ---
-**A note on scope:** this document describes the complete intended legal-system model — the whole picture, as planned from the start. Not every entity below is built yet. Statute, Citation, Construction, Assist Organization, and Summary are current, live record types. Agency, Filing Procedure, Legal Update, and Reference describe where the model is headed; their presence here is design intent, not a claim that they exist in code today.
+**A note on scope:** This document describes the legal-system model. All primary entities—including Jurisdiction, Summary, Statute, Citation, Construction, Common Law, Agency, Filing Procedure, Legal Update, and Reference—are fully implemented in the codebase and active.
 ---
 
 ## The Core Problem
@@ -126,7 +126,6 @@ When no structured court mapping exists, an alternate text path may be used.
 ---
 
 ### Agency
-*(design intent — not yet in code)*
 
 A governmental body that receives disclosures, investigates retaliation, enforces protections, or otherwise participates in whistleblower processes.
 
@@ -148,7 +147,6 @@ Who receives the report?
 ---
 
 ### Filing Procedure
-*(design intent — not yet in code)*
 
 A specific intake or enforcement path associated with an agency.
 
@@ -218,7 +216,6 @@ It is written primarily for Maya: someone attempting to understand the terrain r
 ---
 
 ### Legal Update
-*(design intent — not yet in code)*
 
 A timestamped record of a significant development affecting whistleblower law or procedure.
 
@@ -234,7 +231,6 @@ Legal updates can appear both at the jurisdiction level and in broader update vi
 ---
 
 ### Reference
-*(design intent — not yet in code)*
 
 A source document associated with a statute, citation, or construction.
 

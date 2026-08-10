@@ -9,13 +9,13 @@ know what a field is called, what type it is, or why it exists.
 
 ACF field groups are registered in PHP, not stored in the database. The
 source of truth is always the relevant `includes/acf/` file. This
-document describes what is in those files as of v3.14.0.
+document describes what is in those files as of v3.20.2.
 
 ---
 
 ## Field Group Architecture
 
-Fifteen field groups are registered. Thirteen are CPT-specific. Two are
+Fifteen field groups are registered. Eleven are CPT-specific. Four are
 shared groups that attach to multiple CPTs via their location rules:
 
 | Shared Group | Group Key | Purpose |
@@ -59,12 +59,10 @@ Hidden audit keys (no ACF field, never shown in UI):
 
 **Group key:** `group_plain_english_metadata`
 **File:** `acf/acf-plain-english-fields.php`
-**Attaches to:** `jx-statute`, `jx-common-law`,`jx-citation`, `jx-construction`,
-`ws-agency`, `ws-assist-org`
+**Attaches to:** `jx-statute`, `jx-common-law`, `jx-citation`, `jx-construction`,
+`ws-agency`, `ag-procedure`, `ws-assist-org`
 
-*NOTE:* `jx-summary` and `ag-procedure` are intentionally excluded.
-The summary IS the plain-english document. The procedure walkthrough
-IS the plain-english content. Neither carries this overlay.
+*NOTE:* `jx-summary` is intentionally excluded because the summary itself is the plain-English document. `ag-procedure` does carry the Plain English overlay, allowing editors to provide a high-level plain-English overview alongside the detailed step-by-step walkthrough.
 
 | Meta Key | Type | Notes |
 |---|---|---|
@@ -277,6 +275,103 @@ stamp, plain-english, source verify, and major edit from shared groups.
 | Meta Key | Type | Notes |
 |---|---|---|
 | `ws_ref_materials` | relationship | Links to `ws-reference` posts |
+
+---
+
+## CPT Group: Common Law
+
+**Group key:** `group_jx_common_law_metadata`
+**File:** `acf/acf-jx-common-laws.php`
+**Attaches to:** `jx-common-law`
+
+This CPT mirrors the statute field structure but focuses on judicially recognized whistleblower doctrines (e.g., public policy exceptions).
+
+**Tab: Legal Basis**
+
+| Meta Key | Type | Notes |
+|---|---|---|
+| `ws_jx_comlaw_doctrine_name` | text | Doctrine Name |
+| `ws_jx_comlaw_doctrine_id` | text | Internal Doctrine ID |
+| `ws_jx_comlaw_common_name` | text | Common Name |
+| `ws_jx_comlaw_precedent_url` | url | Leading Case URL |
+| `ws_jx_comlaw_precedent_url_is_pdf` | true_false | True if case URL is a PDF |
+| `ws_jx_comlaw_public_policy_sources` | checkbox | Sources of public policy (e.g., statutes, constitution) |
+| `ws_jx_comlaw_other_sources` | text | Other public policy sources details (conditional) |
+| `ws_jx_comlaw_doctrine_basis_wysiwyg` | wysiwyg | Explanation of the doctrine's basis |
+| `ws_jx_comlaw_recognition_status_wysiwyg` | wysiwyg | Rationale/status of judicial recognition |
+| `ws_jx_comlaw_protected_disclosures` | taxonomy | `ws_protected_disclosure` terms; `save_terms: 1` |
+| `ws_jx_comlaw_protected_classes` | taxonomy | `ws_protected_class` terms; `save_terms: 1` |
+| `ws_jx_comlaw_protected_class_details` | textarea | Details on protected classes |
+| `ws_jx_comlaw_disclosure_targets` | taxonomy | `ws_disclosure_target` terms; `save_terms: 1` |
+| `ws_jx_comlaw_disclosure_target_details` | textarea | Details on disclosure targets |
+| `ws_jx_comlaw_adverse_action_scope` | textarea | Scope of adverse actions |
+| `ws_jx_comlaw_has_attach_flag` | true_false | Surface this doctrine on the jurisdiction summary page |
+| `ws_jx_comlaw_display_order` | number | Sort order among flagged records (conditional) |
+
+**Tab: Statute of Limitations & Deadlines**
+
+| Meta Key | Type | Notes |
+|---|---|---|
+| `ws_jx_comlaw_sol_value` | number | Filing window value |
+| `ws_jx_comlaw_sol_unit` | select | `days` / `months` / `years` |
+| `ws_jx_comlaw_sol_trigger` | select | What starts the clock |
+| `ws_jx_comlaw_has_limit_ambiguous` | true_false | Toggle — SOL is ambiguous or supplementary details exist |
+| `ws_jx_comlaw_limit_details` | textarea | SOL details (conditional) |
+| `ws_jx_comlaw_has_tolling_details` | true_false | Toggle — tolling provisions exist |
+| `ws_jx_comlaw_tolling_details` | textarea | Tolling details (conditional) |
+| `ws_jx_comlaw_has_exhaustion_required` | true_false | Toggle — exhaustion required before filing |
+| `ws_jx_comlaw_exhaustion_details` | textarea | Exhaustion details (conditional) |
+
+**Tab: Enforcement**
+
+| Meta Key | Type | Notes |
+|---|---|---|
+| `ws_jx_comlaw_process_types` | taxonomy | `ws_process_type` terms; `save_terms: 1` |
+| `ws_jx_comlaw_adverse_actions` | taxonomy | `ws_adverse_action` terms; `save_terms: 1` |
+| `ws_jx_comlaw_adverse_action_details` | textarea | Details on adverse actions |
+| `ws_jx_comlaw_fee_shifting` | taxonomy | `ws_fee_shifting_rule` terms; `save_terms: 1` |
+| `ws_jx_comlaw_remedies` | taxonomy | `ws_remedy` terms; `save_terms: 1` |
+| `ws_jx_comlaw_remedy_details` | textarea | Details on remedies |
+| `ws_jx_comlaw_related_agencies` | post_object | Oversight agencies (multi-select) |
+| `ws_jx_comlaw_federal_agencies` | post_object | Federal agencies (multi-select) |
+| `ws_jx_comlaw_local_agencies` | post_object | Local agencies (multi-select) |
+| `ws_jx_comlaw_enforcement_channel` | textarea | Details on enforcement channel |
+
+**Tab: Burden of Proof**
+
+| Meta Key | Type | Notes |
+|---|---|---|
+| `ws_jx_comlaw_has_statutory_preclusion` | true_false | Toggle — statutory preclusion exists |
+| `ws_jx_comlaw_statutory_preclusion_details` | textarea | Statutory preclusion details (conditional) |
+| `ws_jx_comlaw_employee_standard` | taxonomy | `ws_employee_standard` terms; `save_terms: 1` |
+| `ws_jx_comlaw_employee_standard_details` | textarea | Details on employee standards |
+| `ws_jx_comlaw_employer_defenses` | taxonomy | `ws_employer_defense` terms; `save_terms: 1` |
+| `ws_jx_comlaw_employer_defense_details` | textarea | Details on employer defenses |
+| `ws_jx_comlaw_has_rebuttable_presumption` | true_false | Toggle — rebuttable presumption exists |
+| `ws_jx_comlaw_rebuttable_presumption_details` | textarea | Rebuttable presumption details (conditional) |
+| `ws_jx_comlaw_has_bop_details` | true_false | Toggle — BOP details exist |
+| `ws_jx_comlaw_bop_details` | textarea | BOP details (conditional) |
+| `ws_jx_comlaw_bop_flag` | text | BOP flag description |
+
+**Tab: Reward**
+
+| Meta Key | Type | Notes |
+|---|---|---|
+| `ws_jx_comlaw_has_reward_available` | true_false | Toggle — reward available |
+| `ws_jx_comlaw_reward_details` | textarea | Reward details (conditional) |
+
+**Tab: Relationships**
+
+| Meta Key | Type | Notes |
+|---|---|---|
+| `ws_jx_comlaw_citation_ids` | post_object | Related `jx-citation` posts |
+| `ws_jx_comlaw_construction_ids` | post_object | Related `jx-construction` posts |
+
+**Tab: Reference Materials**
+
+| Meta Key | Type | Notes |
+|---|---|---|
+| `ws_jx_comlaw_ref_materials` | relationship | Links to `ws-reference` posts |
 
 ---
 
