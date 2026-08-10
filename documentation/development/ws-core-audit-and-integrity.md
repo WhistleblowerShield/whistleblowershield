@@ -23,15 +23,30 @@ A tamper-resistant, append-only edit history written on every save of
 any audited CPT. Stored as private post meta (leading underscore) and
 never exposed in the WordPress admin UI or ACF field groups.
 
+This system is intentionally separate from the provenance stamp fields
+(`ws_auto_create_author`, `ws_auto_last_edited_author`, etc.). Provenance
+stamps are the editorial record — they can be corrected by an administrator
+when attribution needs to reflect who actually wrote or reviewed the content.
+The audit trail is the custody record — it cannot be corrected, because it
+does not care about credit. It records who touched the data and when, full
+stop. A typo fix by an admin is logged here. It is not logged as an
+editorial change in the provenance stamps.
+
 **Two meta keys per post:**
 
 | Key | Behavior | Shape |
 |---|---|---|
 | `_ws_last_edited_by` | Overwritten on each save | `{ user_id, display_name, timestamp (UTC ISO 8601) }` |
-| `_ws_edit_history` | Append-only, never overwritten | Array of `{ user_id, display_name, timestamp }` entries |
+| `_ws_edit_history` | Append-only, never overwritten | Array of `{ user_id, display_name, timestamp }` entries, oldest first |
 
-**Audited CPTs:** `jurisdiction`, `jx-summary`, `jx-statute`,
-`jx-citation`, `jx-construction`, `ws-legal-update`, `ws-agency`
+All timestamps are GMT — `gmdate( 'c' )` (UTC ISO 8601). The audit trail
+never uses local site time.
+
+**Audited CPTs:**
+
+`ws-jurisdiction`, `jx-summary`, `jx-statute`, `jx-common-law`,
+`jx-citation`, `jx-construction`, `ws-legal-update`, `ws-agency`,
+`ag-procedure`, `ws-assist-orgs`, `ws-reference`
 
 **Hook priority:** `save_post` at priority 99 — after ACF finishes
 writing its own fields — to avoid any race condition with ACF data.

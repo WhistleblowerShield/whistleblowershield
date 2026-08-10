@@ -1,7 +1,7 @@
 # Design Principles
 
-**Status:** Pending review  
 **Purpose:** Record the design rules that have survived implementation, review, and refactoring.
+
 
 These principles are not branding language. They are working rules.
 
@@ -97,10 +97,11 @@ Recommended distinction:
 
 ```text
 name        = canonical schema name
-json_key    = current code name for research-facing alias
-prompt_key  = likely future name for that alias concept
+prompt_key  = research-agent alias (implemented; used when canonical name is ambiguous to an LLM)
 label       = editor-facing display text
 ```
+
+`prompt_key` is the current field name throughout the codebase. `json_key` is retired.
 
 ### Why This Matters
 

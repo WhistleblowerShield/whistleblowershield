@@ -3993,21 +3993,21 @@ function ws_ingest_process_assist_org_record( array $record, array $meta, array 
         'income_eligibility_required'   => 'ws_aorg_has_income_limit',
     ];
     $tri_values = [];
-    foreach ( $tri_choice_fields as $json_key => $meta_key ) {
-        $raw_val = ws_ingest_get_value( $flat, $json_key );
+    foreach ( $tri_choice_fields as $prompt_key => $meta_key ) {
+        $raw_val = ws_ingest_get_value( $flat, $prompt_key );
         $missing = ( $raw_val === null ) || ( is_string( $raw_val ) && trim( $raw_val ) === '' );
 
         if ( $missing ) {
             update_post_meta( $post_id, $meta_key, 0 );
-            $tri_values[ $json_key ] = 0;
+            $tri_values[ $prompt_key ] = 0;
             $needs_review = true;
-            $result['warnings'][] = "{$org_name}: {$json_key} missing/empty; coerced to 'no' (0). Human review required.";
+            $result['warnings'][] = "{$org_name}: {$prompt_key} missing/empty; coerced to 'no' (0). Human review required.";
             continue;
         }
 
-        $parsed = ws_ingest_parse_boolish_value( $raw_val, $org_name, $json_key, $result['warnings'] );
+        $parsed = ws_ingest_parse_boolish_value( $raw_val, $org_name, $prompt_key, $result['warnings'] );
         update_post_meta( $post_id, $meta_key, $parsed );
-        $tri_values[ $json_key ] = $parsed;
+        $tri_values[ $prompt_key ] = $parsed;
 
         if ( is_string( $raw_val ) && strtolower( trim( $raw_val ) ) === 'unclear' ) {
             $needs_review = true;

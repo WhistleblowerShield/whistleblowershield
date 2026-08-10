@@ -1,7 +1,7 @@
 # Architecture Overview
 
-**Status:** Pending review  
 **Purpose:** Record the current architectural structure of WhistleblowerShield and the reasons the major boundaries exist.
+
 
 WhistleblowerShield is implemented as a WordPress plugin, but the architecture is not organized around WordPress as the primary idea.
 
@@ -286,9 +286,13 @@ Do not document all four legal-record types as fully migrated unless the code pr
 
 ### Prompt and Ingest Tooling
 
-Prompt and ingest tooling is active, but parts are transitional.
+Prompt and ingest tooling is active, but the prompt-generator files are pending a
+ground-up rewrite.
 
-In current code, some fields use `json_key` to express an alternate research-facing name. The better long-term name may be `prompt_key`, but documentation should describe current code as current code until the rename is actually made.
+`prompt_key` is the current field name throughout the codebase. `json_key` is retired —
+the rename is complete in the schema, the output array, the renderer, and the ingest
+tooling. There are no surviving `json_key` references.
+
 
 ### Glossary
 

@@ -14,9 +14,9 @@ The purpose of this document is to provide a concise description of what current
 
 ## Current State
 
-WhistleblowerShield is operational on the production server and remains behind a construction page.
+WhistleblowerShield is running on the production server and remains behind a construction page.
 
-The core platform architecture is in place. The data model, editorial systems, audit controls, administrative tooling, and research ingest workflow are functioning. Jurisdiction data is being added through the established research and review process.
+The core platform architecture is load-bearing and in active use. The data model, editorial systems, audit controls, administrative tooling, and research ingest workflow are running and in use. Jurisdiction data is being added through an established research and review process. None of these systems should be considered finished — active development continues across most of them.
 
 The project is currently in a controlled population phase, where platform capabilities are being validated while jurisdiction content coverage expands.
 
@@ -36,11 +36,11 @@ The ws-core plugin provides the application's primary architecture, including:
 - Content rendering and presentation layers
 - Taxonomy-driven classification and filtering
 
-The platform architecture is established and operational.
+The platform architecture is load-bearing and in active use. It continues to evolve.
 
 ### Research and Ingest Workflow
 
-The research pipeline is operational.
+The research pipeline is running and producing content.
 
 Research records are produced through AI-assisted workflows, reviewed through structured validation processes, and subjected to human review before publication.
 
@@ -51,7 +51,7 @@ Administrative tooling exists to:
 - Process approved records
 - Maintain ingest audit trails
 
-The workflow is functioning and actively producing publishable jurisdiction content.
+The workflow is running and actively producing publishable jurisdiction content. It remains under refinement.
 
 ### Jurisdiction Coverage
 
@@ -129,6 +129,6 @@ Additional documentation remains under review to ensure it reflects current impl
 
 ## Assessment
 
-As of August 2026, WhistleblowerShield has moved beyond initial architecture and experimentation.
+As of August 2026, WhistleblowerShield has moved past initial architecture and early experimentation.
 
-The platform's core systems are operational, the research workflow is functioning, and jurisdiction content is actively being added. Remaining work is focused primarily on content population, public-facing presentation improvements, and completion of planned user experience features.
+The platform's core systems are running, the research workflow is producing content, and jurisdiction coverage is actively expanding. Significant work remains — content population, public-facing presentation, and planned user experience features are all ongoing. This is not a finished product.

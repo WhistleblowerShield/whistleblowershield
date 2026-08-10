@@ -16,7 +16,7 @@
  *
  * `acf-jx-statutes.php` already contains `ws_get_jx_statute_prompt_package()`
  * — a function built for exactly this purpose. It returns the live field
- * table (name, json_key, json_path, type, taxonomy, choices, prompt_group,
+ * table (name, prompt_key, json_path, type, taxonomy, choices, prompt_group,
  * and an auto-generated instruction string) filtered to only the fields
  * flagged for prompt inclusion. The statute branch below now renders
  * FROM that function, live, every time. If a field is added, removed, or
@@ -104,7 +104,7 @@ function ws_prompt_render_acf_prompt_package( array $package, string $record_typ
     foreach ( $package['fields_by_tab'] as $tab_key => $fields ) {
         $pairs = [];
         foreach ( $fields as $field ) {
-            $key = $field['json_key'] ?? $field['name'];
+            $key = $field['prompt_key'] ?? $field['name'];
             $pairs[] = '"' . $key . '": ' . ws_prompt_acf_field_json_placeholder( $field );
         }
         $tab_lines[] = '  "' . $tab_key . '": {' . implode( ', ', $pairs ) . '}';

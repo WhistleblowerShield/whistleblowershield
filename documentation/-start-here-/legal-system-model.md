@@ -9,7 +9,7 @@ It is a reference for understanding the legal model that underpins Whistleblower
 It is not a technical specification of the database schema. That belongs to the development and reference documentation.
 
 ---
-**A note on scope:** This document describes the legal-system model. All primary entities—including Jurisdiction, Summary, Statute, Citation, Construction, Common Law, Agency, Filing Procedure, Legal Update, and Reference—are fully implemented in the codebase and active.
+**A note on scope:** This document describes the legal-system model as currently designed. The primary entities — Jurisdiction, Summary, Statute, Citation, Construction, Common Law, Agency, Filing Procedure, Legal Update, and Reference — are represented in the codebase. Implementation depth and public-facing completeness vary by entity. Some are further along than others. Do not treat this document as evidence that any entity is finished.
 ---
 
 ## The Core Problem

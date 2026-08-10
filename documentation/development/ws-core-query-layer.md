@@ -130,7 +130,7 @@ Resolves a USPS code to a `WS_JURISDICTION_TAXONOMY` taxonomy term ID. Returns `
 Resolves a USPS code to a jurisdiction post ID. Composes `ws_get_term_id_by_code()` internally. Returns `int` post ID or `0`.
 
 #### `ws_resolve_jx_id( $input )`
-Accepts a post ID, post slug, or USPS code and returns a post ID. Used by shortcodes to normalize their `jx` attribute before calling dataset functions.
+Resolves a mixed input to a jurisdiction post ID. Two branches: if `$input` is numeric it is cast directly to `int` and returned as a post ID; if it is a string it is treated as a USPS code and passed to `ws_get_id_by_code()`. Post slugs are **not** supported — pass a numeric post ID or a two-letter USPS code. Returns `0` if input is empty or unresolved. Used internally to eliminate repeated `is_numeric` ternaries in dataset functions.
 
 #### `ws_get_jx_term_id( $post_id )`
 Returns the `WS_JURISDICTION_TAXONOMY` taxonomy term ID for a jurisdiction post. Returns `0` if no term is assigned.

@@ -623,13 +623,7 @@ function ws_get_jx_statute_prompt_package(): array {
             $prompt_field = [
                 'name'          => $field['name'],
                 'json_path'     => $field['json_path'],
-                // Output key intentionally left as 'json_key', not 'prompt_key' —
-                // pg-blocks-legal.php (line ~107) reads this exact key from this
-                // exact returned array and is explicitly out of scope for this
-                // rename pass. The VALUE now comes from the renamed internal
-                // 'prompt_key' field. Update both together when pg-* is next
-                // touched, not before.
-                'json_key'      => $field['prompt_key'] ?? null,
+                'prompt_key'    => $field['prompt_key'] ?? null,
                 'tab'           => $field['tab'],
                 'tab_label'     => $tab['label'],
                 'group'         => $prompt_group,
@@ -666,10 +660,6 @@ function ws_get_jx_statute_prompt_package(): array {
  * Build a simple default prompt instruction from field args.
 //
 // prompt_key is NOT the canonical schema name.
-//
-// It exists solely for research-agent interoperability. Named 'prompt_key',
-// not 'json_key' — JSON is only the current transport shape for the LLM
-// research pass, not the concept itself, and that isn't guaranteed to hold.
 //
 // Most fields should omit prompt_key entirely.
 // When omitted, the canonical field name is used.

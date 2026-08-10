@@ -401,7 +401,7 @@ Cache invalidation is generally tied to save, update, or delete events affecting
 
 ## Current Areas of Active Development
 
-The architecture described above is operational.
+The architecture described above is running and in active use.
 
 Several areas remain in active development:
 
@@ -477,4 +477,4 @@ Support structured research
 Assemble reader-facing guidance
 ```
 
-The architecture remains under active development, but the major boundaries between data, workflow, retrieval, assembly, and presentation are established and continue to guide implementation decisions.
+The architecture remains under active development. The major boundaries between data, workflow, retrieval, assembly, and presentation are load-bearing and continue to guide implementation decisions — but none of those boundaries should be treated as closed to revision.

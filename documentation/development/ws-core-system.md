@@ -54,6 +54,7 @@ ws-core/
     ├── cascade/                    Situation-based filter cascade (2 files)
     └── admin/                      Admin layer (10 files + matrix/ monitors/ tools/ subdirectory)
         ├── ws-fail-loud.php        Loud error reporting framework (Phase 1 universal)
+        ├── admin-audit-trail.php   Tamper-resistant append-only edit history (GMT timestamps, all audited CPTs)
         ├── matrix/                 Matrix seeders + divergence watch (9 files)
         ├── monitors/               Cron job invoked monitors (URL and feed) (2 files)
         └── tools/                  Admin utility tools + schema constants (4 files + prompt-generator/ subdirectory)
@@ -110,9 +111,8 @@ or filtering taxonomies. Taxonomy tables are always singular. Strings
 that are single-select taxonomy are also always singular. Arrays that
 are multi-select are always plural.
 
-| Slug | Label | Hierarchical | Public | Applied To |
-|---|---|---|---|---|
-| `ws_jurisdiction` | Jurisdictions | — | — | All content CPTs | multi-select || `ws_protected_disclosure` | Disclosure Categories | ✓ | ✓ | `jx-statute`, `jx-citation`, `ws-agency`, `ag-procedure`, `ws-assist-org` | multi-select |
+| `ws_jurisdiction` | Jurisdictions | — | — | All content CPTs | multi-select |
+| `ws_protected_disclosure` | Disclosure Categories | ✓ | ✓ | `jx-statute`, `jx-citation`, `ws-agency`, `ag-procedure`, `ws-assist-org` | multi-select |
 | `ws_process_type` | Process Types | — | ✓ | `jx-statute`, `ws-agency`, `ws-assist-org`, `jx-construction` | multi-select |
 | `ws_remedy` | Remedies | — | — | `jx-statute` | multi-select |
 | `ws_protected_class` | Protected Classes | ✓ | — | `jx-statute` | multi-select |
@@ -129,11 +129,12 @@ are multi-select are always plural.
 | `ws_procedure_type` | Procedure Types | — | — | `ag-procedure` | single-select |
 
 **`WS_JURISDICTION_TAXONOMY` details:** Private taxonomy. Slugs are lowercase
-**`WS_JURISDICTION_TAXONOMY` details:** Private taxonomy. Slugs are lowercase
 USPS codes (`us`, `ca`, `tx`, `dc`, `pr`, etc.). Terms are seeded by
 `matrix-jurisdictions.php`. Always reference via the
 `WS_JURISDICTION_TAXONOMY` constant — never hardcode the string
-`'ws_jurisdiction'`.**Hierarchical taxonomies:** `ws_protected_disclosure` has six parent
+`'ws_jurisdiction'`.
+
+**Hierarchical taxonomies:** `ws_protected_disclosure` has six parent
 categories with ~30 child terms covering the main areas of whistleblower
 law (workplace, financial, government accountability, public health,
 privacy, national security). `ws_protected_class` and
