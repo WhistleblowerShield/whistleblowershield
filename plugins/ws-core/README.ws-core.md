@@ -5,7 +5,7 @@ model, editorial workflow, and public-facing output for the platform.
 
 **Stack:** WordPress + ACF Pro
 **Requires:** PHP 8.0+, WordPress 6.0+, ACF Pro
-**Version:** 3.18.0
+**Version:** 3.20.0
 
 Full project documentation is in `/documentation/`. This file covers the
 rules a developer needs open while writing code.
@@ -91,9 +91,9 @@ same query layer pattern via `ws_get_jx_common_law_data()`.
 
 ## Taxonomy Registry
 
-17 taxonomies registered in `includes/taxonomies/register-taxonomies.php`.
+21 taxonomies registered in `includes/taxonomies/register-taxonomies.php`.
 Taxonomy names are always singular. Meta names that store arrays of
-taxonomy terms are always plural. Meta names the store a single term
+taxonomy terms are always plural. Meta names the store of a single term
 are always singular.
 
 ### Shared doctrinal taxonomies

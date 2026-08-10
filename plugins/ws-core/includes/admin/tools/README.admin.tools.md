@@ -11,6 +11,8 @@ This folder currently contains:
 - `tool-prompt-generator.php`
 - `tool-ingest.php`
 - `tool-taxonomy-term-audit.php`
+- `ws-schema-constants.php`
+- `prompt-generator/` — prompt generation implementation files
 
 ---
 
