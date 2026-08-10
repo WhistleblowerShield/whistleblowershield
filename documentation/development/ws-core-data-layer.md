@@ -495,9 +495,12 @@ This CPT mirrors the statute field structure but focuses on judicially recognize
 **File:** `acf/acf-ag-procedures.php`
 **Attaches to:** `ag-procedure`
 
-Stamp fields attach via the shared group. Plain English fields do NOT
-attach — the walkthrough is the plain-english content. Source verify
-fields DO attach.
+Stamp fields, Plain English fields, and Source Verify fields all attach
+via their shared groups. The walkthrough field (`ws_ag_procedure_walkthrough_wysiwyg`)
+is the step-by-step filing guide. The Plain English overlay (`ws_has_plain_english`,
+`ws_plain_english_wysiwyg`) sits alongside it as a high-level, plain-language
+summary of the procedure — government agency filing instructions are rarely
+written for a general audience, so this overlay exists to make them navigable.
 
 **Tab: Procedure Identity**
 

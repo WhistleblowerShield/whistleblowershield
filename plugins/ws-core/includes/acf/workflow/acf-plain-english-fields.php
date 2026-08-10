@@ -7,7 +7,7 @@
  *
  * ATTACHED CPTs
  * -------------
- * jx-statute, jx-common-law, jx-citation, jx-construction, ws-agency, ws-assist-org
+ * jx-statute, jx-common-law, jx-citation, jx-construction, ws-agency, ag-procedure, ws-assist-org
  *
  * EXCLUDED CPTs (and why)
  * -----------------------
