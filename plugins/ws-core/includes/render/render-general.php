@@ -28,7 +28,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.6.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -317,3 +317,4 @@ function ws_render_jurisdiction_index( $data ) {
     <?php
     return ob_get_clean();
 }
+

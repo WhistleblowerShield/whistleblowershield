@@ -16,7 +16,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.10.5
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -218,3 +218,4 @@ function ws_get_reference_page_data( $parent_post_id ) {
         'references'   => ws_get_ref_materials( $parent_post_id ),
     ];
 }
+

@@ -4,7 +4,7 @@
  *
  * @package WhistleblowerShield
  * @since   1.0.0
- * @version    3.20.0
+ * @version    3.20.1
  */
 
 defined( 'ABSPATH' ) || exit;

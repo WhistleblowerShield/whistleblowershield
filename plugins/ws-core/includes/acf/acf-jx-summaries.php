@@ -70,7 +70,7 @@
  *
  * @package    WhistleblowerShield
  * @since      2.1.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -214,5 +214,6 @@ function ws_register_acf_jx_summary() {
 // Field locking, auto-fill today, and stamp fields are handled centrally
 // in admin-hooks.php via ws_acf_lock_for_non_admins(), ws_acf_autofill_today(),
 // and ws_acf_write_stamp_fields().
+
 
 

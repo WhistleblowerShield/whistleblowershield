@@ -34,7 +34,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.3.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -169,3 +169,4 @@ function ws_register_acf_ws_reference() {
 // Field locking and stamp fields are handled centrally in admin-hooks.php.
 // ws_ref_approved has been retired — Approval tab removed entirely.
 // ws-reference is NOT enrolled in the plain_english guards or stamp functions.
+

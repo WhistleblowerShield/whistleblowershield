@@ -12,7 +12,7 @@
  *
  * @package WhistleblowerShield
  * @since   2.4.0
- * @version    3.20.0
+ * @version    3.20.1
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -103,3 +103,4 @@ function ws_register_cpt_jx_construction_() {
 
     register_post_type( 'jx-construction', $args );
 }
+

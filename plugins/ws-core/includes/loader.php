@@ -146,7 +146,7 @@
  *
  * @package WhistleblowerShield
  * @since   2.1.0
- * @version    3.20.2
+ * @version    3.20.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -664,3 +664,4 @@ if ( ! is_admin() ) {
 	}
 
 }
+

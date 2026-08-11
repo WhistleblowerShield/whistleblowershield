@@ -24,7 +24,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.0.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -139,3 +139,4 @@ function ws_matrix_watch_render_widget() {
 
     echo '</ul>';
 }
+

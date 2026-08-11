@@ -9,7 +9,7 @@
  *
  * @package WhistleblowerShield
  * @since   2.3.0
- * @version    3.20.0
+ * @version    3.20.1
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -98,3 +98,4 @@ function ws_register_cpt_jx_citation() {
 
     register_post_type( 'jx-citation', $args );
 }
+

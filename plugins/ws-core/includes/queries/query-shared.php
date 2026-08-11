@@ -34,7 +34,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.6.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -146,3 +146,4 @@ function ws_build_source_verify_array( $post_id ) {
         'needs_review'     => (bool) get_post_meta( $post_id, 'ws_needs_review', true ),
     ];
 }
+

@@ -1,0 +1,49 @@
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\workflow\acf-major-edit.php:44: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\workflow\acf-plain-english-fields.php:37: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\workflow\acf-source-verify.php:32: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\workflow\acf-stamp-fields.php:19: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-ag-procedures.php:93: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-agencies.php:88: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-jurisdictions.php:73: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-jx-citations.php:101: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-jx-common-laws.php:132: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-jx-constructions.php:104: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-jx-summaries.php:73: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-legal-updates.php:71: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\acf\acf-references.php:37: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\admin\matrix\admin-matrix-watch.php:27: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\admin\matrix\matrix-federal-courts.php:7: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\admin\matrix\matrix-state-courts.php:7: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\admin\tools\tool-ingest.php:67: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\admin\admin-audit-trail.php:87: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\admin\admin-citation-metabox.php:38: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\admin\admin-columns.php:38: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\admin\admin-construction-metabox.php:32: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\cascade\ws-filter-config.php:27: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\cpt\cpt-ag-procedures.php:7: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\cpt\cpt-agencies.php:7: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\cpt\cpt-assist-orgs.php:15: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\cpt\cpt-jurisdictions.php:11: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\cpt\cpt-jx-citations.php:12: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\cpt\cpt-jx-common-laws.php:40: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\cpt\cpt-jx-constructions.php:15: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\cpt\cpt-jx-statutes.php:24: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\cpt\cpt-jx-summaries.php:44: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\cpt\cpt-legal-updates.php:44: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\cpt\cpt-references.php:34: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\queries\query-agencies.php:44: * @version    3.20.2
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\queries\query-general.php:19: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\queries\query-helpers.php:32: * @version    3.20.2
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\queries\query-shared.php:37: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\queries\README.queries.md:150:* **3.20.2:** Restored `is_fed` signature logic for common law queries; corrected court label resolving for frontend; aligned jurisdiction taxonomy key reading.
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\queries\README.queries.md:158:* **3.20.2:** Updated court matrices loader dependency notes.
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\queries\README.queries.md:168:* **3.20.2:** Added error checking to single-value procedure type lookups.
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\render\render-directory.php:10: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\render\render-general.php:31: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\render\render-section.php:54: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\shortcodes\shortcodes-jurisdiction.php:14: * @version    3.20.0
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\includes\loader.php:149: * @version    3.20.2
+C:\Users\Dejunai\projects\whistleblowershield\plugins\ws-core\README.ws-core.md:276:| 3.20.2 | Moved `ws-fail-loud.php` and court matrices to the Universal Layer so they are available on the frontend. |
+C:\Users\Dejunai\projects\whistleblowershield\plugins\plugins.todo.md:226:Fixed in `loader.php` (now `@version 3.20.2`): `ws-fail-loud.php` now loads at
+C:\Users\Dejunai\projects\whistleblowershield\documentation\development\ws-core-data-layer.md:12:document describes what is in those files as of v3.20.2.
+C:\Users\Dejunai\projects\whistleblowershield\documentation\development\ws-core-system.md:161:| `WS_CORE_VERSION` | `'3.20.2'` | Plugin version — used as asset enqueue version string |

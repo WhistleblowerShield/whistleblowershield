@@ -7,7 +7,7 @@
  *
  * @package WhistleblowerShield
  * @since   3.6.0
- * @version    3.20.0
+ * @version    3.20.1
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -902,3 +902,4 @@ function ws_render_directory_empty() {
     <?php
     return ob_get_clean();
 }
+

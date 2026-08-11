@@ -4,7 +4,7 @@
  *
  * @package WhistleblowerShield
  * @since   3.9.0
- * @version    3.20.0
+ * @version    3.20.1
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -78,3 +78,4 @@ function ws_register_cpt_ag_procedures() {
 // manage_ag-procedure_posts_columns or manage_ag-procedure_posts_custom_column hooks
 // here — duplicate registrations cause conflicting column sets. All CPT column logic lives
 // in admin-columns.php.
+

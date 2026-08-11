@@ -8,7 +8,7 @@
  *
  * @package WhistleblowerShield
  * @since   1.0.0
- * @version    3.20.0
+ * @version    3.20.1
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -88,3 +88,4 @@ function ws_register_cpt_jurisdiction() {
 
     register_post_type( 'jurisdiction', $args );
 }
+

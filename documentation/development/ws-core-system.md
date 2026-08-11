@@ -158,7 +158,7 @@ All constants are defined in `ws-core.php` before the bootstrap runs.
 
 | Constant | Value | Purpose |
 |---|---|---|
-| `WS_CORE_VERSION` | `'3.20.2'` | Plugin version — used as asset enqueue version string |
+| `WS_CORE_VERSION` | `'3.20.1'` | Plugin version — used as asset enqueue version string |
 | `WS_CORE_PATH` | `plugin_dir_path()` | Absolute filesystem path to plugin root |
 | `WS_CORE_URL` | `plugin_dir_url()` | URL to plugin root for asset enqueues |
 | `WS_JURISDICTION_TAXONOMY` | `'ws_jurisdiction'` | Canonical taxonomy slug — use everywhere WordPress expects a taxonomy identifier |

@@ -29,7 +29,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.6.0
- * @version    3.20.2
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -135,3 +135,4 @@ function ws_court_lookup( $court_key ) {
     }
     return $court;
 }
+

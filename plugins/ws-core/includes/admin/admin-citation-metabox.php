@@ -35,7 +35,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.6.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  *
  * VERSION
@@ -235,3 +235,4 @@ function ws_render_citation_metabox( $post ) {
     </div>
     <?php
 }
+

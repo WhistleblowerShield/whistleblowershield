@@ -84,7 +84,7 @@
  *
  * @package WhistleblowerShield
  * @since   1.0.0
- * @version    3.20.0
+ * @version    3.20.1
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -210,3 +210,4 @@ function ws_get_edit_history( $post_id ) {
     $data = get_post_meta( (int) $post_id, '_ws_edit_history', true );
     return is_array( $data ) ? $data : [];
 }
+

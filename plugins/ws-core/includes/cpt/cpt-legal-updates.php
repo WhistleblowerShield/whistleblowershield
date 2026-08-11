@@ -41,7 +41,7 @@
  *
  * @package    WhistleblowerShield
  * @since      1.0.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -216,3 +216,4 @@ add_action( 'admin_notices', function() {
     echo esc_html__( 'Legal Updates are a permanent sitewide changelog and cannot be deleted. If one should be hidden from public output, ask an administrator to enable the "Hide from Public Change Log" flag.', 'ws-core' );
     echo '</p></div>';
 } );
+

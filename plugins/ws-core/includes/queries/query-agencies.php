@@ -41,7 +41,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.9.0
- * @version    3.20.2
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -667,4 +667,5 @@ add_action( 'deleted_post', function( $post_id ) {
     }
 
 } );
+
 

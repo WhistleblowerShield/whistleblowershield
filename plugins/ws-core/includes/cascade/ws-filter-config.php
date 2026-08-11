@@ -24,7 +24,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.15.0
- * @version    3.20.0
+ * @version    3.20.1
  *
  * @uses       Included by ws-core.php at core_init() — loaded before any
  *             renderer, query builder, or shortcode that needs the constants
@@ -296,3 +296,4 @@ function ws_filter_jx_threshold_overrides(): array {
 function ws_filter_thin_result_copy(): string {
     return "WhistleblowerShield is dedicated to helping you find the right assistance organization. Based on what you shared, your situation appears broader than our current filter set. The organizations below are trusted, reputable, and equipped to help across a wide range of needs.";
 }
+

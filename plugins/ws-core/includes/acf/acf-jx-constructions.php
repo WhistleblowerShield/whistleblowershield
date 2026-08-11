@@ -101,7 +101,7 @@
  *
  * @package    WhistleblowerShield
  * @since      2.4.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -905,3 +905,4 @@ function ws_jx_construction_auto_populate_affected_jx( $post_id ) {
              delete_post_meta( $post_id, 'ws_jx_construction_affected_jx' );
     }
 }
+

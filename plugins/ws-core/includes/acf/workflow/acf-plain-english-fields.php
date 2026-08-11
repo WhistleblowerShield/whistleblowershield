@@ -34,7 +34,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.4.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -233,3 +233,4 @@ function ws_register_acf_plain_english_fields() {
 //      stamps: ws_auto_plain_english_reviewed_by, ws_auto_plain_english_reviewed_date
 //   - ws_acf_stamp_summarized_fields()    — acf/save_post priority 25
 //   - ws_acf_lock_for_non_editors()       — acf/load_field by field name
+

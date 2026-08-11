@@ -35,7 +35,7 @@
  *
  * @package WhistleblowerShield
  * @since   2.1.0
- * @version    3.20.0
+ * @version    3.20.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -503,3 +503,4 @@ function ws_render_assist_org_column( $column, $post_id ) {
         }
     }
 }
+

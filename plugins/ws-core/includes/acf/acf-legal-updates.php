@@ -68,7 +68,7 @@
  * 
  * @package    WhistleblowerShield
  * @since      1.0.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -271,3 +271,4 @@ function ws_register_acf_legal_update() {
     ] ); // end acf_add_local_field_group
 
 } // end ws_register_acf_legal_update
+

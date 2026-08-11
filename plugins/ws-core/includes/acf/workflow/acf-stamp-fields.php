@@ -16,7 +16,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.4.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -164,3 +164,4 @@ function ws_register_acf_stamp_fields() {
 // ws_acf_lock_for_non_admins() applies to: ws_auto_create_date, ws_auto_last_edited_date,
 // ws_auto_last_edited_author, ws_auto_create_author (registered by field name, applies
 // to all CPTs carrying these field names — no per-file registration needed).
+

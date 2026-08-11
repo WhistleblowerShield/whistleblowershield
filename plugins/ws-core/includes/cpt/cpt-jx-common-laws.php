@@ -37,7 +37,7 @@
  *
  * @package    WhistleblowerShield
  * @since      3.13.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Whistleblower Shield
  * @link       https://whistleblowershield.org
  * @copyright  Copyright (c) Whistleblower Shield
@@ -128,3 +128,4 @@ function ws_register_cpt_common_law() {
 
     register_post_type( 'jx-common-law', $args );
 }
+

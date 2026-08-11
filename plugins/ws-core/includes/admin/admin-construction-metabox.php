@@ -29,7 +29,7 @@
  *
  * @package    WhistleblowerShield
  * @since      2.4.0
- * @version    3.20.0
+ * @version    3.20.1
  * @author     Dejunai
  *
  * VERSION
@@ -231,3 +231,4 @@ function ws_render_construction_metabox( $post ) {
     </div>
     <?php
 }
+
