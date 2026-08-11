@@ -111,6 +111,8 @@ or filtering taxonomies. Taxonomy tables are always singular. Strings
 that are single-select taxonomy are also always singular. Arrays that
 are multi-select are always plural.
 
+| Slug | Label | Hierarchical | Public | Applied To | Selection |
+|---|---|---|---|---|---|
 | `ws_jurisdiction` | Jurisdictions | — | — | All content CPTs | multi-select |
 | `ws_protected_disclosure` | Disclosure Categories | ✓ | ✓ | `jx-statute`, `jx-citation`, `ws-agency`, `ag-procedure`, `ws-assist-org` | multi-select |
 | `ws_process_type` | Process Types | — | ✓ | `jx-statute`, `ws-agency`, `ws-assist-org`, `jx-construction` | multi-select |
@@ -127,6 +129,7 @@ are multi-select are always plural.
 | `ws_aorg_cost_model` | Cost Structure | — | — | `ws-assist-org` | multi-select |
 | `ws_aorg_service` | Services Offered | — | — | `ws-assist-org` | multi-select |
 | `ws_procedure_type` | Procedure Types | — | — | `ag-procedure` | single-select |
+| `ws_glossary` | Glossary Terms | — | — | Site-wide tooltip scanner / terms | single-select |
 
 **`WS_JURISDICTION_TAXONOMY` details:** Private taxonomy. Slugs are lowercase
 USPS codes (`us`, `ca`, `tx`, `dc`, `pr`, etc.). Terms are seeded by

@@ -185,6 +185,7 @@ placed on a non-jurisdiction page.
 | `[ws_jx_header]` | `jx=""` | Full jurisdiction header: flag, name, government offices panel |
 | `[ws_jx_summary]` | *(none)* | Summary block with authorship footer and trust badge |
 | `[ws_jx_statutes]` | *(none)* | Curated statute blocks with two-group local/federal split |
+| `[ws_jx_common_law]` | *(none)* | Curated common-law doctrine blocks |
 | `[ws_jx_flag]` | `jx=""` | Flag image with attribution only (no header) |
 | `[ws_jx_citation]` | *(none)* | Curated citation list |
 | `[ws_jx_construction_]` | *(none)* | Curated construction blocks |
@@ -200,7 +201,7 @@ needs to appear on a non-jurisdiction page.
 
 | Tag | Attributes | Purpose |
 |---|---|---|
-| `[ws_nla_disclaimer_notice]` | *(none)* | Standard "not legal advice" notice box |
+| `[ws_not_legal_advice_disclaimer_notice]` | *(none)* | Standard "not legal advice" notice box |
 | `[ws_footer]` | *(none)* | Site footer block |
 | `[ws_legal_updates]` | `jx=""`, `count="0"` | Legal updates list. `jx` = USPS code or post ID (omit for sitewide). `count` defaults to 5 per-jurisdiction and 100 sitewide. |
 | `[ws_reference_page]` | `post_id="0"` | Reference materials page for a parent post. Also reads `post_id` and `section` from URL params — a single page serves all records. |
